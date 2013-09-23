@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <title>Administration</title>
+
+        <link rel="stylesheet" type="text/css" href="css/application.css"/>
+        <link rel="stylesheet" type="text/css" href="css/table.css"/>
+
+        <script src="js/jquery-1.9.1.js"></script>
+        <script src="js/jquery.base64.js"></script>
+        <script src="js/app.jquery.dataTables.min.js"></script>
+        <script src="js/TableTools.min.js"></script>
+        <script src="js/utilities.js"></script>      
+        <script src="js/application.js"></script>
+
+        <script src="js/jqplot/jquery.jqplot.js"></script>          
+        <script src="js/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
+        <script src="js/jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
+        <script src="js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+        <script src="js/jqplot/plugins/jqplot.enhancedLegendRenderer.min.js"></script>
+        <script src="js/jqplot/plugins/jqplot.highlighter.min.js"></script>
+        <script src="js/jqplot/plugins/jqplot.dateAxisRenderer.min.js"></script>
+        
+        <link rel="stylesheet" type="text/css" href="js/jqplot/jquery.jqplot.css"/>
+
+    </head>
+
+    <body>
+
+        <div class="titleBar">
+
+            <span class="titleText">
+                Cloud Foundry
+            </span>
+  
+            <span class="cloudControllerText">
+
+            </span>
+
+            <span class="disconnected">
+              <img class="disconnectedImage" src="images/red.png" height="16"/>
+              <span>Unable to connect to the NATS server</span>
+            </span>
+
+            <span class="userContainer">
+                <span class="user">
+                </span>
+                <img src="images/dropdown.png"/>
+            </span>
+
+            <div class="userMenu">
+                Sign Out
+            </div>
+
+        </div>
+
+        <div class="menuBar">
+
+            <span id="Organizations" class="menuItem">
+                Organizations
+            </span>
+
+            <span id="Spaces" class="menuItem">
+                Spaces
+            </span>
+
+            <span id="Applications" class="menuItem">
+                Apps
+            </span>
+
+            <span id="Users" class="menuItem">
+                Users
+            </span>
+
+            <span id="DropletExecutionAgents" class="menuItem">
+                DEAs
+            </span>
+
+            <span id="CloudControllers" class="menuItem">
+                Cloud Controllers
+            </span>
+
+            <span id="HealthManagers" class="menuItem">
+                Health Managers
+            </span>
+
+            <span id="Gateways" class="menuItem">
+                Service Gateways
+            </span>
+
+            <span id="Routers" class="menuItem">
+                Routers
+            </span>
+
+            <span id="Components" class="menuItem">
+                Components
+            </span>
+
+            <span id="Logs" class="menuItem">
+                Logs
+            </span>
+
+            <span id="Tasks" class="menuItem hiddenPage">
+                Tasks
+            </span>
+
+            <span id="Stats" class="menuItem">
+                Stats
+            </span>
+
+            <span>
+                <img id="RefreshButton" src="images/refresh.png" class="refreshButton"/>
+            </span>
+
+        </div>
+
+        <div class="content">
+
+            <div class="loadingPage"></div>
+            <div class="errorPage">
+                <img class="errorImage" src="images/critical.png"/>
+                <span class="errorText"></span>
+            </div>
+
+            <div id="CloudControllersPage" class="page hiddenPage">
+
+                <div id="CloudControllersTableContainer" class="pageSection">
+
+                    <table id="CloudControllersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                    </table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div id="CloudControllerDetailsLabel" class="propertyLabel">
+                        Details
+                    </div>
+
+                    <div id="CloudControllerPropertiesContainer">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="HealthManagersPage" class="page hiddenPage">
+
+                <div id="HealthManagersTableContainer" class="pageSection">
+
+                    <table id="HealthManagersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                    </table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div id="HealthManagerDetailsLabel" class="propertyLabel">
+                        Details
+                    </div>
+
+                    <div id="HealthManagerPropertiesContainer">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="GatewaysPage" class="page hiddenPage">
+
+                <div id="GatewaysTableContainer" class="pageSection">
+
+                    <table id="GatewaysTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                    </table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div class="pageSection">
+
+                        <div id="GatewayDetailsLabel" class="propertyLabel">
+                            Details
+                        </div>
+
+                        <div id="GatewayPropertiesContainer">
+                        </div>
+
+                    </div>
+
+                    <div id="GatewayNodesTableContainer" class="pageSection">
+
+                        <div id="GatewayDetailsLabel" class="propertyLabel">
+                            Nodes
+                        </div>
+
+                        <table id="GatewayNodesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="RoutersPage" class="page hiddenPage">
+
+                <div id="RoutersTableContainer" class="pageSection">
+
+                    <table id="RoutersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                    </table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div id="RouterDetailsLabel" class="propertyLabel">
+                        Details
+                    </div>
+
+                    <div id="RouterPropertiesContainer">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="DropletExecutionAgentsPage" class="page hiddenPage">
+
+                <div id="DropletExecutionAgentsTableContainer" class="pageSection">
+
+                    <span id="DropletExecutionAgentsActions" class="tableActionButton hiddenPage">
+                        <img id="DropletExecutionAgentsCreateButton" src="images/add.png" title="Create new DEA"/>
+                    </span>
+
+                    <table id="DropletExecutionAgentsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr class="customTableHeaderGroup">
+                                <th colspan="6"> </th>
+                                <th colspan="5">% Free</th>
+                            </tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Started</th>
+                                <th>CPU</th>
+                                <th>Memory</th>
+                                <th>Apps</th>
+                                <th>Memory</th>
+                                <th>Disk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div id="DropletExecutionAgentDetailsLabel" class="propertyLabel">
+                        Details
+                    </div>
+
+                    <div id="DropletExecutionAgentPropertiesContainer">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="ApplicationsPage" class="page hiddenPage">
+
+                <div id="ApplicationsTableContainer" class="pageSection">
+
+                    <table id="ApplicationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div class="pageSection">
+
+                        <div id="ApplicationDetailsLabel" class="propertyLabel">
+                            Details
+                        </div>
+
+                        <div id="ApplicationPropertiesContainer">
+                        </div>
+
+                    </div>
+
+                    <div id="ApplicationServicesTableContainer" class="pageSection">
+
+                        <div id="ApplicationServicesDetailsLabel" class="propertyLabel">
+                            Services
+                        </div>
+
+                        <table id="ApplicationServicesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="UsersPage" class="page hiddenPage">
+
+                <div id="UsersTableContainer" class="pageSection">
+
+                    <table id="UsersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                    </table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div id="UserDetailsLabel" class="propertyLabel">
+                        Details
+                    </div>
+
+                    <div id="UserPropertiesContainer">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="OrganizationsPage" class="page hiddenPage">
+
+                <div id="OrganizationsTableContainer" class="pageSection">
+
+                    <table id="OrganizationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr class="customTableHeaderGroup">
+                                <th colspan="5"> </th>
+                                <th colspan="3">App States</th>
+                                <th colspan="3">App Package States</th>              
+                            </tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Spaces</th>
+                                <th>Users</th>
+                                <th>Total</th>
+                                <th>Started</th>
+                                <th>Stopped</th>
+                                <th>Pending</th>
+                                <th>Staged</th>
+                                <th>Failed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div id="OrganizationDetailsLabel" class="propertyLabel">
+                        Details
+                    </div>
+
+                    <div id="OrganizationPropertiesContainer">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="SpacesPage" class="page hiddenPage">
+
+                <div id="SpacesTableContainer" class="pageSection">
+
+                    <table id="SpacesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr class="customTableHeaderGroup">
+                                <th colspan="4"> </th>
+                                <th colspan="3">App States</th>
+                                <th colspan="3">App Package States</th>              
+                            </tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Organization</th>
+                                <th>Target</th>
+                                <th>Users</th>
+                                <th>Total</th>
+                                <th>Started</th>
+                                <th>Stopped</th>
+                                <th>Pending</th>
+                                <th>Staged</th>
+                                <th>Failed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div id="SpaceDetailsLabel" class="propertyLabel">
+                        Details
+                    </div>
+
+                    <div id="SpacePropertiesContainer">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="ComponentsPage" class="page hiddenPage">
+
+                <div id="ComponentsTableContainer" class="pageSection">
+
+                    <span id="ComponentsActions" class="tableActionButton hiddenPage">
+                        <img id="ComponentsRemoveAllButton" src="images/clear.png" title="Clear data cache"/>
+                    </span>
+
+                    <table id="ComponentsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                    </table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div id="ComponentDetailsLabel" class="propertyLabel">
+                        Details
+                    </div>
+
+                    <div id="ComponentPropertiesContainer">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="LogsPage" class="page hiddenPage">
+
+                <div id="LogsTableContainer" class="pageSection">
+
+                    <table id="LogsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div id="LogContainer">
+
+                        <div>
+                            <button id="LogFirstButton"   class="logButton"><img id="LogFirstButtonImage"   class="logButtonImage" src="images/first.png"/></button>
+                            <button id="LogBackButton"    class="logButton"><img id="LogBackButtonImage"    class="logButtonImage" src="images/back.png"/></button>
+                            <button id="LogForwardButton" class="logButton"><img id="LogForwardButtonImage" class="logButtonImage" src="images/forward.png"/></button>
+                            <button id="LogLastButton"    class="logButton"><img id="LogLastButtonImage"    class="logButtonImage" src="images/last.png"/></button>
+
+                            <a id="LogLink" class="logLink" href=""></a>
+                        </div>
+
+                        <div>
+                            <div id="LogScrollBarContainer" class="logScrollBarContainer">
+                                <div id="LogScrollBar" class="logScrollBar"></div>
+                            </div>
+                        </div>
+
+
+                        <pre id="LogContents" class="logContents"></pre>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="TasksPage" class="page hiddenPage">
+
+                <div id="TasksTableContainer" class="pageSection">
+
+                    <table id="TasksTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div id="TaskContainer">
+
+                        <div class="taskCheckboxContainer">
+                            <input type="checkbox" id="TaskShowTimestamps">timestamps</input>
+                            <input type="checkbox" id="TaskShowStandardOut" checked>stdout</input>
+                            <input type="checkbox" id="TaskShowStandardError">stderr</input>
+                        </div>
+
+                        <pre id="TaskContents" class="logContents"></pre>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="StatsPage" class="page hiddenPage">
+
+                <div id="StatsContainer" class="pageSection">
+
+                    <span id="StatsActions" class="tableActionButton hiddenPage">
+                        <img id="StatsCreateButton" src="images/add.png"   title="Create Stats"/>
+                    </span>
+
+                    <table id="StatsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr class="customTableHeaderGroup">
+                                <th colspan="1"> </th>
+                                <th colspan="1"> </th>
+                                <th colspan="1"> </th>
+                                <th colspan="2">Instances</th>
+                                <th colspan="1"> </th>
+                            </tr>
+                            <tr>
+                                <th>Date</th>
+                                <th>Users</th>
+                                <th>Apps</th>
+                                <th>Running</th>
+                                <th>Total</th>
+                                <th>DEAs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div class="pageSection" style="margin-right: 0px;">
+                    <div id="StatsChart" style="height: 420px; width: 730px;"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="Dialog" class="dialog hiddenPage">
+
+            <div class="dialogTitleBarContainer">
+                <div class="dialogTitleBar">
+                    <span id="DialogTitle"></span>  
+                </div>
+            </div>
+
+            <div class="dialogContents">
+
+                <div>
+                    <span id="DialogText" class="dialogText"></span>    
+                </div>
+
+                <div>
+                    <div class="dialogButtonContainer">
+                        <button id="DialogCancelButton" class="dialogButton"></button>
+                        <button id="DialogOkayButton"   class="dialogButton">OK</button>
+                    </div>    
+                <div>
+
+            <div>
+
+        </div>
+
+    </body>
+
+</html>

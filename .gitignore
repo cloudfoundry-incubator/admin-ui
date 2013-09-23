@@ -16,3 +16,9 @@ tmp
 .yardoc
 _yardoc
 doc/
+
+admin_ui.log
+data
+.README.md.html
+.project
+

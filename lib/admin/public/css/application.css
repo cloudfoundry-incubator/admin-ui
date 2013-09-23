@@ -1,0 +1,385 @@
+
+body
+{
+    margin: 0px;
+    font-family: Helvetica,Arial,Tahoma,Verdana,sans-serif;
+}
+
+html.waiting,
+html.waiting *
+{
+    cursor: wait !important;
+}
+
+.titleBar
+{
+    float: left;
+    width: 100%;
+    background-image: -ms-linear-gradient(top, #737373 0%, #000000 100%);
+    background-image: -moz-linear-gradient(top, #737373 0%, #000000 100%);
+    background-image: -o-linear-gradient(top, #737373 0%, #000000 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #737373), color-stop(1, #000000));
+    background-image: -webkit-linear-gradient(top, #737373 0%, #000000, 100%);
+    background-image: linear-gradient(to bottom, #737373 0%, #000000, 100%);
+    color: rgb(250, 250, 250);
+    white-space: nowrap;
+}
+
+.titleText
+{
+    float: left;
+    padding: 4px 10px 4px 20px;
+    font-size: 1.08em;
+    font-weight: bold;
+}
+
+.cloudControllerText
+{
+    float: left;
+    padding: 7px 20px 0px 0px;
+    font-size: .8em;
+}
+
+.disconnected
+{
+    float: left;
+    padding: 4px 10px;
+    font-size: .9em;
+    color: rgb(255, 30, 30);
+    display: none;
+}
+
+.disconnectedImage
+{
+    position: relative;
+    top: 2px;
+}
+
+.userContainer
+{
+    float: right;
+    margin-top: 3px;
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+.user
+{
+    font-size: .8em;
+}
+
+.userMenu
+{
+    display: none;
+    padding: 3px 5px;
+    background-color: rgb(80, 80, 80);
+    color: rgb(230, 230, 230);
+    font-size: .8em;
+    border-top: 1px solid rgb(120, 120, 120);
+    border-left: 1px solid rgb(105, 105, 105);
+    border-right: 2px solid rgb(30, 30, 30);
+    border-bottom: 2px solid rgb(30, 30, 30);
+    cursor: pointer;
+}
+
+.refreshButton
+{
+    float: left;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+.toolbarButton
+{
+    margin-bottom: 5px;
+    cursor: pointer; 
+}
+
+.menuBar
+{
+    float: left;
+    width: 100%;
+    font-size: .9em;
+    /*
+    background-color: rgb(125, 125, 125);
+    */
+    background-color: rgb(0, 120, 180);
+    color: rgb(255, 255, 255);
+    border-top: 1px solid rgb(30, 30, 30);
+    white-space: nowrap;
+    overflow: auto;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.menuItem
+{
+    cursor: pointer;
+    padding: 15px 10px 12px 10px;
+    border-right: 1px solid rgb(0, 50, 100);
+    background-color: rgb(0, 100, 160);
+    /*
+    border-right: 1px solid rgb(115, 115, 115);
+    background-image: -moz-linear-gradient(top, #8C8C8C 0%, #BCBCBC 100%);
+    */
+    color: rgb(230, 230, 230);
+    float: left;
+}
+
+.menuItemHighlighted
+{
+    background-color: rgb(0, 140, 200);
+    /*
+    background-image: -moz-linear-gradient(top, #9D9D9D 0%, #CDCDCD 100%);
+    */
+    color: rgb(255, 255, 255);
+}
+
+.menuItemSelected
+{
+    /*
+    background-image: none;
+    */
+    background-color: white;
+    color: rgb(50, 50, 50);
+}
+
+.menuItemHighlighted.menuItemSelected
+{
+    color: rgb(120, 120, 120);
+}
+
+a
+{
+    color: rgb(0, 120, 180);
+}
+
+.tableLink
+{
+    color: rgb(0, 120, 180);
+}
+
+.tableActionButton
+{
+    cursor: pointer;
+    float: right; 
+    position: relative; 
+    top: 10px; 
+    right: 17px;
+}
+
+.content
+{
+    height: 100%;
+    width: 100%;
+    clear: both;
+}
+
+.loadingPage
+{
+    height: 100px;
+    background: white url(../images/loading.gif) no-repeat center bottom;
+    display: none;
+}
+
+.errorPage
+{
+    padding: 20px;
+    display: none;
+}
+
+.errorImage
+{
+    vertical-align: middle;
+}
+
+.errorText
+{
+    color: rgb(220, 0, 0);
+}
+
+.page
+{
+    padding: 15px 20px;
+}
+
+.hiddenPage
+{
+    display: none !important;
+}
+
+.pageSection
+{
+    float: left;
+    margin-top: 5px;
+    margin-right: 45px;
+    margin-bottom: 30px;
+}
+
+.verticalPageSection
+{
+    clear: both;
+}
+
+.propertyLabel
+{
+    font-size: .9em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.propertyKeyCell, .propertyValueCell
+{
+    font-size: .9em;
+    padding: 4px 12px;
+    text-align: left;
+}
+
+.firstPropertyKeyCell
+{
+    border-top: 1px solid rgb(210, 210, 210);
+}
+
+.firstPropertyValueCell
+{
+    border-top: 1px solid rgb(210, 210, 210);
+}
+
+.propertyKeyCell
+{
+    background-color: rgb(238, 238, 238);
+    border-bottom: 1px solid rgb(210, 210, 210);
+    color: rgb(70, 70, 70);
+}
+
+.propertyValueCell
+{
+    background-color: rgb(250, 250, 250);
+    border-bottom: 1px solid rgb(210, 210, 210);
+    color: rgb(20, 20, 20);
+}
+
+.cellRightAlign
+{
+    text-align: right;
+    margin-right: 3px;
+}
+
+.logContents
+{
+    border: 1px outset rgb(50, 50, 50);
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    margin: 0px;
+}
+
+.logScrollBarContainer
+{
+    margin-top: 3px;
+    height: 10px;
+    width: 100%;
+    left: 0px;
+    background-color: rgb(200, 200, 200);
+    border: 1px solid rgb(90, 90, 90);
+}
+
+.logScrollBar
+{
+    position: relative;
+    top: 0px;
+    left: 0px;
+    height: 10px;
+    width: 0px;
+    /*
+    background-color: rgb(0, 150, 250);
+    */
+    background-color: rgb(120, 120, 120);
+    cursor: pointer;
+}
+
+.logButton
+{
+    padding: 0px;
+    cursor: pointer;
+}
+
+.logButtonDisabled
+{
+    cursor: default;
+}
+
+.logButtonImage
+{
+    vertical-align: middle;
+}
+
+.logLink
+{
+    margin-left: 10px;
+    font-size: .9em;
+    position: relative;
+    top: 4px;
+}
+
+.removeButton
+{
+    position: relative;
+    top: -2px;
+    left: 3px;
+}
+
+.taskCheckboxContainer
+{
+    font-size: .95em; 
+    margin-left: 10px;
+    margin-bottom: 2px;  
+}
+
+.dialog
+{
+    position: absolute;
+    background-color: rgb(220, 220, 220);
+    border: 2px outset rgb(140, 140, 140);
+}
+
+.dialogTitleBarContainer
+{
+    background-color: rgb(140, 140, 140);
+    color: rgb(250, 250, 250);
+    width: 100%;
+}
+
+.dialogTitleBar
+{
+    padding: 4px 15px;
+}
+
+.dialogContents
+{
+    padding: 15px;
+}
+
+.dialogText
+{
+    font-size: .9em;
+    color: rgb(20, 20, 20);
+}
+
+.dialogButtonContainer
+{
+    margin-top: 20px;
+    margin-bottom: 15px;
+    float: right;
+}
+
+.dialogButton
+{
+    cursor: pointer;
+}
