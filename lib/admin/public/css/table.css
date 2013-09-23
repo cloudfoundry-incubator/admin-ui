@@ -1,0 +1,243 @@
+
+div.DTTT_container
+{
+    float: right;
+    margin: 4px 2px 4px 6px;
+}
+
+button.DTTT_button, div.DTTT_button, a.DTTT_button
+{
+    font-size: .8em;
+}
+
+.dataTables_scroll
+{
+    clear: both;
+}
+
+table
+{
+    border-collapse: collapse;
+}
+
+div.dataTables_wrapper
+{
+    background-color: rgb(205, 205, 205);
+}
+
+div.dataTables_length,
+div.dataTables_filter,
+div.dataTables_info,
+div.dataTables_paginate
+{
+    background-color: rgb(205, 205, 205);
+    font-family: Helvetica,Arial,Tahoma,Verdana,sans-serif;
+    font-size: .9em;
+    font-weight: normal;
+}
+
+div.dataTables_filter
+{
+    background: url(../images/critical.png) norepeat left middle;
+}
+
+div.dataTables_length,
+div.dataTables_info,
+div.dataTables_paginate
+{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+div.dataTables_length
+{
+    float: left;
+    margin-top: 2px;
+    margin-left: 5px;
+}
+
+div.dataTables_filter
+{
+    float: left;
+    margin-top: 1px;
+    margin-left: 20px;
+}
+
+div.dataTables_info
+{
+    float: left;
+    margin-left: 3px;
+    margin-bottom: 3px;
+    font-size: .8em;
+}
+
+div.dataTables_paginate
+{
+    float: right;
+}
+
+div.dataTables_length,
+div.dataTables_filter,
+div.dataTables_paginate,
+div.dataTables_info
+{
+    padding: 6px;
+}
+
+table.customTable
+{
+    clear: both;
+}
+
+div.dataTables_wrapper:after
+{
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+html[xmlns] .dataTables_wrapper { display: block; }
+* html .dataTables_wrapper { height: 1%; }
+
+table.customTable
+{
+    width: 100%;
+    clear: both;
+}
+
+table.customTable td,
+table.customTable th
+{
+    padding: 5px;
+    border: 1px solid rgb(190, 190, 190);
+}
+
+table.customTable th
+{
+    border: 1px solid rgb(120, 120, 120);
+    background-color: rgb(170, 170, 170);
+}
+
+table.customTable tr.customTableHeaderGroup th
+{
+    text-align: center;
+    cursor: default;
+    background-color:
+}
+
+table.customTable th
+{
+    font-weight: bold;
+    font-size: .8em;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+table.customTable thead,
+table.customTable thead th,
+table.customTable tbody
+{
+    text-align: left;
+}
+
+table.customTable tbody tr.even
+{
+    background: rgb(237, 237, 237);
+}
+
+table.customTable tbody tr.odd
+{
+    background: rgb(245, 245, 245);
+}
+
+table.customTable tbody td
+{
+    font-size: .8em;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+table.customTable thead th.sorting_asc
+{
+    background: rgb(170, 170, 170) url('../images/sort_asc.png') no-repeat right center;
+}
+
+table.customTable thead th.sorting_desc
+{
+    background: rgb(170, 170, 170) url('../images/sort_desc.png') no-repeat right center;
+}
+
+table.customTable thead th.sorting
+{
+    background: rgb(170, 170, 170) url('../images/sort_both.png') no-repeat right center;
+}
+
+a.paginate_button,
+a.paginate_active
+{
+    display: inline-block;
+    background-color: rgb(235, 235, 235);
+    border: 1px solid rgb(220, 220, 220);
+    color: rgb(60, 60, 60);
+    padding: 2px 6px;
+    margin-left: 4px;
+    cursor: pointer;
+    font-size: .8em;
+}
+
+a.paginate_active
+{
+    background-color: transparent;
+    border: 1px solid rgb(160, 160, 160);
+    color: rgb(80, 80, 80);
+    cursor: default;
+}
+
+a.paginate_button_disabled
+{
+    background-color: rgb(220, 220, 220);
+    border: 1px solid rgb(210, 210, 210);
+    color: rgb(160, 160, 160);
+    cursor: default;
+}
+
+.paging_full_numbers a:active
+{
+    outline: none
+}
+
+.paging_full_numbers a:hover
+{
+    text-decoration: none;
+}
+
+div.dataTables_paginate span>a
+{
+    width: 15px;
+    text-align: center;
+}
+
+div.dataTables_info
+{
+    padding: 9px 6px 6px 6px;
+}
+
+table.dataTable tr.DTTT_selected.odd,
+table.dataTable tr.DTTT_selected.even,
+table.dataTable tr.DTTT_selected.odd td.sorting_1,
+table.dataTable tr.DTTT_selected.even td.sorting_1
+{
+    background-color: rgb(120, 120, 120);
+    color: rgb(220, 220, 220);
+}
