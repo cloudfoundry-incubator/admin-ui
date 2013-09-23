@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <title>Login</title>
+
+        <link rel="stylesheet" href="css/login.css"/>
+
+        <script src="js/jquery-1.9.1.js"></script>
+
+        <script>
+
+            $(document).ready(function()
+            {
+                var error = decodeURIComponent((new RegExp('[?|&]error=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+
+                if (error)
+                {
+                    $(".errorMessage").css("opacity", 1);
+
+                    $(".errorMessage").animate({
+                                                   opacity: 0
+                                               },
+                                               6000,
+                                               "linear",
+                                               function() {});
+                }
+
+                var username = $("#username");
+
+                var value =  username.val();
+                if (value.length > 0)
+                {
+                    username.val("");
+                    username.focus();
+                    username.val(value);
+                }
+                else
+                {
+                    username.focus();
+                }
+            });
+
+        </script>
+
+    </head>
+
+    <body>
+
+        <div class="loginContainer">
+
+            <div class="loginLabel">Login</div>
+
+            <br/>
+
+            <div>Please enter your information:</div>
+
+            <br/>
+
+            <div>
+
+                <form action="login" method="post">
+
+                    <div>
+                        <span class="required">*</span>
+                        <label for="username">User name:</label>
+                    </div>
+                    <div>
+                        <input id="username" type="text" name="username" value="" required="true"/></input>
+                    </div>
+
+                    <div class="inputMargin">
+                        <span class="required">*</span>
+                        <label for="password">Password:</label>
+                    </div>
+                    <div>
+                        <input id="password" type="password" name="password" value="" required="true"/></input>
+                    </div>
+
+                    <br/>
+
+                    <div>
+                        <button type="submit">Login</button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <br/>
+        <br/>
+        <br/>
+
+        <div class="errorMessage">
+            Invalid user name or password, please try again.
+        </div>
+
+    </body>
+
+</html>

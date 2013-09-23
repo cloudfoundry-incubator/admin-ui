@@ -1,0 +1,50 @@
+
+body
+{
+    margin: 0px;
+    font-family: Helvetica,Arial,Tahoma,Verdana,sans-serif;
+}
+
+.banner
+{
+    float: left;
+    width: 100%;
+    background-image: -ms-linear-gradient(top, #0064A0 0%, #002033 100%);
+    background-image: -moz-linear-gradient(top, #0064A0 0%, #002033 100%);
+    background-image: -o-linear-gradient(top, #0064A0 0%, #002033 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #0064A0), color-stop(1, #002033));
+    background-image: -webkit-linear-gradient(top, #0064A0 0%, #002033 100%);
+    background-image: linear-gradient(to bottom, #0064A0 0%, #002033 100%);
+    border-bottom: rgb(100, 150, 200) solid 2px;
+}
+
+.bannerText
+{
+    padding: 5px 50px;
+}
+
+.bannerTitle
+{
+    font-size: 1.7em;
+    color: rgb(210, 230, 250);
+    text-shadow: 1px 1px rgba(170, 190, 210, .5);
+}
+
+.bannerLabel
+{
+    font-size: 1.3em;
+    color: rgb(240, 240, 240);
+}
+
+.pageSection
+{
+    float: left;
+    margin: 20px;
+}
+
+.cellRightAlign
+{
+    text-align: right;
+    margin-right: 3px;
+}
+

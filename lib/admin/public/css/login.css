@@ -1,0 +1,53 @@
+
+body
+{
+    background-color: rgb(240, 240, 240);
+    color: rgb(50, 50, 50);
+    font-family: Helvetica,Arial,Tahoma,Verdana,sans-serif;
+}
+
+.loginContainer
+{
+     margin: 100px auto 0;
+     border: 1px solid rgb(200, 200, 200);
+     background-color: white;
+     padding: 20px;
+     width: 220px;
+}
+
+.loginLabel
+{
+    font-size: 22px;
+}
+
+.required
+{
+    font-family: Verdana;
+    color: rgb(235, 120, 30);
+    vertical-align: middle;
+}
+
+.inputMargin
+{
+    margin-top: 10px;
+}
+
+input[type=text], input[type=password]
+{
+    width: 200px;
+    padding: 2px;
+    border: 1px solid rgb(200, 200, 200);
+}
+
+button
+{
+    cursor: pointer;
+}
+
+.errorMessage
+{
+    text-align: center;
+    font-size: 16px;
+    color: rgb(180, 0, 0);
+    opacity: 0;
+}
