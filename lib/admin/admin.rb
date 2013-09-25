@@ -770,27 +770,33 @@ class Admin
 
       rows = []
 
-      users = Users.all()
+      begin
+        users = Users.all()
 
-      DataMapper.repository(:ccdb) do
+        DataMapper.repository(:ccdb) do
 
-        usersCC          = User_cc.all()
-        spacesDevelopers = Spaces_Developers.all()
+          usersCC          = User_cc.all()
+          spacesDevelopers = Spaces_Developers.all()
 
-        usersHash = Hash.new
-        users.each do |user|
-          usersCC.each do |userCC|
-            if (user["id"] == userCC["guid"])
-              usersHash[userCC["id"]] = user.attributes()
+          usersHash = Hash.new
+          users.each do |user|
+            usersCC.each do |userCC|
+              if (user["id"] == userCC["guid"])
+                usersHash[userCC["id"]] = user.attributes()
+              end
             end
+          end
+
+          spacesDevelopers.each do |row|
+            currentUser = usersHash[row["user_id"]].clone()
+            currentUser[:space_id] = row["space_id"]
+            rows.push(currentUser)               
           end
         end
 
-        spacesDevelopers.each do |row|
-          currentUser = usersHash[row["user_id"]].clone()
-          currentUser[:space_id] = row["space_id"]
-          rows.push(currentUser)               
-        end
+      rescue => error
+        @logger.debug("Error during /users: #{error.inspect}")
+        @logger.debug(error.backtrace.join("\n"))
       end
 
       result["items"] = rows
@@ -809,14 +815,19 @@ class Admin
 
       items = []
 
-      DataMapper.repository(:ccdb) do
+      begin
+        DataMapper.repository(:ccdb) do
 
-        organizations = Organization.all()
+          organizations = Organization.all()
     
-        organizations.each do |organization|
-          items.push(organization.attributes)
+          organizations.each do |organization|
+            items.push(organization.attributes)
+          end
         end
 
+      rescue => error
+        @logger.debug("Error during /organizations: #{error.inspect}")
+        @logger.debug(error.backtrace.join("\n"))
       end
 
       result["items"] = items
@@ -836,14 +847,19 @@ class Admin
       
       items = []
 
-      DataMapper.repository(:ccdb) do
+      begin
+        DataMapper.repository(:ccdb) do
 
-        spaces = Spaces.all()
+          spaces = Spaces.all()
 
-        spaces.each do |space|
-          items.push(space.attributes)
+          spaces.each do |space|
+            items.push(space.attributes)
+          end
         end
 
+      rescue => error
+        @logger.debug("Error during /spaces: #{error.inspect}")
+        @logger.debug(error.backtrace.join("\n"))
       end
 
       result["items"] = items
@@ -863,14 +879,19 @@ class Admin
 
       items = []
 
-      DataMapper.repository(:ccdb) do
+      begin
+        DataMapper.repository(:ccdb) do
 
-        apps = Apps.all()
+          apps = Apps.all()
     
-        apps.each do |app|
-          items.push(app.attributes)
+          apps.each do |app|
+            items.push(app.attributes)
+          end
         end
 
+      rescue => error
+        @logger.debug("Error during /applications: #{error.inspect}")
+        @logger.debug(error.backtrace.join("\n"))
       end
 
       result["items"] = items
@@ -1235,7 +1256,7 @@ Subject: #{title}
 <table cellpadding="5" style="border-collapse: collapse; border: 1px solid rgb(100, 100, 100); font-family: verdana,tahoma,sans-serif; font-size: .9em">
   <tr style="background-color: rgb(150, 160, 170); color: rgb(250, 250, 250); border: 1px solid rgb(100, 100, 100);">
     <th style="border: 1px solid rgb(100, 100, 100);">Type</th>
-    <th style="border: 1px solid rgb(100, 100, 100);">URI</th>		
+    <th style="border: 1px solid rgb(100, 100, 100);">URI</th>
   </tr>
   #{rows}
 </table>
