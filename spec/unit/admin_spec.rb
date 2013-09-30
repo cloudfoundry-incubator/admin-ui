@@ -154,12 +154,64 @@ describe Admin do
       @http = nil
     end
 
-    it '/settings fails as expected' do
-      request = Net::HTTP::Get.new('/settings')
+    def fails_as_expected(path)
+      request = Net::HTTP::Get.new(path)
 
       response = @http.request(request)
 
       fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPSeeOther)
+    end
+
+    it '/applications fails as expected' do
+      fails_as_expected('/applications')
+    end
+
+    it '/cloudControllers fails as expected' do
+      fails_as_expected('/cloudControllers')
+    end
+
+    it '/components fails as expected' do
+      fails_as_expected('/components')
+    end
+
+    it '/dropletExecutionAgents fails as expected' do
+      fails_as_expected('/dropletExecutionAgents')
+    end
+
+    it '/gateways fails as expected' do
+      fails_as_expected('/gateways')
+    end
+
+    it '/healthManagers fails as expected' do
+      fails_as_expected('/healthManagers')
+    end
+
+    it '/logs fails as expected' do
+      fails_as_expected('/logs')
+    end
+
+    it '/organizations fails as expected' do
+      fails_as_expected('/organizations')
+    end
+
+    it '/routers fails as expected' do
+      fails_as_expected('/routers')
+    end
+
+    it '/settings fails as expected' do
+      fails_as_expected('/settings')
+    end
+
+    it '/spaces fails as expected' do
+      fails_as_expected('/spaces')
+    end
+
+    it '/tasks fails as expected' do
+      fails_as_expected('/tasks')
+    end
+
+    it '/users fails as expected' do
+      fails_as_expected('/users')
     end
 
   end
