@@ -1,9 +1,19 @@
 require 'spec_helper'
 
+HOST = 'localhost'
+PORT = 8070
+
 CONFIG_FILE = '/tmp/admin_ui.yml'
 DATA_FILE   = '/tmp/admin_ui_data.json'
 LOG_FILE    = '/tmp/admin_ui.log'
 STATS_FILE  = '/tmp/admin_ui_stats.json'
+
+ADMIN_USER     = 'admin'
+ADMIN_PASSWORD = 'admin_passw0rd'
+
+USER          = 'user'
+USER_PASSWORD = 'user_passw0rd'
+
 
 describe Admin do
   before(:all) do
@@ -16,13 +26,13 @@ describe Admin do
       :log_files            => [],
       :mbus                 => 'nats://nats:c1oudc0w@localhost:4222',
       :monitored_components => ['ALL'],
-      :port                 => 8070,
+      :port                 => PORT,
       :receiver_emails      => [],
       :sender_email         => {:server => 'localhost', :account => 'system@localhost'},
       :stats_file           => STATS_FILE,
       :uaa                  => 'postgres://uaaadmin:c1oudc0w@localhost:5524/uaadb',
-      :ui_admin_credentials => {:username => 'admin', :password => 'passw0rd'},
-      :ui_credentials       => {:username => 'user', :password => 'passw0rd'}
+      :ui_admin_credentials => {:username => ADMIN_USER, :password => ADMIN_PASSWORD},
+      :ui_credentials       => {:username => USER, :password => USER_PASSWORD}
     }
 
     File.open(CONFIG_FILE, 'w') { |file| file.write(JSON.pretty_generate(config)) }
@@ -43,19 +53,35 @@ describe Admin do
     Process.wait(cleanup_files_pid)
   end
 
-  context 'Login required and performed' do
-
-    before(:all) do
-      @http   = Net::HTTP.new('localhost', 8070)
-      request = Net::HTTP::Post.new('/login?username=admin&password=passw0rd')
+  context 'Login required, performed and failed' do
+    
+    it 'login fails as expected' do
+      @http   = Net::HTTP.new(HOST, PORT)
+      request = Net::HTTP::Post.new("/login?username=#{ADMIN_USER}&password=#{USER_PASSWORD}")
       request['Content-Length'] = 0
 
       response = @http.request(request)
-
       fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPSeeOther)
 
-      @cookie = response['Set-Cookie']
+      location = response['location']
+      location.should eq("http://#{HOST}:#{PORT}/login.html?error=true")
+    end
+  end
 
+  context 'Login required, performed and succeeded' do
+
+    before(:all) do
+      @http   = Net::HTTP.new(HOST, PORT)
+      request = Net::HTTP::Post.new("/login?username=#{ADMIN_USER}&password=#{ADMIN_PASSWORD}")
+      request['Content-Length'] = 0
+
+      response = @http.request(request)
+      fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPSeeOther)
+
+      location = response['location']
+      location.should eq("http://#{HOST}:#{PORT}/application.html?user=#{ADMIN_USER}")
+
+      @cookie = response['Set-Cookie']
       @cookie.should_not be_nil
     end
 
@@ -66,11 +92,9 @@ describe Admin do
 
     def get_json(path)
       request = Net::HTTP::Get.new(path)
-
       request['Cookie'] = @cookie
 
       response = @http.request(request)
-
       fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
 
       body = response.body
@@ -147,71 +171,73 @@ describe Admin do
   context 'Login required, but not performed' do
 
     before(:all) do
-      @http = Net::HTTP.new('localhost', 8070)
+      @http = Net::HTTP.new(HOST, PORT)
     end
 
     after(:all) do
       @http = nil
     end
 
-    def fails_as_expected(path)
+    def redirects_as_expected(path)
       request = Net::HTTP::Get.new(path)
 
       response = @http.request(request)
-
       fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPSeeOther)
+
+      location = response['location']
+      location.should eq("http://#{HOST}:#{PORT}/login.html")
     end
 
-    it '/applications fails as expected' do
-      fails_as_expected('/applications')
+    it '/applications redirects as expected' do
+      redirects_as_expected('/applications')
     end
 
-    it '/cloudControllers fails as expected' do
-      fails_as_expected('/cloudControllers')
+    it '/cloudControllers redirects as expected' do
+      redirects_as_expected('/cloudControllers')
     end
 
-    it '/components fails as expected' do
-      fails_as_expected('/components')
+    it '/components redirects as expected' do
+      redirects_as_expected('/components')
     end
 
-    it '/dropletExecutionAgents fails as expected' do
-      fails_as_expected('/dropletExecutionAgents')
+    it '/dropletExecutionAgents redirects as expected' do
+      redirects_as_expected('/dropletExecutionAgents')
     end
 
-    it '/gateways fails as expected' do
-      fails_as_expected('/gateways')
+    it '/gateways redirects as expected' do
+      redirects_as_expected('/gateways')
     end
 
-    it '/healthManagers fails as expected' do
-      fails_as_expected('/healthManagers')
+    it '/healthManagers redirects as expected' do
+      redirects_as_expected('/healthManagers')
     end
 
-    it '/logs fails as expected' do
-      fails_as_expected('/logs')
+    it '/logs redirects as expected' do
+      redirects_as_expected('/logs')
     end
 
-    it '/organizations fails as expected' do
-      fails_as_expected('/organizations')
+    it '/organizations redirects as expected' do
+      redirects_as_expected('/organizations')
     end
 
-    it '/routers fails as expected' do
-      fails_as_expected('/routers')
+    it '/routers redirects as expected' do
+      redirects_as_expected('/routers')
     end
 
-    it '/settings fails as expected' do
-      fails_as_expected('/settings')
+    it '/settings redirects as expected' do
+      redirects_as_expected('/settings')
     end
 
-    it '/spaces fails as expected' do
-      fails_as_expected('/spaces')
+    it '/spaces redirects as expected' do
+      redirects_as_expected('/spaces')
     end
 
-    it '/tasks fails as expected' do
-      fails_as_expected('/tasks')
+    it '/tasks redirects as expected' do
+      redirects_as_expected('/tasks')
     end
 
-    it '/users fails as expected' do
-      fails_as_expected('/users')
+    it '/users redirects as expected' do
+      redirects_as_expected('/users')
     end
 
   end
@@ -219,7 +245,7 @@ describe Admin do
   context 'Login not required' do
 
     before(:all) do
-      @http = Net::HTTP.new('localhost', 8070)
+      @http = Net::HTTP.new(HOST, PORT)
     end
 
     after(:all) do
@@ -230,7 +256,6 @@ describe Admin do
       request = Net::HTTP::Get.new(path)
 
       response = @http.request(request)
-
       fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
 
       response
