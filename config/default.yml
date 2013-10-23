@@ -1,38 +1,33 @@
 ---
+cloud_controller_discovery_interval: 300
 cloud_controller_uri: http://api.cloud-controller
-mbus: nats://nats:c1oudc0w@10.10.10.10:4222
-cc: postgres://ccadmin:c1oudc0w@10.10.10.10:5524/ccdb
-uaa: postgres://uaaadmin:c1oudc0w@10.10.10.10:5524/uaadb
-port: 8070
+component_connection_retries: 2
 data_file: data/data.json
-stats_file: data/stats.json
 log_file: admin_ui.log
+log_file_page_size: 51200
+log_files: [/var/vcap/sys/log/cloud_controller_ng/*.log, admin_ui.log]
+mbus: nats://nats:c1oudc0w@10.10.10.10:4222
+monitored_components: [NATS, CloudController, DEA, HealthManager, Router, -Provisioner, ALL]
+nats_discovery_interval: 30
+nats_discovery_timeout: 10
+port: 8070
+receiver_emails: [ ]
+sender_email:
+  server: 10.10.10.10
+  account: system@10.10.10.10
+stats_file: data/stats.json
+stats_refresh_time: 300
+stats_retries: 5
+stats_retry_interval: 300
+tasks_refresh_interval: 5000
+uaa_admin_credentials:
+  username: admin
+  password: c1oudc0w
 ui_credentials:
   username: user
   password: passw0rd
 ui_admin_credentials:
   username: admin
   password: passw0rd
-dea_retries: 10
-nats_discovery_timeout: 10
-component_connection_retries: 2
-sender_email:
-  server: 10.10.10.10
-  account: system@10.10.10.10
-receiver_emails: [bar@10.10.10.10, baz@10.10.10.10]
-monitored_components:
-  - NATS
-  - CloudController
-  - DEA
-  - HealthManager
-  - Router
-  - -Provisioner
-  - ALL
-cache_refresh_interval: 30
-tasks_refresh_interval: 5000
-stats_refresh_time: 300
-stats_retry_interval: 300
-stats_retries: 5
-log_file_page_size: 51200
-log_files:
-  - /var/vcap/sys/log/cloud_controller_ng/*.log
+varz_discovery_interval: 30
+

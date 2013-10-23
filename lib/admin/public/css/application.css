@@ -163,6 +163,8 @@ a
 .tableLink
 {
     color: rgb(0, 120, 180);
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 .tableActionButton

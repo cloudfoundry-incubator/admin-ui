@@ -8,22 +8,42 @@
         <link rel="stylesheet" type="text/css" href="css/application.css"/>
         <link rel="stylesheet" type="text/css" href="css/table.css"/>
 
-        <script src="js/jquery-1.9.1.js"></script>
-        <script src="js/jquery.base64.js"></script>
-        <script src="js/app.jquery.dataTables.min.js"></script>
-        <script src="js/TableTools.min.js"></script>
-        <script src="js/utilities.js"></script>      
-        <script src="js/application.js"></script>
+        <script src="js/external/jquery/jquery-1.9.1.js"></script>
+        <script src="js/external/jquery/jquery.base64.js"></script>
+        <script src="js/external/jquery/app.jquery.dataTables.min.js"></script>
+        <script src="js/external/jquery/TableTools.min.js"></script>
 
-        <script src="js/jqplot/jquery.jqplot.js"></script>          
-        <script src="js/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
-        <script src="js/jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
-        <script src="js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
-        <script src="js/jqplot/plugins/jqplot.enhancedLegendRenderer.min.js"></script>
-        <script src="js/jqplot/plugins/jqplot.highlighter.min.js"></script>
-        <script src="js/jqplot/plugins/jqplot.dateAxisRenderer.min.js"></script>
+        <script src="js/app/constants.js"></script>      
+        <script src="js/app/utilities.js"></script>     
+        <script src="js/app/format.js"></script>
+        <script src="js/app/data.js"></script>
+        <script src="js/app/table.js"></script>
+        <script src="js/app/stats.js"></script>
+        <script src="js/app/tab.js"></script>
+        <script src="js/app/tabs/applicationsTab.js"></script>        
+        <script src="js/app/tabs/cloudControllersTab.js"></script>        
+        <script src="js/app/tabs/componentsTab.js"></script>
+        <script src="js/app/tabs/deasTab.js"></script>
+        <script src="js/app/tabs/developersTab.js"></script>       
+        <script src="js/app/tabs/gatewaysTab.js"></script>    
+        <script src="js/app/tabs/healthManagersTab.js"></script> 
+        <script src="js/app/tabs/logsTab.js"></script>
+        <script src="js/app/tabs/organizationsTab.js"></script>  
+        <script src="js/app/tabs/routersTab.js"></script>        
+        <script src="js/app/tabs/spacesTab.js"></script>
+        <script src="js/app/tabs/statsTab.js"></script>
+        <script src="js/app/tabs/tasksTab.js"></script>
+        <script src="js/app/adminUI.js"></script>
+
+        <script src="js/external/jqplot/jquery.jqplot.js"></script>          
+        <script src="js/external/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
+        <script src="js/external/jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
+        <script src="js/external/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+        <script src="js/external/jqplot/plugins/jqplot.enhancedLegendRenderer.min.js"></script>
+        <script src="js/external/jqplot/plugins/jqplot.highlighter.min.js"></script>
+        <script src="js/external/jqplot/plugins/jqplot.dateAxisRenderer.min.js"></script>
         
-        <link rel="stylesheet" type="text/css" href="js/jqplot/jquery.jqplot.css"/>
+        <link rel="stylesheet" type="text/css" href="js/external/jqplot/jquery.jqplot.css"/>
 
     </head>
 
@@ -41,7 +61,7 @@
 
             <span class="disconnected">
               <img class="disconnectedImage" src="images/red.png" height="16"/>
-              <span>Unable to connect to the NATS server</span>
+              <span>Unable to connect to backend services</span>
             </span>
 
             <span class="userContainer">
@@ -70,11 +90,11 @@
                 Apps
             </span>
 
-            <span id="Users" class="menuItem">
-                Users
+            <span id="Developers" class="menuItem">
+                Developers
             </span>
 
-            <span id="DropletExecutionAgents" class="menuItem">
+            <span id="DEAs" class="menuItem">
                 DEAs
             </span>
 
@@ -135,11 +155,11 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="CloudControllerDetailsLabel" class="propertyLabel">
+                    <div id="CloudControllersDetailsLabel" class="propertyLabel">
                         Details
                     </div>
 
-                    <div id="CloudControllerPropertiesContainer">
+                    <div id="CloudControllersPropertiesContainer">
                     </div>
 
                 </div>
@@ -157,11 +177,11 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="HealthManagerDetailsLabel" class="propertyLabel">
+                    <div id="HealthManagersDetailsLabel" class="propertyLabel">
                         Details
                     </div>
 
-                    <div id="HealthManagerPropertiesContainer">
+                    <div id="HealthManagersPropertiesContainer">
                     </div>
 
                 </div>
@@ -181,22 +201,22 @@
 
                     <div class="pageSection">
 
-                        <div id="GatewayDetailsLabel" class="propertyLabel">
+                        <div id="GatewaysDetailsLabel" class="propertyLabel">
                             Details
                         </div>
 
-                        <div id="GatewayPropertiesContainer">
+                        <div id="GatewaysPropertiesContainer">
                         </div>
 
                     </div>
 
-                    <div id="GatewayNodesTableContainer" class="pageSection">
+                    <div id="GatewaysNodesTableContainer" class="pageSection">
 
-                        <div id="GatewayDetailsLabel" class="propertyLabel">
+                        <div id="GatewaysNodesDetailsLabel" class="propertyLabel">
                             Nodes
                         </div>
 
-                        <table id="GatewayNodesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <table id="GatewaysNodesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         </table>
 
                     </div>
@@ -216,30 +236,30 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="RouterDetailsLabel" class="propertyLabel">
+                    <div id="RoutersDetailsLabel" class="propertyLabel">
                         Details
                     </div>
 
-                    <div id="RouterPropertiesContainer">
+                    <div id="RoutersPropertiesContainer">
                     </div>
 
                 </div>
 
             </div>
 
-            <div id="DropletExecutionAgentsPage" class="page hiddenPage">
+            <div id="DEAsPage" class="page hiddenPage">
 
-                <div id="DropletExecutionAgentsTableContainer" class="pageSection">
+                <div id="DEAsTableContainer" class="pageSection">
 
-                    <span id="DropletExecutionAgentsActions" class="tableActionButton hiddenPage">
-                        <img id="DropletExecutionAgentsCreateButton" src="images/add.png" title="Create new DEA"/>
+                    <span id="DEAsActions" class="tableActionButton hiddenPage">
+                        <img id="DEAsCreateButton" src="images/add.png" title="Create new DEA"/>
                     </span>
 
-                    <table id="DropletExecutionAgentsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                    <table id="DEAsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
                                 <th colspan="6"> </th>
-                                <th colspan="5">% Free</th>
+                                <th colspan="2">% Free</th>
                             </tr>
                             <tr>
                                 <th>Name</th>
@@ -253,6 +273,7 @@
                             </tr>
                         </thead>
                         <tbody>
+
                         </tbody>
                     </table>
 
@@ -260,11 +281,11 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="DropletExecutionAgentDetailsLabel" class="propertyLabel">
+                    <div id="DEAsDetailsLabel" class="propertyLabel">
                         Details
                     </div>
 
-                    <div id="DropletExecutionAgentPropertiesContainer">
+                    <div id="DEAsPropertiesContainer">
                     </div>
 
                 </div>
@@ -283,22 +304,22 @@
 
                     <div class="pageSection">
 
-                        <div id="ApplicationDetailsLabel" class="propertyLabel">
+                        <div id="ApplicationsDetailsLabel" class="propertyLabel">
                             Details
                         </div>
 
-                        <div id="ApplicationPropertiesContainer">
+                        <div id="ApplicationsPropertiesContainer">
                         </div>
 
                     </div>
 
-                    <div id="ApplicationServicesTableContainer" class="pageSection">
+                    <div id="ApplicationsServicesTableContainer" class="pageSection">
 
-                        <div id="ApplicationServicesDetailsLabel" class="propertyLabel">
+                        <div id="ApplicationsServicesDetailsLabel" class="propertyLabel">
                             Services
                         </div>
 
-                        <table id="ApplicationServicesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <table id="ApplicationsServicesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         </table>
 
                     </div>
@@ -307,22 +328,22 @@
 
             </div>
 
-            <div id="UsersPage" class="page hiddenPage">
+            <div id="DevelopersPage" class="page hiddenPage">
 
-                <div id="UsersTableContainer" class="pageSection">
+                <div id="DevelopersTableContainer" class="pageSection">
 
-                    <table id="UsersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                    <table id="DevelopersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                     </table>
 
                 </div>
 
                 <div class="verticalPageSection">
 
-                    <div id="UserDetailsLabel" class="propertyLabel">
+                    <div id="DevelopersDetailsLabel" class="propertyLabel">
                         Details
                     </div>
 
-                    <div id="UserPropertiesContainer">
+                    <div id="DevelopersPropertiesContainer">
                     </div>
 
                 </div>
@@ -345,7 +366,7 @@
                                 <th>Status</th>
                                 <th>Created</th>
                                 <th>Spaces</th>
-                                <th>Users</th>
+                                <th>Developers</th>
                                 <th>Total</th>
                                 <th>Started</th>
                                 <th>Stopped</th>
@@ -362,11 +383,11 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="OrganizationDetailsLabel" class="propertyLabel">
+                    <div id="OrganizationsDetailsLabel" class="propertyLabel">
                         Details
                     </div>
 
-                    <div id="OrganizationPropertiesContainer">
+                    <div id="OrganizationsPropertiesContainer">
                     </div>
 
                 </div>
@@ -380,7 +401,7 @@
                     <table id="SpacesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="4"> </th>
+                                <th colspan="5"> </th>
                                 <th colspan="3">App States</th>
                                 <th colspan="3">App Package States</th>              
                             </tr>
@@ -388,7 +409,8 @@
                                 <th>Name</th>
                                 <th>Organization</th>
                                 <th>Target</th>
-                                <th>Users</th>
+                                <th>Created</th>
+                                <th>Developers</th>
                                 <th>Total</th>
                                 <th>Started</th>
                                 <th>Stopped</th>
@@ -405,11 +427,11 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="SpaceDetailsLabel" class="propertyLabel">
+                    <div id="SpacesDetailsLabel" class="propertyLabel">
                         Details
                     </div>
 
-                    <div id="SpacePropertiesContainer">
+                    <div id="SpacesPropertiesContainer">
                     </div>
 
                 </div>
@@ -431,11 +453,11 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="ComponentDetailsLabel" class="propertyLabel">
+                    <div id="ComponentsDetailsLabel" class="propertyLabel">
                         Details
                     </div>
 
-                    <div id="ComponentPropertiesContainer">
+                    <div id="ComponentsPropertiesContainer">
                     </div>
 
                 </div>
@@ -506,7 +528,7 @@
 
             <div id="StatsPage" class="page hiddenPage">
 
-                <div id="StatsContainer" class="pageSection">
+                <div id="StatsTableContainer" class="pageSection">
 
                     <span id="StatsActions" class="tableActionButton hiddenPage">
                         <img id="StatsCreateButton" src="images/add.png"   title="Create Stats"/>
@@ -515,18 +537,18 @@
                     <table id="StatsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="1"> </th>
-                                <th colspan="1"> </th>
-                                <th colspan="1"> </th>
+                                <th colspan="5"> </th>
                                 <th colspan="2">Instances</th>
                                 <th colspan="1"> </th>
                             </tr>
                             <tr>
                                 <th>Date</th>
+                                <th>Organizations</th>
+                                <th>Spaces</th>
                                 <th>Users</th>
                                 <th>Apps</th>
-                                <th>Running</th>
                                 <th>Total</th>
+                                <th>Running</th>
                                 <th>DEAs</th>
                             </tr>
                         </thead>
