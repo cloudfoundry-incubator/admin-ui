@@ -2,7 +2,8 @@ require_relative 'utils'
 
 module IBM::AdminUI
   class LogFiles
-    def initialize(logger)
+    def initialize(config, logger)
+      @config = config
       @logger = logger
     end
 
@@ -30,17 +31,17 @@ module IBM::AdminUI
       size = File.size(path)
 
       start = start.nil? ? -1 : start.to_i
-      start = (size - Config.log_file_page_size) if start < 0
+      start = (size - @config.log_file_page_size) if start < 0
       start = [start, 0].max
 
-      read_size = [size - start, Config.log_file_page_size].min
+      read_size = [size - start, @config.log_file_page_size].min
 
       contents = IO.read(path, read_size, start)
 
       result = {
                  :data      => contents.nil? ? '' : contents,
                  :file_size => size,
-                 :page_size => Config.log_file_page_size,
+                 :page_size => @config.log_file_page_size,
                  :path      => path,
                  :read_size => read_size,
                  :start     => start
@@ -49,13 +50,13 @@ module IBM::AdminUI
       if read_size < size
         if start > 0
           result.merge!(:first => 0)
-          back = [start - Config.log_file_page_size, 0].max
+          back = [start - @config.log_file_page_size, 0].max
           result.merge!(:back => back)
         end
 
         if start + read_size < size
-          forward = [start + Config.log_file_page_size,
-                     size - Config.log_file_page_size].min
+          forward = [start + @config.log_file_page_size,
+                     size - @config.log_file_page_size].min
           result.merge!(:forward => forward)
           result.merge!(:last => -1)
         end
@@ -69,7 +70,7 @@ module IBM::AdminUI
     def log_files
       result = []
 
-      Config.log_files.each do |log_file|
+      @config.log_files.each do |log_file|
         log_file_path = log_file.to_s
 
         if File.directory?(log_file_path)

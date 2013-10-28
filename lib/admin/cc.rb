@@ -2,7 +2,8 @@ require 'json'
 
 module IBM::AdminUI
   class CC
-    def initialize(logger)
+    def initialize(config, logger)
+      @config = config
       @logger = logger
 
       @semaphore = Mutex.new
@@ -20,14 +21,14 @@ module IBM::AdminUI
     def applications
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @cache.nil?
-        return @cache[:applications].clone
+        @cache[:applications]
       end
     end
 
     def applications_count
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @cache.nil?
-        return @cache[:applications]['items'].length
+        @cache[:applications]['items'].length
       end
     end
 
@@ -58,63 +59,63 @@ module IBM::AdminUI
     def organizations
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @cache.nil?
-        return @cache[:organizations].clone
+        @cache[:organizations]
       end
     end
 
     def organizations_count
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @cache.nil?
-        return @cache[:organizations]['items'].length
+        @cache[:organizations]['items'].length
       end
     end
 
     def spaces
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @cache.nil?
-        return @cache[:spaces].clone
+        @cache[:spaces]
       end
     end
 
     def spaces_auditors
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @cache.nil?
-        return @cache[:spaces_auditors].clone
+        @cache[:spaces_auditors]
       end
     end
 
     def spaces_count
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @cache.nil?
-        return @cache[:spaces]['items'].length
+        @cache[:spaces]['items'].length
       end
     end
 
     def spaces_developers
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @cache.nil?
-        return @cache[:spaces_developers].clone
+        @cache[:spaces_developers]
       end
     end
 
     def spaces_managers
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @cache.nil?
-        return @cache[:spaces_managers].clone
+        @cache[:spaces_managers]
       end
     end
 
     def users
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @cache.nil?
-        return @cache[:users].clone
+        @cache[:users]
       end
     end
 
     def users_count
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @cache.nil?
-        return @cache[:users]['items'].length
+        @cache[:users]['items'].length
       end
     end
 
@@ -129,7 +130,7 @@ module IBM::AdminUI
     private
 
     def schedule_discovery
-      @logger.debug("[#{ Config.cloud_controller_discovery_interval } second interval] Starting CC discovery...")
+      @logger.debug("[#{ @config.cloud_controller_discovery_interval } second interval] Starting CC discovery...")
 
       organizations     = discover_organizations
       spaces            = discover_spaces
@@ -162,7 +163,7 @@ module IBM::AdminUI
         @logger.debug('Caching CC data...')
         @cache = cache
         @condition.broadcast
-        @condition.wait(@semaphore, Config.cloud_controller_discovery_interval)
+        @condition.wait(@semaphore, @config.cloud_controller_discovery_interval)
       end
     end
 
@@ -183,12 +184,7 @@ module IBM::AdminUI
     def discover_applications
       items = []
       get_cc('v2/apps').each do |app|
-        entity   = app['entity']
-        metadata = app['metadata']
-
-        attributes = entity.clone
-        attributes.merge!(metadata)
-        items.push(attributes)
+        items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
     rescue => error
@@ -200,12 +196,7 @@ module IBM::AdminUI
     def discover_organizations
       items = []
       get_cc('v2/organizations').each do |app|
-        entity   = app['entity']
-        metadata = app['metadata']
-
-        attributes = entity.clone
-        attributes.merge!(metadata)
-        items.push(attributes)
+        items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
     rescue => error
@@ -217,12 +208,7 @@ module IBM::AdminUI
     def discover_spaces
       items = []
       get_cc('v2/spaces').each do |app|
-        entity   = app['entity']
-        metadata = app['metadata']
-
-        attributes = entity.clone
-        attributes.merge!(metadata)
-        items.push(attributes)
+        items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
     rescue => error
@@ -237,9 +223,8 @@ module IBM::AdminUI
         guid = user_deep['metadata']['guid']
 
         user_deep['entity']['audited_spaces'].each do |space|
-          attributes = { 'user_guid'  => guid,
-                         'space_guid' => space['metadata']['guid'] }
-          items.push(attributes)
+          items.push('user_guid'  => guid,
+                     'space_guid' => space['metadata']['guid'])
         end
       end
       result(items)
@@ -255,9 +240,8 @@ module IBM::AdminUI
         guid = user_deep['metadata']['guid']
 
         user_deep['entity']['spaces'].each do |space|
-          attributes = { 'user_guid'  => guid,
-                         'space_guid' => space['metadata']['guid'] }
-          items.push(attributes)
+          items.push('user_guid'  => guid,
+                     'space_guid' => space['metadata']['guid'])
         end
       end
       result(items)
@@ -273,9 +257,8 @@ module IBM::AdminUI
         guid = user_deep['metadata']['guid']
 
         user_deep['entity']['managed_spaces'].each do |space|
-          attributes = { 'user_guid'  => guid,
-                         'space_guid' => space['metadata']['guid'] }
-          items.push(attributes)
+          items.push('user_guid'  => guid,
+                     'space_guid' => space['metadata']['guid'])
         end
       end
       result(items)
@@ -286,8 +269,7 @@ module IBM::AdminUI
     end
 
     def discover_users_cc_deep
-      items = get_cc('v2/users?inline-relations-depth=1')
-      result(items)
+      result(get_cc('v2/users?inline-relations-depth=1'))
     rescue => error
       @logger.debug("Error during discover_users_cc_deep: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -307,12 +289,12 @@ module IBM::AdminUI
           authorities.push(group['display'])
         end
 
-        attributes = { 'active'       => user['active'],
-                       'authorities'  => authorities.sort.join(', '),
-                       'created'      => meta['created'],
-                       'id'           => user['id'],
-                       'lastmodified' => meta['lastModified'],
-                       'version'      => meta['version'] }
+        attributes = { 'active'        => user['active'],
+                       'authorities'   => authorities.sort.join(', '),
+                       'created'       => meta['created'],
+                       'id'            => user['id'],
+                       'last_modified' => meta['lastModified'],
+                       'version'       => meta['version'] }
 
         attributes['email']      = emails[0]['value'] unless emails.nil? || emails.length == 0
         attributes['familyname'] = name['familyName'] unless name['familyName'].nil?
@@ -329,7 +311,7 @@ module IBM::AdminUI
     end
 
     def get_cc(path)
-      uri = "#{ Config.cloud_controller_uri }/#{ path }"
+      uri = "#{ @config.cloud_controller_uri }/#{ path }"
 
       resources = []
       loop do
@@ -337,7 +319,7 @@ module IBM::AdminUI
         resources.concat(json['resources'])
         next_url = json['next_url']
         return resources if next_url.nil?
-        uri = "#{ Config.cloud_controller_uri }#{ next_url }"
+        uri = "#{ @config.cloud_controller_uri }#{ next_url }"
       end
 
       resources
@@ -387,7 +369,7 @@ module IBM::AdminUI
       @token = nil
 
       response = Utils.http_post("#{ @authorization_endpoint }/oauth/token",
-                                 "grant_type=password&username=#{ Config.uaa_admin_credentials_username }&password=#{ Config.uaa_admin_credentials_password }",
+                                 "grant_type=password&username=#{ @config.uaa_admin_credentials_username }&password=#{ @config.uaa_admin_credentials_password }",
                                  'Basic Y2Y6')
 
       if response.is_a?(Net::HTTPOK)
@@ -401,7 +383,7 @@ module IBM::AdminUI
     def info
       return unless @token_endpoint.nil?
 
-      response = Utils.http_get("#{ Config.cloud_controller_uri }/info")
+      response = Utils.http_get("#{ @config.cloud_controller_uri }/info")
 
       if response.is_a?(Net::HTTPOK)
         body_json = JSON.parse(response.body)

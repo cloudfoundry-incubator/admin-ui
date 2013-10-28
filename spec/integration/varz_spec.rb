@@ -10,138 +10,133 @@ describe IBM::AdminUI::VARZ, :type => :integration do
 
   before do
     nats_stub
-
-    logger = Logger.new(log_file)
-    logger.level = Logger::DEBUG
-
-    IBM::AdminUI::Config.load(:data_file            => data_file,
-                              :monitored_components => [])
-
-    nats = IBM::AdminUI::NATS.new(logger,
-                                  IBM::AdminUI::EMail.new(logger))
-
-    @varz = IBM::AdminUI::VARZ.new(logger,
-                                   nats)
   end
 
+  let(:logger) { Logger.new(log_file) }
+  let(:config) do
+    IBM::AdminUI::Config.load(:data_file            => data_file,
+                              :monitored_components => [])
+  end
+
+  let(:email) { IBM::AdminUI::EMail.new(config, logger) }
+  let(:nats) { IBM::AdminUI::NATS.new(config, logger, email) }
+  let(:varz) { IBM::AdminUI::VARZ.new(config, logger, nats) }
+
   after do
-    cleanup_files_pid = Process.spawn({}, "rm -fr #{ data_file } #{ log_file }")
-    Process.wait(cleanup_files_pid)
+    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ log_file }"))
   end
 
   context 'Stubbed NATS, but not HTTP' do
     it 'returns disconnected components as expected' do
-      components = @varz.components
+      components = varz.components
 
-      components['connected'].should eq(true)
+      expect(components['connected']).to eq(true)
       items = components['items']
-      items.length.should be(5)
+      expect(items.length).to be(5)
 
-      items.should include('connected' => false,
-                           'data'      => nats_cloud_controller,
-                           'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                           'name'      => nats_cloud_controller['host'],
-                           'uri'       => nats_cloud_controller_varz)
+      expect(items).to include('connected' => false,
+                               'data'      => nats_cloud_controller,
+                               'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'name'      => nats_cloud_controller['host'],
+                               'uri'       => nats_cloud_controller_varz)
 
-      items.should include('connected' => false,
-                           'data'      => nats_dea,
-                           'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                           'name'      => nats_dea['host'],
-                           'uri'       => nats_dea_varz)
+      expect(items).to include('connected' => false,
+                               'data'      => nats_dea,
+                               'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'name'      => nats_dea['host'],
+                               'uri'       => nats_dea_varz)
 
-      items.should include('connected' => false,
-                           'data'      => nats_health_manager,
-                           'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                           'name'      => nats_health_manager['host'],
-                           'uri'       => nats_health_manager_varz)
+      expect(items).to include('connected' => false,
+                               'data'      => nats_health_manager,
+                               'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'name'      => nats_health_manager['host'],
+                               'uri'       => nats_health_manager_varz)
 
-      items.should include('connected' => false,
-                           'data'      => nats_router,
-                           'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                           'name'      => nats_router['host'],
-                           'uri'       => nats_router_varz)
+      expect(items).to include('connected' => false,
+                               'data'      => nats_router,
+                               'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'name'      => nats_router['host'],
+                               'uri'       => nats_router_varz)
 
-      items.should include('connected' => false,
-                           'data'      => nats_provisioner,
-                           'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                           'name'      => nats_provisioner['host'],
-                           'uri'       => nats_provisioner_varz)
+      expect(items).to include('connected' => false,
+                               'data'      => nats_provisioner,
+                               'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'name'      => nats_provisioner['host'],
+                               'uri'       => nats_provisioner_varz)
     end
 
     it 'returns disconnected cloud_controllers as expected' do
-      cloud_controllers = @varz.cloud_controllers
+      cloud_controllers = varz.cloud_controllers
 
-      cloud_controllers['connected'].should eq(true)
+      expect(cloud_controllers['connected']).to eq(true)
       items = cloud_controllers['items']
-      items.length.should be(1)
+      expect(items.length).to be(1)
 
-      items.should include('connected' => false,
-                           'data'      => nats_cloud_controller,
-                           'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                           'name'      => nats_cloud_controller['host'],
-                           'uri'       => nats_cloud_controller_varz)
+      expect(items).to include('connected' => false,
+                               'data'      => nats_cloud_controller,
+                               'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'name'      => nats_cloud_controller['host'],
+                               'uri'       => nats_cloud_controller_varz)
     end
 
     it 'returns disconnected deas as expected' do
-      deas = @varz.deas
+      deas = varz.deas
 
-      deas['connected'].should eq(true)
+      expect(deas['connected']).to eq(true)
       items = deas['items']
-      items.length.should be(1)
+      expect(items.length).to be(1)
 
-      items.should include('connected' => false,
-                           'data'      => nats_dea,
-                           'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                           'name'      => nats_dea['host'],
-                           'uri'       => nats_dea_varz)
+      expect(items).to include('connected' => false,
+                               'data'      => nats_dea,
+                               'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'name'      => nats_dea['host'],
+                               'uri'       => nats_dea_varz)
     end
 
     it 'returns deas_count' do
-      deas_count = @varz.deas_count
-
-      deas_count.should be(1)
+      expect(varz.deas_count).to be(1)
     end
 
     it 'returns disconnected health_managers as expected' do
-      health_managers = @varz.health_managers
+      health_managers = varz.health_managers
 
-      health_managers['connected'].should eq(true)
+      expect(health_managers['connected']).to eq(true)
       items = health_managers['items']
-      items.length.should be(1)
+      expect(items.length).to be(1)
 
-      items.should include('connected' => false,
-                           'data'      => nats_health_manager,
-                           'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                           'name'      => nats_health_manager['host'],
-                           'uri'       => nats_health_manager_varz)
+      expect(items).to include('connected' => false,
+                               'data'      => nats_health_manager,
+                               'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'name'      => nats_health_manager['host'],
+                               'uri'       => nats_health_manager_varz)
     end
 
     it 'returns disconnected gateways as expected' do
-      gateways = @varz.gateways
+      gateways = varz.gateways
 
-      gateways['connected'].should eq(true)
+      expect(gateways['connected']).to eq(true)
       items = gateways['items']
-      items.length.should be(1)
+      expect(items.length).to be(1)
 
-     items.should include('connected' => false,
-                          'data'      => nats_provisioner,
-                          'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                          'name'      => nats_provisioner['type'].sub('-Provisioner', ''),
-                          'uri'       => nats_provisioner_varz)
+      expect(items).to include('connected' => false,
+                               'data'      => nats_provisioner,
+                               'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'name'      => nats_provisioner['type'].sub('-Provisioner', ''),
+                               'uri'       => nats_provisioner_varz)
     end
 
     it 'returns disconnected routers as expected' do
-      routers = @varz.routers
+      routers = varz.routers
 
-      routers['connected'].should eq(true)
+      expect(routers['connected']).to eq(true)
       items = routers['items']
-      items.length.should be(1)
+      expect(items.length).to be(1)
 
-      items.should include('connected' => false,
-                           'data'      => nats_router,
-                           'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                           'name'      => nats_router['host'],
-                           'uri'       => nats_router_varz)
+      expect(items).to include('connected' => false,
+                               'data'      => nats_router,
+                               'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'name'      => nats_router['host'],
+                               'uri'       => nats_router_varz)
     end
   end
 
@@ -151,113 +146,111 @@ describe IBM::AdminUI::VARZ, :type => :integration do
     end
 
     it 'returns connected components' do
-      components = @varz.components
+      components = varz.components
 
-      components['connected'].should eq(true)
+      expect(components['connected']).to eq(true)
       items = components['items']
 
-      items.length.should be(5)
+      expect(items.length).to be(5)
 
-      items.should include('connected' => true,
-                           'data'      => varz_cloud_controller,
-                           'name'      => nats_cloud_controller['host'],
-                           'uri'       => nats_cloud_controller_varz)
+      expect(items).to include('connected' => true,
+                               'data'      => varz_cloud_controller,
+                               'name'      => nats_cloud_controller['host'],
+                               'uri'       => nats_cloud_controller_varz)
 
-      items.should include('connected' => true,
-                           'data'      => varz_dea,
-                           'name'      => nats_dea['host'],
-                           'uri'       => nats_dea_varz)
+      expect(items).to include('connected' => true,
+                               'data'      => varz_dea,
+                               'name'      => nats_dea['host'],
+                               'uri'       => nats_dea_varz)
 
-      items.should include('connected' => true,
-                           'data'      => varz_health_manager,
-                           'name'      => nats_health_manager['host'],
-                           'uri'       => nats_health_manager_varz)
+      expect(items).to include('connected' => true,
+                               'data'      => varz_health_manager,
+                               'name'      => nats_health_manager['host'],
+                               'uri'       => nats_health_manager_varz)
 
-      items.should include('connected' => true,
-                           'data'      => varz_router,
-                           'name'      => nats_router['host'],
-                           'uri'       => nats_router_varz)
+      expect(items).to include('connected' => true,
+                               'data'      => varz_router,
+                               'name'      => nats_router['host'],
+                               'uri'       => nats_router_varz)
 
-      items.should include('connected' => true,
-                           'data'      => varz_provisioner,
-                           'name'      => nats_provisioner['host'],
-                           'uri'       => nats_provisioner_varz)
+      expect(items).to include('connected' => true,
+                               'data'      => varz_provisioner,
+                               'name'      => nats_provisioner['host'],
+                               'uri'       => nats_provisioner_varz)
     end
 
     it 'returns connected cloud_controllers' do
-      cloud_controllers = @varz.cloud_controllers
+      cloud_controllers = varz.cloud_controllers
 
-      cloud_controllers['connected'].should eq(true)
+      expect(cloud_controllers['connected']).to eq(true)
       items = cloud_controllers['items']
 
-      items.length.should be(1)
+      expect(items.length).to be(1)
 
-      items.should include('connected' => true,
-                           'data'      => varz_cloud_controller,
-                           'name'      => nats_cloud_controller['host'],
-                           'uri'       => nats_cloud_controller_varz)
+      expect(items).to include('connected' => true,
+                               'data'      => varz_cloud_controller,
+                               'name'      => nats_cloud_controller['host'],
+                               'uri'       => nats_cloud_controller_varz)
     end
 
     it 'returns connected deas' do
-      deas = @varz.deas
+      deas = varz.deas
 
-      deas['connected'].should eq(true)
+      expect(deas['connected']).to eq(true)
       items = deas['items']
 
-      items.length.should be(1)
+      expect(items.length).to be(1)
 
-      items.should include('connected' => true,
-                           'data'      => varz_dea,
-                           'name'      => nats_dea['host'],
-                           'uri'       => nats_dea_varz)
+      expect(items).to include('connected' => true,
+                               'data'      => varz_dea,
+                               'name'      => nats_dea['host'],
+                               'uri'       => nats_dea_varz)
     end
 
     it 'returns deas_count' do
-      deas_count = @varz.deas_count
-
-      deas_count.should be(1)
+      expect(varz.deas_count).to be(1)
     end
 
     it 'returns connected health_managers' do
-      health_managers = @varz.health_managers
+      health_managers = varz.health_managers
 
-      health_managers['connected'].should eq(true)
+      expect(health_managers['connected']).to eq(true)
       items = health_managers['items']
 
-      items.length.should be(1)
+      expect(items.length).to be(1)
 
-      items.should include('connected' => true,
-                           'data'      => varz_health_manager,
-                           'name'      => nats_health_manager['host'],
-                           'uri'       => nats_health_manager_varz)
+      expect(items).to include('connected' => true,
+                               'data'      => varz_health_manager,
+                               'name'      => nats_health_manager['host'],
+                               'uri'       => nats_health_manager_varz)
     end
 
     it 'returns connected gateways' do
-      gateways = @varz.gateways
+      gateways = varz.gateways
 
-      gateways['connected'].should eq(true)
+      expect(gateways['connected']).to eq(true)
       items = gateways['items']
 
-      items.length.should be(1)
+      expect(items.length).to be(1)
 
-      items.should include('connected' => true,
-                           'data'      => varz_provisioner,
-                           'name'      => nats_provisioner['type'].sub('-Provisioner', ''),
-                           'uri'       => nats_provisioner_varz)
+      expect(items).to include('connected' => true,
+                               'data'      => varz_provisioner,
+                               'name'      => nats_provisioner['type'].sub('-Provisioner', ''),
+                               'uri'       => nats_provisioner_varz)
     end
 
     it 'returns connected routers' do
-      routers = @varz.routers
+      routers = varz.routers
 
-      routers['connected'].should eq(true)
+      expect(routers['connected']).to eq(true)
       items = routers['items']
 
-      items.length.should be(1)
+      expect(items.length).to be(1)
 
-      items.should include('connected' => true,
-                           'data'      => varz_router,
-                           'name'      => nats_router['host'],
-                           'uri'       => nats_router_varz)
+      expect(items).to include('connected' => true,
+                               'data'      => varz_router,
+                               'name'      => nats_router['host'],
+                               'uri'       => nats_router_varz)
     end
   end
 end

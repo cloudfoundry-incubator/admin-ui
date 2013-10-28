@@ -3,9 +3,10 @@ require 'sinatra'
 module IBM
   module AdminUI
     class Web < Sinatra::Base
-      def initialize(logger, cc, log_files, stats, tasks, varz)
+      def initialize(config, logger, cc, log_files, stats, tasks, varz)
         super({})
 
+        @config    = config
         @logger    = logger
         @cc        = cc
         @log_files = log_files
@@ -98,8 +99,8 @@ module IBM
       get '/settings', :auth => [:user] do
         {
           :admin                  => session[:admin],
-          :cloud_controller_uri   => Config.cloud_controller_uri,
-          :tasks_refresh_interval => Config.tasks_refresh_interval
+          :cloud_controller_uri   => @config.cloud_controller_uri,
+          :tasks_refresh_interval => @config.tasks_refresh_interval
         }.to_json
       end
 
@@ -158,9 +159,9 @@ module IBM
 
         if username.nil?
           redirect_to_login
-        elsif Config.ui_credentials_username == username && Config.ui_credentials_password == password
+        elsif @config.ui_credentials_username == username && @config.ui_credentials_password == password
           authenticated(username, false)
-        elsif Config.ui_admin_credentials_username == username && Config.ui_admin_credentials_password == password
+        elsif @config.ui_admin_credentials_username == username && @config.ui_admin_credentials_password == password
           authenticated(username, true)
         else
           session[:username] = nil

@@ -3,7 +3,8 @@ require 'net/http'
 
 module IBM::AdminUI
   class VARZ
-    def initialize(logger, nats)
+    def initialize(config, logger, nats)
+      @config = config
       @logger = logger
       @nats   = nats
 
@@ -105,7 +106,7 @@ module IBM::AdminUI
       cache = { 'connected' => false, 'items' => item_hash }
 
       begin
-        @logger.debug("[#{ Config.varz_discovery_interval } second interval] Starting VARZ discovery...")
+        @logger.debug("[#{ @config.varz_discovery_interval } second interval] Starting VARZ discovery...")
 
         nats_result = @nats.get
 
@@ -124,7 +125,7 @@ module IBM::AdminUI
       @semaphore.synchronize do
         @cache = cache
         @condition.broadcast
-        @condition.wait(@semaphore, Config.varz_discovery_interval)
+        @condition.wait(@semaphore, @config.varz_discovery_interval)
       end
     end
 

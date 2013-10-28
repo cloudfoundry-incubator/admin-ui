@@ -2,30 +2,31 @@ require 'net/smtp'
 
 module IBM::AdminUI
   class EMail
-    def initialize(logger)
+    def initialize(config, logger)
+      @config = config
       @logger = logger
     end
 
     def configured?
-      !Config.sender_email_server.nil?  &&
-      !Config.sender_email_account.nil? &&
-      !Config.receiver_emails.nil?      &&
-      Config.receiver_emails.length > 0
+      !@config.sender_email_server.nil?  &&
+      !@config.sender_email_account.nil? &&
+      !@config.receiver_emails.nil?      &&
+      @config.receiver_emails.length > 0
     end
 
     def send_email(disconnected)
       if configured? && disconnected.length > 0
-        recipients = Config.receiver_emails.join(', ')
+        recipients = @config.receiver_emails.join(', ')
         title      = email_title(disconnected)
         email      = email_content(recipients,
                                    title,
                                    email_table_rows(disconnected))
 
         begin
-          Net::SMTP.start(Config.sender_email_server) do |smtp|
+          Net::SMTP.start(@config.sender_email_server) do |smtp|
             smtp.send_message(email,
-                              Config.sender_email_account,
-                              Config.receiver_emails)
+                              @config.sender_email_account,
+                              @config.receiver_emails)
           end
 
           @logger.debug("Email '#{ title }' sent to #{ recipients }")
@@ -38,7 +39,7 @@ module IBM::AdminUI
     private
 
     def email_title(disconnected)
-      title = "[#{ Config.cloud_controller_uri }] "
+      title = "[#{ @config.cloud_controller_uri }] "
 
       if disconnected.length == 1
         title += "#{ disconnected.first['type'] } is down"
@@ -63,7 +64,7 @@ module IBM::AdminUI
 
     def email_content(recipients, title, rows)
       <<END_OF_MESSAGE
-From: #{ Config.sender_email_account }
+From: #{ @config.sender_email_account }
 To: #{ recipients }
 Importance: High
 MIME-Version: 1.0
@@ -71,7 +72,7 @@ Content-type: text/html
 Subject: #{ title }
 
 <div style="font-family: verdana,tahoma,sans-serif; font-size: .9em; color: rgb(35, 35, 35);">
-  <div style="font-weight: bold; margin-bottom: 1em;">Cloud Controller: #{ Config.cloud_controller_uri }</div>
+  <div style="font-weight: bold; margin-bottom: 1em;">Cloud Controller: #{ @config.cloud_controller_uri }</div>
   <div style="margin-bottom: .7em;">The following Cloud Foundry components are down:</div>
 </div>
 

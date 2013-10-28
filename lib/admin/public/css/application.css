@@ -15,12 +15,12 @@ html.waiting *
 {
     float: left;
     width: 100%;
-    background-image: -ms-linear-gradient(top, #737373 0%, #000000 100%);
-    background-image: -moz-linear-gradient(top, #737373 0%, #000000 100%);
-    background-image: -o-linear-gradient(top, #737373 0%, #000000 100%);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #737373), color-stop(1, #000000));
-    background-image: -webkit-linear-gradient(top, #737373 0%, #000000, 100%);
-    background-image: linear-gradient(to bottom, #737373 0%, #000000, 100%);
+    background-image: -moz-linear-gradient(top, rgb(20, 20, 20) 60%, rgb(50, 50, 50) 100%);
+    background-image: -webkit-linear-gradient(top, rgb(20, 20, 20) 60%, rgb(50, 50, 50) 100%);
+    background-image: linear-gradient(top, rgb(20, 20, 20) 60%, rgb(50, 50, 50) 100%);
+    background-image: -o-linear-gradient(top, rgb(20, 20, 20) 60%, rgb(50, 50, 50) 100%);
+    background-image: -ms-linear-gradient(top, rgb(20, 20, 20) 60%, rgb(50, 50, 50) 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.6, rgb(20, 20, 20)), color-stop(1.0, rgb(50, 50, 50)));
     color: rgb(250, 250, 250);
     white-space: nowrap;
 }
@@ -102,10 +102,7 @@ html.waiting *
     float: left;
     width: 100%;
     font-size: .9em;
-    /*
-    background-color: rgb(125, 125, 125);
-    */
-    background-color: rgb(0, 120, 180);
+    background-color: rgb(140, 140, 140);
     color: rgb(255, 255, 255);
     border-top: 1px solid rgb(30, 30, 30);
     white-space: nowrap;
@@ -122,32 +119,40 @@ html.waiting *
 {
     cursor: pointer;
     padding: 15px 10px 12px 10px;
-    border-right: 1px solid rgb(0, 50, 100);
-    background-color: rgb(0, 100, 160);
     /*
-    border-right: 1px solid rgb(115, 115, 115);
-    background-image: -moz-linear-gradient(top, #8C8C8C 0%, #BCBCBC 100%);
+    border-right: 1px solid rgb(0, 65, 125);
+    background-color: rgb(20, 120, 180);
     */
-    color: rgb(230, 230, 230);
+    border-right: 1px solid rgb(0, 65, 125);
+    background-image: -moz-linear-gradient(top, rgb(15, 115, 185) 0%, rgb(0, 90, 150) 40%);
+    background-image: -webkit-linear-gradient(top, rgb(15, 115, 185) 0%, rgb(0, 90, 150) 40%);
+    background-image: linear-gradient(top, rgb(15, 115, 185) 0%, rgb(0, 90, 150) 40%);
+    background-image: -o-linear-gradient(top, rgb(15, 115, 185) 0%, rgb(0, 90, 150) 40%);
+    background-image: -ms-linear-gradient(top, rgb(15, 115, 185) 0%, rgb(0, 90, 150) 40%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, rgb(15, 115, 185)), color-stop(0.4, rgb(0, 90, 150)));
+    color: rgb(255, 255, 255);
     float: left;
 }
 
 .menuItemHighlighted
 {
-    background-color: rgb(0, 140, 200);
     /*
-    background-image: -moz-linear-gradient(top, #9D9D9D 0%, #CDCDCD 100%);
+    background-color: rgb(60, 160, 220);
     */
+    background-image: -moz-linear-gradient(top, rgb(85, 185, 255) 0%, rgb(30, 130, 200) 40%);
+    background-image: -webkit-linear-gradient(top, rgb(85, 185, 255) 0%, rgb(30, 130, 200) 40%);
+    background-image: linear-gradient(top, rgb(85, 185, 255) 0%, rgb(30, 130, 200) 40%);
+    background-image: -o-linear-gradient(top, rgb(85, 185, 255) 0%, rgb(30, 130, 200) 40%);
+    background-image: -ms-linear-gradient(top, rgb(85, 185, 255) 0%, rgb(30, 130, 200) 40%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, rgb(85, 185, 255)), color-stop(0.4, rgb(30, 130, 200)));
     color: rgb(255, 255, 255);
 }
 
 .menuItemSelected
 {
-    /*
     background-image: none;
-    */
     background-color: white;
-    color: rgb(50, 50, 50);
+    color: rgb(40, 40, 40);
 }
 
 .menuItemHighlighted.menuItemSelected

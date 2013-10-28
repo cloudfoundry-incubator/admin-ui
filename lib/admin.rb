@@ -11,8 +11,8 @@ require_relative 'admin/web'
 
 module IBM::AdminUI
   class Admin
-    def initialize(config)
-      @config = config
+    def initialize(config_hash)
+      @config_hash = config_hash
     end
 
     def start
@@ -33,43 +33,44 @@ module IBM::AdminUI
     end
 
     def setup_config
-      Config.load(@config)
+      @config = Config.load(@config_hash)
     end
 
     def setup_logger
-      @logger = Logger.new(Config.log_file)
+      @logger = Logger.new(@config.log_file)
       @logger.level = Logger::DEBUG
     end
 
     def setup_components
-      email = EMail.new(@logger)
-      nats  = NATS.new(@logger, email)
+      email = EMail.new(@config, @logger)
+      nats  = NATS.new(@config, @logger, email)
 
-      @cc        = CC.new(@logger)
-      @log_files = LogFiles.new(@logger)
-      @tasks     = Tasks.new(@logger)
-      @varz      = VARZ.new(@logger, nats)
-      @stats     = Stats.new(@logger, @cc, @varz)
+      @cc        = CC.new(@config, @logger)
+      @log_files = LogFiles.new(@config, @logger)
+      @tasks     = Tasks.new(@config, @logger)
+      @varz      = VARZ.new(@config, @logger, nats)
+      @stats     = Stats.new(@config, @logger, @cc, @varz)
     end
 
     def display_files
       puts "\n\n"
       puts 'AdminUI files...'
-      puts "  data:  #{ Config.data_file }"
-      puts "  log:   #{ Config.log_file }"
-      puts "  stats: #{ Config.stats_file }"
+      puts "  data:  #{ @config.data_file }"
+      puts "  log:   #{ @config.log_file }"
+      puts "  stats: #{ @config.stats_file }"
       puts "\n"
     end
 
     def launch_web
-      web = IBM::AdminUI::Web.new(@logger,
+      web = IBM::AdminUI::Web.new(@config,
+                                  @logger,
                                   @cc,
                                   @log_files,
                                   @stats,
                                   @tasks,
                                   @varz)
 
-      Rack::Handler::WEBrick.run web, { :Port => Config.port }
+      Rack::Handler::WEBrick.run web, { :Port => @config.port }
     end
   end
 end

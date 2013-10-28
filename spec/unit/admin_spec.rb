@@ -1,24 +1,24 @@
 require_relative '../spec_helper'
 
-HOST = 'localhost'
-PORT = 8071
-
-CONFIG_FILE = '/tmp/admin_ui.yml'
-DATA_FILE   = '/tmp/admin_ui_data.json'
-LOG_FILE    = '/tmp/admin_ui.log'
-STATS_FILE  = '/tmp/admin_ui_stats.json'
-
-ADMIN_USER     = 'admin'
-ADMIN_PASSWORD = 'admin_passw0rd'
-
-USER          = 'user'
-USER_PASSWORD = 'user_passw0rd'
-
-CLOUD_CONTROLLER_URI = 'http://api.localhost'
-
-TASKS_REFRESH_INTERVAL = 6000
-
 describe IBM::AdminUI::Admin do
+  HOST = 'localhost'
+  PORT = 8071
+
+  CONFIG_FILE = '/tmp/admin_ui.yml'
+  DATA_FILE   = '/tmp/admin_ui_data.json'
+  LOG_FILE    = '/tmp/admin_ui.log'
+  STATS_FILE  = '/tmp/admin_ui_stats.json'
+
+  ADMIN_USER     = 'admin'
+  ADMIN_PASSWORD = 'admin_passw0rd'
+
+  USER          = 'user'
+  USER_PASSWORD = 'user_passw0rd'
+
+  CLOUD_CONTROLLER_URI = 'http://api.localhost'
+
+  TASKS_REFRESH_INTERVAL = 6000
+
   before(:all) do
     config =
     {
@@ -56,72 +56,57 @@ describe IBM::AdminUI::Admin do
     Process.kill('TERM', @pid)
     Process.wait(@pid)
 
-    cleanup_files_pid = Process.spawn({}, "rm -fr #{ CONFIG_FILE } #{ DATA_FILE } #{ LOG_FILE } #{ STATS_FILE }")
-    Process.wait(cleanup_files_pid)
+    Process.wait(Process.spawn({}, "rm -fr #{ CONFIG_FILE } #{ DATA_FILE } #{ LOG_FILE } #{ STATS_FILE }"))
   end
 
   def create_http
-    @http = Net::HTTP.new(HOST, PORT)
+    Net::HTTP.new(HOST, PORT)
   end
 
-  def clear_http
-    @http = nil
-  end
-
-  def login
-    create_http
-
+  def login_and_return_cookie(http)
     request = Net::HTTP::Post.new("/login?username=#{ ADMIN_USER }&password=#{ ADMIN_PASSWORD }")
     request['Content-Length'] = 0
 
-    response = @http.request(request)
+    response = http.request(request)
     fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPSeeOther)
 
     location = response['location']
-    location.should eq("http://#{ HOST }:#{ PORT }/application.html?user=#{ ADMIN_USER }")
+    expect(location).to eq("http://#{ HOST }:#{ PORT }/application.html?user=#{ ADMIN_USER }")
 
-    @cookie = response['Set-Cookie']
-    @cookie.should_not be_nil
-  end
+    cookie = response['Set-Cookie']
+    expect(cookie).to_not be_nil
 
-  def logout
-    clear_http
-
-    @cookie = nil
+    cookie
   end
 
   context 'Login required, performed and failed' do
+    let(:http) { create_http }
+
     it 'login fails as expected' do
-      create_http
       request = Net::HTTP::Post.new("/login?username=#{ ADMIN_USER }&password=#{ USER_PASSWORD }")
       request['Content-Length'] = 0
 
-      response = @http.request(request)
+      response = http.request(request)
       fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPSeeOther)
 
       location = response['location']
-      location.should eq("http://#{ HOST }:#{ PORT }/login.html?error=true")
+      expect(location).to eq("http://#{ HOST }:#{ PORT }/login.html?error=true")
     end
   end
 
   context 'Login required, performed and succeeded' do
-    before(:all) do
-      login
-    end
-
-    after(:all) do
-      logout
-    end
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
 
     def get_json(path)
       request = Net::HTTP::Get.new(path)
-      request['Cookie'] = @cookie
+      request['Cookie'] = cookie
 
-      response = @http.request(request)
+      response = http.request(request)
       fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
 
       body = response.body
-      body.should_not be_nil
+      expect(body).to_not be_nil
 
       JSON.parse(body)
     end
@@ -129,13 +114,13 @@ describe IBM::AdminUI::Admin do
     def verify_disconnected_items(path)
       json = get_json(path)
 
-      json.should include('connected' => false, 'items' => [])
+      expect(json).to include('connected' => false, 'items' => [])
     end
 
     def verify_empty_items(path)
       json = get_json(path)
 
-      json.should include('items' => [])
+      expect(json).to include('items' => [])
     end
 
     it '/applications succeeds' do
@@ -177,9 +162,9 @@ describe IBM::AdminUI::Admin do
     it '/settings succeeds' do
       json = get_json('/settings')
 
-      json.should eq('admin'                  => true,
-                     'cloud_controller_uri'   => CLOUD_CONTROLLER_URI,
-                     'tasks_refresh_interval' => TASKS_REFRESH_INTERVAL)
+      expect(json).to eq('admin'                  => true,
+                         'cloud_controller_uri'   => CLOUD_CONTROLLER_URI,
+                         'tasks_refresh_interval' => TASKS_REFRESH_INTERVAL)
 
     end
 
@@ -210,22 +195,16 @@ describe IBM::AdminUI::Admin do
   end
 
   context 'Login required, but not performed' do
-    before(:all) do
-      create_http
-    end
-
-    after(:all) do
-      clear_http
-    end
+    let(:http) { create_http }
 
     def redirects_as_expected(path)
       request = Net::HTTP::Get.new(path)
 
-      response = @http.request(request)
+      response = http.request(request)
       fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPSeeOther)
 
       location = response['location']
-      location.should eq("http://#{ HOST }:#{ PORT }/login.html")
+      expect(location).to eq("http://#{ HOST }:#{ PORT }/login.html")
     end
 
     it '/applications redirects as expected' do
@@ -307,18 +286,12 @@ describe IBM::AdminUI::Admin do
   end
 
   context 'Login not required' do
-    before(:all) do
-      create_http
-    end
-
-    after(:all) do
-      clear_http
-    end
+    let(:http) { create_http }
 
     def get_response(path)
       request = Net::HTTP::Get.new(path)
 
-      response = @http.request(request)
+      response = http.request(request)
       fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
 
       response
@@ -328,7 +301,7 @@ describe IBM::AdminUI::Admin do
       response = get_response(path)
 
       body = response.body
-      body.should_not be_nil
+      expect(body).to_not be_nil
 
       body
     end
@@ -348,85 +321,73 @@ describe IBM::AdminUI::Admin do
   end
 
   context 'Statistics' do
+    let(:http) { create_http }
+
     it '/current_statistics succeeds' do
-      create_http
+      request = Net::HTTP::Get.new('/current_statistics')
 
-      begin
-        request = Net::HTTP::Get.new('/current_statistics')
+      response = http.request(request)
+      fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
 
-        response = @http.request(request)
-        fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
+      body = response.body
+      expect(body).to_not be_nil
 
-        body = response.body
-        body.should_not be_nil
+      json = JSON.parse(body)
 
-        json = JSON.parse(body)
-
-        json.should include('apps'              => 0,
-                            'deas'              => 0,
-                            'organizations'     => 0,
-                            'running_instances' => 0,
-                            'spaces'            => 0,
-                            'total_instances'   => 0,
-                            'users'             => 0)
-      ensure
-        clear_http
-      end
+      expect(json).to include('apps'              => 0,
+                              'deas'              => 0,
+                              'organizations'     => 0,
+                              'running_instances' => 0,
+                              'spaces'            => 0,
+                              'total_instances'   => 0,
+                              'users'             => 0)
     end
 
-    it '/statistics post succeeds' do
-      login
+    context 'Login required for post' do
+      let(:cookie) { login_and_return_cookie(http) }
 
-      begin
+      it '/statistics post succeeds' do
         request = Net::HTTP::Post.new('/statistics?apps=1&deas=2&organizations=3&running_instances=4&spaces=5&timestamp=6&total_instances=7&users=8')
-        request['Cookie']         = @cookie
+        request['Cookie']         = cookie
         request['Content-Length'] = 0
 
-        response = @http.request(request)
+        response = http.request(request)
         fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
 
         body = response.body
-        body.should_not be_nil
+        expect(body).to_not be_nil
 
         json = JSON.parse(body)
-        json.should eq('apps'              => 1,
-                       'deas'              => 2,
-                       'organizations'     => 3,
-                       'running_instances' => 4,
-                       'spaces'            => 5,
-                       'timestamp'         => 6,
-                       'total_instances'   => 7,
-                       'users'             => 8)
-      ensure
-        logout
-      end
-    end
+        expect(json).to eq('apps'              => 1,
+                           'deas'              => 2,
+                           'organizations'     => 3,
+                           'running_instances' => 4,
+                           'spaces'            => 5,
+                           'timestamp'         => 6,
+                           'total_instances'   => 7,
+                           'users'             => 8)
 
-    it '/statistics succeeds' do
-      create_http
+        # Second half of the test does not require cookie for request
 
-      begin
         request = Net::HTTP::Get.new('/statistics')
 
-        response = @http.request(request)
+        response = http.request(request)
         fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
 
         body = response.body
-        body.should_not be_nil
+        expect(body).to_not be_nil
 
         json = JSON.parse(body)
 
-        json.should eq('label' => CLOUD_CONTROLLER_URI,
-                       'items' => [{ 'apps'              => 1,
-                                     'deas'              => 2,
-                                     'organizations'     => 3,
-                                     'running_instances' => 4,
-                                     'spaces'            => 5,
-                                     'timestamp'         => 6,
-                                     'total_instances'   => 7,
-                                     'users'             => 8 }])
-      ensure
-        clear_http
+        expect(json).to eq('label' => CLOUD_CONTROLLER_URI,
+                           'items' => [{ 'apps'              => 1,
+                                         'deas'              => 2,
+                                         'organizations'     => 3,
+                                         'running_instances' => 4,
+                                         'spaces'            => 5,
+                                         'timestamp'         => 6,
+                                         'total_instances'   => 7,
+                                         'users'             => 8 }])
       end
     end
   end

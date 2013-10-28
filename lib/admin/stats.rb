@@ -3,7 +3,8 @@ require_relative 'utils'
 
 module IBM::AdminUI
   class Stats
-    def initialize(logger, cc, varz)
+    def initialize(config, logger, cc, varz)
+      @config = config
       @logger = logger
       @cc     = cc
       @varz   = varz
@@ -20,12 +21,12 @@ module IBM::AdminUI
     def stats
       result = {}
 
-      result['label'] = Config.cloud_controller_uri
+      result['label'] = @config.cloud_controller_uri
       result['items']  = []
 
       @stats_semaphore.synchronize do
         begin
-          result['items'] = JSON.parse(IO.read(Config.stats_file)) if File.exists?(Config.stats_file)
+          result['items'] = JSON.parse(IO.read(@config.stats_file)) if File.exists?(@config.stats_file)
         rescue => error
           @logger.debug("Error reading stats file: #{ error }")
         end
@@ -64,7 +65,7 @@ module IBM::AdminUI
 
     def calculate_time_until_generate_stats
       current_time = Time.now.to_i
-      refresh_time = (Date.today.to_time + 60 * Config.stats_refresh_time).to_i
+      refresh_time = (Date.today.to_time + 60 * @config.stats_refresh_time).to_i
       time_difference = refresh_time - current_time
       time_difference > 0 ? time_difference : (refresh_time + 60 * 60 * 24) - current_time
     end
@@ -77,13 +78,13 @@ module IBM::AdminUI
           begin
             stats_array = []
 
-            stats_array = JSON.parse(IO.read(Config.stats_file)) if File.exists?(Config.stats_file)
+            stats_array = JSON.parse(IO.read(@config.stats_file)) if File.exists?(@config.stats_file)
 
             @logger.debug("Writing stats: #{ stats }")
 
             stats_array.push(stats)
 
-            File.open(Config.stats_file, 'w') do |file|
+            File.open(@config.stats_file, 'w') do |file|
               file << JSON.pretty_generate(stats_array)
             end
 
@@ -102,14 +103,14 @@ module IBM::AdminUI
 
       attempt = 0
 
-      while !save_stats(stats) && (attempt < Config.stats_retries)
+      while !save_stats(stats) && (attempt < @config.stats_retries)
         attempt += 1
-        @logger.debug("Waiting #{ Config.stats_retry_interval } seconds before trying to save stats again...")
+        @logger.debug("Waiting #{ @config.stats_retry_interval } seconds before trying to save stats again...")
         sleep(Confog.stats_retry_interval)
         stats = current_stats
       end
 
-      @logger.debug('Reached max number of stat retries, giving up for now...') if attempt == Config.stats_retries
+      @logger.debug('Reached max number of stat retries, giving up for now...') if attempt == @config.stats_retries
     end
   end
 end

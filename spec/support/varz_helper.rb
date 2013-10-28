@@ -2,6 +2,7 @@ require 'json'
 require 'net/http'
 require 'uri'
 require_relative '../spec_helper'
+require_relative 'nats_helper'
 
 module VARZHelper
   include NATSHelper
@@ -42,7 +43,7 @@ module VARZHelper
     {
       'cpu'          => 0.1,
       'mem'          => 2,
-      'num-cores'    => 3,
+      'num_cores'    => 3,
       'start'        => '2013-10-21T07:00:00-05:00',
       'type'         => nats_cloud_controller['type'],
       'uptime'       => '4d:5h:6m:7s',
@@ -79,7 +80,7 @@ module VARZHelper
               'disk' => 12,
               'fds'  => 13
             },
-            'instance_index'          => 14,
+            'instance_index'          => 0,
             'services'                =>
             [
               {
@@ -127,6 +128,7 @@ module VARZHelper
       {
         'service' =>
         {
+          'description'        => 'test provisioner description',
           'name'               => nats_provisioner['name'],
           'supported_versions' => ['8.9'],
         },
@@ -136,12 +138,14 @@ module VARZHelper
         "#{ nats_provisioner['name'] }_node1" =>
         {
           'available_capacity' => 10,
+          'id'                 => "#{ nats_provisioner['name'] }_node1"
         }
       },
       'prov_svcs' =>
       {
         'service1' =>
         {
+          'configuration' => {}
         }
       }
     }

@@ -10,35 +10,34 @@ describe IBM::AdminUI::NATS, :type => :integration do
 
   before do
     nats_stub
-
-    logger = Logger.new(log_file)
-    logger.level = Logger::DEBUG
-
-    IBM::AdminUI::Config.load(:data_file            => data_file,
-                              :monitored_components => [])
-
-    @nats = IBM::AdminUI::NATS.new(logger,
-                                   IBM::AdminUI::EMail.new(logger))
   end
 
+  let(:logger) { Logger.new(log_file) }
+  let(:config) do
+    IBM::AdminUI::Config.load(:data_file            => data_file,
+                              :monitored_components => [])
+  end
+
+  let(:email) { IBM::AdminUI::EMail.new(config, logger) }
+  let(:nats) { IBM::AdminUI::NATS.new(config, logger, email) }
+
   after do
-    cleanup_files_pid = Process.spawn({}, "rm -fr #{ data_file } #{ log_file }")
-    Process.wait(cleanup_files_pid)
+    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ log_file }"))
   end
 
   context 'Stubbed NATS' do
     it 'returns items as expected' do
-      get = @nats.get
+      get = nats.get
 
-      get['connected'].should eq(true)
+      expect(get['connected']).to eq(true)
       items = get['items']
-      items.length.should be(5)
+      expect(items.length).to be(5)
 
-      items.should include(nats_cloud_controller_varz => nats_cloud_controller)
-      items.should include(nats_dea_varz => nats_dea)
-      items.should include(nats_health_manager_varz => nats_health_manager)
-      items.should include(nats_provisioner_varz => nats_provisioner)
-      items.should include(nats_router_varz => nats_router)
+      expect(items).to include(nats_cloud_controller_varz => nats_cloud_controller)
+      expect(items).to include(nats_dea_varz => nats_dea)
+      expect(items).to include(nats_health_manager_varz => nats_health_manager)
+      expect(items).to include(nats_provisioner_varz => nats_provisioner)
+      expect(items).to include(nats_router_varz => nats_router)
     end
   end
 end

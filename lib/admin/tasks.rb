@@ -3,7 +3,8 @@ require_relative 'utils'
 
 module IBM::AdminUI
   class Tasks
-    def initialize(logger)
+    def initialize(config, logger)
+      @config = config
       @logger = logger
 
       @tasks_semaphore = Mutex.new
