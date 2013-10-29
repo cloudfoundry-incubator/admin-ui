@@ -2,6 +2,7 @@ require 'json'
 require 'net/http'
 require 'uri'
 require_relative '../spec_helper'
+# This shouldn't be required, but is in some environments...
 require_relative 'nats_helper'
 
 module VARZHelper

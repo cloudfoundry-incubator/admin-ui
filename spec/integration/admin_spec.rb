@@ -1,68 +1,7 @@
-require 'webrick'
 require_relative '../spec_helper'
 
 describe IBM::AdminUI::Admin, :type => :integration do
-  include CCHelper
-  include NATSHelper
-  include VARZHelper
-
-  let(:host) { 'localhost' }
-  let(:port) { 8071 }
-
-  let(:data_file) { '/tmp/admin_ui_data.json' }
-  let(:log_file) { '/tmp/admin_ui.log' }
-  let(:stats_file) { '/tmp/admin_ui_stats.json' }
-
-  let(:admin_user) { 'admin' }
-  let(:admin_password) { 'admin_passw0rd' }
-
-  let(:user) { 'user' }
-  let(:user_password) { 'user_passw0rd' }
-
-  let(:cloud_controller_uri) { 'http://api.localhost' }
-  let(:config) do
-    {
-      :cloud_controller_uri   => cloud_controller_uri,
-      :data_file              => data_file,
-      :log_file               => log_file,
-      :log_files              => [],
-      :mbus                   => 'nats://nats:c1oudc0w@localhost:14222',
-      :monitored_components   => ['ALL'],
-      :port                   => port,
-      :receiver_emails        => [],
-      :sender_email           => { :account => 'system@localhost', :server => 'localhost' },
-      :stats_file             => stats_file,
-      :uaa_admin_credentials  => { :password => 'c1oudc0w', :username => 'admin' },
-      :ui_admin_credentials   => { :password => admin_password, :username => admin_user },
-      :ui_credentials         => { :password => user_password, :username => user }
-    }
-  end
-
-  before do
-    cc_stub(IBM::AdminUI::Config.load(config))
-    nats_stub
-    varz_stub
-
-    ::WEBrick::Log.any_instance.stub(:log)
-
-    Thread.new do
-      IBM::AdminUI::Admin.new(config).start
-    end
-
-    sleep(1)
-  end
-
-  after do
-    Rack::Handler::WEBrick.shutdown
-
-    Thread.list.each do |thread|
-      unless thread == Thread.main
-        thread.kill
-        thread.join
-      end
-    end
-    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ log_file } #{ stats_file }"))
-  end
+  include_context :server_context
 
   context 'retrieves and validates' do
     def create_http
@@ -85,12 +24,18 @@ describe IBM::AdminUI::Admin, :type => :integration do
       cookie
     end
 
-    def get_json(path)
+    def get_response(path)
       request = Net::HTTP::Get.new(path)
       request['Cookie'] = cookie
 
       response = http.request(request)
       fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
+
+      response
+    end
+
+    def get_json(path)
+      response = get_response(path)
 
       body = response.body
       expect(body).to_not be_nil
@@ -109,7 +54,7 @@ describe IBM::AdminUI::Admin, :type => :integration do
 
         resources = cc_source['resources']
 
-        expect(items.length).to be(resources.length)
+        expect(items.length).to eq(resources.length)
 
         resources.each do |resource|
           expect(items).to include(resource['entity'].merge(resource['metadata']))
@@ -133,7 +78,7 @@ describe IBM::AdminUI::Admin, :type => :integration do
           end
         end
 
-        expect(items.length).to be(count)
+        expect(items.length).to eq(count)
       end
     end
 
@@ -143,7 +88,7 @@ describe IBM::AdminUI::Admin, :type => :integration do
         expect(retrieved['connected']).to eq(true)
         items = retrieved['items']
 
-        expect(items.length).to be(1)
+        expect(items.length).to eq(1)
 
         expect(items).to include('connected' => true,
                                  'data'      => varz_data,
@@ -170,7 +115,7 @@ describe IBM::AdminUI::Admin, :type => :integration do
         expect(retrieved['connected']).to eq(true)
         items = retrieved['items']
 
-        expect(items.length).to be(5)
+        expect(items.length).to eq(5)
 
         expect(items).to include('connected' => true,
                                  'data'      => varz_cloud_controller,
@@ -219,6 +164,15 @@ describe IBM::AdminUI::Admin, :type => :integration do
       let(:varz_uri)  { nats_dea_varz }
     end
 
+    context 'download' do
+      let(:response) { get_response("/download?path=#{ log_file }") }
+      it 'retrieves' do
+        body = response.body
+        expect(body).to_not be_nil
+        expect(body.start_with?('# Logfile created on ')).to eq(true)
+      end
+    end
+
     it_behaves_like('retrieves varz record') do
       let(:varz_data) { varz_provisioner }
       let(:varz_name) { nats_provisioner['type'].sub('-Provisioner', '') }
@@ -231,6 +185,31 @@ describe IBM::AdminUI::Admin, :type => :integration do
       let(:varz_name) { nats_health_manager['host'] }
       let(:path)      { '/health_managers' }
       let(:varz_uri)  { nats_health_manager_varz }
+    end
+
+    context 'log' do
+      let(:retrieved) { get_json("/log?path=#{ log_file }") }
+      it 'retrieves' do
+        expect(retrieved['data']).to_not be_nil
+        expect(retrieved['file_size']).to be > 0
+        expect(retrieved['page_size']).to be > 0
+        expect(retrieved['path']).to eq(log_file)
+        expect(retrieved['read_size']).to be > 0
+        expect(retrieved['start']).to eq(0)
+      end
+    end
+
+    context 'logs' do
+      let(:retrieved) { get_json('/logs') }
+      it 'retrieves' do
+        items = retrieved['items']
+        expect(items).to_not be_nil
+        expect(items.length).to eq(1)
+        item = items[0]
+        expect(item).to include('path' => log_file)
+        expect(item['size']).to be > 0
+        expect(item['time']).to be > 0
+      end
     end
 
     it_behaves_like('retrieves cc entity/metadata record') do
@@ -273,7 +252,7 @@ describe IBM::AdminUI::Admin, :type => :integration do
 
         resources = uaa_users['resources']
 
-        expect(items.length).to be(resources.length)
+        expect(items.length).to eq(resources.length)
 
         resources.each do |resource|
           authorities = []

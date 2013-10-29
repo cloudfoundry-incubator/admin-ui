@@ -1,72 +1,26 @@
 require 'rubygems'
 require 'selenium-webdriver'
-require 'webrick'
 require_relative '../spec_helper'
 
-describe IBM::AdminUI::Admin, :type => :integration do
-  include CCHelper
-  include NATSHelper
-  include VARZHelper
-
-  let(:host) { 'localhost' }
-  let(:port) { 8071 }
-
-  let(:data_file) { '/tmp/admin_ui_data.json' }
-  let(:log_file) { '/tmp/admin_ui.log' }
-  let(:stats_file) { '/tmp/admin_ui_stats.json' }
-
-  let(:admin_user) { 'admin' }
-  let(:admin_password) { 'admin_passw0rd' }
-
-  let(:user) { 'user' }
-  let(:user_password) { 'user_passw0rd' }
-
-  let(:cloud_controller_uri) { 'http://api.localhost' }
-  let(:config) do
-    {
-      :cloud_controller_uri   => cloud_controller_uri,
-      :data_file              => data_file,
-      :log_file               => log_file,
-      :log_files              => [],
-      :mbus                   => 'nats://nats:c1oudc0w@localhost:14222',
-      :monitored_components   => ['ALL'],
-      :port                   => port,
-      :receiver_emails        => [],
-      :sender_email           => { :account => 'system@localhost', :server => 'localhost' },
-      :stats_file             => stats_file,
-      :uaa_admin_credentials  => { :password => 'c1oudc0w', :username => 'admin' },
-      :ui_admin_credentials   => { :password => admin_password, :username => admin_user },
-      :ui_credentials         => { :password => user_password, :username => user }
-    }
+RSpec.configure do |config|
+  firefox_exists = false
+  begin
+    firefox_exists = File.exists?(Selenium::WebDriver::Firefox::Binary.path)
+  rescue
   end
+  config.filter_run_excluding :firefox_available => true unless firefox_exists
+end
+
+describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true do
+  include_context :server_context
 
   before do
-    cc_stub(IBM::AdminUI::Config.load(config))
-    nats_stub
-    varz_stub
-
-    ::WEBrick::Log.any_instance.stub(:log)
-
-    Thread.new do
-      IBM::AdminUI::Admin.new(config).start
-    end
-
     @driver = Selenium::WebDriver.for :firefox
     @driver.manage.timeouts.implicit_wait = 5
   end
 
   after do
     @driver.quit
-
-    Rack::Handler::WEBrick.shutdown
-
-    Thread.list.each do |thread|
-      unless thread == Thread.main
-        thread.kill
-        thread.join
-      end
-    end
-    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ log_file } #{ stats_file }"))
   end
 
   def login(username, password, target_page)
@@ -207,16 +161,16 @@ describe IBM::AdminUI::Admin, :type => :integration do
             check_details([
                             { :label => 'Name',            :tag => 'div', :value => cc_organizations['resources'][0]['entity']['name'] },
                             { :label => 'Status',          :tag =>   nil, :value => cc_organizations['resources'][0]['entity']['status'].upcase },
-                            { :label => 'Created',         :tag =>   nil, :value => 'Oct 16, 2013 8:55:46 AM' },  # TODO: fix this...
+                            { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organizations['resources'][0]['metadata']['created_at'] }\")") },
                             { :label => 'Billing Enabled', :tag =>   nil, :value => cc_organizations['resources'][0]['entity']['billing_enabled'].to_s },
-                            { :label => 'Spaces',          :tag =>   'a', :value => '1' }, # TODO: fix this...
-                            { :label => 'Developers',      :tag =>   'a', :value => '1' }, # TODO: fix this...
-                            { :label => 'Total Apps',      :tag =>   'a', :value => '1' }, # TODO: fix this...
-                            { :label => 'Started Apps',    :tag =>   nil, :value => '1' }, # TODO: fix this...
-                            { :label => 'Stopped Apps',    :tag =>   nil, :value => '1' }, # TODO: fix this...
-                            { :label => 'Pending Apps',    :tag =>   nil, :value => '1' }, # TODO: fix this...
-                            { :label => 'Staged Apps',     :tag =>   nil, :value => '1' }, # TODO: fix this...
-                            { :label => 'Failed Apps',     :tag =>   nil, :value => '1' }  # TODO: fix this...                    
+                            { :label => 'Spaces',          :tag =>   'a', :value => cc_spaces['resources'].length.to_s },
+                            { :label => 'Developers',      :tag =>   'a', :value => cc_users_deep['resources'].length.to_s },
+                            { :label => 'Total Apps',      :tag =>   'a', :value => cc_apps['resources'].length.to_s },
+                            { :label => 'Started Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STARTED' ? '1' : '0' },
+                            { :label => 'Stopped Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STOPPED' ? '1' : '0' },
+                            { :label => 'Pending Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'PENDING' ? '1' : '0' },
+                            { :label => 'Staged Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STAGED'  ? '1' : '0' },
+                            { :label => 'Failed Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'FAILED'  ? '1' : '0' }
                           ])
           end
           it 'has spaces link' do
@@ -257,14 +211,14 @@ describe IBM::AdminUI::Admin, :type => :integration do
             check_details([
                             { :label => 'Name',         :tag => 'div', :value => cc_spaces['resources'][0]['entity']['name'] },
                             { :label => 'Organization', :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] },
-                            { :label => 'Created',      :tag =>   nil, :value => 'Oct 16, 2013 8:55:54 AM' }, # TODO: fix this...
-                            { :label => 'Developers',   :tag =>   'a', :value => '1' },                       # TODO: fix this...
-                            { :label => 'Total Apps',   :tag =>   'a', :value => '1' },                       # TODO: fix this...
-                            { :label => 'Started Apps', :tag =>   nil, :value => '1' },                       # TODO: fix this...
-                            { :label => 'Stopped Apps', :tag =>   nil, :value => '1' },                       # TODO: fix this...
-                            { :label => 'Pending Apps', :tag =>   nil, :value => '1' },                       # TODO: fix this...
-                            { :label => 'Staged Apps',  :tag =>   nil, :value => '1' },                       # TODO: fix this...
-                            { :label => 'Failed Apps',  :tag =>   nil, :value => '1' }                        # TODO: fix this...
+                            { :label => 'Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_spaces['resources'][0]['metadata']['created_at'] }\")") },
+                            { :label => 'Developers',   :tag =>   'a', :value => cc_users_deep['resources'].length.to_s },
+                            { :label => 'Total Apps',   :tag =>   'a', :value => cc_apps['resources'].length.to_s },
+                            { :label => 'Started Apps', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STARTED' ? '1' : '0' },
+                            { :label => 'Stopped Apps', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STOPPED' ? '1' : '0' },
+                            { :label => 'Pending Apps', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'PENDING' ? '1' : '0' },
+                            { :label => 'Staged Apps',  :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STAGED'  ? '1' : '0' },
+                            { :label => 'Failed Apps',  :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'FAILED'  ? '1' : '0' }
                           ])
           end
           it 'has organization link' do
@@ -299,7 +253,7 @@ describe IBM::AdminUI::Admin, :type => :integration do
             check_details([
                             { :label => 'Name',            :tag => 'div', :value => cc_apps['resources'][0]['entity']['name'] },
                             { :label => 'State',           :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] },
-                            { :label => 'Started',         :tag =>   nil, :value => 'Oct 22, 2013 8:20:59 AM' }, # TODO: fix this...
+                            { :label => 'Started',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })") },
                             { :label => 'URI',             :tag =>   'a', :value => "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }" },
                             { :label => 'Buildpack',       :tag =>   nil, :value => cc_apps['resources'][0]['entity']['detected_buildpack'] },
                             { :label => 'Memory Reserved', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['memory'].to_s },
@@ -308,9 +262,9 @@ describe IBM::AdminUI::Admin, :type => :integration do
                             { :label => 'Instance State',  :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['state'] },
                             { :label => 'Services',        :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
                             { :label => 'Droplet Hash',    :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['droplet_sha1'].to_s },
-                            { :label => 'Space',           :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },        # TODO: fix this...
-                            { :label => 'Organization',    :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] }, # TODO: fix this...
-                            { :label => 'DEA',             :tag =>   'a', :value => nats_dea['host'] }                                    # TODO: fix this...
+                            { :label => 'Space',           :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },
+                            { :label => 'Organization',    :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] },
+                            { :label => 'DEA',             :tag =>   'a', :value => nats_dea['host'] }
                           ])
           end
           it 'has services' do
@@ -349,11 +303,23 @@ describe IBM::AdminUI::Admin, :type => :integration do
             select_first_row
           end
           it 'has details' do
+            groups = []
+            uaa_users['resources'][0]['groups'].each do |group|
+              groups.push(group['display'])
+            end
+            groups.sort!
+            index = 0
+            groups_string = ''
+            while index < groups.length
+              groups_string += ', ' unless index == 0
+              groups_string += groups[index]
+              index += 1
+            end
             check_details([
                             { :label => 'Email',        :tag => 'div', :value => "mailto:#{ uaa_users['resources'][0]['emails'][0]['value'] }" },
-                            { :label => 'Created',      :tag =>   nil, :value => 'Oct 16, 2013 3:55:27 AM' }, # TODO fix this...
-                            { :label => 'Modified',     :tag =>   nil, :value => 'undefined' },               # TODO fix this...
-                            { :label => 'Authorities',  :tag =>   nil, :value => 'approvals.me, cloud_controller.admin, cloud_controller.read, cloud_controller.write, openid, password.write, scim.me, scim.read, scim.userids, scim.write, uaa.user' }, # TODO fix this...
+                            { :label => 'Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")") },
+                            { :label => 'Modified',     :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['lastModified'] }\")") },
+                            { :label => 'Authorities',  :tag =>   nil, :value => groups_string },
                             { :label => 'Space',        :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },
                             { :label => 'Organization', :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] }
                           ])
@@ -367,7 +333,6 @@ describe IBM::AdminUI::Admin, :type => :integration do
         end
       end
 
-=begin
       context 'DEAs' do
         let(:tab_id) { 'DEAs' }
         it 'has a table' do
@@ -392,22 +357,22 @@ describe IBM::AdminUI::Admin, :type => :integration do
           end
           it 'has details' do
             check_details([
-                            { :label => 'Name',         :tag => nil, :value => '' },
-                            { :label => 'URI',          :tag => 'a', :value => '' },
-                            { :label => 'Host',         :tag => nil, :value => '' },
-                            { :label => 'Started',      :tag => nil, :value => '' },
-                            { :label => 'Uptime',       :tag => nil, :value => '' },
-                            { :label => 'Apps',         :tag => 'a', :value => '' },
-                            { :label => 'Cores',        :tag => nil, :value => '' },
-                            { :label => 'CPU',          :tag => nil, :value => '' },
-                            { :label => 'CPU Load Avg', :tag => nil, :value => '' },
-                            { :label => 'Memory',       :tag => nil, :value => '' },
-                            { :label => 'Memory Free',  :tag => nil, :value => '' },
-                            { :label => 'Disk Free',    :tag => nil, :value => '' }
+                            { :label => 'Name',         :tag => nil, :value => varz_dea['host'] },
+                            { :label => 'URI',          :tag => 'a', :value => nats_dea_varz },
+                            { :label => 'Host',         :tag => nil, :value => varz_dea['host'] },
+                            { :label => 'Started',      :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")") },
+                            { :label => 'Uptime',       :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_dea['uptime'] }\")") },
+                            { :label => 'Apps',         :tag => 'a', :value => varz_dea['instance_registry'].length.to_s },
+                            { :label => 'Cores',        :tag => nil, :value => varz_dea['num_cores'].to_s },
+                            { :label => 'CPU',          :tag => nil, :value => varz_dea['cpu'].to_s },
+                            { :label => 'CPU Load Avg', :tag => nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") + '%' },
+                            { :label => 'Memory',       :tag => nil, :value => varz_dea['mem'].to_s },
+                            { :label => 'Memory Free',  :tag => nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })") + '%' },
+                            { :label => 'Disk Free',    :tag => nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") + '%' }
                           ])
           end
           it 'has applications link' do
-            check_filter_link('DEAs', 5, 'Applications', '9.53.21.188:36364')
+            check_filter_link('DEAs', 5, 'Applications', varz_dea['host'])
           end
         end
       end
@@ -428,15 +393,15 @@ describe IBM::AdminUI::Admin, :type => :integration do
           it 'has details' do
             select_first_row
             check_details([
-                            { :label => 'Name',             :tag => nil, :value => '' },
-                            { :label => 'URI',              :tag => 'a', :value => '' },
-                            { :label => 'Started',          :tag => nil, :value => '' },
-                            { :label => 'Uptime',           :tag => nil, :value => '' },
-                            { :label => 'Cores',            :tag => nil, :value => '' },
-                            { :label => 'CPU',              :tag => nil, :value => '' },
-                            { :label => 'Memory',           :tag => nil, :value => '' },
-                            { :label => 'Requests',         :tag => nil, :value => '' },
-                            { :label => 'Pending Requests', :tag => nil, :value => '' }
+                            { :label => 'Name',             :tag => nil, :value => nats_cloud_controller['host'] },
+                            { :label => 'URI',              :tag => 'a', :value => nats_cloud_controller_varz },
+                            { :label => 'Started',          :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
+                            { :label => 'Uptime',           :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_cloud_controller['uptime'] }\")") },
+                            { :label => 'Cores',            :tag => nil, :value => varz_cloud_controller['num_cores'].to_s },
+                            { :label => 'CPU',              :tag => nil, :value => varz_cloud_controller['cpu'].to_s },
+                            { :label => 'Memory',           :tag => nil, :value => varz_cloud_controller['mem'].to_s },
+                            { :label => 'Requests',         :tag => nil, :value => varz_cloud_controller['vcap_sinatra']['requests']['completed'].to_s },
+                            { :label => 'Pending Requests', :tag => nil, :value => varz_cloud_controller['vcap_sinatra']['requests']['outstanding'].to_s }
                           ])
           end
         end
@@ -458,18 +423,18 @@ describe IBM::AdminUI::Admin, :type => :integration do
           it 'has details' do
             select_first_row
             check_details([
-                            { :label => 'Name',              :tag => nil, :value => '' },
-                            { :label => 'URI',               :tag => 'a', :value => '' },
-                            { :label => 'Started',           :tag => nil, :value => '' },
-                            { :label => 'Uptime',            :tag => nil, :value => '' },
-                            { :label => 'Cores',             :tag => nil, :value => '' },
-                            { :label => 'CPU',               :tag => nil, :value => '' },
-                            { :label => 'Memory',            :tag => nil, :value => '' },
-                            { :label => 'Users',             :tag => nil, :value => '' },
-                            { :label => 'Applications',      :tag => nil, :value => '' },
-                            { :label => 'Instances',         :tag => nil, :value => '' },
-                            { :label => 'Running Instances', :tag => nil, :value => '' },
-                            { :label => 'Crashed Instances', :tag => nil, :value => '' }
+                            { :label => 'Name',              :tag => nil, :value => nats_health_manager['host'] },
+                            { :label => 'URI',               :tag => 'a', :value => nats_health_manager_varz },
+                            { :label => 'Started',           :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_health_manager['start'] }\")") },
+                            { :label => 'Uptime',            :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_health_manager['uptime'] }\")") },
+                            { :label => 'Cores',             :tag => nil, :value => varz_health_manager['num_cores'].to_s },
+                            { :label => 'CPU',               :tag => nil, :value => varz_health_manager['cpu'].to_s },
+                            { :label => 'Memory',            :tag => nil, :value => varz_health_manager['mem'].to_s },
+                            { :label => 'Users',             :tag => nil, :value => varz_health_manager['total_users'].to_s },
+                            { :label => 'Applications',      :tag => nil, :value => varz_health_manager['total_apps'].to_s },
+                            { :label => 'Instances',         :tag => nil, :value => varz_health_manager['total_instances'].to_s },
+                            { :label => 'Running Instances', :tag => nil, :value => varz_health_manager['running_instances'].to_s },
+                            { :label => 'Crashed Instances', :tag => nil, :value => varz_health_manager['crashed_instances'].to_s }
                           ])
           end
         end
@@ -492,18 +457,29 @@ describe IBM::AdminUI::Admin, :type => :integration do
             select_first_row
           end
           it 'has details' do
+            capacity = 0
+            varz_provisioner['nodes'].each do |node|
+              unless node[1]['available_capacity'].nil?
+                capacity += node[1]['available_capacity']
+              end
+            end
+            services = 0
+            varz_provisioner['prov_svcs'].each do |service|
+              services += 1 if service[1]['configuration']['data'].nil?
+            end
+            percent_available_capacity = capacity > 0 ? ((capacity.to_f / (services + capacity).to_f) * 100).round.to_i : 0
             check_details([
-                            { :label => 'Name',                 :tag => nil, :value => '' },
-                            { :label => 'URI',                  :tag => nil, :value => '' },
-                            { :label => 'Supported Versions',   :tag => nil, :value => '' },
-                            { :label => 'Description',          :tag => nil, :value => '' },
-                            { :label => 'Started',              :tag => nil, :value => '' },
-                            { :label => 'Uptime',               :tag => nil, :value => '' },
-                            { :label => 'Cores',                :tag => nil, :value => '' },
-                            { :label => 'CPU',                  :tag => nil, :value => '' },
-                            { :label => 'Memory',               :tag => nil, :value => '' },
-                            { :label => 'Provisioned Services', :tag => nil, :value => '' },
-                            { :label => 'Available Capacity',   :tag => nil, :value => '' }
+                            { :label => 'Name',                 :tag => nil, :value => nats_provisioner['type'][0..-13] },
+                            { :label => 'URI',                  :tag => nil, :value => nats_provisioner_varz },
+                            { :label => 'Supported Versions',   :tag => nil, :value => varz_provisioner['config']['service']['supported_versions'][0] },
+                            { :label => 'Description',          :tag => nil, :value => varz_provisioner['config']['service']['description'] },
+                            { :label => 'Started',              :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_provisioner['start'] }\")") },
+                            { :label => 'Uptime',               :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_provisioner['uptime'] }\")") },
+                            { :label => 'Cores',                :tag => nil, :value => varz_provisioner['num_cores'].to_s },
+                            { :label => 'CPU',                  :tag => nil, :value => varz_provisioner['cpu'].to_s },
+                            { :label => 'Memory',               :tag => nil, :value => varz_provisioner['mem'].to_s },
+                            { :label => 'Provisioned Services', :tag => nil, :value => varz_provisioner['prov_svcs'].length.to_s },
+                            { :label => 'Available Capacity',   :tag => nil, :value => "#{ capacity} (#{ percent_available_capacity }%)" }
                           ])
           end
           it 'has nodes' do
@@ -532,21 +508,21 @@ describe IBM::AdminUI::Admin, :type => :integration do
           it 'has details' do
             select_first_row
             check_details([
-                            { :label => 'Name',          :tag => nil, :value => '' },
-                            { :label => 'URI',           :tag => 'a', :value => '' },
-                            { :label => 'Started',       :tag => nil, :value => '' },
-                            { :label => 'Uptime',        :tag => nil, :value => '' },
-                            { :label => 'Cores',         :tag => nil, :value => '' },
-                            { :label => 'CPU',           :tag => nil, :value => '' },
-                            { :label => 'Memory',        :tag => nil, :value => '' },
-                            { :label => 'Droplets',      :tag => nil, :value => '' },
-                            { :label => 'Requests',      :tag => nil, :value => '' },
-                            { :label => 'Bad Requests',  :tag => nil, :value => '' },
-                            { :label => '2XX Responses', :tag => nil, :value => '' },
-                            { :label => '3XX Responses', :tag => nil, :value => '' },
-                            { :label => '4XX Responses', :tag => nil, :value => '' },
-                            { :label => '5XX Responses', :tag => nil, :value => '' },
-                            { :label => 'XXX Responses', :tag => nil, :value => '' }
+                            { :label => 'Name',          :tag => nil, :value => nats_router['host'] },
+                            { :label => 'URI',           :tag => 'a', :value => nats_router_varz },
+                            { :label => 'Started',       :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_router['start'] }\")") },
+                            { :label => 'Uptime',        :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_router['uptime'] }\")") },
+                            { :label => 'Cores',         :tag => nil, :value => varz_router['num_cores'].to_s },
+                            { :label => 'CPU',           :tag => nil, :value => varz_router['cpu'].to_s },
+                            { :label => 'Memory',        :tag => nil, :value => varz_router['mem'].to_s },
+                            { :label => 'Droplets',      :tag => nil, :value => varz_router['droplets'].to_s },
+                            { :label => 'Requests',      :tag => nil, :value => varz_router['requests'].to_s },
+                            { :label => 'Bad Requests',  :tag => nil, :value => varz_router['bad_requests'].to_s },
+                            { :label => '2XX Responses', :tag => nil, :value => varz_router['responses_2xx'].to_s },
+                            { :label => '3XX Responses', :tag => nil, :value => varz_router['responses_3xx'].to_s },
+                            { :label => '4XX Responses', :tag => nil, :value => varz_router['responses_4xx'].to_s },
+                            { :label => '5XX Responses', :tag => nil, :value => varz_router['responses_5xx'].to_s },
+                            { :label => 'XXX Responses', :tag => nil, :value => varz_router['responses_xxx'].to_s }
                           ])
           end
         end
@@ -568,11 +544,11 @@ describe IBM::AdminUI::Admin, :type => :integration do
           it 'has details' do
             select_first_row
             check_details([
-                            { :label => 'Name',    :tag => nil, :value => '' },
-                            { :label => 'Type',    :tag => nil, :value => '' },
-                            { :label => 'Started', :tag => nil, :value => '' },
-                            { :label => 'URI',     :tag => 'a', :value => '' },
-                            { :label => 'State',   :tag => nil, :value => '' }
+                            { :label => 'Name',    :tag => nil, :value => nats_cloud_controller['host'] },
+                            { :label => 'Type',    :tag => nil, :value => nats_cloud_controller['type'] },
+                            { :label => 'Started', :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
+                            { :label => 'URI',     :tag => 'a', :value => nats_cloud_controller_varz },
+                            { :label => 'State',   :tag => nil, :value => @driver.execute_script('return Constants.STATUS__RUNNING') }
                           ])
           end
         end
@@ -590,18 +566,18 @@ describe IBM::AdminUI::Admin, :type => :integration do
                         }
                       ])
         end
-        it 'has contents' do
-          row = get_first_row
-          row.click
-          columns = row.find_elements(:tag_name => 'td')
-          expect(columns.length).to eq(3)
+#        it 'has contents' do
+#          row = get_first_row
+#          row.click
+#          columns = row.find_elements(:tag_name => 'td')
+#          expect(columns.length).to eq(3)
 #          expect(columns[0].text).to eq('')
 #          expect(columns[1].text).to eq('')
 #          expect(columns[2].text).to eq('')
-          expect(@driver.find_element(:id => 'LogContainer').displayed?).to be_true
-          expect(@driver.find_element(:id => 'LogLink').text).to eq(columns[0].text)
+#          expect(@driver.find_element(:id => 'LogContainer').displayed?).to be_true
+#          expect(@driver.find_element(:id => 'LogLink').text).to eq(columns[0].text)
 #          expect(@driver.find_element(:id => 'LogContents').text).to eq('')
-        end
+#        end
       end
 
       context 'Tasks' do
@@ -640,7 +616,6 @@ describe IBM::AdminUI::Admin, :type => :integration do
           expect(@driver.find_element(:id => 'StatsChart').displayed?).to be_true
         end
       end
-=end
     end
   end
 end

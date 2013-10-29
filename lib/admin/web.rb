@@ -49,6 +49,10 @@ module IBM
         @stats.current_stats.to_json
       end
 
+      get '/deas', :auth => [:user] do
+        @varz.deas.to_json
+      end
+
       get '/download', :auth => [:user] do
         file = @log_files.log_file(params['path'])
         if file.nil?
@@ -58,10 +62,6 @@ module IBM
                     :disposition => 'attachment',
                     :filename    => File.basename(file))
         end
-      end
-
-      get '/deas', :auth => [:user] do
-        @varz.deas.to_json
       end
 
       get '/favicon.ico' do
