@@ -1,6 +1,6 @@
-# IBM Administration Web UI for CloudFoundry NG 
+# Administration Web UI for CloudFoundry NG 
 
-The IBM Administration Web UI provides metrics and operations data for CloudFoundry NG.
+The Administration Web UI provides metrics and operations data for CloudFoundry NG.
 It gathers data from the varz providers for the various CloudFoundry components as well as
 from the cloud controller and UAA REST API's.
 
@@ -58,13 +58,13 @@ rbenv rehash
 ### Retrieve the administration ui code
 
 ```
-git clone https://github.com/cloudfoundry/ibm-admin-ui.git
+git clone https://github.com/cloudfoundry-incubator/admin-ui.git
 ```
 
 ### Install Administration UI
 
 ```
-cd ibm-admin-ui
+cd admin-ui
 bundle install
 ```
 

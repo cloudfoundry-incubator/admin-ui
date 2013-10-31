@@ -1,6 +1,6 @@
 require 'json'
 
-module IBM::AdminUI
+module AdminUI
   class CC
     def initialize(config, logger)
       @config = config

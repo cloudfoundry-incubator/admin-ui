@@ -61,4 +61,4 @@ unless missing_options.empty?
   exit 1
 end
 
-IBM::AdminUI::Admin.new(@config).start
+AdminUI::Admin.new(@config).start

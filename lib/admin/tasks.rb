@@ -1,7 +1,7 @@
 require 'open3'
 require_relative 'utils'
 
-module IBM::AdminUI
+module AdminUI
   class Tasks
     def initialize(config, logger)
       @config = config
@@ -15,9 +15,7 @@ module IBM::AdminUI
     def new_dea
       script_path = File.join(File.dirname(__FILE__), 'scripts', 'newDEA.sh')
 
-      task_id = launch_command("#{ script_path }")
-
-      { :task_id => task_id }
+      launch_command("#{ script_path }")
     end
 
     def tasks

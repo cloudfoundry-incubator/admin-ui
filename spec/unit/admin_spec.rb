@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe IBM::AdminUI::Admin do
+describe AdminUI::Admin do
   HOST = 'localhost'
   PORT = 8071
 
@@ -68,7 +68,7 @@ describe IBM::AdminUI::Admin do
     request['Content-Length'] = 0
 
     response = http.request(request)
-    fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPSeeOther)
+    expect(response.is_a?(Net::HTTPSeeOther)).to be_true
 
     location = response['location']
     expect(location).to eq("http://#{ HOST }:#{ PORT }/application.html?user=#{ ADMIN_USER }")
@@ -87,7 +87,7 @@ describe IBM::AdminUI::Admin do
       request['Content-Length'] = 0
 
       response = http.request(request)
-      fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPSeeOther)
+      expect(response.is_a?(Net::HTTPSeeOther)).to be_true
 
       location = response['location']
       expect(location).to eq("http://#{ HOST }:#{ PORT }/login.html?error=true")
@@ -103,7 +103,7 @@ describe IBM::AdminUI::Admin do
       request['Cookie'] = cookie
 
       response = http.request(request)
-      fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
+      expect(response.is_a?(Net::HTTPOK)).to be_true
 
       body = response.body
       expect(body).to_not be_nil
@@ -201,7 +201,7 @@ describe IBM::AdminUI::Admin do
       request = Net::HTTP::Get.new(path)
 
       response = http.request(request)
-      fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPSeeOther)
+      expect(response.is_a?(Net::HTTPSeeOther)).to be_true
 
       location = response['location']
       expect(location).to eq("http://#{ HOST }:#{ PORT }/login.html")
@@ -292,7 +292,7 @@ describe IBM::AdminUI::Admin do
       request = Net::HTTP::Get.new(path)
 
       response = http.request(request)
-      fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
+      expect(response.is_a?(Net::HTTPOK)).to be_true
 
       response
     end
@@ -327,7 +327,7 @@ describe IBM::AdminUI::Admin do
       request = Net::HTTP::Get.new('/current_statistics')
 
       response = http.request(request)
-      fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
+      expect(response.is_a?(Net::HTTPOK)).to be_true
 
       body = response.body
       expect(body).to_not be_nil
@@ -352,7 +352,7 @@ describe IBM::AdminUI::Admin do
         request['Content-Length'] = 0
 
         response = http.request(request)
-        fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
+        expect(response.is_a?(Net::HTTPOK)).to be_true
 
         body = response.body
         expect(body).to_not be_nil
@@ -372,7 +372,7 @@ describe IBM::AdminUI::Admin do
         request = Net::HTTP::Get.new('/statistics')
 
         response = http.request(request)
-        fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
+        expect(response.is_a?(Net::HTTPOK)).to be_true
 
         body = response.body
         expect(body).to_not be_nil

@@ -2,7 +2,7 @@ require 'logger'
 require 'nats/client'
 require_relative '../spec_helper'
 
-describe IBM::AdminUI::NATS, :type => :integration do
+describe AdminUI::NATS, :type => :integration do
   include NATSHelper
 
   let(:data_file) { '/tmp/admin_ui_data.json' }
@@ -14,12 +14,12 @@ describe IBM::AdminUI::NATS, :type => :integration do
 
   let(:logger) { Logger.new(log_file) }
   let(:config) do
-    IBM::AdminUI::Config.load(:data_file            => data_file,
-                              :monitored_components => [])
+    AdminUI::Config.load(:data_file            => data_file,
+                         :monitored_components => [])
   end
 
-  let(:email) { IBM::AdminUI::EMail.new(config, logger) }
-  let(:nats) { IBM::AdminUI::NATS.new(config, logger, email) }
+  let(:email) { AdminUI::EMail.new(config, logger) }
+  let(:nats) { AdminUI::NATS.new(config, logger, email) }
 
   after do
     Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ log_file }"))

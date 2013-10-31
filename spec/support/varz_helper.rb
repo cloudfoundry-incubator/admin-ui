@@ -19,23 +19,23 @@ module VARZHelper
   end
 
   def varz_stub
-    IBM::AdminUI::Utils.stub(:http_get).with(nats_cloud_controller_varz, anything) do
+    AdminUI::Utils.stub(:http_get).with(nats_cloud_controller_varz, anything) do
       OK.new(varz_cloud_controller)
     end
 
-    IBM::AdminUI::Utils.stub(:http_get).with(nats_dea_varz, anything) do
+    AdminUI::Utils.stub(:http_get).with(nats_dea_varz, anything) do
       OK.new(varz_dea)
     end
 
-    IBM::AdminUI::Utils.stub(:http_get).with(nats_health_manager_varz, anything) do
+    AdminUI::Utils.stub(:http_get).with(nats_health_manager_varz, anything) do
       OK.new(varz_health_manager)
     end
 
-    IBM::AdminUI::Utils.stub(:http_get).with(nats_provisioner_varz, anything) do
+    AdminUI::Utils.stub(:http_get).with(nats_provisioner_varz, anything) do
       OK.new(varz_provisioner)
     end
 
-    IBM::AdminUI::Utils.stub(:http_get).with(nats_router_varz, anything) do
+    AdminUI::Utils.stub(:http_get).with(nats_router_varz, anything) do
       OK.new(varz_router)
     end
   end
@@ -86,7 +86,7 @@ module VARZHelper
             [
               {
                 'name'     => 'TestService-random',
-                'provider' => 'ibm',
+                'provider' => 'test',
                 'vendor'   => 'TestService',
                 'version'  => '1.0',
                 'plan'     => 'free'

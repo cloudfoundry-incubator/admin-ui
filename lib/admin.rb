@@ -9,7 +9,7 @@ require_relative 'admin/tasks'
 require_relative 'admin/varz'
 require_relative 'admin/web'
 
-module IBM::AdminUI
+module AdminUI
   class Admin
     def initialize(config_hash)
       @config_hash = config_hash
@@ -62,13 +62,13 @@ module IBM::AdminUI
     end
 
     def launch_web
-      web = IBM::AdminUI::Web.new(@config,
-                                  @logger,
-                                  @cc,
-                                  @log_files,
-                                  @stats,
-                                  @tasks,
-                                  @varz)
+      web = AdminUI::Web.new(@config,
+                             @logger,
+                             @cc,
+                             @log_files,
+                             @stats,
+                             @tasks,
+                             @varz)
 
       Rack::Handler::WEBrick.run web, { :Port => @config.port }
     end

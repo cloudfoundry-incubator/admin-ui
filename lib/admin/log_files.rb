@@ -1,6 +1,6 @@
 require_relative 'utils'
 
-module IBM::AdminUI
+module AdminUI
   class LogFiles
     def initialize(config, logger)
       @config = config

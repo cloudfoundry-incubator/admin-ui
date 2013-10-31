@@ -1,7 +1,7 @@
 require 'json'
 require 'net/http'
 
-module IBM::AdminUI
+module AdminUI
   class VARZ
     def initialize(config, logger, nats)
       @config = config

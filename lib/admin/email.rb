@@ -1,6 +1,6 @@
 require 'net/smtp'
 
-module IBM::AdminUI
+module AdminUI
   class EMail
     def initialize(config, logger)
       @config = config

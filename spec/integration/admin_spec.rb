@@ -1,48 +1,48 @@
 require_relative '../spec_helper'
 
-describe IBM::AdminUI::Admin, :type => :integration do
+describe AdminUI::Admin, :type => :integration do
   include_context :server_context
 
+  def create_http
+    Net::HTTP.new(host, port)
+  end
+
+  def login_and_return_cookie(http)
+    request = Net::HTTP::Post.new("/login?username=#{ admin_user }&password=#{ admin_password }")
+    request['Content-Length'] = 0
+
+    response = http.request(request)
+    expect(response.is_a?(Net::HTTPSeeOther)).to be_true
+
+    location = response['location']
+    expect(location).to eq("http://#{ host }:#{ port }/application.html?user=#{ admin_user }")
+
+    cookie = response['Set-Cookie']
+    expect(cookie).to_not be_nil
+
+    cookie
+  end
+
+  def get_response(path)
+    request = Net::HTTP::Get.new(path)
+    request['Cookie'] = cookie
+
+    response = http.request(request)
+    expect(response.is_a?(Net::HTTPOK)).to be_true
+
+    response
+  end
+
+  def get_json(path)
+    response = get_response(path)
+
+    body = response.body
+    expect(body).to_not be_nil
+
+    JSON.parse(body)
+  end
+
   context 'retrieves and validates' do
-    def create_http
-      Net::HTTP.new(host, port)
-    end
-
-    def login_and_return_cookie(http)
-      request = Net::HTTP::Post.new("/login?username=#{ admin_user }&password=#{ admin_password }")
-      request['Content-Length'] = 0
-
-      response = http.request(request)
-      fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPSeeOther)
-
-      location = response['location']
-      expect(location).to eq("http://#{ host }:#{ port }/application.html?user=#{ admin_user }")
-
-      cookie = response['Set-Cookie']
-      expect(cookie).to_not be_nil
-
-      cookie
-    end
-
-    def get_response(path)
-      request = Net::HTTP::Get.new(path)
-      request['Cookie'] = cookie
-
-      response = http.request(request)
-      fail_with('Unexpected http status code') unless response.is_a?(Net::HTTPOK)
-
-      response
-    end
-
-    def get_json(path)
-      response = get_response(path)
-
-      body = response.body
-      expect(body).to_not be_nil
-
-      JSON.parse(body)
-    end
-
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
 
@@ -165,11 +165,10 @@ describe IBM::AdminUI::Admin, :type => :integration do
     end
 
     context 'download' do
-      let(:response) { get_response("/download?path=#{ log_file }") }
+      let(:response) { get_response("/download?path=#{ log_file_displayed }") }
       it 'retrieves' do
         body = response.body
-        expect(body).to_not be_nil
-        expect(body.start_with?('# Logfile created on ')).to eq(true)
+        expect(body).to eq(log_file_displayed_contents)
       end
     end
 
@@ -188,13 +187,13 @@ describe IBM::AdminUI::Admin, :type => :integration do
     end
 
     context 'log' do
-      let(:retrieved) { get_json("/log?path=#{ log_file }") }
+      let(:retrieved) { get_json("/log?path=#{ log_file_displayed }") }
       it 'retrieves' do
-        expect(retrieved['data']).to_not be_nil
-        expect(retrieved['file_size']).to be > 0
-        expect(retrieved['page_size']).to be > 0
-        expect(retrieved['path']).to eq(log_file)
-        expect(retrieved['read_size']).to be > 0
+        expect(retrieved['data']).to eq(log_file_displayed_contents)
+        expect(retrieved['file_size']).to eq(log_file_displayed_contents_length)
+        expect(retrieved['page_size']).to eq(log_file_page_size)
+        expect(retrieved['path']).to eq(log_file_displayed)
+        expect(retrieved['read_size']).to eq(log_file_displayed_contents_length)
         expect(retrieved['start']).to eq(0)
       end
     end
@@ -206,9 +205,9 @@ describe IBM::AdminUI::Admin, :type => :integration do
         expect(items).to_not be_nil
         expect(items.length).to eq(1)
         item = items[0]
-        expect(item).to include('path' => log_file)
-        expect(item['size']).to be > 0
-        expect(item['time']).to be > 0
+        expect(item).to include('path' => log_file_displayed,
+                                'size' => log_file_displayed_contents_length,
+                                'time' => log_file_displayed_modified_milliseconds)
       end
     end
 
@@ -274,6 +273,52 @@ describe IBM::AdminUI::Admin, :type => :integration do
           expect(items).to include(hash)
         end
       end
+    end
+  end
+
+  context 'tasks' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    it 'creates DEA, retrieves all tasks and retrieves specific status' do
+      request = Net::HTTP::Post.new('/deas')
+      request['Cookie']         = cookie
+      request['Content-Length'] = 0
+
+      response = http.request(request)
+      expect(response.is_a?(Net::HTTPOK)).to be_true
+
+      body = response.body
+      expect(body).to_not be_nil
+
+      json = JSON.parse(body)
+
+      expect(json).to include('task_id' => 0)
+
+      tasks = get_json('/tasks')
+      items = tasks['items']
+      expect(items.length).to eq(1)
+      item = items[0]
+      expect(item['command']).to_not be_nil
+      expect(item['id']).to eq(0)
+      expect(item['started']).to be > 0
+      expect(item['state']).to eq('RUNNING')
+
+      task_status = get_json('/task_status?task_id=0')
+      expect(task_status['id']).to eq(0)
+      expect(task_status['state']).to eq('RUNNING')
+      expect(task_status['updated']).to be > 0
+      output = task_status['output']
+      found_out = false
+      output.each do |out|
+        if out['type'] == 'out'
+          found_out = true
+          expect(out['text'].start_with?('Creating new DEA')).to be_true
+          expect(out['time']).to be > 0
+          break
+        end
+      end
+      expect(found_out).to be_true
     end
   end
 end

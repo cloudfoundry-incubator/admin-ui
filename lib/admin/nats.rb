@@ -1,7 +1,7 @@
 require 'json'
 require 'nats/client'
 
-module IBM::AdminUI
+module AdminUI
   class NATS
     def initialize(config, logger, email)
       @config = config

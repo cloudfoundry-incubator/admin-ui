@@ -1,14 +1,14 @@
 require 'logger'
 require_relative '../spec_helper'
 
-describe IBM::AdminUI::CC do
+describe AdminUI::CC do
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(log_file) }
   let(:config) do
-    IBM::AdminUI::Config.load(:cloud_controller_uri   => 'http://api.localhost',
-                              :uaa_admin_credentials  => { :password => 'c1oudc0w', :username => 'admin' })
+    AdminUI::Config.load(:cloud_controller_uri   => 'http://api.localhost',
+                         :uaa_admin_credentials  => { :password => 'c1oudc0w', :username => 'admin' })
   end
-  let(:cc) { IBM::AdminUI::CC.new(config, logger) }
+  let(:cc) { AdminUI::CC.new(config, logger) }
 
   after do
     Process.wait(Process.spawn({}, "rm -fr #{ log_file }"))

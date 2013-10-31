@@ -1,22 +1,22 @@
 require 'logger'
 require_relative '../spec_helper'
 
-describe IBM::AdminUI::CC, :type => :integration do
+describe AdminUI::CC, :type => :integration do
   include CCHelper
 
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(log_file) }
   let(:config) do
-    IBM::AdminUI::Config.load(:cloud_controller_discovery_interval => 1,
-                              :cloud_controller_uri                => 'http://api.cloudfoundry',
-                              :uaa_admin_credentials               => { :username => 'user', :password => 'password' })
+    AdminUI::Config.load(:cloud_controller_discovery_interval => 1,
+                         :cloud_controller_uri                => 'http://api.cloudfoundry',
+                         :uaa_admin_credentials               => { :username => 'user', :password => 'password' })
   end
 
   before do
     cc_stub(config)
   end
 
-  let(:cc) { IBM::AdminUI::CC.new(config, logger) }
+  let(:cc) { AdminUI::CC.new(config, logger) }
 
   after do
     Process.wait(Process.spawn({}, "rm -fr #{ log_file }"))

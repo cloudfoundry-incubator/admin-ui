@@ -1,7 +1,7 @@
 require 'json'
 require_relative 'utils'
 
-module IBM::AdminUI
+module AdminUI
   class Stats
     def initialize(config, logger, cc, varz)
       @config = config

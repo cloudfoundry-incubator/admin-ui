@@ -1,7 +1,7 @@
 require 'logger'
 require_relative '../spec_helper'
 
-describe IBM::AdminUI::VARZ, :type => :integration do
+describe AdminUI::VARZ, :type => :integration do
   include NATSHelper
   include VARZHelper
 
@@ -14,13 +14,13 @@ describe IBM::AdminUI::VARZ, :type => :integration do
 
   let(:logger) { Logger.new(log_file) }
   let(:config) do
-    IBM::AdminUI::Config.load(:data_file            => data_file,
-                              :monitored_components => [])
+    AdminUI::Config.load(:data_file            => data_file,
+                         :monitored_components => [])
   end
 
-  let(:email) { IBM::AdminUI::EMail.new(config, logger) }
-  let(:nats) { IBM::AdminUI::NATS.new(config, logger, email) }
-  let(:varz) { IBM::AdminUI::VARZ.new(config, logger, nats) }
+  let(:email) { AdminUI::EMail.new(config, logger) }
+  let(:nats) { AdminUI::NATS.new(config, logger, email) }
+  let(:varz) { AdminUI::VARZ.new(config, logger, nats) }
 
   after do
     Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ log_file }"))

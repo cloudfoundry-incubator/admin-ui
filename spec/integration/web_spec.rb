@@ -11,7 +11,7 @@ RSpec.configure do |config|
   config.filter_run_excluding :firefox_available => true unless firefox_exists
 end
 
-describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true do
+describe AdminUI::Admin, :type => :integration, :firefox_available => true do
   include_context :server_context
 
   before do
@@ -24,7 +24,7 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
   end
 
   def login(username, password, target_page)
-    @driver.get 'http://localhost:8071/'
+    @driver.get "http://#{ host }:#{ port }"
     @driver.find_element(:id => 'username').send_keys username
     @driver.find_element(:id => 'password').send_keys password
     @driver.find_element(:id => 'username').submit
@@ -32,12 +32,12 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
   end
 
   it 'requires valid credentials' do
-    login('admin', 'bad_password', 'Login')
+    login(admin_user, 'bad_password', 'Login')
   end
 
   context 'authenticated' do
     before do
-      login('admin', 'admin_passw0rd', 'Administration')
+      login(admin_user, admin_password, 'Administration')
     end
 
     it 'has a title' do
@@ -76,7 +76,7 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
         expect(@driver.find_element(:id => "#{ tab_id }Page").displayed?).to be_true
       end
 
-      def check_table(columns_array)
+      def check_table_layout(columns_array)
         expect(@driver.find_element(:id => "#{ tab_id }Table").displayed?).to be_true
         columns_array.each do |columns|
           check_table_headers(columns)
@@ -93,6 +93,14 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
             expect(headRow[:columns][column_index].attribute('colspan')).to eq(headRow[:colspans][column_index])
           end
           column_index += 1
+        end
+      end
+
+      def check_table_data(cells, expected_values)
+        index = 0
+        while index < expected_values.length
+          expect(cells[index].text).to eq(expected_values[index])
+          index += 1
         end
       end
 
@@ -138,20 +146,34 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
       context 'organizations' do
         let(:tab_id) { 'Organizations' }
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                          :expected_length => 3,
-                          :labels          => ['', 'App States', 'App Package States'],
-                          :colspans        => %w(5 3 3)
-                        },
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                          :expected_length => 11,
-                          :labels          => %w(Name Status Created Spaces Developers Total Started Stopped Pending Staged Failed),
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                 :expected_length => 3,
+                                 :labels          => ['', 'App States', 'App Package States'],
+                                 :colspans        => %w(5 3 3)
+                               },
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                 :expected_length => 11,
+                                 :labels          => %w(Name Status Created Spaces Developers Total Started Stopped Pending Staged Failed),
+                                 :colspans        => nil
+                               }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td"),
+                           [
+                             cc_organizations['resources'][0]['entity']['name'],
+                             cc_organizations['resources'][0]['entity']['status'].upcase,
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_organizations['resources'][0]['metadata']['created_at'] }\")"),
+                             cc_spaces['resources'].length.to_s,
+                             cc_users_deep['resources'].length.to_s,
+                             cc_apps['resources'].length.to_s,
+                             cc_apps['resources'][0]['entity']['state'] == 'STARTED' ? '1' : '0',
+                             cc_apps['resources'][0]['entity']['state'] == 'STOPPED' ? '1' : '0',
+                             cc_apps['resources'][0]['entity']['state'] == 'PENDING' ? '1' : '0',
+                             cc_apps['resources'][0]['entity']['state'] == 'STAGED'  ? '1' : '0',
+                             cc_apps['resources'][0]['entity']['state'] == 'FAILED'  ? '1' : '0'
+                           ])
         end
         context 'selectable' do
           before do
@@ -188,20 +210,34 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
       context 'Spaces' do
         let(:tab_id) { 'Spaces' }
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                          :expected_length => 3,
-                          :labels          => ['', 'App States', 'App Package States'],
-                          :colspans        => %w(5 3 3)
-                        },
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                          :expected_length => 11,
-                          :labels          => %w(Name Organization Target Created Developers Total Started Stopped Pending Staged Failed),
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                 :expected_length => 3,
+                                 :labels          => ['', 'App States', 'App Package States'],
+                                 :colspans        => %w(5 3 3)
+                               },
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                 :expected_length => 11,
+                                 :labels          => %w(Name Organization Target Created Developers Total Started Stopped Pending Staged Failed),
+                                 :colspans        => nil
+                               }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='SpacesTable']/tbody/tr/td"),
+                           [
+                             cc_spaces['resources'][0]['entity']['name'],
+                             cc_organizations['resources'][0]['entity']['name'],
+                             "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_spaces['resources'][0]['metadata']['created_at'] }\")"),
+                             cc_users_deep['resources'].length.to_s,
+                             cc_apps['resources'].length.to_s,
+                             cc_apps['resources'][0]['entity']['state'] == 'STARTED' ? '1' : '0',
+                             cc_apps['resources'][0]['entity']['state'] == 'STOPPED' ? '1' : '0',
+                             cc_apps['resources'][0]['entity']['state'] == 'PENDING' ? '1' : '0',
+                             cc_apps['resources'][0]['entity']['state'] == 'STAGED'  ? '1' : '0',
+                             cc_apps['resources'][0]['entity']['state'] == 'FAILED'  ? '1' : '0'
+                           ])
         end
         context 'selectable' do
           before do
@@ -236,14 +272,31 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
       context 'Applications' do
         let(:tab_id) { 'Applications' }
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                          :expected_length => 14,
-                          :labels          => ['Name', 'State', "Package\nState", 'Started', 'URI', 'Buildpack', 'Memory', 'Disk', 'Instance', 'Services', 'Space', 'Organization', 'Target', 'DEA'],
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                 :expected_length => 14,
+                                 :labels          => ['Name', 'State', "Package\nState", 'Started', 'URI', 'Buildpack', 'Memory', 'Disk', 'Instance', 'Services', 'Space', 'Organization', 'Target', 'DEA'],
+                                 :colspans        => nil
+                               }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td"),
+                           [
+                             cc_apps['resources'][0]['entity']['name'],
+                             cc_apps['resources'][0]['entity']['state'],
+                             '',
+                             @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })"),
+                             "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }",
+                             cc_apps['resources'][0]['entity']['detected_buildpack'],
+                             cc_apps['resources'][0]['entity']['memory'].to_s,
+                             cc_apps['resources'][0]['entity']['disk_quota'].to_s,
+                             varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'].to_s,
+                             varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s,
+                             cc_spaces['resources'][0]['entity']['name'],
+                             cc_organizations['resources'][0]['entity']['name'],
+                             "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
+                             nats_dea['host']
+                           ])
         end
         context 'selectable' do
           before do
@@ -273,6 +326,14 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
                                 :expected_length => 5,
                                 :labels          => ['Instance Name', 'Provider', 'Service Name', 'Version', 'Plan Name'],
                                 :colspans        => nil)
+            check_table_data(@driver.find_elements(:xpath => "//table[@id='ApplicationsServicesTable']/tbody/tr/td"),
+                             [
+                               varz_dea['instance_registry']['application1']['application1_instance1']['services'][0]['name'],
+                               varz_dea['instance_registry']['application1']['application1_instance1']['services'][0]['provider'],
+                               varz_dea['instance_registry']['application1']['application1_instance1']['services'][0]['vendor'],
+                               varz_dea['instance_registry']['application1']['application1_instance1']['services'][0]['version'],
+                               varz_dea['instance_registry']['application1']['application1_instance1']['services'][0]['plan'],
+                             ])
           end
           it 'has space link' do
             check_select_link('Applications', 11, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
@@ -289,14 +350,22 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
       context 'Developers' do
         let(:tab_id) { 'Developers' }
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='DevelopersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                          :expected_length => 5,
-                          :labels          => %w(Email Space Organization Target Created),
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='DevelopersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                 :expected_length => 5,
+                                 :labels          => %w(Email Space Organization Target Created),
+                                 :colspans        => nil
+                               }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='DevelopersTable']/tbody/tr/td"),
+                           [
+                             "#{ uaa_users['resources'][0]['emails'][0]['value'] }",
+                             cc_spaces['resources'][0]['entity']['name'],
+                             cc_organizations['resources'][0]['entity']['name'],
+                             "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
+                             @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")"),
+                           ])
         end
         context 'selectable' do
           before do
@@ -336,20 +405,31 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
       context 'DEAs' do
         let(:tab_id) { 'DEAs' }
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                          :expected_length => 2,
-                          :labels          => ['', '% Free'],
-                          :colspans        => %w(6 2)
-                        },
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                          :expected_length => 8,
-                          :labels          => %w(Name Status Started CPU Memory Apps Memory Disk),
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                 :expected_length => 2,
+                                 :labels          => ['', '% Free'],
+                                 :colspans        => %w(6 2)
+                               },
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                 :expected_length => 8,
+                                 :labels          => %w(Name Status Started CPU Memory Apps Memory Disk),
+                                 :colspans        => nil
+                               }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='DEAsTable']/tbody/tr/td"),
+                           [
+                             varz_dea['host'],
+                             @driver.execute_script('return Constants.STATUS__RUNNING'),
+                             @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")"),
+                             varz_dea['cpu'].to_s,
+                             varz_dea['mem'].to_s,
+                             varz_dea['instance_registry'].length.to_s,
+                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })"),
+                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })")
+                           ])
         end
         context 'selectable' do
           before do
@@ -365,10 +445,10 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
                             { :label => 'Apps',         :tag => 'a', :value => varz_dea['instance_registry'].length.to_s },
                             { :label => 'Cores',        :tag => nil, :value => varz_dea['num_cores'].to_s },
                             { :label => 'CPU',          :tag => nil, :value => varz_dea['cpu'].to_s },
-                            { :label => 'CPU Load Avg', :tag => nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") + '%' },
+                            { :label => 'CPU Load Avg', :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") }%" },
                             { :label => 'Memory',       :tag => nil, :value => varz_dea['mem'].to_s },
-                            { :label => 'Memory Free',  :tag => nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })") + '%' },
-                            { :label => 'Disk Free',    :tag => nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") + '%' }
+                            { :label => 'Memory Free',  :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })") }%" },
+                            { :label => 'Disk Free',    :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") }%" }
                           ])
           end
           it 'has applications link' do
@@ -380,14 +460,23 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
       context 'Cloud Controllers' do
         let(:tab_id) { 'CloudControllers' }
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='CloudControllersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                          :expected_length => 6,
-                          :labels          => %w(Name State Started Cores CPU Memory),
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='CloudControllersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                 :expected_length => 6,
+                                 :labels          => %w(Name State Started Cores CPU Memory),
+                                 :colspans        => nil
+                               }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='CloudControllersTable']/tbody/tr/td"),
+                           [
+                             nats_cloud_controller['host'],
+                             @driver.execute_script('return Constants.STATUS__RUNNING'),
+                             @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")"),
+                             varz_cloud_controller['num_cores'].to_s,
+                             varz_cloud_controller['cpu'].to_s,
+                             varz_cloud_controller['mem'].to_s
+                           ])
         end
         context 'selectable' do
           it 'has details' do
@@ -410,14 +499,26 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
       context 'Health Managers' do
         let(:tab_id) { 'HealthManagers' }
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='HealthManagersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                          :expected_length => 9,
-                          :labels          => %w(Name State Started Cores CPU Memory Users Applications Instances),
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='HealthManagersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                 :expected_length => 9,
+                                 :labels          => %w(Name State Started Cores CPU Memory Users Applications Instances),
+                                 :colspans        => nil
+                               }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='HealthManagersTable']/tbody/tr/td"),
+                           [
+                             nats_health_manager['host'],
+                             @driver.execute_script('return Constants.STATUS__RUNNING'),
+                             @driver.execute_script("return Format.formatDateString(\"#{ varz_health_manager['start'] }\")"),
+                             varz_health_manager['num_cores'].to_s,
+                             varz_health_manager['cpu'].to_s,
+                             varz_health_manager['mem'].to_s,
+                             varz_health_manager['total_users'].to_s,
+                             varz_health_manager['total_apps'].to_s,
+                             varz_health_manager['total_instances'].to_s
+                           ])
         end
         context 'selectable' do
           it 'has details' do
@@ -442,32 +543,47 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
 
       context 'Service Gateways' do
         let(:tab_id) { 'Gateways' }
+        before do
+          @capacity = 0
+          varz_provisioner['nodes'].each do |node|
+            unless node[1]['available_capacity'].nil?
+              @capacity += node[1]['available_capacity']
+            end
+          end
+          services = 0
+          varz_provisioner['prov_svcs'].each do |service|
+            services += 1 if service[1]['configuration']['data'].nil?
+          end
+          @percent_available_capacity = @capacity > 0 ? ((@capacity.to_f / (services + @capacity).to_f) * 100).round.to_i : 0
+        end
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='GatewaysTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                          :expected_length => 10,
-                          :labels          => ['Name', 'State', 'Started', 'Description', 'CPU', 'Memory', 'Nodes', "Provisioned\nServices", "Available\nCapacity", "% Available\nCapacity"],
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='GatewaysTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                 :expected_length => 10,
+                                 :labels          => ['Name', 'State', 'Started', 'Description', 'CPU', 'Memory', 'Nodes', "Provisioned\nServices", "Available\nCapacity", "% Available\nCapacity"],
+                                 :colspans        => nil
+                               }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='GatewaysTable']/tbody/tr/td"),
+                           [
+                             nats_provisioner['type'][0..-13],
+                             @driver.execute_script('return Constants.STATUS__RUNNING'),
+                             @driver.execute_script("return Format.formatDateString(\"#{ varz_provisioner['start'] }\")"),
+                             varz_provisioner['config']['service']['description'],
+                             varz_provisioner['cpu'].to_s,
+                             varz_provisioner['mem'].to_s,
+                             varz_provisioner['nodes'].length.to_s,
+                             varz_provisioner['prov_svcs'].length.to_s,
+                             @capacity.to_s,
+                             @percent_available_capacity.to_s
+                           ])
         end
         context 'selectable' do
           before do
             select_first_row
           end
           it 'has details' do
-            capacity = 0
-            varz_provisioner['nodes'].each do |node|
-              unless node[1]['available_capacity'].nil?
-                capacity += node[1]['available_capacity']
-              end
-            end
-            services = 0
-            varz_provisioner['prov_svcs'].each do |service|
-              services += 1 if service[1]['configuration']['data'].nil?
-            end
-            percent_available_capacity = capacity > 0 ? ((capacity.to_f / (services + capacity).to_f) * 100).round.to_i : 0
             check_details([
                             { :label => 'Name',                 :tag => nil, :value => nats_provisioner['type'][0..-13] },
                             { :label => 'URI',                  :tag => nil, :value => nats_provisioner_varz },
@@ -479,7 +595,7 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
                             { :label => 'CPU',                  :tag => nil, :value => varz_provisioner['cpu'].to_s },
                             { :label => 'Memory',               :tag => nil, :value => varz_provisioner['mem'].to_s },
                             { :label => 'Provisioned Services', :tag => nil, :value => varz_provisioner['prov_svcs'].length.to_s },
-                            { :label => 'Available Capacity',   :tag => nil, :value => "#{ capacity} (#{ percent_available_capacity }%)" }
+                            { :label => 'Available Capacity',   :tag => nil, :value => "#{ @capacity} (#{ @percent_available_capacity }%)" }
                           ])
           end
           it 'has nodes' do
@@ -488,6 +604,11 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
                                 :expected_length => 2,
                                 :labels          => ['Name', 'Available Capacity'],
                                 :colspans        => nil)
+            check_table_data(@driver.find_elements(:xpath => "//table[@id='GatewaysNodesTable']/tbody/tr/td"),
+                             [
+                               varz_provisioner['nodes'].keys[0],
+                               varz_provisioner['nodes'][varz_provisioner['nodes'].keys[0]]['available_capacity'].to_s,
+                             ])
           end
         end
       end
@@ -495,14 +616,26 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
       context 'Routers' do
         let(:tab_id) { 'Routers' }
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='RoutersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                          :expected_length => 9,
-                          :labels          => ['Name', 'State', 'Started', 'Cores', 'CPU', 'Memory', 'Droplets', 'Requests', 'Bad Requests'],
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='RoutersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                 :expected_length => 9,
+                                 :labels          => ['Name', 'State', 'Started', 'Cores', 'CPU', 'Memory', 'Droplets', 'Requests', 'Bad Requests'],
+                                 :colspans        => nil
+                               }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='RoutersTable']/tbody/tr/td"),
+                           [
+                             nats_router['host'],
+                             @driver.execute_script('return Constants.STATUS__RUNNING'),
+                             @driver.execute_script("return Format.formatDateString(\"#{ varz_router['start'] }\")"),
+                             varz_router['num_cores'].to_s,
+                             varz_router['cpu'].to_s,
+                             varz_router['mem'].to_s,
+                             varz_router['droplets'].to_s,
+                             varz_router['requests'].to_s,
+                             varz_router['bad_requests'].to_s
+                           ])
         end
         context 'selectable' do
           it 'has details' do
@@ -531,14 +664,21 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
       context 'Components' do
         let(:tab_id) { 'Components' }
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='ComponentsTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                          :expected_length => 4,
-                          :labels          => %w(Name Type State Started),
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ComponentsTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                 :expected_length => 4,
+                                 :labels          => %w(Name Type State Started),
+                                 :colspans        => nil
+                               }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='ComponentsTable']/tbody/tr/td"),
+                           [
+                             nats_cloud_controller['host'],
+                             nats_cloud_controller['type'],
+                             @driver.execute_script('return Constants.STATUS__RUNNING'),
+                             @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")")
+                           ])
         end
         context 'selectable' do
           it 'has details' do
@@ -557,60 +697,98 @@ describe IBM::AdminUI::Admin, :type => :integration, :firefox_available => true 
       context 'Logs' do
         let(:tab_id) { 'Logs' }
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='LogsTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                          :expected_length => 3,
-                          :labels          => ['Path', 'Size', 'Last Modified'],
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='LogsTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                 :expected_length => 3,
+                                 :labels          => ['Path', 'Size', 'Last Modified'],
+                                 :colspans        => nil
+                               }
+                             ])
         end
-#        it 'has contents' do
-#          row = get_first_row
-#          row.click
-#          columns = row.find_elements(:tag_name => 'td')
-#          expect(columns.length).to eq(3)
-#          expect(columns[0].text).to eq('')
-#          expect(columns[1].text).to eq('')
-#          expect(columns[2].text).to eq('')
-#          expect(@driver.find_element(:id => 'LogContainer').displayed?).to be_true
-#          expect(@driver.find_element(:id => 'LogLink').text).to eq(columns[0].text)
-#          expect(@driver.find_element(:id => 'LogContents').text).to eq('')
-#        end
+        it 'has contents' do
+          row = get_first_row
+          row.click
+          columns = row.find_elements(:tag_name => 'td')
+          expect(columns.length).to eq(3)
+          expect(columns[0].text).to eq(log_file_displayed)
+          expect(columns[1].text).to eq(log_file_displayed_contents_length.to_s)
+          expect(columns[2].text).to eq(@driver.execute_script("return Format.formatDateNumber(#{ log_file_displayed_modified_milliseconds })"))
+          expect(@driver.find_element(:id => 'LogContainer').displayed?).to be_true
+          expect(@driver.find_element(:id => 'LogLink').text).to eq(columns[0].text)
+          expect(@driver.find_element(:id => 'LogContents').text).to eq(log_file_displayed_contents)
+        end
       end
 
       context 'Tasks' do
         let(:tab_id) { 'Tasks' }
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='TasksTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                          :expected_length => 3,
-                          :labels          => %w(Command State Started),
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='TasksTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                 :expected_length => 3,
+                                 :labels          => %w(Command State Started),
+                                 :colspans        => nil
+                               }
+                             ])
+        end
+        it 'can show task output' do
+          expect(@driver.find_element(:xpath => "//table[@id='TasksTable']/tbody/tr").text).to eq('No data available in table')
+          @driver.find_element(:id => 'DEAs').click
+          @driver.find_element(:id => 'DEAsCreateButton').click
+          @driver.find_element(:id => 'DialogOkayButton').click
+          @driver.find_element(:id => 'Tasks').click
+          expect(@driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr").length).to eq(1)
+          cells = @driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr/td")
+          expect(cells[0].text).to eq(File.join(File.dirname(__FILE__)[0..-17], 'lib/admin/scripts', 'newDEA.sh'))
+          expect(cells[1].text).to eq(@driver.execute_script('return Constants.STATUS__RUNNING'))
+          @driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr")[0].click
+          expect(@driver.find_element(:id => 'TaskContents').text.length > 0).to be_true
         end
       end
 
       context 'Stats' do
         let(:tab_id) { 'Stats' }
         it 'has a table' do
-          check_table([
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='StatsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                          :expected_length => 3,
-                          :labels          => ['', 'Instances', ''],
-                          :colspans        => %w(5 2 1)
-                        },
-                        {
-                          :columns         => @driver.find_elements(:xpath => "//div[@id='StatsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                          :expected_length => 8,
-                          :labels          => %w(Date Organizations Spaces Users Apps Total Running DEAs),
-                          :colspans        => nil
-                        }
-                      ])
+          check_table_layout([
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='StatsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                 :expected_length => 3,
+                                 :labels          => ['', 'Instances', ''],
+                                 :colspans        => %w(5 2 1)
+                               },
+                               {
+                                 :columns         => @driver.find_elements(:xpath => "//div[@id='StatsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                 :expected_length => 8,
+                                 :labels          => %w(Date Organizations Spaces Users Apps Total Running DEAs),
+                                 :colspans        => nil
+                               }
+                             ])
+        end
+        it 'can show current stats' do
+          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
+          @driver.find_element(:id => 'StatsCreateButton').click
+          rows = @driver.find_elements(:xpath => "//span[@id='DialogText']/div/table/tbody/tr")
+          rows.each do |row|
+            expect(row.find_element(:class_name => 'cellRightAlign').text).to eq('1')
+          end
+          @driver.find_element(:id => 'DialogCancelButton').click
+          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
+        end
+        it 'can create stats' do
+          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
+          @driver.find_element(:id => 'StatsCreateButton').click
+          @driver.find_element(:id => 'DialogOkayButton').click
+          Selenium::WebDriver::Wait.new(:timeout => 2).until { @driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text != 'No data available in table' }
+          cells = @driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td")
+          expect(cells[0].text.length > 0).to be_true
+          expect(cells[1].text).to eq(cc_organizations['resources'].length.to_s)
+          expect(cells[2].text).to eq(cc_spaces['resources'].length.to_s)
+          expect(cells[3].text).to eq(uaa_users['resources'].length.to_s)
+          expect(cells[4].text).to eq(cc_apps['resources'].length.to_s)
+          expect(cells[5].text).to eq('1')
+          expect(cells[6].text).to eq('1')
+          expect(cells[7].text).to eq('1')
         end
         it 'has a chart' do
           expect(@driver.find_element(:id => 'StatsChart').displayed?).to be_true
