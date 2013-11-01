@@ -15,6 +15,10 @@ describe AdminUI::NATS do
   let(:email) { AdminUI::EMail.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
 
+  before do
+    AdminUI::Config.any_instance.stub(:validate)
+  end
+
   after do
     Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ log_file }"))
   end

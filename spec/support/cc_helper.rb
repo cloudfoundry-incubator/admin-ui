@@ -62,6 +62,7 @@ module CCHelper
             'instances'          => 1,
             'memory'             => 11,
             'name'               => 'test',
+            'package_state'      => 'STAGED',
             'space_guid'         => 'space1',
             'state'              => 'STARTED'
           }

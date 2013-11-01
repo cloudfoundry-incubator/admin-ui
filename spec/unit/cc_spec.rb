@@ -10,6 +10,10 @@ describe AdminUI::CC do
   end
   let(:cc) { AdminUI::CC.new(config, logger) }
 
+  before do
+    AdminUI::Config.any_instance.stub(:validate)
+  end
+
   after do
     Process.wait(Process.spawn({}, "rm -fr #{ log_file }"))
   end

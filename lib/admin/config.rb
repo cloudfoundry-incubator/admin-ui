@@ -1,3 +1,5 @@
+require 'membrane'
+
 module AdminUI
   class Config
     DEFAULTS_CONFIG =
@@ -5,8 +7,11 @@ module AdminUI
       :cloud_controller_discovery_interval =>    300,
       :component_connection_retries        =>      2,
       :log_file_page_size                  => 51_200,
+      :log_files                           =>     [],
+      :monitored_components                =>     [],
       :nats_discovery_interval             =>     30,
       :nats_discovery_timeout              =>     10,
+      :receiver_emails                     =>     [],
       :stats_refresh_time                  => 60 * 5,
       :stats_retries                       =>      5,
       :stats_retry_interval                =>    300,
@@ -14,8 +19,62 @@ module AdminUI
       :varz_discovery_interval             =>     30
     }
 
+    def self.schema
+      ::Membrane::SchemaParser.parse do
+        {
+          optional(:cloud_controller_discovery_interval) => Integer,
+          :cloud_controller_uri                          => %r(http://[^\r\n\t]+),
+          optional(:component_connection_retries)        => Integer,
+          :data_file                                     => /[^\r\n\t]+/,
+          :log_file                                      => /[^\r\n\t]+/,
+          optional(:log_file_page_size)                  => Integer,
+          optional(:log_files)                           => [String],
+          :mbus                                          => %r(nats://[^\r\n\t]+),
+          optional(:monitored_components)                => [/[^\r\n\t]+/],
+          optional(:nats_discovery_interval)             => Integer,
+          optional(:nats_discovery_timeout)              => Integer,
+          :port                                          => Integer,
+          optional(:receiver_emails)                     => [/[^\r\n\t]+/],
+          optional(:sender_email)                        =>
+          {
+            :server  => /[^\r\n\t]+/,
+            :account => /[^\r\n\t]+/
+          },
+
+          :stats_file                                    => /[^\r\n\t]+/,
+          optional(:stats_refresh_time)                  => Integer,
+          optional(:stats_retries)                       => Integer,
+          optional(:stats_retry_interval)                => Integer,
+          optional(:tasks_refresh_interval)              => Integer,
+          :uaa_admin_credentials                         =>
+          {
+            :username => /[^\r\n\t]+/,
+            :password => /[^\r\n\t]+/
+          },
+
+          :ui_credentials                                =>
+          {
+            :username => /[^\r\n\t]+/,
+            :password => /[^\r\n\t]+/
+          },
+
+          :ui_admin_credentials                          =>
+          {
+            :username => /[^\r\n\t]+/,
+            :password => /[^\r\n\t]+/
+          },
+
+          optional(:varz_discovery_interval)             => Integer
+        }
+      end
+    end
+
     def self.load(config)
-      Config.new(config)
+      Config.new(config).tap(&:validate)
+    end
+
+    def validate
+      self.class.schema.validate(@config)
     end
 
     def cloud_controller_discovery_interval

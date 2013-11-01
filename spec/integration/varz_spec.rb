@@ -9,6 +9,7 @@ describe AdminUI::VARZ, :type => :integration do
   let(:log_file) { '/tmp/admin_ui.log' }
 
   before do
+    AdminUI::Config.any_instance.stub(:validate)
     nats_stub
   end
 

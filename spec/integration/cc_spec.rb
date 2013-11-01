@@ -13,6 +13,7 @@ describe AdminUI::CC, :type => :integration do
   end
 
   before do
+    AdminUI::Config.any_instance.stub(:validate)
     cc_stub(config)
   end
 

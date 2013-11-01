@@ -1,35 +1,10 @@
 require 'rubygems'
-require 'selenium-webdriver'
-require_relative '../spec_helper'
-
-RSpec.configure do |config|
-  firefox_exists = false
-  begin
-    firefox_exists = File.exists?(Selenium::WebDriver::Firefox::Binary.path)
-  rescue
-  end
-  config.filter_run_excluding :firefox_available => true unless firefox_exists
-end
+require_relative '../../spec_helper'
+require_relative '../../support/web_helper'
 
 describe AdminUI::Admin, :type => :integration, :firefox_available => true do
   include_context :server_context
-
-  before do
-    @driver = Selenium::WebDriver.for :firefox
-    @driver.manage.timeouts.implicit_wait = 5
-  end
-
-  after do
-    @driver.quit
-  end
-
-  def login(username, password, target_page)
-    @driver.get "http://#{ host }:#{ port }"
-    @driver.find_element(:id => 'username').send_keys username
-    @driver.find_element(:id => 'password').send_keys password
-    @driver.find_element(:id => 'username').submit
-    Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.title == target_page }
-  end
+  include_context :web_context
 
   it 'requires valid credentials' do
     login(admin_user, 'bad_password', 'Login')
@@ -76,74 +51,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         expect(@driver.find_element(:id => "#{ tab_id }Page").displayed?).to be_true
       end
 
-      def check_table_layout(columns_array)
-        expect(@driver.find_element(:id => "#{ tab_id }Table").displayed?).to be_true
-        columns_array.each do |columns|
-          check_table_headers(columns)
-        end
-      end
-
-      def check_table_headers(headRow)
-        expect(headRow[:columns]).to_not be_nil
-        expect(headRow[:columns].length).to eq(headRow[:expected_length])
-        column_index = 0
-        while column_index < headRow[:expected_length]
-          expect(headRow[:columns][column_index].text).to eq(headRow[:labels][column_index])
-          unless headRow[:colspans].nil?
-            expect(headRow[:columns][column_index].attribute('colspan')).to eq(headRow[:colspans][column_index])
-          end
-          column_index += 1
-        end
-      end
-
-      def check_table_data(cells, expected_values)
-        index = 0
-        while index < expected_values.length
-          expect(cells[index].text).to eq(expected_values[index])
-          index += 1
-        end
-      end
-
-      def get_first_row
-        @driver.find_elements(:xpath => "//table[@id='#{ tab_id }Table']/tbody/tr")[0]
-      end
-
-      def select_first_row
-        get_first_row.click
-      end
-
-      def check_filter_link(tab_id, link_index, target_tab_id, expected_filter)
-        @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(:tag_name => 'a').click
-        expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq(target_tab_id)
-        expect(@driver.find_element(:id => "#{ target_tab_id }Table_filter").find_element(:tag_name => 'input').attribute('value')).to eq(expected_filter)
-      end
-
-      def check_select_link(tab_id, link_index, target_tab_id, expected_name)
-        @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(:tag_name => 'a').click
-        expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq(target_tab_id)
-        expect(@driver.find_element(:xpath => "//table[@id='#{ target_tab_id }Table']/tbody/tr[contains(@class, 'DTTT_selected')]/td[1]").text).to eq(expected_name)
-        expect(@driver.find_element(:id => "#{ target_tab_id }DetailsLabel").displayed?).to be_true
-        expect(@driver.find_elements(:xpath => "//div[@id='#{ target_tab_id }PropertiesContainer']/table/tr[*]/td[2]")[0].text).to eq(expected_name)
-      end
-
-      def check_details(expected_properties)
-        expect(@driver.find_element(:id => "#{ tab_id }DetailsLabel").displayed?).to be_true
-        properties = @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[1]")
-        values     = @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]")
-        property_index = 0
-        expected_properties.each do |expected_property|
-          expect(properties[property_index].text).to eq("#{ expected_property[:label] }:")
-          if expected_property[:tag].nil?
-            value = values[property_index].text
-          else
-            value = values[property_index].find_element(:tag_name => expected_property[:tag]).text
-          end
-            expect(value).to eq(expected_property[:value])
-          property_index += 1
-        end
-      end
-
-      context 'organizations' do
+      context 'Organizations' do
         let(:tab_id) { 'Organizations' }
         it 'has a table' do
           check_table_layout([
@@ -170,9 +78,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_apps['resources'].length.to_s,
                              cc_apps['resources'][0]['entity']['state'] == 'STARTED' ? '1' : '0',
                              cc_apps['resources'][0]['entity']['state'] == 'STOPPED' ? '1' : '0',
-                             cc_apps['resources'][0]['entity']['state'] == 'PENDING' ? '1' : '0',
-                             cc_apps['resources'][0]['entity']['state'] == 'STAGED'  ? '1' : '0',
-                             cc_apps['resources'][0]['entity']['state'] == 'FAILED'  ? '1' : '0'
+                             cc_apps['resources'][0]['entity']['package_state'] == 'PENDING' ? '1' : '0',
+                             cc_apps['resources'][0]['entity']['package_state'] == 'STAGED'  ? '1' : '0',
+                             cc_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? '1' : '0'
                            ])
         end
         context 'selectable' do
@@ -190,9 +98,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                             { :label => 'Total Apps',      :tag =>   'a', :value => cc_apps['resources'].length.to_s },
                             { :label => 'Started Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STARTED' ? '1' : '0' },
                             { :label => 'Stopped Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STOPPED' ? '1' : '0' },
-                            { :label => 'Pending Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'PENDING' ? '1' : '0' },
-                            { :label => 'Staged Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STAGED'  ? '1' : '0' },
-                            { :label => 'Failed Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'FAILED'  ? '1' : '0' }
+                            { :label => 'Pending Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'PENDING' ? '1' : '0' },
+                            { :label => 'Staged Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'STAGED'  ? '1' : '0' },
+                            { :label => 'Failed Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? '1' : '0' }
                           ])
           end
           it 'has spaces link' do
@@ -234,9 +142,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_apps['resources'].length.to_s,
                              cc_apps['resources'][0]['entity']['state'] == 'STARTED' ? '1' : '0',
                              cc_apps['resources'][0]['entity']['state'] == 'STOPPED' ? '1' : '0',
-                             cc_apps['resources'][0]['entity']['state'] == 'PENDING' ? '1' : '0',
-                             cc_apps['resources'][0]['entity']['state'] == 'STAGED'  ? '1' : '0',
-                             cc_apps['resources'][0]['entity']['state'] == 'FAILED'  ? '1' : '0'
+                             cc_apps['resources'][0]['entity']['package_state'] == 'PENDING' ? '1' : '0',
+                             cc_apps['resources'][0]['entity']['package_state'] == 'STAGED'  ? '1' : '0',
+                             cc_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? '1' : '0'
                            ])
         end
         context 'selectable' do
@@ -252,9 +160,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                             { :label => 'Total Apps',   :tag =>   'a', :value => cc_apps['resources'].length.to_s },
                             { :label => 'Started Apps', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STARTED' ? '1' : '0' },
                             { :label => 'Stopped Apps', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STOPPED' ? '1' : '0' },
-                            { :label => 'Pending Apps', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'PENDING' ? '1' : '0' },
-                            { :label => 'Staged Apps',  :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STAGED'  ? '1' : '0' },
-                            { :label => 'Failed Apps',  :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'FAILED'  ? '1' : '0' }
+                            { :label => 'Pending Apps', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'PENDING' ? '1' : '0' },
+                            { :label => 'Staged Apps',  :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'STAGED'  ? '1' : '0' },
+                            { :label => 'Failed Apps',  :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? '1' : '0' }
                           ])
           end
           it 'has organization link' do
@@ -284,7 +192,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            [
                              cc_apps['resources'][0]['entity']['name'],
                              cc_apps['resources'][0]['entity']['state'],
-                             '',
+                             @driver.execute_script('return Constants.STATUS__STAGED'),
                              @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })"),
                              "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }",
                              cc_apps['resources'][0]['entity']['detected_buildpack'],
@@ -306,6 +214,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_details([
                             { :label => 'Name',            :tag => 'div', :value => cc_apps['resources'][0]['entity']['name'] },
                             { :label => 'State',           :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] },
+                            { :label => 'Package State',   :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] },
                             { :label => 'Started',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })") },
                             { :label => 'URI',             :tag =>   'a', :value => "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }" },
                             { :label => 'Buildpack',       :tag =>   nil, :value => cc_apps['resources'][0]['entity']['detected_buildpack'] },
@@ -336,13 +245,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              ])
           end
           it 'has space link' do
-            check_select_link('Applications', 11, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
+            check_select_link('Applications', 12, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
           end
           it 'has organization link' do
-            check_select_link('Applications', 12, 'Organizations', cc_organizations['resources'][0]['entity']['name'])
+            check_select_link('Applications', 13, 'Organizations', cc_organizations['resources'][0]['entity']['name'])
           end
           it 'has DEA link' do
-            check_select_link('Applications', 13, 'DEAs', nats_dea['host'])
+            check_select_link('Applications', 14, 'DEAs', nats_dea['host'])
           end
         end
       end
@@ -430,6 +339,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })"),
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })")
                            ])
+        end
+        it 'has a create DEA button' do
+          expect(@driver.find_element(:id => 'DEAsCreateButton').displayed?).to be_true
         end
         context 'selectable' do
           before do
@@ -680,6 +592,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")")
                            ])
         end
+        it 'has a remove all components button' do
+          expect(@driver.find_element(:id => 'ComponentsRemoveAllButton').displayed?).to be_true
+        end
         context 'selectable' do
           it 'has details' do
             select_first_row
@@ -740,7 +655,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           @driver.find_element(:id => 'Tasks').click
           expect(@driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr").length).to eq(1)
           cells = @driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr/td")
-          expect(cells[0].text).to eq(File.join(File.dirname(__FILE__)[0..-17], 'lib/admin/scripts', 'newDEA.sh'))
+          expect(cells[0].text).to eq(File.join(File.dirname(__FILE__)[0..-22], 'lib/admin/scripts', 'newDEA.sh'))
           expect(cells[1].text).to eq(@driver.execute_script('return Constants.STATUS__RUNNING'))
           @driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr")[0].click
           expect(@driver.find_element(:id => 'TaskContents').text.length > 0).to be_true
@@ -749,25 +664,22 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Stats' do
         let(:tab_id) { 'Stats' }
-        it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='StatsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                                 :expected_length => 3,
-                                 :labels          => ['', 'Instances', ''],
-                                 :colspans        => %w(5 2 1)
-                               },
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='StatsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                 :expected_length => 8,
-                                 :labels          => %w(Date Organizations Spaces Users Apps Total Running DEAs),
-                                 :colspans        => nil
-                               }
-                             ])
+        context 'statistics' do
+          before do
+            add_stats
+            @driver.find_element(:id => 'RefreshButton').click
+          end
+          it 'has a table' do
+            check_stats_table('Stats')
+          end
+          it 'has a chart' do
+            check_stats_chart('Stats')
+          end
         end
         it 'can show current stats' do
           expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
           @driver.find_element(:id => 'StatsCreateButton').click
+          expect(@driver.find_element(:xpath => "//span[@id='DialogText']/span").text.length > 0).to be_true
           rows = @driver.find_elements(:xpath => "//span[@id='DialogText']/div/table/tbody/tr")
           rows.each do |row|
             expect(row.find_element(:class_name => 'cellRightAlign').text).to eq('1')
@@ -778,20 +690,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         it 'can create stats' do
           expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
           @driver.find_element(:id => 'StatsCreateButton').click
+          date = @driver.find_element(:xpath => "//span[@id='DialogText']/span").text
           @driver.find_element(:id => 'DialogOkayButton').click
           Selenium::WebDriver::Wait.new(:timeout => 2).until { @driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text != 'No data available in table' }
-          cells = @driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td")
-          expect(cells[0].text.length > 0).to be_true
-          expect(cells[1].text).to eq(cc_organizations['resources'].length.to_s)
-          expect(cells[2].text).to eq(cc_spaces['resources'].length.to_s)
-          expect(cells[3].text).to eq(uaa_users['resources'].length.to_s)
-          expect(cells[4].text).to eq(cc_apps['resources'].length.to_s)
-          expect(cells[5].text).to eq('1')
-          expect(cells[6].text).to eq('1')
-          expect(cells[7].text).to eq('1')
-        end
-        it 'has a chart' do
-          expect(@driver.find_element(:id => 'StatsChart').displayed?).to be_true
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td"), [date, '1', '1', '1', '1', '1', '1', '1'])
         end
       end
     end

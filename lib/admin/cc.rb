@@ -358,7 +358,7 @@ module AdminUI
           login
           recent_login = true
         else
-          fail "Unexected response code from get is #{ response_code }, message #{ response.message }"
+          fail "Unexected response code from get is #{ response.code }, message #{ response.message }"
         end
       end
     end

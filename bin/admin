@@ -18,19 +18,6 @@ Ctrl-C to cleanly terminate
 
 "
 
-REQUIRED_OPTIONS = %w(cloud_controller_uri
-                      data_file
-                      log_file
-                      log_files
-                      mbus
-                      monitored_components
-                      receiver_emails
-                      sender_email
-                      stats_file port
-                      uaa_admin_credentials
-                      ui_admin_credentials
-                      ui_credentials)
-
 # default configuration file
 config_file = File.join(File.dirname(__FILE__), '..', 'config', 'default.yml')
 
@@ -51,13 +38,7 @@ end.parse!
 begin
   @config = YAML.load_file(config_file)
 rescue => exception
-  puts "Can't read config file: #{ exception }"
-  exit 1
-end
-
-missing_options = REQUIRED_OPTIONS.select { |option| !@config.key? option }
-unless missing_options.empty?
-  puts "Missing required options: #{ missing_options.join(", ") }"
+  puts "Can't load config file: #{ exception }"
   exit 1
 end
 
