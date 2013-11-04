@@ -74,6 +74,7 @@ module VARZHelper
             'application_id'          => 'application1',
             'application_name'        => 'test',
             'application_uris'        => ['test.localhost.com'],
+            'computed_pcpu'           => 0.12118232960961232,
             'droplet_sha1'            => 'droplet1',
             'limits'                  =>
             {
@@ -93,7 +94,9 @@ module VARZHelper
               }
             ],
             'state'                   => 'RUNNING',
-            'state_running_timestamp' => 1382448059.0734425
+            'state_running_timestamp' => 1382448059.0734425,
+            'used_disk_in_bytes'      => 56_057_856,
+            'used_memory_in_bytes'    => 19_292_160,
           }
         }
       }
