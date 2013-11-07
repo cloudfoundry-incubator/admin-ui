@@ -15,6 +15,9 @@ GEM
       eventmachine (>= 0.12.10)
       json_pure (>= 1.7.3)
       thin (>= 1.4.1)
+    net-sftp (2.1.2)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.7.0)
     rack (1.5.2)
     rack-protection (1.5.1)
       rack
@@ -50,6 +53,7 @@ PLATFORMS
 DEPENDENCIES
   membrane (= 0.0.2)
   nats (= 0.4.26)
+  net-sftp (= 2.1.2)
   rspec
   selenium-webdriver
   sinatra (= 1.4.2)

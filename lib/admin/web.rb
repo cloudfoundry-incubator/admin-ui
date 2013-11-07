@@ -53,7 +53,7 @@ module AdminUI
     end
 
     get '/download', :auth => [:user] do
-      file = @log_files.log_file(params['path'])
+      file = @log_files.file(params['path'])
       if file.nil?
         redirect_to_login
       else
@@ -75,7 +75,7 @@ module AdminUI
     end
 
     get '/log', :auth => [:user] do
-      result = @log_files.log_content(params['path'], params['start'])
+      result = @log_files.content(params['path'], params['start'])
       if result.nil?
         redirect_to_login
       else
@@ -84,7 +84,7 @@ module AdminUI
     end
 
     get '/logs', :auth => [:user] do
-      { :items => @log_files.logs_info }.to_json
+      { :items => @log_files.infos }.to_json
     end
 
     get '/organizations', :auth => [:user] do

@@ -122,12 +122,30 @@ Size of each log file page in bytes.
 Example: <code>51200</code>
 </dd>
 <dt>
+<code>log_file_sftp_keys</code>
+</dt>
+<dd>
+Key files in a comma-delimited array to use to access logs using SFTP.
+<br>
+Example: <code>[/some_directory/some_key.pem]</code>
+</dd>
+<dt>
 <code>log_files</code>
 </dt>
 <dd>
-Log files in a comma-delimited array being exposed through the administration ui. Note that these files must be accessible by the user that started the administration ui.
+Log files in a comma-delimited array being exposed through the administration ui. Note that these files must be accessible by the user that started the administration ui.  These files can either be found on a file system accessible by the local system or as an SFTP URI.  In the case of SFTP, both
+user:password and user with pem files are supported.  If the SFTP password is not specified, the key files specified in log_file_sftp_keys will be used. <br>
+Example <code>[/var/vcap/sys/log/cloud_controller_ng/cloud_controller_ng.log]</code>
 <br>
 Example <code>[/var/vcap/sys/log/cloud_controller_ng/*.log]</code>
+<br>
+Example <code>[/var/vcap/sys/log/**/*.log]</code>
+<br>
+Example <code>[sftp://someuser:somepassword@10.10.10.10/path/file.log]</code>
+<br>
+Example <code>[sftp://someuser@10.10.10.10/path/*.log]</code>
+<br>
+Example <code>[sftp://someuser:somepassword@10.10.10.10/path/**/*.log]</code>
 </dd>
 <dt>
 <code><b>mbus</b></code>

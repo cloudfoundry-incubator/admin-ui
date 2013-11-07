@@ -43,6 +43,12 @@ describe AdminUI::Config do
         expect(config.log_file_page_size).to eq(log_file_page_size)
       end
 
+      it 'log_file_sftp_keys' do
+        log_file_sftp_keys = ['bogus1.pem', 'bogus2.pem']
+        config = AdminUI::Config.load('log_file_sftp_keys' => log_file_sftp_keys)
+        expect(config.log_file_sftp_keys).to eq(log_file_sftp_keys)
+      end
+
       it 'log_files' do
         log_files = %w(file1 file2)
         config = AdminUI::Config.load('log_files' => log_files)
@@ -201,6 +207,10 @@ describe AdminUI::Config do
         expect(config.log_file_page_size).to eq(51_200)
       end
 
+      it 'log_file_sftp_keys' do
+        expect(config.log_file_sftp_keys).to eq([])
+      end
+
       it 'log_files' do
         expect(config.log_files).to eq([])
       end
@@ -337,6 +347,10 @@ describe AdminUI::Config do
 
       it 'log_file_page_size' do
         expect { AdminUI::Config.load(config.merge(:log_file_page_size => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'log_file_sftp_keys' do
+        expect { AdminUI::Config.load(config.merge(:log_file_sftp_keys => [1, 2, 3])) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'log_files' do

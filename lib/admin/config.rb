@@ -7,6 +7,7 @@ module AdminUI
       :cloud_controller_discovery_interval =>    300,
       :component_connection_retries        =>      2,
       :log_file_page_size                  => 51_200,
+      :log_file_sftp_keys                  =>     [],
       :log_files                           =>     [],
       :monitored_components                =>     [],
       :nats_discovery_interval             =>     30,
@@ -27,6 +28,7 @@ module AdminUI
           optional(:component_connection_retries)        => Integer,
           :data_file                                     => /[^\r\n\t]+/,
           :log_file                                      => /[^\r\n\t]+/,
+          optional(:log_file_sftp_keys)                  => [String],
           optional(:log_file_page_size)                  => Integer,
           optional(:log_files)                           => [String],
           :mbus                                          => %r(nats://[^\r\n\t]+),
@@ -99,6 +101,10 @@ module AdminUI
 
     def log_file_page_size
       @config[:log_file_page_size]
+    end
+
+    def log_file_sftp_keys
+      @config[:log_file_sftp_keys]
     end
 
     def log_files
