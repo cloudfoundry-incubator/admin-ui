@@ -70,7 +70,7 @@ module AdminUI
                              @tasks,
                              @varz)
 
-      Rack::Handler::WEBrick.run web, { :Port => @config.port }
+      Rack::Handler::WEBrick.run(web, :Port => @config.port)
     end
   end
 end

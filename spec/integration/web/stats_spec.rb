@@ -11,7 +11,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
   before do
     add_stats
     @driver.get "http://#{ host }:#{ port }/stats"
-    Selenium::WebDriver::Wait.new(:timeout => 2).until { @driver.title == 'Statistics' }
+    Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.title == 'Statistics' }
   end
 
   it 'has a table' do

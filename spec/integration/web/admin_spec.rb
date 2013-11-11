@@ -491,18 +491,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
               @capacity += node[1]['available_capacity']
             end
           end
-          services = 0
-          varz_provisioner['prov_svcs'].each do |service|
-            services += 1 if service[1]['configuration']['data'].nil?
-          end
-          @percent_available_capacity = @capacity > 0 ? ((@capacity.to_f / (services + @capacity).to_f) * 100).round.to_i : 0
         end
         it 'has a table' do
           check_table_layout([
                                {
                                  :columns         => @driver.find_elements(:xpath => "//div[@id='GatewaysTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                                 :expected_length => 10,
-                                 :labels          => ['Name', 'State', 'Started', 'Description', 'CPU', 'Memory', 'Nodes', "Provisioned\nServices", "Available\nCapacity", "% Available\nCapacity"],
+                                 :expected_length => 8,
+                                 :labels          => ['Name', 'State', 'Started', 'Description', 'CPU', 'Memory', 'Nodes', "Available\nCapacity"],
                                  :colspans        => nil
                                }
                              ])
@@ -515,9 +510,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              varz_provisioner['cpu'].to_s,
                              varz_provisioner['mem'].to_s,
                              varz_provisioner['nodes'].length.to_s,
-                             varz_provisioner['prov_svcs'].length.to_s,
-                             @capacity.to_s,
-                             @percent_available_capacity.to_s
+                             @capacity.to_s
                            ])
         end
         context 'selectable' do
@@ -535,8 +528,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                             { :label => 'Cores',                :tag => nil, :value => varz_provisioner['num_cores'].to_s },
                             { :label => 'CPU',                  :tag => nil, :value => varz_provisioner['cpu'].to_s },
                             { :label => 'Memory',               :tag => nil, :value => varz_provisioner['mem'].to_s },
-                            { :label => 'Provisioned Services', :tag => nil, :value => varz_provisioner['prov_svcs'].length.to_s },
-                            { :label => 'Available Capacity',   :tag => nil, :value => "#{ @capacity} (#{ @percent_available_capacity }%)" }
+                            { :label => 'Available Capacity',   :tag => nil, :value => "#{ @capacity}" }
                           ])
           end
           it 'has nodes' do
@@ -721,7 +713,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           @driver.find_element(:id => 'StatsCreateButton').click
           date = @driver.find_element(:xpath => "//span[@id='DialogText']/span").text
           @driver.find_element(:id => 'DialogOkayButton').click
-          Selenium::WebDriver::Wait.new(:timeout => 2).until { @driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text != 'No data available in table' }
+          Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text != 'No data available in table' }
           check_table_data(@driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td"), [date, '1', '1', '1', '1', '1', '1', '1'])
         end
       end
