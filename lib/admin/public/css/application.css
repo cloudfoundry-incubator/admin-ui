@@ -172,15 +172,6 @@ a
     text-decoration: underline;
 }
 
-.tableActionButton
-{
-    cursor: pointer;
-    float: right; 
-    position: relative; 
-    top: 10px; 
-    right: 17px;
-}
-
 .content
 {
     height: 100%;

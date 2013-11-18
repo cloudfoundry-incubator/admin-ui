@@ -47,7 +47,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     context 'tabs' do
       before do
         @driver.find_element(:id => tab_id).click
-        expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq(tab_id)
+        Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == tab_id }
         expect(@driver.find_element(:id => "#{ tab_id }Page").displayed?).to be_true
       end
 
@@ -370,7 +370,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
         it 'has a create DEA button' do
-          expect(@driver.find_element(:id => 'DEAsCreateButton').displayed?).to be_true
+          expect(@driver.find_element(:id => 'ToolTables_DEAsTable_0').text).to eq('Create new DEA')
         end
         context 'selectable' do
           before do
@@ -613,8 +613,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")")
                            ])
         end
-        it 'has a remove all components button' do
-          expect(@driver.find_element(:id => 'ComponentsRemoveAllButton').displayed?).to be_true
+        it 'has a remove OFFLINE components button' do
+          expect(@driver.find_element(:id => 'ToolTables_ComponentsTable_0').text).to eq('Remove OFFLINE')
         end
         context 'selectable' do
           it 'has details' do
@@ -671,7 +671,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         it 'can show task output' do
           expect(@driver.find_element(:xpath => "//table[@id='TasksTable']/tbody/tr").text).to eq('No data available in table')
           @driver.find_element(:id => 'DEAs').click
-          @driver.find_element(:id => 'DEAsCreateButton').click
+          @driver.find_element(:id => 'ToolTables_DEAsTable_0').click
           @driver.find_element(:id => 'DialogOkayButton').click
           @driver.find_element(:id => 'Tasks').click
           expect(@driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr").length).to eq(1)
@@ -699,7 +699,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
         it 'can show current stats' do
           expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
-          @driver.find_element(:id => 'StatsCreateButton').click
+          @driver.find_element(:id => 'ToolTables_StatsTable_0').click
           expect(@driver.find_element(:xpath => "//span[@id='DialogText']/span").text.length > 0).to be_true
           rows = @driver.find_elements(:xpath => "//span[@id='DialogText']/div/table/tbody/tr")
           rows.each do |row|
@@ -710,7 +710,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
         it 'can create stats' do
           expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
-          @driver.find_element(:id => 'StatsCreateButton').click
+          @driver.find_element(:id => 'ToolTables_StatsTable_0').click
           date = @driver.find_element(:xpath => "//span[@id='DialogText']/span").text
           @driver.find_element(:id => 'DialogOkayButton').click
           Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text != 'No data available in table' }

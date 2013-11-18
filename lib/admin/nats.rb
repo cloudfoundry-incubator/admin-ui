@@ -31,26 +31,18 @@ module AdminUI
       end
     end
 
-    def remove(uri)
-      if uri.nil?
-        @semaphore.synchronize do
-          @use_cache = false
+    def remove(uris)
+      @semaphore.synchronize do
+        if File.exists?(@config.data_file)
+          @cache = JSON.parse(IO.read(@config.data_file))
 
-          @condition.broadcast
-
-          @condition.wait(@semaphore) until @use_cache
-        end
-      else
-        @semaphore.synchronize do
-          if File.exists?(@config.data_file)
-            @cache = JSON.parse(IO.read(@config.data_file))
-
+          uris.each do |uri|
             @cache['items'].delete(uri)
             @cache['notified'].delete(uri)
+          end
 
-            File.open(@config.data_file, 'w') do |file|
-              file.write(JSON.pretty_generate(@cache))
-            end
+          File.open(@config.data_file, 'w') do |file|
+            file.write(JSON.pretty_generate(@cache))
           end
         end
       end

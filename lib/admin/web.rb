@@ -186,12 +186,9 @@ module AdminUI
     end
 
     delete '/components', :auth => [:user] do
-      uri = params['uri']
-      @varz.remove(uri)
+      @varz.remove(params['uri'])
 
-      @cc.reload if uri.nil?
-
-      [200, { :uri => uri }.to_json]
+      204
     end
 
     private

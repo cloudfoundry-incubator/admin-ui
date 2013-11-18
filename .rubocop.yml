@@ -1,6 +1,9 @@
 ClassLength:
   Enabled: false
 
+CyclomaticComplexity:
+  Enabled: false
+
 Documentation:
   Enabled: false
 

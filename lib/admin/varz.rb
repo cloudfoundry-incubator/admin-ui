@@ -56,20 +56,25 @@ module AdminUI
       end
     end
 
-    def remove(uri)
-      @nats.remove(uri)
+    def remove(uri_parameter)
+      @semaphore.synchronize do
+        unless @cache.nil?
+          uris = []
+          if uri_parameter.nil?
+            @cache['items'].each do |uri, item|
+              uris.push(uri) unless item['connected']
+            end
+          else
+            uris.push(uri_parameter)
+          end
 
-      if uri.nil?
-        @semaphore.synchronize do
-          @cache = nil
-          @condition.broadcast
-          @condition.wait(@semaphore) while @cache.nil?
+          @nats.remove(uris)
+
+          uris.each do |uri|
+            @cache['items'].delete(uri)
+          end
         end
-      else
-        @semaphore.synchronize do
-          @cache['items'].delete(uri) unless @cache.nil?
-          @condition.broadcast
-        end
+        @condition.broadcast
       end
     end
 

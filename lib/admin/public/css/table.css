@@ -1,13 +1,15 @@
 
 div.DTTT_container
 {
-    float: right;
     margin: 4px 2px 4px 6px;
 }
 
 button.DTTT_button, div.DTTT_button, a.DTTT_button
 {
-    font-size: .8em;
+    font-size: .75em;
+    border-radius: 3px;
+    margin-top: 3px;
+    padding: 3px 9px;
 }
 
 .dataTables_scroll
@@ -124,11 +126,15 @@ table.customTable th
     background-color: rgb(170, 170, 170);
 }
 
+table.dataTable thead th
+{
+    border-bottom: 1px solid rgb(120, 120, 120);
+}
+
 table.customTable tr.customTableHeaderGroup th
 {
     text-align: center;
     cursor: default;
-    background-color:
 }
 
 table.customTable th
@@ -183,33 +189,50 @@ table.customTable thead th.sorting
     background: rgb(170, 170, 170) url('../images/sort_both.png') no-repeat right center;
 }
 
-a.paginate_button,
-a.paginate_active
+.paging_full_numbers
 {
+    line-height: 19px;
+}
+
+.paging_full_numbers a.paginate_button,
+.paging_full_numbers a.paginate_button_disabled,
+.paging_full_numbers a.paginate_active
+{
+    border-radius: 3px;
     display: inline-block;
-    background-color: rgb(235, 235, 235);
-    border: 1px solid rgb(220, 220, 220);
-    color: rgb(60, 60, 60);
-    padding: 2px 6px;
+    padding: 0px 6px;
+    vertical-align: middle;
     margin-left: 4px;
-    cursor: pointer;
     font-size: .8em;
 }
 
-a.paginate_active
+.paging_full_numbers a.paginate_button
 {
-    background-color: transparent;
+    background-color: rgb(235, 235, 235);
+    border: 1px solid rgb(160, 160, 160);
+    color: rgb(60, 60, 60);
+    cursor: pointer;
+}
+
+.paging_full_numbers a.paginate_active
+{
+    background-color: transparent; 
     border: 1px solid rgb(160, 160, 160);
     color: rgb(80, 80, 80);
     cursor: default;
 }
 
-a.paginate_button_disabled
+.paging_full_numbers a.paginate_button_disabled
 {
     background-color: rgb(220, 220, 220);
     border: 1px solid rgb(210, 210, 210);
-    color: rgb(160, 160, 160);
+    color: rgb(160, 160, 160) !important;
     cursor: default;
+}
+
+.paging_full_numbers a:active
+{
+    outline: none
 }
 
 .paging_full_numbers a:active
@@ -228,6 +251,22 @@ div.dataTables_paginate span>a
     text-align: center;
 }
 
+.paging_full_numbers a.paginate_button:hover
+{
+    background-color: rgb(235, 235, 235);
+    border: 1px solid rgb(180, 180, 180);
+    color: rgb(100, 100, 100) !important;
+    cursor: pointer;
+}
+
+.paging_full_numbers a.paginate_button_disabled:hover
+{
+    background-color: rgb(220, 220, 220);
+    border: 1px solid rgb(210, 210, 210);
+    color: rgb(160, 160, 160) !important;
+    cursor: default;
+}
+
 div.dataTables_info
 {
     padding: 9px 6px 6px 6px;
@@ -241,3 +280,14 @@ table.dataTable tr.DTTT_selected.even td.sorting_1
     background-color: rgb(120, 120, 120);
     color: rgb(220, 220, 220);
 }
+
+table.dataTable tr.odd td.sorting_1
+{
+    background-color: rgb(235, 235, 235);
+}
+
+table.dataTable tr.even td.sorting_1
+{
+    background-color: rgb(227, 227, 227);
+}
+

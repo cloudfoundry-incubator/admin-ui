@@ -6,12 +6,17 @@
         <title>Administration</title>
 
         <link rel="stylesheet" type="text/css" href="css/application.css"/>
-        <link rel="stylesheet" type="text/css" href="css/table.css"/>
 
         <script src="js/external/jquery/jquery-1.9.1.js"></script>
         <script src="js/external/jquery/jquery.base64.js"></script>
-        <script src="js/external/jquery/app.jquery.dataTables.min.js"></script>
-        <script src="js/external/jquery/TableTools.min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="js/external/jquery/DataTables-1.9.4/media/css/jquery.dataTables.css"/>
+        <link rel="stylesheet" type="text/css" href="js/external/jquery/TableTools-2.1.5/media/css/TableTools.css"/>
+
+        <link rel="stylesheet" type="text/css" href="css/table.css"/>
+
+        <script src="js/external/jquery/DataTables-1.9.4/media/js/jquery.dataTables.min.js"></script>
+        <script src="js/external/jquery/TableTools-2.1.5/media/js/TableTools.min.js"></script>
 
         <script src="js/app/constants.js"></script>      
         <script src="js/app/utilities.js"></script>     
@@ -251,10 +256,6 @@
 
                 <div id="DEAsTableContainer" class="pageSection">
 
-                    <span id="DEAsActions" class="tableActionButton hiddenPage">
-                        <img id="DEAsCreateButton" src="images/add.png" title="Create new DEA"/>
-                    </span>
-
                     <table id="DEAsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
@@ -483,10 +484,6 @@
 
                 <div id="ComponentsTableContainer" class="pageSection">
 
-                    <span id="ComponentsActions" class="tableActionButton hiddenPage">
-                        <img id="ComponentsRemoveAllButton" src="images/clear.png" title="Clear data cache"/>
-                    </span>
-
                     <table id="ComponentsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                     </table>
 
@@ -570,10 +567,6 @@
             <div id="StatsPage" class="page hiddenPage">
 
                 <div id="StatsTableContainer" class="pageSection">
-
-                    <span id="StatsActions" class="tableActionButton hiddenPage">
-                        <img id="StatsCreateButton" src="images/add.png"   title="Create Stats"/>
-                    </span>
 
                     <table id="StatsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>

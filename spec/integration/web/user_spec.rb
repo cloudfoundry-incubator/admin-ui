@@ -15,14 +15,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       @driver.find_element(:id => 'DEAs').click
       expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('DEAs')
       expect(@driver.find_element(:id => 'DEAsPage').displayed?).to be_true
-      expect(@driver.find_element(:id => 'DEAsCreateButton').displayed?).to be_false
+      expect(@driver.find_element(:id => 'ToolTables_DEAsTable_0').text).to eq('Copy')
     end
 
     it 'does not have a remove all components button' do
       @driver.find_element(:id => 'Components').click
       expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('Components')
       expect(@driver.find_element(:id => 'ComponentsPage').displayed?).to be_true
-      expect(@driver.find_element(:id => 'ComponentsRemoveAllButton').displayed?).to be_false
+      expect(@driver.find_element(:id => 'ToolTables_ComponentsTable_0').text).to eq('Copy')
     end
 
     it 'does not have a tasks tab' do
@@ -33,7 +33,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       @driver.find_element(:id => 'Stats').click
       expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('Stats')
       expect(@driver.find_element(:id => 'StatsPage').displayed?).to be_true
-      expect(@driver.find_element(:id => 'StatsCreateButton').displayed?).to be_false
+      expect(@driver.find_element(:id => 'ToolTables_StatsTable_0').text).to eq('Copy')
     end
   end
 end
