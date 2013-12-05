@@ -24,7 +24,7 @@ module AdminUI
       ::Membrane::SchemaParser.parse do
         {
           optional(:cloud_controller_discovery_interval) => Integer,
-          :cloud_controller_uri                          => %r(http://[^\r\n\t]+),
+          :cloud_controller_uri                          => %r(http[s]?://[^\r\n\t]+),
           optional(:component_connection_retries)        => Integer,
           :data_file                                     => /[^\r\n\t]+/,
           :log_file                                      => /[^\r\n\t]+/,

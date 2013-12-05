@@ -13,8 +13,9 @@ module AdminUI
       path  = uri.path
       path += "?#{ uri.query }" unless uri.query.nil?
 
-      http    = Net::HTTP.new(uri.host, uri.port)
-      request = Net::HTTP::Get.new(path)
+      http         = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = uri.scheme.to_s.downcase == 'https'
+      request      = Net::HTTP::Get.new(path)
 
       request.basic_auth(basic_auth_array[0], basic_auth_array[1]) unless basic_auth_array.nil? || basic_auth_array.length < 2
       request['Authorization'] = authorization_header unless authorization_header.nil?
@@ -28,8 +29,9 @@ module AdminUI
       path  = uri.path
       path += "?#{ uri.query }" unless uri.query.nil?
 
-      http    = Net::HTTP.new(uri.host, uri.port)
-      request = Net::HTTP::Post.new(path)
+      http         = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = uri.scheme.to_s.downcase == 'https'
+      request      = Net::HTTP::Post.new(path)
 
       request.body = body
       request['Authorization'] = authorization_header

@@ -6,164 +6,118 @@ module AdminUI
       @config = config
       @logger = logger
 
-      @semaphore = Mutex.new
-      @condition = ConditionVariable.new
+      @caches = {}
+      # These keys need to conform to their respective discover_x methods.
+      # For instance applications conforms to discover_applications
+      [:applications, :organizations, :spaces, :users_cc_deep, :users_uaa].each do |key|
+        hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
+        @caches[key] = hash
 
-      @cache = nil
-
-      Thread.new do
-        loop do
-          schedule_discovery
+        Thread.new do
+          loop do
+            schedule_discovery(key, hash)
+          end
         end
       end
     end
 
     def applications
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        @cache[:applications]
-      end
+      result_cache(:applications)
     end
 
     def applications_count
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        @cache[:applications]['items'].length
-      end
+      applications['items'].length
     end
 
     def applications_running_instances
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        instances = 0
-        @cache[:applications]['items'].each do |app|
-          instances += app['instances'] if app['state'] == 'STARTED'
-        end
-
-        instances
+      instances = 0
+      applications['items'].each do |app|
+        instances += app['instances'] if app['state'] == 'STARTED'
       end
+      instances
     end
 
     def applications_total_instances
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        instances = 0
-        @cache[:applications]['items'].each do |app|
-          instances += app['instances']
-        end
-
-        instances
+      instances = 0
+      applications['items'].each do |app|
+        instances += app['instances']
       end
+      instances
     end
 
     def organizations
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        @cache[:organizations]
-      end
+      result_cache(:organizations)
     end
 
     def organizations_count
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        @cache[:organizations]['items'].length
-      end
+      organizations['items'].length
     end
 
     def spaces
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        @cache[:spaces]
-      end
+      result_cache(:spaces)
     end
 
     def spaces_auditors
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        @cache[:spaces_auditors]
+      users_cc_deep = result_cache(:users_cc_deep)
+      if users_cc_deep['connected']
+        discover_spaces_auditors(users_cc_deep)
+      else
+        result
       end
     end
 
     def spaces_count
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        @cache[:spaces]['items'].length
-      end
+      spaces['items'].length
     end
 
     def spaces_developers
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        @cache[:spaces_developers]
+      users_cc_deep = result_cache(:users_cc_deep)
+      if users_cc_deep['connected']
+        discover_spaces_developers(users_cc_deep)
+      else
+        result
       end
     end
 
     def spaces_managers
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        @cache[:spaces_managers]
+      users_cc_deep = result_cache(:users_cc_deep)
+      if users_cc_deep['connected']
+        discover_spaces_managers(users_cc_deep)
+      else
+        result
       end
     end
 
     def users
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        @cache[:users]
-      end
+      result_cache(:users_uaa)
     end
 
     def users_count
-      @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
-        @cache[:users]['items'].length
-      end
-    end
-
-    def reload
-      @semaphore.synchronize do
-        @cache = nil
-        @condition.broadcast
-        @condition.wait(@semaphore) while @cache.nil?
-      end
+      users['items'].length
     end
 
     private
 
-    def schedule_discovery
-      @logger.debug("[#{ @config.cloud_controller_discovery_interval } second interval] Starting CC discovery...")
+    def schedule_discovery(key, hash)
+      key_string = key.to_s
 
-      organizations     = discover_organizations
-      spaces            = discover_spaces
-      applications      = discover_applications
-      users_uaa         = discover_users_uaa
-      users_cc_deep     = discover_users_cc_deep
+      @logger.debug("[#{ @config.cloud_controller_discovery_interval } second interval] Starting CC #{ key_string } discovery...")
 
-      if users_cc_deep['connected']
-        spaces_auditors   = discover_spaces_auditors(users_cc_deep)
-        spaces_developers = discover_spaces_developers(users_cc_deep)
-        spaces_managers   = discover_spaces_managers(users_cc_deep)
-      else
-        spaces_auditors   = result
-        spaces_developers = result
-        spaces_managers   = result
+      result_cache = send("discover_#{ key_string }".to_sym)
+
+      hash[:semaphore].synchronize do
+        @logger.debug("Caching CC #{ key_string } data...")
+        hash[:result] = result_cache
+        hash[:condition].broadcast
+        hash[:condition].wait(hash[:semaphore], @config.cloud_controller_discovery_interval)
       end
+    end
 
-      cache =
-      {
-        :applications      => applications,
-        :organizations     => organizations,
-        :spaces            => spaces,
-        :spaces_auditors   => spaces_auditors,
-        :spaces_developers => spaces_developers,
-        :spaces_managers   => spaces_managers,
-        :users             => users_uaa
-      }
-
-      @semaphore.synchronize do
-        @logger.debug('Caching CC data...')
-        @cache = cache
-        @condition.broadcast
-        @condition.wait(@semaphore, @config.cloud_controller_discovery_interval)
+    def result_cache(key)
+      hash = @caches[key]
+      hash[:semaphore].synchronize do
+        hash[:condition].wait(hash[:semaphore]) while hash[:result].nil?
+        hash[:result]
       end
     end
 
