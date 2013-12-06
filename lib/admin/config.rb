@@ -5,6 +5,7 @@ module AdminUI
     DEFAULTS_CONFIG =
     {
       :cloud_controller_discovery_interval =>    300,
+      :cloud_controller_ssl_verify_none    =>  false,
       :component_connection_retries        =>      2,
       :log_file_page_size                  => 51_200,
       :log_file_sftp_keys                  =>     [],
@@ -24,6 +25,7 @@ module AdminUI
       ::Membrane::SchemaParser.parse do
         {
           optional(:cloud_controller_discovery_interval) => Integer,
+          optional(:cloud_controller_ssl_verify_none)    => bool,
           :cloud_controller_uri                          => %r(http[s]?://[^\r\n\t]+),
           optional(:component_connection_retries)        => Integer,
           :data_file                                     => /[^\r\n\t]+/,
@@ -81,6 +83,10 @@ module AdminUI
 
     def cloud_controller_discovery_interval
       @config[:cloud_controller_discovery_interval]
+    end
+
+    def cloud_controller_ssl_verify_none
+      @config[:cloud_controller_ssl_verify_none]
     end
 
     def cloud_controller_uri

@@ -15,31 +15,31 @@ module CCHelper
   end
 
   def cc_stub(config)
-    AdminUI::Utils.stub(:http_get).with("#{ config.cloud_controller_uri }/info") do
+    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/info") do
       OK.new(cc_info)
     end
 
-    AdminUI::Utils.stub(:http_post).with("#{ authorization_endpoint }/oauth/token", anything, anything) do
+    AdminUI::Utils.stub(:http_post).with(anything, "#{ authorization_endpoint }/oauth/token", anything, anything) do
       OK.new(uaa_oauth)
     end
 
-    AdminUI::Utils.stub(:http_get).with("#{ config.cloud_controller_uri }/v2/apps", anything, anything) do
+    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/apps", anything, anything) do
       OK.new(cc_apps)
     end
 
-    AdminUI::Utils.stub(:http_get).with("#{ config.cloud_controller_uri }/v2/organizations", anything, anything) do
+    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", anything, anything) do
       OK.new(cc_organizations)
     end
 
-    AdminUI::Utils.stub(:http_get).with("#{ config.cloud_controller_uri }/v2/spaces", anything, anything) do
+    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/spaces", anything, anything) do
       OK.new(cc_spaces)
     end
 
-    AdminUI::Utils.stub(:http_get).with("#{ config.cloud_controller_uri }/v2/users?inline-relations-depth=1", anything, anything) do
+    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/users?inline-relations-depth=1", anything, anything) do
       OK.new(cc_users_deep)
     end
 
-    AdminUI::Utils.stub(:http_get).with("#{ token_endpoint }/Users", anything, anything) do
+    AdminUI::Utils.stub(:http_get).with(anything, "#{ token_endpoint }/Users", anything, anything) do
       OK.new(uaa_users)
     end
   end

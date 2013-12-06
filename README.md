@@ -84,6 +84,16 @@ Seconds between cloud controller REST API discoveries
 Example: <code>300</code>
 </dd>
 <dt>
+<code>cloud_controller_ssl_verify_none</code>
+</dt>
+<dd>
+If connection to cloud_controller is https, true to ignore ssl verification
+<br>
+Example: <code>true</code>
+<br>
+Example: <code>false</code>
+</dd>
+<dt>
 <code><b>cloud_controller_uri</b></code>
 </dt>
 <dd>

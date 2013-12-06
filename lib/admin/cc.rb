@@ -305,7 +305,7 @@ module AdminUI
       end
 
       loop do
-        response = Utils.http_get(uri, nil, @token)
+        response = Utils.http_get(@config, uri, nil, @token)
         if response.is_a?(Net::HTTPOK)
           return JSON.parse(response.body)
         elsif !recent_login && response.is_a?(Net::HTTPUnauthorized)
@@ -322,7 +322,8 @@ module AdminUI
 
       @token = nil
 
-      response = Utils.http_post("#{ @authorization_endpoint }/oauth/token",
+      response = Utils.http_post(@config,
+                                 "#{ @authorization_endpoint }/oauth/token",
                                  "grant_type=password&username=#{ @config.uaa_admin_credentials_username }&password=#{ @config.uaa_admin_credentials_password }",
                                  'Basic Y2Y6')
 
@@ -337,7 +338,7 @@ module AdminUI
     def info
       return unless @token_endpoint.nil?
 
-      response = Utils.http_get("#{ @config.cloud_controller_uri }/info")
+      response = Utils.http_get(@config, "#{ @config.cloud_controller_uri }/info")
 
       if response.is_a?(Net::HTTPOK)
         body_json = JSON.parse(response.body)

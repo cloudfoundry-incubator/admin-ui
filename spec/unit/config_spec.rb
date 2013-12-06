@@ -13,6 +13,12 @@ describe AdminUI::Config do
         expect(config.cloud_controller_discovery_interval).to eq(cloud_controller_discovery_interval)
       end
 
+      it 'cloud_controller_ssl_verify_none' do
+        cloud_controller_ssl_verify_none = true
+        config = AdminUI::Config.load('cloud_controller_ssl_verify_none' => true)
+        expect(config.cloud_controller_ssl_verify_none).to eq(cloud_controller_ssl_verify_none)
+      end
+
       it 'cloud_controller_uri' do
         cloud_controller_uri = 'http://api.localhost'
         config = AdminUI::Config.load('cloud_controller_uri' => cloud_controller_uri)
@@ -187,6 +193,10 @@ describe AdminUI::Config do
         expect(config.cloud_controller_discovery_interval).to eq(300)
       end
 
+      it 'cloud_controller_ssl_verify_none' do
+        expect(config.cloud_controller_ssl_verify_none).to eq(false)
+      end
+
       it 'cloud_controller_uri' do
         expect(config.cloud_controller_uri).to be_nil
       end
@@ -329,6 +339,10 @@ describe AdminUI::Config do
         expect { AdminUI::Config.load(config.merge(:cloud_controller_discovery_interval => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
+      it 'cloud_controller_ssl_verify_none' do
+        expect { AdminUI::Config.load(config.merge(:cloud_controller_ssl_verify_none => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
       it 'cloud_controller_uri' do
         expect { AdminUI::Config.load(config.merge(:cloud_controller_uri => 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
@@ -449,6 +463,10 @@ describe AdminUI::Config do
     context 'Missing values' do
       it 'cloud_controller_discovery_interval' do
         expect { AdminUI::Config.load(config.merge(:cloud_controller_discovery_interval => nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'cloud_controller_ssl_verify_none' do
+        expect { AdminUI::Config.load(config.merge(:cloud_controller_ssl_verify_none => nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'cloud_controller_uri' do
