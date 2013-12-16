@@ -37,6 +37,8 @@ module AdminUI
 
       request.body = body
       request['Authorization'] = authorization_header
+      request['Accept'] = 'application/json;charset=utf-8'
+      request['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8'
 
       http.request(request)
     end
