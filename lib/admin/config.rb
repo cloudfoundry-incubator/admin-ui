@@ -25,7 +25,7 @@ module AdminUI
     def self.schema
       ::Membrane::SchemaParser.parse do
         {
-          optional(:bind_address)                        => String,
+          optional(:bind_address)                        => /[^\r\n\t]+/,
           optional(:cloud_controller_discovery_interval) => Integer,
           optional(:cloud_controller_ssl_verify_none)    => bool,
           :cloud_controller_uri                          => %r(http[s]?://[^\r\n\t]+),

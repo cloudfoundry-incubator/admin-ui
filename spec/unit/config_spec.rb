@@ -6,6 +6,12 @@ describe AdminUI::Config do
       AdminUI::Config.any_instance.stub(:validate)
     end
 
+    it 'bind_address' do
+      bind_address = "0.0.0.0"
+      config = AdminUI::Config.load('bind_address' => bind_address)
+      expect(config.bind_address).to eq(bind_address)
+    end
+
     context 'Values loaded and returned' do
       it 'cloud_controller_discovery_interval' do
         cloud_controller_discovery_interval = 11
@@ -189,6 +195,10 @@ describe AdminUI::Config do
     context 'Defaults' do
       let(:config) { AdminUI::Config.load({}) }
 
+      it 'bind_address' do
+        expect(config.bind_address).to eq("127.0.0.1")
+      end
+      
       it 'cloud_controller_discovery_interval' do
         expect(config.cloud_controller_discovery_interval).to eq(300)
       end
@@ -335,6 +345,10 @@ describe AdminUI::Config do
     end
 
     context 'Invalid value types' do
+      it 'bind_address' do
+        expect { AdminUI::Config.load(config.merge(:bind_address => 22)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
       it 'cloud_controller_discovery_interval' do
         expect { AdminUI::Config.load(config.merge(:cloud_controller_discovery_interval => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
