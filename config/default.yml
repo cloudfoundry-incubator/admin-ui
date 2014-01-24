@@ -12,6 +12,7 @@ monitored_components: [NATS, CloudController, DEA, HealthManager, Router, -Provi
 nats_discovery_interval: 30
 nats_discovery_timeout: 10
 port: 8070
+bind_address: 0.0.0.0
 receiver_emails: [ ]
 sender_email:
   server: 10.10.10.10
