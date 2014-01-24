@@ -4,6 +4,7 @@ module AdminUI
   class Config
     DEFAULTS_CONFIG =
     {
+      :bind_address                        => "127.0.0.1"
       :cloud_controller_discovery_interval =>    300,
       :cloud_controller_ssl_verify_none    =>  false,
       :component_connection_retries        =>      2,
@@ -24,6 +25,7 @@ module AdminUI
     def self.schema
       ::Membrane::SchemaParser.parse do
         {
+          optional(:bind_address)                        => String,
           optional(:cloud_controller_discovery_interval) => Integer,
           optional(:cloud_controller_ssl_verify_none)    => bool,
           :cloud_controller_uri                          => %r(http[s]?://[^\r\n\t]+),
@@ -79,6 +81,10 @@ module AdminUI
 
     def validate
       self.class.schema.validate(@config)
+    end
+    
+    def bind_address
+      @config[:bind_address]
     end
 
     def cloud_controller_discovery_interval

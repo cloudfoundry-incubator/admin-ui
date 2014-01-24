@@ -76,6 +76,14 @@ Values that <b>must</b> be changed for your environment are marked in <b>bold</b
 
 <dl>
 <dt>
+<code>bind_address</code>
+</dt>
+<dd>
+The network address on which the server listens for web requests.
+<br>
+Example: <code>127.0.0.1</code>
+</dd>
+<dt>
 <code>cloud_controller_discovery_interval</code>
 </dt>
 <dd>
