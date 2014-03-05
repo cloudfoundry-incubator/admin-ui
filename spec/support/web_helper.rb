@@ -51,7 +51,7 @@ shared_context :web_context do
       else
         value = values[property_index].find_element(:tag_name => expected_property[:tag]).text
       end
-        expect(value).to eq(expected_property[:value])
+      expect(value).to eq(expected_property[:value])
       property_index += 1
     end
   end
@@ -140,7 +140,7 @@ shared_context :web_context do
     end
   end
 
-  def get_first_row
+  def first_row
     @driver.find_elements(:xpath => "//table[@id='#{ tab_id }Table']/tbody/tr")[0]
   end
 
@@ -153,6 +153,6 @@ shared_context :web_context do
   end
 
   def select_first_row
-    get_first_row.click
+    first_row.click
   end
 end

@@ -48,6 +48,22 @@ describe AdminUI::CC do
       expect(cc.organizations_count).to eq(0)
     end
 
+    it 'returns zero services as expected' do
+      verify_disconnected_items(cc.services)
+    end
+
+    it 'returns zero service_bindings as expected' do
+      verify_disconnected_items(cc.service_bindings)
+    end
+
+    it 'returns zero service_instances as expected' do
+      verify_disconnected_items(cc.service_instances)
+    end
+
+    it 'returns zero service_plans as expected' do
+      verify_disconnected_items(cc.service_plans)
+    end
+
     it 'returns zero spaces as expected' do
       verify_disconnected_items(cc.spaces)
     end

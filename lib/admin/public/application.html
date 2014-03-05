@@ -35,6 +35,7 @@
         <script src="js/app/tabs/logsTab.js"></script>
         <script src="js/app/tabs/organizationsTab.js"></script>  
         <script src="js/app/tabs/routersTab.js"></script>        
+        <script src="js/app/tabs/serviceInstancesTab.js"></script>
         <script src="js/app/tabs/spacesTab.js"></script>
         <script src="js/app/tabs/statsTab.js"></script>
         <script src="js/app/tabs/tasksTab.js"></script>
@@ -93,6 +94,10 @@
 
             <span id="Applications" class="menuItem">
                 Apps
+            </span>
+
+            <span id="ServiceInstances" class="menuItem">
+                Service Instances
             </span>
 
             <span id="Developers" class="menuItem">
@@ -259,13 +264,15 @@
                     <table id="DEAsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="6"> </th>
+                                <th colspan="8"> </th>
                                 <th colspan="2">% Free</th>
                             </tr>
                             <tr>
                                 <th>Name</th>
+                                <th>Index</th>
                                 <th>Status</th>
                                 <th>Started</th>
+                                <th>Stack</th>
                                 <th>CPU</th>
                                 <th>Memory</th>
                                 <th>Apps</th>
@@ -478,6 +485,65 @@
                     </div>
 
                     <div id="SpacesPropertiesContainer">
+                    </div>
+
+                </div>
+
+            </div>
+
+           <div id="ServiceInstancesPage" class="page hiddenPage">
+
+                <div id="ServiceInstancesTableContainer" class="pageSection">
+
+                    <table id="ServiceInstancesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr class="customTableHeaderGroup">
+                                <th colspan="4">Service</th>
+                                <th colspan="3">Service Plan</th>
+                                <th colspan="3">Service Instance</th>
+                                <th colspan="1"> </th>
+                            </tr>
+                            <tr>
+                                <th>Provider</th>
+                                <th>Label</th>
+                                <th>Version</th>
+                                <th>Created</th>
+                                <th>Name</th>
+                                <th>Created</th>
+                                <th>Public</th>
+                                <th>Name</th>
+                                <th>Created</th>
+                                <th>Bindings</th>
+                                <th>Target</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div class="pageSection">
+                        <div id="ServiceInstancesDetailsLabel" class="propertyLabel">
+                            Details
+                        </div>
+
+                        <div id="ServiceInstancesPropertiesContainer">
+                        </div>
+
+                    </div>
+
+                    <div id="ServiceInstancesApplicationsTableContainer" class="pageSection">
+
+                        <div id="ServiceInstancesApplicationsDetailsLabel" class="propertyLabel">
+                            Bound Applications
+                        </div>
+
+                        <table id="ServiceInstancesApplicationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        </table>
+
                     </div>
 
                 </div>

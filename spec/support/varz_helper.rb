@@ -43,6 +43,7 @@ module VARZHelper
   def varz_cloud_controller
     {
       'cpu'          => 0.1,
+      'index'        => 0,
       'mem'          => 2,
       'num_cores'    => 3,
       'start'        => '2013-10-21T07:00:00-05:00',
@@ -60,8 +61,10 @@ module VARZHelper
       'cpu'                    => 0.3,
       'cpu_load_avg'           => 0.4,
       'host'                   => nats_dea['host'],
+      'index'                  => 0,
       'mem'                    => 5,
       'num_cores'              => 6,
+      'stacks'                 => ['lucid64'],
       'start'                  => '2013-10-21T07:00:00-05:00',
       'type'                   => nats_dea['type'],
       'uptime'                 => '7d:8h:9m:10s',
@@ -90,13 +93,13 @@ module VARZHelper
                 'provider' => 'test',
                 'vendor'   => 'TestService',
                 'version'  => '1.0',
-                'plan'     => 'free'
+                'plan'     => 'TestServicePlan'
               }
             ],
             'state'                   => 'RUNNING',
             'state_running_timestamp' => 1382448059.0734425,
             'used_disk_in_bytes'      => 56_057_856,
-            'used_memory_in_bytes'    => 19_292_160,
+            'used_memory_in_bytes'    => 19_292_160
           }
         }
       }
@@ -107,6 +110,7 @@ module VARZHelper
     {
       'cpu'               => 0.1,
       'crashed_instances' => 2,
+      'index'             => 0,
       'mem'               => 3,
       'num_cores'         => 4,
       'running_instances' => 5,
@@ -123,6 +127,7 @@ module VARZHelper
     {
       'cpu'       => 0.1,
       'host'      => nats_provisioner['host'],
+      'index'     => 0,
       'mem'       => 2,
       'num_cores' => 3,
       'start'     => '2013-10-21T07:00:00-05:00',
@@ -134,8 +139,8 @@ module VARZHelper
         {
           'description'        => 'test provisioner description',
           'name'               => nats_provisioner['name'],
-          'supported_versions' => ['8.9'],
-        },
+          'supported_versions' => ['8.9']
+        }
       },
       'nodes'     =>
       {
@@ -160,6 +165,7 @@ module VARZHelper
       'bad_requests'  => 1,
       'cpu'           => 0.2,
       'droplets'      => 3,
+      'index'         => 0,
       'mem'           => 4,
       'num_cores'     => 5,
       'requests'      => 6,

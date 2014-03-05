@@ -70,6 +70,66 @@ describe AdminUI::CC, :type => :integration do
       expect(cc.organizations_count).to be(cc_organizations['resources'].length)
     end
 
+    it 'returns connected services' do
+      services = cc.services
+
+      expect(services['connected']).to eq(true)
+      items = services['items']
+
+      resources = cc_services['resources']
+
+      expect(items.length).to be(resources.length)
+
+      resources.each do |resource|
+        expect(items).to include(resource['entity'].merge(resource['metadata']))
+      end
+    end
+
+    it 'returns connected service_bindings' do
+      service_bindings = cc.service_bindings
+
+      expect(service_bindings['connected']).to eq(true)
+      items = service_bindings['items']
+
+      resources = cc_service_bindings['resources']
+
+      expect(items.length).to be(resources.length)
+
+      resources.each do |resource|
+        expect(items).to include(resource['entity'].merge(resource['metadata']))
+      end
+    end
+
+    it 'returns connected service_instances' do
+      service_instances = cc.service_instances
+
+      expect(service_instances['connected']).to eq(true)
+      items = service_instances['items']
+
+      resources = cc_service_instances['resources']
+
+      expect(items.length).to be(resources.length)
+
+      resources.each do |resource|
+        expect(items).to include(resource['entity'].merge(resource['metadata']))
+      end
+    end
+
+    it 'returns connected service_plans' do
+      service_plans = cc.service_plans
+
+      expect(service_plans['connected']).to eq(true)
+      items = service_plans['items']
+
+      resources = cc_service_plans['resources']
+
+      expect(items.length).to be(resources.length)
+
+      resources.each do |resource|
+        expect(items).to include(resource['entity'].merge(resource['metadata']))
+      end
+    end
+
     it 'returns connected spaces' do
       spaces = cc.spaces
 

@@ -31,6 +31,22 @@ module CCHelper
       OK.new(cc_organizations)
     end
 
+    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/services", anything, anything) do
+      OK.new(cc_services)
+    end
+
+    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/service_bindings", anything, anything) do
+      OK.new(cc_service_bindings)
+    end
+
+    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/service_instances", anything, anything) do
+      OK.new(cc_service_instances)
+    end
+
+    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", anything, anything) do
+      OK.new(cc_service_plans)
+    end
+
     AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/spaces", anything, anything) do
       OK.new(cc_spaces)
     end
@@ -80,13 +96,111 @@ module CCHelper
           'metadata' =>
           {
             'created_at' => '2013-10-16T08:55:46-05:00',
-            'guid'       => 'organization1',
+            'guid'       => 'organization1'
           },
           'entity'   =>
           {
             'billing_enabled' => false,
             'name'            => 'test_org',
             'status'          => 'active'
+          }
+        }
+      ]
+    }
+  end
+
+  def cc_services
+    {
+      'total_results' => 1,
+      'resources'     =>
+      [
+        {
+          'metadata' =>
+          {
+            'created_at' => '2014-02-12T09:32:31-06:00',
+            'guid'       => 'service1'
+          },
+          'entity'   =>
+          {
+            'bindable'          => true,
+            'description'       => 'TestService description',
+            'documentation_url' => 'http://documentation_url.com',
+            'extra'             => 'service extra',
+            'info_url'          => 'http://info_url.com',
+            'label'             => 'TestService',
+            'provider'          => 'test',
+            'tags'              => %w(tag1 tag2),
+            'version'           => '1.0'
+          }
+        }
+      ]
+    }
+  end
+
+  def cc_service_bindings
+    {
+      'total_results' => 1,
+      'resources'     =>
+      [
+        {
+          'metadata' =>
+          {
+            'created_at' => '2014-02-12T09:41:42-06:00',
+            'guid'       => 'service_binding1'
+          },
+          'entity'   =>
+          {
+            'app_guid'              => 'application1',
+            'service_instance_guid' => 'service_instance1'
+          }
+        }
+      ]
+    }
+  end
+
+  def cc_service_instances
+    {
+      'total_results' => 1,
+      'resources'     =>
+      [
+        {
+          'metadata' =>
+          {
+            'created_at' => '2014-02-12T09:40:52-06:00',
+            'guid'       => 'service_instance1'
+          },
+          'entity' =>
+          {
+            'dashboard_url'     => 'http://www.ibm.com',
+            'name'              => 'TestService-random',
+            'service_plan_guid' => 'service_plan1',
+            'space_guid'        => 'space1'
+          }
+        }
+      ]
+    }
+  end
+
+  def cc_service_plans
+    {
+      'total_results' => 1,
+      'resources'     =>
+      [
+        {
+          'metadata' =>
+          {
+            'created_at' => '2014-02-12T09:34:10-06:00',
+            'guid'       => 'service_plan1'
+          },
+          'entity'   =>
+          {
+            'description'  => 'TestServicePlan description',
+            'extra'        => 'service plan extra',
+            'free'         => true,
+            'name'         => 'TestServicePlan',
+            'public'       => true,
+            'service_guid' => 'service1',
+            'unique_id'    => 'service_plan_unique_id1'
           }
         }
       ]
@@ -122,7 +236,7 @@ module CCHelper
         {
           'metadata' =>
           {
-            'guid' => 'user1',
+            'guid' => 'user1'
           },
           'entity' =>
           {
@@ -172,7 +286,7 @@ module CCHelper
           {
             'created'      => '2013-10-16T08:55:27.339Z',
             'lastModified' => '2013-10-23T07:07:50.425Z',
-            'version'      => 5,
+            'version'      => 5
           },
           'name'     =>
           {
@@ -220,8 +334,8 @@ module CCHelper
             {
               'display' => 'uaa.user'
             }
-          ],
-        },
+          ]
+        }
       ]
     }
   end

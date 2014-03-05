@@ -509,7 +509,7 @@ describe AdminUI::Config do
         end
 
         it 'ui_admin_credentials_username' do
-          expect { AdminUI::Config.load(config.merge(:ui_admin_credentials => { :password => 'hi', })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(:ui_admin_credentials => { :password => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 
@@ -519,7 +519,7 @@ describe AdminUI::Config do
         end
 
         it 'ui_credentials_username' do
-          expect { AdminUI::Config.load(config.merge(:ui_credentials => { :password => 'hi', })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(:ui_credentials => { :password => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
     end

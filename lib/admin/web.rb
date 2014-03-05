@@ -103,6 +103,22 @@ module AdminUI
       }.to_json
     end
 
+    get '/services', :auth => [:user] do
+      @cc.services.to_json
+    end
+
+    get '/service_bindings', :auth => [:user] do
+      @cc.service_bindings.to_json
+    end
+
+    get '/service_instances', :auth => [:user] do
+      @cc.service_instances.to_json
+    end
+
+    get '/service_plans', :auth => [:user] do
+      @cc.service_plans.to_json
+    end
+
     get '/spaces', :auth => [:user] do
       @cc.spaces.to_json
     end

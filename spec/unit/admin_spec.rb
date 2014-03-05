@@ -164,6 +164,22 @@ describe AdminUI::Admin do
 
     end
 
+    it '/services succeeds' do
+      verify_disconnected_items('/services')
+    end
+
+    it '/service_bindings succeeds' do
+      verify_disconnected_items('/service_bindings')
+    end
+
+    it '/service_instances succeeds' do
+      verify_disconnected_items('/service_instances')
+    end
+
+    it '/service_plans succeeds' do
+      verify_disconnected_items('/service_plans')
+    end
+
     it '/spaces succeeds' do
       verify_disconnected_items('/spaces')
     end
@@ -249,6 +265,22 @@ describe AdminUI::Admin do
 
     it '/settings redirects as expected' do
       redirects_as_expected('/settings')
+    end
+
+    it '/services redirects as expected' do
+      redirects_as_expected('/services')
+    end
+
+    it '/service_bindings redirects as expected' do
+      redirects_as_expected('/service_bindings')
+    end
+
+    it '/service_instances redirects as expected' do
+      redirects_as_expected('/service_instances')
+    end
+
+    it '/service_plans redirects as expected' do
+      redirects_as_expected('/service_plans')
     end
 
     it '/spaces redirects as expected' do

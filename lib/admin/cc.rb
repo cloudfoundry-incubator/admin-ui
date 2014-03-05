@@ -9,7 +9,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :organizations, :spaces, :users_cc_deep, :users_uaa].each do |key|
+      [:applications, :organizations, :services, :service_bindings, :service_instances, :service_plans, :spaces, :users_cc_deep, :users_uaa].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
 
@@ -51,6 +51,22 @@ module AdminUI
 
     def organizations_count
       organizations['items'].length
+    end
+
+    def services
+      result_cache(:services)
+    end
+
+    def service_bindings
+      result_cache(:service_bindings)
+    end
+
+    def service_instances
+      result_cache(:service_instances)
+    end
+
+    def service_plans
+      result_cache(:service_plans)
     end
 
     def spaces
@@ -155,6 +171,54 @@ module AdminUI
       result(items)
     rescue => error
       @logger.debug("Error during discover_organizations: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_services
+      items = []
+      get_cc('v2/services').each do |app|
+        items.push(app['entity'].merge(app['metadata']))
+      end
+      result(items)
+    rescue => error
+      @logger.debug("Error during discover_services: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_service_bindings
+      items = []
+      get_cc('v2/service_bindings').each do |app|
+        items.push(app['entity'].merge(app['metadata']))
+      end
+      result(items)
+    rescue => error
+      @logger.debug("Error during discover_service_bindings: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_service_instances
+      items = []
+      get_cc('v2/service_instances').each do |app|
+        items.push(app['entity'].merge(app['metadata']))
+      end
+      result(items)
+    rescue => error
+      @logger.debug("Error during discover_service_instances: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_service_plans
+      items = []
+      get_cc('v2/service_plans').each do |app|
+        items.push(app['entity'].merge(app['metadata']))
+      end
+      result(items)
+    rescue => error
+      @logger.debug("Error during discover_service_plans: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
