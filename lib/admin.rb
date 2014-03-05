@@ -70,7 +70,7 @@ module AdminUI
                              @tasks,
                              @varz)
 
-      Rack::Handler::WEBrick.run(web, :Port => @config.port)
+      Rack::Handler::WEBrick.run(web, :Port => @config.port, :BindAddress => @config.bind_address)
     end
   end
 end

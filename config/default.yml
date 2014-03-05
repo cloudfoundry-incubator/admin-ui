@@ -1,4 +1,5 @@
 ---
+bind_address: 127.0.0.1
 cloud_controller_discovery_interval: 300
 cloud_controller_uri: http://api.cloud-controller
 component_connection_retries: 2
