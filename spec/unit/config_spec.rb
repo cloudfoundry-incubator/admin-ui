@@ -7,7 +7,7 @@ describe AdminUI::Config do
     end
 
     it 'bind_address' do
-      bind_address = "0.0.0.0"
+      bind_address = '0.0.0.0'
       config = AdminUI::Config.load('bind_address' => bind_address)
       expect(config.bind_address).to eq(bind_address)
     end
@@ -196,9 +196,9 @@ describe AdminUI::Config do
       let(:config) { AdminUI::Config.load({}) }
 
       it 'bind_address' do
-        expect(config.bind_address).to eq("127.0.0.1")
+        expect(config.bind_address).to eq('127.0.0.1')
       end
-      
+
       it 'cloud_controller_discovery_interval' do
         expect(config.cloud_controller_discovery_interval).to eq(300)
       end

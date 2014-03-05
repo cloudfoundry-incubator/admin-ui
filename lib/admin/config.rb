@@ -4,22 +4,22 @@ module AdminUI
   class Config
     DEFAULTS_CONFIG =
     {
-      :bind_address                        => "127.0.0.1",
-      :cloud_controller_discovery_interval =>    300,
-      :cloud_controller_ssl_verify_none    =>  false,
-      :component_connection_retries        =>      2,
-      :log_file_page_size                  => 51_200,
-      :log_file_sftp_keys                  =>     [],
-      :log_files                           =>     [],
-      :monitored_components                =>     [],
-      :nats_discovery_interval             =>     30,
-      :nats_discovery_timeout              =>     10,
-      :receiver_emails                     =>     [],
-      :stats_refresh_time                  => 60 * 5,
-      :stats_retries                       =>      5,
-      :stats_retry_interval                =>    300,
-      :tasks_refresh_interval              =>  5_000,
-      :varz_discovery_interval             =>     30
+      :bind_address                        => '127.0.0.1',
+      :cloud_controller_discovery_interval =>         300,
+      :cloud_controller_ssl_verify_none    =>       false,
+      :component_connection_retries        =>           2,
+      :log_file_page_size                  =>      51_200,
+      :log_file_sftp_keys                  =>          [],
+      :log_files                           =>          [],
+      :monitored_components                =>          [],
+      :nats_discovery_interval             =>          30,
+      :nats_discovery_timeout              =>          10,
+      :receiver_emails                     =>          [],
+      :stats_refresh_time                  =>      60 * 5,
+      :stats_retries                       =>           5,
+      :stats_retry_interval                =>         300,
+      :tasks_refresh_interval              =>       5_000,
+      :varz_discovery_interval             =>          30
     }
 
     def self.schema
@@ -82,7 +82,7 @@ module AdminUI
     def validate
       self.class.schema.validate(@config)
     end
-    
+
     def bind_address
       @config[:bind_address]
     end
