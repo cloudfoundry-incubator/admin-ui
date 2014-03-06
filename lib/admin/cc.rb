@@ -240,9 +240,12 @@ module AdminUI
       users_deep['items'].each do |user_deep|
         guid = user_deep['metadata']['guid']
 
-        user_deep['entity']['audited_spaces'].each do |space|
-          items.push('user_guid'  => guid,
-                     'space_guid' => space['metadata']['guid'])
+        audited_spaces = user_deep['entity']['audited_spaces']
+        unless audited_spaces.nil?
+          audited_spaces.each do |space|
+            items.push('user_guid'  => guid,
+                       'space_guid' => space['metadata']['guid'])
+          end
         end
       end
       result(items)
@@ -257,9 +260,12 @@ module AdminUI
       users_deep['items'].each do |user_deep|
         guid = user_deep['metadata']['guid']
 
-        user_deep['entity']['spaces'].each do |space|
-          items.push('user_guid'  => guid,
-                     'space_guid' => space['metadata']['guid'])
+        spaces = user_deep['entity']['spaces']
+        unless spaces.nil?
+          spaces.each do |space|
+            items.push('user_guid'  => guid,
+                       'space_guid' => space['metadata']['guid'])
+          end
         end
       end
       result(items)
@@ -274,9 +280,12 @@ module AdminUI
       users_deep['items'].each do |user_deep|
         guid = user_deep['metadata']['guid']
 
-        user_deep['entity']['managed_spaces'].each do |space|
-          items.push('user_guid'  => guid,
-                     'space_guid' => space['metadata']['guid'])
+        managed_spaces = user_deep['entity']['managed_spaces']
+        unless managed_spaces.nil?
+          managed_spaces.each do |space|
+            items.push('user_guid'  => guid,
+                       'space_guid' => space['metadata']['guid'])
+          end
         end
       end
       result(items)

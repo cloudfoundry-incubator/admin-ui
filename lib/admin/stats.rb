@@ -106,7 +106,7 @@ module AdminUI
       while !save_stats(stats) && (attempt < @config.stats_retries)
         attempt += 1
         @logger.debug("Waiting #{ @config.stats_retry_interval } seconds before trying to save stats again...")
-        sleep(Confog.stats_retry_interval)
+        sleep(@config.stats_retry_interval)
         stats = current_stats
       end
 
