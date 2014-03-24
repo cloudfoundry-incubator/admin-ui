@@ -1,0 +1,14 @@
+Per Travic CI system requirements, when writing selenium based rspec test cases for Admin-UI, the test case code should
+wait until the page element has been rendered. The code should follow the following pattern:
+
+begin
+    Selenium::WebDriver::Wait.new(:timeout => 5).until do
+        # Write a boolean expression as a test body
+    end
+rescue Selenium::WebDriver::Error::TimeOutError
+end
+# Re-do the test using rspec style expectations, this will help to provide more detail information in case the test is failed.
+expect(....).to eq(...)
+
+
+Please refer to the "it has a title" test case in spec/integration/web/admin_spec.rb as an example.

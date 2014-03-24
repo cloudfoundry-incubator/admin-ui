@@ -20,6 +20,12 @@ describe AdminUI::CC, :type => :integration do
   let(:cc) { AdminUI::CC.new(config, logger) }
 
   after do
+    Thread.list.each do |thread|
+      unless thread == Thread.main
+        thread.kill
+        thread.join
+      end
+    end
     Process.wait(Process.spawn({}, "rm -fr #{ log_file }"))
   end
 
