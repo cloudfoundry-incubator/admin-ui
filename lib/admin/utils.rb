@@ -19,6 +19,7 @@ module AdminUI
       request          = Net::HTTP::Get.new(path)
 
       request.basic_auth(basic_auth_array[0], basic_auth_array[1]) unless basic_auth_array.nil? || basic_auth_array.length < 2
+      request['Accept']        = 'application/json'
       request['Authorization'] = authorization_header unless authorization_header.nil?
 
       http.request(request)
@@ -36,6 +37,7 @@ module AdminUI
       request          = Net::HTTP::Post.new(path)
 
       request.body = body
+      request['Accept']        = 'application/json'
       request['Authorization'] = authorization_header
 
       http.request(request)
