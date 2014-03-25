@@ -37,6 +37,7 @@ module AdminUI
 
       request.body = body
       request['Authorization'] = authorization_header
+      request['Accept'] = "application/json" 
 
       http.request(request)
     end
