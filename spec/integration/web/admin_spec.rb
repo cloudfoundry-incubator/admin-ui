@@ -73,19 +73,16 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Organizations' do
         let(:tab_id) { 'Organizations' }
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                                 :expected_length => 5,
-                                 :labels          => ['', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                 :colspans        => %w(5 5 2 3 3)
-                               },
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                 :expected_length => 18,
-                                 :labels          => ['Name', 'Status', 'Created', 'Spaces', 'Developers', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
-                                 :colspans        => nil
-                               }
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 5,
+                                :labels          => ['', 'Used', 'Reserved', 'App States', 'App Package States'],
+                                :colspans        => %w(5 5 2 3 3)
+                              },
+                              { :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                :expected_length => 18,
+                                :labels          => ['Name', 'Status', 'Created', 'Spaces', 'Developers', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :colspans        => nil
+                              }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td"),
                            [
@@ -114,26 +111,25 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             select_first_row
           end
           it 'has details' do
-            check_details([
-                            { :label => 'Name',            :tag => 'div', :value => cc_organizations['resources'][0]['entity']['name'] },
-                            { :label => 'Status',          :tag =>   nil, :value => cc_organizations['resources'][0]['entity']['status'].upcase },
-                            { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organizations['resources'][0]['metadata']['created_at'] }\")") },
-                            { :label => 'Billing Enabled', :tag =>   nil, :value => cc_organizations['resources'][0]['entity']['billing_enabled'].to_s },
-                            { :label => 'Spaces',          :tag =>   'a', :value => cc_spaces['resources'].length.to_s },
-                            { :label => 'Developers',      :tag =>   'a', :value => cc_users_deep['resources'].length.to_s },
-                            { :label => 'Instances Used',  :tag =>   'a', :value => cc_apps['resources'][0]['entity']['instances'].to_s },
-                            { :label => 'Services Used',   :tag =>   'a', :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
-                            { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
-                            { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
-                            { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
-                            { :label => 'Memory Reserved', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['memory'].to_s },
-                            { :label => 'Disk Reserved',   :tag =>   nil, :value => cc_apps['resources'][0]['entity']['disk_quota'].to_s },
-                            { :label => 'Total Apps',      :tag =>   'a', :value => cc_apps['resources'].length.to_s },
-                            { :label => 'Started Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STARTED' ? '1' : '0' },
-                            { :label => 'Stopped Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STOPPED' ? '1' : '0' },
-                            { :label => 'Pending Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'PENDING' ? '1' : '0' },
-                            { :label => 'Staged Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'STAGED'  ? '1' : '0' },
-                            { :label => 'Failed Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? '1' : '0' }
+            check_details([{ :label => 'Name',            :tag => 'div', :value => cc_organizations['resources'][0]['entity']['name'] },
+                           { :label => 'Status',          :tag =>   nil, :value => cc_organizations['resources'][0]['entity']['status'].upcase },
+                           { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organizations['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Billing Enabled', :tag =>   nil, :value => cc_organizations['resources'][0]['entity']['billing_enabled'].to_s },
+                           { :label => 'Spaces',          :tag =>   'a', :value => cc_spaces['resources'].length.to_s },
+                           { :label => 'Developers',      :tag =>   'a', :value => cc_users_deep['resources'].length.to_s },
+                           { :label => 'Instances Used',  :tag =>   'a', :value => cc_apps['resources'][0]['entity']['instances'].to_s },
+                           { :label => 'Services Used',   :tag =>   'a', :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
+                           { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
+                           { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
+                           { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
+                           { :label => 'Memory Reserved', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['memory'].to_s },
+                           { :label => 'Disk Reserved',   :tag =>   nil, :value => cc_apps['resources'][0]['entity']['disk_quota'].to_s },
+                           { :label => 'Total Apps',      :tag =>   'a', :value => cc_apps['resources'].length.to_s },
+                           { :label => 'Started Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STARTED' ? '1' : '0' },
+                           { :label => 'Stopped Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STOPPED' ? '1' : '0' },
+                           { :label => 'Pending Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'PENDING' ? '1' : '0' },
+                           { :label => 'Staged Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'STAGED'  ? '1' : '0' },
+                           { :label => 'Failed Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? '1' : '0' }
                           ])
           end
           it 'has spaces link' do
@@ -157,19 +153,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Spaces' do
         let(:tab_id) { 'Spaces' }
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                                 :expected_length => 5,
-                                 :labels          => ['', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                 :colspans        => %w(4 5 2 3 3)
-                               },
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                 :expected_length => 17,
-                                 :labels          => ['Name', 'Target', 'Created', 'Developers', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
-                                 :colspans        => nil
-                               }
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 5,
+                                :labels          => ['', 'Used', 'Reserved', 'App States', 'App Package States'],
+                                :colspans        => %w(4 5 2 3 3)
+                              },
+                              {
+                                :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                :expected_length => 17,
+                                :labels          => ['Name', 'Target', 'Created', 'Developers', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :colspans        => nil
+                              }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='SpacesTable']/tbody/tr/td"),
                            [
@@ -197,24 +191,23 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             select_first_row
           end
           it 'has details' do
-            check_details([
-                            { :label => 'Name',            :tag => 'div', :value => cc_spaces['resources'][0]['entity']['name'] },
-                            { :label => 'Organization',    :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] },
-                            { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_spaces['resources'][0]['metadata']['created_at'] }\")") },
-                            { :label => 'Developers',      :tag =>   'a', :value => cc_users_deep['resources'].length.to_s },
-                            { :label => 'Instances Used',  :tag =>   'a', :value => cc_apps['resources'][0]['entity']['instances'].to_s },
-                            { :label => 'Services Used',   :tag =>   'a', :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
-                            { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
-                            { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
-                            { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
-                            { :label => 'Memory Reserved', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['memory'].to_s },
-                            { :label => 'Disk Reserved',   :tag =>   nil, :value => cc_apps['resources'][0]['entity']['disk_quota'].to_s },
-                            { :label => 'Total Apps',      :tag =>   'a', :value => cc_apps['resources'].length.to_s },
-                            { :label => 'Started Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STARTED' ? '1' : '0' },
-                            { :label => 'Stopped Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STOPPED' ? '1' : '0' },
-                            { :label => 'Pending Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'PENDING' ? '1' : '0' },
-                            { :label => 'Staged Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'STAGED'  ? '1' : '0' },
-                            { :label => 'Failed Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? '1' : '0' }
+            check_details([{ :label => 'Name',            :tag => 'div', :value => cc_spaces['resources'][0]['entity']['name'] },
+                           { :label => 'Organization',    :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] },
+                           { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_spaces['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Developers',      :tag =>   'a', :value => cc_users_deep['resources'].length.to_s },
+                           { :label => 'Instances Used',  :tag =>   'a', :value => cc_apps['resources'][0]['entity']['instances'].to_s },
+                           { :label => 'Services Used',   :tag =>   'a', :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
+                           { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
+                           { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
+                           { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
+                           { :label => 'Memory Reserved', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['memory'].to_s },
+                           { :label => 'Disk Reserved',   :tag =>   nil, :value => cc_apps['resources'][0]['entity']['disk_quota'].to_s },
+                           { :label => 'Total Apps',      :tag =>   'a', :value => cc_apps['resources'].length.to_s },
+                           { :label => 'Started Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STARTED' ? '1' : '0' },
+                           { :label => 'Stopped Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] == 'STOPPED' ? '1' : '0' },
+                           { :label => 'Pending Apps',    :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'PENDING' ? '1' : '0' },
+                           { :label => 'Staged Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'STAGED'  ? '1' : '0' },
+                           { :label => 'Failed Apps',     :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? '1' : '0' }
                           ])
           end
           it 'has organization link' do
@@ -238,19 +231,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Applications' do
         let(:tab_id) { 'Applications' }
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                                 :expected_length => 4,
-                                 :labels          => ['', 'Used', 'Reserved', ''],
-                                 :colspans        => %w(7 4 2 2)
-                               },
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                 :expected_length => 15,
-                                 :labels          => ['Name', 'State', "Package\nState", 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
-                                 :colspans        => nil
-                               }
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 4,
+                                :labels          => ['', 'Used', 'Reserved', ''],
+                                :colspans        => %w(7 4 2 2)
+                              },
+                              {
+                                :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                :expected_length => 15,
+                                :labels          => ['Name', 'State', "Package\nState", 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                :colspans        => nil
+                              }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td"),
                            [
@@ -276,25 +267,24 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             select_first_row
           end
           it 'has details' do
-            check_details([
-                            { :label => 'Name',            :tag => 'div', :value => cc_apps['resources'][0]['entity']['name'] },
-                            { :label => 'State',           :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] },
-                            { :label => 'Package State',   :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] },
-                            { :label => 'Started',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })") },
-                            { :label => 'URI',             :tag =>   'a', :value => "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }" },
-                            { :label => 'Buildpack',       :tag =>   nil, :value => cc_apps['resources'][0]['entity']['detected_buildpack'] },
-                            { :label => 'Instance Index',  :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'].to_s },
-                            { :label => 'Instance State',  :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['state'] },
-                            { :label => 'Droplet Hash',    :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['droplet_sha1'].to_s },
-                            { :label => 'Services Used',        :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
-                            { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
-                            { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
-                            { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
-                            { :label => 'Memory Reserved', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['memory'].to_s },
-                            { :label => 'Disk Reserved',   :tag =>   nil, :value => cc_apps['resources'][0]['entity']['disk_quota'].to_s },
-                            { :label => 'Space',           :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },
-                            { :label => 'Organization',    :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] },
-                            { :label => 'DEA',             :tag =>   'a', :value => nats_dea['host'] }
+            check_details([{ :label => 'Name',            :tag => 'div', :value => cc_apps['resources'][0]['entity']['name'] },
+                           { :label => 'State',           :tag =>   nil, :value => cc_apps['resources'][0]['entity']['state'] },
+                           { :label => 'Package State',   :tag =>   nil, :value => cc_apps['resources'][0]['entity']['package_state'] },
+                           { :label => 'Started',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })") },
+                           { :label => 'URI',             :tag =>   'a', :value => "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }" },
+                           { :label => 'Buildpack',       :tag =>   nil, :value => cc_apps['resources'][0]['entity']['detected_buildpack'] },
+                           { :label => 'Instance Index',  :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'].to_s },
+                           { :label => 'Instance State',  :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['state'] },
+                           { :label => 'Droplet Hash',    :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['droplet_sha1'].to_s },
+                           { :label => 'Services Used',        :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
+                           { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
+                           { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
+                           { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
+                           { :label => 'Memory Reserved', :tag =>   nil, :value => cc_apps['resources'][0]['entity']['memory'].to_s },
+                           { :label => 'Disk Reserved',   :tag =>   nil, :value => cc_apps['resources'][0]['entity']['disk_quota'].to_s },
+                           { :label => 'Space',           :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },
+                           { :label => 'Organization',    :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] },
+                           { :label => 'DEA',             :tag =>   'a', :value => nats_dea['host'] }
                           ])
           end
           it 'has services' do
@@ -327,19 +317,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Service Instances' do
         let(:tab_id) { 'ServiceInstances' }
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                                 :expected_length => 4,
-                                 :labels          => ['Service', 'Service Plan', 'Service Instance', ''],
-                                 :colspans        => %w(4 3 3 1)
-                               },
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                 :expected_length => 11,
-                                 :labels          => %w(Provider Label Version Created Name Created Public Name Created Bindings Target),
-                                 :colspans        => nil
-                               }
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 4,
+                                :labels          => ['Service', 'Service Plan', 'Service Instance', ''],
+                                :colspans        => %w(4 3 3 1)
+                              },
+                              {
+                                :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                :expected_length => 11,
+                                :labels          => %w(Provider Label Version Created Name Created Public Name Created Bindings Target),
+                                :colspans        => nil
+                              }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='ServiceInstancesTable']/tbody/tr/td"),
                            [
@@ -361,28 +349,27 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             select_first_row
           end
           it 'has details' do
-            check_details([
-                            { :label => 'Service Instance Name',          :tag => 'div', :value => cc_service_instances['resources'][0]['entity']['name'] },
-                            { :label => 'Service Instance Created',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instances['resources'][0]['metadata']['created_at'] }\")") },
-                            { :label => 'Service Instance Dashboard URL', :tag =>   nil, :value => cc_service_instances['resources'][0]['entity']['dashboard_url'] },
-                            { :label => 'Service Provider',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['provider'] },
-                            { :label => 'Service Label',                  :tag =>   nil, :value => cc_services['resources'][0]['entity']['label'] },
-                            { :label => 'Service Version',                :tag =>   nil, :value => cc_services['resources'][0]['entity']['version'] },
-                            { :label => 'Service Created',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")") },
-                            { :label => 'Service Description',            :tag =>   nil, :value => cc_services['resources'][0]['entity']['description'] },
-                            { :label => 'Service Bindable',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['bindable'].to_s },
-                            { :label => 'Service Extra',                  :tag =>   nil, :value => cc_services['resources'][0]['entity']['extra'] },
-                            { :label => 'Service Tag',                    :tag =>   nil, :value => cc_services['resources'][0]['entity']['tags'][0] },
-                            { :label => 'Service Tag',                    :tag =>   nil, :value => cc_services['resources'][0]['entity']['tags'][1] },
-                            { :label => 'Service Documentation URL',      :tag =>   nil, :value => cc_services['resources'][0]['entity']['documentation_url'] },
-                            { :label => 'Service Info URL',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['info_url'] },
-                            { :label => 'Service Plan Name',              :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['name'] },
-                            { :label => 'Service Plan Created',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")") },
-                            { :label => 'Service Plan Public',            :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['public'].to_s },
-                            { :label => 'Service Plan Description',       :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['description'] },
-                            { :label => 'Service Plan Extra',             :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['extra'] },
-                            { :label => 'Space',                          :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },
-                            { :label => 'Organization',                   :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] }
+            check_details([{ :label => 'Service Instance Name',          :tag => 'div', :value => cc_service_instances['resources'][0]['entity']['name'] },
+                           { :label => 'Service Instance Created',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instances['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Service Instance Dashboard URL', :tag =>   nil, :value => cc_service_instances['resources'][0]['entity']['dashboard_url'] },
+                           { :label => 'Service Provider',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['provider'] },
+                           { :label => 'Service Label',                  :tag =>   nil, :value => cc_services['resources'][0]['entity']['label'] },
+                           { :label => 'Service Version',                :tag =>   nil, :value => cc_services['resources'][0]['entity']['version'] },
+                           { :label => 'Service Created',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Service Description',            :tag =>   nil, :value => cc_services['resources'][0]['entity']['description'] },
+                           { :label => 'Service Bindable',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['bindable'].to_s },
+                           { :label => 'Service Extra',                  :tag =>   nil, :value => cc_services['resources'][0]['entity']['extra'] },
+                           { :label => 'Service Tag',                    :tag =>   nil, :value => cc_services['resources'][0]['entity']['tags'][0] },
+                           { :label => 'Service Tag',                    :tag =>   nil, :value => cc_services['resources'][0]['entity']['tags'][1] },
+                           { :label => 'Service Documentation URL',      :tag =>   nil, :value => cc_services['resources'][0]['entity']['documentation_url'] },
+                           { :label => 'Service Info URL',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['info_url'] },
+                           { :label => 'Service Plan Name',              :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['name'] },
+                           { :label => 'Service Plan Created',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Service Plan Public',            :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['public'].to_s },
+                           { :label => 'Service Plan Description',       :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['description'] },
+                           { :label => 'Service Plan Extra',             :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['extra'] },
+                           { :label => 'Space',                          :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },
+                           { :label => 'Organization',                   :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] }
                           ])
           end
           it 'has bound applications' do
@@ -409,12 +396,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Developers' do
         let(:tab_id) { 'Developers' }
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='DevelopersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                                 :expected_length => 5,
-                                 :labels          => %w(Email Space Organization Target Created),
-                                 :colspans        => nil
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DevelopersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                :expected_length => 5,
+                                :labels          => %w(Email Space Organization Target Created),
+                                :colspans        => nil
                                }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='DevelopersTable']/tbody/tr/td"),
@@ -443,13 +428,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
               groups_string += groups[index]
               index += 1
             end
-            check_details([
-                            { :label => 'Email',        :tag => 'div', :value => "mailto:#{ uaa_users['resources'][0]['emails'][0]['value'] }" },
-                            { :label => 'Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")") },
-                            { :label => 'Modified',     :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['lastModified'] }\")") },
-                            { :label => 'Authorities',  :tag =>   nil, :value => groups_string },
-                            { :label => 'Space',        :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },
-                            { :label => 'Organization', :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] }
+            check_details([{ :label => 'Email',        :tag => 'div', :value => "mailto:#{ uaa_users['resources'][0]['emails'][0]['value'] }" },
+                           { :label => 'Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")") },
+                           { :label => 'Modified',     :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['lastModified'] }\")") },
+                           { :label => 'Authorities',  :tag =>   nil, :value => groups_string },
+                           { :label => 'Space',        :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },
+                           { :label => 'Organization', :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] }
                           ])
           end
           it 'has space link' do
@@ -464,19 +448,16 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'DEAs' do
         let(:tab_id) { 'DEAs' }
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                                 :expected_length => 2,
-                                 :labels          => ['', '% Free'],
-                                 :colspans        => %w(8 2)
-                               },
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                 :expected_length => 10,
-                                 :labels          => %w(Name Index Status Started Stack CPU Memory Apps Memory Disk),
-                                 :colspans        => nil
-                               }
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 2,
+                                :labels          => ['', '% Free'],
+                                :colspans        => %w(8 2)
+                              },
+                              { :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                :expected_length => 10,
+                                :labels          => %w(Name Index Status Started Stack CPU Memory Apps Memory Disk),
+                                :colspans        => nil
+                              }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='DEAsTable']/tbody/tr/td"),
                            [
@@ -500,21 +481,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             select_first_row
           end
           it 'has details' do
-            check_details([
-                            { :label => 'Name',         :tag => nil, :value => varz_dea['host'] },
-                            { :label => 'Index',        :tag => nil, :value => varz_dea['index'].to_s },
-                            { :label => 'URI',          :tag => 'a', :value => nats_dea_varz },
-                            { :label => 'Host',         :tag => nil, :value => varz_dea['host'] },
-                            { :label => 'Started',      :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")") },
-                            { :label => 'Uptime',       :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_dea['uptime'] }\")") },
-                            { :label => 'Stack',        :tag => nil, :value => varz_dea['stacks'][0] },
-                            { :label => 'Apps',         :tag => 'a', :value => varz_dea['instance_registry'].length.to_s },
-                            { :label => 'Cores',        :tag => nil, :value => varz_dea['num_cores'].to_s },
-                            { :label => 'CPU',          :tag => nil, :value => varz_dea['cpu'].to_s },
-                            { :label => 'CPU Load Avg', :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") }%" },
-                            { :label => 'Memory',       :tag => nil, :value => varz_dea['mem'].to_s },
-                            { :label => 'Memory Free',  :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })") }%" },
-                            { :label => 'Disk Free',    :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") }%" }
+            check_details([{ :label => 'Name',         :tag => nil, :value => varz_dea['host'] },
+                           { :label => 'Index',        :tag => nil, :value => varz_dea['index'].to_s },
+                           { :label => 'URI',          :tag => 'a', :value => nats_dea_varz },
+                           { :label => 'Host',         :tag => nil, :value => varz_dea['host'] },
+                           { :label => 'Started',      :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")") },
+                           { :label => 'Uptime',       :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_dea['uptime'] }\")") },
+                           { :label => 'Stack',        :tag => nil, :value => varz_dea['stacks'][0] },
+                           { :label => 'Apps',         :tag => 'a', :value => varz_dea['instance_registry'].length.to_s },
+                           { :label => 'Cores',        :tag => nil, :value => varz_dea['num_cores'].to_s },
+                           { :label => 'CPU',          :tag => nil, :value => varz_dea['cpu'].to_s },
+                           { :label => 'CPU Load Avg', :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") }%" },
+                           { :label => 'Memory',       :tag => nil, :value => varz_dea['mem'].to_s },
+                           { :label => 'Memory Free',  :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })") }%" },
+                           { :label => 'Disk Free',    :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") }%" }
                           ])
           end
           it 'has applications link' do
@@ -526,13 +506,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Cloud Controllers' do
         let(:tab_id) { 'CloudControllers' }
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='CloudControllersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                                 :expected_length => 7,
-                                 :labels          => %w(Name Index State Started Cores CPU Memory),
-                                 :colspans        => nil
-                               }
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='CloudControllersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                :expected_length => 7,
+                                :labels          => %w(Name Index State Started Cores CPU Memory),
+                                :colspans        => nil
+                              }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='CloudControllersTable']/tbody/tr/td"),
                            [
@@ -548,17 +526,16 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         context 'selectable' do
           it 'has details' do
             select_first_row
-            check_details([
-                            { :label => 'Name',             :tag => nil, :value => nats_cloud_controller['host'] },
-                            { :label => 'Index',            :tag => nil, :value => varz_cloud_controller['index'].to_s },
-                            { :label => 'URI',              :tag => 'a', :value => nats_cloud_controller_varz },
-                            { :label => 'Started',          :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
-                            { :label => 'Uptime',           :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_cloud_controller['uptime'] }\")") },
-                            { :label => 'Cores',            :tag => nil, :value => varz_cloud_controller['num_cores'].to_s },
-                            { :label => 'CPU',              :tag => nil, :value => varz_cloud_controller['cpu'].to_s },
-                            { :label => 'Memory',           :tag => nil, :value => varz_cloud_controller['mem'].to_s },
-                            { :label => 'Requests',         :tag => nil, :value => varz_cloud_controller['vcap_sinatra']['requests']['completed'].to_s },
-                            { :label => 'Pending Requests', :tag => nil, :value => varz_cloud_controller['vcap_sinatra']['requests']['outstanding'].to_s }
+            check_details([{ :label => 'Name',             :tag => nil, :value => nats_cloud_controller['host'] },
+                           { :label => 'Index',            :tag => nil, :value => varz_cloud_controller['index'].to_s },
+                           { :label => 'URI',              :tag => 'a', :value => nats_cloud_controller_varz },
+                           { :label => 'Started',          :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
+                           { :label => 'Uptime',           :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_cloud_controller['uptime'] }\")") },
+                           { :label => 'Cores',            :tag => nil, :value => varz_cloud_controller['num_cores'].to_s },
+                           { :label => 'CPU',              :tag => nil, :value => varz_cloud_controller['cpu'].to_s },
+                           { :label => 'Memory',           :tag => nil, :value => varz_cloud_controller['mem'].to_s },
+                           { :label => 'Requests',         :tag => nil, :value => varz_cloud_controller['vcap_sinatra']['requests']['completed'].to_s },
+                           { :label => 'Pending Requests', :tag => nil, :value => varz_cloud_controller['vcap_sinatra']['requests']['outstanding'].to_s }
                           ])
           end
         end
@@ -567,12 +544,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Health Managers' do
         let(:tab_id) { 'HealthManagers' }
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='HealthManagersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                                 :expected_length => 10,
-                                 :labels          => %w(Name Index State Started Cores CPU Memory Users Applications Instances),
-                                 :colspans        => nil
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='HealthManagersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                :expected_length => 10,
+                                :labels          => %w(Name Index State Started Cores CPU Memory Users Applications Instances),
+                                :colspans        => nil
                                }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='HealthManagersTable']/tbody/tr/td"),
@@ -592,20 +567,19 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         context 'selectable' do
           it 'has details' do
             select_first_row
-            check_details([
-                            { :label => 'Name',              :tag => nil, :value => nats_health_manager['host'] },
-                            { :label => 'Index',             :tag => nil, :value => varz_health_manager['index'].to_s },
-                            { :label => 'URI',               :tag => 'a', :value => nats_health_manager_varz },
-                            { :label => 'Started',           :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_health_manager['start'] }\")") },
-                            { :label => 'Uptime',            :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_health_manager['uptime'] }\")") },
-                            { :label => 'Cores',             :tag => nil, :value => varz_health_manager['num_cores'].to_s },
-                            { :label => 'CPU',               :tag => nil, :value => varz_health_manager['cpu'].to_s },
-                            { :label => 'Memory',            :tag => nil, :value => varz_health_manager['mem'].to_s },
-                            { :label => 'Users',             :tag => nil, :value => varz_health_manager['total_users'].to_s },
-                            { :label => 'Applications',      :tag => nil, :value => varz_health_manager['total_apps'].to_s },
-                            { :label => 'Instances',         :tag => nil, :value => varz_health_manager['total_instances'].to_s },
-                            { :label => 'Running Instances', :tag => nil, :value => varz_health_manager['running_instances'].to_s },
-                            { :label => 'Crashed Instances', :tag => nil, :value => varz_health_manager['crashed_instances'].to_s }
+            check_details([{ :label => 'Name',              :tag => nil, :value => nats_health_manager['host'] },
+                           { :label => 'Index',             :tag => nil, :value => varz_health_manager['index'].to_s },
+                           { :label => 'URI',               :tag => 'a', :value => nats_health_manager_varz },
+                           { :label => 'Started',           :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_health_manager['start'] }\")") },
+                           { :label => 'Uptime',            :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_health_manager['uptime'] }\")") },
+                           { :label => 'Cores',             :tag => nil, :value => varz_health_manager['num_cores'].to_s },
+                           { :label => 'CPU',               :tag => nil, :value => varz_health_manager['cpu'].to_s },
+                           { :label => 'Memory',            :tag => nil, :value => varz_health_manager['mem'].to_s },
+                           { :label => 'Users',             :tag => nil, :value => varz_health_manager['total_users'].to_s },
+                           { :label => 'Applications',      :tag => nil, :value => varz_health_manager['total_apps'].to_s },
+                           { :label => 'Instances',         :tag => nil, :value => varz_health_manager['total_instances'].to_s },
+                           { :label => 'Running Instances', :tag => nil, :value => varz_health_manager['running_instances'].to_s },
+                           { :label => 'Crashed Instances', :tag => nil, :value => varz_health_manager['crashed_instances'].to_s }
                           ])
           end
         end
@@ -622,12 +596,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
         end
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='GatewaysTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                                 :expected_length => 9,
-                                 :labels          => ['Name', 'Index', 'State', 'Started', 'Description', 'CPU', 'Memory', 'Nodes', "Available\nCapacity"],
-                                 :colspans        => nil
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='GatewaysTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                :expected_length => 9,
+                                :labels          => ['Name', 'Index', 'State', 'Started', 'Description', 'CPU', 'Memory', 'Nodes', "Available\nCapacity"],
+                                :colspans        => nil
                                }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='GatewaysTable']/tbody/tr/td"),
@@ -648,18 +620,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             select_first_row
           end
           it 'has details' do
-            check_details([
-                            { :label => 'Name',                 :tag => nil, :value => nats_provisioner['type'][0..-13] },
-                            { :label => 'Index',                :tag => nil, :value => varz_provisioner['index'].to_s },
-                            { :label => 'URI',                  :tag => nil, :value => nats_provisioner_varz },
-                            { :label => 'Supported Versions',   :tag => nil, :value => varz_provisioner['config']['service']['supported_versions'][0] },
-                            { :label => 'Description',          :tag => nil, :value => varz_provisioner['config']['service']['description'] },
-                            { :label => 'Started',              :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_provisioner['start'] }\")") },
-                            { :label => 'Uptime',               :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_provisioner['uptime'] }\")") },
-                            { :label => 'Cores',                :tag => nil, :value => varz_provisioner['num_cores'].to_s },
-                            { :label => 'CPU',                  :tag => nil, :value => varz_provisioner['cpu'].to_s },
-                            { :label => 'Memory',               :tag => nil, :value => varz_provisioner['mem'].to_s },
-                            { :label => 'Available Capacity',   :tag => nil, :value => "#{ @capacity}" }
+            check_details([{ :label => 'Name',                 :tag => nil, :value => nats_provisioner['type'][0..-13] },
+                           { :label => 'Index',                :tag => nil, :value => varz_provisioner['index'].to_s },
+                           { :label => 'URI',                  :tag => nil, :value => nats_provisioner_varz },
+                           { :label => 'Supported Versions',   :tag => nil, :value => varz_provisioner['config']['service']['supported_versions'][0] },
+                           { :label => 'Description',          :tag => nil, :value => varz_provisioner['config']['service']['description'] },
+                           { :label => 'Started',              :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_provisioner['start'] }\")") },
+                           { :label => 'Uptime',               :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_provisioner['uptime'] }\")") },
+                           { :label => 'Cores',                :tag => nil, :value => varz_provisioner['num_cores'].to_s },
+                           { :label => 'CPU',                  :tag => nil, :value => varz_provisioner['cpu'].to_s },
+                           { :label => 'Memory',               :tag => nil, :value => varz_provisioner['mem'].to_s },
+                           { :label => 'Available Capacity',   :tag => nil, :value => "#{ @capacity}" }
                           ])
           end
           it 'has nodes' do
@@ -680,9 +651,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Routers' do
         let(:tab_id) { 'Routers' }
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='RoutersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='RoutersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
                                  :expected_length => 10,
                                  :labels          => ['Name', 'Index', 'State', 'Started', 'Cores', 'CPU', 'Memory', 'Droplets', 'Requests', 'Bad Requests'],
                                  :colspans        => nil
@@ -705,23 +674,22 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         context 'selectable' do
           it 'has details' do
             select_first_row
-            check_details([
-                            { :label => 'Name',          :tag => nil, :value => nats_router['host'] },
-                            { :label => 'Index',         :tag => nil, :value => varz_router['index'].to_s },
-                            { :label => 'URI',           :tag => 'a', :value => nats_router_varz },
-                            { :label => 'Started',       :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_router['start'] }\")") },
-                            { :label => 'Uptime',        :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_router['uptime'] }\")") },
-                            { :label => 'Cores',         :tag => nil, :value => varz_router['num_cores'].to_s },
-                            { :label => 'CPU',           :tag => nil, :value => varz_router['cpu'].to_s },
-                            { :label => 'Memory',        :tag => nil, :value => varz_router['mem'].to_s },
-                            { :label => 'Droplets',      :tag => nil, :value => varz_router['droplets'].to_s },
-                            { :label => 'Requests',      :tag => nil, :value => varz_router['requests'].to_s },
-                            { :label => 'Bad Requests',  :tag => nil, :value => varz_router['bad_requests'].to_s },
-                            { :label => '2XX Responses', :tag => nil, :value => varz_router['responses_2xx'].to_s },
-                            { :label => '3XX Responses', :tag => nil, :value => varz_router['responses_3xx'].to_s },
-                            { :label => '4XX Responses', :tag => nil, :value => varz_router['responses_4xx'].to_s },
-                            { :label => '5XX Responses', :tag => nil, :value => varz_router['responses_5xx'].to_s },
-                            { :label => 'XXX Responses', :tag => nil, :value => varz_router['responses_xxx'].to_s }
+            check_details([{ :label => 'Name',          :tag => nil, :value => nats_router['host'] },
+                           { :label => 'Index',         :tag => nil, :value => varz_router['index'].to_s },
+                           { :label => 'URI',           :tag => 'a', :value => nats_router_varz },
+                           { :label => 'Started',       :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_router['start'] }\")") },
+                           { :label => 'Uptime',        :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_router['uptime'] }\")") },
+                           { :label => 'Cores',         :tag => nil, :value => varz_router['num_cores'].to_s },
+                           { :label => 'CPU',           :tag => nil, :value => varz_router['cpu'].to_s },
+                           { :label => 'Memory',        :tag => nil, :value => varz_router['mem'].to_s },
+                           { :label => 'Droplets',      :tag => nil, :value => varz_router['droplets'].to_s },
+                           { :label => 'Requests',      :tag => nil, :value => varz_router['requests'].to_s },
+                           { :label => 'Bad Requests',  :tag => nil, :value => varz_router['bad_requests'].to_s },
+                           { :label => '2XX Responses', :tag => nil, :value => varz_router['responses_2xx'].to_s },
+                           { :label => '3XX Responses', :tag => nil, :value => varz_router['responses_3xx'].to_s },
+                           { :label => '4XX Responses', :tag => nil, :value => varz_router['responses_4xx'].to_s },
+                           { :label => '5XX Responses', :tag => nil, :value => varz_router['responses_5xx'].to_s },
+                           { :label => 'XXX Responses', :tag => nil, :value => varz_router['responses_xxx'].to_s }
                           ])
           end
         end
@@ -730,9 +698,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Components' do
         let(:tab_id) { 'Components' }
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ComponentsTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='ComponentsTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
                                  :expected_length => 5,
                                  :labels          => %w(Name Type Index State Started),
                                  :colspans        => nil
@@ -753,13 +719,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         context 'selectable' do
           it 'has details' do
             select_first_row
-            check_details([
-                            { :label => 'Name',    :tag => nil, :value => nats_cloud_controller['host'] },
-                            { :label => 'Type',    :tag => nil, :value => nats_cloud_controller['type'] },
-                            { :label => 'Index',   :tag => nil, :value => varz_cloud_controller['index'].to_s },
-                            { :label => 'Started', :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
-                            { :label => 'URI',     :tag => 'a', :value => nats_cloud_controller_varz },
-                            { :label => 'State',   :tag => nil, :value => @driver.execute_script('return Constants.STATUS__RUNNING') }
+            check_details([{  :label => 'Name',    :tag => nil, :value => nats_cloud_controller['host'] },
+                           {  :label => 'Type',    :tag => nil, :value => nats_cloud_controller['type'] },
+                           {  :label => 'Index',   :tag => nil, :value => varz_cloud_controller['index'].to_s },
+                           {  :label => 'Started', :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
+                           {  :label => 'URI',     :tag => 'a', :value => nats_cloud_controller_varz },
+                           {  :label => 'State',   :tag => nil, :value => @driver.execute_script('return Constants.STATUS__RUNNING') }
                           ])
           end
         end
@@ -768,9 +733,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Logs' do
         let(:tab_id) { 'Logs' }
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='LogsTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='LogsTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
                                  :expected_length => 3,
                                  :labels          => ['Path', 'Size', 'Last Modified'],
                                  :colspans        => nil
@@ -794,9 +757,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Tasks' do
         let(:tab_id) { 'Tasks' }
         it 'has a table' do
-          check_table_layout([
-                               {
-                                 :columns         => @driver.find_elements(:xpath => "//div[@id='TasksTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='TasksTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
                                  :expected_length => 3,
                                  :labels          => %w(Command State Started),
                                  :colspans        => nil
@@ -819,9 +780,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
           begin
             Selenium::WebDriver::Wait.new(:timeout => 5).until do
-                cells = @driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr/td")
-                cells[0].text == File.join(File.dirname(__FILE__)[0..-22], 'lib/admin/scripts', 'newDEA.sh') &&
-                cells[1].text == @driver.execute_script('return Constants.STATUS__RUNNING')
+              cells = @driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr/td")
+              cells[0].text == File.join(File.dirname(__FILE__)[0..-22], 'lib/admin/scripts', 'newDEA.sh') &&
+              cells[1].text == @driver.execute_script('return Constants.STATUS__RUNNING')
             end
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end

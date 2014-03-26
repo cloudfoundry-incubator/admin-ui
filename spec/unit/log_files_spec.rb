@@ -18,7 +18,7 @@ describe AdminUI::LogFiles do
   let(:log_file_name) { 'test' }
   let(:log_file_extension) { 'log' }
   let(:log_file_content) { 'This is sample file content.  It is not really very long.  But, will suffice for testing' }
-  let(:log_file_mtime) { Time.now }
+  let(:log_file_mtime) { Time.new(1976, 7, 4, 12, 34, 56, 0) }
 
   before do
     AdminUI::Config.any_instance.stub(:validate)

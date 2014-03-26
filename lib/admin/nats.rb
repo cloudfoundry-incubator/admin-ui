@@ -33,7 +33,7 @@ module AdminUI
 
     def remove(uris)
       @semaphore.synchronize do
-        if File.exists?(@config.data_file)
+        if File.exist?(@config.data_file)
           @cache = JSON.parse(IO.read(@config.data_file))
 
           uris.each do |uri|
@@ -118,7 +118,7 @@ module AdminUI
       @cache['notified'] = {}
 
       begin
-        @cache = JSON.parse(IO.read(@config.data_file)) if @use_cache && File.exists?(@config.data_file)
+        @cache = JSON.parse(IO.read(@config.data_file)) if @use_cache && File.exist?(@config.data_file)
 
         @cache['connected'] = nats_discovery_results['connected']
         @cache['items'].merge!(nats_discovery_results['items'])
