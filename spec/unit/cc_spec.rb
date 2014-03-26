@@ -8,7 +8,8 @@ describe AdminUI::CC do
     AdminUI::Config.load(:cloud_controller_uri   => 'http://api.localhost',
                          :uaa_admin_credentials  => { :password => 'c1oudc0w', :username => 'admin' })
   end
-  let(:cc) { AdminUI::CC.new(config, logger) }
+  let(:client) { AdminUI::RestClient.new(config, logger) }
+  let(:cc) { AdminUI::CC.new(config, logger, client) }
 
   before do
     AdminUI::Config.any_instance.stub(:validate)

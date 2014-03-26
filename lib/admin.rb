@@ -1,6 +1,7 @@
 require 'logger'
 require_relative 'admin/config'
 require_relative 'admin/cc'
+require_relative 'admin/cc_rest_client'
 require_relative 'admin/email'
 require_relative 'admin/log_files'
 require_relative 'admin/nats'
@@ -42,10 +43,11 @@ module AdminUI
     end
 
     def setup_components
+      client = RestClient.new(@config, @logger)
       email = EMail.new(@config, @logger)
       nats  = NATS.new(@config, @logger, email)
 
-      @cc        = CC.new(@config, @logger)
+      @cc        = CC.new(@config, @logger, client)
       @log_files = LogFiles.new(@config, @logger)
       @tasks     = Tasks.new(@config, @logger)
       @varz      = VARZ.new(@config, @logger, nats)
