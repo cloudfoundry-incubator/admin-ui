@@ -2,7 +2,7 @@ require 'json'
 require_relative 'utils'
 
 module AdminUI
-  class RestClient
+  class CCRestClient
     def initialize(config, logger)
       @config = config
       @logger = logger
@@ -67,11 +67,11 @@ module AdminUI
           return
         end
 
-        if recent_login && response.is_a?(Net::HTTPUnauthorized)
+        if !recent_login && response.is_a?(Net::HTTPUnauthorized)
           login
           recent_login = true
         else
-        fail "Unexected response code from #{ method } is #{ response.code }, message #{ response.message }"
+          fail "Unexected response code from #{ method } is #{ response.code }, message #{ response.message }"
         end
       end
     end

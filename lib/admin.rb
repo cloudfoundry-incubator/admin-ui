@@ -43,9 +43,9 @@ module AdminUI
     end
 
     def setup_components
-      client = RestClient.new(@config, @logger)
-      email = EMail.new(@config, @logger)
-      nats  = NATS.new(@config, @logger, email)
+      client = CCRestClient.new(@config, @logger)
+      email  = EMail.new(@config, @logger)
+      nats   = NATS.new(@config, @logger, email)
 
       @cc        = CC.new(@config, @logger, client)
       @log_files = LogFiles.new(@config, @logger)

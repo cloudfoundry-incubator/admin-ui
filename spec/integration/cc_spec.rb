@@ -11,7 +11,7 @@ describe AdminUI::CC, :type => :integration do
                          :cloud_controller_uri                => 'http://api.cloudfoundry',
                          :uaa_admin_credentials               => { :username => 'user', :password => 'password' })
   end
-  let(:client) { AdminUI::RestClient.new(config, logger) }
+  let(:client) { AdminUI::CCRestClient.new(config, logger) }
 
   before do
     AdminUI::Config.any_instance.stub(:validate)
