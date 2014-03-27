@@ -14,7 +14,7 @@ shared_context :server_context do
   let(:log_file_displayed) { '/tmp/admin_ui_displayed.log' }
   let(:log_file_displayed_contents) { 'These are test log file contents' }
   let(:log_file_displayed_contents_length) { log_file_displayed_contents.length }
-  let(:log_file_displayed_modified) { Time.now }
+  let(:log_file_displayed_modified) { Time.new(1976, 07, 04, 12, 34, 56, 0) }
   let(:log_file_displayed_modified_milliseconds) { AdminUI::Utils.time_in_milliseconds(log_file_displayed_modified) }
   let(:log_file_page_size) { 100 }
   let(:stats_file) { '/tmp/admin_ui_stats.json' }
