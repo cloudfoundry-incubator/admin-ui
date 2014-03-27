@@ -1,3 +1,8 @@
+AllCops:
+  Excludes:
+    - '.bundle/**'
+    - 'vendor/**'
+
 ClassLength:
   Enabled: false
 
@@ -21,8 +26,3 @@ MethodLength:
 
 ParameterLists:
   Enabled: false
-
-AllCops:
-  Exclude:
-    - .bundle
-    - vendor
