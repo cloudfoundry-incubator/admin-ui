@@ -4,7 +4,7 @@ rvm:
 before_install:
 - git submodule update --init --recursive
 script: rubocop
-script: bundle exec rspec
+# script: bundle exec rspec
 branches:
   only:
   - master
