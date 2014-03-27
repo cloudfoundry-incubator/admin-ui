@@ -1,10 +1,9 @@
 language: ruby
 rvm:
   - 1.9.3-p484
-
 before_install:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-
-script: bundle exec rspec spec
-
+- git submodule update --init --recursive
+script: bundle exec rspec
+branches:
+  only:
+  - master
