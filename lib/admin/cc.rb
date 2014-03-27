@@ -2,8 +2,9 @@ require 'json'
 
 module AdminUI
   class CC
-    def initialize(config, logger)
+    def initialize(config, logger, client)
       @config = config
+      @client = client
       @logger = logger
 
       @caches = {}
@@ -153,7 +154,7 @@ module AdminUI
 
     def discover_applications
       items = []
-      get_cc('v2/apps').each do |app|
+      @client.get_cc('v2/apps').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -165,7 +166,7 @@ module AdminUI
 
     def discover_organizations
       items = []
-      get_cc('v2/organizations').each do |app|
+      @client.get_cc('v2/organizations').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -177,7 +178,7 @@ module AdminUI
 
     def discover_services
       items = []
-      get_cc('v2/services').each do |app|
+      @client.get_cc('v2/services').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -189,7 +190,7 @@ module AdminUI
 
     def discover_service_bindings
       items = []
-      get_cc('v2/service_bindings').each do |app|
+      @client.get_cc('v2/service_bindings').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -201,7 +202,7 @@ module AdminUI
 
     def discover_service_instances
       items = []
-      get_cc('v2/service_instances').each do |app|
+      @client.get_cc('v2/service_instances').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -213,7 +214,7 @@ module AdminUI
 
     def discover_service_plans
       items = []
-      get_cc('v2/service_plans').each do |app|
+      @client.get_cc('v2/service_plans').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -225,7 +226,7 @@ module AdminUI
 
     def discover_spaces
       items = []
-      get_cc('v2/spaces').each do |app|
+      @client.get_cc('v2/spaces').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -296,7 +297,7 @@ module AdminUI
     end
 
     def discover_users_cc_deep
-      result(get_cc('v2/users?inline-relations-depth=1'))
+      result(@client.get_cc('v2/users?inline-relations-depth=1'))
     rescue => error
       @logger.debug("Error during discover_users_cc_deep: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -305,7 +306,7 @@ module AdminUI
 
     def discover_users_uaa
       items = []
-      get_uaa('Users').each do |user|
+      @client.get_uaa('Users').each do |user|
         emails = user['emails']
         groups = user['groups']
         meta   = user['meta']
@@ -335,99 +336,6 @@ module AdminUI
       @logger.debug("Error during discover_users_uaa: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
-    end
-
-    def get_cc(path)
-      uri = "#{ @config.cloud_controller_uri }/#{ path }"
-
-      resources = []
-      loop do
-        json = get(uri)
-        resources.concat(json['resources'])
-        next_url = json['next_url']
-        return resources if next_url.nil?
-        uri = "#{ @config.cloud_controller_uri }#{ next_url }"
-      end
-
-      resources
-    end
-
-    def get_uaa(path)
-      info
-
-      uri = "#{ @token_endpoint }/#{ path }"
-
-      resources = []
-      loop do
-        json = get(uri)
-        resources.concat(json['resources'])
-        total_results = json['totalResults']
-        start_index = resources.length + 1
-        return resources unless total_results > start_index
-        uri = "#{ @token_endpoint }/#{ path }?startIndex=#{ start_index }"
-      end
-
-      resources
-    end
-
-    def get(uri)
-      recent_login = false
-      if @token.nil?
-        login
-        recent_login = true
-      end
-
-      loop do
-        response = Utils.http_get(@config, uri, nil, @token)
-        if response.is_a?(Net::HTTPOK)
-          return JSON.parse(response.body)
-        elsif !recent_login && response.is_a?(Net::HTTPUnauthorized)
-          login
-          recent_login = true
-        else
-          fail "Unexected response code from get is #{ response.code }, message #{ response.message }"
-        end
-      end
-    end
-
-    def login
-      info
-
-      @token = nil
-
-      response = Utils.http_post(@config,
-                                 "#{ @authorization_endpoint }/oauth/token",
-                                 "grant_type=password&username=#{ @config.uaa_admin_credentials_username }&password=#{ @config.uaa_admin_credentials_password }",
-                                 'Basic Y2Y6')
-
-      if response.is_a?(Net::HTTPOK)
-        body_json = JSON.parse(response.body)
-        @token = "#{ body_json['token_type'] } #{ body_json['access_token'] }"
-      else
-        fail "Unexpected response code from login is #{ response.code }, message #{ response.message }"
-      end
-    end
-
-    def info
-      return unless @token_endpoint.nil?
-
-      response = Utils.http_get(@config, "#{ @config.cloud_controller_uri }/info")
-
-      if response.is_a?(Net::HTTPOK)
-        body_json = JSON.parse(response.body)
-
-        @authorization_endpoint = body_json['authorization_endpoint']
-        if @authorization_endpoint.nil?
-          fail "Information retrieved from #{ url } does not include authorization_endpoint"
-        end
-
-        @token_endpoint = body_json['token_endpoint']
-        if @token_endpoint.nil?
-          fail "Information retrieved from #{ url } does not include token_endpoint"
-        end
-      else
-        fail "Unable to fetch info from #{ url }"
-      end
     end
   end
 end

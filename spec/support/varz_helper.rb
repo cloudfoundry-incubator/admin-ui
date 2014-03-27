@@ -19,23 +19,23 @@ module VARZHelper
   end
 
   def varz_stub
-    AdminUI::Utils.stub(:http_get).with(anything, nats_cloud_controller_varz, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, nats_cloud_controller_varz, AdminUI::Utils::HTTP_GET, anything) do
       OK.new(varz_cloud_controller)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, nats_dea_varz, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, nats_dea_varz, AdminUI::Utils::HTTP_GET, anything) do
       OK.new(varz_dea)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, nats_health_manager_varz, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, nats_health_manager_varz, AdminUI::Utils::HTTP_GET, anything) do
       OK.new(varz_health_manager)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, nats_provisioner_varz, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, nats_provisioner_varz, AdminUI::Utils::HTTP_GET, anything) do
       OK.new(varz_provisioner)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, nats_router_varz, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, nats_router_varz, AdminUI::Utils::HTTP_GET, anything) do
       OK.new(varz_router)
     end
   end
