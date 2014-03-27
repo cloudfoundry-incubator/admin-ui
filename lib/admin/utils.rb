@@ -38,6 +38,7 @@ module AdminUI
 
       request.basic_auth(basic_auth_array[0], basic_auth_array[1]) unless basic_auth_array.nil? || basic_auth_array.length < 2
       request['Authorization'] = authorization_header unless authorization_header.nil?
+      request['Accept']        = 'application/json'
 
       request.body = body if body
 
