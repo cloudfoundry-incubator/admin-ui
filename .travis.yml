@@ -4,7 +4,11 @@ rvm:
 before_install:
 - git submodule update --init --recursive
 - gem install rubocop
-script: pwd && ls -la && rubocop
+script: 
+  - cat .rubocop.yml
+  - pwd 
+  - ls -la 
+  - rubocop
 # script: bundle exec rspec
 branches:
   only:
