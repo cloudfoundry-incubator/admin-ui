@@ -15,47 +15,47 @@ module CCHelper
   end
 
   def cc_stub(config)
-    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/info") do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/info", AdminUI::Utils::HTTP_GET) do
       OK.new(cc_info)
     end
 
-    AdminUI::Utils.stub(:http_post).with(anything, "#{ authorization_endpoint }/oauth/token", anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ authorization_endpoint }/oauth/token", AdminUI::Utils::HTTP_POST, anything, anything, anything) do
       OK.new(uaa_oauth)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/apps", anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_apps)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_organizations)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/services", anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/services", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_services)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/service_bindings", anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_bindings", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_service_bindings)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/service_instances", anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_instances", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_service_instances)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_service_plans)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/spaces", anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_spaces)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, "#{ config.cloud_controller_uri }/v2/users?inline-relations-depth=1", anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/users?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_users_deep)
     end
 
-    AdminUI::Utils.stub(:http_get).with(anything, "#{ token_endpoint }/Users", anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ token_endpoint }/Users", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(uaa_users)
     end
   end
