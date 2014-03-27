@@ -1,0 +1,9 @@
+language: ruby
+rvm:
+  - 1.9.3-p484
+before_install:
+- git submodule update --init --recursive
+script: bundle exec rspec
+branches:
+  only:
+  - master
