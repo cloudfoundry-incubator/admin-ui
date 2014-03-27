@@ -1,3 +1,4 @@
+[![Build Status](https://api.travis-ci.org/cloudfoundry-incubator/admin-ui.png)](https://travis-ci.org/cloudfoundry-incubator/admin-ui)
 # Administration Web UI for CloudFoundry NG 
 
 The Administration Web UI provides metrics and operations data for CloudFoundry NG.
