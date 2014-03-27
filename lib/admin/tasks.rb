@@ -84,8 +84,7 @@ module AdminUI
     def create_task(command)
       current_time = Utils.time_in_milliseconds
 
-      task = {
-               :command   => command,
+      task = { :command   => command,
                :condition => ConditionVariable.new,
                :output    => [],
                :semaphore => Mutex.new,

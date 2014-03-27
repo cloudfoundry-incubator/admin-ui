@@ -65,8 +65,7 @@ module AdminUI
       end
 
       def create_content_result(file_size, start, read_size, contents)
-        result = {
-                   :data      => contents.nil? ? '' : contents,
+        result = { :data      => contents.nil? ? '' : contents,
                    :file_size => file_size,
                    :page_size => @config.log_file_page_size,
                    :path      => @path,

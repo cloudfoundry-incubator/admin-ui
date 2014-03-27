@@ -3,7 +3,7 @@ require 'selenium-webdriver'
 RSpec.configure do |config|
   firefox_exists = false
   begin
-    firefox_exists = File.exists?(Selenium::WebDriver::Firefox::Binary.path)
+    firefox_exists = File.exist?(Selenium::WebDriver::Firefox::Binary.path)
   rescue
   end
   config.filter_run_excluding :firefox_available => true unless firefox_exists
@@ -24,17 +24,15 @@ shared_context :web_context do
 
   def add_stats
     File.open(stats_file, 'w') do |file|
-      file.write(JSON.pretty_generate([
-                                        {
-                                          'apps'              => stat_count,
-                                          'deas'              => stat_count,
-                                          'organizations'     => stat_count,
-                                          'running_instances' => stat_count,
-                                          'spaces'            => stat_count,
-                                          'timestamp'         => stat_date,
-                                          'total_instances'   => stat_count,
-                                          'users'             => stat_count
-                                        }
+      file.write(JSON.pretty_generate([{ 'apps'              => stat_count,
+                                         'deas'              => stat_count,
+                                         'organizations'     => stat_count,
+                                         'running_instances' => stat_count,
+                                         'spaces'            => stat_count,
+                                         'timestamp'         => stat_date,
+                                         'total_instances'   => stat_count,
+                                         'users'             => stat_count
+                                       }
                                       ]))
     end
   end
@@ -84,19 +82,17 @@ shared_context :web_context do
   end
 
   def check_stats_table(id)
-    check_table_layout([
-                         {
-                           :columns         => @driver.find_elements(:xpath => "//div[@id='#{ id }TableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                           :expected_length => 3,
-                           :labels          => ['', 'Instances', ''],
-                           :colspans        => %w(5 2 1)
-                         },
-                         {
-                           :columns         => @driver.find_elements(:xpath => "//div[@id='#{ id }TableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                           :expected_length => 8,
-                           :labels          => %w(Date Organizations Spaces Users Apps Total Running DEAs),
-                           :colspans        => nil
-                         }
+    check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='#{ id }TableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                          :expected_length => 3,
+                          :labels          => ['', 'Instances', ''],
+                          :colspans        => %w(5 2 1)
+                        },
+                        {
+                          :columns         => @driver.find_elements(:xpath => "//div[@id='#{ id }TableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                          :expected_length => 8,
+                          :labels          => %w(Date Organizations Spaces Users Apps Total Running DEAs),
+                          :colspans        => nil
+                        }
                        ])
     stat_count_string = stat_count.to_s
     check_table_data(@driver.find_elements(:xpath => "//table[@id='#{ id }Table']/tbody/tr/td"),

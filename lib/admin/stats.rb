@@ -26,7 +26,7 @@ module AdminUI
 
       @stats_semaphore.synchronize do
         begin
-          result['items'] = JSON.parse(IO.read(@config.stats_file)) if File.exists?(@config.stats_file)
+          result['items'] = JSON.parse(IO.read(@config.stats_file)) if File.exist?(@config.stats_file)
         rescue => error
           @logger.debug("Error reading stats file: #{ error }")
         end
@@ -78,7 +78,7 @@ module AdminUI
           begin
             stats_array = []
 
-            stats_array = JSON.parse(IO.read(@config.stats_file)) if File.exists?(@config.stats_file)
+            stats_array = JSON.parse(IO.read(@config.stats_file)) if File.exist?(@config.stats_file)
 
             @logger.debug("Writing stats: #{ stats }")
 
