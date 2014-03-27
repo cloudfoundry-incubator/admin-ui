@@ -5,7 +5,7 @@ before_install:
 - git submodule update --init --recursive
 - gem install rubocop
 script: pwd
-script: ls -l
+script: ls -la
 script: rubocop
 # script: bundle exec rspec
 branches:
