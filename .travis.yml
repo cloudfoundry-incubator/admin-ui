@@ -5,11 +5,8 @@ before_install:
 - git submodule update --init --recursive
 - gem install rubocop
 script: 
-  - cat .rubocop.yml
-  - pwd 
-  - ls -la 
   - rubocop
-# script: bundle exec rspec
+  # - bundle exec rspec
 branches:
   only:
   - master
