@@ -3,7 +3,11 @@ rvm:
   - 1.9.3-p484
 before_install:
 - git submodule update --init --recursive
-script: bundle exec rspec
+- gem install rubocop
+script: pwd
+script: ls -la
+script: rubocop
+# script: bundle exec rspec
 branches:
   only:
   - master
