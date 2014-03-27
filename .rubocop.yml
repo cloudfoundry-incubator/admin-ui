@@ -21,3 +21,8 @@ MethodLength:
 
 ParameterLists:
   Enabled: false
+
+AllCops:
+  Exclude:
+    - .bundle
+    - vendor
