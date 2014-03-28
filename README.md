@@ -7,7 +7,7 @@ from the cloud controller and UAA REST API's.
 
 ## Placement
 
-In order to exeucute, the administration ui needs to be able to access the following resources:
+In order to execute, the administration ui needs to be able to access the following resources:
 
 - NATS
 - Cloud controller REST API
