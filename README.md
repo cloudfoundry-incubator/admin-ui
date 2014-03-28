@@ -1,20 +1,20 @@
 [![Build Status](https://api.travis-ci.org/cloudfoundry-incubator/admin-ui.png)](https://travis-ci.org/cloudfoundry-incubator/admin-ui)
 # Administration Web UI for Cloud Foundry NG 
 
-The Administration Web UI provides metrics and operations data for CloudFoundry NG.
+The Administration Web UI provides metrics and operations data for Cloud Foundry NG.
 It gathers data from the varz providers for the various Cloud Foundry components as well as
 from the Cloud Controller and UAA REST APIs.
 
 ## Placement
 
-In order to execute, the administration UI needs to be able to access the following resources:
+In order to execute, the Administration UI needs to be able to access the following resources:
 
 - NATS
 - Cloud Controller REST API
 - UAA REST API
 
-Installation of the administration UI and its prerequisites requires access to the Internet to
-access github.com, rubygems.org, Ubuntu software repositories, etc. 
+Installation of the Administration UI and its prerequisites requires access to the Internet to
+access GitHub.com, RubyGems.org, Ubuntu software repositories, etc. 
 
 ## Installation Steps
 
