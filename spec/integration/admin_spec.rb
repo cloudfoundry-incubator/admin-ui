@@ -42,6 +42,61 @@ describe AdminUI::Admin, :type => :integration do
     JSON.parse(body)
   end
 
+  def put_request(path, body)
+    request = Net::HTTP::Put.new(path)
+    request['Cookie'] = cookie
+    request['Content-Length'] = 0
+    request.body = body if body
+
+    response = http.request(request)
+
+    response
+  end
+
+  def delete_request(path)
+    request = Net::HTTP::Delete.new(path)
+    request['Cookie'] = cookie
+    request['Content-Length'] = 0
+
+    response = http.request(request)
+
+    response
+  end
+
+  context 'manage application' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure the original application status is STARTED
+      expect(get_json('/applications')['items'][0]['state']).to eq('STARTED')
+    end
+
+    def stop_app
+      response = put_request('/applications/application1', '{"state":"STOPPED"}')
+      expect(response.is_a?Net::HTTPNoContent).to be_true
+    end
+
+    def start_app
+      response = put_request('/applications/application1', '{"state":"STARTED"}')
+      expect(response.is_a?Net::HTTPNoContent).to be_true
+    end
+
+    it 'stops an running application' do
+      # Stub the http request to return
+      cc_stopped_apps_stub(AdminUI::Config.load(config))
+      expect { stop_app }.to change { get_json('/applications')['items'][0]['state'] }.from('STARTED').to('STOPPED')
+    end
+
+    it 'starts an stopped application' do
+      # Stub the http request to return
+      cc_apps_stop_to_start_stub(AdminUI::Config.load(config))
+      stop_app
+
+      expect { start_app }.to change { get_json('/applications')['items'][0]['state'] }.from('STOPPED').to('STARTED')
+    end
+  end
+
   context 'retrieves and validates' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -99,7 +154,7 @@ describe AdminUI::Admin, :type => :integration do
 
     it_behaves_like('retrieves cc entity/metadata record') do
       let(:path)      { '/applications' }
-      let(:cc_source) { cc_apps }
+      let(:cc_source) { cc_started_apps }
     end
 
     it_behaves_like('retrieves varz record') do
@@ -147,12 +202,12 @@ describe AdminUI::Admin, :type => :integration do
     context 'current_statistics' do
       let(:retrieved) { get_json('/current_statistics') }
       it 'retrieves' do
-        expect(retrieved).to include('apps'              => cc_apps['resources'].length,
+        expect(retrieved).to include('apps'              => cc_started_apps['resources'].length,
                                      'deas'              => 1,
                                      'organizations'     => cc_organizations['resources'].length,
-                                     'running_instances' => cc_apps['resources'].length,
+                                     'running_instances' => cc_started_apps['resources'].length,
                                      'spaces'            => cc_spaces['resources'].length,
-                                     'total_instances'   => cc_apps['resources'].length,
+                                     'total_instances'   => cc_started_apps['resources'].length,
                                      'users'             => uaa_users['resources'].length)
       end
     end

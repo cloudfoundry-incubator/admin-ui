@@ -48,11 +48,10 @@ module AdminUI
       filter(/Router/)
     end
 
-    def reload
+    def invalid
       @semaphore.synchronize do
         @cache = nil
         @condition.broadcast
-        @condition.wait(@semaphore) while @cache.nil?
       end
     end
 

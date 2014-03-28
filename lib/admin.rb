@@ -5,6 +5,7 @@ require_relative 'admin/cc_rest_client'
 require_relative 'admin/email'
 require_relative 'admin/log_files'
 require_relative 'admin/nats'
+require_relative 'admin/operation'
 require_relative 'admin/stats'
 require_relative 'admin/tasks'
 require_relative 'admin/varz'
@@ -51,6 +52,7 @@ module AdminUI
       @log_files = LogFiles.new(@config, @logger)
       @tasks     = Tasks.new(@config, @logger)
       @varz      = VARZ.new(@config, @logger, nats)
+      @operation = Operation.new(@config, @logger, @cc, client, @varz)
       @stats     = Stats.new(@config, @logger, @cc, @varz)
     end
 
@@ -68,6 +70,7 @@ module AdminUI
                              @logger,
                              @cc,
                              @log_files,
+                             @operation,
                              @stats,
                              @tasks,
                              @varz)
