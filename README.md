@@ -1,20 +1,20 @@
 [![Build Status](https://api.travis-ci.org/cloudfoundry-incubator/admin-ui.png)](https://travis-ci.org/cloudfoundry-incubator/admin-ui)
-# Administration Web UI for CloudFoundry NG 
+# Administration Web UI for Cloud Foundry NG 
 
 The Administration Web UI provides metrics and operations data for CloudFoundry NG.
-It gathers data from the varz providers for the various CloudFoundry components as well as
-from the cloud controller and UAA REST API's.
+It gathers data from the varz providers for the various Cloud Foundry components as well as
+from the Cloud Controller and UAA REST APIs.
 
 ## Placement
 
-In order to execute, the administration ui needs to be able to access the following resources:
+In order to execute, the administration UI needs to be able to access the following resources:
 
 - NATS
-- Cloud controller REST API
+- Cloud Controller REST API
 - UAA REST API
 
-Installation of the administration ui and its prerequisites require access to the internet to
-access github.com, rubygems.org, ubuntu software repositories, etc. 
+Installation of the administration UI and its prerequisites requires access to the Internet to
+access github.com, rubygems.org, Ubuntu software repositories, etc. 
 
 ## Installation Steps
 
@@ -30,7 +30,7 @@ sudo apt-get install -f -y --no-install-recommends git-core build-essential libs
 
 ### Ruby
 
-Ruby is required to run the administration ui.  This has been tested with Ruby 1.9.3-p448.
+Ruby is required to run the Administration UI.  This has been tested with Ruby 1.9.3-p448.
 Here is a sample installation of ruby using rbenv:
 
 ```
@@ -44,7 +44,7 @@ rbenv global 1.9.3-p448
 ```
 
 ### Ruby Bundler Gem
-The bundler gem is required to install prerequisite gems for the administration ui.
+The bundler gem is required to install prerequisite gems for the Administration UI.
 
 ```
 gem install bundler --no-rdoc --no-ri
@@ -56,7 +56,7 @@ If you are using rbenv you need to refresh the rbenv shims:
 rbenv rehash
 ```
 
-### Retrieve the administration ui code
+### Retrieve the Administration UI code
 
 ```
 git clone https://github.com/cloudfoundry-incubator/admin-ui.git
@@ -69,7 +69,7 @@ cd admin-ui
 bundle install
 ```
 
-### Administraton UI Configuration 
+### Administration UI Configuration 
 
 Default configuration found in config/default.yml
 
@@ -96,7 +96,7 @@ Example: <code>300</code>
 <code>cloud_controller_ssl_verify_none</code>
 </dt>
 <dd>
-If connection to cloud_controller is https, true to ignore ssl verification
+If connection to cloud_controller is https, true to ignore SSL verification
 <br>
 Example: <code>true</code>
 <br>
@@ -106,7 +106,7 @@ Example: <code>false</code>
 <code><b>cloud_controller_uri</b></code>
 </dt>
 <dd>
-The URI used to connect to the cloud controller REST API.  This is also used as a title for the web ui header as well as email notification.
+The URI used to connect to the Cloud Controller REST API.  This is also used as a title for the web UI header as well as email notification.
 </dd>
 <dt>
 <code>component_connection_retries</code>
@@ -120,7 +120,7 @@ Example: <code>2</code>
 <code>data_file</code>
 </dt>
 <dd>
-Relative path location to store the administration ui data file.  
+Relative path location to store the Administration UI data file.  
 <br>
 Example: <code>data/data.json</code>
 </dd>
@@ -128,7 +128,7 @@ Example: <code>data/data.json</code>
 <code>log_file</code>
 </dt>
 <dd>
-Relative path locaton to the administration ui log file
+Relative path locaton to the Administration UI log file
 <br>
 Example: <code>admin_ui.log</code>
 </dd>
@@ -152,7 +152,7 @@ Example: <code>[/some_directory/some_key.pem]</code>
 <code>log_files</code>
 </dt>
 <dd>
-Log files in a comma-delimited array being exposed through the administration ui. Note that these files must be accessible by the user that started the administration ui.  These files can either be found on a file system accessible by the local system or as an SFTP URI.  In the case of SFTP, both
+Log files in a comma-delimited array being exposed through the Administration UI. Note that these files must be accessible by the user that started the Administration UI.  These files can either be found on a file system accessible by the local system or as an SFTP URI.  In the case of SFTP, both
 user:password and user with pem files are supported.  If the SFTP password is not specified, the key files specified in log_file_sftp_keys will be used. <br>
 Example <code>[/var/vcap/sys/log/cloud_controller_ng/cloud_controller_ng.log]</code>
 <br>
@@ -206,7 +206,7 @@ Example: <code>10</code>
 <code>port</code>
 </dt>
 <dd>
-Port for the administration ui web server.  
+Port for the Administration UI web server.  
 <br>
 Example: <code>8070</code>
 </dd>
@@ -249,7 +249,7 @@ Example: <code>system@10.10.10.10</code>
 <code>stats_file</code>
 </dt>
 <dd>
-Relative path location to store the administration ui statistics.
+Relative path location to store the Administration UI statistics.
 <br>
 Example: <code>data/stats.json</code>
 </dd>
@@ -281,7 +281,7 @@ Example: <code>300</code>
 <code><b>uaa_admin_credentials</b></code>
 </dt>
 <dd>
-UAA credentials to access the cloud controller REST API as an admin user
+UAA credentials to access the Cloud Controller REST API as an admin user
 <br>
 <dl>
 <dt>
@@ -306,7 +306,7 @@ Example: <code>c1oudc0w</code>
 <code><b>ui_credentials</b></code>
 </dt>
 <dd>
-Credentials to access the administration ui as a standard user.
+Credentials to access the Administration UI as a standard user.
 <br>
 <dl>
 <dt>
@@ -330,7 +330,7 @@ Example: <code>passw0rd</code>
 <code><b>ui_admin_credentials</b></code>
 </dt>
 <dd>
-Credentials to access the administration ui as an admin user
+Credentials to access the Administration UI as an admin user
 <br>
 <dl>
 <dt>
