@@ -1,6 +1,10 @@
 language: ruby
 rvm:
   - 1.9.3-p484
+addons:
+  sauce_connect:
+    username: 'admin-ui'
+    access_key: '079fcd98-e832-47cc-9d0d-9b139dcbfa57'
 before_install:
 - git submodule update --init --recursive
 - gem install rubocop
