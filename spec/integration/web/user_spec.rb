@@ -11,9 +11,30 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       login(user, user_password, 'Administration')
     end
 
-    it 'does not have a create DEA button' do
+    it 'does not have start, stop or restart buttons' do
       # Need to wait until the page has been rendered.
       # Move the click operation into the wait block to ensure the action has been taken, this is used to fit Travis CI system.
+      begin
+        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+          @driver.find_element(:id => 'Applications').click
+          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Applications'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('Applications')
+
+      begin
+        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+          @driver.find_element(:id => 'ApplicationsPage').displayed? &&
+          @driver.find_element(:id => 'ToolTables_ApplicationsTable_0').text == 'Copy'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(:id => 'ApplicationsPage').displayed?).to eq(true)
+      expect(@driver.find_element(:id => 'ToolTables_ApplicationsTable_0').text).to eq('Copy')
+    end
+
+    it 'does not have a create DEA button' do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
           @driver.find_element(:id => 'DEAs').click
@@ -24,7 +45,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('DEAs')
 
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:id => 'DEAsPage').displayed? && @driver.find_element(:id => 'ToolTables_DEAsTable_0').text == 'Copy' }
+        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+          @driver.find_element(:id => 'DEAsPage').displayed? &&
+          @driver.find_element(:id => 'ToolTables_DEAsTable_0').text == 'Copy'
+        end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
       expect(@driver.find_element(:id => 'DEAsPage').displayed?).to eq(true)
