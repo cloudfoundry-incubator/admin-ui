@@ -11,13 +11,11 @@ describe AdminUI::Operation, :type => :integration do
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(log_file) }
   let(:config) do
-    AdminUI::Config.load(
-      :cloud_controller_discovery_interval => 10,
-      :cloud_controller_uri                => 'http://api.cloudfoundry',
-      :data_file                           => data_file,
-      :monitored_components                => [],
-      :uaa_admin_credentials               => { :username => 'user', :password => 'password' }
-    )
+    AdminUI::Config.load(:cloud_controller_discovery_interval => 10,
+                         :cloud_controller_uri                => 'http://api.cloudfoundry',
+                         :data_file                           => data_file,
+                         :monitored_components                => [],
+                         :uaa_admin_credentials               => { :username => 'user', :password => 'password' })
   end
 
   let(:client) { AdminUI::CCRestClient.new(config, logger) }

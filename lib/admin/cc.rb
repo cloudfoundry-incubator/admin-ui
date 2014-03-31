@@ -54,7 +54,7 @@ module AdminUI
       organizations['items'].length
     end
 
-    def invalid_applications
+    def invalidate_applications
       hash = @caches[:applications]
       hash[:semaphore].synchronize do
         hash[:result] = nil

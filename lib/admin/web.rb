@@ -203,10 +203,16 @@ module AdminUI
     end
 
     put '/applications/:app_guid', :auth => [:admin] do
-      control_message = request.body.read.to_s
-      @operation.manage_application(params[:app_guid], control_message)
+      begin
+        control_message = request.body.read.to_s
+        @operation.manage_application(params[:app_guid], control_message)
 
-      204
+        204
+      rescue => error
+        @logger.debug("Error during update application: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
     end
 
     delete '/components', :auth => [:user] do

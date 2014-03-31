@@ -33,7 +33,7 @@ describe AdminUI::CC, :type => :integration do
   context 'Stubbed HTTP' do
     it 'clears the application cache' do
       cc_apps_start_to_stop_stub(config)
-      expect { cc.invalid_applications }.to change { cc.applications['items'][0]['state'] }.from('STARTED').to('STOPPED')
+      expect { cc.invalidate_applications }.to change { cc.applications['items'][0]['state'] }.from('STARTED').to('STOPPED')
     end
 
     it 'returns connected applications' do

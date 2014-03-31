@@ -13,8 +13,8 @@ module AdminUI
 
       @client.put_cc(url, control_message)
 
-      @cc.invalid_applications
-      @varz.invalid
+      @cc.invalidate_applications
+      @varz.invalidate
     end
   end
 end

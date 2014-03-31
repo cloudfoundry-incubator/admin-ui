@@ -82,13 +82,13 @@ describe AdminUI::Admin, :type => :integration do
       expect(response.is_a?Net::HTTPNoContent).to be_true
     end
 
-    it 'stops an running application' do
+    it 'stops a running application' do
       # Stub the http request to return
       cc_stopped_apps_stub(AdminUI::Config.load(config))
       expect { stop_app }.to change { get_json('/applications')['items'][0]['state'] }.from('STARTED').to('STOPPED')
     end
 
-    it 'starts an stopped application' do
+    it 'starts a stopped application' do
       # Stub the http request to return
       cc_apps_stop_to_start_stub(AdminUI::Config.load(config))
       stop_app

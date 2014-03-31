@@ -239,7 +239,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 17,
-                                :labels          => ['', 'Name', 'State', "Package\nState", 'Started', 'URI', 'Buildpack', 'Instance', 'Instance State', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                :labels          => ['', 'Name', 'State', "Package\nState", "Instance\nState", 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
                                 :colspans        => nil
                               }
                              ])
@@ -249,11 +249,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_started_apps['resources'][0]['entity']['name'],
                              cc_started_apps['resources'][0]['entity']['state'],
                              @driver.execute_script('return Constants.STATUS__STAGED'),
+                             varz_dea['instance_registry']['application1']['application1_instance1']['state'],
                              @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })"),
                              "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }",
                              cc_started_apps['resources'][0]['entity']['detected_buildpack'],
                              varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'].to_s,
-                             varz_dea['instance_registry']['application1']['application1_instance1']['state'],
                              varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s,
                              @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s,
                              @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s,

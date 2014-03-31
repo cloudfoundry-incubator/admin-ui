@@ -48,7 +48,7 @@ module AdminUI
       filter(/Router/)
     end
 
-    def invalid
+    def invalidate
       @semaphore.synchronize do
         @cache = nil
         @condition.broadcast
