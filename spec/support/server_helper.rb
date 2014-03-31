@@ -5,6 +5,7 @@ shared_context :server_context do
   include CCHelper
   include NATSHelper
   include VARZHelper
+  include OperationHelper
 
   let(:host) { 'localhost' }
   let(:port) { 8071 }
@@ -51,6 +52,7 @@ shared_context :server_context do
     cc_stub(AdminUI::Config.load(config))
     nats_stub
     varz_stub
+    operation_stub(AdminUI::Config.load(config))
 
     ::WEBrick::Log.any_instance.stub(:log)
 

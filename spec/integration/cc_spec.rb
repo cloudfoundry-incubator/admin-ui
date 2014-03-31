@@ -31,13 +31,18 @@ describe AdminUI::CC, :type => :integration do
   end
 
   context 'Stubbed HTTP' do
+    it 'clears the application cache' do
+      cc_apps_start_to_stop_stub(config)
+      expect { cc.invalidate_applications }.to change { cc.applications['items'][0]['state'] }.from('STARTED').to('STOPPED')
+    end
+
     it 'returns connected applications' do
       applications = cc.applications
 
       expect(applications['connected']).to eq(true)
       items = applications['items']
 
-      resources = cc_apps['resources']
+      resources = cc_started_apps['resources']
 
       expect(items.length).to be(resources.length)
 
@@ -47,15 +52,15 @@ describe AdminUI::CC, :type => :integration do
     end
 
     it 'returns applications_count' do
-      expect(cc.applications_count).to be(cc_apps['resources'].length)
+      expect(cc.applications_count).to be(cc_started_apps['resources'].length)
     end
 
     it 'returns applications_running_instances' do
-      expect(cc.applications_running_instances).to be(cc_apps['resources'].length)
+      expect(cc.applications_running_instances).to be(cc_started_apps['resources'].length)
     end
 
     it 'returns applications_total_instances' do
-      expect(cc.applications_total_instances).to be(cc_apps['resources'].length)
+      expect(cc.applications_total_instances).to be(cc_started_apps['resources'].length)
     end
 
     it 'returns connected organizations' do

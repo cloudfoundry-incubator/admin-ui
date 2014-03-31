@@ -107,6 +107,22 @@ describe AdminUI::Admin do
       JSON.parse(body)
     end
 
+    def put(path, body)
+      request = Net::HTTP::Put.new(path)
+      request['Cookie'] = cookie
+      request['Content-Length'] = 0
+      request.body = body if body
+
+      http.request(request)
+    end
+
+    def delete(path)
+      request = Net::HTTP::Delete.new(path)
+      request['Cookie'] = cookie
+
+      http.request(request)
+    end
+
     def verify_disconnected_items(path)
       json = get_json(path)
 
@@ -117,6 +133,13 @@ describe AdminUI::Admin do
       json = get_json(path)
 
       expect(json).to include('items' => [])
+    end
+
+    context 'manage application' do
+      it 'returns failure code due to disconnection' do
+        response = put('/applications/application1', '{"state":"STARTED"}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
     end
 
     it '/applications succeeds' do
@@ -209,8 +232,22 @@ describe AdminUI::Admin do
   context 'Login required, but not performed' do
     let(:http) { create_http }
 
-    def redirects_as_expected(path)
-      request = Net::HTTP::Get.new(path)
+    def get_redirects_as_expected(path)
+      do_redirect_request(Net::HTTP::Get.new(path))
+    end
+
+    def put_redirects_as_expected(path, body)
+      request = Net::HTTP::Put.new(path)
+      request.body = body if body
+      do_redirect_request(request)
+    end
+
+    def delete_redirects_as_expected(path)
+      do_redirect_request(Net::HTTP::Delete.new(path))
+    end
+
+    def do_redirect_request(request)
+      request['Content-Length'] = 0
 
       response = http.request(request)
       expect(response.is_a?(Net::HTTPSeeOther)).to be_true
@@ -220,97 +257,100 @@ describe AdminUI::Admin do
     end
 
     it '/applications redirects as expected' do
-      redirects_as_expected('/applications')
+      get_redirects_as_expected('/applications')
     end
 
     it '/cloud_controllers redirects as expected' do
-      redirects_as_expected('/cloud_controllers')
+      get_redirects_as_expected('/cloud_controllers')
     end
 
     it '/components redirects as expected' do
-      redirects_as_expected('/components')
+      get_redirects_as_expected('/components')
     end
 
     it '/deas redirects as expected' do
-      redirects_as_expected('/deas')
+      get_redirects_as_expected('/deas')
     end
 
     it '/download redirects as expected' do
-      redirects_as_expected('/download')
+      get_redirects_as_expected('/download')
     end
 
     it '/gateways redirects as expected' do
-      redirects_as_expected('/gateways')
+      get_redirects_as_expected('/gateways')
     end
 
     it '/health_managers redirects as expected' do
-      redirects_as_expected('/health_managers')
+      get_redirects_as_expected('/health_managers')
     end
 
     it '/log redirects as expected' do
-      redirects_as_expected('/log')
+      get_redirects_as_expected('/log')
     end
 
     it '/logs redirects as expected' do
-      redirects_as_expected('/logs')
+      get_redirects_as_expected('/logs')
     end
 
     it '/organizations redirects as expected' do
-      redirects_as_expected('/organizations')
+      get_redirects_as_expected('/organizations')
     end
 
     it '/routers redirects as expected' do
-      redirects_as_expected('/routers')
+      get_redirects_as_expected('/routers')
     end
 
     it '/settings redirects as expected' do
-      redirects_as_expected('/settings')
+      get_redirects_as_expected('/settings')
     end
 
     it '/services redirects as expected' do
-      redirects_as_expected('/services')
+      get_redirects_as_expected('/services')
     end
 
     it '/service_bindings redirects as expected' do
-      redirects_as_expected('/service_bindings')
+      get_redirects_as_expected('/service_bindings')
     end
 
     it '/service_instances redirects as expected' do
-      redirects_as_expected('/service_instances')
+      get_redirects_as_expected('/service_instances')
     end
 
     it '/service_plans redirects as expected' do
-      redirects_as_expected('/service_plans')
+      get_redirects_as_expected('/service_plans')
     end
 
     it '/spaces redirects as expected' do
-      redirects_as_expected('/spaces')
+      get_redirects_as_expected('/spaces')
     end
 
     it '/spaces_auditors redirects as expected' do
-      redirects_as_expected('/spaces_auditors')
+      get_redirects_as_expected('/spaces_auditors')
     end
 
     it '/spaces_developers redirects as expected' do
-      redirects_as_expected('/spaces_developers')
+      get_redirects_as_expected('/spaces_developers')
     end
 
     it '/spaces_managersd redirects as expected' do
-      redirects_as_expected('/spaces_managers')
+      get_redirects_as_expected('/spaces_managers')
     end
 
     it '/tasks redirects as expected' do
-      redirects_as_expected('/tasks')
+      get_redirects_as_expected('/tasks')
     end
 
     it '/task_status redirects as expected' do
-      redirects_as_expected('/task_status')
+      get_redirects_as_expected('/task_status')
     end
 
     it '/users redirects as expected' do
-      redirects_as_expected('/users')
+      get_redirects_as_expected('/users')
     end
 
+    it 'puts /applications/:app_guid redirects as expected' do
+      put_redirects_as_expected('/applications/application1', '{"state":"STARTED"}')
+    end
   end
 
   context 'Login not required' do

@@ -54,6 +54,14 @@ module AdminUI
       organizations['items'].length
     end
 
+    def invalidate_applications
+      hash = @caches[:applications]
+      hash[:semaphore].synchronize do
+        hash[:result] = nil
+        hash[:condition].broadcast
+      end
+    end
+
     def services
       result_cache(:services)
     end

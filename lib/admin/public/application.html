@@ -307,15 +307,17 @@
                     <table id="ApplicationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="7"> </th>
+                                <th colspan="9"> </th>
                                 <th colspan="4">Used</th>
                                 <th colspan="2">Reserved</th>
                                 <th colspan="2"> </th>
                             </tr>
                             <tr>
+                                <th>Check</th>
                                 <th>Name</th>
                                 <th>State</th>
                                 <th>Package State</th>
+                                <th>Instance State</th>
                                 <th>Started</th>
                                 <th>URI</th>
                                 <th>Buildpack</th>
@@ -669,6 +671,11 @@
             </div>
 
         </div>
+
+        <div id="ModalDialogDiv" class="modal_dialog_div_content">
+            <div id="ModalDialogMessageDiv" class="modal_dialog_div_messageshow"></div>
+        </div>
+        <div id="ModalDialogBackgroundDiv" class="modal_dialog_div_overlay"></div>
 
         <div id="Dialog" class="dialog hiddenPage">
 

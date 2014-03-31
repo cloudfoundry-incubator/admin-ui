@@ -2,13 +2,14 @@ require 'sinatra'
 
 module AdminUI
   class Web < Sinatra::Base
-    def initialize(config, logger, cc, log_files, stats, tasks, varz)
+    def initialize(config, logger, cc, log_files, operation, stats, tasks, varz)
       super({})
 
       @config    = config
       @logger    = logger
       @cc        = cc
       @log_files = log_files
+      @operation = operation
       @stats     = stats
       @tasks     = tasks
       @varz      = varz
@@ -199,6 +200,19 @@ module AdminUI
 
       [200, stats.to_json]
 
+    end
+
+    put '/applications/:app_guid', :auth => [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @operation.manage_application(params[:app_guid], control_message)
+
+        204
+      rescue => error
+        @logger.debug("Error during update application: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
     end
 
     delete '/components', :auth => [:user] do
