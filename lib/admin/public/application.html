@@ -34,7 +34,8 @@
         <script src="js/app/tabs/healthManagersTab.js"></script> 
         <script src="js/app/tabs/logsTab.js"></script>
         <script src="js/app/tabs/organizationsTab.js"></script>  
-        <script src="js/app/tabs/routersTab.js"></script>        
+        <script src="js/app/tabs/routersTab.js"></script>
+        <script src="js/app/tabs/routesTab.js"></script>
         <script src="js/app/tabs/serviceInstancesTab.js"></script>
         <script src="js/app/tabs/spacesTab.js"></script>
         <script src="js/app/tabs/statsTab.js"></script>
@@ -94,6 +95,10 @@
 
             <span id="Applications" class="menuItem">
                 Apps
+            </span>
+
+            <span id="Routes" class="menuItem">
+                Routes
             </span>
 
             <span id="ServiceInstances" class="menuItem">
@@ -257,6 +262,31 @@
 
             </div>
 
+            <div id="RoutesPage" class="page hiddenPage">
+                <div id="RoutesTableContainer" class="pageSection">
+                    <table id="RoutesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <tbody>
+                        <tr>
+                            <th>Check</th>
+                            <th>Host</th>
+                            <th>Domain</th>
+                            <th>Created</th>
+                            <th>Target</th>
+                            <th>Applications</th>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="RoutesDetailsLabel" class="propertyLabel">
+                        Details
+                    </div>
+                    <div id="RoutesPropertiesContainer">
+                    </div>
+                </div>
+            </div>
+
             <div id="DEAsPage" class="page hiddenPage">
 
                 <div id="DEAsTableContainer" class="pageSection">
@@ -395,7 +425,7 @@
                     <table id="OrganizationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="5"> </th>
+                                <th colspan="6"> </th>
                                 <th colspan="5">Used</th>
                                 <th colspan="2">Reserved</th>
                                 <th colspan="3">App States</th>
@@ -407,6 +437,7 @@
                                 <th>Created</th>
                                 <th>Spaces</th>
                                 <th>Developers</th>
+                                <th>Routes (Used/Total)</th>
                                 <th>Instances</th>
                                 <th>Services</th>
                                 <th>Memory</th>
@@ -448,7 +479,7 @@
                     <table id="SpacesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="4"> </th>
+                                <th colspan="5"> </th>
                                 <th colspan="5">Used</th>
                                 <th colspan="2">Reserved</th>
                                 <th colspan="3">App States</th>
@@ -459,6 +490,7 @@
                                 <th>Target</th>
                                 <th>Created</th>
                                 <th>Developers</th>
+                                <th>Routes (Used/Total)</th>
                                 <th>Instances</th>
                                 <th>Services</th>
                                 <th>Memory</th>

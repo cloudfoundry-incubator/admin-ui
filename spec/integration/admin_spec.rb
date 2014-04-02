@@ -97,6 +97,26 @@ describe AdminUI::Admin, :type => :integration do
     end
   end
 
+  context 'manage route' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there is a route
+      expect(get_json('/routes')['items'].length).to eq(1)
+    end
+
+    def delete_route
+      response = delete_request('/routes/route1')
+      expect(response.is_a?Net::HTTPNoContent).to be_true
+    end
+
+    it 'deletes the specific route' do
+      cc_empty_routes_stub(AdminUI::Config.load(config))
+      expect { delete_route }.to change { get_json('/routes')['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'retrieves and validates' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -276,6 +296,11 @@ describe AdminUI::Admin, :type => :integration do
       let(:varz_name) { nats_router['host'] }
       let(:path)      { '/routers' }
       let(:varz_uri)  { nats_router_varz }
+    end
+
+    it_behaves_like('retrieves cc entity/metadata record') do
+      let(:path)      { '/routes' }
+      let(:cc_source) { cc_routes }
     end
 
     it_behaves_like('retrieves cc entity/metadata record') do

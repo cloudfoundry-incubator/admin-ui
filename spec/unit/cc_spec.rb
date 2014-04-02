@@ -45,6 +45,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.organizations)
     end
 
+    it 'returns zero routes as expected' do
+      verify_disconnected_items(cc.routes)
+    end
+
     it 'returns zero organizations count as expected' do
       expect(cc.organizations_count).to eq(0)
     end

@@ -16,5 +16,14 @@ module AdminUI
       @cc.invalidate_applications
       @varz.invalidate
     end
+
+    def manage_route(method, route_guid)
+      url = "v2/routes/#{ route_guid }"
+
+      if method.upcase == 'DELETE'
+        @client.delete_cc(url)
+        @cc.invalidate_routes
+      end
+    end
   end
 end

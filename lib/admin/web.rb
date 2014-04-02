@@ -96,6 +96,10 @@ module AdminUI
       @varz.routers.to_json
     end
 
+    get '/routes', :auth => [:user] do
+      @cc.routes.to_json
+    end
+
     get '/settings', :auth => [:user] do
       {
         :admin                  => session[:admin],
@@ -219,6 +223,17 @@ module AdminUI
       @varz.remove(params['uri'])
 
       204
+    end
+
+    delete '/routes/:route_guid', :auth => [:admin] do
+      begin
+        @operation.manage_route('DELETE', params[:route_guid])
+        204
+      rescue => error
+        @logger.debug("Error during deleting route: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
     end
 
     private

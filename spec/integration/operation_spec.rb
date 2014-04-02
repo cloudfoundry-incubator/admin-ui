@@ -59,5 +59,17 @@ describe AdminUI::Operation, :type => :integration do
         expect { operation.manage_application('application1', '{"state":"STARTED"}') }.to change { cc.applications['items'][0]['state'] }.from('STOPPED').to('STARTED')
       end
     end
+
+    context 'manage route' do
+      before do
+        # Make sure there is a route
+        expect(cc.routes['items'].length).to eq(1)
+      end
+
+      it 'deletes specific route' do
+        cc_empty_routes_stub(config)
+        expect { operation.manage_route('DELETE', 'route1') }.to change { cc.routes['items'].length }.from(1).to(0)
+      end
+    end
   end
 end
