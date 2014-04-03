@@ -21,5 +21,9 @@ module OperationHelper
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps/application1", AdminUI::Utils::HTTP_PUT, anything, '{"state":"STARTED"}', anything) do
       Created.new(cc_started_app)
     end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes/route1", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      Net::HTTPNoContent.new(1.0, 204, 'OK')
+    end
   end
 end

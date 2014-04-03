@@ -36,6 +36,11 @@ describe AdminUI::CC, :type => :integration do
       expect { cc.invalidate_applications }.to change { cc.applications['items'][0]['state'] }.from('STARTED').to('STOPPED')
     end
 
+    it 'clears the route cache' do
+      cc_routes_delete_stub(config)
+      expect { cc.invalidate_routes }.to change { cc.routes['items'].length }.from(1).to(0)
+    end
+
     it 'returns connected applications' do
       applications = cc.applications
 
@@ -70,6 +75,21 @@ describe AdminUI::CC, :type => :integration do
       items = organizations['items']
 
       resources = cc_organizations['resources']
+
+      expect(items.length).to be(resources.length)
+
+      resources.each do |resource|
+        expect(items).to include(resource['entity'].merge(resource['metadata']))
+      end
+    end
+
+    it 'returns connected routes' do
+      routes = cc.routes
+
+      expect(routes['connected']).to eq(true)
+      items = routes['items']
+
+      resources = cc_routes['resources']
 
       expect(items.length).to be(resources.length)
 

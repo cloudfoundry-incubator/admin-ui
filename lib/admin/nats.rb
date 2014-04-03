@@ -131,7 +131,7 @@ module AdminUI
         @cache['items'].each do |url, item|
           update_connection_status(item['type'],
                                    url,
-                                   !nats_discovery_results['items'][url].nil?,
+                                   nats_discovery_results['items'][url],
                                    disconnected)
         end
 
@@ -177,9 +177,7 @@ module AdminUI
 
     def monitored?(component)
       @config.monitored_components.each do |type|
-        if !(component =~ /#{ type }/).nil? || type.casecmp('ALL') == 0
-          return true
-        end
+        return true if component =~ /#{ type }/ || type.casecmp('ALL') == 0
       end
       false
     end

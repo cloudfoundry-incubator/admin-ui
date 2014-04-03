@@ -97,7 +97,7 @@ module VARZHelper
               }
             ],
             'state'                   => 'RUNNING',
-            'state_running_timestamp' => 1382448059.0734425,
+            'state_running_timestamp' => 1_382_448_059.0734425,
             'used_disk_in_bytes'      => 56_057_856,
             'used_memory_in_bytes'    => 19_292_160
           }

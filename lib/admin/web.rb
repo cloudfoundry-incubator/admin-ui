@@ -22,7 +22,7 @@ module AdminUI
 
     set(:auth) do |*roles|
       condition do
-        unless !session[:username].nil? && (!roles.include?(:admin) || session[:admin])
+        unless session[:username] && (!roles.include?(:admin) || session[:admin])
           @logger.debug('Authorization failure, redirecting to login...')
           redirect_to_login
         end
@@ -94,6 +94,10 @@ module AdminUI
 
     get '/routers', :auth => [:user] do
       @varz.routers.to_json
+    end
+
+    get '/routes', :auth => [:user] do
+      @cc.routes.to_json
     end
 
     get '/settings', :auth => [:user] do
@@ -219,6 +223,17 @@ module AdminUI
       @varz.remove(params['uri'])
 
       204
+    end
+
+    delete '/routes/:route_guid', :auth => [:admin] do
+      begin
+        @operation.manage_route('DELETE', params[:route_guid])
+        204
+      rescue => error
+        @logger.debug("Error during deleting route: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
     end
 
     private

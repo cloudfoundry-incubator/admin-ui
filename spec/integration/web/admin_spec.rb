@@ -25,20 +25,21 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     end
 
     it 'has tabs' do
-      expect(@driver.find_element(:id => 'Organizations').displayed?).to    be_true
-      expect(@driver.find_element(:id => 'Spaces').displayed?).to           be_true
-      expect(@driver.find_element(:id => 'Applications').displayed?).to     be_true
+      expect(@driver.find_element(:id => 'Organizations').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Spaces').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Applications').displayed?).to be_true
       expect(@driver.find_element(:id => 'ServiceInstances').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Developers').displayed?).to       be_true
-      expect(@driver.find_element(:id => 'DEAs').displayed?).to             be_true
+      expect(@driver.find_element(:id => 'Developers').displayed?).to be_true
+      expect(@driver.find_element(:id => 'DEAs').displayed?).to be_true
       expect(@driver.find_element(:id => 'CloudControllers').displayed?).to be_true
-      expect(@driver.find_element(:id => 'HealthManagers').displayed?).to   be_true
-      expect(@driver.find_element(:id => 'Gateways').displayed?).to         be_true
-      expect(@driver.find_element(:id => 'Routers').displayed?).to          be_true
-      expect(@driver.find_element(:id => 'Components').displayed?).to       be_true
-      expect(@driver.find_element(:id => 'Logs').displayed?).to             be_true
-      expect(@driver.find_element(:id => 'Tasks').displayed?).to            be_true
-      expect(@driver.find_element(:id => 'Stats').displayed?).to            be_true
+      expect(@driver.find_element(:id => 'HealthManagers').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Gateways').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Routers').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Routes').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Components').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Logs').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Tasks').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Stats').displayed?).to be_true
     end
 
     it 'has a refresh button' do
@@ -74,13 +75,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Organizations' }
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 5,
-                                :labels          => ['', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                :colspans        => %w(5 5 2 3 3)
+                                :expected_length => 6,
+                                :labels          => ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
+                                :colspans        => %w(5 2 5 2 3 3)
                               },
                               { :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 18,
-                                :labels          => ['Name', 'Status', 'Created', 'Spaces', 'Developers', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :expected_length => 20,
+                                :labels          => ['Name', 'Status', 'Created', 'Spaces', 'Developers', 'Total', 'Used', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 :colspans        => nil
                               }
                              ])
@@ -91,6 +92,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatDateString(\"#{ cc_organizations['resources'][0]['metadata']['created_at'] }\")"),
                              cc_spaces['resources'].length.to_s,
                              cc_users_deep['resources'].length.to_s,
+                             cc_routes['resources'].length.to_s,
+                             cc_routes['resources'].length.to_s,
                              cc_started_apps['resources'][0]['entity']['instances'].to_s,
                              varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s,
                              @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s,
@@ -117,6 +120,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Billing Enabled', :tag =>   nil, :value => cc_organizations['resources'][0]['entity']['billing_enabled'].to_s },
                            { :label => 'Spaces',          :tag =>   'a', :value => cc_spaces['resources'].length.to_s },
                            { :label => 'Developers',      :tag =>   'a', :value => cc_users_deep['resources'].length.to_s },
+                           { :label => 'Total Routes',    :tag =>   'a', :value => cc_routes['resources'].length.to_s },
+                           { :label => 'Used Routes',     :tag =>   nil, :value => cc_routes['resources'].length.to_s },
                            { :label => 'Instances Used',  :tag =>   'a', :value => cc_started_apps['resources'][0]['entity']['instances'].to_s },
                            { :label => 'Services Used',   :tag =>   'a', :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
                            { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
@@ -138,14 +143,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has developers link' do
             check_filter_link('Organizations', 5, 'Developers', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
+          it 'has routes link' do
+            check_filter_link('Organizations', 6, 'Routes', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+          end
           it 'has instances link' do
-            check_filter_link('Organizations', 6, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+            check_filter_link('Organizations', 8, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
           it 'has services link' do
-            check_filter_link('Organizations', 7, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+            check_filter_link('Organizations', 9, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
           it 'has applications link' do
-            check_filter_link('Organizations', 13, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+            check_filter_link('Organizations', 15, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
         end
       end
@@ -154,14 +162,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Spaces' }
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 5,
-                                :labels          => ['', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                :colspans        => %w(4 5 2 3 3)
+                                :expected_length => 6,
+                                :labels          => ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
+                                :colspans        => %w(4 2 5 2 3 3)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 17,
-                                :labels          => ['Name', 'Target', 'Created', 'Developers', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :expected_length => 19,
+                                :labels          => ['Name', 'Target', 'Created', 'Developers', 'Total', 'Used', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 :colspans        => nil
                               }
                              ])
@@ -171,6 +179,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
                              @driver.execute_script("return Format.formatDateString(\"#{ cc_spaces['resources'][0]['metadata']['created_at'] }\")"),
                              cc_users_deep['resources'].length.to_s,
+                             cc_routes['resources'].length.to_s,
+                             cc_routes['resources'].length.to_s,
                              cc_started_apps['resources'][0]['entity']['instances'].to_s,
                              varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s,
                              @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s,
@@ -195,6 +205,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Organization',    :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] },
                            { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_spaces['resources'][0]['metadata']['created_at'] }\")") },
                            { :label => 'Developers',      :tag =>   'a', :value => cc_users_deep['resources'].length.to_s },
+                           { :label => 'Total Routes',    :tag =>   nil, :value => cc_routes['resources'].length.to_s },
+                           { :label => 'Used Routes',     :tag =>   nil, :value => cc_routes['resources'].length.to_s },
                            { :label => 'Instances Used',  :tag =>   'a', :value => cc_started_apps['resources'][0]['entity']['instances'].to_s },
                            { :label => 'Services Used',   :tag =>   'a', :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
                            { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
@@ -216,14 +228,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has developers link' do
             check_filter_link('Spaces', 3, 'Developers', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
           end
+          it 'has routes link' do
+            check_filter_link('Spaces', 4, 'Routes', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
+          end
           it 'has instances link' do
-            check_filter_link('Spaces', 4, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
+            check_filter_link('Spaces', 6, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
           end
           it 'has services link' do
-            check_filter_link('Spaces', 5, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
+            check_filter_link('Spaces', 7, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
           end
           it 'has applications link' do
-            check_filter_link('Spaces', 11, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
+            check_filter_link('Spaces', 13, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
           end
         end
       end
@@ -294,7 +309,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
           def check_operation_result
             alert = nil
-            Selenium::WebDriver::Wait.new(:timeout => 5).until { !(alert = @driver.switch_to.alert).nil? }
+            Selenium::WebDriver::Wait.new(:timeout => 5).until { alert = @driver.switch_to.alert }
             expect(alert.text).to eq("The operation finished without error.\nPlease refresh the page later for the updated result.")
             alert.dismiss
           end
@@ -410,6 +425,103 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has DEA link' do
             check_select_link('Applications', 17, 'DEAs', nats_dea['host'])
+          end
+        end
+      end
+
+      context 'Routes' do
+        let(:tab_id) { 'Routes' }
+        it 'has a table' do
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='RoutesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 6,
+                                :labels          => ['', 'Host', 'Domain', 'Created', 'Target', 'Application'],
+                                :colspans        => nil
+                              }
+                              ])
+          app_names = []
+          cc_routes['resources'][0]['entity']['apps'].each do |app|
+            app_names.push(app['entity']['name'])
+          end
+
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='RoutesTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_routes['resources'][0]['entity']['host'],
+                             cc_routes['resources'][0]['entity']['domain']['entity']['name'],
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_routes['resources'][0]['metadata']['created_at'] }\")"),
+                             "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
+                             app_names.join('\n')
+                           ])
+        end
+
+        it 'has a checkbox in the first column' do
+          inputs = @driver.find_elements(:xpath => "//table[@id='RoutesTable']/tbody/tr/td[1]/input")
+          expect(inputs.length).to eq(1)
+          expect(inputs[0].attribute('value')).to eq("#{ cc_routes['resources'][0]['metadata']['guid']}")
+        end
+
+        context 'manage routes' do
+          def check_first_row
+            @driver.find_elements(:xpath => "//table[@id='RoutesTable']/tbody/tr/td[1]/input")[0].click
+          end
+
+          it 'has a delete button' do
+            expect(@driver.find_element(:id => 'ToolTables_RoutesTable_0').text).to eq('Delete')
+          end
+
+          it 'alerts the user to select at least one row when clicking the delete button' do
+            @driver.find_element(:id => 'ToolTables_RoutesTable_0').click
+            alert = @driver.switch_to.alert
+            expect(alert.text).to eq('Please select at least one row!')
+            alert.dismiss
+          end
+
+          it 'deletes the selected route' do
+            cc_empty_routes_stub(AdminUI::Config.load(config))
+
+            # delete the route
+            check_first_row
+            @driver.find_element(:id => 'ToolTables_RoutesTable_0').click
+            confirm = @driver.switch_to.alert
+            expect(confirm.text).to eq('Are you sure you want to delete the selected routes?')
+            confirm.accept
+
+            alert = nil
+            Selenium::WebDriver::Wait.new(:timeout => 5).until { alert = @driver.switch_to.alert }
+            expect(alert.text).to eq('Routes successfully deleted.')
+            alert.dismiss
+
+            begin
+              Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='RoutesTable']/tbody/tr").text == 'No data available in table' }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(:xpath => "//table[@id='RoutesTable']/tbody/tr").text).to eq('No data available in table')
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ :label => 'Host',          :tag => nil, :value => cc_routes['resources'][0]['entity']['host'] },
+                           { :label => 'Domain',        :tag => nil, :value => cc_routes['resources'][0]['entity']['domain']['entity']['name'] },
+                           { :label => 'Created',       :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_routes['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Applications',  :tag => 'a', :value => cc_routes['resources'][0]['entity']['apps'].length.to_s },
+                           { :label => 'Space',         :tag => 'a', :value => cc_spaces['resources'][0]['entity']['name'] },
+                           { :label => 'Organization',  :tag => 'a', :value => cc_organizations['resources'][0]['entity']['name'] }
+                          ])
+          end
+
+          it 'has applications link' do
+            check_filter_link('Routes', 3, 'Applications', "#{ cc_routes['resources'][0]['entity']['host'] }.#{ cc_routes['resources'][0]['entity']['domain']['entity']['name'] }")
+          end
+          it 'has space link' do
+            check_select_link('Routes', 4, 'Spaces', "#{ cc_spaces['resources'][0]['entity']['name']}")
+          end
+          it 'has organization link' do
+            check_select_link('Routes', 5, 'Organizations', "#{ cc_organizations['resources'][0]['entity']['name'] }")
           end
         end
       end

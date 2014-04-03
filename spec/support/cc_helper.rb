@@ -31,6 +31,10 @@ module CCHelper
       OK.new(cc_organizations)
     end
 
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+      OK.new(cc_routes)
+    end
+
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/services", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_services)
     end
@@ -75,6 +79,23 @@ module CCHelper
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_stopped_apps))
   end
 
+  # Continuously mock two http request returns, the first http call returns one route, while the second call returns empty route array.
+  def cc_routes_delete_stub(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_routes), CCHelper::OK.new(cc_empty_routes))
+  end
+
+  # Mock empty routes array http response.
+  def cc_empty_routes_stub(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_empty_routes))
+  end
+
+  def cc_empty_routes
+    {
+      'total_results' => 0,
+      'resources'     => []
+    }
+  end
+
   def cc_organizations
     {
       'total_results' => 1,
@@ -91,6 +112,72 @@ module CCHelper
             'billing_enabled' => false,
             'name'            => 'test_org',
             'status'          => 'active'
+          }
+        }
+      ]
+    }
+  end
+
+  def cc_routes
+    {
+      'total_results' => 1,
+      'resources'     =>
+      [
+        {
+          'metadata' =>
+          {
+            'created_at' => '2014-02-12T09:40:52-06:00',
+            'guid'       => 'route1'
+          },
+          'entity'   =>
+          {
+            'host'   => 'test_host',
+            'space_guid' => 'space1',
+            'domain' =>
+            {
+              'metadata' =>
+              {
+                'created_at' => '2014-02-12T09:40:52-06:00',
+                'guid'       => 'domain1'
+              },
+              'entity'   =>
+              {
+                'name' => 'test_domain'
+              }
+            },
+            'space' =>
+            {
+              'metadata' =>
+              {
+                'created_at' => '2014-02-12T09:40:52-06:00',
+                'guid'       => 'space1'
+              },
+              'entity'   =>
+              {
+                'name' => 'test_space'
+              }
+            },
+            'apps' =>
+            [
+              {
+                'metadata' =>
+                {
+                  'created_at' => '2013-10-18T08:28:35-05:00',
+                  'guid'       => 'application1'
+                },
+                'entity'   =>
+                {
+                  'detected_buildpack' => 'Ruby/Rack',
+                  'disk_quota'         => 12,
+                  'instances'          => 1,
+                  'memory'             => 11,
+                  'name'               => 'test',
+                  'package_state'      => 'STAGED',
+                  'space_guid'         => 'space1',
+                  'state'              => 'STARTED'
+                }
+              }
+            ]
           }
         }
       ]
