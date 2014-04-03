@@ -77,11 +77,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 6,
                                 :labels          => ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                :colspans        => %w(5 2 5 2 3 3)
+                                :colspans        => %w(5 3 5 2 3 3)
                               },
                               { :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 20,
-                                :labels          => ['Name', 'Status', 'Created', 'Spaces', 'Developers', 'Total', 'Used', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :expected_length => 21,
+                                :labels          => ['Name', 'Status', 'Created', 'Spaces', 'Developers', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 :colspans        => nil
                               }
                              ])
@@ -94,6 +94,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_users_deep['resources'].length.to_s,
                              cc_routes['resources'].length.to_s,
                              cc_routes['resources'].length.to_s,
+                             '0',
                              cc_started_apps['resources'][0]['entity']['instances'].to_s,
                              varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s,
                              @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s,
@@ -122,6 +123,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Developers',      :tag =>   'a', :value => cc_users_deep['resources'].length.to_s },
                            { :label => 'Total Routes',    :tag =>   'a', :value => cc_routes['resources'].length.to_s },
                            { :label => 'Used Routes',     :tag =>   nil, :value => cc_routes['resources'].length.to_s },
+                           { :label => 'Unused Routes',   :tag =>   nil, :value => '0' },
                            { :label => 'Instances Used',  :tag =>   'a', :value => cc_started_apps['resources'][0]['entity']['instances'].to_s },
                            { :label => 'Services Used',   :tag =>   'a', :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
                            { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
@@ -147,13 +149,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Organizations', 6, 'Routes', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
           it 'has instances link' do
-            check_filter_link('Organizations', 8, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
-          end
-          it 'has services link' do
             check_filter_link('Organizations', 9, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
+          it 'has services link' do
+            check_filter_link('Organizations', 10, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+          end
           it 'has applications link' do
-            check_filter_link('Organizations', 15, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+            check_filter_link('Organizations', 16, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
         end
       end
@@ -164,12 +166,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 6,
                                 :labels          => ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                :colspans        => %w(4 2 5 2 3 3)
+                                :colspans        => %w(4 3 5 2 3 3)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 19,
-                                :labels          => ['Name', 'Target', 'Created', 'Developers', 'Total', 'Used', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :expected_length => 20,
+                                :labels          => ['Name', 'Target', 'Created', 'Developers', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 :colspans        => nil
                               }
                              ])
@@ -181,6 +183,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_users_deep['resources'].length.to_s,
                              cc_routes['resources'].length.to_s,
                              cc_routes['resources'].length.to_s,
+                             '0',
                              cc_started_apps['resources'][0]['entity']['instances'].to_s,
                              varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s,
                              @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s,
@@ -207,6 +210,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Developers',      :tag =>   'a', :value => cc_users_deep['resources'].length.to_s },
                            { :label => 'Total Routes',    :tag =>   nil, :value => cc_routes['resources'].length.to_s },
                            { :label => 'Used Routes',     :tag =>   nil, :value => cc_routes['resources'].length.to_s },
+                           { :label => 'Unused Routes',   :tag =>   nil, :value => '0' },
                            { :label => 'Instances Used',  :tag =>   'a', :value => cc_started_apps['resources'][0]['entity']['instances'].to_s },
                            { :label => 'Services Used',   :tag =>   'a', :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
                            { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
@@ -232,13 +236,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Spaces', 4, 'Routes', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
           end
           it 'has instances link' do
-            check_filter_link('Spaces', 6, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
-          end
-          it 'has services link' do
             check_filter_link('Spaces', 7, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
           end
+          it 'has services link' do
+            check_filter_link('Spaces', 8, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
+          end
           it 'has applications link' do
-            check_filter_link('Spaces', 13, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
+            check_filter_link('Spaces', 14, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
           end
         end
       end
