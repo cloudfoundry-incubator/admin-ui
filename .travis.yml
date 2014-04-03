@@ -8,7 +8,7 @@ addons:
       secure: "ZHw5o9aH8zL/c6iwVTv9/7STggk9IiedZh0jrw3DQqZtu6K6G04iIF+S/5EDiCIcZj+EARoZsk1TPO8v+OS0WpZoxSo2of04tWA0cfXnkc5R2hdjDIsUJxJC1/xkDwCpCuTKIvf9yh3Td+u+U8UBgAC7YDihJ1ZGESWfEpjaxoU="
 before_install:
 - git submodule update --init --recursive
-- gem install rubocop
+- gem install rubocop -v 0.20.0 --no-rdoc --no-ri
 script: 
   - rubocop
   - bundle exec rspec
