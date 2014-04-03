@@ -1,5 +1,5 @@
 AllCops:
-  Excludes:
+  Exclude:
     - '.bundle/**'
     - 'vendor/**'
     # We shouldn't need the above but for now there's a bug in rubocop
