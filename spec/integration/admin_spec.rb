@@ -74,12 +74,12 @@ describe AdminUI::Admin, :type => :integration do
 
     def stop_app
       response = put_request('/applications/application1', '{"state":"STOPPED"}')
-      expect(response.is_a?Net::HTTPNoContent).to be_true
+      expect(response.is_a? Net::HTTPNoContent).to be_true
     end
 
     def start_app
       response = put_request('/applications/application1', '{"state":"STARTED"}')
-      expect(response.is_a?Net::HTTPNoContent).to be_true
+      expect(response.is_a? Net::HTTPNoContent).to be_true
     end
 
     it 'stops a running application' do
@@ -108,7 +108,7 @@ describe AdminUI::Admin, :type => :integration do
 
     def delete_route
       response = delete_request('/routes/route1')
-      expect(response.is_a?Net::HTTPNoContent).to be_true
+      expect(response.is_a? Net::HTTPNoContent).to be_true
     end
 
     it 'deletes the specific route' do

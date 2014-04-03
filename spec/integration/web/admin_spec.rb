@@ -25,21 +25,21 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     end
 
     it 'has tabs' do
-      expect(@driver.find_element(:id => 'Organizations').displayed?).to    be_true
-      expect(@driver.find_element(:id => 'Spaces').displayed?).to           be_true
-      expect(@driver.find_element(:id => 'Applications').displayed?).to     be_true
+      expect(@driver.find_element(:id => 'Organizations').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Spaces').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Applications').displayed?).to be_true
       expect(@driver.find_element(:id => 'ServiceInstances').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Developers').displayed?).to       be_true
-      expect(@driver.find_element(:id => 'DEAs').displayed?).to             be_true
+      expect(@driver.find_element(:id => 'Developers').displayed?).to be_true
+      expect(@driver.find_element(:id => 'DEAs').displayed?).to be_true
       expect(@driver.find_element(:id => 'CloudControllers').displayed?).to be_true
-      expect(@driver.find_element(:id => 'HealthManagers').displayed?).to   be_true
-      expect(@driver.find_element(:id => 'Gateways').displayed?).to         be_true
-      expect(@driver.find_element(:id => 'Routers').displayed?).to          be_true
-      expect(@driver.find_element(:id => 'Routes').displayed?).to           be_true
-      expect(@driver.find_element(:id => 'Components').displayed?).to       be_true
-      expect(@driver.find_element(:id => 'Logs').displayed?).to             be_true
-      expect(@driver.find_element(:id => 'Tasks').displayed?).to            be_true
-      expect(@driver.find_element(:id => 'Stats').displayed?).to            be_true
+      expect(@driver.find_element(:id => 'HealthManagers').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Gateways').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Routers').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Routes').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Components').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Logs').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Tasks').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Stats').displayed?).to be_true
     end
 
     it 'has a refresh button' do
