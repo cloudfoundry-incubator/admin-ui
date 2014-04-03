@@ -303,7 +303,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
           def check_operation_result
             alert = nil
-            Selenium::WebDriver::Wait.new(:timeout => 5).until { !(alert = @driver.switch_to.alert).nil? }
+            Selenium::WebDriver::Wait.new(:timeout => 5).until { alert = @driver.switch_to.alert }
             expect(alert.text).to eq("The operation finished without error.\nPlease refresh the page later for the updated result.")
             alert.dismiss
           end
@@ -481,7 +481,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             confirm.accept
 
             alert = nil
-            Selenium::WebDriver::Wait.new(:timeout => 5).until { !(alert = @driver.switch_to.alert).nil? }
+            Selenium::WebDriver::Wait.new(:timeout => 5).until { alert = @driver.switch_to.alert }
             expect(alert.text).to eq('Routes successfully deleted.')
             alert.dismiss
 

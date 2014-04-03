@@ -22,7 +22,7 @@ module AdminUI
 
     set(:auth) do |*roles|
       condition do
-        unless !session[:username].nil? && (!roles.include?(:admin) || session[:admin])
+        unless session[:username] && (!roles.include?(:admin) || session[:admin])
           @logger.debug('Authorization failure, redirecting to login...')
           redirect_to_login
         end
