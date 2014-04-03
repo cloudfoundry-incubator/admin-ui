@@ -501,21 +501,21 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has details' do
             check_details([{ :label => 'Host',          :tag => nil, :value => cc_routes['resources'][0]['entity']['host'] },
                            { :label => 'Domain',        :tag => nil, :value => cc_routes['resources'][0]['entity']['domain']['entity']['name'] },
+                           { :label => 'Created',       :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_routes['resources'][0]['metadata']['created_at'] }\")") },
                            { :label => 'Applications',  :tag => 'a', :value => cc_routes['resources'][0]['entity']['apps'].length.to_s },
                            { :label => 'Space',         :tag => 'a', :value => cc_spaces['resources'][0]['entity']['name'] },
-                           { :label => 'Organization',  :tag => 'a', :value => cc_organizations['resources'][0]['entity']['name'] },
-                           { :label => 'Created',       :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_routes['resources'][0]['metadata']['created_at'] }\")") }
+                           { :label => 'Organization',  :tag => 'a', :value => cc_organizations['resources'][0]['entity']['name'] }
                           ])
           end
 
           it 'has applications link' do
-            check_filter_link('Routes', 2, 'Applications', "#{ cc_routes['resources'][0]['entity']['host'] }.#{ cc_routes['resources'][0]['entity']['domain']['entity']['name'] }")
+            check_filter_link('Routes', 3, 'Applications', "#{ cc_routes['resources'][0]['entity']['host'] }.#{ cc_routes['resources'][0]['entity']['domain']['entity']['name'] }")
           end
           it 'has space link' do
-            check_select_link('Routes', 3, 'Spaces', "#{ cc_spaces['resources'][0]['entity']['name']}")
+            check_select_link('Routes', 4, 'Spaces', "#{ cc_spaces['resources'][0]['entity']['name']}")
           end
           it 'has organization link' do
-            check_select_link('Routes', 4, 'Organizations', "#{ cc_organizations['resources'][0]['entity']['name'] }")
+            check_select_link('Routes', 5, 'Organizations', "#{ cc_organizations['resources'][0]['entity']['name'] }")
           end
         end
       end
