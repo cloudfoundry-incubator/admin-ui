@@ -11,7 +11,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       login(user, user_password, 'Administration')
     end
 
-    it 'does not have start, stop or restart buttons' do
+    it 'does not have start, stop or restart app buttons' do
       # Need to wait until the page has been rendered.
       # Move the click operation into the wait block to ensure the action has been taken, this is used to fit Travis CI system.
       begin
@@ -32,6 +32,27 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       end
       expect(@driver.find_element(:id => 'ApplicationsPage').displayed?).to eq(true)
       expect(@driver.find_element(:id => 'ToolTables_ApplicationsTable_0').text).to eq('Copy')
+    end
+
+    it 'does not have delete route button' do
+      begin
+        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+          @driver.find_element(:id => 'Routes').click
+          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Routes'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('Routes')
+
+      begin
+        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+          @driver.find_element(:id => 'RoutesPage').displayed? &&
+          @driver.find_element(:id => 'ToolTables_RoutesTable_0').text == 'Copy'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(:id => 'RoutesPage').displayed?).to eq(true)
+      expect(@driver.find_element(:id => 'ToolTables_RoutesTable_0').text).to eq('Copy')
     end
 
     it 'does not have a create DEA button' do
