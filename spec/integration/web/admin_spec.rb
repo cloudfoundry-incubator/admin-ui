@@ -152,7 +152,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Organizations', 9, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
           it 'has services link' do
-            check_filter_link('Organizations', 10, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+            check_filter_link('Organizations', 10, 'ServiceInstances', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
           it 'has applications link' do
             check_filter_link('Organizations', 16, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
@@ -239,7 +239,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Spaces', 7, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
           end
           it 'has services link' do
-            check_filter_link('Spaces', 8, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
+            check_filter_link('Spaces', 8, 'ServiceInstances', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
           end
           it 'has applications link' do
             check_filter_link('Spaces', 14, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
