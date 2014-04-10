@@ -25,5 +25,12 @@ module AdminUI
         @cc.invalidate_routes
       end
     end
+
+    def manage_service_plan(service_plan_guid, control_message)
+      url = "/v2/service_plans/#{ service_plan_guid}"
+      @logger.debug("#{url}, #{control_message}")
+      @client.put_cc(url, control_message)
+      @cc.invalidate_service_caches
+    end
   end
 end

@@ -219,6 +219,20 @@ module AdminUI
       end
     end
 
+    put '/service_plans/:service_plan_guid', :auth => [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        service_plan_guid = params[:service_plan_guid]
+        @operation.manage_service_plan(service_plan_guid, control_message)
+
+        204
+      rescue => error
+        @logger.debug("Error during update to service plan #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/components', :auth => [:user] do
       @varz.remove(params['uri'])
 
