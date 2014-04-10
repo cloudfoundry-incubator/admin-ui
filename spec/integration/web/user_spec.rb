@@ -76,6 +76,27 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       expect(@driver.find_element(:id => 'ToolTables_DEAsTable_0').text).to eq('Copy')
     end
 
+    it 'does not have public and private service plan buttons' do
+      begin
+        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+          @driver.find_element(:id => 'ServicePlans').click
+          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'ServicePlans'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('ServicePlans')
+
+      begin
+        Selenium::WebDriver::Wait.new(:timeout => 10).until do
+          @driver.find_element(:id => 'ServicePlansPage').displayed? &&
+          @driver.find_element(:id => 'ToolTables_ServicePlansTable_0').text == 'Copy'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(:id => 'ServicePlansPage').displayed?).to eq(true)
+      expect(@driver.find_element(:id => 'ToolTables_ServicePlansTable_0').text).to eq('Copy')
+    end
+
     it 'does not have a remove all components button' do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do

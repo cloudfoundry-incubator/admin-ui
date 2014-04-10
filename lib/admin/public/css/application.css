@@ -403,10 +403,10 @@ a
     left: 50%;
     width: 280px;
     margin-left:-140px;
-    height: 50px;
-    margin-top:-80px;
+    height: 80px;
+    margin-top:-40px;
     padding: 0;
-    border: 3px solid gray;
+    /* border: 3px solid gray; */
     background-color: #F0F5F8;
     _position:absolute;
     z-index:1011;
@@ -415,14 +415,13 @@ a
 
 .modal_dialog_div_messageshow
 {
-    height:30px;
     width:280px;
     line-height:30px;
     text-align:center;
-    margin:0 auto;
+    /* margin:0 auto; */
     color:#000;
     font-size:13px;
     font-weight:bold;
     overflow:hidden;
-    margin-top:10px;
+    /* margin-top:10px;*/
 }
