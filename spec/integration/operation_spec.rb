@@ -71,5 +71,18 @@ describe AdminUI::Operation, :type => :integration do
         expect { operation.manage_route('DELETE', 'route1') }.to change { cc.routes['items'].length }.from(1).to(0)
       end
     end
+
+    context 'manage service plan' do
+      before do
+        # Make sure the original service plan's public field is true
+        expect(cc.service_plans['items'][0]['public'].to_s).to eq('true')
+      end
+
+      it 'makes service plan private' do
+        # Mock the http response for private service plan
+        cc_service_plans_private_stub(config)
+        expect { operation.manage_service_plan('service_plan1', '{"public": false }') }.to change { cc.service_plans['items'][0]['public'].to_s }.from('true').to('false')
+      end
+    end
   end
 end

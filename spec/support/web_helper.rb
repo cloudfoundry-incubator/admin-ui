@@ -63,6 +63,8 @@ shared_context :web_context do
       expect(properties[property_index].text).to eq("#{ expected_property[:label] }:")
       if expected_property[:tag].nil?
         value = values[property_index].text
+      elsif  expected_property[:tag] == 'img'
+        value = values[property_index].find_element(:tag_name => 'div').attribute('innerHTML')
       else
         value = values[property_index].find_element(:tag_name => expected_property[:tag]).text
       end
@@ -83,6 +85,13 @@ shared_context :web_context do
     expect(@driver.find_element(:xpath => "//table[@id='#{ target_tab_id }Table']/tbody/tr[contains(@class, 'DTTT_selected')]/td[1]").text).to eq(expected_name)
     expect(@driver.find_element(:id => "#{ target_tab_id }DetailsLabel").displayed?).to be_true
     expect(@driver.find_elements(:xpath => "//div[@id='#{ target_tab_id }PropertiesContainer']/table/tr[*]/td[2]")[0].text).to eq(expected_name)
+  end
+
+  def check_main_table_link(tab_id, column_index, target_tab_id, target_colmn_idex, expected_name)
+    @driver.find_element(:xpath => "//table[@id='#{ tab_id }Table']/tbody/tr[1]/td[#{column_index}]").find_element(:link, '1').click
+    expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq(target_tab_id)
+    expect(@driver.find_element(:id => "#{ target_tab_id }Table_filter").find_element(:tag_name => 'input').attribute('value')).to eq(expected_name)
+    expect(@driver.find_elements(:xpath => "//table[@id='#{ target_tab_id }Table']/tbody/tr[*]/td[#{target_colmn_idex}]")[0].text).to eq(expected_name)
   end
 
   def check_stats_chart(id)
