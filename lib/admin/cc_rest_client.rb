@@ -9,14 +9,14 @@ module AdminUI
     end
 
     def delete_cc(path)
-      cf_request(Utils::HTTP_DELETE, get_cc_url(path), nil, nil)
+      cf_request(get_cc_url(path), Utils::HTTP_DELETE)
     end
 
     def get_cc(path)
       uri = get_cc_url(path)
       resources = []
       loop do
-        json = cf_request(Utils::HTTP_GET, uri, nil, nil)
+        json = cf_request(uri, Utils::HTTP_GET)
         resources.concat(json['resources'])
         next_url = json['next_url']
         return resources if next_url.nil?
@@ -32,7 +32,7 @@ module AdminUI
 
       resources = []
       loop do
-        json = cf_request(Utils::HTTP_GET, uri, nil, nil)
+        json = cf_request(uri, Utils::HTTP_GET)
         resources.concat(json['resources'])
         total_results = json['totalResults']
         start_index = resources.length + 1
@@ -44,12 +44,12 @@ module AdminUI
     end
 
     def put_cc(path, body)
-      cf_request(Utils::HTTP_PUT, get_cc_url(path), nil, body)
+      cf_request(get_cc_url(path), Utils::HTTP_PUT, body)
     end
 
     private
 
-    def cf_request(method, url, basic_auth, body)
+    def cf_request(url, method, body = nil)
       recent_login = false
       if @token.nil?
         login
@@ -58,7 +58,7 @@ module AdminUI
 
       failed_attempt = 3
       loop do
-        response = Utils.http_request(@config, url, method, basic_auth, body, @token)
+        response = Utils.http_request(@config, url, method, nil, body, @token)
 
         if method == Utils::HTTP_GET && response.is_a?(Net::HTTPOK)
           return JSON.parse(response.body)
