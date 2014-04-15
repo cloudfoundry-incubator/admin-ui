@@ -56,6 +56,7 @@ module AdminUI
         recent_login = true
       end
 
+      failed_attempt = 3
       loop do
         response = Utils.http_request(@config, url, method, nil, body, @token)
 
@@ -70,6 +71,18 @@ module AdminUI
         if !recent_login && response.is_a?(Net::HTTPUnauthorized)
           login
           recent_login = true
+        elsif failed_attempt > 0
+          failed_attempt -= 1
+          begin
+            puts("sleeping in attempt = #{failed_attempt}")
+            sleep(2)
+            login
+            recent_login = true
+          rescue => error
+             @logger.debug("Error during update to service plan #{ error.inspect }; failed attempt: #{failed_attempt}")
+             @logger.debug(error.backtrace.join("\n"))
+             raise "Unexected response code from #{ method } is #{ response.code }, message #{ response.message }"
+          end
         else
           fail "Unexected response code from #{ method } is #{ response.code }, message #{ response.message }"
         end
