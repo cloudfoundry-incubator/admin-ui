@@ -63,6 +63,8 @@ shared_context :web_context do
       expect(properties[property_index].text).to eq("#{ expected_property[:label] }:")
       if expected_property[:tag].nil?
         value = values[property_index].text
+      elsif  expected_property[:tag] == 'img'
+        value = values[property_index].find_element(:tag_name => 'div').attribute('innerHTML')
       else
         value = values[property_index].find_element(:tag_name => expected_property[:tag]).text
       end

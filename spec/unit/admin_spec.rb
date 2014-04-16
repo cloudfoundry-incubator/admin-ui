@@ -149,6 +149,13 @@ describe AdminUI::Admin do
       end
     end
 
+    context 'manage service plan' do
+      it 'returns failure code due to disconnection' do
+        response = put('/service_plans/service_plan1', '{"public": true }')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
     it '/applications succeeds' do
       verify_disconnected_items('/applications')
     end

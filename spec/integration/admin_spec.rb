@@ -117,6 +117,34 @@ describe AdminUI::Admin, :type => :integration do
     end
   end
 
+  context 'manage service plan' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure the original service plan status is public
+      expect(get_json('/service_plans')['items'][0]['public'].to_s).to eq('true')
+    end
+
+    def make_service_plan_private
+      response = put_request('/service_plans/service_plan1', '{"public": false }')
+      expect(response.is_a? Net::HTTPNoContent).to be_true
+    end
+
+    def make_service_plan_public
+      response = put_request('/service_plans/service_plan1', '{"public": true }')
+      expect(response.is_a? Net::HTTPNoContent).to be_true
+    end
+
+    it 'make service plans private and back to public' do
+      # Stub the http request to return
+      cc_service_plans_public_to_private_to_public_stub(AdminUI::Config.load(config))
+      expect { make_service_plan_private }.to change { get_json('/service_plans')['items'][0]['public'].to_s }.from('true').to('false')
+      make_service_plan_public
+      expect { get_json('/service_plans')['items'][0]['public'] }.to be_true
+    end
+  end
+
   context 'retrieves and validates' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
