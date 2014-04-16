@@ -5,6 +5,8 @@ The Administration Web UI provides metrics and operations data for Cloud Foundry
 It gathers data from the varz providers for the various Cloud Foundry components as well as
 from the Cloud Controller and UAA REST APIs.
 
+See the [Using the Administration UI](#using) section for more information on using it and for sample screen shots.
+
 ## Placement
 
 In order to execute, the Administration UI needs to be able to access the following resources:
@@ -370,8 +372,18 @@ can let it default to config/default.yml
 ruby bin/admin [-c <configuration file>]
 ```
 
-## View Administration UI 
+## <a name="using"></a> Using the Administration UI 
+
+To access the Administration UI, go to:`
 
 ```
 http://<admin ui host>:8070
 ```
+
+You will be prompted for the credentials.  Once there, by default, you will be
+taken to the DEA tab:
+(./images/dea-tab.png)
+
+When you click on a DEA, you'll see more details about it:
+(./images/dea-tab-vm.png)
+
