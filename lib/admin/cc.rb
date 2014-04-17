@@ -62,12 +62,12 @@ module AdminUI
       end
     end
 
+    def invalidate_service_plans
+      invalidate_cache(:service_plans)
+    end
+
     def invalidate_routes
-      hash = @caches[:routes]
-      hash[:semaphore].synchronize do
-        hash[:result] = nil
-        hash[:condition].broadcast
-      end
+      invalidate_cache(:routes)
     end
 
     def routes
@@ -134,6 +134,22 @@ module AdminUI
     end
 
     private
+
+    def invalidate_cache(key, *rediscover)
+      key_string = key.to_s
+
+      hash = @caches[key]
+      hash[:semaphore].synchronize do
+        if rediscover
+          result_cache = send("discover_#{ key_string }".to_sym)
+          @logger.debug("Caching CC #{ key_string } data...")
+          hash[:result] = result_cache
+        else
+          hash[:result] = nil
+        end
+        hash[:condition].broadcast
+      end
+    end
 
     def schedule_discovery(key, hash)
       key_string = key.to_s

@@ -219,6 +219,19 @@ module AdminUI
       end
     end
 
+    put '/service_plans/:service_plan_guid', :auth => [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @operation.manage_service_plan(params[:service_plan_guid], control_message)
+
+        204
+      rescue => error
+        @logger.debug("Error during update to service plan #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/components', :auth => [:user] do
       @varz.remove(params['uri'])
 
@@ -227,7 +240,7 @@ module AdminUI
 
     delete '/routes/:route_guid', :auth => [:admin] do
       begin
-        @operation.manage_route('DELETE', params[:route_guid])
+        @operation.manage_route(params[:route_guid])
         204
       rescue => error
         @logger.debug("Error during deleting route: #{ error.inspect }")

@@ -89,6 +89,36 @@ module CCHelper
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_empty_routes))
   end
 
+  # Continuously mock two http request returns, the first http call returns applications in public state, while the second http call returns service _plans in private state, and the third one to return public service plan.
+  def cc_service_plans_public_to_private_to_public_stub(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_public_service_plans), CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_public_service_plans))
+  end
+
+  # Continuously mock two http request returns, the first http call returns applications in private state, while the second http call returns service _plans in public state, and the third one to return private service plan.
+  def cc_service_plans_private_to_public_to_private_stub(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_public_service_plans), CCHelper::OK.new(cc_private_service_plans))
+  end
+
+  # Continuously mock two http request returns, the first http call returns applications in public state, while the second http call returns service _plans in private state.
+  def cc_service_plans_public_to_private_stub(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_public_service_plans), CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_private_service_plans))
+  end
+
+  # Continuously mock two http request returns, the first http call returns applications in private state, while the second http call returns service _plans in public state.
+  def cc_service_plans_private_to_public_stub(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_public_service_plans))
+  end
+
+  # Continuously mock two http request returns, the first http call returns applications in public state, while the second http call returns service _plans in private state.
+  def cc_service_plans_public_stub(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_public_service_plans))
+  end
+
+  # Continuously mock two http request returns, the first http call returns applications in private state, while the second http call returns service _plans in public state.
+  def cc_service_plans_private_stub(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_private_service_plans))
+  end
+
   def cc_empty_routes
     {
       'total_results' => 0,
@@ -197,10 +227,11 @@ module CCHelper
           },
           'entity'   =>
           {
+            'active'            => true,
             'bindable'          => true,
             'description'       => 'TestService description',
             'documentation_url' => 'http://documentation_url.com',
-            'extra'             => 'service extra',
+            'extra'             => '{"displayName":"displayname","imageUrl":"http://docs.cloudfoundry.com/images/favicon.ico","longDescription":"long description","providerDisplayName":"provider name"}',
             'info_url'          => 'http://info_url.com',
             'label'             => 'TestService',
             'provider'          => 'test',
@@ -400,6 +431,60 @@ module CCHelper
               }
           }
         ]
+    }
+  end
+
+# Mock the http response of a batch of applications in public state.
+  def cc_public_service_plans
+    {
+      'total_results' => 1,
+      'resources'     =>
+      [
+        {
+          'metadata' =>
+          {
+            'created_at' => '2014-02-12T09:34:10-06:00',
+            'guid'       => 'service_plan1'
+          },
+          'entity'   =>
+          {
+            'description'  => 'TestServicePlan description',
+            'extra'        => 'service plan extra',
+            'free'         => true,
+            'name'         => 'TestServicePlan',
+            'public'       => true,
+            'service_guid' => 'service1',
+            'unique_id'    => 'service_plan_unique_id1'
+          }
+        }
+      ]
+    }
+  end
+
+# Mock the http response of a batch of applications in public state.
+  def cc_private_service_plans
+    {
+      'total_results' => 1,
+      'resources'     =>
+      [
+        {
+          'metadata' =>
+          {
+            'created_at' => '2014-02-12T09:34:10-06:00',
+            'guid'       => 'service_plan1'
+          },
+          'entity'   =>
+          {
+            'description'  => 'TestServicePlan description',
+            'extra'        => 'service plan extra',
+            'free'         => true,
+            'name'         => 'TestServicePlan',
+            'public'       => false,
+            'service_guid' => 'service1',
+            'unique_id'    => 'service_plan_unique_id1'
+          }
+        }
+      ]
     }
   end
 

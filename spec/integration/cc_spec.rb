@@ -41,6 +41,11 @@ describe AdminUI::CC, :type => :integration do
       expect { cc.invalidate_routes }.to change { cc.routes['items'].length }.from(1).to(0)
     end
 
+    it 'clears the service plan cache' do
+      cc_service_plans_public_to_private_stub(config)
+      expect { cc.invalidate_service_plans }.to change { cc.service_plans['items'][0]['public'].to_s }.from('true').to('false')
+    end
+
     it 'returns connected applications' do
       applications = cc.applications
 

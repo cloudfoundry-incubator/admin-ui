@@ -34,6 +34,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       expect(@driver.find_element(:id => 'CloudControllers').displayed?).to be_true
       expect(@driver.find_element(:id => 'HealthManagers').displayed?).to be_true
       expect(@driver.find_element(:id => 'Gateways').displayed?).to be_true
+      expect(@driver.find_element(:id => 'ServicePlans').displayed?).to be_true
       expect(@driver.find_element(:id => 'Routers').displayed?).to be_true
       expect(@driver.find_element(:id => 'Routes').displayed?).to be_true
       expect(@driver.find_element(:id => 'Components').displayed?).to be_true
@@ -600,11 +601,150 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                @driver.execute_script("return Format.formatDateString(\"#{ cc_service_bindings['resources'][0]['metadata']['created_at'] }\")")
                              ])
           end
+          it 'has service plan name link' do
+            check_filter_link('ServiceInstances', 14, 'ServicePlans', cc_service_plans['resources'][0]['entity']['name'])
+          end
           it 'has space link' do
             check_select_link('ServiceInstances', 19, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
           end
           it 'has organization link' do
             check_select_link('ServiceInstances', 20, 'Organizations', cc_organizations['resources'][0]['entity']['name'])
+          end
+        end
+      end
+
+      context 'Service Plans' do
+        let(:tab_id) { 'ServicePlans' }
+        it 'has a table' do
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 2,
+                                :labels          => ['Service Plan', 'Service'],
+                                :colspans        => %w(5 7)
+                              },
+                              {
+                                :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                :expected_length => 12,
+                                :labels          => ['', 'Name', 'Created', 'Public', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Active', 'Bindable', 'Description'],
+                                :colspans        => nil
+                              }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_service_plans['resources'][0]['entity']['name'],
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")"),
+                             cc_service_plans['resources'][0]['entity']['public'].to_s,
+                             cc_service_instances['resources'].length.to_s,
+                             cc_services['resources'][0]['entity']['provider'],
+                             cc_services['resources'][0]['entity']['label'],
+                             cc_services['resources'][0]['entity']['version'],
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")"),
+                             cc_services['resources'][0]['entity']['active'].to_s,
+                             cc_services['resources'][0]['entity']['bindable'].to_s,
+                             cc_services['resources'][0]['entity']['description']
+                           ])
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            value_extra_json = JSON.parse(cc_services['resources'][0]['entity']['extra'])
+            check_details([{ :label => 'Service Plan Name',              :tag => 'div', :value => cc_service_plans['resources'][0]['entity']['name'] },
+                           { :label => 'Service Plan Created',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Service Plan Public',            :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['public'].to_s },
+                           { :label => 'Service Plan Description',       :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['description'] },
+                           { :label => 'Service Instances',              :tag =>   nil, :value => cc_service_instances['resources'].length.to_s },
+                           { :label => 'Service Provider',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['provider'] },
+                           { :label => 'Service Label',                  :tag =>   nil, :value => cc_services['resources'][0]['entity']['label'] },
+                           { :label => 'Service Version',                :tag =>   nil, :value => cc_services['resources'][0]['entity']['version'] },
+                           { :label => 'Service Created',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Service Active',                 :tag =>   nil, :value => cc_services['resources'][0]['entity']['active'].to_s },
+                           { :label => 'Service Bindable',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['bindable'].to_s },
+                           { :label => 'Service Description',            :tag =>   nil, :value => cc_services['resources'][0]['entity']['description'] },
+                           { :label => 'Service Display Name',           :tag =>   nil, :value => value_extra_json['displayName'] },
+                           { :label => 'Service Provider Display Name',  :tag =>   nil, :value => value_extra_json['providerDisplayName'] },
+                           { :label => 'Service Icon',                   :tag => 'img', :value => @driver.execute_script("return Format.formatIconImage(\"#{value_extra_json['imageUrl']}\", \"service icon\", \"flot:left;\")").gsub(/'/, "\"").gsub(/[ ]+/, ' ').gsub(/ >/, '>') },
+                           { :label => 'Service Long Description',       :tag =>   nil, :value => value_extra_json['longDescription'] }
+                          ])
+          end
+
+          it 'has a checkbox in the first column' do
+            inputs = @driver.find_elements(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[1]/input")
+            expect(inputs.length).to eq(1)
+            expect(inputs[0].attribute('value')).to eq("#{ cc_service_plans['resources'][0]['metadata']['guid'] }")
+          end
+
+          it 'has service instances link to service instances filtered by service plan name' do
+            check_filter_link('ServicePlans', 4, 'ServiceInstances', cc_service_plans['resources'][0]['entity']['name'])
+          end
+
+          context 'manage service plans' do
+            def check_first_row
+              @driver.find_elements(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[1]/input")[0].click
+            end
+
+            def manage_service_plan(buttonIndex)
+              check_first_row
+              @driver.find_element(:id => "ToolTables_ServicePlansTable_#{buttonIndex}").click
+              if buttonIndex == 0
+                check_operation_result('public')
+              else
+                check_operation_result('private')
+              end
+            end
+
+            def check_service_plan_state(expect_state)
+              # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
+              # error happens.
+              begin
+                Selenium::WebDriver::Wait.new(:timeout => 20).until { @driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[4]").text == expect_state }
+              rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+              end
+              expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[4]").text).to eq(expect_state)
+            end
+
+            def check_operation_result(visibility)
+              alert = nil
+              Selenium::WebDriver::Wait.new(:timeout => 100).until { alert = @driver.switch_to.alert }
+              expect(alert.text.sub(/\n/, '')).to eq('The operation finished without error.Please refresh the page later for the updated result.')
+              alert.dismiss
+            end
+
+            it 'has a Public button' do
+              expect(@driver.find_element(:id => 'ToolTables_ServicePlansTable_0').text).to eq('Public')
+            end
+
+            it 'has a Private button' do
+              expect(@driver.find_element(:id => 'ToolTables_ServicePlansTable_1').text).to eq('Private')
+            end
+
+            shared_examples 'click public or private button without selecting a single row' do
+              it 'alerts the user to select at least one row when clicking the button' do
+                @driver.find_element(:id => buttonId).click
+                alert = @driver.switch_to.alert
+                expect(alert.text).to eq('Please select at least one row!')
+                alert.dismiss
+              end
+            end
+
+            it_behaves_like('click public or private button without selecting a single row') do
+              let(:buttonId) { 'ToolTables_ServicePlansTable_0' }
+            end
+
+            it_behaves_like('click public or private button without selecting a single row') do
+              let(:buttonId) { 'ToolTables_ServicePlansTable_1' }
+            end
+
+            it 'make selected public service plans private and back to public' do
+              check_service_plan_state('true')
+              cc_service_plans_private_stub(AdminUI::Config.load(config))
+              check_service_plan_state('true')
+              manage_service_plan(1)
+              check_service_plan_state('false')
+            end
           end
         end
       end
