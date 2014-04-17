@@ -222,8 +222,7 @@ module AdminUI
     put '/service_plans/:service_plan_guid', :auth => [:admin] do
       begin
         control_message = request.body.read.to_s
-        service_plan_guid = params[:service_plan_guid]
-        @operation.manage_service_plan(service_plan_guid, control_message)
+        @operation.manage_service_plan(params[:service_plan_guid], control_message)
 
         204
       rescue => error
@@ -241,7 +240,7 @@ module AdminUI
 
     delete '/routes/:route_guid', :auth => [:admin] do
       begin
-        @operation.manage_route('DELETE', params[:route_guid])
+        @operation.manage_route(params[:route_guid])
         204
       rescue => error
         @logger.debug("Error during deleting route: #{ error.inspect }")

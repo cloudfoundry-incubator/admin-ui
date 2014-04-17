@@ -652,9 +652,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
           it 'has details' do
             value_extra_json = JSON.parse(cc_services['resources'][0]['entity']['extra'])
-            check_details([{ :label => 'Service Plan Name',              :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['name'] },
+            check_details([{ :label => 'Service Plan Name',              :tag => 'div', :value => cc_service_plans['resources'][0]['entity']['name'] },
                            { :label => 'Service Plan Created',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")") },
                            { :label => 'Service Plan Public',            :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['public'].to_s },
+                           { :label => 'Service Plan Description',       :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['description'] },
                            { :label => 'Service Instances',              :tag =>   nil, :value => cc_service_instances['resources'].length.to_s },
                            { :label => 'Service Provider',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['provider'] },
                            { :label => 'Service Label',                  :tag =>   nil, :value => cc_services['resources'][0]['entity']['label'] },
@@ -677,7 +678,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has service instances link to service instances filtered by service plan name' do
-            check_filter_link('ServicePlans', 3, 'ServiceInstances', cc_service_plans['resources'][0]['entity']['name'])
+            check_filter_link('ServicePlans', 4, 'ServiceInstances', cc_service_plans['resources'][0]['entity']['name'])
           end
 
           context 'manage service plans' do

@@ -377,6 +377,10 @@ describe AdminUI::Admin do
     it 'puts /applications/:app_guid redirects as expected' do
       put_redirects_as_expected('/applications/application1', '{"state":"STARTED"}')
     end
+
+    it 'puts /service_plans/:service_plan_guid redirects as expected' do
+      put_redirects_as_expected('/service_plans/application1', '{"public":true}')
+    end
   end
 
   context 'Login not required' do
