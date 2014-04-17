@@ -75,7 +75,11 @@ module AdminUI
                              @tasks,
                              @varz)
 
-      Rack::Handler::WEBrick.run(web, :Port => @config.port, :BindAddress => @config.bind_address)
+      # Only show error and fatal messages
+      error_logger = Logger.new(STDERR)
+      error_logger.level = Logger::ERROR
+
+      Rack::Handler::WEBrick.run(web, :AccessLog => [], :Logger => error_logger, :Port => @config.port, :BindAddress => @config.bind_address)
     end
   end
 end
