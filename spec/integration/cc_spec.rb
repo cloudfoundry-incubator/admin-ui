@@ -41,6 +41,11 @@ describe AdminUI::CC, :type => :integration do
       expect { cc.invalidate_routes }.to change { cc.routes['items'].length }.from(1).to(0)
     end
 
+    it 'clears the organizations cache' do
+      cc_clear_organization_cache_stub(config)
+      expect { cc.invalidate_organizations }.to change { cc.organizations['items'].length }.from(1).to(0)
+    end
+
     it 'clears the service plan cache' do
       cc_service_plans_public_to_private_stub(config)
       expect { cc.invalidate_service_plans }.to change { cc.service_plans['items'][0]['public'].to_s }.from('true').to('false')
@@ -80,6 +85,21 @@ describe AdminUI::CC, :type => :integration do
       items = organizations['items']
 
       resources = cc_organizations['resources']
+
+      expect(items.length).to be(resources.length)
+
+      resources.each do |resource|
+        expect(items).to include(resource['entity'].merge(resource['metadata']))
+      end
+    end
+
+    it 'returns connected quota_definitions' do
+      quotas = cc.quota_definitions
+
+      expect(quotas['connected']).to eq(true)
+      items = quotas['items']
+
+      resources = cc_quota_definitions['resources']
 
       expect(items.length).to be(resources.length)
 

@@ -29,5 +29,14 @@ module AdminUI
       @client.put_cc(url, control_message)
       @cc.invalidate_service_plans
     end
+
+    def manage_organization(method, org_guid, control_message)
+      url = "v2/organizations/#{ org_guid }"
+
+      if method.upcase == 'PUT'
+        @client.put_cc(url, control_message)
+        @cc.invalidate_organizations
+      end
+    end
   end
 end

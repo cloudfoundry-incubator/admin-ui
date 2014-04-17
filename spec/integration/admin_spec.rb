@@ -97,6 +97,26 @@ describe AdminUI::Admin, :type => :integration do
     end
   end
 
+  context 'manage organization' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there is an organization
+      expect(get_json('/organizations')['items'].length).to eq(1)
+    end
+
+    def set_quota
+      response = put_request('/organizations/organization1', '{"quota_definition_guid":"quota2"}')
+      expect(response.is_a? Net::HTTPNoContent).to be_true
+    end
+
+    it 'sets the specific quota for organization' do
+      cc_organization_with_different_quota_stub(AdminUI::Config.load(config))
+      expect { set_quota }.to change { get_json('/organizations')['items'][0]['quota_definition_guid'] }.from('quota1').to('quota2')
+    end
+  end
+
   context 'manage route' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -317,6 +337,11 @@ describe AdminUI::Admin, :type => :integration do
     it_behaves_like('retrieves cc entity/metadata record') do
       let(:path)      { '/organizations' }
       let(:cc_source) { cc_organizations }
+    end
+
+    it_behaves_like('retrieves cc entity/metadata record') do
+      let(:path)      { '/quota_definitions' }
+      let(:cc_source) { cc_quota_definitions }
     end
 
     it_behaves_like('retrieves varz record') do

@@ -52,7 +52,6 @@
         <script src="js/external/jqplot/plugins/jqplot.dateAxisRenderer.min.js"></script>
         
         <link rel="stylesheet" type="text/css" href="js/external/jqplot/jquery.jqplot.css"/>
-
     </head>
 
     <body>
@@ -478,7 +477,7 @@
                     <table id="OrganizationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="5"> </th>
+                                <th colspan="7"> </th>
                                 <th colspan="3">Routes</th>
                                 <th colspan="5">Used</th>
                                 <th colspan="2">Reserved</th>
@@ -486,11 +485,13 @@
                                 <th colspan="3">App Package States</th>     
                             </tr>
                             <tr>
+                                <th>Check</th>
                                 <th>Name</th>
                                 <th>Status</th>
                                 <th>Created</th>
                                 <th>Spaces</th>
                                 <th>Developers</th>
+                                <th> Quota</th>
                                 <th>Total</th>
                                 <th>Used</th>
                                 <th>Unused</th>
@@ -764,7 +765,10 @@
         </div>
 
         <div id="ModalDialogDiv" class="modal_dialog_div_content">
+            <div id="ModalDialogTitleDiv" class="modal_dialog_div_title"></div>
             <div id="ModalDialogMessageDiv" class="modal_dialog_div_messageshow"></div>
+            <hr id="ModalDialogButtonsLine" class="modal_dialog_div_buttonline">
+            <div id="ModalDialogButtonsDiv" class="modal_dialog_div_buttoncontainer"></div>
         </div>
         <div id="ModalDialogBackgroundDiv" class="modal_dialog_div_overlay"></div>
 

@@ -149,6 +149,13 @@ describe AdminUI::Admin do
       end
     end
 
+    context 'set organization quota' do
+      it 'returns failure code due to disconnection' do
+        response = put('/organizations/organization1', '{"quota_definition_guid":"quota1"}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
     context 'manage service plan' do
       it 'returns failure code due to disconnection' do
         response = put('/service_plans/service_plan1', '{"public": true }')
@@ -186,6 +193,10 @@ describe AdminUI::Admin do
 
     it '/organizations succeeds' do
       verify_disconnected_items('/organizations')
+    end
+
+    it '/quota_definitions succeeds' do
+      verify_disconnected_items('/quota_definitions')
     end
 
     it '/routers succeeds' do
@@ -314,6 +325,10 @@ describe AdminUI::Admin do
       get_redirects_as_expected('/organizations')
     end
 
+    it '/quota_definitions redirects as expected' do
+      get_redirects_as_expected('/quota_definitions')
+    end
+
     it '/routers redirects as expected' do
       get_redirects_as_expected('/routers')
     end
@@ -376,6 +391,10 @@ describe AdminUI::Admin do
 
     it 'puts /applications/:app_guid redirects as expected' do
       put_redirects_as_expected('/applications/application1', '{"state":"STARTED"}')
+    end
+
+    it 'puts /organizations/:org_guid redirects as expected' do
+      put_redirects_as_expected('/organizations/organization1', '{"quota_definition_guid":"quota1"}')
     end
 
     it 'puts /service_plans/:service_plan_guid redirects as expected' do

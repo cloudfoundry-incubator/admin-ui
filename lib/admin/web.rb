@@ -92,6 +92,10 @@ module AdminUI
       @cc.organizations.to_json
     end
 
+    get '/quota_definitions', :auth => [:user] do
+      @cc.quota_definitions.to_json
+    end
+
     get '/routers', :auth => [:user] do
       @varz.routers.to_json
     end
@@ -214,6 +218,19 @@ module AdminUI
         204
       rescue => error
         @logger.debug("Error during update application: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    put '/organizations/:org_guid', :auth => [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @operation.manage_organization('PUT', params[:org_guid], control_message)
+
+        204
+      rescue => error
+        @logger.debug("Error during update organization: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
