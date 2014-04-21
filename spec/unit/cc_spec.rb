@@ -45,6 +45,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.organizations)
     end
 
+    it 'returns zero quotas as expected' do
+      verify_disconnected_items(cc.quota_definitions)
+    end
+
     it 'returns zero routes as expected' do
       verify_disconnected_items(cc.routes)
     end

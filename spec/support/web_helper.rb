@@ -79,10 +79,10 @@ shared_context :web_context do
     expect(@driver.find_element(:id => "#{ target_tab_id }Table_filter").find_element(:tag_name => 'input').attribute('value')).to eq(expected_filter)
   end
 
-  def check_select_link(tab_id, link_index, target_tab_id, expected_name)
+  def check_select_link(tab_id, link_index, target_tab_id, expected_name, expected_column_index = 1)
     @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(:tag_name => 'a').click
     expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq(target_tab_id)
-    expect(@driver.find_element(:xpath => "//table[@id='#{ target_tab_id }Table']/tbody/tr[contains(@class, 'DTTT_selected')]/td[1]").text).to eq(expected_name)
+    expect(@driver.find_element(:xpath => "//table[@id='#{ target_tab_id }Table']/tbody/tr[contains(@class, 'DTTT_selected')]/td[#{ expected_column_index }]").text).to eq(expected_name)
     expect(@driver.find_element(:id => "#{ target_tab_id }DetailsLabel").displayed?).to be_true
     expect(@driver.find_elements(:xpath => "//div[@id='#{ target_tab_id }PropertiesContainer']/table/tr[*]/td[2]")[0].text).to eq(expected_name)
   end

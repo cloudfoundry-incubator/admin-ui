@@ -84,5 +84,17 @@ describe AdminUI::Operation, :type => :integration do
         expect { operation.manage_service_plan('service_plan1', '{"public": false }') }.to change { cc.service_plans['items'][0]['public'].to_s }.from('true').to('false')
       end
     end
+
+    context 'manage organization' do
+      before do
+        # Make sure there is an organization
+        expect(cc.organizations['items'][0]['quota_definition_guid']).to eq('quota1')
+      end
+
+      it 'sets the quota for an organization' do
+        cc_organization_with_different_quota_stub(config)
+        expect { operation.manage_organization('organization1', '{"quota_definition_guid":"quota2"}') }.to change { cc.organizations['items'][0]['quota_definition_guid'] }.from('quota1').to('quota2')
+      end
+    end
   end
 end

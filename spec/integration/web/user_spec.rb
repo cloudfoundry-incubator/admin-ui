@@ -55,6 +55,27 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       expect(@driver.find_element(:id => 'ToolTables_RoutesTable_0').text).to eq('Copy')
     end
 
+    it 'does not have set quota button' do
+      begin
+        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+          @driver.find_element(:id => 'Organizations').click
+          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Organizations'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('Organizations')
+
+      begin
+        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+          @driver.find_element(:id => 'OrganizationsPage').displayed? &&
+              @driver.find_element(:id => 'ToolTables_OrganizationsTable_0').text == 'Copy'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(:id => 'OrganizationsPage').displayed?).to eq(true)
+      expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_0').text).to eq('Copy')
+    end
+
     it 'does not have a create DEA button' do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do

@@ -31,6 +31,10 @@ module CCHelper
       OK.new(cc_organizations)
     end
 
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/quota_definitions", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+      OK.new(cc_quota_definitions)
+    end
+
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_routes)
     end
@@ -74,6 +78,16 @@ module CCHelper
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_stopped_apps), CCHelper::OK.new(cc_started_apps))
   end
 
+  # Continuously mock two http request returns, the first http call returns at least one organization, the second http call returns empty organization set.
+  def cc_clear_organization_cache_stub(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_organizations), CCHelper::OK.new(cc_empty_resources))
+  end
+
+  # Mock http response and return an organization with another quota.
+  def cc_organization_with_different_quota_stub(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_organizations_with_other_quota))
+  end
+
   # Mock http response to return applications in stopped state.
   def cc_stopped_apps_stub(config)
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_stopped_apps))
@@ -81,12 +95,12 @@ module CCHelper
 
   # Continuously mock two http request returns, the first http call returns one route, while the second call returns empty route array.
   def cc_routes_delete_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_routes), CCHelper::OK.new(cc_empty_routes))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_routes), CCHelper::OK.new(cc_empty_resources))
   end
 
   # Mock empty routes array http response.
   def cc_empty_routes_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_empty_routes))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_empty_resources))
   end
 
   # Continuously mock two http request returns, the first http call returns applications in public state, while the second http call returns service _plans in private state, and the third one to return public service plan.
@@ -119,7 +133,7 @@ module CCHelper
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_private_service_plans))
   end
 
-  def cc_empty_routes
+  def cc_empty_resources
     {
       'total_results' => 0,
       'resources'     => []
@@ -139,9 +153,74 @@ module CCHelper
           },
           'entity'   =>
           {
-            'billing_enabled' => false,
-            'name'            => 'test_org',
-            'status'          => 'active'
+            'billing_enabled'       => false,
+            'name'                  => 'test_org',
+            'quota_definition_guid' => 'quota1',
+            'status'                => 'active'
+          }
+        }
+      ]
+    }
+  end
+
+  def cc_organizations_with_other_quota
+    {
+      'total_results' => 1,
+      'resources'     =>
+      [
+        {
+          'metadata' =>
+          {
+            'created_at' => '2013-10-16T08:55:46-05:00',
+            'guid'       => 'organization1'
+          },
+          'entity'   =>
+          {
+            'billing_enabled'       => false,
+            'name'                  => 'test_org',
+            'quota_definition_guid' => 'quota2',
+            'status'                => 'active'
+          }
+        }
+      ]
+    }
+  end
+
+  def cc_quota_definitions
+    {
+      'total_results' => 2,
+      'resources'     =>
+      [
+        {
+          'metadata' =>
+          {
+            'created_at' => '2013-10-16T08:55:46-05:00',
+            'guid'       => 'quota1'
+          },
+          'entity'   =>
+          {
+            'memory_limit'               => 1024,
+            'name'                       => 'test_quota_1',
+            'non_basic_services_allowed' => true,
+            'total_services'             => 100,
+            'total_routes'               => 100,
+            'trial_db_allowed'           => false
+          }
+        },
+        {
+          'metadata' =>
+          {
+            'created_at' => '2013-10-16T08:55:46-05:00',
+            'guid'       => 'quota2'
+          },
+          'entity'   =>
+          {
+            'memory_limit'               => 1024,
+            'name'                       => 'test_quota_2',
+            'non_basic_services_allowed' => true,
+            'total_services'             => 100,
+            'total_routes'               => 100,
+            'trial_db_allowed'           => false
           }
         }
       ]

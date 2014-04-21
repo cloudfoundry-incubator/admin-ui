@@ -78,21 +78,23 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 6,
                                 :labels          => ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                :colspans        => %w(5 3 5 2 3 3)
+                                :colspans        => %w(7 3 5 2 3 3)
                               },
                               { :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 21,
-                                :labels          => ['Name', 'Status', 'Created', 'Spaces', 'Developers', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :expected_length => 23,
+                                :labels          => ['', 'Name', 'Status', 'Created', 'Spaces', 'Developers', 'Quota', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 :colspans        => nil
                               }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td"),
                            [
+                             '',
                              cc_organizations['resources'][0]['entity']['name'],
                              cc_organizations['resources'][0]['entity']['status'].upcase,
                              @driver.execute_script("return Format.formatDateString(\"#{ cc_organizations['resources'][0]['metadata']['created_at'] }\")"),
                              cc_spaces['resources'].length.to_s,
                              cc_users_deep['resources'].length.to_s,
+                             cc_quota_definitions['resources'][0]['entity']['name'],
                              cc_routes['resources'].length.to_s,
                              cc_routes['resources'].length.to_s,
                              '0',
@@ -111,6 +113,61 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_started_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? '1' : '0'
                            ])
         end
+
+        it 'has a checkbox in the first column' do
+          inputs = @driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")
+          expect(inputs.length).to eq(1)
+          expect(inputs[0].attribute('value')).to eq("#{ cc_organizations['resources'][0]['metadata']['guid'] }")
+        end
+
+        context 'set quota' do
+          def check_first_row
+            @driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")[0].click
+          end
+
+          def check_operation_result
+            alert = nil
+            Selenium::WebDriver::Wait.new(:timeout => 5).until { alert = @driver.switch_to.alert }
+            expect(alert.text).to eq("The operation finished without error.\nPlease refresh the page later for the updated result.")
+            alert.dismiss
+          end
+
+          it 'has a set quota button' do
+            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_0').text).to eq('Set Quota')
+          end
+
+          it 'alerts the user to select at least one row when clicking the button without selecting a row' do
+            @driver.find_element(:id => 'ToolTables_OrganizationsTable_0').click
+            alert = @driver.switch_to.alert
+            expect(alert.text).to eq('Please select at least one row!')
+            alert.dismiss
+          end
+
+          it 'sets the specific quota for the organization' do
+            cc_organization_with_different_quota_stub(AdminUI::Config.load(config))
+
+            check_first_row
+            @driver.find_element(:id => 'ToolTables_OrganizationsTable_0').click
+
+            # Check whether the dialog is displayed
+            expect(@driver.find_element(:id => 'ModalDialogMessageDiv').displayed?).to be_true
+            expect(@driver.find_element(:id => 'quotaSelector').displayed?).to be_true
+            expect(@driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[1]').text).to eq('test_quota_1')
+            expect(@driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[2]').text).to eq('test_quota_2')
+
+            # Select another quota and click the set button
+            @driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[2]').click
+            @driver.find_element(:id => 'modalDialogButton0').click
+            check_operation_result
+
+            begin
+              Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[7]").text == 'test_quota_2' }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[7]").text).to eq('test_quota_2')
+          end
+        end
+
         context 'selectable' do
           before do
             select_first_row
@@ -122,6 +179,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Billing Enabled', :tag =>   nil, :value => cc_organizations['resources'][0]['entity']['billing_enabled'].to_s },
                            { :label => 'Spaces',          :tag =>   'a', :value => cc_spaces['resources'].length.to_s },
                            { :label => 'Developers',      :tag =>   'a', :value => cc_users_deep['resources'].length.to_s },
+                           { :label => 'Quota',           :tag =>   nil, :value => cc_quota_definitions['resources'][0]['entity']['name'] },
                            { :label => 'Total Routes',    :tag =>   'a', :value => cc_routes['resources'].length.to_s },
                            { :label => 'Used Routes',     :tag =>   nil, :value => cc_routes['resources'].length.to_s },
                            { :label => 'Unused Routes',   :tag =>   nil, :value => '0' },
@@ -147,16 +205,16 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Organizations', 5, 'Developers', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
           it 'has routes link' do
-            check_filter_link('Organizations', 6, 'Routes', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+            check_filter_link('Organizations', 7, 'Routes', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
           it 'has instances link' do
-            check_filter_link('Organizations', 9, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+            check_filter_link('Organizations', 10, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
           it 'has services link' do
-            check_filter_link('Organizations', 10, 'ServiceInstances', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+            check_filter_link('Organizations', 11, 'ServiceInstances', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
           it 'has applications link' do
-            check_filter_link('Organizations', 16, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+            check_filter_link('Organizations', 17, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
         end
       end
@@ -228,7 +286,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                           ])
           end
           it 'has organization link' do
-            check_select_link('Spaces', 1, 'Organizations', cc_organizations['resources'][0]['entity']['name'])
+            check_select_link('Spaces', 1, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
           end
           it 'has developers link' do
             check_filter_link('Spaces', 3, 'Developers', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
@@ -426,7 +484,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_select_link('Applications', 15, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
           end
           it 'has organization link' do
-            check_select_link('Applications', 16, 'Organizations', cc_organizations['resources'][0]['entity']['name'])
+            check_select_link('Applications', 16, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
           end
           it 'has DEA link' do
             check_select_link('Applications', 17, 'DEAs', nats_dea['host'])
@@ -526,7 +584,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_select_link('Routes', 4, 'Spaces', "#{ cc_spaces['resources'][0]['entity']['name']}")
           end
           it 'has organization link' do
-            check_select_link('Routes', 5, 'Organizations', "#{ cc_organizations['resources'][0]['entity']['name'] }")
+            check_select_link('Routes', 5, 'Organizations', "#{ cc_organizations['resources'][0]['entity']['name'] }", 2)
           end
         end
       end
@@ -608,7 +666,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_select_link('ServiceInstances', 19, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
           end
           it 'has organization link' do
-            check_select_link('ServiceInstances', 20, 'Organizations', cc_organizations['resources'][0]['entity']['name'])
+            check_select_link('ServiceInstances', 20, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
           end
         end
       end
@@ -796,7 +854,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_select_link('Developers', 4, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
           end
           it 'has organization link' do
-            check_select_link('Developers', 5, 'Organizations', cc_organizations['resources'][0]['entity']['name'])
+            check_select_link('Developers', 5, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
           end
         end
       end

@@ -10,7 +10,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :organizations, :routes, :services, :service_bindings, :service_instances, :service_plans, :spaces, :users_cc_deep, :users_uaa].each do |key|
+      [:applications, :organizations, :quota_definitions, :routes, :services, :service_bindings, :service_instances, :service_plans, :spaces, :users_cc_deep, :users_uaa].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
 
@@ -62,12 +62,20 @@ module AdminUI
       end
     end
 
+    def invalidate_organizations
+      invalidate_cache(:organizations)
+    end
+
     def invalidate_service_plans
       invalidate_cache(:service_plans)
     end
 
     def invalidate_routes
       invalidate_cache(:routes)
+    end
+
+    def quota_definitions
+      result_cache(:quota_definitions)
     end
 
     def routes
@@ -208,6 +216,18 @@ module AdminUI
       result(items)
     rescue => error
       @logger.debug("Error during discover_organizations: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_quota_definitions
+      items = []
+      @client.get_cc('v2/quota_definitions').each do |quota|
+        items.push(quota['entity'].merge(quota['metadata']))
+      end
+      result(items)
+    rescue => error
+      @logger.debug("Error during discover_quota_definitions: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
