@@ -93,7 +93,7 @@ describe AdminUI::Operation, :type => :integration do
 
       it 'sets the quota for an organization' do
         cc_organization_with_different_quota_stub(config)
-        expect { operation.manage_organization('PUT', 'organization1', '{"quota_definition_guid":"quota2"}') }.to change { cc.organizations['items'][0]['quota_definition_guid'] }.from('quota1').to('quota2')
+        expect { operation.manage_organization('organization1', '{"quota_definition_guid":"quota2"}') }.to change { cc.organizations['items'][0]['quota_definition_guid'] }.from('quota1').to('quota2')
       end
     end
   end

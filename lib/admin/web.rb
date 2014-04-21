@@ -226,7 +226,7 @@ module AdminUI
     put '/organizations/:org_guid', :auth => [:admin] do
       begin
         control_message = request.body.read.to_s
-        @operation.manage_organization('PUT', params[:org_guid], control_message)
+        @operation.manage_organization(params[:org_guid], control_message)
 
         204
       rescue => error
