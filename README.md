@@ -5,6 +5,8 @@ The Administration Web UI provides metrics and operations data for Cloud Foundry
 It gathers data from the varz providers for the various Cloud Foundry components as well as
 from the Cloud Controller and UAA REST APIs.
 
+See the [Using the Administration UI](#using) section for more information on using it and for sample screen shots.
+
 ## Placement
 
 In order to execute, the Administration UI needs to be able to access the following resources:
@@ -370,8 +372,66 @@ can let it default to config/default.yml
 ruby bin/admin [-c <configuration file>]
 ```
 
-## View Administration UI 
+## <a name="using"></a> Using the Administration UI 
+
+To access the Administration UI, go to:
 
 ```
 http://<admin ui host>:8070
 ```
+
+You will be prompted for the credentials.  Once there, by default, you will be
+taken to the DEA tab:
+![DEA Tab](./images/dea-tab.png)
+
+From there you will see the list of DEAs running in the environment, along with
+some basic statistics.  Selecting one from the list will bring up another
+table below the DEA table showing even more details about the DEA you selected:
+
+![DEA Tab](./images/dea-tab-vm.png)
+
+One important thing to note is that some of the items in the secondary
+table are hyperlinks. Clicking on that link will take you to the appropriate
+tab with a query already filled in, allowing you to see just the data
+related to what you clicked on.  For example, in the table above if you
+clicked on the <code>Apps</code> link, meaning the <code>2</code>,
+you'll be taken to the <code>Apps</code> tab and the query will be
+filled in such that you will only see the apps running on this DEA,
+as shown here:
+![Apps Tab](./images/apps-tab.png)
+
+Notice the <code>Search</code> entry field is pre-populated with a string
+and the table is filtered to show just those rows that contain that string
+in any column.
+
+Also, note that each row in the table has a checkbox.  While not all tables
+will have those, by selecting a set of rows an action can be performed on
+them. For example, in this case, by selecting one or more apps you can then
+use the buttons on the right side of the main table:
+
+![Apps Buttons](./images/apps-buttons.png)
+
+to start, stop, restart, etc. those apps.
+
+All of the tabs will follow the same interaction pattern as described above.
+
+There are however a few other tabs that worth calling out.
+
+The <code>Logs</code> tab will display the contents of the log files that the
+Administration UI has access to - these need to be local to the application:
+
+![Logs Tab](./images/logs-tab.png)
+
+On this tab, once a particular log file is selected, you can examine its
+contents in the text area.  Use the buttons to iterate through the file
+one page at a time, or use horizontal scroll bar at the top of the text area
+to quickly move to one section of the file.
+
+The <code>Stats</code> tab:
+
+![Stats Tab](./images/stats-tab.png)
+
+can be used to view basic history data about the environment.  Normally, 
+a snapshot of the statitics are taken once a day, but you can force a new
+set of data points to be taken by using the <code>Create Stats</code>
+button. 
