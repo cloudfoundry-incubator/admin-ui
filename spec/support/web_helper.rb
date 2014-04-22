@@ -36,7 +36,17 @@ shared_context :web_context do
 
     url = "http://#{ username }:#{ access_key }@localhost:4445/wd/hub"
 
-    Selenium::WebDriver.for(:remote, :desired_capabilities => caps, :url => url)
+    Selenium::WebDriver.for(:remote,
+                            :desired_capabilities => caps,
+                            :url => url)
+  rescue => error
+    unless url.nil?
+      puts "Trying to connect to: #{ url.gsub(access_key, '<access_key>') }"
+      puts "Caps : #{ caps.inspect }"
+    end
+    puts "Error: #{ error.inspect }"
+    puts error.backtrace.join("\n")
+    raise error
   end
 
   def add_stats

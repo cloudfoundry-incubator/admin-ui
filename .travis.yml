@@ -14,4 +14,6 @@ script:
   - bundle exec rspec
 branches:
   only:
-  - master
+  # For now enable it for all branches so people can verify their
+  # changes prior to submitting a PR
+  # - master
