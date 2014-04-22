@@ -5,7 +5,7 @@ addons:
   sauce_connect:
     username: 'admin-ui'
     access_key:
-      secure: "ZHw5o9aH8zL/c6iwVTv9/7STggk9IiedZh0jrw3DQqZtu6K6G04iIF+S/5EDiCIcZj+EARoZsk1TPO8v+OS0WpZoxSo2of04tWA0cfXnkc5R2hdjDIsUJxJC1/xkDwCpCuTKIvf9yh3Td+u+U8UBgAC7YDihJ1ZGESWfEpjaxoU="
+      secure: "HERcu03sO5U2b3YfM7nifYeM41XH/nFmqG3tMp1d2ChNcIAHBKub8zlS/kcY1G37HXR/6YQDg2onJ7wuy4/Vrc/C/TZXi/MmzwiGrBGzBQ9zFzuilFFuqECek0UPnwZBYXPWr56v6MD1/vOs42cqyfJWfV8AQJI2jdLFReVxNSI="
 before_install:
 - git submodule update --init --recursive
 - gem install rubocop -v 0.20.0 --no-rdoc --no-ri
