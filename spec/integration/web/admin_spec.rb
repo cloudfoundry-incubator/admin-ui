@@ -677,14 +677,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'ServicePlans' }
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 2,
-                                :labels          => ['Service Plan', 'Service'],
-                                :colspans        => %w(5 7)
+                                :expected_length => 3,
+                                :labels          => ['Service Plan', 'Service', 'Service Broker'],
+                                :colspans        => %w(5 6 1)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[5]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 12,
-                                :labels          => [' ', 'Name', 'Created', 'Public', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Active', 'Bindable', 'Description'],
+                                :labels          => [' ', 'Name', 'Created', 'Public', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Active', 'Bindable', 'Name'],
                                 :colspans        => nil
                               }
                              ])
@@ -701,7 +701,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")"),
                              cc_services['resources'][0]['entity']['active'].to_s,
                              cc_services['resources'][0]['entity']['bindable'].to_s,
-                             cc_services['resources'][0]['entity']['description']
+                             cc_service_brokers['resources'][0]['entity']['name']
                            ])
         end
 
@@ -717,6 +717,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Plan Public',            :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['public'].to_s },
                            { :label => 'Service Plan Description',       :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['description'] },
                            { :label => 'Service Instances',              :tag =>   nil, :value => cc_service_instances['resources'].length.to_s },
+                           { :label => 'Service Broker Name',            :tag =>   nil, :value => cc_service_brokers['resources'][0]['entity']['name'] },
                            { :label => 'Service Provider',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['provider'] },
                            { :label => 'Service Label',                  :tag =>   nil, :value => cc_services['resources'][0]['entity']['label'] },
                            { :label => 'Service Version',                :tag =>   nil, :value => cc_services['resources'][0]['entity']['version'] },
