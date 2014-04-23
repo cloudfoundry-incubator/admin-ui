@@ -104,6 +104,11 @@ shared_context :web_context do
   end
 
   def check_stats_chart(id)
+    # As the page refreshes, we need to catch the stale element error and re-find the element on the page
+    begin
+      Selenium::WebDriver::Wait.new(:timeout => 10).until { @driver.find_element(:id => "#{ id }Chart").displayed? }
+    rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+    end
     chart = @driver.find_element(:id => "#{ id }Chart")
     expect(chart.displayed?).to be_true
     rows = chart.find_elements(:xpath => "//table[@class='jqplot-table-legend']/tbody/tr")

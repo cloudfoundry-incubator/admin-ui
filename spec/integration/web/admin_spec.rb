@@ -1247,10 +1247,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
           # As the page refreshes, we need to catch the stale element error and re-find the element on the page
           begin
-            Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text != 'No data available in table' }
+            Selenium::WebDriver::Wait.new(:timeout => 10).until { @driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text != 'No data available in table' }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
-          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).should_not eq('No data available in table')
+          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).not_to eq('No data available in table')
 
           check_table_data(@driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td"), [@driver.execute_script("return Format.formatDateNumber(#{ current_date })"), '1', '1', '1', '1', '1', '1', '1', date, '1', '1', '1', '1', '1', '1', '1'])
         end
