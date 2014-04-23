@@ -157,6 +157,21 @@ describe AdminUI::CC, :type => :integration do
       end
     end
 
+    it 'returns connected service_brokers' do
+      service_brokers = cc.service_brokers
+
+      expect(service_brokers['connected']).to eq(true)
+      items = service_brokers['items']
+
+      resources = cc_service_brokers['resources']
+
+      expect(items.length).to be(resources.length)
+
+      resources.each do |resource|
+        expect(items).to include(resource['entity'].merge(resource['metadata']))
+      end
+    end
+
     it 'returns connected service_instances' do
       service_instances = cc.service_instances
 

@@ -120,6 +120,10 @@ module AdminUI
       @cc.service_bindings.to_json
     end
 
+    get '/service_brokers', :auth => [:user] do
+      @cc.service_brokers.to_json
+    end
+
     get '/service_instances', :auth => [:user] do
       @cc.service_instances.to_json
     end

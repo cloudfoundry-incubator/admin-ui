@@ -47,6 +47,10 @@ module CCHelper
       OK.new(cc_service_bindings)
     end
 
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_brokers", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+      OK.new(cc_service_brokers)
+    end
+
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_instances", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_service_instances)
     end
@@ -306,16 +310,17 @@ module CCHelper
           },
           'entity'   =>
           {
-            'active'            => true,
-            'bindable'          => true,
-            'description'       => 'TestService description',
-            'documentation_url' => 'http://documentation_url.com',
-            'extra'             => '{"displayName":"displayname","imageUrl":"http://docs.cloudfoundry.com/images/favicon.ico","longDescription":"long description","providerDisplayName":"provider name"}',
-            'info_url'          => 'http://info_url.com',
-            'label'             => 'TestService',
-            'provider'          => 'test',
-            'tags'              => %w(tag1 tag2),
-            'version'           => '1.0'
+            'active'              => true,
+            'bindable'            => true,
+            'description'         => 'TestService description',
+            'documentation_url'   => 'http://documentation_url.com',
+            'extra'               => '{"displayName":"displayname","imageUrl":"http://docs.cloudfoundry.com/images/favicon.ico","longDescription":"long description","providerDisplayName":"provider name"}',
+            'info_url'            => 'http://info_url.com',
+            'label'               => 'TestService',
+            'provider'            => 'test',
+            'service_broker_guid' => 'service_broker1',
+            'tags'                => %w(tag1 tag2),
+            'version'             => '1.0'
           }
         }
       ]
@@ -337,6 +342,26 @@ module CCHelper
           {
             'app_guid'              => 'application1',
             'service_instance_guid' => 'service_instance1'
+          }
+        }
+      ]
+    }
+  end
+
+  def cc_service_brokers
+    {
+      'total_results' => 1,
+      'resources'     =>
+      [
+        {
+          'metadata' =>
+          {
+            'created_at' => '2014-02-12T09:41:42-06:00',
+            'guid'       => 'service_broker1'
+          },
+          'entity'   =>
+          {
+            'name' => 'TestServiceBroker'
           }
         }
       ]

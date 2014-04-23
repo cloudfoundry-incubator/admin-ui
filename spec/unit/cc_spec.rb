@@ -65,6 +65,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.service_bindings)
     end
 
+    it 'returns zero service_brokers as expected' do
+      verify_disconnected_items(cc.service_brokers)
+    end
+
     it 'returns zero service_instances as expected' do
       verify_disconnected_items(cc.service_instances)
     end
