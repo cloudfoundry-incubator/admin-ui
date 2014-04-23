@@ -11,10 +11,16 @@ end
 
 shared_context :web_context do
   let(:stat_date) { 1_383_238_113_597 }
+  let(:current_date) { (Time.now.to_f * 1000).to_i }
   let(:stat_count) { 1 }
+
   before do
     @driver = selenium_web_driver
     @driver.manage.timeouts.implicit_wait = 5
+
+    AdminUI::Utils.stub(:time_in_milliseconds) do
+      current_date
+    end
   end
 
   after do
@@ -126,6 +132,15 @@ shared_context :web_context do
     stat_count_string = stat_count.to_s
     check_table_data(@driver.find_elements(:xpath => "//table[@id='#{ id }Table']/tbody/tr/td"),
                      [
+                       @driver.execute_script("return Format.formatDateNumber(#{ current_date })"),
+                       stat_count_string,
+                       stat_count_string,
+                       stat_count_string,
+                       stat_count_string,
+                       stat_count_string,
+                       stat_count_string,
+                       stat_count_string,
+
                        @driver.execute_script("return Format.formatDateNumber(#{ stat_date })"),
                        stat_count_string,
                        stat_count_string,

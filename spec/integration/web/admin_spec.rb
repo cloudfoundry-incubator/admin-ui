@@ -1223,8 +1223,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_stats_chart('Stats')
           end
         end
+
+        def check_default_stats_table
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td"), [@driver.execute_script("return Format.formatDateNumber(#{ current_date })"), '1', '1', '1', '1', '1', '1', '1'])
+        end
+
         it 'can show current stats' do
-          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
+          check_default_stats_table
           @driver.find_element(:id => 'ToolTables_StatsTable_0').click
           expect(@driver.find_element(:xpath => "//span[@id='DialogText']/span").text.length > 0).to be_true
           rows = @driver.find_elements(:xpath => "//span[@id='DialogText']/div/table/tbody/tr")
@@ -1232,10 +1237,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             expect(row.find_element(:class_name => 'cellRightAlign').text).to eq('1')
           end
           @driver.find_element(:id => 'DialogCancelButton').click
-          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
+          check_default_stats_table
         end
         it 'can create stats' do
-          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
+          check_default_stats_table
           @driver.find_element(:id => 'ToolTables_StatsTable_0').click
           date = @driver.find_element(:xpath => "//span[@id='DialogText']/span").text
           @driver.find_element(:id => 'DialogOkayButton').click
@@ -1247,7 +1252,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).should_not eq('No data available in table')
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td"), [date, '1', '1', '1', '1', '1', '1', '1'])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td"), [@driver.execute_script("return Format.formatDateNumber(#{ current_date })"), '1', '1', '1', '1', '1', '1', '1', date, '1', '1', '1', '1', '1', '1', '1'])
         end
       end
     end
