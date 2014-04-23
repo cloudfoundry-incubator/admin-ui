@@ -11,10 +11,16 @@ end
 
 shared_context :web_context do
   let(:stat_date) { 1_383_238_113_597 }
+  let(:current_date) { (Time.now.to_f * 1000).to_i }
   let(:stat_count) { 1 }
+
   before do
     @driver = selenium_web_driver
     @driver.manage.timeouts.implicit_wait = 5
+
+    AdminUI::Utils.stub(:time_in_milliseconds) do
+      current_date
+    end
   end
 
   after do
@@ -98,6 +104,11 @@ shared_context :web_context do
   end
 
   def check_stats_chart(id)
+    # As the page refreshes, we need to catch the stale element error and re-find the element on the page
+    begin
+      Selenium::WebDriver::Wait.new(:timeout => 10).until { @driver.find_element(:id => "#{ id }Chart").displayed? }
+    rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+    end
     chart = @driver.find_element(:id => "#{ id }Chart")
     expect(chart.displayed?).to be_true
     rows = chart.find_elements(:xpath => "//table[@class='jqplot-table-legend']/tbody/tr")
@@ -126,6 +137,15 @@ shared_context :web_context do
     stat_count_string = stat_count.to_s
     check_table_data(@driver.find_elements(:xpath => "//table[@id='#{ id }Table']/tbody/tr/td"),
                      [
+                       @driver.execute_script("return Format.formatDateNumber(#{ current_date })"),
+                       stat_count_string,
+                       stat_count_string,
+                       stat_count_string,
+                       stat_count_string,
+                       stat_count_string,
+                       stat_count_string,
+                       stat_count_string,
+
                        @driver.execute_script("return Format.formatDateNumber(#{ stat_date })"),
                        stat_count_string,
                        stat_count_string,

@@ -1223,8 +1223,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_stats_chart('Stats')
           end
         end
+
+        def check_default_stats_table
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td"), [@driver.execute_script("return Format.formatDateNumber(#{ current_date })"), '1', '1', '1', '1', '1', '1', '1'])
+        end
+
         it 'can show current stats' do
-          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
+          check_default_stats_table
           @driver.find_element(:id => 'ToolTables_StatsTable_0').click
           expect(@driver.find_element(:xpath => "//span[@id='DialogText']/span").text.length > 0).to be_true
           rows = @driver.find_elements(:xpath => "//span[@id='DialogText']/div/table/tbody/tr")
@@ -1232,22 +1237,22 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             expect(row.find_element(:class_name => 'cellRightAlign').text).to eq('1')
           end
           @driver.find_element(:id => 'DialogCancelButton').click
-          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
+          check_default_stats_table
         end
         it 'can create stats' do
-          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).to eq('No data available in table')
+          check_default_stats_table
           @driver.find_element(:id => 'ToolTables_StatsTable_0').click
           date = @driver.find_element(:xpath => "//span[@id='DialogText']/span").text
           @driver.find_element(:id => 'DialogOkayButton').click
 
           # As the page refreshes, we need to catch the stale element error and re-find the element on the page
           begin
-            Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text != 'No data available in table' }
+            Selenium::WebDriver::Wait.new(:timeout => 10).until { @driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text != 'No data available in table' }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
-          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).should_not eq('No data available in table')
+          expect(@driver.find_element(:xpath => "//table[@id='StatsTable']/tbody/tr").text).not_to eq('No data available in table')
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td"), [date, '1', '1', '1', '1', '1', '1', '1'])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td"), [@driver.execute_script("return Format.formatDateNumber(#{ current_date })"), '1', '1', '1', '1', '1', '1', '1', date, '1', '1', '1', '1', '1', '1', '1'])
         end
       end
     end
