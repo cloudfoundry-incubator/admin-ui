@@ -593,19 +593,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'ServiceInstances' }
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 4,
-                                :labels          => ['Service', 'Service Plan', 'Service Instance', ''],
-                                :colspans        => %w(4 3 3 1)
+                                :expected_length => 5,
+                                :labels          => ['Service Broker', 'Service', 'Service Plan', 'Service Instance', ''],
+                                :colspans        => %w(1 4 3 3 1)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 11,
-                                :labels          => %w(Provider Label Version Created Name Created Public Name Created Bindings Target),
+                                :expected_length => 12,
+                                :labels          => %w(Name Provider Label Version Created Name Created Public Name Created Bindings Target),
                                 :colspans        => nil
                               }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='ServiceInstancesTable']/tbody/tr/td"),
                            [
+                             cc_service_brokers['resources'][0]['entity']['name'],
                              cc_services['resources'][0]['entity']['provider'],
                              cc_services['resources'][0]['entity']['label'],
                              cc_services['resources'][0]['entity']['version'],
@@ -627,6 +628,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_details([{ :label => 'Service Instance Name',          :tag => 'div', :value => cc_service_instances['resources'][0]['entity']['name'] },
                            { :label => 'Service Instance Created',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instances['resources'][0]['metadata']['created_at'] }\")") },
                            { :label => 'Service Instance Dashboard URL', :tag =>   nil, :value => cc_service_instances['resources'][0]['entity']['dashboard_url'] },
+                           { :label => 'Service Broker Name',            :tag =>   nil, :value => cc_service_brokers['resources'][0]['entity']['name'] },
                            { :label => 'Service Provider',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['provider'] },
                            { :label => 'Service Label',                  :tag =>   nil, :value => cc_services['resources'][0]['entity']['label'] },
                            { :label => 'Service Version',                :tag =>   nil, :value => cc_services['resources'][0]['entity']['version'] },
@@ -660,13 +662,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              ])
           end
           it 'has service plan name link' do
-            check_filter_link('ServiceInstances', 14, 'ServicePlans', cc_service_plans['resources'][0]['entity']['name'])
+            check_filter_link('ServiceInstances', 15, 'ServicePlans', cc_service_plans['resources'][0]['entity']['name'])
           end
           it 'has space link' do
-            check_select_link('ServiceInstances', 19, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
+            check_select_link('ServiceInstances', 20, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
           end
           it 'has organization link' do
-            check_select_link('ServiceInstances', 20, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
+            check_select_link('ServiceInstances', 21, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
           end
         end
       end

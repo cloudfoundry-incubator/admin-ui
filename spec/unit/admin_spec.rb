@@ -224,6 +224,10 @@ describe AdminUI::Admin do
       verify_disconnected_items('/service_bindings')
     end
 
+    it '/service_brokers succeeds' do
+      verify_disconnected_items('/service_brokers')
+    end
+
     it '/service_instances succeeds' do
       verify_disconnected_items('/service_instances')
     end
@@ -347,6 +351,10 @@ describe AdminUI::Admin do
 
     it '/service_bindings redirects as expected' do
       get_redirects_as_expected('/service_bindings')
+    end
+
+    it '/service_brokers redirects as expected' do
+      get_redirects_as_expected('/service_brokers')
     end
 
     it '/service_instances redirects as expected' do

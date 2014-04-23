@@ -367,6 +367,11 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     it_behaves_like('retrieves cc entity/metadata record') do
+      let(:path)      { '/service_brokers' }
+      let(:cc_source) { cc_service_brokers }
+    end
+
+    it_behaves_like('retrieves cc entity/metadata record') do
       let(:path)      { '/service_instances' }
       let(:cc_source) { cc_service_instances }
     end

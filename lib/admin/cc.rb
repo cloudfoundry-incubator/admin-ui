@@ -10,7 +10,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :organizations, :quota_definitions, :routes, :services, :service_bindings, :service_instances, :service_plans, :spaces, :users_cc_deep, :users_uaa].each do |key|
+      [:applications, :organizations, :quota_definitions, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_plans, :spaces, :users_cc_deep, :users_uaa].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
 
@@ -88,6 +88,10 @@ module AdminUI
 
     def service_bindings
       result_cache(:service_bindings)
+    end
+
+    def service_brokers
+      result_cache(:service_brokers)
     end
 
     def service_instances
@@ -264,6 +268,18 @@ module AdminUI
       result(items)
     rescue => error
       @logger.debug("Error during discover_service_bindings: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_service_brokers
+      items = []
+      @client.get_cc('v2/service_brokers').each do |app|
+        items.push(app['entity'].merge(app['metadata']))
+      end
+      result(items)
+    rescue => error
+      @logger.debug("Error during discover_service_brokers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
