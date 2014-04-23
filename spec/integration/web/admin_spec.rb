@@ -82,7 +82,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                               },
                               { :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 23,
-                                :labels          => ['', 'Name', 'Status', 'Created', 'Spaces', 'Developers', 'Quota', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :labels          => [' ', 'Name', 'Status', 'Created', 'Spaces', 'Developers', 'Quota', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 :colspans        => nil
                               }
                              ])
@@ -317,7 +317,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 17,
-                                :labels          => ['', 'Name', 'State', "Package\nState", "Instance\nState", 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                :labels          => [' ', 'Name', 'State', "Package\nState", "Instance\nState", 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
                                 :colspans        => nil
                               }
                              ])
@@ -497,7 +497,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='RoutesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 6,
-                                :labels          => ['', 'Host', 'Domain', 'Created', 'Target', 'Application'],
+                                :labels          => [' ', 'Host', 'Domain', 'Created', 'Target', 'Application'],
                                 :colspans        => nil
                               }
                               ])
@@ -682,7 +682,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[5]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 12,
-                                :labels          => ['', 'Name', 'Created', 'Public', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Active', 'Bindable', 'Description'],
+                                :labels          => [' ', 'Name', 'Created', 'Public', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Active', 'Bindable', 'Description'],
                                 :colspans        => nil
                               }
                              ])
