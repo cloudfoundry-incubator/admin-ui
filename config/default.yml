@@ -1,14 +1,15 @@
 ---
 bind_address: 127.0.0.1
 cloud_controller_discovery_interval: 300
-cloud_controller_uri: http://api.cloud-controller
+cloud_controller_uri: http://api.10.244.0.34.xip.io
+cloud_controller_ssl_verify_none: true
 component_connection_retries: 2
 data_file: data/data.json
 log_file: admin_ui.log
 log_file_page_size: 51200
 log_file_sftp_keys: [ ]
 log_files: [/var/vcap/sys/log/cloud_controller_ng/*.log, admin_ui.log]
-mbus: nats://nats:c1oudc0w@10.10.10.10:4222
+mbus: nats://nats:nats@10.244.0.6:4222
 monitored_components: [NATS, CloudController, DEA, HealthManager, Router, -Provisioner, ALL]
 nats_discovery_interval: 30
 nats_discovery_timeout: 10
@@ -24,7 +25,7 @@ stats_retry_interval: 300
 tasks_refresh_interval: 5000
 uaa_admin_credentials:
   username: admin
-  password: c1oudc0w
+  password: admin
 ui_credentials:
   username: user
   password: passw0rd
