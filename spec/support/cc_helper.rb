@@ -199,7 +199,8 @@ module CCHelper
           'metadata' =>
           {
             'created_at' => '2013-10-16T08:55:46-05:00',
-            'guid'       => 'quota1'
+            'guid'       => 'quota1',
+            'updated_at' => '2013-11-16T08:55:46-05:00'
           },
           'entity'   =>
           {
@@ -215,7 +216,8 @@ module CCHelper
           'metadata' =>
           {
             'created_at' => '2013-10-16T08:55:46-05:00',
-            'guid'       => 'quota2'
+            'guid'       => 'quota2',
+            'updated_at' => '2013-12-16T08:55:46-05:00'
           },
           'entity'   =>
           {

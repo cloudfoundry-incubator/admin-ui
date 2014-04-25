@@ -30,11 +30,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       expect(@driver.find_element(:id => 'Applications').displayed?).to be_true
       expect(@driver.find_element(:id => 'ServiceInstances').displayed?).to be_true
       expect(@driver.find_element(:id => 'Developers').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Quotas').displayed?).to be_true
+      expect(@driver.find_element(:id => 'ServicePlans').displayed?).to be_true
       expect(@driver.find_element(:id => 'DEAs').displayed?).to be_true
       expect(@driver.find_element(:id => 'CloudControllers').displayed?).to be_true
       expect(@driver.find_element(:id => 'HealthManagers').displayed?).to be_true
       expect(@driver.find_element(:id => 'Gateways').displayed?).to be_true
-      expect(@driver.find_element(:id => 'ServicePlans').displayed?).to be_true
       expect(@driver.find_element(:id => 'Routers').displayed?).to be_true
       expect(@driver.find_element(:id => 'Routes').displayed?).to be_true
       expect(@driver.find_element(:id => 'Components').displayed?).to be_true
@@ -203,6 +204,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has developers link' do
             check_filter_link('Organizations', 5, 'Developers', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+          end
+          it 'has quota link' do
+            check_select_link('Organizations', 6, 'Quotas', "#{ cc_quota_definitions['resources'][0]['entity']['name'] }")
           end
           it 'has routes link' do
             check_filter_link('Organizations', 7, 'Routes', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
@@ -662,13 +666,120 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              ])
           end
           it 'has service plan name link' do
-            check_filter_link('ServiceInstances', 15, 'ServicePlans', cc_service_plans['resources'][0]['entity']['name'])
+            check_select_link('ServiceInstances', 15, 'ServicePlans', cc_service_plans['resources'][0]['entity']['name'], 2)
           end
           it 'has space link' do
             check_select_link('ServiceInstances', 20, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
           end
           it 'has organization link' do
             check_select_link('ServiceInstances', 21, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
+          end
+        end
+      end
+
+      context 'Developers' do
+        let(:tab_id) { 'Developers' }
+        it 'has a table' do
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DevelopersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                :expected_length => 5,
+                                :labels          => %w(Email Space Organization Target Created),
+                                :colspans        => nil
+                               }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='DevelopersTable']/tbody/tr/td"),
+                           [
+                             "#{ uaa_users['resources'][0]['emails'][0]['value'] }",
+                             cc_spaces['resources'][0]['entity']['name'],
+                             cc_organizations['resources'][0]['entity']['name'],
+                             "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
+                             @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")")
+                           ])
+        end
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+          it 'has details' do
+            groups = []
+            uaa_users['resources'][0]['groups'].each do |group|
+              groups.push(group['display'])
+            end
+            groups.sort!
+            index = 0
+            groups_string = ''
+            while index < groups.length
+              groups_string += ', ' unless index == 0
+              groups_string += groups[index]
+              index += 1
+            end
+            check_details([{ :label => 'Email',        :tag => 'div', :value => "mailto:#{ uaa_users['resources'][0]['emails'][0]['value'] }" },
+                           { :label => 'Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")") },
+                           { :label => 'Modified',     :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['lastModified'] }\")") },
+                           { :label => 'Authorities',  :tag =>   nil, :value => groups_string },
+                           { :label => 'Space',        :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },
+                           { :label => 'Organization', :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] }
+                          ])
+          end
+          it 'has space link' do
+            check_select_link('Developers', 4, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
+          end
+          it 'has organization link' do
+            check_select_link('Developers', 5, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
+          end
+        end
+      end
+
+      context 'Quotas' do
+        let(:tab_id) { 'Quotas' }
+        it 'has a table' do
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='QuotasTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 9,
+                                :labels          => ['Name', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Non-Basic Services Allowed', 'Trial-DB Allowed', 'Organizations'],
+                                :colspans        => nil
+                              }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='QuotasTable']/tbody/tr/td"),
+                           [
+                             cc_quota_definitions['resources'][0]['entity']['name'],
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][0]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][0]['entity']['total_services'] }\")"),
+                             @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][0]['entity']['total_routes'] }\")"),
+                             @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][0]['entity']['memory_limit'] }\")"),
+                             cc_quota_definitions['resources'][0]['entity']['non_basic_services_allowed'].to_s,
+                             cc_quota_definitions['resources'][0]['entity']['trial_db_allowed'].to_s,
+                             '1',
+
+                             cc_quota_definitions['resources'][1]['entity']['name'],
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][1]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][1]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][1]['entity']['total_services'] }\")"),
+                             @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][1]['entity']['total_routes'] }\")"),
+                             @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][1]['entity']['memory_limit'] }\")"),
+                             cc_quota_definitions['resources'][1]['entity']['non_basic_services_allowed'].to_s,
+                             cc_quota_definitions['resources'][1]['entity']['trial_db_allowed'].to_s,
+                             '0'
+                           ])
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+          it 'has details' do
+            check_details([{ :label => 'Name',                       :tag => 'div', :value => cc_quota_definitions['resources'][0]['entity']['name'] },
+                           { :label => 'Created',                    :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Updated',                    :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][0]['metadata']['updated_at'] }\")") },
+                           { :label => 'Total Services',             :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][0]['entity']['total_services'] }\")") },
+                           { :label => 'Total Routes',               :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][0]['entity']['total_routes'] }\")") },
+                           { :label => 'Memory Limit',               :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][0]['entity']['memory_limit'] }\")") },
+                           { :label => 'Non-Basic Services Allowed', :tag =>   nil, :value => cc_quota_definitions['resources'][0]['entity']['non_basic_services_allowed'].to_s },
+                           { :label => 'Trial-DB Allowed',           :tag =>   nil, :value => cc_quota_definitions['resources'][0]['entity']['trial_db_allowed'].to_s },
+                           { :label => 'Organizations',              :tag =>   'a', :value => '1' }
+                          ])
+          end
+          it 'has organizations link' do
+            check_filter_link('Quotas', 8, 'Organizations', "#{ cc_quota_definitions['resources'][0]['entity']['name'] }")
           end
         end
       end
@@ -806,58 +917,6 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
               manage_service_plan(1)
               check_service_plan_state('false')
             end
-          end
-        end
-      end
-
-      context 'Developers' do
-        let(:tab_id) { 'Developers' }
-        it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DevelopersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 5,
-                                :labels          => %w(Email Space Organization Target Created),
-                                :colspans        => nil
-                               }
-                             ])
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='DevelopersTable']/tbody/tr/td"),
-                           [
-                             "#{ uaa_users['resources'][0]['emails'][0]['value'] }",
-                             cc_spaces['resources'][0]['entity']['name'],
-                             cc_organizations['resources'][0]['entity']['name'],
-                             "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
-                             @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")")
-                           ])
-        end
-        context 'selectable' do
-          before do
-            select_first_row
-          end
-          it 'has details' do
-            groups = []
-            uaa_users['resources'][0]['groups'].each do |group|
-              groups.push(group['display'])
-            end
-            groups.sort!
-            index = 0
-            groups_string = ''
-            while index < groups.length
-              groups_string += ', ' unless index == 0
-              groups_string += groups[index]
-              index += 1
-            end
-            check_details([{ :label => 'Email',        :tag => 'div', :value => "mailto:#{ uaa_users['resources'][0]['emails'][0]['value'] }" },
-                           { :label => 'Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")") },
-                           { :label => 'Modified',     :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['lastModified'] }\")") },
-                           { :label => 'Authorities',  :tag =>   nil, :value => groups_string },
-                           { :label => 'Space',        :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },
-                           { :label => 'Organization', :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] }
-                          ])
-          end
-          it 'has space link' do
-            check_select_link('Developers', 4, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
-          end
-          it 'has organization link' do
-            check_select_link('Developers', 5, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
           end
         end
       end
