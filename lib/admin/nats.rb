@@ -1,5 +1,6 @@
 require 'json'
 require 'nats/client'
+require 'uri'
 
 module AdminUI
   class NATS
@@ -120,6 +121,20 @@ module AdminUI
       begin
         @cache = JSON.parse(IO.read(@config.data_file)) if @use_cache && File.exist?(@config.data_file)
 
+        # Special-casing code to handle same component restarting with different ephemeral port.
+        # Remove all old references which also have new references prior to merge.
+        new_item_keys = {}
+        nats_discovery_results['items'].each do |uri, item|
+          new_item_keys[item_key(uri, item)] = nil
+        end
+
+        @cache['items'].each do |uri, item|
+          if new_item_keys.include?(item_key(uri, item))
+            @cache['items'].delete(uri)
+            @cache['notified'].delete(uri)
+          end
+        end
+
         @cache['connected'] = nats_discovery_results['connected']
         @cache['items'].merge!(nats_discovery_results['items'])
 
@@ -128,10 +143,10 @@ module AdminUI
                                  @cache['connected'],
                                  disconnected)
 
-        @cache['items'].each do |url, item|
+        @cache['items'].each do |uri, item|
           update_connection_status(item['type'],
-                                   url,
-                                   nats_discovery_results['items'][url],
+                                   uri,
+                                   nats_discovery_results['items'][uri],
                                    disconnected)
         end
 
@@ -193,6 +208,12 @@ module AdminUI
 
     def item_uri(item)
       "http://#{ item['host'] }/varz"
+    end
+
+    # Determine key for comparison.  Type and index are insufficient.  Host must be included (without port) as well.
+    def item_key(uri_string, item)
+      uri = URI.parse(uri_string)
+      "#{ item['type'] }:#{ item['index'] }:#{ uri.host }"
     end
   end
 end
