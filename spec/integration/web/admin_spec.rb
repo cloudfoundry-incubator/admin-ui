@@ -204,6 +204,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has developers link' do
             check_filter_link('Organizations', 5, 'Developers', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
+          it 'has quota link' do
+            check_filter_link('Organizations', 6, 'Quotas', "#{ cc_quota_definitions['resources'][0]['entity']['name'] }")
+          end
           it 'has routes link' do
             check_filter_link('Organizations', 7, 'Routes', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
@@ -215,6 +218,56 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has applications link' do
             check_filter_link('Organizations', 17, 'Applications', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
+          end
+        end
+      end
+
+      context 'Quotas' do
+        let(:tab_id) { 'Quotas' }
+        it 'has a table' do
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='QuotasTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 7,
+                                :labels          => ['Name', 'Total Services', 'Total Routes', 'Memory Limit', 'Non-Basic Services Allowed', 'Trial-DB Allowed', 'Created'],
+                                :colspans        => nil
+                              }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='QuotasTable']/tbody/tr/td"),
+                           [
+                             cc_quota_definitions['resources'][0]['entity']['name'],
+                             cc_quota_definitions['resources'][0]['entity']['total_services'].to_s,
+                             cc_quota_definitions['resources'][0]['entity']['total_routes'].to_s,
+                             @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][0]['entity']['memory_limit'] }\")"),
+                             cc_quota_definitions['resources'][0]['entity']['non_basic_services_allowed'].to_s,
+                             cc_quota_definitions['resources'][0]['entity']['trial_db_allowed'].to_s,
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][0]['metadata']['created_at'] }\")"),
+
+                             cc_quota_definitions['resources'][1]['entity']['name'],
+                             cc_quota_definitions['resources'][1]['entity']['total_services'].to_s,
+                             cc_quota_definitions['resources'][1]['entity']['total_routes'].to_s,
+                             @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][1]['entity']['memory_limit'] }\")"),
+                             cc_quota_definitions['resources'][1]['entity']['non_basic_services_allowed'].to_s,
+                             cc_quota_definitions['resources'][1]['entity']['trial_db_allowed'].to_s,
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][1]['metadata']['created_at'] }\")")
+                           ])
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+          it 'has details' do
+            check_details([{ :label => 'Name',                       :tag => nil, :value => cc_quota_definitions['resources'][0]['entity']['name'] },
+                           { :label => 'Total Services',             :tag => nil, :value => cc_quota_definitions['resources'][0]['entity']['total_services'].to_s },
+                           { :label => 'Total Routes',               :tag => nil, :value => cc_quota_definitions['resources'][0]['entity']['total_routes'].to_s },
+                           { :label => 'Memory Limit',               :tag => nil, :value => @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][0]['entity']['memory_limit'] }\")") },
+                           { :label => 'Non-Basic Services Allowed', :tag => nil, :value => cc_quota_definitions['resources'][0]['entity']['non_basic_services_allowed'].to_s },
+                           { :label => 'Trial-DB Allowed',           :tag => nil, :value => cc_quota_definitions['resources'][0]['entity']['trial_db_allowed'].to_s },
+                           { :label => 'Organizations',              :tag => 'a', :value => '1' },
+                           { :label => 'Created At',                 :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][0]['metadata']['created_at'] }\")") }
+                          ])
+          end
+          it 'has organizations link' do
+            check_filter_link('Quotas', 6, 'Organizations', "#{ cc_quota_definitions['resources'][0]['entity']['name'] }")
           end
         end
       end

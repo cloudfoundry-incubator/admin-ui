@@ -33,7 +33,8 @@
         <script src="js/app/tabs/gatewaysTab.js"></script>    
         <script src="js/app/tabs/healthManagersTab.js"></script> 
         <script src="js/app/tabs/logsTab.js"></script>
-        <script src="js/app/tabs/organizationsTab.js"></script>  
+        <script src="js/app/tabs/organizationsTab.js"></script>
+        <script src="js/app/tabs/quotasTab.js"></script>
         <script src="js/app/tabs/routersTab.js"></script>
         <script src="js/app/tabs/routesTab.js"></script>
         <script src="js/app/tabs/serviceInstancesTab.js"></script>
@@ -87,6 +88,10 @@
 
             <span id="Organizations" class="menuItem">
                 Organizations
+            </span>
+
+            <span id="Quotas" class="menuItem">
+                Quotas
             </span>
 
             <span id="Spaces" class="menuItem">
@@ -525,6 +530,41 @@
                     </div>
 
                     <div id="OrganizationsPropertiesContainer">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="QuotasPage" class="page hiddenPage">
+
+                <div id="QuotasTableContainer" class="pageSection">
+
+                    <table id="QuotasTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Total Services</th>
+                                <th>Total Routes</th>
+                                <th>Memory Limit</th>
+                                <th>Non-Basic Services Allowed</th>
+                                <th>Trial-DB Allowed</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div id="QuotasDetailsLabel" class="propertyLabel">
+                        Details
+                    </div>
+
+                    <div id="QuotasPropertiesContainer">
                     </div>
 
                 </div>
