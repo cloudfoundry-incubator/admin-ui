@@ -880,7 +880,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
               expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[5]").text).to eq(expect_state)
             end
 
-            def check_operation_result(visibility)
+            def check_operation_result(_visibility)
               alert = nil
               Selenium::WebDriver::Wait.new(:timeout => 100).until { alert = @driver.switch_to.alert }
               expect(alert.text.sub(/\n/, '')).to eq('The operation finished without error.Please refresh the page later for the updated result.')

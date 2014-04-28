@@ -26,7 +26,7 @@ module AdminUI
         tasks = @tasks.clone
       end
 
-      tasks.each do |task_id, task|
+      tasks.each do |_task_id, task|
         result.push(:command => task[:command],
                     :id      => task[:id],
                     :started => task[:started],

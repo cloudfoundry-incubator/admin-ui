@@ -63,7 +63,7 @@ module SFTPHelper
       @sftp_close = true
     end
 
-    MockSession.any_instance.stub(:download!) do |source, target|
+    MockSession.any_instance.stub(:download!) do |_source, target|
       @sftp_download = true
       File.open(target, 'w') do |file|
         file.write(file_content)
