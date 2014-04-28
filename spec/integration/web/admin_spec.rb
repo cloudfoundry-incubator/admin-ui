@@ -599,12 +599,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 5,
                                 :labels          => ['Service Broker', 'Service', 'Service Plan', 'Service Instance', ''],
-                                :colspans        => %w(1 4 3 3 1)
+                                :colspans        => %w(1 4 4 3 1)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 12,
-                                :labels          => %w(Name Provider Label Version Created Name Created Public Name Created Bindings Target),
+                                :expected_length => 13,
+                                :labels          => %w(Name Provider Label Version Created Name Created Public Target Name Created Bindings Target),
                                 :colspans        => nil
                               }
                              ])
@@ -618,6 +618,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_service_plans['resources'][0]['entity']['name'],
                              @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")"),
                              cc_service_plans['resources'][0]['entity']['public'].to_s,
+                             @driver.execute_script("return Format.formatTarget(\"#{ cc_services['resources'][0]['entity']['provider'] }/#{ cc_services['resources'][0]['entity']['label'] }/#{ cc_service_plans['resources'][0]['entity']['name'] }\")").gsub(/<\/?[^>]+>/, ''),
                              cc_service_instances['resources'][0]['entity']['name'],
                              @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instances['resources'][0]['metadata']['created_at'] }\")"),
                              cc_service_bindings['total_results'].to_s,
@@ -790,12 +791,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[5]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
                                 :labels          => ['Service Plan', 'Service', 'Service Broker'],
-                                :colspans        => %w(5 6 1)
+                                :colspans        => %w(6 6 1)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 12,
-                                :labels          => [' ', 'Name', 'Created', 'Public', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Active', 'Bindable', 'Name'],
+                                :expected_length => 13,
+                                :labels          => [' ', 'Name', 'Target', 'Created', 'Public', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Active', 'Bindable', 'Name'],
                                 :colspans        => nil
                               }
                              ])
@@ -803,6 +804,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            [
                              '',
                              cc_service_plans['resources'][0]['entity']['name'],
+                             @driver.execute_script("return Format.formatTarget(\"#{ cc_services['resources'][0]['entity']['provider'] }/#{ cc_services['resources'][0]['entity']['label'] }/#{ cc_service_plans['resources'][0]['entity']['name'] }\")").gsub(/<\/?[^>]+>/, ''),
                              @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")"),
                              cc_service_plans['resources'][0]['entity']['public'].to_s,
                              cc_service_instances['resources'].length.to_s,
@@ -849,8 +851,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             expect(inputs[0].attribute('value')).to eq("#{ cc_service_plans['resources'][0]['metadata']['guid'] }")
           end
 
-          it 'has service instances link to service instances filtered by service plan name' do
-            check_filter_link('ServicePlans', 4, 'ServiceInstances', cc_service_plans['resources'][0]['entity']['name'])
+          it 'has service instances link to service instances filtered by service plan target' do
+            check_filter_link('ServicePlans', 4, 'ServiceInstances', "#{ cc_services['resources'][0]['entity']['provider'] }/#{ cc_services['resources'][0]['entity']['label'] }/#{ cc_service_plans['resources'][0]['entity']['name'] }")
           end
 
           context 'manage service plans' do
@@ -872,10 +874,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
               # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
               # error happens.
               begin
-                Selenium::WebDriver::Wait.new(:timeout => 20).until { @driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[4]").text == expect_state }
+                Selenium::WebDriver::Wait.new(:timeout => 20).until { @driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[5]").text == expect_state }
               rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
               end
-              expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[4]").text).to eq(expect_state)
+              expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[5]").text).to eq(expect_state)
             end
 
             def check_operation_result(visibility)
