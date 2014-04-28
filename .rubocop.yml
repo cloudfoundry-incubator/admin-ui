@@ -1,7 +1,7 @@
 AllCops:
   Exclude:
-    - '.bundle/**'
-    - 'vendor/**'
+    - '.bundle/**/*'
+    - 'vendor/**/*'
     # We shouldn't need the above but for now there's a bug in rubocop
 
 ClassLength:
