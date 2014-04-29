@@ -609,28 +609,33 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 5,
                                 :labels          => ['Service Broker', 'Service', 'Service Plan', 'Service Instance', ''],
-                                :colspans        => %w(1 4 4 3 1)
+                                :colspans        => %w(3 5 5 4 1)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 13,
-                                :labels          => %w(Name Provider Label Version Created Name Created Public Target Name Created Bindings Target),
+                                :expected_length => 18,
+                                :labels          => %w(Name Created Updated Provider Label Version Created Updated Name Created Updated Public Target Name Created Updated Bindings Target),
                                 :colspans        => nil
                               }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='ServiceInstancesTable']/tbody/tr/td"),
                            [
                              cc_service_brokers['resources'][0]['entity']['name'],
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_brokers['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_brokers['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_services['resources'][0]['entity']['provider'],
                              cc_services['resources'][0]['entity']['label'],
                              cc_services['resources'][0]['entity']['version'],
                              @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_service_plans['resources'][0]['entity']['name'],
                              @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_service_plans['resources'][0]['entity']['public'].to_s,
                              @driver.execute_script("return Format.formatTarget(\"#{ cc_services['resources'][0]['entity']['provider'] }/#{ cc_services['resources'][0]['entity']['label'] }/#{ cc_service_plans['resources'][0]['entity']['name'] }\")").gsub(/<\/?[^>]+>/, ''),
                              cc_service_instances['resources'][0]['entity']['name'],
                              @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instances['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instances['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_service_bindings['total_results'].to_s,
                              "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }"
                            ])
@@ -642,12 +647,16 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has details' do
             check_details([{ :label => 'Service Instance Name',          :tag => 'div', :value => cc_service_instances['resources'][0]['entity']['name'] },
                            { :label => 'Service Instance Created',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instances['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Service Instance Updated',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instances['resources'][0]['metadata']['updated_at'] }\")") },
                            { :label => 'Service Instance Dashboard URL', :tag =>   nil, :value => cc_service_instances['resources'][0]['entity']['dashboard_url'] },
                            { :label => 'Service Broker Name',            :tag =>   nil, :value => cc_service_brokers['resources'][0]['entity']['name'] },
+                           { :label => 'Service Broker Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_brokers['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Service Broker Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_brokers['resources'][0]['metadata']['updated_at'] }\")") },
                            { :label => 'Service Provider',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['provider'] },
                            { :label => 'Service Label',                  :tag =>   nil, :value => cc_services['resources'][0]['entity']['label'] },
                            { :label => 'Service Version',                :tag =>   nil, :value => cc_services['resources'][0]['entity']['version'] },
                            { :label => 'Service Created',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Service Updated',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['updated_at'] }\")") },
                            { :label => 'Service Description',            :tag =>   nil, :value => cc_services['resources'][0]['entity']['description'] },
                            { :label => 'Service Bindable',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['bindable'].to_s },
                            { :label => 'Service Extra',                  :tag =>   nil, :value => cc_services['resources'][0]['entity']['extra'] },
@@ -655,8 +664,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Tag',                    :tag =>   nil, :value => cc_services['resources'][0]['entity']['tags'][1] },
                            { :label => 'Service Documentation URL',      :tag =>   nil, :value => cc_services['resources'][0]['entity']['documentation_url'] },
                            { :label => 'Service Info URL',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['info_url'] },
-                           { :label => 'Service Plan Name',              :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['name'] },
+                           { :label => 'Service Plan Name',              :tag =>   'a', :value => cc_service_plans['resources'][0]['entity']['name'] },
                            { :label => 'Service Plan Created',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Service Plan Updated',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['updated_at'] }\")") },
                            { :label => 'Service Plan Public',            :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['public'].to_s },
                            { :label => 'Service Plan Description',       :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['description'] },
                            { :label => 'Service Plan Extra',             :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['extra'] },
@@ -677,13 +687,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              ])
           end
           it 'has service plan name link' do
-            check_select_link('ServiceInstances', 15, 'ServicePlans', cc_service_plans['resources'][0]['entity']['name'], 2)
+            check_select_link('ServiceInstances', 19, 'ServicePlans', cc_service_plans['resources'][0]['entity']['name'], 2)
           end
           it 'has space link' do
-            check_select_link('ServiceInstances', 20, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
+            check_select_link('ServiceInstances', 25, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
           end
           it 'has organization link' do
-            check_select_link('ServiceInstances', 21, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
+            check_select_link('ServiceInstances', 26, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
           end
         end
       end
@@ -802,12 +812,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[5]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
                                 :labels          => ['Service Plan', 'Service', 'Service Broker'],
-                                :colspans        => %w(6 6 1)
+                                :colspans        => %w(7 7 3)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[5]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 13,
-                                :labels          => [' ', 'Name', 'Target', 'Created', 'Public', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Active', 'Bindable', 'Name'],
+                                :expected_length => 17,
+                                :labels          => [' ', 'Name', 'Target', 'Created', 'Updated', 'Public', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'Created', 'Updated'],
                                 :colspans        => nil
                               }
                              ])
@@ -817,15 +827,19 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_service_plans['resources'][0]['entity']['name'],
                              @driver.execute_script("return Format.formatTarget(\"#{ cc_services['resources'][0]['entity']['provider'] }/#{ cc_services['resources'][0]['entity']['label'] }/#{ cc_service_plans['resources'][0]['entity']['name'] }\")").gsub(/<\/?[^>]+>/, ''),
                              @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_service_plans['resources'][0]['entity']['public'].to_s,
                              cc_service_instances['resources'].length.to_s,
                              cc_services['resources'][0]['entity']['provider'],
                              cc_services['resources'][0]['entity']['label'],
                              cc_services['resources'][0]['entity']['version'],
                              @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_services['resources'][0]['entity']['active'].to_s,
                              cc_services['resources'][0]['entity']['bindable'].to_s,
-                             cc_service_brokers['resources'][0]['entity']['name']
+                             cc_service_brokers['resources'][0]['entity']['name'],
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_brokers['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_brokers['resources'][0]['metadata']['updated_at'] }\")")
                            ])
         end
 
@@ -838,14 +852,18 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             value_extra_json = JSON.parse(cc_services['resources'][0]['entity']['extra'])
             check_details([{ :label => 'Service Plan Name',              :tag => 'div', :value => cc_service_plans['resources'][0]['entity']['name'] },
                            { :label => 'Service Plan Created',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Service Plan Updated',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['updated_at'] }\")") },
                            { :label => 'Service Plan Public',            :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['public'].to_s },
                            { :label => 'Service Plan Description',       :tag =>   nil, :value => cc_service_plans['resources'][0]['entity']['description'] },
-                           { :label => 'Service Instances',              :tag =>   nil, :value => cc_service_instances['resources'].length.to_s },
+                           { :label => 'Service Instances',              :tag =>   'a', :value => cc_service_instances['resources'].length.to_s },
                            { :label => 'Service Broker Name',            :tag =>   nil, :value => cc_service_brokers['resources'][0]['entity']['name'] },
+                           { :label => 'Service Broker Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_brokers['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Service Broker Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_brokers['resources'][0]['metadata']['updated_at'] }\")") },
                            { :label => 'Service Provider',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['provider'] },
                            { :label => 'Service Label',                  :tag =>   nil, :value => cc_services['resources'][0]['entity']['label'] },
                            { :label => 'Service Version',                :tag =>   nil, :value => cc_services['resources'][0]['entity']['version'] },
                            { :label => 'Service Created',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Service Updated',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['updated_at'] }\")") },
                            { :label => 'Service Active',                 :tag =>   nil, :value => cc_services['resources'][0]['entity']['active'].to_s },
                            { :label => 'Service Bindable',               :tag =>   nil, :value => cc_services['resources'][0]['entity']['bindable'].to_s },
                            { :label => 'Service Description',            :tag =>   nil, :value => cc_services['resources'][0]['entity']['description'] },
@@ -863,7 +881,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has service instances link to service instances filtered by service plan target' do
-            check_filter_link('ServicePlans', 4, 'ServiceInstances', "#{ cc_services['resources'][0]['entity']['provider'] }/#{ cc_services['resources'][0]['entity']['label'] }/#{ cc_service_plans['resources'][0]['entity']['name'] }")
+            check_filter_link('ServicePlans', 5, 'ServiceInstances', "#{ cc_services['resources'][0]['entity']['provider'] }/#{ cc_services['resources'][0]['entity']['label'] }/#{ cc_service_plans['resources'][0]['entity']['name'] }")
           end
 
           context 'manage service plans' do
@@ -885,10 +903,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
               # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
               # error happens.
               begin
-                Selenium::WebDriver::Wait.new(:timeout => 20).until { @driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[5]").text == expect_state }
+                Selenium::WebDriver::Wait.new(:timeout => 20).until { @driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[6]").text == expect_state }
               rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
               end
-              expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[5]").text).to eq(expect_state)
+              expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[6]").text).to eq(expect_state)
             end
 
             def check_operation_result(visibility)
