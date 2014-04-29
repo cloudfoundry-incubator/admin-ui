@@ -153,6 +153,7 @@ module CCHelper
           'metadata' =>
           {
             'created_at' => '2013-10-16T08:55:46-05:00',
+            'updated_at' => '2013-10-17T08:55:46-05:00',
             'guid'       => 'organization1'
           },
           'entity'   =>
@@ -176,6 +177,7 @@ module CCHelper
           'metadata' =>
           {
             'created_at' => '2013-10-16T08:55:46-05:00',
+            'updated_at' => '2013-10-17T08:55:46-05:00',
             'guid'       => 'organization1'
           },
           'entity'   =>
@@ -242,6 +244,7 @@ module CCHelper
           'metadata' =>
           {
             'created_at' => '2014-02-12T09:40:52-06:00',
+            'updated_at' => '2014-02-13T09:40:52-06:00',
             'guid'       => 'route1'
           },
           'entity'   =>
@@ -308,7 +311,8 @@ module CCHelper
           'metadata' =>
           {
             'created_at' => '2014-02-12T09:32:31-06:00',
-            'guid'       => 'service1'
+            'guid'       => 'service1',
+            'updated_at' => '2014-02-12T09:32:31-06:00'
           },
           'entity'   =>
           {
@@ -359,7 +363,8 @@ module CCHelper
           'metadata' =>
           {
             'created_at' => '2014-02-12T09:41:42-06:00',
-            'guid'       => 'service_broker1'
+            'guid'       => 'service_broker1',
+            'updated_at' => '2014-03-12T09:41:42-06:00'
           },
           'entity'   =>
           {
@@ -379,7 +384,8 @@ module CCHelper
           'metadata' =>
           {
             'created_at' => '2014-02-12T09:40:52-06:00',
-            'guid'       => 'service_instance1'
+            'guid'       => 'service_instance1',
+            'updated_at' => '2014-03-12T09:40:52-06:00'
           },
           'entity' =>
           {
@@ -402,7 +408,8 @@ module CCHelper
           'metadata' =>
           {
             'created_at' => '2014-02-12T09:34:10-06:00',
-            'guid'       => 'service_plan1'
+            'guid'       => 'service_plan1',
+            'updated_at' => '2014-03-12T09:34:10-06:00'
           },
           'entity'   =>
           {
@@ -428,6 +435,7 @@ module CCHelper
           'metadata' =>
           {
             'created_at' => '2013-10-16T08:55:54-05:00',
+            'updated_at' => '2013-10-17T08:55:54-05:00',
             'guid'       => 'space1'
           },
           'entity'   =>
@@ -494,6 +502,7 @@ module CCHelper
             'metadata' =>
               {
                 'created_at' => '2013-10-18T08:28:35-05:00',
+                'updated_at' => '2013-10-19T08:28:35-05:00',
                 'guid'       => 'application1'
               },
             'entity'   =>
@@ -522,6 +531,7 @@ module CCHelper
             'metadata' =>
               {
                 'created_at' => '2013-10-18T08:28:35-05:00',
+                'updated_at' => '2013-10-19T08:28:35-05:00',
                 'guid'       => 'application1'
               },
             'entity'   =>
@@ -650,8 +660,8 @@ module CCHelper
           'userName' => 'admin',
           'meta'     =>
           {
-            'created'      => '2013-10-16T08:55:27.339Z',
-            'lastModified' => '2013-10-23T07:07:50.425Z',
+            'created'      => '2014-10-16T08:55:27.339Z',
+            'lastModified' => '2014-10-23T07:07:50.425Z',
             'version'      => 5
           },
           'name'     =>
