@@ -408,7 +408,6 @@ module AdminUI
                        'last_modified' => meta['lastModified'],
                        'version'       => meta['version'] }
 
-        attributes['updated']    = meta['updated']    unless meta['updated'].nil?
         attributes['email']      = emails[0]['value'] unless emails.nil? || emails.length == 0
         attributes['familyname'] = name['familyName'] unless name['familyName'].nil?
         attributes['givenname']  = name['givenName'] unless name['givenName'].nil?

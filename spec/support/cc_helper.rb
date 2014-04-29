@@ -657,7 +657,6 @@ module CCHelper
           'meta'     =>
           {
             'created'      => '2014-10-16T08:55:27.339Z',
-            'updated'      => '2014-10-17T08:55:27.339Z',
             'lastModified' => '2014-10-23T07:07:50.425Z',
             'version'      => 5
           },

@@ -36,7 +36,6 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       expect(@driver.find_element(:id => 'CloudControllers').displayed?).to be_true
       expect(@driver.find_element(:id => 'HealthManagers').displayed?).to be_true
       expect(@driver.find_element(:id => 'Gateways').displayed?).to be_true
-      expect(@driver.find_element(:id => 'ServicePlans').displayed?).to be_true
       expect(@driver.find_element(:id => 'Routers').displayed?).to be_true
       expect(@driver.find_element(:id => 'Routes').displayed?).to be_true
       expect(@driver.find_element(:id => 'Components').displayed?).to be_true
@@ -178,8 +177,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has details' do
             check_details([{ :label => 'Name',            :tag => 'div', :value => cc_organizations['resources'][0]['entity']['name'] },
                            { :label => 'Status',          :tag =>   nil, :value => cc_organizations['resources'][0]['entity']['status'].upcase },
-                           { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDate(\"#{ cc_organizations['resources'][0]['metadata']['created_at'] }\")") },
-                           { :label => 'Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDate(\"#{ cc_organizations['resources'][0]['metadata']['updated_at'] }\")") },
+                           { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organizations['resources'][0]['metadata']['created_at'] }\")") },
+                           { :label => 'Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organizations['resources'][0]['metadata']['updated_at'] }\")") },
                            { :label => 'Billing Enabled', :tag =>   nil, :value => cc_organizations['resources'][0]['entity']['billing_enabled'].to_s },
                            { :label => 'Spaces',          :tag =>   'a', :value => cc_spaces['resources'].length.to_s },
                            { :label => 'Developers',      :tag =>   'a', :value => cc_users_deep['resources'].length.to_s },
@@ -326,7 +325,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 19,
-                                :labels          => [' ', 'Name', 'Created', 'Updated', 'Started', 'State', "Package\nState", "Instance\nState", 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                :labels          => [' ', 'Name', 'State', "Package\nState", "Instance\nState", 'Created', 'Updated', 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
                                 :colspans        => nil
                               }
                              ])
@@ -334,12 +333,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            [
                              '',
                              cc_started_apps['resources'][0]['entity']['name'],
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_started_apps['resources'][0]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_started_apps['resources'][0]['metadata']['updated_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })"),
                              cc_started_apps['resources'][0]['entity']['state'],
                              @driver.execute_script('return Constants.STATUS__STAGED'),
                              varz_dea['instance_registry']['application1']['application1_instance1']['state'],
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_started_apps['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatDateString(\"#{ cc_started_apps['resources'][0]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })"),
                              "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }",
                              cc_started_apps['resources'][0]['entity']['detected_buildpack'],
                              varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'].to_s,
@@ -375,10 +374,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
             # error happens.
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[6]").text == expect_state }
+              Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[3]").text == expect_state }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[6]").text).to eq(expect_state)
+            expect(@driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[3]").text).to eq(expect_state)
           end
 
           def check_operation_result
@@ -457,15 +456,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has details' do
             check_details([{ :label => 'Name',            :tag => 'div', :value => cc_started_apps['resources'][0]['entity']['name'] },
+                           { :label => 'State',           :tag =>   nil, :value => cc_started_apps['resources'][0]['entity']['state'] },
+                           { :label => 'Package State',   :tag =>   nil, :value => cc_started_apps['resources'][0]['entity']['package_state'] },
+                           { :label => 'Instance State',  :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['state'] },
                            { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_started_apps['resources'][0]['metadata']['created_at']}\")") },
                            { :label => 'Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_started_apps['resources'][0]['metadata']['updated_at'] }\")") },
                            { :label => 'Started',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })") },
-                           { :label => 'State',           :tag =>   nil, :value => cc_started_apps['resources'][0]['entity']['state'] },
-                           { :label => 'Package State',   :tag =>   nil, :value => cc_started_apps['resources'][0]['entity']['package_state'] },
                            { :label => 'URI',             :tag =>   'a', :value => "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }" },
                            { :label => 'Buildpack',       :tag =>   nil, :value => cc_started_apps['resources'][0]['entity']['detected_buildpack'] },
                            { :label => 'Instance Index',  :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'].to_s },
-                           { :label => 'Instance State',  :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['state'] },
                            { :label => 'Droplet Hash',    :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['droplet_sha1'].to_s },
                            { :label => 'Services Used',        :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
                            { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
@@ -689,6 +688,59 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
       end
 
+      context 'Developers' do
+        let(:tab_id) { 'Developers' }
+        it 'has a table' do
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DevelopersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+                                :expected_length => 6,
+                                :labels          => %w(Email Space Organization Target Created Updated),
+                                :colspans        => nil
+                               }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='DevelopersTable']/tbody/tr/td"),
+                           [
+                             "#{ uaa_users['resources'][0]['emails'][0]['value'] }",
+                             cc_spaces['resources'][0]['entity']['name'],
+                             cc_organizations['resources'][0]['entity']['name'],
+                             "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
+                             @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")"),
+                             @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['lastModified'] }\")")
+                           ])
+        end
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+          it 'has details' do
+            groups = []
+            uaa_users['resources'][0]['groups'].each do |group|
+              groups.push(group['display'])
+            end
+            groups.sort!
+            index = 0
+            groups_string = ''
+            while index < groups.length
+              groups_string += ', ' unless index == 0
+              groups_string += groups[index]
+              index += 1
+            end
+            check_details([{ :label => 'Email',        :tag => 'div', :value => "mailto:#{ uaa_users['resources'][0]['emails'][0]['value'] }" },
+                           { :label => 'Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")") },
+                           { :label => 'Updated',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['lastModified'] }\")") },
+                           { :label => 'Authorities',  :tag =>   nil, :value => groups_string },
+                           { :label => 'Space',        :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },
+                           { :label => 'Organization', :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] }
+                          ])
+          end
+          it 'has space link' do
+            check_select_link('Developers', 4, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
+          end
+          it 'has organization link' do
+            check_select_link('Developers', 5, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
+          end
+        end
+      end
+
       context 'Quotas' do
         let(:tab_id) { 'Quotas' }
         it 'has a table' do
@@ -878,60 +930,6 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
               manage_service_plan(1)
               check_service_plan_state('false')
             end
-          end
-        end
-      end
-
-      context 'Developers' do
-        let(:tab_id) { 'Developers' }
-        it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DevelopersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 6,
-                                :labels          => %w(Email Space Organization Target Created Updated),
-                                :colspans        => nil
-                               }
-                             ])
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='DevelopersTable']/tbody/tr/td"),
-                           [
-                             "#{ uaa_users['resources'][0]['emails'][0]['value'] }",
-                             cc_spaces['resources'][0]['entity']['name'],
-                             cc_organizations['resources'][0]['entity']['name'],
-                             "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
-                             @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['updated'] }\")")
-                           ])
-        end
-        context 'selectable' do
-          before do
-            select_first_row
-          end
-          it 'has details' do
-            groups = []
-            uaa_users['resources'][0]['groups'].each do |group|
-              groups.push(group['display'])
-            end
-            groups.sort!
-            index = 0
-            groups_string = ''
-            while index < groups.length
-              groups_string += ', ' unless index == 0
-              groups_string += groups[index]
-              index += 1
-            end
-            check_details([{ :label => 'Email',        :tag => 'div', :value => "mailto:#{ uaa_users['resources'][0]['emails'][0]['value'] }" },
-                           { :label => 'Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")") },
-                           { :label => 'Updated',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['updated'] }\")") },
-                           { :label => 'Modified',     :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['lastModified'] }\")") },
-                           { :label => 'Authorities',  :tag =>   nil, :value => groups_string },
-                           { :label => 'Space',        :tag =>   'a', :value => cc_spaces['resources'][0]['entity']['name'] },
-                           { :label => 'Organization', :tag =>   'a', :value => cc_organizations['resources'][0]['entity']['name'] }
-                          ])
-          end
-          it 'has space link' do
-            check_select_link('Developers', 5, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
-          end
-          it 'has organization link' do
-            check_select_link('Developers', 6, 'Organizations', cc_organizations['resources'][0]['entity']['name'], 2)
           end
         end
       end
