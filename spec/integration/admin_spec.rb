@@ -420,6 +420,7 @@ describe AdminUI::Admin, :type => :integration do
           hash = { 'active'        => resource['active'],
                    'authorities'   => authorities.sort.join(', '),
                    'created'       => resource['meta']['created'],
+                   'updated'       => resource['meta']['updated'],
                    'id'            => resource['id'],
                    'last_modified' => resource['meta']['lastModified'],
                    'username'      => resource['userName'],
