@@ -1,7 +1,8 @@
 
 div.DTTT_container
 {
-    margin: 4px 2px 4px 6px;
+    margin: 4px 2px 4px 30px;
+    float: left;
 }
 
 button.DTTT_button, div.DTTT_button, a.DTTT_button
