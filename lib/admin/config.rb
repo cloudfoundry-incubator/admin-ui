@@ -1,4 +1,6 @@
 require 'membrane'
+require_relative 'utils'
+require 'cron_parser'
 
 module AdminUI
   class Config
@@ -24,6 +26,7 @@ module AdminUI
 
     def self.schema
       ::Membrane::SchemaParser.parse do
+        schema =
         {
           optional(:bind_address)                        => /[^\r\n\t]+/,
           optional(:cloud_controller_discovery_interval) => Integer,
@@ -49,6 +52,7 @@ module AdminUI
 
           :stats_file                                    => /[^\r\n\t]+/,
           optional(:stats_refresh_time)                  => Integer,
+          optional(:stats_refresh_schedules)             => [/@yearly|@annually|@monthly|@weekly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/],
           optional(:stats_retries)                       => Integer,
           optional(:stats_retry_interval)                => Integer,
           optional(:tasks_refresh_interval)              => Integer,
@@ -72,6 +76,16 @@ module AdminUI
 
           optional(:varz_discovery_interval)             => Integer
         }
+        unless schema[:stats_refresh_schedules].nil?
+          schema[:stats_refresh_schedules].each do | spec |
+            begin
+              CronParser.new(spec)
+            rescue => error
+              raise Membrane::SchemaValidationError, error.inspect
+            end
+          end
+        end
+        schema
       end
     end
 
@@ -161,6 +175,10 @@ module AdminUI
       @config[:stats_file]
     end
 
+    def stats_refresh_schedules
+      @config[:stats_refresh_schedules]
+    end
+
     def stats_refresh_time
       @config[:stats_refresh_time]
     end
@@ -215,6 +233,17 @@ module AdminUI
 
     def initialize(config)
       @config = DEFAULTS_CONFIG.merge(symbolize_keys(config))
+      if @config[:stats_refresh_schedules].nil?
+        stats_refresh_time = @config[:stats_refresh_time]
+        begin
+          Integer(stats_refresh_time)
+        rescue ArgumentError, TypeError
+          raise Membrane::SchemaValidationError
+        end
+        @config[:stats_refresh_schedules]  =  []
+        @config[:stats_refresh_schedules].push("#{Utils.minutes_in_an_hour(stats_refresh_time)} #{Utils.hours_in_a_day(stats_refresh_time) > 0 ? Utils.hours_in_a_day(stats_refresh_time) : '*' } * * *")
+      end
+      @config
     end
 
     def symbolize_keys(hash)

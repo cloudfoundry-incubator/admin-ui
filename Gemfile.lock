@@ -18,6 +18,7 @@ GEM
     net-sftp (2.1.2)
       net-ssh (>= 2.6.5)
     net-ssh (2.7.0)
+    parse-cron (0.1.4)
     rack (1.5.2)
     rack-protection (1.5.1)
       rack
@@ -54,6 +55,7 @@ DEPENDENCIES
   membrane (= 0.0.2)
   nats (= 0.4.26)
   net-sftp (= 2.1.2)
+  parse-cron (= 0.1.4)
   rspec
   selenium-webdriver (= 2.39.0)
   sinatra (= 1.4.2)

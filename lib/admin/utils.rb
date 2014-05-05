@@ -44,5 +44,15 @@ module AdminUI
 
       http.request(request)
     end
+
+    def self.hours_in_a_day(num_minutes)
+      minutes_in_a_day = num_minutes % (24 * 60)
+      minutes_in_a_day / 60
+    end
+
+    def self.minutes_in_an_hour(num_minutes)
+      minutes_in_a_day = num_minutes % (24 * 60)
+      minutes_in_a_day % 60
+    end
   end
 end

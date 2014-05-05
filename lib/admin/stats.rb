@@ -1,13 +1,17 @@
 require 'json'
 require_relative 'utils'
+require 'cron_parser'
 
 module AdminUI
   class Stats
+    attr_reader :time_last_run
+
     def initialize(config, logger, cc, varz)
       @config = config
       @logger = logger
       @cc     = cc
       @varz   = varz
+      @time_last_run = Time.now
 
       @stats_semaphore = Mutex.new
 
@@ -52,6 +56,25 @@ module AdminUI
       save_stats(stats) ? stats : nil
     end
 
+    def calculate_time_until_generate_stats
+      current_time_sec = Time.now.to_i
+      target_time = @time_last_run
+      @config.stats_refresh_schedules.each do | spec |
+        begin
+          cron_parser = CronParser.new(spec)
+          refresh_time = cron_parser.next(@time_last_run).to_i
+          if target_time == @time_last_run || target_time > refresh_time
+            target_time = refresh_time
+          end
+        rescue => error
+          @logger.debug("Error detected in the '" + spec + "' of stats_refresh_schedule property as specified in config/default.yml")
+          @logger.debug(error.backtrace.join("\n"))
+          raise error
+        end
+      end
+      target_time - current_time_sec
+    end
+
     private
 
     def schedule_stats
@@ -59,15 +82,9 @@ module AdminUI
       @logger.debug("Waiting #{ time_until_generate_stats } seconds before trying to save stats...")
       sleep(time_until_generate_stats)
       generate_stats
+      @time_last_run = Time.now
     rescue => error
       @logger.debug("Error generating stats: #{ error.inspect }")
-    end
-
-    def calculate_time_until_generate_stats
-      current_time = Time.now.to_i
-      refresh_time = (Date.today.to_time + 60 * @config.stats_refresh_time).to_i
-      time_difference = refresh_time - current_time
-      time_difference > 0 ? time_difference : (refresh_time + 60 * 60 * 24) - current_time
     end
 
     def save_stats(stats)
