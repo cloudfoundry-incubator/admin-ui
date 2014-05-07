@@ -6,6 +6,7 @@ gem 'nats', '0.4.26', :require => 'nats/client'
 gem 'sinatra', '1.4.2'
 gem 'membrane', '0.0.2'
 gem 'net-sftp', '2.1.2'
+gem 'parse-cron', '0.1.4'
 
 group :test do
   gem 'rspec'

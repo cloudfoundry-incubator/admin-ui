@@ -44,5 +44,25 @@ module AdminUI
 
       http.request(request)
     end
+
+    def self.hours_in_a_day(num_minutes)
+      minutes_in_a_day = num_minutes % (24 * 60)
+      minutes_in_a_day / 60
+    end
+
+    def self.minutes_in_an_hour(num_minutes)
+      minutes_in_a_day = num_minutes % (24 * 60)
+      minutes_in_a_day % 60
+    end
+
+    def self.symbolize_keys(hash)
+      if hash.is_a? Hash
+        new_hash = {}
+        hash.each { |k, v| new_hash[k.to_sym] = symbolize_keys(v) }
+        new_hash
+      else
+        hash
+      end
+    end
   end
 end
