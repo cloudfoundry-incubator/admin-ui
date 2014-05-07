@@ -19,7 +19,7 @@ sender_email:
   server: 10.10.10.10
   account: system@10.10.10.10
 stats_file: data/stats.json
-stats_refresh_time: 300
+stats_refresh_schedules: [ '0 5 * * *' ]
 stats_retries: 5
 stats_retry_interval: 300
 tasks_refresh_interval: 5000
