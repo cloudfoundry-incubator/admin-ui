@@ -261,90 +261,75 @@ Example: <code>data/stats.json</code>
 <dd>
 Deprecated.  See stats_refresh_schedules for details.
 <br>
-Daily minute from midnight for automatic stats collection
+A daily schedule which starts at specified minutes from midnight for automatic stats collection
 <br>
-Example: <code>300</code>.  This results in stats collection at 5 AM.
+Example: <code>300</code>.  This results in stats collection starting at 5 AM.
 </dd>
 <dt>
 <code>stats_refresh_schedules</code>
 </dt>
 <dd>
-Schedules of automatic stats collection expressed in the form of an array of strings which follow syntax similar the crontab schedule.  Each string consists of five fields, for specifying time, date, days of a week and ect, as follows.
+Schedules of automatic stats collection expressed in an array of strings.  Each string represents a schedule and follows a syntax very similar to crontab.  It consists of five fields, for specifying time, date, days of a week and etc, as follow.
 <br>
-<br>
-* &nbsp;&nbsp;&nbsp;* &nbsp;&nbsp;&nbsp;* &nbsp;&nbsp;&nbsp;* &nbsp;&nbsp;&nbsp;*  <br>
-- &nbsp;&nbsp;&nbsp;- &nbsp;&nbsp;&nbsp;- &nbsp;&nbsp;&nbsp;- &nbsp;&nbsp;&nbsp;-  <br>
-| &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;<br>
-| &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;+----- day of week (0 - 6)(Sunday=0) <br>
-| &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;+------- month (1 - 12) <br>
-| &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;+--------- day of month (1 - 31) <br>
-| &nbsp;&nbsp;&nbsp;+----------- hour (0 - 23) <br>
-+------------- minute (0 - 59) <br>
-where * denotes an expression using legal values shown inside the parenthesis for the column. <br>
+<pre>
+       *        *        *        *        * 
+       -        -        -        -        - 
+       |        |        |        |        | 
+       |        |        |        |        +----- day of week (0 - 6)(Sunday=0) 
+       |        |        |        +------- month (1 - 12) 
+       |        |        +--------- day of month (1 - 31)
+       |        +----------- hour (0 - 23)
+       +------------- minute (0 - 59)
+       
+       where * denotes an expression using legal values shown inside the parenthesis for the column. 
+</pre>
 
-<br>
-<br>
 * Fields are separated by spaces.  
 <br>
+* Fields can be expressed by a wildcard * symbol which means every occurance of the fields.
 <br>
-* Fields can be expressed by a wildcard * symbal which means every occurance of the fields.
-<br><br>
-For example, 
+Example: <code>['0 * * * *'] means the collection starts once every hour at the beginning of the hour.</code>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;['0 * * * *'] means the collection starts once every hour at the beginning of the hour.
-<br><br>
+<br>
 * Field value can be expressed in form of a range, which consists of two legal values connected by a hyphen (-).
-<br><br>
-For example,
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;['0 0 * * 1-5'] means the collection starts midnight 12:00AM, Monday to Friday.
-<br><br>
+Example: <code>['0 0 * * 1-5'] means the collection starts at midnight 12:00AM, Monday to Friday. </cdoe> 
+<br>
+<br>
 * Field value can also be a sequence of legal values separated by comma.  Sequence doesn't need to be monitonic.
-<br><br>
-For example, 
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;['0 1,11,12,13 * * *'] means the collection process starts at 1:00AM, 11:00AM, 12:00PM and 1:00PM every day.
-<br>
+Example: <code>['0 1,11,12,13 * * *'] means the collection process starts at 1:00AM, 11:00AM, 12:00PM and 1:00PM every day.</code>
 <br>
 * Mixed uses of sequence and ranges are permitted. <br>
-&nbsp;&nbsp;&nbsp;&nbsp;The example above can expressed this way as well: ['0 1,11-13 * * *']
+Example: <code>The example above can expressed this way as well: ['0 1,11-13 * * *']</code>
 <br>
-<br>
+
 * Step based repeat pattern like /4 is currently not supported.
 <br>
-<br>
-<b>Reference: </b>[Please see crontab syntax (http://www.adminschoice.com/crontab-quick-reference/) for details](http://www.adminschoice.com/crontab-quick-reference/) 
-<br>
-<br>
+
 * stats_refresh_schedules supports multiple schedules.
 <br>
-<br>
-For example, 
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[ '0 1 * * *', '0 12-13 * * 1-5' ] means the collection starts at 1:00AM everyday; on Monday to Friday, the collection process will also start at 12:00PM and 1:00PM.
+Example: <code>[ '0 1 * * *', '0 12-13 * * 1-5' ] means the collection starts at 1:00AM everyday; on Monday to Friday, the collection process will also start at 12:00PM and 1:00PM.</code>
 <br>
 <br>
 This property supports the following predefined schedules
 <br>
-<br>
-Predefined Schedule &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Description                                  <br>
-----------------------------------------------------------------------------
-<br>
-&nbsp;&nbsp; ['@hourly'] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; runs at the beginning of every hour
-<br>
-&nbsp;&nbsp; ['@daily'] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  runs at the 12:00AM everyday
-<br>
-&nbsp;&nbsp; ['@weekly'] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  runs at the 12:00AM every Sunday
-<br>
-&nbsp;&nbsp; ['@monthly'] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  runs at the 12:00AM on first day of the month
-<br>
-&nbsp;&nbsp; ['@yeary'] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  runs at the 12:00AM on every Jan 1st
-<br>
-&nbsp;&nbsp; ['@annually'] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  runs at the 12:00AM on every Jan 1st.  It is the same as @yearly.
-<br>
-<br>
-* When stats_refresh_schedules supports and stats_refresh_time are both present in the default.yml file, stats_refresh_time setting is ignored and ony stats_refresh_schedules supports setting is taken.
-<br>
+<pre>
+<b>Predefined Schedule                        Description</b>
+-----------------------------------------------------------------------------
+ ['@hourly']                      runs at the beginning of every hour
+ ['@daily']                       runs at the 12:00AM everyday
+ ['@midnight']                    runs at the 12:00AM everyday
+ ['@weekly']                      runs at the 12:00AM every Sunday
+ ['@monthly']                     runs at the 12:00AM on first day of the month
+ ['@yearly']                      runs at the 12:00AM on every Jan 1st
+ ['@annually']                    runs at the 12:00AM on every Jan 1st.  It is the same as @yearly.
+</pre>
+
+* When stats_refresh_schedules supports and stats_refresh_time are both present in the default.yml file, admin-ui will error out with an error message which reads 
+<code>Two mutally exclusive properties, stats_refresh_time and stats_refresh_schedules, are present in the configuration file.  Please remove one of the two properties.</code><br>
+* When neither stats_refresh_schedules supports nor stats_refresh_time is present in the default.yml file, admin-util disable stats collection.<br>
+* The default value of stats_refresh_schedules in default.yml file is <code>stats_refresh_schedules: ['0 5 * * *']</code>.  This value translates to a schedule that starts daily at 5:00AM. <br>
 </dd>
 <dt>
 <code>stats_retries</code>

@@ -1,6 +1,6 @@
+require 'cron_parser'
 require 'membrane'
 require_relative 'utils'
-require 'cron_parser'
 
 module AdminUI
   class Config
@@ -17,7 +17,7 @@ module AdminUI
       :nats_discovery_interval             =>          30,
       :nats_discovery_timeout              =>          10,
       :receiver_emails                     =>          [],
-      :stats_refresh_time                  =>      60 * 5,
+      :stats_refresh_schedules             =>          [],
       :stats_retries                       =>           5,
       :stats_retry_interval                =>         300,
       :tasks_refresh_interval              =>       5_000,
@@ -52,7 +52,7 @@ module AdminUI
 
           :stats_file                                    => /[^\r\n\t]+/,
           optional(:stats_refresh_time)                  => Integer,
-          optional(:stats_refresh_schedules)             => [/@yearly|@annually|@monthly|@weekly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/],
+          optional(:stats_refresh_schedules)             => [/@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/],
           optional(:stats_retries)                       => Integer,
           optional(:stats_retry_interval)                => Integer,
           optional(:tasks_refresh_interval)              => Integer,
@@ -232,18 +232,27 @@ module AdminUI
     private
 
     def initialize(config)
-      @config = DEFAULTS_CONFIG.merge(symbolize_keys(config))
-      if @config[:stats_refresh_schedules].nil?
-        stats_refresh_time = @config[:stats_refresh_time]
+      user_select = symbolize_keys(config)
+      if user_select[:stats_refresh_schedules].nil? && user_select[:stats_refresh_time].nil?
+        # when neither properties is present in default.yml, the hard-coded default value of stats_refresh_schedules, which is [], takes effect.
+      elsif user_select[:stats_refresh_schedules].nil?
+        # this can happen when user deletes the stats_refresh_schedules property from default.yml and add the stats_refresh_time,
+        # especially when they swap in an old copy of default.yml
+        stats_refresh_time = user_select[:stats_refresh_time]
         begin
           Integer(stats_refresh_time)
         rescue ArgumentError, TypeError
-          raise Membrane::SchemaValidationError
+          raise Membrane::SchemaValidationError, 'stats_refresh_time requires an interger for number of minutes from midnight.'
         end
-        @config[:stats_refresh_schedules]  =  []
-        @config[:stats_refresh_schedules].push("#{Utils.minutes_in_an_hour(stats_refresh_time)} #{Utils.hours_in_a_day(stats_refresh_time) > 0 ? Utils.hours_in_a_day(stats_refresh_time) : '*' } * * *")
+        # convert the stats_refresh_time to stats_refresh_schedules
+        user_select[:stats_refresh_schedules] = []
+        user_select[:stats_refresh_schedules].push("#{Utils.minutes_in_an_hour(stats_refresh_time)} #{Utils.hours_in_a_day(stats_refresh_time) > 0 ? Utils.hours_in_a_day(stats_refresh_time) : '*' } * * *")
+      elsif user_select[:stats_refresh_time].nil?
+        # let the mechanism of :stats_refresh_schedules to take effect, so do nothing else.
+      else
+        fail Membrane::SchemaValidationError, 'Two mutally exclusive properties, stats_refresh_time and stats_refresh_schedules, are both present in the configuration file.  Please remove one of the two properties.'
       end
-      @config
+      @config = DEFAULTS_CONFIG.merge(user_select)
     end
 
     def symbolize_keys(hash)

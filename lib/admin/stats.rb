@@ -1,23 +1,27 @@
+require 'cron_parser'
 require 'json'
 require_relative 'utils'
-require 'cron_parser'
 
 module AdminUI
   class Stats
     attr_reader :time_last_run
 
     def initialize(config, logger, cc, varz)
-      @config = config
-      @logger = logger
-      @cc     = cc
-      @varz   = varz
-      @time_last_run = Time.now
+      @config          = config
+      @logger          = logger
+      @cc              = cc
+      @varz            = varz
+      @time_last_run   = Time.now
 
       @stats_semaphore = Mutex.new
 
       Thread.new do
         loop do
-          schedule_stats
+          time_last_run = schedule_stats
+          if  time_last_run < 0
+            @logger.debug('stats collection is disabled.')
+            fail
+          end
         end
       end
     end
@@ -59,6 +63,11 @@ module AdminUI
     def calculate_time_until_generate_stats
       current_time_sec = Time.now.to_i
       target_time = @time_last_run
+      return -1 if @config.stats_refresh_schedules.length == 0
+      unless @config.stats_refresh_time.nil?
+        @logger.debug("converted stats_refresh_time with value being '#{@config.stats_refresh_time}' to stats_refresh_schedules with value being #{@config.stats_refresh_schedules}")
+      end
+      @logger.debug("stats collection is running according schedule =[#{@config.stats_refresh_schedules}]")
       @config.stats_refresh_schedules.each do | spec |
         begin
           cron_parser = CronParser.new(spec)
@@ -79,6 +88,7 @@ module AdminUI
 
     def schedule_stats
       time_until_generate_stats = calculate_time_until_generate_stats
+      return -1 if time_until_generate_stats < 0
       @logger.debug("Waiting #{ time_until_generate_stats } seconds before trying to save stats...")
       sleep(time_until_generate_stats)
       generate_stats

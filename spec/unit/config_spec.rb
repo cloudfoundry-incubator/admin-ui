@@ -152,10 +152,10 @@ describe AdminUI::Config do
         expect(config.stats_refresh_schedules).to eq(['@hourly'])
       end
 
-      it 'stats_refresh_schedules for predefined schedule - @mothly' do
-        stats_refresh_schedules = ['@mothly']
+      it 'stats_refresh_schedules for predefined schedule - @monthly' do
+        stats_refresh_schedules = ['@monthly']
         config = AdminUI::Config.load('stats_refresh_schedules' => stats_refresh_schedules)
-        expect(config.stats_refresh_schedules).to eq(['@mothly'])
+        expect(config.stats_refresh_schedules).to eq(['@monthly'])
       end
 
       it 'stats_refresh_schedules for predefined schedule - @yearly' do
@@ -168,6 +168,11 @@ describe AdminUI::Config do
         stats_refresh_schedules = ['@annually']
         config = AdminUI::Config.load('stats_refresh_schedules' => stats_refresh_schedules)
         expect(config.stats_refresh_schedules).to eq(['@annually'])
+      end
+
+      it 'has neither stats_refresh_time nor stats_refresh_schedules entry' do
+        config = AdminUI::Config.new({})
+        expect(config.stats_refresh_schedules.length).to eq(0)
       end
 
       it 'stats_retries' do
@@ -316,7 +321,11 @@ describe AdminUI::Config do
       end
 
       it 'stats_refresh_time' do
-        expect(config.stats_refresh_time).to eq(60 * 5)
+        expect(config.stats_refresh_time).to be nil
+      end
+
+      it 'stats_refresh_schedules' do
+        expect(config.stats_refresh_schedules).to eq([])
       end
 
       it 'stats_retries' do
@@ -466,23 +475,27 @@ describe AdminUI::Config do
       end
 
       it 'stats_refresh_time' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_time => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(:stats_refresh_time => 'hi')) }.to raise_error(Membrane::SchemaValidationError, 'stats_refresh_time requires an interger for number of minutes from midnight.')
       end
 
       it 'stats_refresh_schedules' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['hi'])) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['hi'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value hi doesn\'t match regexp (?-mix:@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))) }')
       end
 
       it 'stats_refresh_schedules with specs not compliant to crontab format - extra commma' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 1,,2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 1,,2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 1,,2 * * * doesn\'t match regexp (?-mix:@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))) }')
       end
 
-      it 'stats_refresh_schedules with specs not compliant to crontab format - extra range symbal' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 1--2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError)
+      it 'stats_refresh_schedules with specs not compliant to crontab format - extra range symbol' do
+        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 1--2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 1--2 * * * doesn\'t match regexp (?-mix:@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))) }')
       end
 
       it 'stats_refresh_schedules with specs not compliant to crontab format - use of step' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 /2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 /2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 /2 * * * doesn\'t match regexp (?-mix:@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))) }')
+      end
+
+      it 'has both stats_refresh_time and stats_refresh_schedules entry' do
+        expect { AdminUI::Config.new(:stats_refresh_schedules => ['@daily'], :stats_refresh_time => 300) }.to raise_error(Membrane::SchemaValidationError, 'Two mutally exclusive properties, stats_refresh_time and stats_refresh_schedules, are both present in the configuration file.  Please remove one of the two properties.')
       end
 
       it 'stats_retries' do
