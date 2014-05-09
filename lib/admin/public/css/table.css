@@ -80,7 +80,7 @@ div.dataTables_info
 
 div.dataTables_paginate
 {
-    float: right;
+    float: left;
 }
 
 div.dataTables_length,
@@ -248,7 +248,7 @@ table.customTable thead th.sorting
 
 div.dataTables_paginate span>a
 {
-    width: 15px;
+    width: 35px;
     text-align: center;
 }
 
