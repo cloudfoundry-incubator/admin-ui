@@ -1,4 +1,6 @@
+require 'cron_parser'
 require 'membrane'
+require_relative 'utils'
 
 module AdminUI
   class Config
@@ -15,7 +17,7 @@ module AdminUI
       :nats_discovery_interval             =>          30,
       :nats_discovery_timeout              =>          10,
       :receiver_emails                     =>          [],
-      :stats_refresh_time                  =>      60 * 5,
+      :stats_refresh_schedules             =>          ['0 5 * * *'],
       :stats_retries                       =>           5,
       :stats_retry_interval                =>         300,
       :tasks_refresh_interval              =>       5_000,
@@ -24,6 +26,7 @@ module AdminUI
 
     def self.schema
       ::Membrane::SchemaParser.parse do
+        schema =
         {
           optional(:bind_address)                        => /[^\r\n\t]+/,
           optional(:cloud_controller_discovery_interval) => Integer,
@@ -49,6 +52,7 @@ module AdminUI
 
           :stats_file                                    => /[^\r\n\t]+/,
           optional(:stats_refresh_time)                  => Integer,
+          optional(:stats_refresh_schedules)             => [/@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/],
           optional(:stats_retries)                       => Integer,
           optional(:stats_retry_interval)                => Integer,
           optional(:tasks_refresh_interval)              => Integer,
@@ -72,11 +76,40 @@ module AdminUI
 
           optional(:varz_discovery_interval)             => Integer
         }
+        unless schema[:stats_refresh_schedules].nil?
+          schema[:stats_refresh_schedules].each do | spec |
+            begin
+              CronParser.new(spec)
+            rescue => error
+              raise Membrane::SchemaValidationError, error.inspect
+            end
+          end
+        end
+        schema
       end
     end
 
     def self.load(config)
-      Config.new(config).tap(&:validate)
+      # pre-processing: work on deprecated properties
+      filtered_select = Utils.symbolize_keys(config)
+      if filtered_select[:stats_refresh_schedules].nil? && filtered_select[:stats_refresh_time].nil?
+        filtered_select[:stats_refresh_schedules] = []
+      elsif filtered_select[:stats_refresh_schedules].nil?
+        to_convert_stats_refresh_time = true
+        filtered_select[:stats_refresh_schedules] = []    # this is to override default value of ['0 5 * * *']
+      elsif filtered_select[:stats_refresh_time].nil?
+        # let the mechanism of :stats_refresh_schedules to take effect, so do nothing else.
+      else
+        fail Membrane::SchemaValidationError, 'Two mutally exclusive properties, stats_refresh_time and stats_refresh_schedules, are both present in the configuration file.  Please remove one of the two properties.'
+      end
+
+      config_instance = Config.new(filtered_select).tap(&:validate)
+      # post init processing: convert stats_fresh_time
+      if to_convert_stats_refresh_time == true
+        stats_refresh_time = filtered_select[:stats_refresh_time]
+        config_instance.stats_refresh_schedules.push("#{Utils.minutes_in_an_hour(stats_refresh_time)} #{Utils.hours_in_a_day(stats_refresh_time) > 0 ? Utils.hours_in_a_day(stats_refresh_time) : '*' } * * *")
+      end
+      @config = config_instance
     end
 
     def validate
@@ -161,8 +194,8 @@ module AdminUI
       @config[:stats_file]
     end
 
-    def stats_refresh_time
-      @config[:stats_refresh_time]
+    def stats_refresh_schedules
+      @config[:stats_refresh_schedules]
     end
 
     def stats_retries
@@ -214,17 +247,7 @@ module AdminUI
     private
 
     def initialize(config)
-      @config = DEFAULTS_CONFIG.merge(symbolize_keys(config))
-    end
-
-    def symbolize_keys(hash)
-      if hash.is_a? Hash
-        new_hash = {}
-        hash.each { |k, v| new_hash[k.to_sym] = symbolize_keys(v) }
-        new_hash
-      else
-        hash
-      end
+      @config = DEFAULTS_CONFIG.merge(Utils.symbolize_keys(config))
     end
   end
 end
