@@ -9,7 +9,7 @@ module AdminUI
     end
 
     def delete_application(app_guid)
-      url = "v2/apps/#{ app_guid }"
+      url = "v2/apps/#{ app_guid }?recursive=true"
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_applications

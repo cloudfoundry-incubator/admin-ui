@@ -26,7 +26,7 @@ module OperationHelper
       Created.new(cc_organizations_with_other_quota)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps/application1", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps/application1?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       Net::HTTPNoContent.new(1.0, 204, 'OK')
     end
 
