@@ -135,6 +135,13 @@ describe AdminUI::Admin do
       expect(json).to include('items' => [])
     end
 
+    context 'delete application' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/applications/application1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
     context 'delete route' do
       it 'returns failure code due to disconnection' do
         response = delete('/routes/route1')
@@ -391,6 +398,10 @@ describe AdminUI::Admin do
 
     it '/users redirects as expected' do
       get_redirects_as_expected('/users')
+    end
+
+    it 'deletes /applications/:app_guid redirects as expected' do
+      delete_redirects_as_expected('/applications/application1')
     end
 
     it 'deletes /routes/:route_guid redirects as expected' do

@@ -11,7 +11,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       login(user, user_password, 'Administration')
     end
 
-    it 'does not have start, stop or restart app buttons' do
+    it 'does not have start, stop, restart or delete app buttons' do
       # Need to wait until the page has been rendered.
       # Move the click operation into the wait block to ensure the action has been taken, this is used to fit Travis CI system.
       begin

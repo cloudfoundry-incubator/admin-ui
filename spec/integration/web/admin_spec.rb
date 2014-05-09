@@ -399,6 +399,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             expect(@driver.find_element(:id => 'ToolTables_ApplicationsTable_2').text).to eq('Restart')
           end
 
+          it 'has a delete button' do
+            expect(@driver.find_element(:id => 'ToolTables_ApplicationsTable_3').text).to eq('Delete')
+          end
+
           shared_examples 'click start button without selecting a single row' do
             it 'alerts the user to select at least one row when clicking the button' do
               @driver.find_element(:id => buttonId).click
@@ -419,6 +423,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           # Restart button
           it_behaves_like('click start button without selecting a single row') do
             let(:buttonId) { 'ToolTables_ApplicationsTable_2' }
+          end
+          # Delete button
+          it_behaves_like('click start button without selecting a single row') do
+            let(:buttonId) { 'ToolTables_ApplicationsTable_3' }
           end
 
           it 'stops the selected application' do
@@ -447,6 +455,50 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             # restart the app
             manage_application(2)
             check_app_state('STARTED')
+          end
+
+          def check_deleted_app_table_data
+            check_table_data(@driver.find_elements(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_started_apps['resources'][0]['entity']['name'],
+                               '',
+                               '',
+                               varz_dea['instance_registry']['application1']['application1_instance1']['state'],
+                               '',
+                               '',
+                               @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })"),
+                               "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }",
+                               '',
+                               '0',
+                               varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s,
+                               @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s,
+                               @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s,
+                               @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s,
+                               cc_started_apps['resources'][0]['entity']['memory'].to_s,
+                               cc_started_apps['resources'][0]['entity']['disk_quota'].to_s,
+                               '',
+                               nats_dea['host']
+                             ])
+          end
+
+          it 'deletes the selected application' do
+            cc_empty_applications_stub(AdminUI::Config.load(config))
+
+            # delete the application
+            check_first_row
+            @driver.find_element(:id => 'ToolTables_ApplicationsTable_3').click
+            confirm = @driver.switch_to.alert
+            expect(confirm.text).to eq('Are you sure you want to delete the selected applications?')
+            confirm.accept
+
+            check_operation_result
+
+            begin
+              Selenium::WebDriver::Wait.new(:timeout => 5).until { check_deleted_app_table_data }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            check_deleted_app_table_data
           end
         end
 
