@@ -82,6 +82,11 @@ describe AdminUI::Admin, :type => :integration do
       expect(response.is_a? Net::HTTPNoContent).to be_true
     end
 
+    def delete_app
+      response = delete_request('/applications/application1')
+      expect(response.is_a? Net::HTTPNoContent).to be_true
+    end
+
     it 'stops a running application' do
       # Stub the http request to return
       cc_stopped_apps_stub(AdminUI::Config.load(config))
@@ -94,6 +99,11 @@ describe AdminUI::Admin, :type => :integration do
       stop_app
 
       expect { start_app }.to change { get_json('/applications')['items'][0]['state'] }.from('STOPPED').to('STARTED')
+    end
+
+    it 'deletes an application' do
+      cc_empty_applications_stub(AdminUI::Config.load(config))
+      expect { delete_app }.to change { get_json('/applications')['items'].length }.from(1).to(0)
     end
   end
 

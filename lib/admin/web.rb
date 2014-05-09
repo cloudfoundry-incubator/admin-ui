@@ -253,6 +253,17 @@ module AdminUI
       end
     end
 
+    delete '/applications/:app_guid', :auth => [:admin] do
+      begin
+        @operation.delete_application(params[:app_guid])
+        204
+      rescue => error
+        @logger.debug("Error during deleting application: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/components', :auth => [:user] do
       @varz.remove(params['uri'])
 

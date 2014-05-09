@@ -58,6 +58,11 @@ describe AdminUI::Operation, :type => :integration do
 
         expect { operation.manage_application('application1', '{"state":"STARTED"}') }.to change { cc.applications['items'][0]['state'] }.from('STOPPED').to('STARTED')
       end
+
+      it 'deletes the application' do
+        cc_empty_applications_stub(config)
+        expect { operation.delete_application('application1') }.to change { cc.applications['items'].length }.from(1).to(0)
+      end
     end
 
     context 'manage route' do
