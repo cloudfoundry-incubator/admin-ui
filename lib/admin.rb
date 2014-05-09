@@ -7,6 +7,7 @@ require_relative 'admin/log_files'
 require_relative 'admin/nats'
 require_relative 'admin/operation'
 require_relative 'admin/stats'
+require_relative 'admin/tabs'
 require_relative 'admin/tasks'
 require_relative 'admin/varz'
 require_relative 'admin/web'
@@ -52,7 +53,8 @@ module AdminUI
       @log_files = LogFiles.new(@config, @logger)
       @tasks     = Tasks.new(@config, @logger)
       @varz      = VARZ.new(@config, @logger, nats)
-      @operation = Operation.new(@config, @logger, @cc, client, @varz)
+      @tabs      = Tabs.new(@config, @logger, @cc, @varz)
+      @operation = Operation.new(@config, @logger, @cc, @tabs, client, @varz)
       @stats     = Stats.new(@config, @logger, @cc, @varz)
     end
 
@@ -72,6 +74,7 @@ module AdminUI
                              @log_files,
                              @operation,
                              @stats,
+                             @tabs,
                              @tasks,
                              @varz)
 

@@ -1,8 +1,9 @@
+require_relative 'tabs/all_actions'
 require 'sinatra'
 
 module AdminUI
   class Web < Sinatra::Base
-    def initialize(config, logger, cc, log_files, operation, stats, tasks, varz)
+    def initialize(config, logger, cc, log_files, operation, stats, tabs, tasks, varz)
       super({})
 
       @config    = config
@@ -11,6 +12,7 @@ module AdminUI
       @log_files = log_files
       @operation = operation
       @stats     = stats
+      @tabs      = tabs
       @tasks     = tasks
       @varz      = varz
     end
@@ -31,6 +33,10 @@ module AdminUI
 
     get '/' do
       send_file File.expand_path('login.html', settings.public_folder)
+    end
+
+    get '/applications_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.applications, params).items.to_json
     end
 
     get '/applications', :auth => [:user] do
@@ -96,6 +102,10 @@ module AdminUI
       @cc.quota_definitions.to_json
     end
 
+    get '/routes_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.routes, params).items.to_json
+    end
+
     get '/routers', :auth => [:user] do
       @varz.routers.to_json
     end
@@ -122,6 +132,10 @@ module AdminUI
 
     get '/service_brokers', :auth => [:user] do
       @cc.service_brokers.to_json
+    end
+
+    get '/service_instances_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.service_instances, params).items.to_json
     end
 
     get '/service_instances', :auth => [:user] do

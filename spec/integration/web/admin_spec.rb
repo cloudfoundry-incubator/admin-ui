@@ -1,3 +1,4 @@
+require 'date'
 require 'rubygems'
 require_relative '../../spec_helper'
 require_relative '../../support/web_helper'
@@ -317,13 +318,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Applications' do
         let(:tab_id) { 'Applications' }
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 4,
                                 :labels          => ['', 'Used', 'Reserved', ''],
                                 :colspans        => %w(11 4 2 2)
                               },
                               {
-                                :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 19,
                                 :labels          => [' ', 'Name', 'State', "Package\nState", "Instance\nState", 'Created', 'Updated', 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
                                 :colspans        => nil
@@ -336,9 +337,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_started_apps['resources'][0]['entity']['state'],
                              @driver.execute_script('return Constants.STATUS__STAGED'),
                              varz_dea['instance_registry']['application1']['application1_instance1']['state'],
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_started_apps['resources'][0]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_started_apps['resources'][0]['metadata']['updated_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_started_apps['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_started_apps['resources'][0]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ DateTime.parse(Time.at(varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp']).to_s).rfc3339 }\")"),
                              "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }",
                              cc_started_apps['resources'][0]['entity']['detected_buildpack'],
                              varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'].to_s,
@@ -467,7 +468,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                varz_dea['instance_registry']['application1']['application1_instance1']['state'],
                                '',
                                '',
-                               @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })"),
+                               @driver.execute_script("return Format.formatString(\"#{ DateTime.parse(Time.at(varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp']).to_s).rfc3339 }\")"),
                                "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }",
                                '',
                                '0',
@@ -559,7 +560,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Routes' do
         let(:tab_id) { 'Routes' }
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='RoutesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='RoutesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 7,
                                 :labels          => [' ', 'Host', 'Domain', 'Created', 'Updated', 'Target', 'Application'],
                                 :colspans        => nil
@@ -575,8 +576,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              '',
                              cc_routes['resources'][0]['entity']['host'],
                              cc_routes['resources'][0]['entity']['domain']['entity']['name'],
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_routes['resources'][0]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_routes['resources'][0]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_routes['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_routes['resources'][0]['metadata']['updated_at'] }\")"),
                              "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
                              app_names.join('\n')
                            ])
@@ -658,13 +659,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Service Instances' do
         let(:tab_id) { 'ServiceInstances' }
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 5,
                                 :labels          => ['Service Broker', 'Service', 'Service Plan', 'Service Instance', ''],
                                 :colspans        => %w(3 5 5 4 1)
                               },
                               {
-                                :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 18,
                                 :labels          => %w(Name Created Updated Provider Label Version Created Updated Name Created Updated Public Target Name Created Updated Bindings Target),
                                 :colspans        => nil
@@ -673,21 +674,21 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_data(@driver.find_elements(:xpath => "//table[@id='ServiceInstancesTable']/tbody/tr/td"),
                            [
                              cc_service_brokers['resources'][0]['entity']['name'],
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_brokers['resources'][0]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_brokers['resources'][0]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_service_brokers['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_service_brokers['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_services['resources'][0]['entity']['provider'],
                              cc_services['resources'][0]['entity']['label'],
                              cc_services['resources'][0]['entity']['version'],
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_services['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_service_plans['resources'][0]['entity']['name'],
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_service_plans['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_service_plans['resources'][0]['entity']['public'].to_s,
                              @driver.execute_script("return Format.formatTarget(\"#{ cc_services['resources'][0]['entity']['provider'] }/#{ cc_services['resources'][0]['entity']['label'] }/#{ cc_service_plans['resources'][0]['entity']['name'] }\")").gsub(/<\/?[^>]+>/, ''),
                              cc_service_instances['resources'][0]['entity']['name'],
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instances['resources'][0]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instances['resources'][0]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_service_instances['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_service_instances['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_service_bindings['total_results'].to_s,
                              "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }"
                            ])
