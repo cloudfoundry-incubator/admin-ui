@@ -6,7 +6,7 @@ module AdminUI
   class Config
     DEFAULTS_CONFIG =
     {
-      :bind_address                        => '127.0.0.1',
+      :bind_address                        =>   '0.0.0.0',
       :cloud_controller_discovery_interval =>         300,
       :cloud_controller_ssl_verify_none    =>       false,
       :component_connection_retries        =>           2,
