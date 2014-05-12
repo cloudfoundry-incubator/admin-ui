@@ -24,18 +24,15 @@ describe AdminUI::Stats do
     AdminUI::Config.any_instance.stub(:validate)
   end
 
-  context 'calculate_time_until_generate_stats' do
-
-    shared_examples 'common_calculate_time_until_generate_stats' do
-      it 'starts at designated schedule' do
-        time_last_run = Time.now
-        stats_refresh_schedules.each do |spec|
-          cron_parser = CronParser.new(spec)
-          current_time = Time.now.to_i
-          refresh_time = cron_parser.next(time_last_run).to_i
-          sec_to_next_run = refresh_time - current_time
-          expect(equal_in_range(stats.calculate_time_until_generate_stats, sec_to_next_run, 2)).to be true
-        end
+  shared_examples 'common_calculate_time_until_generate_stats' do
+    it 'starts at designated schedule' do
+      time_last_run = Time.now
+      stats_refresh_schedules.each do |spec|
+        cron_parser = CronParser.new(spec)
+        current_time = Time.now.to_i
+        refresh_time = cron_parser.next(time_last_run).to_i
+        sec_to_next_run = refresh_time - current_time
+        expect(equal_in_range(stats.calculate_time_until_generate_stats, sec_to_next_run, 2)).to be(true)
       end
     end
   end
@@ -112,22 +109,19 @@ describe AdminUI::Stats do
     it_behaves_like('common_calculate_time_until_generate_stats')
   end
 
-  context 'calculate_time_until_generate_stats for multiple schedules' do
-
-    shared_examples 'common_calculate_time_until_generate_stats_earliest_time_slot' do
-      it 'runs starts at the earliest time slot when multiple schedules are specified.' do
-        time_last_run = Time.now
-        target_time = time_last_run
-        stats_refresh_schedules.each do |spec|
-          cron_parser = CronParser.new(spec)
-          refresh_time = cron_parser.next(time_last_run).to_i
-          if target_time == time_last_run || target_time > refresh_time
-            target_time = refresh_time
-          end
+  shared_examples 'common_calculate_time_until_generate_stats_earliest_time_slot' do
+    it 'runs starts at the earliest time slot when multiple schedules are specified.' do
+      time_last_run = Time.now
+      target_time = time_last_run
+      stats_refresh_schedules.each do |spec|
+        cron_parser = CronParser.new(spec)
+        refresh_time = cron_parser.next(time_last_run).to_i
+        if target_time == time_last_run || target_time > refresh_time
+          target_time = refresh_time
         end
-        sec_to_next_run = target_time - time_last_run.to_i
-        expect(equal_in_range(stats.calculate_time_until_generate_stats, sec_to_next_run, 2)).to be true
       end
+      sec_to_next_run = target_time - time_last_run.to_i
+      expect(equal_in_range(stats.calculate_time_until_generate_stats, sec_to_next_run, 2)).to be(true)
     end
   end
 
@@ -158,7 +152,7 @@ describe AdminUI::Stats do
     end
 
     it 'disables stats collection if stats_refresh_time and stats_refresh_schedule are both missing' do
-      expect(equal_in_range(stats.calculate_time_until_generate_stats, -1, 2)).to be true
+      expect(equal_in_range(stats.calculate_time_until_generate_stats, -1, 2)).to be(true)
     end
   end
 
@@ -183,7 +177,7 @@ describe AdminUI::Stats do
         end
       end
       sec_to_next_run = target_time - time_last_run.to_i
-      expect(equal_in_range(stats.calculate_time_until_generate_stats, sec_to_next_run, 2)).to be true
+      expect(equal_in_range(stats.calculate_time_until_generate_stats, sec_to_next_run, 2)).to be(true)
     end
   end
 end
