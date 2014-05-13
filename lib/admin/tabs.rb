@@ -1,5 +1,6 @@
 require 'date'
 require_relative 'tabs/applications_tab'
+require_relative 'tabs/organizations_tab'
 require_relative 'tabs/routes_tab'
 require_relative 'tabs/service_instances_tab'
 
@@ -14,7 +15,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :routes, :service_instances].each do |key|
+      [:applications, :organizations, :routes, :service_instances].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
 
@@ -30,12 +31,20 @@ module AdminUI
       invalidate_cache(:applications)
     end
 
+    def invalidate_organizations
+      invalidate_cache(:organizations)
+    end
+
     def invalidate_routes
       invalidate_cache(:routes)
     end
 
     def applications
       result_cache(:applications)
+    end
+
+    def organizations
+      result_cache(:organizations)
     end
 
     def routes
@@ -81,6 +90,10 @@ module AdminUI
 
     def discover_applications
       AdminUI::ApplicationsTab.new(@logger, @cc, @varz).items
+    end
+
+    def discover_organizations
+      AdminUI::OrganizationsTab.new(@logger, @cc, @varz).items
     end
 
     def discover_routes

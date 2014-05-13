@@ -31,8 +31,8 @@ describe AdminUI::Operation, :type => :integration do
   let(:cc) { AdminUI::CC.new(config, logger, client) }
   let(:email) { AdminUI::EMail.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
-  let(:tabs) { AdminUI::Tabs.new(config, logger, cc) }
   let(:varz) { AdminUI::VARZ.new(config, logger, nats) }
+  let(:tabs) { AdminUI::Tabs.new(config, logger, cc, varz) }
   let(:operation) { AdminUI::Operation.new(config, logger, cc, tabs, client, varz) }
 
   after do

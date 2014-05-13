@@ -6,14 +6,13 @@ module AdminUI
     def do_items
       applications = @cc.applications
       deas         = @varz.deas
-      
+
       # applications or DEA's have to exist.  Other record types are optional
       return result unless applications['connected'] || deas['connected']
 
       organizations = @cc.organizations
       spaces        = @cc.spaces
 
-      application_hash  = Hash[*applications['items'].map { |item| [item['guid'], item] }.flatten]
       organization_hash = Hash[*organizations['items'].map { |item| [item['guid'], item] }.flatten]
       space_hash        = Hash[*spaces['items'].map { |item| [item['guid'], item] }.flatten]
 
@@ -202,10 +201,6 @@ module AdminUI
       end
 
       result(items, (1..18).to_a, (1..9).to_a << 17)
-    end
-
-    def convert_bytes_to_megabytes(bytes)
-      (bytes / 1_048_576.0).round
     end
   end
 end

@@ -8,5 +8,9 @@ module AdminUI
       @cc   = cc
       @varz = varz
     end
+
+    def convert_bytes_to_megabytes(bytes)
+      (bytes / 1_048_576.0).round
+    end
   end
 end

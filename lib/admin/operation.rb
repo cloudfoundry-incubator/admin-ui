@@ -14,6 +14,7 @@ module AdminUI
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_applications
+      @varz.invalidate
       @tabs.invalidate_applications
     end
 
@@ -46,6 +47,7 @@ module AdminUI
       @logger.debug("PUT #{ url }, #{ control_message }")
       @client.put_cc(url, control_message)
       @cc.invalidate_organizations
+      @tabs.invalidate_organizations
     end
   end
 end

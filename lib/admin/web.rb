@@ -94,6 +94,10 @@ module AdminUI
       { :items => @log_files.infos }.to_json
     end
 
+    get '/organizations_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.organizations, params).items.to_json
+    end
+
     get '/organizations', :auth => [:user] do
       @cc.organizations.to_json
     end
