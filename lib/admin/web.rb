@@ -110,6 +110,10 @@ module AdminUI
       @cc.quota_definitions.to_json
     end
 
+    get '/quotas_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.quotas, params).items.to_json
+    end
+
     get '/routes_tab', :auth => [:user] do
       AllActions.new(@logger, @tabs.routes, params).items.to_json
     end

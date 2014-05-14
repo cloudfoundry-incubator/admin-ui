@@ -248,7 +248,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Organizations', 6, 'Developers', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
           end
           it 'has quota link' do
-            check_select_link('Organizations', 7, 'Quotas', "#{ cc_quota_definitions['resources'][0]['entity']['name'] }")
+            check_filter_link('Organizations', 7, 'Quotas', "#{ cc_quota_definitions['resources'][0]['entity']['name'] }")
           end
           it 'has routes link' do
             check_filter_link('Organizations', 8, 'Routes', "#{ cc_organizations['resources'][0]['entity']['name'] }/")
@@ -846,7 +846,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Quotas' do
         let(:tab_id) { 'Quotas' }
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='QuotasTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='QuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 9,
                                 :labels          => ['Name', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Non-Basic Services Allowed', 'Trial-DB Allowed', 'Organizations'],
                                 :colspans        => nil
@@ -855,8 +855,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_data(@driver.find_elements(:xpath => "//table[@id='QuotasTable']/tbody/tr/td"),
                            [
                              cc_quota_definitions['resources'][0]['entity']['name'],
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][0]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][0]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_quota_definitions['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_quota_definitions['resources'][0]['metadata']['updated_at'] }\")"),
                              @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][0]['entity']['total_services'] }\")"),
                              @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][0]['entity']['total_routes'] }\")"),
                              @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][0]['entity']['memory_limit'] }\")"),
@@ -865,8 +865,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              '1',
 
                              cc_quota_definitions['resources'][1]['entity']['name'],
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][1]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definitions['resources'][1]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_quota_definitions['resources'][1]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_quota_definitions['resources'][1]['metadata']['updated_at'] }\")"),
                              @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][1]['entity']['total_services'] }\")"),
                              @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][1]['entity']['total_routes'] }\")"),
                              @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definitions['resources'][1]['entity']['memory_limit'] }\")"),
