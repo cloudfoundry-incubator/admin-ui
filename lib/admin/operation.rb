@@ -18,6 +18,13 @@ module AdminUI
       @tabs.invalidate_applications
     end
 
+    def delete_organization(org_guid)
+      url = "v2/organizations/#{ org_guid }?recursive=true"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_organizations
+    end
+
     def manage_application(app_guid, control_message)
       url = "v2/apps/#{ app_guid }"
       @logger.debug("PUT #{ url }, #{ control_message }")

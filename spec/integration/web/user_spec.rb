@@ -55,7 +55,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       expect(@driver.find_element(:id => 'ToolTables_RoutesTable_0').text).to eq('Copy')
     end
 
-    it 'does not have set quota button' do
+    it 'does not have set quota and delete button' do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
           @driver.find_element(:id => 'Organizations').click

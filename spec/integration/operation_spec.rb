@@ -66,6 +66,18 @@ describe AdminUI::Operation, :type => :integration do
       end
     end
 
+    context 'manage organization' do
+      before do
+        # Make sure there is an organization
+        expect(cc.organizations['items'].length).to eq(1)
+      end
+
+      it 'deletes specific organization' do
+        cc_empty_organizations_stub(config)
+        expect { operation.delete_organization('organization1') }.to change { cc.organizations['items'].length }.from(1).to(0)
+      end
+    end
+
     context 'manage route' do
       before do
         # Make sure there is a route
