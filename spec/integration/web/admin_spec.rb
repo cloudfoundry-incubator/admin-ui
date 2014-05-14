@@ -268,13 +268,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Spaces' do
         let(:tab_id) { 'Spaces' }
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 6,
                                 :labels          => ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
                                 :colspans        => %w(5 3 5 2 3 3)
                               },
                               {
-                                :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 21,
                                 :labels          => ['Name', 'Target', 'Created', 'Updated', 'Developers', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 :colspans        => nil
@@ -284,8 +284,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            [
                              cc_spaces['resources'][0]['entity']['name'],
                              "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_spaces['resources'][0]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_spaces['resources'][0]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_spaces['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_spaces['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_users_deep['resources'].length.to_s,
                              cc_routes['resources'].length.to_s,
                              cc_routes['resources'].length.to_s,
@@ -585,7 +585,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              ])
           end
           it 'has space link' do
-            check_select_link('Applications', 17, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
+            check_filter_link('Applications', 17, 'Spaces', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
           end
           it 'has organization link' do
             check_filter_link('Applications', 18, 'Organizations', cc_organizations['resources'][0]['entity']['name'])
@@ -687,7 +687,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Routes', 4, 'Applications', "#{ cc_routes['resources'][0]['entity']['host'] }.#{ cc_routes['resources'][0]['entity']['domain']['entity']['name'] }")
           end
           it 'has space link' do
-            check_select_link('Routes', 5, 'Spaces', "#{ cc_spaces['resources'][0]['entity']['name']}")
+            check_filter_link('Routes', 5, 'Spaces', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name']}")
           end
           it 'has organization link' do
             check_filter_link('Routes', 6, 'Organizations', "#{ cc_organizations['resources'][0]['entity']['name'] }")
@@ -782,7 +782,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_select_link('ServiceInstances', 19, 'ServicePlans', cc_service_plans['resources'][0]['entity']['name'], 2)
           end
           it 'has space link' do
-            check_select_link('ServiceInstances', 25, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
+            check_filter_link('ServiceInstances', 25, 'Spaces', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
           end
           it 'has organization link' do
             check_filter_link('ServiceInstances', 26, 'Organizations', cc_organizations['resources'][0]['entity']['name'])
@@ -835,7 +835,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                           ])
           end
           it 'has space link' do
-            check_select_link('Developers', 4, 'Spaces', cc_spaces['resources'][0]['entity']['name'])
+            check_filter_link('Developers', 4, 'Spaces', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
           end
           it 'has organization link' do
             check_filter_link('Developers', 5, 'Organizations', cc_organizations['resources'][0]['entity']['name'])

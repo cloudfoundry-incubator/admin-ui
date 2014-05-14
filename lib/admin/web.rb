@@ -150,6 +150,10 @@ module AdminUI
       @cc.service_plans.to_json
     end
 
+    get '/spaces_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.spaces, params).items.to_json
+    end
+
     get '/spaces', :auth => [:user] do
       @cc.spaces.to_json
     end

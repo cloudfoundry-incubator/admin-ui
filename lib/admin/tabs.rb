@@ -3,6 +3,7 @@ require_relative 'tabs/applications_tab'
 require_relative 'tabs/organizations_tab'
 require_relative 'tabs/routes_tab'
 require_relative 'tabs/service_instances_tab'
+require_relative 'tabs/spaces_tab'
 
 module AdminUI
   class Tabs
@@ -15,7 +16,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :organizations, :routes, :service_instances].each do |key|
+      [:applications, :organizations, :routes, :service_instances, :spaces].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
 
@@ -53,6 +54,10 @@ module AdminUI
 
     def service_instances
       result_cache(:service_instances)
+    end
+
+    def spaces
+      result_cache(:spaces)
     end
 
     private
@@ -102,6 +107,10 @@ module AdminUI
 
     def discover_service_instances
       AdminUI::ServiceInstancesTab.new(@logger, @cc, @varz).items
+    end
+
+    def discover_spaces
+      AdminUI::SpacesTab.new(@logger, @cc, @varz).items
     end
   end
 end
