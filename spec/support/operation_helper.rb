@@ -30,6 +30,10 @@ module OperationHelper
       Net::HTTPNoContent.new(1.0, 204, 'OK')
     end
 
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/organization1?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      Net::HTTPNoContent.new(1.0, 204, 'OK')
+    end
+
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes/route1", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       Net::HTTPNoContent.new(1.0, 204, 'OK')
     end

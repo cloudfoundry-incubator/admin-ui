@@ -142,6 +142,13 @@ describe AdminUI::Admin do
       end
     end
 
+    context 'delete organization' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/organization/organization1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
     context 'delete route' do
       it 'returns failure code due to disconnection' do
         response = delete('/routes/route1')
@@ -402,6 +409,10 @@ describe AdminUI::Admin do
 
     it 'deletes /applications/:app_guid redirects as expected' do
       delete_redirects_as_expected('/applications/application1')
+    end
+
+    it 'deletes /organizations/:org_guid redirects as expected' do
+      delete_redirects_as_expected('/organizations/organization1')
     end
 
     it 'deletes /routes/:route_guid redirects as expected' do

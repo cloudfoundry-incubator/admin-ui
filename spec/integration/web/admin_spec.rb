@@ -170,6 +170,45 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
         end
 
+        context 'manage organization' do
+          def check_first_row
+            @driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")[0].click
+          end
+
+          it 'has a delete button' do
+            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_1').text).to eq('Delete')
+          end
+
+          it 'alerts the user to select at least one row when clicking the delete button' do
+            @driver.find_element(:id => 'ToolTables_OrganizationsTable_1').click
+            alert = @driver.switch_to.alert
+            expect(alert.text).to eq('Please select at least one row!')
+            alert.dismiss
+          end
+
+          it 'deletes the selected organization' do
+            cc_empty_organizations_stub(AdminUI::Config.load(config))
+
+            # delete the organization
+            check_first_row
+            @driver.find_element(:id => 'ToolTables_OrganizationsTable_1').click
+            confirm = @driver.switch_to.alert
+            expect(confirm.text).to eq('Are you sure you want to delete the selected organizations?')
+            confirm.accept
+
+            alert = nil
+            Selenium::WebDriver::Wait.new(:timeout => 5).until { alert = @driver.switch_to.alert }
+            expect(alert.text).to eq('Organizations successfully deleted.')
+            alert.dismiss
+
+            begin
+              Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr").text == 'No data available in table' }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr").text).to eq('No data available in table')
+          end
+        end
+
         context 'selectable' do
           before do
             select_first_row

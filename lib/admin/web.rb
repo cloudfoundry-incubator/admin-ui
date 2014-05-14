@@ -270,6 +270,17 @@ module AdminUI
       204
     end
 
+    delete '/organizations/:org_guid', :auth => [:admin] do
+      begin
+        @operation.delete_organization(params[:org_guid])
+        204
+      rescue => error
+        @logger.debug("Error during deleting organization: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/routes/:route_guid', :auth => [:admin] do
       begin
         @operation.manage_route(params[:route_guid])
