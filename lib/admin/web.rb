@@ -59,6 +59,10 @@ module AdminUI
       @varz.deas.to_json
     end
 
+    get '/developers_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.developers, params).items.to_json
+    end
+
     get '/download', :auth => [:user] do
       file = @log_files.file(params['path'])
       if file.nil?

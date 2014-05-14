@@ -793,7 +793,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Developers' do
         let(:tab_id) { 'Developers' }
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DevelopersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DevelopersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                 :expected_length => 6,
                                 :labels          => %w(Email Space Organization Target Created Updated),
                                 :colspans        => nil
@@ -805,8 +805,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_spaces['resources'][0]['entity']['name'],
                              cc_organizations['resources'][0]['entity']['name'],
                              "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
-                             @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['created'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ uaa_users['resources'][0]['meta']['lastModified'] }\")")
+                             @driver.execute_script("return Format.formatString(\"#{ DateTime.parse(uaa_users['resources'][0]['meta']['created']).rfc3339 }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ DateTime.parse(uaa_users['resources'][0]['meta']['lastModified']).rfc3339 }\")")
                            ])
         end
         context 'selectable' do
