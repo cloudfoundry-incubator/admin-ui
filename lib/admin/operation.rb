@@ -23,6 +23,7 @@ module AdminUI
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_organizations
+      @tabs.invalidate_organizations
     end
 
     def manage_application(app_guid, control_message)
