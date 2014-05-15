@@ -43,6 +43,10 @@ module AdminUI
       @cc.applications.to_json
     end
 
+    get '/cloud_controllers_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.cloud_controllers, params).items.to_json
+    end
+
     get '/cloud_controllers', :auth => [:user] do
       @varz.cloud_controllers.to_json
     end

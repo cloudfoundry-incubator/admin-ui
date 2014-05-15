@@ -1105,7 +1105,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Cloud Controllers' do
         let(:tab_id) { 'CloudControllers' }
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='CloudControllersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='CloudControllersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                 :expected_length => 7,
                                 :labels          => %w(Name Index State Started Cores CPU Memory),
                                 :colspans        => nil
@@ -1116,7 +1116,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              nats_cloud_controller['host'],
                              varz_cloud_controller['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
-                             @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ varz_cloud_controller['start'] }\")"),
                              varz_cloud_controller['num_cores'].to_s,
                              varz_cloud_controller['cpu'].to_s,
                              varz_cloud_controller['mem'].to_s
