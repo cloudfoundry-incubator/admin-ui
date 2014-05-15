@@ -1250,7 +1250,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Routers' do
         let(:tab_id) { 'Routers' }
         it 'has a table' do
-          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='RoutersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='RoutersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                  :expected_length => 10,
                                  :labels          => ['Name', 'Index', 'State', 'Started', 'Cores', 'CPU', 'Memory', 'Droplets', 'Requests', 'Bad Requests'],
                                  :colspans        => nil
@@ -1261,7 +1261,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              nats_router['host'],
                              varz_router['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
-                             @driver.execute_script("return Format.formatDateString(\"#{ varz_router['start'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ varz_router['start'] }\")"),
                              varz_router['num_cores'].to_s,
                              varz_router['cpu'].to_s,
                              varz_router['mem'].to_s,

@@ -5,6 +5,7 @@ require_relative 'tabs/deas_tab'
 require_relative 'tabs/developers_tab'
 require_relative 'tabs/organizations_tab'
 require_relative 'tabs/quotas_tab'
+require_relative 'tabs/routers_tab'
 require_relative 'tabs/routes_tab'
 require_relative 'tabs/service_instances_tab'
 require_relative 'tabs/service_plans_tab'
@@ -21,7 +22,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :cloud_controllers, :deas, :developers, :organizations, :quotas, :routes, :service_instances, :service_plans, :spaces].each do |key|
+      [:applications, :cloud_controllers, :deas, :developers, :organizations, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
 
@@ -71,6 +72,10 @@ module AdminUI
 
     def quotas
       result_cache(:quotas)
+    end
+
+    def routers
+      result_cache(:routers)
     end
 
     def routes
@@ -166,6 +171,14 @@ module AdminUI
       AdminUI::QuotasTab.new(@logger, @cc, @varz).items
     rescue => error
       @logger.debug("Error during discover_quotas: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_routers
+      AdminUI::RoutersTab.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_routers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end

@@ -122,6 +122,10 @@ module AdminUI
       AllActions.new(@logger, @tabs.quotas, params).items.to_json
     end
 
+    get '/routers_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.routers, params).items.to_json
+    end
+
     get '/routes_tab', :auth => [:user] do
       AllActions.new(@logger, @tabs.routes, params).items.to_json
     end
