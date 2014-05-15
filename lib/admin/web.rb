@@ -55,6 +55,10 @@ module AdminUI
       @stats.current_stats.to_json
     end
 
+    get '/deas_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.deas, params).items.to_json
+    end
+
     get '/deas', :auth => [:user] do
       @varz.deas.to_json
     end

@@ -73,9 +73,6 @@ module AdminUI
         # DEA
         row.push(nil)
 
-        # DEA index
-        row.push(-1)
-
         row.push('application'  => application,
                  'space'        => space,
                  'organization' => organization)
@@ -151,7 +148,6 @@ module AdminUI
               end
 
               row.push(host)
-              row.push(dea_index)
 
               # No application to push.  Push the instance instead so we can provide details.
               row.push('instance'     => instance,
@@ -185,13 +181,12 @@ module AdminUI
               row[13] = instance['used_disk_in_bytes'] ? convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : 0
               row[14] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : 0
               row[18] = host
-              row[19] = dea_index
 
               # Need the specific instance for this row
-              row[20] = { 'application'  => row[20]['application'],
+              row[19] = { 'application'  => row[19]['application'],
                           'instance'     => instance,
-                          'space'        => row[20]['space'],
-                          'organization' => row[20]['organization']
+                          'space'        => row[19]['space'],
+                          'organization' => row[19]['organization']
                         }
             end
           end

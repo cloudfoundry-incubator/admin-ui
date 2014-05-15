@@ -1,3 +1,4 @@
+require_relative 'base_tab'
 require 'date'
 
 module AdminUI

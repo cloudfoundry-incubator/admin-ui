@@ -1,5 +1,6 @@
 require 'date'
 require_relative 'tabs/applications_tab'
+require_relative 'tabs/deas_tab'
 require_relative 'tabs/developers_tab'
 require_relative 'tabs/organizations_tab'
 require_relative 'tabs/quotas_tab'
@@ -19,7 +20,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :developers, :organizations, :quotas, :routes, :service_instances, :service_plans, :spaces].each do |key|
+      [:applications, :deas, :developers, :organizations, :quotas, :routes, :service_instances, :service_plans, :spaces].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
 
@@ -49,6 +50,10 @@ module AdminUI
 
     def applications
       result_cache(:applications)
+    end
+
+    def deas
+      result_cache(:deas)
     end
 
     def developers
@@ -114,34 +119,74 @@ module AdminUI
 
     def discover_applications
       AdminUI::ApplicationsTab.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_applications: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_deas
+      AdminUI::DEAsTab.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_deas: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
     end
 
     def discover_developers
       AdminUI::DevelopersTab.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_developers: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
     end
 
     def discover_organizations
       AdminUI::OrganizationsTab.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_organizations: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
     end
 
     def discover_quotas
       AdminUI::QuotasTab.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_quotas: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
     end
 
     def discover_routes
       AdminUI::RoutesTab.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_routes: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
     end
 
     def discover_service_instances
       AdminUI::ServiceInstancesTab.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_service_instances: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
     end
 
     def discover_service_plans
       AdminUI::ServicePlansTab.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_service_plans: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
     end
 
     def discover_spaces
       AdminUI::SpacesTab.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_spaces: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
     end
   end
 end

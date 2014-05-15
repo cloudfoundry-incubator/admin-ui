@@ -1,3 +1,4 @@
+require_relative 'base_action'
 
 module AdminUI
   class SortAction < AdminUI::BaseAction

@@ -1,5 +1,5 @@
+require_relative 'base_tab'
 require 'date'
-require_relative 'has_instances_tab'
 
 module AdminUI
   class QuotasTab < AdminUI::BaseTab

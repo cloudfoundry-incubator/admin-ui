@@ -591,7 +591,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Applications', 18, 'Organizations', cc_organizations['resources'][0]['entity']['name'])
           end
           it 'has DEA link' do
-            check_select_link('Applications', 19, 'DEAs', nats_dea['host'])
+            check_filter_link('Applications', 19, 'DEAs', nats_dea['host'])
           end
         end
       end
@@ -1047,12 +1047,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'DEAs' do
         let(:tab_id) { 'DEAs' }
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 2,
                                 :labels          => ['', '% Free'],
                                 :colspans        => %w(8 2)
                               },
-                              { :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                              { :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 10,
                                 :labels          => %w(Name Index Status Started Stack CPU Memory Apps Memory Disk),
                                 :colspans        => nil
@@ -1063,7 +1063,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              varz_dea['host'],
                              varz_dea['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
-                             @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ varz_dea['start'] }\")"),
                              varz_dea['stacks'][0],
                              varz_dea['cpu'].to_s,
                              varz_dea['mem'].to_s,
