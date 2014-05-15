@@ -51,6 +51,10 @@ module AdminUI
       @varz.cloud_controllers.to_json
     end
 
+    get '/components_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.components, params).items.to_json
+    end
+
     get '/components', :auth => [:user] do
       @varz.components.to_json
     end

@@ -1297,7 +1297,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Components' do
         let(:tab_id) { 'Components' }
         it 'has a table' do
-          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='ComponentsTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='ComponentsTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                  :expected_length => 5,
                                  :labels          => %w(Name Type Index State Started),
                                  :colspans        => nil
@@ -1309,7 +1309,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              nats_cloud_controller['type'],
                              varz_cloud_controller['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
-                             @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")")
+                             @driver.execute_script("return Format.formatString(\"#{ varz_cloud_controller['start'] }\")")
                            ])
         end
         it 'has a remove OFFLINE components button' do
