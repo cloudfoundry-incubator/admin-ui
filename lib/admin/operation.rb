@@ -48,6 +48,7 @@ module AdminUI
       @logger.debug("PUT #{ url }, #{ control_message }")
       @client.put_cc(url, control_message)
       @cc.invalidate_service_plans
+      @tabs.invalidate_service_plans
     end
 
     def manage_organization(org_guid, control_message)

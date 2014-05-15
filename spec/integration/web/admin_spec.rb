@@ -779,7 +779,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              ])
           end
           it 'has service plan name link' do
-            check_select_link('ServiceInstances', 19, 'ServicePlans', cc_service_plans['resources'][0]['entity']['name'], 2)
+            check_filter_link('ServiceInstances', 19, 'ServicePlans', "#{ cc_services['resources'][0]['entity']['provider'] }/#{ cc_services['resources'][0]['entity']['label'] }/#{ cc_service_plans['resources'][0]['entity']['name'] }")
           end
           it 'has space link' do
             check_filter_link('ServiceInstances', 25, 'Spaces', "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }")
@@ -901,13 +901,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Service Plans' do
         let(:tab_id) { 'ServicePlans' }
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[5]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
                                 :labels          => ['Service Plan', 'Service', 'Service Broker'],
                                 :colspans        => %w(7 7 3)
                               },
                               {
-                                :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[5]/div[1]/div/table/thead/tr[2]/th"),
+                                :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 17,
                                 :labels          => [' ', 'Name', 'Target', 'Created', 'Updated', 'Public', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'Created', 'Updated'],
                                 :colspans        => nil
@@ -918,20 +918,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              '',
                              cc_service_plans['resources'][0]['entity']['name'],
                              @driver.execute_script("return Format.formatTarget(\"#{ cc_services['resources'][0]['entity']['provider'] }/#{ cc_services['resources'][0]['entity']['label'] }/#{ cc_service_plans['resources'][0]['entity']['name'] }\")").gsub(/<\/?[^>]+>/, ''),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plans['resources'][0]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_service_plans['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_service_plans['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_service_plans['resources'][0]['entity']['public'].to_s,
                              cc_service_instances['resources'].length.to_s,
                              cc_services['resources'][0]['entity']['provider'],
                              cc_services['resources'][0]['entity']['label'],
                              cc_services['resources'][0]['entity']['version'],
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_services['resources'][0]['metadata']['updated_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_services['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_services['resources'][0]['metadata']['updated_at'] }\")"),
                              cc_services['resources'][0]['entity']['active'].to_s,
                              cc_services['resources'][0]['entity']['bindable'].to_s,
                              cc_service_brokers['resources'][0]['entity']['name'],
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_brokers['resources'][0]['metadata']['created_at'] }\")"),
-                             @driver.execute_script("return Format.formatDateString(\"#{ cc_service_brokers['resources'][0]['metadata']['updated_at'] }\")")
+                             @driver.execute_script("return Format.formatString(\"#{ cc_service_brokers['resources'][0]['metadata']['created_at'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_service_brokers['resources'][0]['metadata']['updated_at'] }\")")
                            ])
         end
 

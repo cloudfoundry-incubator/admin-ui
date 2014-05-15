@@ -154,6 +154,10 @@ module AdminUI
       @cc.service_instances.to_json
     end
 
+    get '/service_plans_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.service_plans, params).items.to_json
+    end
+
     get '/service_plans', :auth => [:user] do
       @cc.service_plans.to_json
     end
