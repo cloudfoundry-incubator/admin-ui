@@ -1143,7 +1143,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Health Managers' do
         let(:tab_id) { 'HealthManagers' }
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='HealthManagersTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='HealthManagersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                 :expected_length => 10,
                                 :labels          => %w(Name Index State Started Cores CPU Memory Users Applications Instances),
                                 :colspans        => nil
@@ -1154,7 +1154,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              nats_health_manager['host'],
                              varz_health_manager['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
-                             @driver.execute_script("return Format.formatDateString(\"#{ varz_health_manager['start'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ varz_health_manager['start'] }\")"),
                              varz_health_manager['num_cores'].to_s,
                              varz_health_manager['cpu'].to_s,
                              varz_health_manager['mem'].to_s,

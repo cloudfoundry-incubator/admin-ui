@@ -93,6 +93,10 @@ module AdminUI
       @varz.gateways.to_json
     end
 
+    get '/health_managers_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.health_managers, params).items.to_json
+    end
+
     get '/health_managers', :auth => [:user] do
       @varz.health_managers.to_json
     end

@@ -4,6 +4,7 @@ require_relative 'tabs/cloud_controllers_tab'
 require_relative 'tabs/components_tab'
 require_relative 'tabs/deas_tab'
 require_relative 'tabs/developers_tab'
+require_relative 'tabs/health_managers_tab'
 require_relative 'tabs/organizations_tab'
 require_relative 'tabs/quotas_tab'
 require_relative 'tabs/routers_tab'
@@ -23,7 +24,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :cloud_controllers, :components, :deas, :developers, :organizations, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces].each do |key|
+      [:applications, :cloud_controllers, :components, :deas, :developers, :health_managers, :organizations, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
 
@@ -69,6 +70,10 @@ module AdminUI
 
     def developers
       result_cache(:developers)
+    end
+
+    def health_managers
+      result_cache(:health_managers)
     end
 
     def organizations
@@ -168,6 +173,14 @@ module AdminUI
       AdminUI::DevelopersTab.new(@logger, @cc, @varz).items
     rescue => error
       @logger.debug("Error during discover_developers: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_health_managers
+      AdminUI::HealthManagersTab.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_health_managers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
