@@ -89,6 +89,10 @@ module AdminUI
     get '/favicon.ico' do
     end
 
+    get '/gateways_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.gateways, params).items.to_json
+    end
+
     get '/gateways', :auth => [:user] do
       @varz.gateways.to_json
     end

@@ -1195,7 +1195,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
         end
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='GatewaysTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='GatewaysTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                 :expected_length => 9,
                                 :labels          => ['Name', 'Index', 'State', 'Started', 'Description', 'CPU', 'Memory', 'Nodes', "Available\nCapacity"],
                                 :colspans        => nil
@@ -1206,7 +1206,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              nats_provisioner['type'][0..-13],
                              varz_provisioner['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
-                             @driver.execute_script("return Format.formatDateString(\"#{ varz_provisioner['start'] }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ varz_provisioner['start'] }\")"),
                              varz_provisioner['config']['service']['description'],
                              varz_provisioner['cpu'].to_s,
                              varz_provisioner['mem'].to_s,
