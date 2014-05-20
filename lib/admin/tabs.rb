@@ -1,4 +1,5 @@
 require 'date'
+require_relative 'scheduled_thread_pool'
 require_relative 'tabs/applications_tab'
 require_relative 'tabs/cloud_controllers_tab'
 require_relative 'tabs/components_tab'
@@ -21,6 +22,8 @@ module AdminUI
       @config = config
       @logger = logger
       @varz   = varz
+      # TODO: Need config for number of threads
+      @pool   = AdminUI::ScheduledThreadPool.new(logger, 5)
 
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
@@ -28,12 +31,7 @@ module AdminUI
       [:applications, :cloud_controllers, :components, :deas, :developers, :gateways, :health_managers, :organizations, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
-
-        Thread.new do
-          loop do
-            schedule_discovery(key, hash)
-          end
-        end
+        schedule(key)
       end
     end
 
@@ -115,23 +113,32 @@ module AdminUI
       hash = @caches[key]
       hash[:semaphore].synchronize do
         hash[:result] = nil
-        hash[:condition].broadcast
+      end
+      schedule(key)
+    end
+
+    def schedule(key, time = Time.now)
+      @pool.schedule(key, time) do
+        discover(key)
       end
     end
 
-    def schedule_discovery(key, hash)
+    def discover(key)
       key_string = key.to_s
 
       @logger.debug("[#{ @config.cloud_controller_discovery_interval } second interval] Starting Tabs #{ key_string } discovery...")
 
       result_cache = send("discover_#{ key_string }".to_sym)
 
+      hash = @caches[key]
       hash[:semaphore].synchronize do
         @logger.debug("Caching Tabs #{ key_string } data...")
         hash[:result] = result_cache
         hash[:condition].broadcast
-        hash[:condition].wait(hash[:semaphore], @config.cloud_controller_discovery_interval)
       end
+
+      # Set up the next scheduled discovery for this key
+      schedule(key, Time.now + @config.cloud_controller_discovery_interval)
     end
 
     def result_cache(key)

@@ -535,7 +535,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_operation_result
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 5).until { check_deleted_app_table_data }
+              Selenium::WebDriver::Wait.new(:timeout => 5).until do
+                begin
+                  check_deleted_app_table_data
+                rescue RSpec::Expectations::ExpectationNotMetError
+                end
+              end
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             check_deleted_app_table_data

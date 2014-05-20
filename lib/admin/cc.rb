@@ -1,4 +1,5 @@
-require 'json'
+require 'date'
+require_relative 'scheduled_thread_pool'
 
 module AdminUI
   class CC
@@ -6,19 +7,16 @@ module AdminUI
       @config = config
       @client = client
       @logger = logger
+      # TODO: Need config for number of threads
+      @pool   = AdminUI::ScheduledThreadPool.new(logger, 5)
 
       @caches = {}
+
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
       [:applications, :organizations, :quota_definitions, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_plans, :spaces, :users_cc_deep, :users_uaa].each do |key|
-        hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
-        @caches[key] = hash
-
-        Thread.new do
-          loop do
-            schedule_discovery(key, hash)
-          end
-        end
+        @caches[key] = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
+        schedule(key)
       end
     end
 
@@ -55,11 +53,7 @@ module AdminUI
     end
 
     def invalidate_applications
-      hash = @caches[:applications]
-      hash[:semaphore].synchronize do
-        hash[:result] = nil
-        hash[:condition].broadcast
-      end
+      invalidate_cache(:applications)
     end
 
     def invalidate_organizations
@@ -147,35 +141,36 @@ module AdminUI
 
     private
 
-    def invalidate_cache(key, *rediscover)
-      key_string = key.to_s
-
+    def invalidate_cache(key)
       hash = @caches[key]
       hash[:semaphore].synchronize do
-        if rediscover
-          result_cache = send("discover_#{ key_string }".to_sym)
-          @logger.debug("Caching CC #{ key_string } data...")
-          hash[:result] = result_cache
-        else
-          hash[:result] = nil
-        end
-        hash[:condition].broadcast
+        hash[:result] = nil
+      end
+      schedule(key)
+    end
+
+    def schedule(key, time = Time.now)
+      @pool.schedule(key, time) do
+        discover(key)
       end
     end
 
-    def schedule_discovery(key, hash)
+    def discover(key)
       key_string = key.to_s
 
       @logger.debug("[#{ @config.cloud_controller_discovery_interval } second interval] Starting CC #{ key_string } discovery...")
 
       result_cache = send("discover_#{ key_string }".to_sym)
 
+      hash = @caches[key]
       hash[:semaphore].synchronize do
         @logger.debug("Caching CC #{ key_string } data...")
         hash[:result] = result_cache
         hash[:condition].broadcast
-        hash[:condition].wait(hash[:semaphore], @config.cloud_controller_discovery_interval)
       end
+
+      # Set up the next scheduled discovery for this key
+      schedule(key, Time.now + @config.cloud_controller_discovery_interval)
     end
 
     def result_cache(key)
