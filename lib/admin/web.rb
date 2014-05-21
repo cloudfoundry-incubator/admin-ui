@@ -114,6 +114,10 @@ module AdminUI
       end
     end
 
+    get '/logs_tab', :auth => [:user] do
+      AllActions.new(@logger, @tabs.logs, params).items.to_json
+    end
+
     get '/logs', :auth => [:user] do
       { :items => @log_files.infos }.to_json
     end

@@ -53,7 +53,7 @@ module AdminUI
       @log_files = LogFiles.new(@config, @logger)
       @tasks     = Tasks.new(@config, @logger)
       @varz      = VARZ.new(@config, @logger, nats)
-      @tabs      = Tabs.new(@config, @logger, @cc, @varz)
+      @tabs      = Tabs.new(@config, @logger, @cc, @varz, @log_files)
       @operation = Operation.new(@config, @logger, @cc, @tabs, client, @varz)
       @stats     = Stats.new(@config, @logger, @cc, @varz)
     end

@@ -7,6 +7,7 @@ require_relative 'tabs/deas_tab'
 require_relative 'tabs/developers_tab'
 require_relative 'tabs/gateways_tab'
 require_relative 'tabs/health_managers_tab'
+require_relative 'tabs/logs_tab'
 require_relative 'tabs/organizations_tab'
 require_relative 'tabs/quotas_tab'
 require_relative 'tabs/routers_tab'
@@ -17,18 +18,19 @@ require_relative 'tabs/spaces_tab'
 
 module AdminUI
   class Tabs
-    def initialize(config, logger, cc, varz)
-      @cc     = cc
-      @config = config
-      @logger = logger
-      @varz   = varz
+    def initialize(config, logger, cc, varz, log_files)
+      @cc        = cc
+      @config    = config
+      @log_files = log_files
+      @logger    = logger
+      @varz      = varz
       # TODO: Need config for number of threads
-      @pool   = AdminUI::ScheduledThreadPool.new(logger, 5)
+      @pool      = AdminUI::ScheduledThreadPool.new(logger, 5)
 
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :cloud_controllers, :components, :deas, :developers, :gateways, :health_managers, :organizations, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces].each do |key|
+      [:applications, :cloud_controllers, :components, :deas, :developers, :gateways, :health_managers, :logs, :organizations, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
         schedule(key)
@@ -77,6 +79,10 @@ module AdminUI
 
     def health_managers
       result_cache(:health_managers)
+    end
+
+    def logs
+      result_cache(:logs)
     end
 
     def organizations
@@ -201,6 +207,14 @@ module AdminUI
       AdminUI::HealthManagersTab.new(@logger, @cc, @varz).items
     rescue => error
       @logger.debug("Error during discover_health_managers: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_logs
+      AdminUI::LogsTab.new(@logger, @cc, @varz, @log_files).items
+    rescue => error
+      @logger.debug("Error during discover_logs: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
