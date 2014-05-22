@@ -2,7 +2,7 @@ require_relative 'base'
 require 'date'
 
 module AdminUI
-  class RoutesTab < AdminUI::Base
+  class RoutesViewModel < AdminUI::Base
     def initialize(logger, cc)
       super(logger)
 

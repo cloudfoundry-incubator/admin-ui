@@ -2,7 +2,7 @@ require_relative 'base'
 require 'date'
 
 module AdminUI
-  class CloudControllersTab < AdminUI::Base
+  class RoutersViewModel < AdminUI::Base
     def initialize(logger, varz)
       super(logger)
 
@@ -10,21 +10,21 @@ module AdminUI
     end
 
     def do_items
-      cloud_controllers = @varz.cloud_controllers
+      routers = @varz.routers
 
-      # cloud_controllers have to exist.  Other record types are optional
-      return result unless cloud_controllers['connected']
+      # routers have to exist.  Other record types are optional
+      return result unless routers['connected']
 
       items = []
 
-      cloud_controllers['items'].each do |cloud_controller|
+      routers['items'].each do |router|
         row = []
 
-        row.push(cloud_controller['name'])
+        row.push(router['name'])
 
-        data = cloud_controller['data']
+        data = router['data']
 
-        if cloud_controller['connected']
+        if router['connected']
           row.push(data['index'])
           row.push('RUNNING')
           row.push(DateTime.parse(data['start']).rfc3339)
@@ -40,7 +40,11 @@ module AdminUI
             row.push(nil)
           end
 
-          row.push(cloud_controller)
+          row.push(data['droplets'])
+          row.push(data['requests'])
+          row.push(data['bad_requests'])
+
+          row.push(router)
         else
           row.push(nil)
           row.push('OFFLINE')
@@ -51,15 +55,15 @@ module AdminUI
             row.push(nil)
           end
 
-          row.push(nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil, nil, nil)
 
-          row.push(cloud_controller['uri'])
+          row.push(router['uri'])
         end
 
         items.push(row)
       end
 
-      result(items, (0..6).to_a, [0, 2, 3])
+      result(items, (0..9).to_a, [0, 2, 3])
     end
   end
 end

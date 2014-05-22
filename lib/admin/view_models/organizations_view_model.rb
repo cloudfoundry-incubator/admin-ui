@@ -1,9 +1,9 @@
 require 'date'
-require_relative 'has_instances_tab'
+require_relative 'has_instances_view_model'
 require_relative '../utils'
 
 module AdminUI
-  class OrganizationsTab < AdminUI::HasInstancesTab
+  class OrganizationsViewModel < AdminUI::HasInstancesViewModel
     def do_items
       organizations = @cc.organizations
 

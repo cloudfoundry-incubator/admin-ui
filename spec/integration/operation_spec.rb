@@ -33,8 +33,8 @@ describe AdminUI::Operation, :type => :integration do
   let(:log_files) { AdminUI::LogFiles.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
   let(:varz) { AdminUI::VARZ.new(config, logger, nats) }
-  let(:tabs) { AdminUI::Tabs.new(config, logger, cc, varz, log_files) }
-  let(:operation) { AdminUI::Operation.new(config, logger, cc, tabs, client, varz) }
+  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, varz, log_files) }
+  let(:operation) { AdminUI::Operation.new(config, logger, cc, client, varz, view_models) }
 
   after do
     Process.wait(Process.spawn({}, "rm -fr #{ log_file }"))

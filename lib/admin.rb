@@ -7,9 +7,9 @@ require_relative 'admin/log_files'
 require_relative 'admin/nats'
 require_relative 'admin/operation'
 require_relative 'admin/stats'
-require_relative 'admin/tabs'
 require_relative 'admin/tasks'
 require_relative 'admin/varz'
+require_relative 'admin/view_models'
 require_relative 'admin/web'
 
 module AdminUI
@@ -49,13 +49,13 @@ module AdminUI
       email  = EMail.new(@config, @logger)
       nats   = NATS.new(@config, @logger, email)
 
-      @cc        = CC.new(@config, @logger, client)
-      @log_files = LogFiles.new(@config, @logger)
-      @tasks     = Tasks.new(@config, @logger)
-      @varz      = VARZ.new(@config, @logger, nats)
-      @tabs      = Tabs.new(@config, @logger, @cc, @varz, @log_files)
-      @operation = Operation.new(@config, @logger, @cc, @tabs, client, @varz)
-      @stats     = Stats.new(@config, @logger, @cc, @varz)
+      @cc          = CC.new(@config, @logger, client)
+      @log_files   = LogFiles.new(@config, @logger)
+      @tasks       = Tasks.new(@config, @logger)
+      @varz        = VARZ.new(@config, @logger, nats)
+      @view_models = ViewModels.new(@config, @logger, @cc, @varz, @log_files)
+      @operation   = Operation.new(@config, @logger, @cc, client, @varz, @view_models)
+      @stats       = Stats.new(@config, @logger, @cc, @varz)
     end
 
     def display_files
@@ -74,9 +74,9 @@ module AdminUI
                              @log_files,
                              @operation,
                              @stats,
-                             @tabs,
                              @tasks,
-                             @varz)
+                             @varz,
+                             @view_models)
 
       # Only show error and fatal messages
       error_logger = Logger.new(STDERR)

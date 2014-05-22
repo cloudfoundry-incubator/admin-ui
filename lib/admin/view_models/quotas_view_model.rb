@@ -2,7 +2,7 @@ require_relative 'base'
 require 'date'
 
 module AdminUI
-  class QuotasTab < AdminUI::Base
+  class QuotasViewModel < AdminUI::Base
     def initialize(logger, cc)
       super(logger)
 

@@ -2,7 +2,7 @@ require_relative 'base'
 require 'date'
 
 module AdminUI
-  class HealthManagersTab < AdminUI::Base
+  class HealthManagersViewModel < AdminUI::Base
     def initialize(logger, varz)
       super(logger)
 

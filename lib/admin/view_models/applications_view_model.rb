@@ -2,7 +2,7 @@ require_relative 'base'
 require 'date'
 
 module AdminUI
-  class ApplicationsTab < AdminUI::Base
+  class ApplicationsViewModel < AdminUI::Base
     def initialize(logger, cc, varz)
       super(logger)
 

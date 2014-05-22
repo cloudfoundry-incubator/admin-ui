@@ -1,23 +1,23 @@
 require 'date'
 require_relative 'scheduled_thread_pool'
-require_relative 'tabs/applications_tab'
-require_relative 'tabs/cloud_controllers_tab'
-require_relative 'tabs/components_tab'
-require_relative 'tabs/deas_tab'
-require_relative 'tabs/developers_tab'
-require_relative 'tabs/gateways_tab'
-require_relative 'tabs/health_managers_tab'
-require_relative 'tabs/logs_tab'
-require_relative 'tabs/organizations_tab'
-require_relative 'tabs/quotas_tab'
-require_relative 'tabs/routers_tab'
-require_relative 'tabs/routes_tab'
-require_relative 'tabs/service_instances_tab'
-require_relative 'tabs/service_plans_tab'
-require_relative 'tabs/spaces_tab'
+require_relative 'view_models/applications_view_model'
+require_relative 'view_models/cloud_controllers_view_model'
+require_relative 'view_models/components_view_model'
+require_relative 'view_models/deas_view_model'
+require_relative 'view_models/developers_view_model'
+require_relative 'view_models/gateways_view_model'
+require_relative 'view_models/health_managers_view_model'
+require_relative 'view_models/logs_view_model'
+require_relative 'view_models/organizations_view_model'
+require_relative 'view_models/quotas_view_model'
+require_relative 'view_models/routers_view_model'
+require_relative 'view_models/routes_view_model'
+require_relative 'view_models/service_instances_view_model'
+require_relative 'view_models/service_plans_view_model'
+require_relative 'view_models/spaces_view_model'
 
 module AdminUI
-  class Tabs
+  class ViewModels
     def initialize(config, logger, cc, varz, log_files)
       @cc        = cc
       @config    = config
@@ -132,13 +132,13 @@ module AdminUI
     def discover(key)
       key_string = key.to_s
 
-      @logger.debug("[#{ @config.cloud_controller_discovery_interval } second interval] Starting Tabs #{ key_string } discovery...")
+      @logger.debug("[#{ @config.cloud_controller_discovery_interval } second interval] Starting view model #{ key_string } discovery...")
 
       result_cache = send("discover_#{ key_string }".to_sym)
 
       hash = @caches[key]
       hash[:semaphore].synchronize do
-        @logger.debug("Caching Tabs #{ key_string } data...")
+        @logger.debug("Caching view model #{ key_string } data...")
         hash[:result] = result_cache
         hash[:condition].broadcast
       end
@@ -156,7 +156,7 @@ module AdminUI
     end
 
     def discover_applications
-      AdminUI::ApplicationsTab.new(@logger, @cc, @varz).items
+      AdminUI::ApplicationsViewModel.new(@logger, @cc, @varz).items
     rescue => error
       @logger.debug("Error during discover_applications: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -164,7 +164,7 @@ module AdminUI
     end
 
     def discover_cloud_controllers
-      AdminUI::CloudControllersTab.new(@logger, @varz).items
+      AdminUI::CloudControllersViewModel.new(@logger, @varz).items
     rescue => error
       @logger.debug("Error during discover_cloud_controllers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -172,7 +172,7 @@ module AdminUI
     end
 
     def discover_components
-      AdminUI::ComponentsTab.new(@logger, @varz).items
+      AdminUI::ComponentsViewModel.new(@logger, @varz).items
     rescue => error
       @logger.debug("Error during discover_components: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -180,7 +180,7 @@ module AdminUI
     end
 
     def discover_deas
-      AdminUI::DEAsTab.new(@logger, @varz).items
+      AdminUI::DEAsViewModel.new(@logger, @varz).items
     rescue => error
       @logger.debug("Error during discover_deas: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -188,7 +188,7 @@ module AdminUI
     end
 
     def discover_developers
-      AdminUI::DevelopersTab.new(@logger, @cc).items
+      AdminUI::DevelopersViewModel.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_developers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -196,7 +196,7 @@ module AdminUI
     end
 
     def discover_gateways
-      AdminUI::GatewaysTab.new(@logger, @varz).items
+      AdminUI::GatewaysViewModel.new(@logger, @varz).items
     rescue => error
       @logger.debug("Error during discover_gateways: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -204,7 +204,7 @@ module AdminUI
     end
 
     def discover_health_managers
-      AdminUI::HealthManagersTab.new(@logger, @varz).items
+      AdminUI::HealthManagersViewModel.new(@logger, @varz).items
     rescue => error
       @logger.debug("Error during discover_health_managers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -212,7 +212,7 @@ module AdminUI
     end
 
     def discover_logs
-      AdminUI::LogsTab.new(@logger, @log_files).items
+      AdminUI::LogsViewModel.new(@logger, @log_files).items
     rescue => error
       @logger.debug("Error during discover_logs: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -220,7 +220,7 @@ module AdminUI
     end
 
     def discover_organizations
-      AdminUI::OrganizationsTab.new(@logger, @cc, @varz).items
+      AdminUI::OrganizationsViewModel.new(@logger, @cc, @varz).items
     rescue => error
       @logger.debug("Error during discover_organizations: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -228,7 +228,7 @@ module AdminUI
     end
 
     def discover_quotas
-      AdminUI::QuotasTab.new(@logger, @cc).items
+      AdminUI::QuotasViewModel.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_quotas: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -236,7 +236,7 @@ module AdminUI
     end
 
     def discover_routers
-      AdminUI::RoutersTab.new(@logger, @varz).items
+      AdminUI::RoutersViewModel.new(@logger, @varz).items
     rescue => error
       @logger.debug("Error during discover_routers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -244,7 +244,7 @@ module AdminUI
     end
 
     def discover_routes
-      AdminUI::RoutesTab.new(@logger, @cc).items
+      AdminUI::RoutesViewModel.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_routes: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -252,7 +252,7 @@ module AdminUI
     end
 
     def discover_service_instances
-      AdminUI::ServiceInstancesTab.new(@logger, @cc).items
+      AdminUI::ServiceInstancesViewModel.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_service_instances: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -260,7 +260,7 @@ module AdminUI
     end
 
     def discover_service_plans
-      AdminUI::ServicePlansTab.new(@logger, @cc).items
+      AdminUI::ServicePlansViewModel.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_service_plans: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -268,7 +268,7 @@ module AdminUI
     end
 
     def discover_spaces
-      AdminUI::SpacesTab.new(@logger, @cc, @varz).items
+      AdminUI::SpacesViewModel.new(@logger, @cc, @varz).items
     rescue => error
       @logger.debug("Error during discover_spaces: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))

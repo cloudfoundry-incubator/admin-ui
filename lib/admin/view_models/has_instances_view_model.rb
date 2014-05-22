@@ -1,7 +1,7 @@
 require_relative 'base'
 
 module AdminUI
-  class HasInstancesTab < AdminUI::Base
+  class HasInstancesViewModel < AdminUI::Base
     def initialize(logger, cc, varz)
       super(logger)
 
