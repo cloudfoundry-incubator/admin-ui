@@ -1,10 +1,16 @@
-require_relative 'base_tab'
+require_relative 'base'
 require 'date'
 
 module AdminUI
-  class ServicePlansTab < AdminUI::BaseTab
+  class ServicePlansTab < AdminUI::Base
+    def initialize(logger, cc)
+      super(logger)
+
+      @cc = cc
+    end
+
     def do_items
-      service_plans    = @cc.service_plans
+      service_plans = @cc.service_plans
 
       # service_plans have to exist.  Other record types are optional
       return result unless service_plans['connected']

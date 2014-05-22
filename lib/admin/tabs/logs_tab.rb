@@ -1,10 +1,10 @@
-require_relative 'base_tab'
+require_relative 'base'
 require 'date'
 
 module AdminUI
-  class LogsTab < AdminUI::BaseTab
-    def initialize(logger, cc, varz, log_files)
-      super(logger, cc, varz)
+  class LogsTab < AdminUI::Base
+    def initialize(logger, log_files)
+      super(logger)
 
       @log_files = log_files
     end

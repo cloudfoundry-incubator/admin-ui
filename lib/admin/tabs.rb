@@ -164,7 +164,7 @@ module AdminUI
     end
 
     def discover_cloud_controllers
-      AdminUI::CloudControllersTab.new(@logger, @cc, @varz).items
+      AdminUI::CloudControllersTab.new(@logger, @varz).items
     rescue => error
       @logger.debug("Error during discover_cloud_controllers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -172,7 +172,7 @@ module AdminUI
     end
 
     def discover_components
-      AdminUI::ComponentsTab.new(@logger, @cc, @varz).items
+      AdminUI::ComponentsTab.new(@logger, @varz).items
     rescue => error
       @logger.debug("Error during discover_components: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -180,7 +180,7 @@ module AdminUI
     end
 
     def discover_deas
-      AdminUI::DEAsTab.new(@logger, @cc, @varz).items
+      AdminUI::DEAsTab.new(@logger, @varz).items
     rescue => error
       @logger.debug("Error during discover_deas: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -188,7 +188,7 @@ module AdminUI
     end
 
     def discover_developers
-      AdminUI::DevelopersTab.new(@logger, @cc, @varz).items
+      AdminUI::DevelopersTab.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_developers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -196,7 +196,7 @@ module AdminUI
     end
 
     def discover_gateways
-      AdminUI::GatewaysTab.new(@logger, @cc, @varz).items
+      AdminUI::GatewaysTab.new(@logger, @varz).items
     rescue => error
       @logger.debug("Error during discover_gateways: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -204,7 +204,7 @@ module AdminUI
     end
 
     def discover_health_managers
-      AdminUI::HealthManagersTab.new(@logger, @cc, @varz).items
+      AdminUI::HealthManagersTab.new(@logger, @varz).items
     rescue => error
       @logger.debug("Error during discover_health_managers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -212,7 +212,7 @@ module AdminUI
     end
 
     def discover_logs
-      AdminUI::LogsTab.new(@logger, @cc, @varz, @log_files).items
+      AdminUI::LogsTab.new(@logger, @log_files).items
     rescue => error
       @logger.debug("Error during discover_logs: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -228,7 +228,7 @@ module AdminUI
     end
 
     def discover_quotas
-      AdminUI::QuotasTab.new(@logger, @cc, @varz).items
+      AdminUI::QuotasTab.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_quotas: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -236,7 +236,7 @@ module AdminUI
     end
 
     def discover_routers
-      AdminUI::RoutersTab.new(@logger, @cc, @varz).items
+      AdminUI::RoutersTab.new(@logger, @varz).items
     rescue => error
       @logger.debug("Error during discover_routers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -244,7 +244,7 @@ module AdminUI
     end
 
     def discover_routes
-      AdminUI::RoutesTab.new(@logger, @cc, @varz).items
+      AdminUI::RoutesTab.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_routes: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -252,7 +252,7 @@ module AdminUI
     end
 
     def discover_service_instances
-      AdminUI::ServiceInstancesTab.new(@logger, @cc, @varz).items
+      AdminUI::ServiceInstancesTab.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_service_instances: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -260,7 +260,7 @@ module AdminUI
     end
 
     def discover_service_plans
-      AdminUI::ServicePlansTab.new(@logger, @cc, @varz).items
+      AdminUI::ServicePlansTab.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_service_plans: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))

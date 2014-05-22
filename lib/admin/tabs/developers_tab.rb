@@ -1,8 +1,14 @@
-require_relative 'base_tab'
+require_relative 'base'
 require 'date'
 
 module AdminUI
-  class DevelopersTab < AdminUI::BaseTab
+  class DevelopersTab < AdminUI::Base
+    def initialize(logger, cc)
+      super(logger)
+
+      @cc = cc
+    end
+
     def do_items
       spaces_developers = @cc.spaces_developers
       users             = @cc.users

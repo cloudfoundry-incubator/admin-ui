@@ -1,8 +1,14 @@
-require_relative 'base_tab'
+require_relative 'base'
 require 'date'
 
 module AdminUI
-  class RoutesTab < AdminUI::BaseTab
+  class RoutesTab < AdminUI::Base
+    def initialize(logger, cc)
+      super(logger)
+
+      @cc = cc
+    end
+
     def do_items
       routes = @cc.routes
 

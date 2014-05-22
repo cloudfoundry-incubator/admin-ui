@@ -1,8 +1,14 @@
-require_relative 'base_tab'
+require_relative 'base'
 require 'date'
 
 module AdminUI
-  class QuotasTab < AdminUI::BaseTab
+  class QuotasTab < AdminUI::Base
+    def initialize(logger, cc)
+      super(logger)
+
+      @cc = cc
+    end
+
     def do_items
       quota_definitions = @cc.quota_definitions
 

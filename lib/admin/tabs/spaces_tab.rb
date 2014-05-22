@@ -1,5 +1,6 @@
 require 'date'
 require_relative 'has_instances_tab'
+require_relative '../utils'
 
 module AdminUI
   class SpacesTab < AdminUI::HasInstancesTab
@@ -124,8 +125,8 @@ module AdminUI
         row.push(space_service_instance_counter || 0)
 
         if space_app_counters
-          row.push(convert_bytes_to_megabytes(space_app_counters['used_memory']))
-          row.push(convert_bytes_to_megabytes(space_app_counters['used_disk']))
+          row.push(Utils.convert_bytes_to_megabytes(space_app_counters['used_memory']))
+          row.push(Utils.convert_bytes_to_megabytes(space_app_counters['used_disk']))
           row.push(space_app_counters['used_cpu'] * 100)
           row.push(space_app_counters['reserved_memory'])
           row.push(space_app_counters['reserved_disk'])

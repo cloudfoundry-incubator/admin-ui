@@ -1,8 +1,14 @@
-require_relative 'base_tab'
+require_relative 'base'
 require 'date'
 
 module AdminUI
-  class ComponentsTab < AdminUI::BaseTab
+  class ComponentsTab < AdminUI::Base
+    def initialize(logger, varz)
+      super(logger)
+
+      @varz = varz
+    end
+
     def do_items
       components = @varz.components
 

@@ -1,5 +1,6 @@
 require 'date'
 require_relative 'has_instances_tab'
+require_relative '../utils'
 
 module AdminUI
   class OrganizationsTab < AdminUI::HasInstancesTab
@@ -150,8 +151,8 @@ module AdminUI
         row.push(organization_service_instance_counter || 0)
 
         if organization_app_counters
-          row.push(convert_bytes_to_megabytes(organization_app_counters['used_memory']))
-          row.push(convert_bytes_to_megabytes(organization_app_counters['used_disk']))
+          row.push(Utils.convert_bytes_to_megabytes(organization_app_counters['used_memory']))
+          row.push(Utils.convert_bytes_to_megabytes(organization_app_counters['used_disk']))
           row.push(organization_app_counters['used_cpu'] * 100)
           row.push(organization_app_counters['reserved_memory'])
           row.push(organization_app_counters['reserved_disk'])

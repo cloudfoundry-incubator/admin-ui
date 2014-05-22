@@ -1,8 +1,14 @@
-require_relative 'base_tab'
+require_relative 'base'
 require 'date'
 
 module AdminUI
-  class CloudControllersTab < AdminUI::BaseTab
+  class CloudControllersTab < AdminUI::Base
+    def initialize(logger, varz)
+      super(logger)
+
+      @varz = varz
+    end
+
     def do_items
       cloud_controllers = @varz.cloud_controllers
 

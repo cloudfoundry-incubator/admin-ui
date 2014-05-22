@@ -1,8 +1,14 @@
-require_relative 'base_tab'
+require_relative 'base'
 require 'date'
 
 module AdminUI
-  class RoutersTab < AdminUI::BaseTab
+  class RoutersTab < AdminUI::Base
+    def initialize(logger, varz)
+      super(logger)
+
+      @varz = varz
+    end
+
     def do_items
       routers = @varz.routers
 

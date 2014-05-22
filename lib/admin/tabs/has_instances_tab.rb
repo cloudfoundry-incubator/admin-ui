@@ -1,7 +1,14 @@
-require_relative 'base_tab'
+require_relative 'base'
 
 module AdminUI
-  class HasInstancesTab < AdminUI::BaseTab
+  class HasInstancesTab < AdminUI::Base
+    def initialize(logger, cc, varz)
+      super(logger)
+
+      @cc   = cc
+      @varz = varz
+    end
+
     def add_instance_metrics(counters_hash, application, instance_hash)
       counters_hash['reserved_memory'] += application['memory']     * application['instances']
       counters_hash['reserved_disk']   += application['disk_quota'] * application['instances']
