@@ -214,6 +214,12 @@ module AdminUI
       @stats.stats.to_json
     end
 
+    get '/stats_view_model' do
+      extended_result = AllActions.new(@logger, @view_models.stats, params).items
+      extended_result[:items][:label] = @config.cloud_controller_uri
+      extended_result.to_json
+    end
+
     get '/stats' do
       send_file File.expand_path('stats.html', settings.public_folder)
     end
@@ -271,6 +277,8 @@ module AdminUI
                                   :users             => params['users'].to_i)
 
       halt 500 if stats.nil?
+
+      @view_models.invalidate_stats
 
       [200, stats.to_json]
 

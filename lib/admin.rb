@@ -53,9 +53,9 @@ module AdminUI
       @log_files   = LogFiles.new(@config, @logger)
       @tasks       = Tasks.new(@config, @logger)
       @varz        = VARZ.new(@config, @logger, nats)
-      @view_models = ViewModels.new(@config, @logger, @cc, @varz, @log_files)
-      @operation   = Operation.new(@config, @logger, @cc, client, @varz, @view_models)
       @stats       = Stats.new(@config, @logger, @cc, @varz)
+      @view_models = ViewModels.new(@config, @logger, @cc, @log_files, @stats, @varz)
+      @operation   = Operation.new(@config, @logger, @cc, client, @varz, @view_models)
     end
 
     def display_files

@@ -15,14 +15,16 @@ require_relative 'view_models/routes_view_model'
 require_relative 'view_models/service_instances_view_model'
 require_relative 'view_models/service_plans_view_model'
 require_relative 'view_models/spaces_view_model'
+require_relative 'view_models/stats_view_model'
 
 module AdminUI
   class ViewModels
-    def initialize(config, logger, cc, varz, log_files)
+    def initialize(config, logger, cc, log_files, stats, varz)
       @cc        = cc
       @config    = config
       @log_files = log_files
       @logger    = logger
+      @stats     = stats
       @varz      = varz
       # TODO: Need config for number of threads
       @pool      = AdminUI::ScheduledThreadPool.new(logger, 5)
@@ -30,7 +32,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :cloud_controllers, :components, :deas, :developers, :gateways, :health_managers, :logs, :organizations, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces].each do |key|
+      [:applications, :cloud_controllers, :components, :deas, :developers, :gateways, :health_managers, :logs, :organizations, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces, :stats].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
         schedule(key)
@@ -51,6 +53,10 @@ module AdminUI
 
     def invalidate_service_plans
       invalidate_cache(:service_plans)
+    end
+
+    def invalidate_stats
+      invalidate_cache(:stats)
     end
 
     def applications
@@ -111,6 +117,10 @@ module AdminUI
 
     def spaces
       result_cache(:spaces)
+    end
+
+    def stats
+      result_cache(:stats)
     end
 
     private
@@ -271,6 +281,14 @@ module AdminUI
       AdminUI::SpacesViewModel.new(@logger, @cc, @varz).items
     rescue => error
       @logger.debug("Error during discover_spaces: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_stats
+      AdminUI::StatsViewModel.new(@logger, @stats).items
+    rescue => error
+      @logger.debug("Error during discover_stats: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end

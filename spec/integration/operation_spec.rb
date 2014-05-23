@@ -33,7 +33,8 @@ describe AdminUI::Operation, :type => :integration do
   let(:log_files) { AdminUI::LogFiles.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
   let(:varz) { AdminUI::VARZ.new(config, logger, nats) }
-  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, varz, log_files) }
+  let(:stats) { AdminUI::Stats.new(config, logger, cc, varz) }
+  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, varz) }
   let(:operation) { AdminUI::Operation.new(config, logger, cc, client, varz, view_models) }
 
   after do

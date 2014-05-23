@@ -9,7 +9,6 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
   let(:tab_id) { 'Statistics' }
 
   before do
-    add_stats
     @driver.get "http://#{ host }:#{ port }/stats"
     Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.title == 'Statistics' }
   end
