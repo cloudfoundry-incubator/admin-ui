@@ -36,11 +36,13 @@ module AdminUI
 
     def schedule(key, time, &block)
       return if key.nil? || time.nil? || block.nil?
-      entry = { :key => key, :time  => time, :block => block }
       @mutex.synchronize do
-        # Intentionally overwrite any existing entry for this key
-        @queue.reject! { |existing_entry| key == existing_entry[:key] }
-        @queue.push(entry)
+        index = @queue.index { |entry| key == entry[:key] }
+        if index
+          return if @queue.at(index)[:time] <= time
+          @queue.delete_at(index)
+        end
+        @queue.push(:key => key, :time  => time, :block => block)
         @queue.sort! { |a, b| a[:time] <=> b[:time] }
       end
     end
