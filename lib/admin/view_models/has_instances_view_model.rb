@@ -36,6 +36,7 @@ module AdminUI
       result = {}
 
       deas['items'].each do |dea|
+        next unless dea['connected']
         dea['data']['instance_registry'].each_value do |application|
           application.each_value do |instance|
             application_id = instance['application_id']

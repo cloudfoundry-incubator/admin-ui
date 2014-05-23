@@ -92,6 +92,7 @@ module AdminUI
       dea_index = 0
 
       deas['items'].each do |dea|
+        next unless dea['connected']
         data = dea['data']
         host = data['host']
         data['instance_registry'].each_value do |application|
