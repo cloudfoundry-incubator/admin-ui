@@ -54,7 +54,7 @@ module AdminUI
       @tasks       = Tasks.new(@config, @logger)
       @varz        = VARZ.new(@config, @logger, nats)
       @stats       = Stats.new(@config, @logger, @cc, @varz)
-      @view_models = ViewModels.new(@config, @logger, @cc, @log_files, @stats, @varz)
+      @view_models = ViewModels.new(@config, @logger, @cc, @log_files, @stats, @tasks, @varz)
       @operation   = Operation.new(@config, @logger, @cc, client, @varz, @view_models)
     end
 

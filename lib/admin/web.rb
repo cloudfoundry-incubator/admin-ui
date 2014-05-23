@@ -224,6 +224,10 @@ module AdminUI
       send_file File.expand_path('stats.html', settings.public_folder)
     end
 
+    get '/tasks_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.tasks, params).items.to_json
+    end
+
     get '/tasks', :auth => [:user] do
       { :items => @tasks.tasks }.to_json
     end
@@ -246,7 +250,9 @@ module AdminUI
     end
 
     post '/deas', :auth => [:admin] do
-      { :task_id => @tasks.new_dea }.to_json
+      result = { :task_id => @tasks.new_dea }
+      @view_models.invalidate_tasks
+      result.to_json
     end
 
     post '/login' do

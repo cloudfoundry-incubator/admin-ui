@@ -1361,7 +1361,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Tasks' do
         let(:tab_id) { 'Tasks' }
         it 'has a table' do
-          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='TasksTableContainer']/div/div[5]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='TasksTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                  :expected_length => 3,
                                  :labels          => %w(Command State Started),
                                  :colspans        => nil
