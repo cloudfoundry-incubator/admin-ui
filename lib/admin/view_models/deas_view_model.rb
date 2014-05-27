@@ -29,12 +29,7 @@ module AdminUI
           row.push('RUNNING')
           row.push(DateTime.parse(data['start']).rfc3339)
           row.push(data['stacks'])
-
-          if data['cpu']
-            row.push(data['cpu'])
-          else
-            row.push(nil)
-          end
+          row.push(data['cpu'])
 
           # Conditional logic since mem becomes mem_bytes in 157
           if data['mem']

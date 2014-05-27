@@ -36,15 +36,10 @@ module AdminUI
         row.push(application['guid'])
         row.push(application['name'])
         row.push(application['state'])
-
-        if application['package_state']
-          row.push(application['package_state'])
-        else
-          row.push('')
-        end
+        row.push(application['package_state'])
 
         # Instance State
-        row.push('')
+        row.push(nil)
 
         row.push(DateTime.parse(application['created_at']).rfc3339)
 

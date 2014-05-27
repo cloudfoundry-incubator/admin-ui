@@ -40,24 +40,9 @@ module AdminUI
             row.push(nil)
           end
 
-          if data['total_users']
-            row.push(data['total_users'])
-          else
-            row.push(nil)
-          end
-
-          if data['total_apps']
-            row.push(data['total_apps'])
-          else
-            row.push(nil)
-          end
-
-          if data['total_instances']
-            row.push(data['total_instances'])
-          else
-            row.push(nil)
-          end
-
+          row.push(data['total_users'])
+          row.push(data['total_apps'])
+          row.push(data['total_instances'])
           row.push(health_manager)
         else
           row.push(nil)

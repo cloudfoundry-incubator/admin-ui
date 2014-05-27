@@ -25,13 +25,7 @@ module AdminUI
         data = component['data']
 
         row.push(data['type'])
-
-        if data['index']
-          row.push(data['index'])
-        else
-          row.push(nil)
-        end
-
+        row.push(data['index'])
         row.push(component['connected'] ? 'RUNNING' : 'OFFLINE')
 
         if data['start']
