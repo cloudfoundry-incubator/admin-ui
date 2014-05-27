@@ -1,4 +1,5 @@
 require 'logger'
+require 'webrick/httprequest'
 require_relative 'admin/config'
 require_relative 'admin/cc'
 require_relative 'admin/cc_rest_client'
@@ -81,6 +82,14 @@ module AdminUI
       # Only show error and fatal messages
       error_logger = Logger.new(STDERR)
       error_logger.level = Logger::ERROR
+
+      if defined?(WEBrick::HTTPRequest)
+        # TODO: Look at moving to Thin to avoid this limitation
+        # We have to increase the WEBrick HTTPRequest constant MAX_URI_LENGTH from its defined value of 2083
+        # or we will have problems with the jQuery DataTables server side ajax calls causing WEBrick::HTTPStatus::RequestURITooLarge
+        WEBrick::HTTPRequest.instance_eval { remove_const :MAX_URI_LENGTH }
+        WEBrick::HTTPRequest.const_set('MAX_URI_LENGTH', 10_240)
+      end
 
       Rack::Handler::WEBrick.run(web, :AccessLog => [], :Logger => error_logger, :Port => @config.port, :BindAddress => @config.bind_address)
     end
