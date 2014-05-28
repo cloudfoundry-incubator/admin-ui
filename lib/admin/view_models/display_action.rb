@@ -3,8 +3,9 @@ require_relative 'base_action'
 module AdminUI
   class DisplayAction < AdminUI::BaseAction
     def do_items
-      i_display_start  = @params[:iDisplayStart].to_i
-      i_display_length = @params[:iDisplayLength].to_i
+      # Add default values for start and length to return all records
+      i_display_start  = @params[:iDisplayStart]  ? @params[:iDisplayStart].to_i  :  0
+      i_display_length = @params[:iDisplayLength] ? @params[:iDisplayLength].to_i : -1
 
       source_items = @source[:items]
       first = i_display_start
