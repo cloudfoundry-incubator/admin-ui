@@ -10,12 +10,12 @@ module AdminUI
     end
 
     def do_items
-      quota_definitions = @cc.quota_definitions
+      quota_definitions = @cc.quota_definitions(false)
 
       # quota_definitions have to exist.  Other record types are optional
       return result unless quota_definitions['connected']
 
-      organizations = @cc.organizations
+      organizations = @cc.organizations(false)
 
       organization_counters = {}
 

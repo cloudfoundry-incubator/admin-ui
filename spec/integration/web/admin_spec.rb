@@ -55,6 +55,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     end
 
     context 'tabs' do
+      let(:table_has_data) { true }
       before do
         # Move click action into the wait blog to ensure relevant tab has been clicked and rendered
         # This part is modified to fit Travis CI system.
@@ -72,6 +73,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         rescue Selenium::WebDriver::Error::TimeOutError
         end
         expect(@driver.find_element(:id => "#{ tab_id }Page").displayed?).to eq(true)
+
+        if table_has_data
+          # Need to wait until the table on the page has data
+          begin
+            Selenium::WebDriver::Wait.new(:timeout => 10).until { @driver.find_element(:xpath => "//table[@id='#{ tab_id }Table']/tbody/tr").text != 'No data available in table' }
+          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+          end
+          expect(@driver.find_element(:xpath => "//table[@id='#{ tab_id }Table']/tbody/tr").text).not_to eq('No data available in table')
+        end
       end
 
       context 'Organizations' do
@@ -1360,6 +1370,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Tasks' do
         let(:tab_id) { 'Tasks' }
+        let(:table_has_data) { false }
         it 'has a table' do
           check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='TasksTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                  :expected_length => 3,

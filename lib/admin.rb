@@ -15,8 +15,9 @@ require_relative 'admin/web'
 
 module AdminUI
   class Admin
-    def initialize(config_hash)
+    def initialize(config_hash, testing = false)
       @config_hash = config_hash
+      @testing     = testing
     end
 
     def start
@@ -50,10 +51,10 @@ module AdminUI
       email  = EMail.new(@config, @logger)
       nats   = NATS.new(@config, @logger, email)
 
-      @cc          = CC.new(@config, @logger, client)
+      @cc          = CC.new(@config, @logger, client, @testing)
       @log_files   = LogFiles.new(@config, @logger)
       @tasks       = Tasks.new(@config, @logger)
-      @varz        = VARZ.new(@config, @logger, nats)
+      @varz        = VARZ.new(@config, @logger, nats, @testing)
       @stats       = Stats.new(@config, @logger, @cc, @varz)
       @view_models = ViewModels.new(@config, @logger, @cc, @log_files, @stats, @tasks, @varz)
       @operation   = Operation.new(@config, @logger, @cc, client, @varz, @view_models)

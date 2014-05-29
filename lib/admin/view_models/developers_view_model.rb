@@ -10,14 +10,14 @@ module AdminUI
     end
 
     def do_items
-      spaces_developers = @cc.spaces_developers
-      users             = @cc.users
+      spaces_developers = @cc.spaces_developers(false)
+      users             = @cc.users(false)
 
       # spaces_developers and users have to exist.  Other record types are optional
       return result unless spaces_developers['connected'] && users['connected']
 
-      organizations = @cc.organizations
-      spaces        = @cc.spaces
+      organizations = @cc.organizations(false)
+      spaces        = @cc.spaces(false)
 
       organization_hash = Hash[*organizations['items'].map { |item| [item['guid'], item] }.flatten]
       space_hash        = Hash[*spaces['items'].map { |item| [item['guid'], item] }.flatten]

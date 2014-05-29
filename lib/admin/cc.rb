@@ -3,12 +3,14 @@ require_relative 'scheduled_thread_pool'
 
 module AdminUI
   class CC
-    def initialize(config, logger, client)
-      @config = config
-      @client = client
-      @logger = logger
+    def initialize(config, logger, client, testing = false)
+      @config  = config
+      @client  = client
+      @logger  = logger
+      @testing = testing
+
       # TODO: Need config for number of threads
-      @pool   = AdminUI::ScheduledThreadPool.new(logger, 5)
+      @pool   = AdminUI::ScheduledThreadPool.new(logger, 6, -2)
 
       @caches = {}
 
@@ -20,36 +22,36 @@ module AdminUI
       end
     end
 
-    def applications
-      result_cache(:applications)
+    def applications(wait = true)
+      result_cache(:applications, wait)
     end
 
-    def applications_count
-      applications['items'].length
+    def applications_count(wait = true)
+      applications(wait)['items'].length
     end
 
-    def applications_running_instances
+    def applications_running_instances(wait = true)
       instances = 0
-      applications['items'].each do |app|
+      applications(wait)['items'].each do |app|
         instances += app['instances'] if app['state'] == 'STARTED'
       end
       instances
     end
 
-    def applications_total_instances
+    def applications_total_instances(wait = true)
       instances = 0
-      applications['items'].each do |app|
+      applications(wait)['items'].each do |app|
         instances += app['instances']
       end
       instances
     end
 
-    def organizations
-      result_cache(:organizations)
+    def organizations(wait = true)
+      result_cache(:organizations, wait)
     end
 
-    def organizations_count
-      organizations['items'].length
+    def organizations_count(wait = true)
+      organizations(wait)['items'].length
     end
 
     def invalidate_applications
@@ -68,40 +70,40 @@ module AdminUI
       invalidate_cache(:routes)
     end
 
-    def quota_definitions
-      result_cache(:quota_definitions)
+    def quota_definitions(wait = true)
+      result_cache(:quota_definitions, wait)
     end
 
-    def routes
-      result_cache(:routes)
+    def routes(wait = true)
+      result_cache(:routes, wait)
     end
 
-    def services
-      result_cache(:services)
+    def services(wait = true)
+      result_cache(:services, wait)
     end
 
-    def service_bindings
-      result_cache(:service_bindings)
+    def service_bindings(wait = true)
+      result_cache(:service_bindings, wait)
     end
 
-    def service_brokers
-      result_cache(:service_brokers)
+    def service_brokers(wait = true)
+      result_cache(:service_brokers, wait)
     end
 
-    def service_instances
-      result_cache(:service_instances)
+    def service_instances(wait = true)
+      result_cache(:service_instances, wait)
     end
 
-    def service_plans
-      result_cache(:service_plans)
+    def service_plans(wait = true)
+      result_cache(:service_plans, wait)
     end
 
-    def spaces
-      result_cache(:spaces)
+    def spaces(wait = true)
+      result_cache(:spaces, wait)
     end
 
-    def spaces_auditors
-      users_cc_deep = result_cache(:users_cc_deep)
+    def spaces_auditors(wait = true)
+      users_cc_deep = result_cache(:users_cc_deep, wait)
       if users_cc_deep['connected']
         discover_spaces_auditors(users_cc_deep)
       else
@@ -109,12 +111,12 @@ module AdminUI
       end
     end
 
-    def spaces_count
-      spaces['items'].length
+    def spaces_count(wait = true)
+      spaces(wait)['items'].length
     end
 
-    def spaces_developers
-      users_cc_deep = result_cache(:users_cc_deep)
+    def spaces_developers(wait = true)
+      users_cc_deep = result_cache(:users_cc_deep, wait)
       if users_cc_deep['connected']
         discover_spaces_developers(users_cc_deep)
       else
@@ -122,8 +124,8 @@ module AdminUI
       end
     end
 
-    def spaces_managers
-      users_cc_deep = result_cache(:users_cc_deep)
+    def spaces_managers(wait = true)
+      users_cc_deep = result_cache(:users_cc_deep, wait)
       if users_cc_deep['connected']
         discover_spaces_managers(users_cc_deep)
       else
@@ -131,12 +133,12 @@ module AdminUI
       end
     end
 
-    def users
-      result_cache(:users_uaa)
+    def users(wait = true)
+      result_cache(:users_uaa, wait)
     end
 
-    def users_count
-      users['items'].length
+    def users_count(wait = true)
+      users(wait)['items'].length
     end
 
     private
@@ -173,10 +175,14 @@ module AdminUI
       schedule(key, Time.now + @config.cloud_controller_discovery_interval)
     end
 
-    def result_cache(key)
+    def result_cache(key, wait)
       hash = @caches[key]
       hash[:semaphore].synchronize do
-        hash[:condition].wait(hash[:semaphore]) while hash[:result].nil?
+        if wait || @testing
+          hash[:condition].wait(hash[:semaphore]) while hash[:result].nil?
+        else
+          return result if hash[:result].nil?
+        end
         hash[:result]
       end
     end

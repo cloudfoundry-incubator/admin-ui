@@ -3,13 +3,13 @@ require 'thread'
 
 module AdminUI
   class ScheduledThreadPool
-    def initialize(logger, number_threads)
+    def initialize(logger, number_threads, priority)
       @logger = logger
       @queue  = []
       @mutex  = Mutex.new
 
       number_threads.times do
-        Thread.new do
+        thread = Thread.new do
           loop do
             entry = nil
             now   = Time.now
@@ -31,6 +31,8 @@ module AdminUI
             sleep 1
           end
         end
+
+        thread.priority = priority
       end
     end
 

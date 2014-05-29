@@ -5,18 +5,18 @@ require_relative '../utils'
 module AdminUI
   class OrganizationsViewModel < AdminUI::HasInstancesViewModel
     def do_items
-      organizations = @cc.organizations
+      organizations = @cc.organizations(false)
 
       # organizations have to exist.  Other record types are optional
       return result unless organizations['connected']
 
-      applications      = @cc.applications
-      deas              = @varz.deas
-      quotas            = @cc.quota_definitions
-      routes            = @cc.routes
-      service_instances = @cc.service_instances
-      spaces            = @cc.spaces
-      spaces_developers = @cc.spaces_developers
+      applications      = @cc.applications(false)
+      deas              = @varz.deas(false)
+      quotas            = @cc.quota_definitions(false)
+      routes            = @cc.routes(false)
+      service_instances = @cc.service_instances(false)
+      spaces            = @cc.spaces(false)
+      spaces_developers = @cc.spaces_developers(false)
 
       quota_hash = Hash[*quotas['items'].map { |item| [item['guid'], item] }.flatten]
       space_hash = Hash[*spaces['items'].map { |item| [item['guid'], item] }.flatten]

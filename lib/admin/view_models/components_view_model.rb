@@ -10,7 +10,7 @@ module AdminUI
     end
 
     def do_items
-      components = @varz.components
+      components = @varz.components(false)
 
       # components have to exist.  Other record types are optional
       return result unless components['connected']

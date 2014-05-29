@@ -29,7 +29,10 @@ module AdminUI
       @tasks     = tasks
       @varz      = varz
       # TODO: Need config for number of threads
-      @pool      = AdminUI::ScheduledThreadPool.new(logger, 5)
+      @pool      = AdminUI::ScheduledThreadPool.new(logger, 2, -1)
+
+      # Using an interval of half of the cloud_controller_interval.  The value of 1 is there for a test-time boundary
+      @interval = [@config.cloud_controller_discovery_interval / 2, 1].max
 
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
@@ -152,7 +155,7 @@ module AdminUI
     def discover(key)
       key_string = key.to_s
 
-      @logger.debug("[#{ @config.cloud_controller_discovery_interval } second interval] Starting view model #{ key_string } discovery...")
+      @logger.debug("[#{ @interval } second interval] Starting view model #{ key_string } discovery...")
 
       result_cache = send("discover_#{ key_string }".to_sym)
 
@@ -164,7 +167,7 @@ module AdminUI
       end
 
       # Set up the next scheduled discovery for this key
-      schedule(key, Time.now + @config.cloud_controller_discovery_interval)
+      schedule(key, Time.now + @interval)
     end
 
     def result_cache(key)

@@ -10,14 +10,14 @@ module AdminUI
     end
 
     def do_items
-      service_plans = @cc.service_plans
+      service_plans = @cc.service_plans(false)
 
       # service_plans have to exist.  Other record types are optional
       return result unless service_plans['connected']
 
-      services          = @cc.services
-      service_brokers   = @cc.service_brokers
-      service_instances = @cc.service_instances
+      services          = @cc.services(false)
+      service_brokers   = @cc.service_brokers(false)
+      service_instances = @cc.service_instances(false)
 
       service_broker_hash = Hash[*service_brokers['items'].map { |item| [item['guid'], item] }.flatten]
       service_hash        = Hash[*services['items'].map { |item| [item['guid'], item] }.flatten]
