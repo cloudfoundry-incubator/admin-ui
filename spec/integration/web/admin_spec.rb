@@ -135,11 +135,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has a set quota button' do
-            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_0').text).to eq('Set Quota')
+            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_1').text).to eq('Set Quota')
           end
 
           it 'alerts the user to select at least one row when clicking the button without selecting a row' do
-            @driver.find_element(:id => 'ToolTables_OrganizationsTable_0').click
+            @driver.find_element(:id => 'ToolTables_OrganizationsTable_1').click
             alert = @driver.switch_to.alert
             expect(alert.text).to eq('Please select at least one row!')
             alert.dismiss
@@ -149,7 +149,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             cc_organization_with_different_quota_stub(AdminUI::Config.load(config))
 
             check_first_row
-            @driver.find_element(:id => 'ToolTables_OrganizationsTable_0').click
+            @driver.find_element(:id => 'ToolTables_OrganizationsTable_1').click
 
             # Check whether the dialog is displayed
             expect(@driver.find_element(:id => 'ModalDialogMessageDiv').displayed?).to be_true
@@ -175,12 +175,48 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             @driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")[0].click
           end
 
+          it 'has a create button' do
+            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_0').text).to eq('Create')
+          end
+
           it 'has a delete button' do
-            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_1').text).to eq('Delete')
+            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_2').text).to eq('Delete')
+          end
+
+          it 'creates an organization' do
+            cc_multiple_organizations_stub(AdminUI::Config.load(config))
+
+            @driver.find_element(:id => 'ToolTables_OrganizationsTable_0').click
+
+            # Check whether the dialog is displayed
+            expect(@driver.find_element(:id => 'ModalDialogMessageDiv').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitleDiv').text).to eq('Create new organization')
+            expect(@driver.find_element(:id => 'organizationName').displayed?).to be_true
+
+            # Click the create button without input an organization name
+            @driver.find_element(:id => 'modalDialogButton0').click
+            alert = @driver.switch_to.alert
+            expect(alert.text).to eq('Please input the name of the organization first!')
+            alert.dismiss
+
+            # Input the name of the organization and click 'Create'
+            @driver.find_element(:id => 'organizationName').send_keys 'new_org'
+            @driver.find_element(:id => 'modalDialogButton0').click
+
+            alert = nil
+            Selenium::WebDriver::Wait.new(:timeout => 5).until { alert = @driver.switch_to.alert }
+            expect(alert.text).to eq("The operation finished without error.\nPlease refresh the page later for the updated result.")
+            alert.dismiss
+
+            begin
+              Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[2]/td[2]").text == 'new_org' }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[2]/td[2]").text).to eq('new_org')
           end
 
           it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(:id => 'ToolTables_OrganizationsTable_1').click
+            @driver.find_element(:id => 'ToolTables_OrganizationsTable_2').click
             alert = @driver.switch_to.alert
             expect(alert.text).to eq('Please select at least one row!')
             alert.dismiss
@@ -191,7 +227,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
             # delete the organization
             check_first_row
-            @driver.find_element(:id => 'ToolTables_OrganizationsTable_1').click
+            @driver.find_element(:id => 'ToolTables_OrganizationsTable_2').click
             confirm = @driver.switch_to.alert
             expect(confirm.text).to eq('Are you sure you want to delete the selected organizations?')
             confirm.accept

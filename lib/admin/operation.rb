@@ -8,6 +8,13 @@ module AdminUI
       @varz   = varz
     end
 
+    def create_organization(control_message)
+      url = 'v2/organizations'
+      @logger.debug("POST #{ url }, #{ control_message }")
+      @client.post_cc(url, control_message)
+      @cc.invalidate_organizations
+    end
+
     def delete_application(app_guid)
       url = "v2/apps/#{ app_guid }?recursive=true"
       @logger.debug("DELETE #{ url }")
