@@ -60,7 +60,7 @@ module AdminUI
     end
 
     get '/current_statistics' do
-      @stats.current_stats.to_json
+      @stats.current_stats(false).to_json
     end
 
     get '/deas_view_model', :auth => [:user] do
@@ -273,14 +273,14 @@ module AdminUI
     end
 
     post '/statistics', :auth => [:admin] do
-      stats = @stats.create_stats(:apps              => params['apps'].to_i,
-                                  :deas              => params['deas'].to_i,
-                                  :organizations     => params['organizations'].to_i,
-                                  :running_instances => params['running_instances'].to_i,
-                                  :spaces            => params['spaces'].to_i,
+      stats = @stats.create_stats(:apps              => params['apps'].empty? ? nil : params['apps'].to_i,
+                                  :deas              => params['deas'].empty? ? nil : params['deas'].to_i,
+                                  :organizations     => params['organizations'].empty? ? nil : params['organizations'].to_i,
+                                  :running_instances => params['running_instances'].empty? ? nil : params['running_instances'].to_i,
+                                  :spaces            => params['spaces'].empty? ? nil : params['spaces'].to_i,
                                   :timestamp         => params['timestamp'].to_i,
-                                  :total_instances   => params['total_instances'].to_i,
-                                  :users             => params['users'].to_i)
+                                  :total_instances   => params['total_instances'].empty? ? nil : params['total_instances'].to_i,
+                                  :users             => params['users'].empty? ? nil : params['users'].to_i)
 
       halt 500 if stats.nil?
 

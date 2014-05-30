@@ -481,13 +481,13 @@ describe AdminUI::Admin do
 
       json = JSON.parse(body)
 
-      expect(json).to include('apps'              => 0,
-                              'deas'              => 0,
-                              'organizations'     => 0,
-                              'running_instances' => 0,
-                              'spaces'            => 0,
-                              'total_instances'   => 0,
-                              'users'             => 0)
+      expect(json).to include('apps'              => nil,
+                              'deas'              => nil,
+                              'organizations'     => nil,
+                              'running_instances' => nil,
+                              'spaces'            => nil,
+                              'total_instances'   => nil,
+                              'users'             => nil)
     end
 
     context 'Login required for post' do

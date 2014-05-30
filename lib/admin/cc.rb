@@ -27,31 +27,29 @@ module AdminUI
     end
 
     def applications_count(wait = true)
-      applications(wait)['items'].length
+      hash = applications(wait)
+      return nil unless hash['connected']
+      hash['items'].length
     end
 
     def applications_running_instances(wait = true)
+      hash = applications(wait)
+      return nil unless hash['connected']
       instances = 0
-      applications(wait)['items'].each do |app|
+      hash['items'].each do |app|
         instances += app['instances'] if app['state'] == 'STARTED'
       end
       instances
     end
 
     def applications_total_instances(wait = true)
+      hash = applications(wait)
+      return nil unless hash['connected']
       instances = 0
-      applications(wait)['items'].each do |app|
+      hash['items'].each do |app|
         instances += app['instances']
       end
       instances
-    end
-
-    def organizations(wait = true)
-      result_cache(:organizations, wait)
-    end
-
-    def organizations_count(wait = true)
-      organizations(wait)['items'].length
     end
 
     def invalidate_applications
@@ -68,6 +66,16 @@ module AdminUI
 
     def invalidate_routes
       invalidate_cache(:routes)
+    end
+
+    def organizations(wait = true)
+      result_cache(:organizations, wait)
+    end
+
+    def organizations_count(wait = true)
+      hash = organizations(wait)
+      return nil unless hash['connected']
+      hash['items'].length
     end
 
     def quota_definitions(wait = true)
@@ -112,7 +120,9 @@ module AdminUI
     end
 
     def spaces_count(wait = true)
-      spaces(wait)['items'].length
+      hash = spaces(wait)
+      return nil unless hash['connected']
+      hash['items'].length
     end
 
     def spaces_developers(wait = true)
@@ -138,7 +148,9 @@ module AdminUI
     end
 
     def users_count(wait = true)
-      users(wait)['items'].length
+      hash = users(wait)
+      return nil unless hash['connected']
+      hash['items'].length
     end
 
     private

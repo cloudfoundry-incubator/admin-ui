@@ -37,8 +37,8 @@ describe AdminUI::NATS do
       expect(varz.deas).to eq('connected' => false, 'items' => [])
     end
 
-    it 'returns zero deas_count as expected' do
-      expect(varz.deas_count).to eq(0)
+    it 'returns nil deas_count as expected' do
+      expect(varz.deas_count).to be_nil
     end
 
     it 'returns zero health_managers as expected' do

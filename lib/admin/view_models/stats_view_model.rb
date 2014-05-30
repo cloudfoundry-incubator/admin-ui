@@ -31,13 +31,13 @@ module AdminUI
       row = []
 
       row.push(DateTime.parse(Time.at(statistic[:timestamp] / 1000.0).utc.to_s).rfc3339)
-      row.push(statistic[:organizations]     || 0)
-      row.push(statistic[:spaces]            || 0)
-      row.push(statistic[:users]             || 0)
-      row.push(statistic[:apps]              || 0)
-      row.push(statistic[:total_instances]   || 0)
-      row.push(statistic[:running_instances] || 0)
-      row.push(statistic[:deas]              || 0)
+      row.push(statistic[:organizations])
+      row.push(statistic[:spaces])
+      row.push(statistic[:users])
+      row.push(statistic[:apps])
+      row.push(statistic[:total_instances])
+      row.push(statistic[:running_instances])
+      row.push(statistic[:deas])
       row.push(statistic)
 
       row

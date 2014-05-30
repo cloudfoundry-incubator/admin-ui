@@ -34,7 +34,9 @@ module AdminUI
     end
 
     def deas_count(wait = true)
-      filter(/DEA/, wait)['items'].length
+      hash = filter(/DEA/, wait)
+      return nil unless hash['connected']
+      hash['items'].length
     end
 
     def health_managers(wait = true)
