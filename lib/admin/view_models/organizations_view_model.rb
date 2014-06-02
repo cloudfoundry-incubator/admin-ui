@@ -171,7 +171,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..23).to_a, (1..4).to_a << 7)
+      result(items, (1..23).to_a, (1..4).to_a << 7)
     end
   end
 end

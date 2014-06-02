@@ -51,7 +51,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..8).to_a, (0..2).to_a)
+      result(items, (0..8).to_a, [0, 1, 2, 6, 7])
     end
   end
 end
