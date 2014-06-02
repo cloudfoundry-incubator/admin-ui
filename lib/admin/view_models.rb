@@ -157,11 +157,15 @@ module AdminUI
 
       @logger.debug("[#{ @interval } second interval] Starting view model #{ key_string } discovery...")
 
+      start = Time.now
+
       result_cache = send("discover_#{ key_string }".to_sym)
+
+      finish = Time.now
 
       hash = @caches[key]
       hash[:semaphore].synchronize do
-        @logger.debug("Caching view model #{ key_string } data...")
+        @logger.debug("Caching view model #{ key_string } data.  Compilation time: #{ finish - start } seconds")
         hash[:result] = result_cache
         hash[:condition].broadcast
       end
