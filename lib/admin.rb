@@ -92,7 +92,12 @@ module AdminUI
         WEBrick::HTTPRequest.const_set('MAX_URI_LENGTH', 10_240)
       end
 
-      Rack::Handler::WEBrick.run(web, :AccessLog => [], :Logger => error_logger, :Port => @config.port, :BindAddress => @config.bind_address)
+      Rack::Handler::WEBrick.run(web,
+                                 :AccessLog          => [],
+                                 :BindAddress        => @config.bind_address,
+                                 :DoNotReverseLookup => true,
+                                 :Logger             => error_logger,
+                                 :Port               => @config.port)
     end
   end
 end
