@@ -161,11 +161,6 @@ describe AdminUI::Admin, :type => :integration do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
 
-    before do
-      # Make sure the original service plan status is public
-      expect(get_json('/service_plans')['items'][0]['public'].to_s).to eq('true')
-    end
-
     def make_service_plan_private
       response = put_request('/service_plans/service_plan1', '{"public": false }')
       expect(response.is_a? Net::HTTPNoContent).to be_true

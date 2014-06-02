@@ -1,11 +1,12 @@
 module AdminUI
   class Operation
-    def initialize(config, logger, cc, client, varz)
-      @cc     = cc
-      @client = client
-      @config = config
-      @logger = logger
-      @varz   = varz
+    def initialize(config, logger, cc, client, varz, view_models)
+      @cc          = cc
+      @client      = client
+      @config      = config
+      @logger      = logger
+      @varz        = varz
+      @view_models = view_models
     end
 
     def delete_application(app_guid)
@@ -13,6 +14,8 @@ module AdminUI
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_applications
+      @varz.invalidate
+      @view_models.invalidate_applications
     end
 
     def delete_organization(org_guid)
@@ -20,6 +23,7 @@ module AdminUI
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_organizations
+      @view_models.invalidate_organizations
     end
 
     def manage_application(app_guid, control_message)
@@ -28,6 +32,7 @@ module AdminUI
       @client.put_cc(url, control_message)
       @cc.invalidate_applications
       @varz.invalidate
+      @view_models.invalidate_applications
     end
 
     def manage_route(route_guid)
@@ -35,6 +40,7 @@ module AdminUI
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_routes
+      @view_models.invalidate_routes
     end
 
     def manage_service_plan(service_plan_guid, control_message)
@@ -42,6 +48,7 @@ module AdminUI
       @logger.debug("PUT #{ url }, #{ control_message }")
       @client.put_cc(url, control_message)
       @cc.invalidate_service_plans
+      @view_models.invalidate_service_plans
     end
 
     def manage_organization(org_guid, control_message)
@@ -49,6 +56,7 @@ module AdminUI
       @logger.debug("PUT #{ url }, #{ control_message }")
       @client.put_cc(url, control_message)
       @cc.invalidate_organizations
+      @view_models.invalidate_organizations
     end
   end
 end

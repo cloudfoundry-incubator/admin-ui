@@ -57,7 +57,7 @@ shared_context :server_context do
     ::WEBrick::Log.any_instance.stub(:log)
 
     Thread.new do
-      AdminUI::Admin.new(config).start
+      AdminUI::Admin.new(config, true).start
     end
 
     sleep(1)

@@ -64,5 +64,9 @@ module AdminUI
         hash
       end
     end
+
+    def self.convert_bytes_to_megabytes(bytes)
+      (bytes / 1_048_576.0).round
+    end
   end
 end

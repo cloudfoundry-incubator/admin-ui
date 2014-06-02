@@ -43,16 +43,16 @@ module AdminUI
       result
     end
 
-    def current_stats
+    def current_stats(wait = true)
       {
-        :apps              => @cc.applications_count,
-        :deas              => @varz.deas_count,
-        :organizations     => @cc.organizations_count,
-        :running_instances => @cc.applications_running_instances,
-        :spaces            => @cc.spaces_count,
+        :apps              => @cc.applications_count(wait),
+        :deas              => @varz.deas_count(wait),
+        :organizations     => @cc.organizations_count(wait),
+        :running_instances => @cc.applications_running_instances(wait),
+        :spaces            => @cc.spaces_count(wait),
         :timestamp         => Utils.time_in_milliseconds,
-        :total_instances   => @cc.applications_total_instances,
-        :users             => @cc.users_count
+        :total_instances   => @cc.applications_total_instances(wait),
+        :users             => @cc.users_count(wait)
       }
     end
 
@@ -123,7 +123,7 @@ module AdminUI
     end
 
     def generate_stats
-      stats = current_stats
+      stats = current_stats(false)
 
       attempt = 0
 
@@ -131,7 +131,7 @@ module AdminUI
         attempt += 1
         @logger.debug("Waiting #{ @config.stats_retry_interval } seconds before trying to save stats again...")
         sleep(@config.stats_retry_interval)
-        stats = current_stats
+        stats = current_stats(false)
       end
 
       @logger.debug('Reached max number of stat retries, giving up for now...') if attempt == @config.stats_retries

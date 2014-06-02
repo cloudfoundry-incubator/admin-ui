@@ -1,65 +1,59 @@
-require 'json'
+require 'date'
+require_relative 'scheduled_thread_pool'
 
 module AdminUI
   class CC
-    def initialize(config, logger, client)
-      @config = config
-      @client = client
-      @logger = logger
+    def initialize(config, logger, client, testing = false)
+      @config  = config
+      @client  = client
+      @logger  = logger
+      @testing = testing
+
+      # TODO: Need config for number of threads
+      @pool   = AdminUI::ScheduledThreadPool.new(logger, 6, -2)
 
       @caches = {}
+
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
       [:applications, :organizations, :quota_definitions, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_plans, :spaces, :users_cc_deep, :users_uaa].each do |key|
-        hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
-        @caches[key] = hash
-
-        Thread.new do
-          loop do
-            schedule_discovery(key, hash)
-          end
-        end
+        @caches[key] = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
+        schedule(key)
       end
     end
 
-    def applications
-      result_cache(:applications)
+    def applications(wait = true)
+      result_cache(:applications, wait)
     end
 
-    def applications_count
-      applications['items'].length
+    def applications_count(wait = true)
+      hash = applications(wait)
+      return nil unless hash['connected']
+      hash['items'].length
     end
 
-    def applications_running_instances
+    def applications_running_instances(wait = true)
+      hash = applications(wait)
+      return nil unless hash['connected']
       instances = 0
-      applications['items'].each do |app|
+      hash['items'].each do |app|
         instances += app['instances'] if app['state'] == 'STARTED'
       end
       instances
     end
 
-    def applications_total_instances
+    def applications_total_instances(wait = true)
+      hash = applications(wait)
+      return nil unless hash['connected']
       instances = 0
-      applications['items'].each do |app|
+      hash['items'].each do |app|
         instances += app['instances']
       end
       instances
     end
 
-    def organizations
-      result_cache(:organizations)
-    end
-
-    def organizations_count
-      organizations['items'].length
-    end
-
     def invalidate_applications
-      hash = @caches[:applications]
-      hash[:semaphore].synchronize do
-        hash[:result] = nil
-        hash[:condition].broadcast
-      end
+      invalidate_cache(:applications)
     end
 
     def invalidate_organizations
@@ -74,40 +68,50 @@ module AdminUI
       invalidate_cache(:routes)
     end
 
-    def quota_definitions
-      result_cache(:quota_definitions)
+    def organizations(wait = true)
+      result_cache(:organizations, wait)
     end
 
-    def routes
-      result_cache(:routes)
+    def organizations_count(wait = true)
+      hash = organizations(wait)
+      return nil unless hash['connected']
+      hash['items'].length
     end
 
-    def services
-      result_cache(:services)
+    def quota_definitions(wait = true)
+      result_cache(:quota_definitions, wait)
     end
 
-    def service_bindings
-      result_cache(:service_bindings)
+    def routes(wait = true)
+      result_cache(:routes, wait)
     end
 
-    def service_brokers
-      result_cache(:service_brokers)
+    def services(wait = true)
+      result_cache(:services, wait)
     end
 
-    def service_instances
-      result_cache(:service_instances)
+    def service_bindings(wait = true)
+      result_cache(:service_bindings, wait)
     end
 
-    def service_plans
-      result_cache(:service_plans)
+    def service_brokers(wait = true)
+      result_cache(:service_brokers, wait)
     end
 
-    def spaces
-      result_cache(:spaces)
+    def service_instances(wait = true)
+      result_cache(:service_instances, wait)
     end
 
-    def spaces_auditors
-      users_cc_deep = result_cache(:users_cc_deep)
+    def service_plans(wait = true)
+      result_cache(:service_plans, wait)
+    end
+
+    def spaces(wait = true)
+      result_cache(:spaces, wait)
+    end
+
+    def spaces_auditors(wait = true)
+      users_cc_deep = result_cache(:users_cc_deep, wait)
       if users_cc_deep['connected']
         discover_spaces_auditors(users_cc_deep)
       else
@@ -115,12 +119,14 @@ module AdminUI
       end
     end
 
-    def spaces_count
-      spaces['items'].length
+    def spaces_count(wait = true)
+      hash = spaces(wait)
+      return nil unless hash['connected']
+      hash['items'].length
     end
 
-    def spaces_developers
-      users_cc_deep = result_cache(:users_cc_deep)
+    def spaces_developers(wait = true)
+      users_cc_deep = result_cache(:users_cc_deep, wait)
       if users_cc_deep['connected']
         discover_spaces_developers(users_cc_deep)
       else
@@ -128,8 +134,8 @@ module AdminUI
       end
     end
 
-    def spaces_managers
-      users_cc_deep = result_cache(:users_cc_deep)
+    def spaces_managers(wait = true)
+      users_cc_deep = result_cache(:users_cc_deep, wait)
       if users_cc_deep['connected']
         discover_spaces_managers(users_cc_deep)
       else
@@ -137,51 +143,62 @@ module AdminUI
       end
     end
 
-    def users
-      result_cache(:users_uaa)
+    def users(wait = true)
+      result_cache(:users_uaa, wait)
     end
 
-    def users_count
-      users['items'].length
+    def users_count(wait = true)
+      hash = users(wait)
+      return nil unless hash['connected']
+      hash['items'].length
     end
 
     private
 
-    def invalidate_cache(key, *rediscover)
-      key_string = key.to_s
-
+    def invalidate_cache(key)
       hash = @caches[key]
       hash[:semaphore].synchronize do
-        if rediscover
-          result_cache = send("discover_#{ key_string }".to_sym)
-          @logger.debug("Caching CC #{ key_string } data...")
-          hash[:result] = result_cache
-        else
-          hash[:result] = nil
-        end
-        hash[:condition].broadcast
+        hash[:result] = nil
+      end
+      schedule(key)
+    end
+
+    def schedule(key, time = Time.now)
+      @pool.schedule(key, time) do
+        discover(key)
       end
     end
 
-    def schedule_discovery(key, hash)
+    def discover(key)
       key_string = key.to_s
 
       @logger.debug("[#{ @config.cloud_controller_discovery_interval } second interval] Starting CC #{ key_string } discovery...")
 
+      start = Time.now
+
       result_cache = send("discover_#{ key_string }".to_sym)
 
-      hash[:semaphore].synchronize do
-        @logger.debug("Caching CC #{ key_string } data...")
-        hash[:result] = result_cache
-        hash[:condition].broadcast
-        hash[:condition].wait(hash[:semaphore], @config.cloud_controller_discovery_interval)
-      end
-    end
+      finish = Time.now
 
-    def result_cache(key)
       hash = @caches[key]
       hash[:semaphore].synchronize do
-        hash[:condition].wait(hash[:semaphore]) while hash[:result].nil?
+        @logger.debug("Caching CC #{ key_string } data.  Retrieval time: #{ finish - start } seconds")
+        hash[:result] = result_cache
+        hash[:condition].broadcast
+      end
+
+      # Set up the next scheduled discovery for this key
+      schedule(key, Time.now + @config.cloud_controller_discovery_interval)
+    end
+
+    def result_cache(key, wait)
+      hash = @caches[key]
+      hash[:semaphore].synchronize do
+        if wait || @testing
+          hash[:condition].wait(hash[:semaphore]) while hash[:result].nil?
+        else
+          return result if hash[:result].nil?
+        end
         hash[:result]
       end
     end
