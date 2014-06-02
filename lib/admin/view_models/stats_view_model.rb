@@ -30,7 +30,7 @@ module AdminUI
     def to_row(statistic)
       row = []
 
-      row.push(DateTime.parse(Time.at(statistic[:timestamp] / 1000.0).utc.to_s).rfc3339)
+      row.push(DateTime.parse(Time.at(statistic[:timestamp] / 1000.0).to_s).rfc3339)
       row.push(statistic[:organizations])
       row.push(statistic[:spaces])
       row.push(statistic[:users])

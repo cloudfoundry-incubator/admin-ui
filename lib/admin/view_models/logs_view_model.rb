@@ -22,7 +22,7 @@ module AdminUI
 
         row.push(log[:path])
         row.push(log[:size])
-        row.push(DateTime.parse(Time.at(log[:time] / 1000.0).utc.to_s).rfc3339)
+        row.push(DateTime.parse(Time.at(log[:time] / 1000.0).to_s).rfc3339)
 
         row.push(log)
 
