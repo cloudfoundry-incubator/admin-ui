@@ -29,16 +29,16 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.applications)
     end
 
-    it 'returns zero application count as expected' do
-      expect(cc.applications_count).to eq(0)
+    it 'returns nil application count as expected' do
+      expect(cc.applications_count).to be_nil
     end
 
-    it 'returns zero application running instances as expected' do
-      expect(cc.applications_running_instances).to eq(0)
+    it 'returns nil application running instances as expected' do
+      expect(cc.applications_running_instances).to be_nil
     end
 
-    it 'returns zero application totals instances as expected' do
-      expect(cc.applications_total_instances).to eq(0)
+    it 'returns nil application totals instances as expected' do
+      expect(cc.applications_total_instances).to be_nil
     end
 
     it 'returns zero organizations as expected' do
@@ -53,8 +53,8 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.routes)
     end
 
-    it 'returns zero organizations count as expected' do
-      expect(cc.organizations_count).to eq(0)
+    it 'returns nil organizations count as expected' do
+      expect(cc.organizations_count).to be_nil
     end
 
     it 'returns zero services as expected' do
@@ -85,8 +85,8 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.spaces_auditors)
     end
 
-    it 'returns zero spaces count as expected' do
-      expect(cc.spaces_count).to eq(0)
+    it 'returns nil spaces count as expected' do
+      expect(cc.spaces_count).to be_nil
     end
 
     it 'returns zero spaces_developers as expected' do
@@ -101,8 +101,8 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.users)
     end
 
-    it 'returns zero users count as expected' do
-      expect(cc.users_count).to eq(0)
+    it 'returns nil users count as expected' do
+      expect(cc.users_count).to be_nil
     end
   end
 end

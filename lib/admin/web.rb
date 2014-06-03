@@ -1,18 +1,20 @@
 require 'sinatra'
+require_relative 'view_models/all_actions'
 
 module AdminUI
   class Web < Sinatra::Base
-    def initialize(config, logger, cc, log_files, operation, stats, tasks, varz)
+    def initialize(config, logger, cc, log_files, operation, stats, tasks, varz, view_models)
       super({})
 
-      @config    = config
-      @logger    = logger
-      @cc        = cc
-      @log_files = log_files
-      @operation = operation
-      @stats     = stats
-      @tasks     = tasks
-      @varz      = varz
+      @config      = config
+      @logger      = logger
+      @cc          = cc
+      @log_files   = log_files
+      @operation   = operation
+      @stats       = stats
+      @tasks       = tasks
+      @varz        = varz
+      @view_models = view_models
     end
 
     configure do
@@ -33,12 +35,24 @@ module AdminUI
       send_file File.expand_path('login.html', settings.public_folder)
     end
 
+    get '/applications_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.applications, params).items.to_json
+    end
+
     get '/applications', :auth => [:user] do
       @cc.applications.to_json
     end
 
+    get '/cloud_controllers_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.cloud_controllers, params).items.to_json
+    end
+
     get '/cloud_controllers', :auth => [:user] do
       @varz.cloud_controllers.to_json
+    end
+
+    get '/components_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.components, params).items.to_json
     end
 
     get '/components', :auth => [:user] do
@@ -46,11 +60,19 @@ module AdminUI
     end
 
     get '/current_statistics' do
-      @stats.current_stats.to_json
+      @stats.current_stats(false).to_json
+    end
+
+    get '/deas_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.deas, params).items.to_json
     end
 
     get '/deas', :auth => [:user] do
       @varz.deas.to_json
+    end
+
+    get '/developers_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.developers, params).items.to_json
     end
 
     get '/download', :auth => [:user] do
@@ -67,8 +89,16 @@ module AdminUI
     get '/favicon.ico' do
     end
 
+    get '/gateways_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.gateways, params).items.to_json
+    end
+
     get '/gateways', :auth => [:user] do
       @varz.gateways.to_json
+    end
+
+    get '/health_managers_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.health_managers, params).items.to_json
     end
 
     get '/health_managers', :auth => [:user] do
@@ -84,8 +114,16 @@ module AdminUI
       end
     end
 
+    get '/logs_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.logs, params).items.to_json
+    end
+
     get '/logs', :auth => [:user] do
       { :items => @log_files.infos }.to_json
+    end
+
+    get '/organizations_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.organizations, params).items.to_json
     end
 
     get '/organizations', :auth => [:user] do
@@ -94,6 +132,18 @@ module AdminUI
 
     get '/quota_definitions', :auth => [:user] do
       @cc.quota_definitions.to_json
+    end
+
+    get '/quotas_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.quotas, params).items.to_json
+    end
+
+    get '/routers_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.routers, params).items.to_json
+    end
+
+    get '/routes_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.routes, params).items.to_json
     end
 
     get '/routers', :auth => [:user] do
@@ -124,12 +174,24 @@ module AdminUI
       @cc.service_brokers.to_json
     end
 
+    get '/service_instances_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.service_instances, params).items.to_json
+    end
+
     get '/service_instances', :auth => [:user] do
       @cc.service_instances.to_json
     end
 
+    get '/service_plans_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.service_plans, params).items.to_json
+    end
+
     get '/service_plans', :auth => [:user] do
       @cc.service_plans.to_json
+    end
+
+    get '/spaces_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.spaces, params).items.to_json
     end
 
     get '/spaces', :auth => [:user] do
@@ -152,8 +214,18 @@ module AdminUI
       @stats.stats.to_json
     end
 
+    get '/stats_view_model' do
+      extended_result = AllActions.new(@logger, @view_models.stats, params).items
+      extended_result[:items][:label] = @config.cloud_controller_uri
+      extended_result.to_json
+    end
+
     get '/stats' do
       send_file File.expand_path('stats.html', settings.public_folder)
+    end
+
+    get '/tasks_view_model', :auth => [:user] do
+      AllActions.new(@logger, @view_models.tasks, params).items.to_json
     end
 
     get '/tasks', :auth => [:user] do
@@ -178,7 +250,9 @@ module AdminUI
     end
 
     post '/deas', :auth => [:admin] do
-      { :task_id => @tasks.new_dea }.to_json
+      result = { :task_id => @tasks.new_dea }
+      @view_models.invalidate_tasks
+      result.to_json
     end
 
     post '/login' do
@@ -212,16 +286,18 @@ module AdminUI
     end
 
     post '/statistics', :auth => [:admin] do
-      stats = @stats.create_stats(:apps              => params['apps'].to_i,
-                                  :deas              => params['deas'].to_i,
-                                  :organizations     => params['organizations'].to_i,
-                                  :running_instances => params['running_instances'].to_i,
-                                  :spaces            => params['spaces'].to_i,
+      stats = @stats.create_stats(:apps              => params['apps'].empty? ? nil : params['apps'].to_i,
+                                  :deas              => params['deas'].empty? ? nil : params['deas'].to_i,
+                                  :organizations     => params['organizations'].empty? ? nil : params['organizations'].to_i,
+                                  :running_instances => params['running_instances'].empty? ? nil : params['running_instances'].to_i,
+                                  :spaces            => params['spaces'].empty? ? nil : params['spaces'].to_i,
                                   :timestamp         => params['timestamp'].to_i,
-                                  :total_instances   => params['total_instances'].to_i,
-                                  :users             => params['users'].to_i)
+                                  :total_instances   => params['total_instances'].empty? ? nil : params['total_instances'].to_i,
+                                  :users             => params['users'].empty? ? nil : params['users'].to_i)
 
       halt 500 if stats.nil?
+
+      @view_models.invalidate_stats
 
       [200, stats.to_json]
 

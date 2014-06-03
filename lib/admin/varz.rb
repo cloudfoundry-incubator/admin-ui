@@ -3,10 +3,11 @@ require 'net/http'
 
 module AdminUI
   class VARZ
-    def initialize(config, logger, nats)
-      @config = config
-      @logger = logger
-      @nats   = nats
+    def initialize(config, logger, nats, testing = false)
+      @config  = config
+      @logger  = logger
+      @nats    = nats
+      @testing = testing
 
       @semaphore = Mutex.new
       @condition = ConditionVariable.new
@@ -20,32 +21,34 @@ module AdminUI
       end
     end
 
-    def components
-      filter(//)
+    def components(wait = true)
+      filter(//, wait)
     end
 
-    def cloud_controllers
-      filter(/CloudController/)
+    def cloud_controllers(wait = true)
+      filter(/CloudController/, wait)
     end
 
-    def deas
-      filter(/DEA/)
+    def deas(wait = true)
+      filter(/DEA/, wait)
     end
 
-    def deas_count
-      filter(/DEA/)['items'].length
+    def deas_count(wait = true)
+      hash = filter(/DEA/, wait)
+      return nil unless hash['connected']
+      hash['items'].length
     end
 
-    def health_managers
-      filter(/HealthManager/)
+    def health_managers(wait = true)
+      filter(/HealthManager/, wait)
     end
 
-    def gateways
-      filter(/-Provisioner/)
+    def gateways(wait = true)
+      filter(/-Provisioner/, wait)
     end
 
-    def routers
-      filter(/Router/)
+    def routers(wait = true)
+      filter(/Router/, wait)
     end
 
     def invalidate
@@ -79,10 +82,14 @@ module AdminUI
 
     private
 
-    def filter(typePattern)
+    def filter(typePattern, wait)
       cache = {}
       @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache.nil?
+        if wait || @testing
+          @condition.wait(@semaphore) while @cache.nil?
+        else
+          return { 'connected' => false, 'items' => [] } if @cache.nil?
+        end
         cache = @cache.clone
       end
 
