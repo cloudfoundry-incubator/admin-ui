@@ -1,0 +1,19 @@
+language: ruby
+rvm:
+  - 1.9.3-p484
+addons:
+  sauce_connect:
+    username: 'admin-ui'
+    access_key:
+      secure: "HERcu03sO5U2b3YfM7nifYeM41XH/nFmqG3tMp1d2ChNcIAHBKub8zlS/kcY1G37HXR/6YQDg2onJ7wuy4/Vrc/C/TZXi/MmzwiGrBGzBQ9zFzuilFFuqECek0UPnwZBYXPWr56v6MD1/vOs42cqyfJWfV8AQJI2jdLFReVxNSI="
+before_install:
+- git submodule update --init --recursive
+- gem install rubocop -v 0.21.0 --no-rdoc --no-ri
+script: 
+  - rubocop
+  - bundle exec rspec
+branches:
+  only:
+  # For now enable it for all branches so people can verify their
+  # changes prior to submitting a PR
+  # - master
