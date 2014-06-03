@@ -14,6 +14,7 @@ module AdminUI
       @logger.debug("POST #{ url }, #{ control_message }")
       @client.post_cc(url, control_message)
       @cc.invalidate_organizations
+      @view_models.invalidate_organizations
     end
 
     def delete_application(app_guid)
