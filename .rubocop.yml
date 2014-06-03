@@ -27,3 +27,6 @@ MethodLength:
 
 ParameterLists:
   Enabled: false
+  
+UselessSetterCall:
+  Enabled: false

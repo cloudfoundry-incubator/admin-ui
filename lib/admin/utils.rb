@@ -42,7 +42,15 @@ module AdminUI
 
       request.body = body if body
 
-      http.request(request)
+      retries_remaining = 2
+      loop do
+        begin
+          return http.request(request)
+        rescue EOFError, Timeout::Error
+          raise if retries_remaining < 1
+          retries_remaining -= 1
+        end
+      end
     end
 
     def self.hours_in_a_day(num_minutes)
