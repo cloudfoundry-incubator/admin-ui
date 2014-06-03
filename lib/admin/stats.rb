@@ -15,7 +15,7 @@ module AdminUI
 
       @stats_semaphore = Mutex.new
 
-      Thread.new do
+      thread = Thread.new do
         loop do
           time_last_run = schedule_stats
           if  time_last_run < 0
@@ -24,6 +24,8 @@ module AdminUI
           end
         end
       end
+
+      thread.priority = -2
     end
 
     def stats

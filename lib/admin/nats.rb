@@ -18,11 +18,13 @@ module AdminUI
 
       @cache = {}
 
-      Thread.new do
+      thread = Thread.new do
         loop do
           schedule_discovery
         end
       end
+
+      thread.priority = -2
     end
 
     def get
@@ -78,12 +80,14 @@ module AdminUI
 
         @last_discovery_time = 0
 
-        Thread.new do
+        thread = Thread.new do
           while (@last_discovery_time == 0 && (Time.now.to_f - @start_time < @config.nats_discovery_interval)) || (Time.now.to_f - @last_discovery_time < @config.nats_discovery_timeout)
             sleep(@config.nats_discovery_timeout)
           end
           ::NATS.stop
         end
+
+        thread.priority = -2
 
         ::NATS.start(:uri => @config.mbus) do
           # Set the connected to true to handle case where NATS is back up but no components are.
@@ -161,7 +165,7 @@ module AdminUI
 
     def send_email(disconnected)
       if @email.configured? && disconnected.length > 0
-        Thread.new do
+        thread = Thread.new do
           begin
             @email.send_email(disconnected)
           rescue => error
@@ -169,6 +173,8 @@ module AdminUI
             @logger.debug(error.backtrace.join("\n"))
           end
         end
+
+        thread.priority = -2
       end
     end
 

@@ -14,11 +14,13 @@ module AdminUI
 
       @cache = nil
 
-      Thread.new do
+      thread = Thread.new do
         loop do
           schedule_discovery
         end
       end
+
+      thread.priority = -2
     end
 
     def components(wait = true)

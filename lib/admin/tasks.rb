@@ -99,7 +99,7 @@ module AdminUI
     end
 
     def handle_task_output!(task, type, type_symbol)
-      Thread.new do
+      thread = Thread.new do
         begin
           line = ''
           until line.nil?
@@ -111,6 +111,8 @@ module AdminUI
           @logger.debug(error.backtrace.join("\n"))
         end
       end
+
+      thread.priority = -2
     end
 
     def update_task!(task, type, line)
@@ -125,13 +127,15 @@ module AdminUI
     end
 
     def wait_task_finished!(task)
-      Thread.new do
+      thread = Thread.new do
         task[:external].join
         task[:semaphore].synchronize do
           task[:state] = 'FINISHED'
           task[:condition].signal
         end
       end
+
+      thread.priority = -2
     end
 
     def register_task!(task)
