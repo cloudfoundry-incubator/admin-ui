@@ -75,6 +75,12 @@ describe AdminUI::Operation, :type => :integration do
         expect(cc.organizations['items'].length).to eq(1)
       end
 
+      it 'creates a new organization' do
+        cc_multiple_organizations_stub(config)
+        expect { operation.create_organization('{"name":"new_org"}') }.to change { cc.organizations['items'].length }.from(1).to(2)
+        expect(cc.organizations['items'][1]['name']).to eq('new_org')
+      end
+
       it 'deletes specific organization' do
         cc_empty_organizations_stub(config)
         expect { operation.delete_organization('organization1') }.to change { cc.organizations['items'].length }.from(1).to(0)

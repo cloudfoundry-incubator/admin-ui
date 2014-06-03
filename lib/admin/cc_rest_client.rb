@@ -47,6 +47,10 @@ module AdminUI
       cf_request(get_cc_url(path), Utils::HTTP_PUT, body)
     end
 
+    def post_cc(path, body)
+      cf_request(get_cc_url(path), Utils::HTTP_POST, body)
+    end
+
     private
 
     def cf_request(url, method, body = nil)
@@ -65,6 +69,8 @@ module AdminUI
           return JSON.parse(response.body)
         elsif method == Utils::HTTP_DELETE && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPNoContent))
           return
+        elsif method == Utils::HTTP_POST && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
+          return JSON.parse(response.body)
         end
 
         if !recent_login && response.is_a?(Net::HTTPUnauthorized)

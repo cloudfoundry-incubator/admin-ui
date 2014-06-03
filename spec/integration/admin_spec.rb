@@ -42,6 +42,17 @@ describe AdminUI::Admin, :type => :integration do
     JSON.parse(body)
   end
 
+  def post_request(path, body)
+    request = Net::HTTP::Post.new(path)
+    request['Cookie'] = cookie
+    request['Content-Length'] = 0
+    request.body = body if body
+
+    response = http.request(request)
+
+    response
+  end
+
   def put_request(path, body)
     request = Net::HTTP::Put.new(path)
     request['Cookie'] = cookie
@@ -116,6 +127,11 @@ describe AdminUI::Admin, :type => :integration do
       expect(get_json('/organizations')['items'].length).to eq(1)
     end
 
+    def create_org
+      response = post_request('/organizations', '{"name":"new_org"}')
+      expect(response.is_a? Net::HTTPNoContent).to be_true
+    end
+
     def delete_org
       response = delete_request('/organizations/organization1')
       expect(response.is_a? Net::HTTPNoContent).to be_true
@@ -124,6 +140,12 @@ describe AdminUI::Admin, :type => :integration do
     def set_quota
       response = put_request('/organizations/organization1', '{"quota_definition_guid":"quota2"}')
       expect(response.is_a? Net::HTTPNoContent).to be_true
+    end
+
+    it 'creates an organization' do
+      cc_multiple_organizations_stub(AdminUI::Config.load(config))
+      expect { create_org }.to change { get_json('/organizations')['items'].length }.from(1).to(2)
+      expect(get_json('/organizations')['items'][1]['name']).to eq('new_org')
     end
 
     it 'deletes an organization' do

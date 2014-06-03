@@ -272,6 +272,19 @@ module AdminUI
       end
     end
 
+    post '/organizations', :auth => [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @operation.create_organization(control_message)
+
+        204
+      rescue => error
+        @logger.debug("Error during creating organization: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     post '/statistics', :auth => [:admin] do
       stats = @stats.create_stats(:apps              => params['apps'].empty? ? nil : params['apps'].to_i,
                                   :deas              => params['deas'].empty? ? nil : params['deas'].to_i,

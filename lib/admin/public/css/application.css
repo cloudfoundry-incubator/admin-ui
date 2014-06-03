@@ -450,7 +450,7 @@ a
     /* margin-top:10px;*/
 }
 
-.quota_management_div
+.quota_management_div, .organization_creation_div
 {
     text-align: left;
     padding-top: 20px;

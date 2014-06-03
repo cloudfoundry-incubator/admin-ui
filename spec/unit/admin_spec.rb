@@ -116,6 +116,15 @@ describe AdminUI::Admin do
       http.request(request)
     end
 
+    def post(path, body)
+      request = Net::HTTP::Post.new(path)
+      request['Cookie'] = cookie
+      request['Content-Length'] = 0
+      request.body = body if body
+
+      http.request(request)
+    end
+
     def delete(path)
       request = Net::HTTP::Delete.new(path)
       request['Cookie'] = cookie
@@ -133,6 +142,13 @@ describe AdminUI::Admin do
       json = get_json(path)
 
       expect(json).to include('items' => [])
+    end
+
+    context 'create organization' do
+      it 'returns failure code due to disconnection' do
+        response = post('/organizations', '{"name":"new_org"}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
     end
 
     context 'delete application' do
@@ -283,6 +299,12 @@ describe AdminUI::Admin do
       do_redirect_request(Net::HTTP::Get.new(path))
     end
 
+    def post_redirects_as_expected(path, body)
+      request = Net::HTTP::Post.new(path)
+      request.body = body if body
+      do_redirect_request(request)
+    end
+
     def put_redirects_as_expected(path, body)
       request = Net::HTTP::Put.new(path)
       request.body = body if body
@@ -417,6 +439,10 @@ describe AdminUI::Admin do
 
     it 'deletes /routes/:route_guid redirects as expected' do
       delete_redirects_as_expected('/routes/route1')
+    end
+
+    it 'posts /organizations redirects as expected' do
+      post_redirects_as_expected('/organizations', '{"name":"new_org"}')
     end
 
     it 'puts /applications/:app_guid redirects as expected' do
