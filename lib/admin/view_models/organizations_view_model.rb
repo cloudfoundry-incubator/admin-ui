@@ -18,6 +18,12 @@ module AdminUI
       spaces            = @cc.spaces(false)
       spaces_developers = @cc.spaces_developers(false)
 
+      applications_connected      = applications['connected']
+      routes_connected            = routes['connected']
+      service_instances_connected = service_instances['connected']
+      spaces_connected            = spaces['connected']
+      spaces_developers_connected = spaces_developers['connected']
+
       quota_hash = Hash[*quotas['items'].map { |item| [item['guid'], item] }.flatten]
       space_hash = Hash[*spaces['items'].map { |item| [item['guid'], item] }.flatten]
 
@@ -123,8 +129,21 @@ module AdminUI
           row.push(nil)
         end
 
-        row.push(organization_space_counter || 0)
-        row.push(organization_developer_counter || 0)
+        if organization_space_counter
+          row.push(organization_space_counter)
+        elsif spaces_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if organization_developer_counter
+          row.push(organization_developer_counter)
+        elsif spaces_connected && spaces_developers_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
 
         quota = quota_hash[organization['quota_definition_guid']]
 
@@ -138,17 +157,27 @@ module AdminUI
           row.push(organization_route_counters['total_routes'])
           row.push(organization_route_counters['total_routes'] - organization_route_counters['unused_routes'])
           row.push(organization_route_counters['unused_routes'])
-        else
+        elsif spaces_connected && routes_connected
           row.push(0, 0, 0)
+        else
+          row.push(nil, nil, nil)
         end
 
         if organization_app_counters
           row.push(organization_app_counters['instances'])
-        else
+        elsif spaces_connected && applications_connected
           row.push(0)
+        else
+          row.push(nil)
         end
 
-        row.push(organization_service_instance_counter || 0)
+        if organization_service_instance_counter
+          row.push(organization_service_instance_counter)
+        elsif spaces_connected && service_instances_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
 
         if organization_app_counters
           row.push(Utils.convert_bytes_to_megabytes(organization_app_counters['used_memory']))
@@ -162,8 +191,10 @@ module AdminUI
           row.push(organization_app_counters['PENDING'] || 0)
           row.push(organization_app_counters['STAGED']  || 0)
           row.push(organization_app_counters['FAILED']  || 0)
-        else
+        elsif spaces_connected && applications_connected
           row.push(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        else
+          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
         end
 
         row.push(organization)

@@ -17,6 +17,11 @@ module AdminUI
       service_instances = @cc.service_instances(false)
       spaces_developers = @cc.spaces_developers(false)
 
+      applications_connected      = applications['connected']
+      routes_connected            = routes['connected']
+      service_instances_connected = service_instances['connected']
+      spaces_developers_connected = spaces_developers['connected']
+
       organization_hash = Hash[*organizations['items'].map { |item| [item['guid'], item] }.flatten]
 
       space_developer_counters        = {}
@@ -106,23 +111,39 @@ module AdminUI
           row.push(nil)
         end
 
-        row.push(space_developer_counter || 0)
+        if space_developer_counter
+          row.push(space_developer_counter)
+        elsif spaces_developers_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
 
         if space_route_counters
           row.push(space_route_counters['total_routes'])
           row.push(space_route_counters['total_routes'] - space_route_counters['unused_routes'])
           row.push(space_route_counters['unused_routes'])
-        else
+        elsif routes_connected
           row.push(0, 0, 0)
+        else
+          row.push(nil, nil, nil)
         end
 
         if space_app_counters
           row.push(space_app_counters['instances'])
-        else
+        elsif applications_connected
           row.push(0)
+        else
+          row.push(nil)
         end
 
-        row.push(space_service_instance_counter || 0)
+        if space_service_instance_counter
+          row.push(space_service_instance_counter)
+        elsif service_instances_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
 
         if space_app_counters
           row.push(Utils.convert_bytes_to_megabytes(space_app_counters['used_memory']))
@@ -136,8 +157,10 @@ module AdminUI
           row.push(space_app_counters['PENDING'] || 0)
           row.push(space_app_counters['STAGED']  || 0)
           row.push(space_app_counters['FAILED']  || 0)
-        else
+        elsif applications_connected
           row.push(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        else
+          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
         end
 
         row.push('organization' => organization,

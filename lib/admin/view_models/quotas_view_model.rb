@@ -17,6 +17,8 @@ module AdminUI
 
       organizations = @cc.organizations(false)
 
+      organizations_connected = organizations['connected']
+
       organization_counters = {}
 
       organizations['items'].each do |organization|
@@ -44,7 +46,14 @@ module AdminUI
         row.push(quota_definition['memory_limit'])
         row.push(quota_definition['non_basic_services_allowed'])
         row.push(quota_definition['trial_db_allowed'])
-        row.push(organization_counters[quota_definition['guid']] || 0)
+
+        if organization_counters[quota_definition['guid']]
+          row.push(organization_counters[quota_definition['guid']])
+        elsif organizations_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
 
         row.push(quota_definition)
 

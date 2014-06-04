@@ -43,7 +43,7 @@ module AdminUI
           if data['instance_registry']
             row.push(data['instance_registry'].length)
           else
-            row.push(0)
+            row.push(nil)
           end
 
           row.push(data['available_memory_ratio'] * 100)

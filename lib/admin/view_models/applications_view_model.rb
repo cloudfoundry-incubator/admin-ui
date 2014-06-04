@@ -126,9 +126,9 @@ module AdminUI
 
               row.push(instance['services'].length)
 
-              row.push(instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : 0)
-              row.push(instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : 0)
-              row.push(instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : 0)
+              row.push(instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil)
+              row.push(instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : nil)
+              row.push(instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil)
 
               row.push(instance['limits']['mem'])
               row.push(instance['limits']['disk'])
@@ -180,9 +180,9 @@ module AdminUI
               row[ 8] = instance['application_uris']
               row[10] = instance_index
               row[11] = instance['services'].length
-              row[12] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : 0
-              row[13] = instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : 0
-              row[14] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : 0
+              row[12] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil
+              row[13] = instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : nil
+              row[14] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil
               row[18] = host
 
               # Need the specific instance for this row
