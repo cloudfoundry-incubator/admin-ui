@@ -19,6 +19,8 @@ module AdminUI
       service_brokers   = @cc.service_brokers(false)
       service_instances = @cc.service_instances(false)
 
+      service_instances_connected = service_instances['connected']
+
       service_broker_hash = Hash[*service_brokers['items'].map { |item| [item['guid'], item] }.flatten]
       service_hash        = Hash[*services['items'].map { |item| [item['guid'], item] }.flatten]
 
@@ -58,7 +60,14 @@ module AdminUI
         end
 
         row.push(service_plan['public'])
-        row.push(service_instance_counters[service_plan['guid']] || 0)
+
+        if service_instance_counters[service_plan['guid']]
+          row.push(service_instance_counters[service_plan['guid']])
+        elsif service_instances_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
 
         if service
           row.push(service['provider'])

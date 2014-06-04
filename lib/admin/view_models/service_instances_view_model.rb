@@ -23,6 +23,9 @@ module AdminUI
       services         = @cc.services(false)
       spaces           = @cc.spaces(false)
 
+      applications_connected     = applications['connected']
+      service_bindings_connected = service_bindings['connected']
+
       application_hash     = Hash[*applications['items'].map { |item| [item['guid'], item] }.flatten]
       organization_hash    = Hash[*organizations['items'].map { |item| [item['guid'], item] }.flatten]
       service_broker_hash  = Hash[*service_brokers['items'].map { |item| [item['guid'], item] }.flatten]
@@ -124,8 +127,10 @@ module AdminUI
 
         if service_binding_apps
           row.push(service_binding_apps.length)
-        else
+        elsif service_bindings_connected && applications_connected
           row.push(0)
+        else
+          row.push(nil)
         end
 
         if organization && space
