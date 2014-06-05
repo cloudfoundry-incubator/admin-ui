@@ -179,7 +179,7 @@ describe AdminUI::Admin do
       end
     end
 
-    context 'set organization quota' do
+    context 'manage organization' do
       it 'returns failure code due to disconnection' do
         response = put('/organizations/organization1', '{"quota_definition_guid":"quota1"}')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
