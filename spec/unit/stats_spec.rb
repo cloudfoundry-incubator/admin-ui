@@ -17,6 +17,7 @@ describe AdminUI::Stats do
                         :data_file                    => data_file,
                         :mbus                         => 'nats://nats:c1oudc0w@localhost:14222',
                         :monitored_components         => [],
+                        :db_uri                       => 'sqlite:///tmp/store.db',
                         :nats_discovery_timeout       => 1)
   end
 
@@ -148,6 +149,7 @@ describe AdminUI::Stats do
       AdminUI::Config.load(:data_file                    => data_file,
                            :mbus                         => 'nats://nats:c1oudc0w@localhost:14222',
                            :monitored_components         => [],
+                           :db_uri                       => 'sqlite:///tmp/store.db',
                            :nats_discovery_timeout       => 1)
     end
 
@@ -162,6 +164,7 @@ describe AdminUI::Stats do
                           :data_file                    => data_file,
                           :mbus                         => 'nats://nats:c1oudc0w@localhost:14222',
                           :monitored_components         => [],
+                          :db_uri                       => 'sqlite:///tmp/store.db',
                           :nats_discovery_timeout       => 1)
     end
 

@@ -6,5 +6,6 @@ require_relative '../lib/admin/nats'
 require_relative '../lib/admin/operation'
 require_relative '../lib/admin/utils'
 require_relative '../lib/admin/varz'
+require_relative '../lib/admin/persistence'
 
 Dir[File.expand_path('../support/**/*.rb', __FILE__)].each { |file| require file }

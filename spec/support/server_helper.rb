@@ -18,7 +18,7 @@ shared_context :server_context do
   let(:log_file_displayed_modified) { Time.new(1976, 7, 4, 12, 34, 56, 0) }
   let(:log_file_displayed_modified_milliseconds) { AdminUI::Utils.time_in_milliseconds(log_file_displayed_modified) }
   let(:log_file_page_size) { 100 }
-  let(:stats_file) { '/tmp/admin_ui_stats.json' }
+  let(:db_file) { '/tmp/admin_ui_store.db' }
 
   let(:admin_user) { 'admin' }
   let(:admin_password) { 'admin_passw0rd' }
@@ -36,10 +36,13 @@ shared_context :server_context do
       :log_files              => [log_file_displayed],
       :mbus                   => 'nats://nats:c1oudc0w@localhost:14222',
       :port                   => port,
-      :stats_file             => stats_file,
+      :db_uri                 => "sqlite://#{db_file}",
       :uaa_admin_credentials  => { :password => 'c1oudc0w', :username => 'admin' },
       :ui_admin_credentials   => { :password => admin_password, :username => admin_user },
-      :ui_credentials         => { :password => user_password, :username => user }
+      :ui_credentials         => { :password => user_password, :username => user },
+      :cloud_controller_discovery_interval    => 3,
+      :nats_discovery_interval                => 3,
+      :varz_discovery_interval                => 3
     }
   end
 
@@ -60,7 +63,7 @@ shared_context :server_context do
       AdminUI::Admin.new(config, true).start
     end
 
-    sleep(1)
+    sleep(5)
   end
 
   after do
@@ -73,6 +76,6 @@ shared_context :server_context do
       end
     end
 
-    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ log_file } #{ log_file_displayed } #{ stats_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ log_file } #{ log_file_displayed } #{ db_file }"))
   end
 end

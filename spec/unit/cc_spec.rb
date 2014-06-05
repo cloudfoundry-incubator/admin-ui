@@ -6,6 +6,7 @@ describe AdminUI::CC do
   let(:logger) { Logger.new(log_file) }
   let(:config) do
     AdminUI::Config.load(:cloud_controller_uri   => 'http://api.localhost',
+                         :db_uri                       => 'sqlite:///tmp/store.db',
                          :uaa_admin_credentials  => { :password => 'c1oudc0w', :username => 'admin' })
   end
   let(:client) { AdminUI::CCRestClient.new(config, logger) }

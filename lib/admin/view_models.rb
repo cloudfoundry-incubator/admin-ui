@@ -29,7 +29,7 @@ module AdminUI
       @tasks     = tasks
       @varz      = varz
       # TODO: Need config for number of threads
-      @pool      = AdminUI::ScheduledThreadPool.new(logger, 2, -1)
+      @pool      = AdminUI::ScheduledThreadPool.new(logger, 10, -1)
 
       # Using an interval of half of the cloud_controller_interval.  The value of 1 is there for a test-time boundary
       @interval = [@config.cloud_controller_discovery_interval / 2, 1].max

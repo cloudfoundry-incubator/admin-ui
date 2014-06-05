@@ -22,6 +22,7 @@ stats_file: data/stats.json
 stats_refresh_schedules: [ '0 5 * * *' ]
 stats_retries: 5
 stats_retry_interval: 300
+db_uri: sqlite://data/store.db
 tasks_refresh_interval: 5000
 uaa_admin_credentials:
   username: admin

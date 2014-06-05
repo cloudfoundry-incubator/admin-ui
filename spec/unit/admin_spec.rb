@@ -1,3 +1,5 @@
+require 'fileutils'
+require 'uri'
 require_relative '../spec_helper'
 
 describe AdminUI::Admin do
@@ -8,7 +10,7 @@ describe AdminUI::Admin do
   DATA_FILE   = '/tmp/admin_ui_data.json'
   LOG_FILE    = '/tmp/admin_ui.log'
   STATS_FILE  = '/tmp/admin_ui_stats.json'
-
+  DB_INST     = '/tmp/store.db'
   ADMIN_USER     = 'admin'
   ADMIN_PASSWORD = 'admin_passw0rd'
 
@@ -20,6 +22,7 @@ describe AdminUI::Admin do
   TASKS_REFRESH_INTERVAL = 6000
 
   before(:all) do
+    File.delete(DB_INST) if File.exist?(DB_INST)
     config =
     {
       :cloud_controller_uri   => CLOUD_CONTROLLER_URI,
@@ -27,7 +30,7 @@ describe AdminUI::Admin do
       :log_file               => LOG_FILE,
       :mbus                   => 'nats://nats:c1oudc0w@localhost:14222',
       :port                   => PORT,
-      :stats_file             => STATS_FILE,
+      :db_uri                 => 'sqlite:///tmp/store.db',
       :tasks_refresh_interval => TASKS_REFRESH_INTERVAL,
       :uaa_admin_credentials  => { :password => 'c1oudc0w', :username => 'admin' },
       :ui_admin_credentials   => { :password => ADMIN_PASSWORD, :username => ADMIN_USER },
@@ -52,7 +55,7 @@ describe AdminUI::Admin do
     Process.kill('TERM', @pid)
     Process.wait(@pid)
 
-    Process.wait(Process.spawn({}, "rm -fr #{ CONFIG_FILE } #{ DATA_FILE } #{ LOG_FILE } #{ STATS_FILE }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ CONFIG_FILE } #{ DATA_FILE } #{ LOG_FILE } #{ STATS_FILE } #{DB_INST}"))
   end
 
   def create_http
@@ -542,7 +545,7 @@ describe AdminUI::Admin do
 
     context 'Login required for post' do
       let(:cookie) { login_and_return_cookie(http) }
-
+      let(:timestamp) { Time.now }
       it '/statistics post succeeds' do
         request = Net::HTTP::Post.new('/statistics?apps=1&deas=2&organizations=3&running_instances=4&spaces=5&timestamp=6&total_instances=7&users=8')
         request['Cookie']         = cookie
@@ -573,7 +576,6 @@ describe AdminUI::Admin do
 
         body = response.body
         expect(body).to_not be_nil
-
         json = JSON.parse(body)
 
         expect(json).to eq('label' => CLOUD_CONTROLLER_URI,

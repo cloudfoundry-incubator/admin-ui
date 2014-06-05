@@ -213,6 +213,7 @@ module AdminUI
     end
 
     get '/statistics' do
+      puts("web: statistics=#{@stats.stats.to_json}")
       @stats.stats.to_json
     end
 
