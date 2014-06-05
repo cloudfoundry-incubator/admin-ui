@@ -30,6 +30,14 @@ module OperationHelper
       Created.new(cc_newly_created_organization)
     end
 
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/organization1", AdminUI::Utils::HTTP_PUT, anything, '{"status":"suspended"}', anything) do
+      Created.new(cc_suspended_organizations)
+    end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/organization1", AdminUI::Utils::HTTP_PUT, anything, '{"status":"active"}', anything) do
+      Created.new(cc_organizations)
+    end
+
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps/application1?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       Net::HTTPNoContent.new(1.0, 204, 'OK')
     end

@@ -148,6 +148,16 @@ describe AdminUI::Admin, :type => :integration do
       expect(get_json('/organizations')['items'][1]['name']).to eq('new_org')
     end
 
+    def suspend_org
+      response = put_request('/organizations/organization1', '{"status":"suspended"}')
+      expect(response.is_a? Net::HTTPNoContent).to be_true
+    end
+
+    def activate_org
+      response = put_request('/organizations/organization1', '{"status":"active"}')
+      expect(response.is_a? Net::HTTPNoContent).to be_true
+    end
+
     it 'deletes an organization' do
       cc_empty_organizations_stub(AdminUI::Config.load(config))
       expect { delete_org }.to change { get_json('/organizations')['items'].length }.from(1).to(0)
@@ -156,6 +166,18 @@ describe AdminUI::Admin, :type => :integration do
     it 'sets the specific quota for organization' do
       cc_organization_with_different_quota_stub(AdminUI::Config.load(config))
       expect { set_quota }.to change { get_json('/organizations')['items'][0]['quota_definition_guid'] }.from('quota1').to('quota2')
+    end
+
+    it 'activates the organization' do
+      cc_organizations_suspend_active_stub(AdminUI::Config.load(config))
+      suspend_org
+
+      expect { activate_org }.to change { get_json('/organizations')['items'][0]['status'] }.from('suspended').to('active')
+    end
+
+    it 'suspends the organization' do
+      cc_suspended_organizations_stub(AdminUI::Config.load(config))
+      expect { suspend_org }.to change { get_json('/organizations')['items'][0]['status'] }.from('active').to('suspended')
     end
   end
 

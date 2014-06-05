@@ -226,27 +226,93 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[2]/td[2]").text).to eq('new_org')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(:id => 'ToolTables_OrganizationsTable_2').click
-            alert = @driver.switch_to.alert
-            expect(alert.text).to eq('Please select at least one row!')
+          it 'has an activate button' do
+            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_3').text).to eq('Activate')
+          end
+
+          it 'has a suspend button' do
+            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_4').text).to eq('Suspend')
+          end
+
+          shared_examples 'click button without selecting a single row' do
+            it 'alerts the user to select at least one row when clicking the button' do
+              @driver.find_element(:id => buttonId).click
+              alert = @driver.switch_to.alert
+              expect(alert.text).to eq('Please select at least one row!')
+              alert.dismiss
+            end
+          end
+
+          # Delete button
+          it_behaves_like('click button without selecting a single row') do
+            let(:buttonId) { 'ToolTables_OrganizationsTable_2' }
+          end
+
+          # Activate button
+          it_behaves_like('click button without selecting a single row') do
+            let(:buttonId) { 'ToolTables_OrganizationsTable_3' }
+          end
+
+          # Suspend button
+          it_behaves_like('click button without selecting a single row') do
+            let(:buttonId) { 'ToolTables_OrganizationsTable_4' }
+          end
+
+          def manage_org(button_id, message, result_message)
+            check_first_row
+
+            @driver.find_element(:id => button_id).click
+            confirm = @driver.switch_to.alert
+            expect(confirm.text).to eq(message)
+            confirm.accept
+
+            alert = nil
+            Selenium::WebDriver::Wait.new(:timeout => 5).until { alert = @driver.switch_to.alert }
+            expect(alert.text).to eq(result_message)
             alert.dismiss
+          end
+
+          def suspend_org
+            manage_org('ToolTables_OrganizationsTable_4', 'Are you sure you want to suspend the selected organizations?', "The operation finished without error.\nPlease refresh the page later for the updated result.")
+          end
+
+          def activate_org
+            manage_org('ToolTables_OrganizationsTable_3', 'Are you sure you want to activate the selected organizations?', "The operation finished without error.\nPlease refresh the page later for the updated result.")
+          end
+
+          def delete_org
+            manage_org('ToolTables_OrganizationsTable_2', 'Are you sure you want to delete the selected organizations?', 'Organizations successfully deleted.')
+          end
+
+          def check_organization_status(status)
+            begin
+              Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[3]").text == status }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[3]").text).to eq(status)
+          end
+
+          it 'activates the selected organization' do
+            cc_organizations_suspend_active_stub(AdminUI::Config.load(config))
+
+            suspend_org
+            check_organization_status('SUSPENDED')
+
+            activate_org
+            check_organization_status('ACTIVE')
+          end
+
+          it 'suspends the selected organization' do
+            cc_suspended_organizations_stub(AdminUI::Config.load(config))
+
+            suspend_org
+            check_organization_status('ACTIVE')
           end
 
           it 'deletes the selected organization' do
             cc_empty_organizations_stub(AdminUI::Config.load(config))
 
-            # delete the organization
-            check_first_row
-            @driver.find_element(:id => 'ToolTables_OrganizationsTable_2').click
-            confirm = @driver.switch_to.alert
-            expect(confirm.text).to eq('Are you sure you want to delete the selected organizations?')
-            confirm.accept
-
-            alert = nil
-            Selenium::WebDriver::Wait.new(:timeout => 5).until { alert = @driver.switch_to.alert }
-            expect(alert.text).to eq('Organizations successfully deleted.')
-            alert.dismiss
+            delete_org
 
             begin
               Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr").text == 'No data available in table' }

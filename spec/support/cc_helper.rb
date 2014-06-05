@@ -121,6 +121,16 @@ module CCHelper
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_multiple_organizations))
   end
 
+  # Mock suspended organizations http response
+  def cc_suspended_organizations_stub(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_suspended_organizations))
+  end
+
+  # Continuously mock two http request returns, the first http call returns organizations in suspended state, while the second http call returns organizations in active state.
+  def cc_organizations_suspend_active_stub(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_suspended_organizations), CCHelper::OK.new(cc_organizations))
+  end
+
   # Continuously mock two http request returns, the first http call returns applications in public state, while the second http call returns service _plans in private state, and the third one to return public service plan.
   def cc_service_plans_public_to_private_to_public_stub(config)
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_public_service_plans), CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_public_service_plans))
@@ -215,6 +225,30 @@ module CCHelper
             'name'                  => 'new_org',
             'quota_definition_guid' => 'quota1',
             'status'                => 'active'
+          }
+        }
+      ]
+    }
+  end
+
+  def cc_suspended_organizations
+    {
+      'total_results' => 1,
+      'resources'     =>
+      [
+        {
+          'metadata' =>
+          {
+            'created_at' => '2013-10-16T08:55:46-05:00',
+            'updated_at' => '2013-10-17T08:55:46-05:00',
+            'guid'       => 'organization1'
+          },
+          'entity'   =>
+          {
+            'billing_enabled'       => false,
+            'name'                  => 'test_org',
+            'quota_definition_guid' => 'quota1',
+            'status'                => 'suspended'
           }
         }
       ]
