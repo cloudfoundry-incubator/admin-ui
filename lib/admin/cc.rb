@@ -219,7 +219,7 @@ module AdminUI
 
     def discover_applications
       items = []
-      @client.get_cc('v2/apps').each do |app|
+      @client.get_cc('v2/apps?results-per-page=100').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -231,7 +231,7 @@ module AdminUI
 
     def discover_organizations
       items = []
-      @client.get_cc('v2/organizations').each do |app|
+      @client.get_cc('v2/organizations?results-per-page=100').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -243,7 +243,7 @@ module AdminUI
 
     def discover_quota_definitions
       items = []
-      @client.get_cc('v2/quota_definitions').each do |quota|
+      @client.get_cc('v2/quota_definitions?results-per-page=100').each do |quota|
         items.push(quota['entity'].merge(quota['metadata']))
       end
       result(items)
@@ -255,7 +255,7 @@ module AdminUI
 
     def discover_routes
       items = []
-      @client.get_cc('v2/routes?inline-relations-depth=1').each do |route|
+      @client.get_cc('v2/routes?inline-relations-depth=1&results-per-page=100').each do |route|
         items.push(route['entity'].merge(route['metadata']))
       end
       result(items)
@@ -267,7 +267,7 @@ module AdminUI
 
     def discover_services
       items = []
-      @client.get_cc('v2/services').each do |app|
+      @client.get_cc('v2/services?results-per-page=100').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -279,7 +279,7 @@ module AdminUI
 
     def discover_service_bindings
       items = []
-      @client.get_cc('v2/service_bindings').each do |app|
+      @client.get_cc('v2/service_bindings?results-per-page=100').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -291,7 +291,7 @@ module AdminUI
 
     def discover_service_brokers
       items = []
-      @client.get_cc('v2/service_brokers').each do |app|
+      @client.get_cc('v2/service_brokers?results-per-page=100').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -303,7 +303,7 @@ module AdminUI
 
     def discover_service_instances
       items = []
-      @client.get_cc('v2/service_instances').each do |app|
+      @client.get_cc('v2/service_instances?results-per-page=100').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -315,7 +315,7 @@ module AdminUI
 
     def discover_service_plans
       items = []
-      @client.get_cc('v2/service_plans').each do |app|
+      @client.get_cc('v2/service_plans?results-per-page=100').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -327,7 +327,7 @@ module AdminUI
 
     def discover_spaces
       items = []
-      @client.get_cc('v2/spaces').each do |app|
+      @client.get_cc('v2/spaces?results-per-page=100').each do |app|
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -398,7 +398,7 @@ module AdminUI
     end
 
     def discover_users_cc_deep
-      result(@client.get_cc('v2/users?inline-relations-depth=1'))
+      result(@client.get_cc('v2/users?inline-relations-depth=1&results-per-page=100'))
     rescue => error
       @logger.debug("Error during discover_users_cc_deep: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))

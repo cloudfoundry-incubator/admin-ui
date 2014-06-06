@@ -23,47 +23,47 @@ module CCHelper
       OK.new(uaa_oauth)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_started_apps)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_organizations)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/quota_definitions", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/quota_definitions?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_quota_definitions)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1&results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_routes)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/services", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/services?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_services)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_bindings", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_bindings?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_service_bindings)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_brokers", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_brokers?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_service_brokers)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_instances", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_instances?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_service_instances)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_service_plans)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_spaces)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/users?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/users?inline-relations-depth=1&results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything) do
       OK.new(cc_users_deep)
     end
 
@@ -74,91 +74,91 @@ module CCHelper
 
   # Continuously mock two http request returns, the first http call returns applications in started state, while the second http call returns applications in stopped state.
   def cc_apps_start_to_stop_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_started_apps), CCHelper::OK.new(cc_stopped_apps))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_started_apps), CCHelper::OK.new(cc_stopped_apps))
   end
 
   # Continuously mock two http request returns, the first http call returns applications in stopped state, while the second http call returns applications in started state.
   def cc_apps_stop_to_start_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_stopped_apps), CCHelper::OK.new(cc_started_apps))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_stopped_apps), CCHelper::OK.new(cc_started_apps))
   end
 
   # Continuously mock two http request returns, the first http call returns at least one organization, the second http call returns empty organization set.
   def cc_clear_organization_cache_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_organizations), CCHelper::OK.new(cc_empty_resources))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_organizations), CCHelper::OK.new(cc_empty_resources))
   end
 
   # Mock http response and return an organization with another quota.
   def cc_organization_with_different_quota_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_organizations_with_other_quota))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_organizations_with_other_quota))
   end
 
   # Mock http response to return applications in stopped state.
   def cc_stopped_apps_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_stopped_apps))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_stopped_apps))
   end
 
   # Continuously mock two http request returns, the first http call returns one route, while the second call returns empty route array.
   def cc_routes_delete_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_routes), CCHelper::OK.new(cc_empty_resources))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1&results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_routes), CCHelper::OK.new(cc_empty_resources))
   end
 
   # Mock empty applications array http response.
   def cc_empty_applications_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_empty_resources))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_empty_resources))
   end
 
   # Mock empty organiztions array http response.
   def cc_empty_organizations_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_empty_resources))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_empty_resources))
   end
 
   # Mock empty routes array http response.
   def cc_empty_routes_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_empty_resources))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes?inline-relations-depth=1&results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_empty_resources))
   end
 
   def cc_multiple_organizations_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_multiple_organizations))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_multiple_organizations))
   end
 
   # Mock suspended organizations http response
   def cc_suspended_organizations_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_suspended_organizations))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_suspended_organizations))
   end
 
   # Continuously mock two http request returns, the first http call returns organizations in suspended state, while the second http call returns organizations in active state.
   def cc_organizations_suspend_active_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_suspended_organizations), CCHelper::OK.new(cc_organizations))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_suspended_organizations), CCHelper::OK.new(cc_organizations))
   end
 
   # Continuously mock two http request returns, the first http call returns applications in public state, while the second http call returns service _plans in private state, and the third one to return public service plan.
   def cc_service_plans_public_to_private_to_public_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_public_service_plans), CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_public_service_plans))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_public_service_plans), CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_public_service_plans))
   end
 
   # Continuously mock two http request returns, the first http call returns applications in private state, while the second http call returns service _plans in public state, and the third one to return private service plan.
   def cc_service_plans_private_to_public_to_private_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_public_service_plans), CCHelper::OK.new(cc_private_service_plans))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_public_service_plans), CCHelper::OK.new(cc_private_service_plans))
   end
 
   # Continuously mock two http request returns, the first http call returns applications in public state, while the second http call returns service _plans in private state.
   def cc_service_plans_public_to_private_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_public_service_plans), CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_private_service_plans))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_public_service_plans), CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_private_service_plans))
   end
 
   # Continuously mock two http request returns, the first http call returns applications in private state, while the second http call returns service _plans in public state.
   def cc_service_plans_private_to_public_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_public_service_plans))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_private_service_plans), CCHelper::OK.new(cc_public_service_plans))
   end
 
   # Continuously mock two http request returns, the first http call returns applications in public state, while the second http call returns service _plans in private state.
   def cc_service_plans_public_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_public_service_plans))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_public_service_plans))
   end
 
   # Continuously mock two http request returns, the first http call returns applications in private state, while the second http call returns service _plans in public state.
   def cc_service_plans_private_stub(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_private_service_plans))
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans?results-per-page=100", AdminUI::Utils::HTTP_GET, anything, anything, anything).and_return(CCHelper::OK.new(cc_private_service_plans))
   end
 
   def cc_empty_resources
