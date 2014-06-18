@@ -75,6 +75,30 @@ describe AdminUI::Admin do
     cookie
   end
 
+  def logout(http, request_cookie)
+    request = Net::HTTP::Post.new('/login')
+    request['Content-Length'] = 0
+    request['Cookie'] = request_cookie
+
+    response = http.request(request)
+    expect(response.is_a?(Net::HTTPSeeOther)).to be_true
+
+    location = response['location']
+    expect(location).to eq("http://#{ HOST }:#{ PORT }/login.html")
+
+    cookie = response['Set-Cookie']
+    expect(cookie).to_not be_nil
+
+    cookie
+  end
+
+  it 'destroys the session after logout' do
+    original_cookie = login_and_return_cookie(create_http)
+    new_cookie      = logout(create_http, original_cookie)
+
+    expect(new_cookie.inspect).not_to eq(original_cookie.inspect)
+  end
+
   context 'Login required, performed and failed' do
     let(:http) { create_http }
 
