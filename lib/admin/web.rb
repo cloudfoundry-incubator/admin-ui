@@ -381,6 +381,10 @@ module AdminUI
       end
     end
 
+    def route_missing
+      [404, 'Page Not Found']
+    end
+
     private
 
     def authenticated(username, admin)
@@ -400,6 +404,23 @@ module AdminUI
       else
         redirect 'login.html', 303
       end
+    end
+
+    def handle_exception!(boom)
+      @env['sinatra.error'] = boom
+      if boom.respond_to? :http_status
+        status(boom.http_status)
+      elsif settings.use_code? && boom.respond_to?(:code) && boom.code.between?(400, 599)
+        status(boom.code)
+      else
+        status(500)
+      end
+
+      status(500) unless status.between? 400, 599
+
+      headers['X-Cascade'] = 'pass' if settings.x_cascade?
+      body '<h1>Application Error: </h1><h3>There was a problem in rendering the page you requested. Please check your URL and try again.</h3>'
+      @logger.debug("application error #{boom}")
     end
   end
 end
