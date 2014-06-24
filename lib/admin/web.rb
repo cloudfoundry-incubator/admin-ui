@@ -266,8 +266,7 @@ module AdminUI
       elsif @config.ui_admin_credentials_username == username && @config.ui_admin_credentials_password == password
         authenticated(username, true)
       else
-        session[:username] = nil
-
+        session.destroy
         redirect 'login.html?error=true'
       end
     end
@@ -392,8 +391,7 @@ module AdminUI
     end
 
     def redirect_to_login
-      session[:username] = nil
-      session[:admin]    = nil
+      session.destroy
 
       if request.xhr?
         halt 303
