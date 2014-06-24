@@ -184,7 +184,7 @@ describe AdminUI::Admin do
 
     context 'delete organization' do
       it 'returns failure code due to disconnection' do
-        response = delete('/organization/organization1')
+        response = delete('/organizations/organization1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
       end
     end
