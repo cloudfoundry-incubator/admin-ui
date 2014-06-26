@@ -82,14 +82,6 @@ shared_context :web_context do
     expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_element(:id => "#{ target_tab_id }Table_filter").find_element(:tag_name => 'input').attribute('value') }).to eq(expected_filter)
   end
 
-  def check_select_link(tab_id, link_index, target_tab_id, expected_name, expected_column_index = 1)
-    Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(:tag_name => 'a').click }
-    expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_element(:class_name => 'menuItemSelected').attribute('id') }).to eq(target_tab_id)
-    expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_element(:xpath => "//table[@id='#{ target_tab_id }Table']/tbody/tr[contains(@class, 'DTTT_selected')]/td[#{ expected_column_index }]").text }).to eq(expected_name)
-    expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_element(:id => "#{ target_tab_id }DetailsLabel").displayed? }).to be_true
-    expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_elements(:xpath => "//div[@id='#{ target_tab_id }PropertiesContainer']/table/tr[*]/td[2]")[0].text }).to eq(expected_name)
-  end
-
   def check_stats_chart(id)
     # As the page refreshes, we need to catch the stale element error and re-find the element on the page
     begin

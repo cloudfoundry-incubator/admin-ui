@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class CloudControllersViewModel < AdminUI::Base
@@ -18,6 +19,7 @@ module AdminUI
       items = []
 
       cloud_controllers['items'].each do |cloud_controller|
+        Thread.pass
         row = []
 
         row.push(cloud_controller['name'])

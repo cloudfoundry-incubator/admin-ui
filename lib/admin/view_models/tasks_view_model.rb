@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class TasksViewModel < AdminUI::Base
@@ -18,6 +19,7 @@ module AdminUI
       items = []
 
       tasks.each do |task|
+        Thread.pass
         row = []
 
         row.push(task[:command])

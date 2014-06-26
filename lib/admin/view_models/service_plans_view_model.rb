@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class ServicePlansViewModel < AdminUI::Base
@@ -27,6 +28,7 @@ module AdminUI
       service_instance_counters = {}
 
       service_instances['items'].each do |service_instance|
+        Thread.pass
         service_plan_guid = service_instance['service_plan_guid']
         service_instance_counters[service_plan_guid] = 0 if service_instance_counters[service_plan_guid].nil?
         service_instance_counters[service_plan_guid] += 1
@@ -35,6 +37,7 @@ module AdminUI
       items = []
 
       service_plans['items'].each do |service_plan|
+        Thread.pass
         service        = service_hash[service_plan['service_guid']]
         service_broker = service.nil? || service['service_broker_guid'].nil? ? nil : service_broker_hash[service['service_broker_guid']]
 

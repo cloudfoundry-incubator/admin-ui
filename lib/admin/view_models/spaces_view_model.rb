@@ -1,4 +1,5 @@
 require 'date'
+require 'thread'
 require_relative 'has_instances_view_model'
 require_relative '../utils'
 
@@ -30,18 +31,21 @@ module AdminUI
       space_app_counters_hash         = {}
 
       spaces_developers['items'].each do |space_developer|
+        Thread.pass
         space_guid = space_developer['space_guid']
         space_developer_counters[space_guid] = 0 if space_developer_counters[space_guid].nil?
         space_developer_counters[space_guid] += 1
       end
 
       service_instances['items'].each do |service_instance|
+        Thread.pass
         space_guid = service_instance['space_guid']
         space_service_instance_counters[space_guid] = 0 if space_service_instance_counters[space_guid].nil?
         space_service_instance_counters[space_guid] += 1
       end
 
       routes['items'].each do |route|
+        Thread.pass
         space_guid = route['space_guid']
         space_route_counters = space_route_counters_hash[space_guid]
         if space_route_counters.nil?
@@ -58,6 +62,7 @@ module AdminUI
       instance_hash = create_instance_hash(deas)
 
       applications['items'].each do |application|
+        Thread.pass
         space_guid = application['space_guid']
         space_app_counters = space_app_counters_hash[space_guid]
         if space_app_counters.nil?
@@ -85,6 +90,7 @@ module AdminUI
       items = []
 
       spaces['items'].each do |space|
+        Thread.pass
         space_guid = space['guid']
 
         organization                   = organization_hash[space['organization_guid']]

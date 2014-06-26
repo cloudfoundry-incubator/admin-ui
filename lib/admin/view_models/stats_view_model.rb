@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 require_relative '../utils'
 
 module AdminUI
@@ -19,6 +20,7 @@ module AdminUI
       items.push(to_row(current_statistic)) if current_statistic
 
       statistics['items'].each do |statistic|
+        Thread.pass
         items.push(to_row(Utils.symbolize_keys(statistic)))
       end
 

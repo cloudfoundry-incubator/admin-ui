@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class QuotasViewModel < AdminUI::Base
@@ -22,6 +23,7 @@ module AdminUI
       organization_counters = {}
 
       organizations['items'].each do |organization|
+        Thread.pass
         quota_definition_guid = organization['quota_definition_guid']
         organization_counters[quota_definition_guid] = 0 if organization_counters[quota_definition_guid].nil?
         organization_counters[quota_definition_guid] += 1
@@ -30,6 +32,7 @@ module AdminUI
       items = []
 
       quota_definitions['items'].each do |quota_definition|
+        Thread.pass
         row = []
 
         row.push(quota_definition['name'])

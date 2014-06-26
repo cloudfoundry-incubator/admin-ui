@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class DEAsViewModel < AdminUI::Base
@@ -18,6 +19,7 @@ module AdminUI
       items = []
 
       deas['items'].each do |dea|
+        Thread.pass
         row = []
 
         row.push(dea['name'])

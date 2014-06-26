@@ -1,5 +1,6 @@
 require 'json'
 require 'net/http'
+require 'thread'
 
 module AdminUI
   class VARZ
@@ -126,6 +127,7 @@ module AdminUI
         cache['connected'] = nats_result['connected']
 
         nats_result['items'].each do |uri, item|
+          Thread.pass
           item_hash[uri] = item_result(uri, item)
         end
       rescue => error

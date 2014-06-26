@@ -1,4 +1,5 @@
 require 'date'
+require 'thread'
 require_relative 'scheduled_thread_pool'
 
 module AdminUI
@@ -37,6 +38,7 @@ module AdminUI
       return nil unless hash['connected']
       instances = 0
       hash['items'].each do |app|
+        Thread.pass
         instances += app['instances'] if app['state'] == 'STARTED'
       end
       instances
@@ -47,6 +49,7 @@ module AdminUI
       return nil unless hash['connected']
       instances = 0
       hash['items'].each do |app|
+        Thread.pass
         instances += app['instances']
       end
       instances
@@ -220,6 +223,7 @@ module AdminUI
     def discover_applications
       items = []
       @client.get_cc('v2/apps?results-per-page=100').each do |app|
+        Thread.pass
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -232,6 +236,7 @@ module AdminUI
     def discover_organizations
       items = []
       @client.get_cc('v2/organizations?results-per-page=100').each do |app|
+        Thread.pass
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -244,6 +249,7 @@ module AdminUI
     def discover_quota_definitions
       items = []
       @client.get_cc('v2/quota_definitions?results-per-page=100').each do |quota|
+        Thread.pass
         items.push(quota['entity'].merge(quota['metadata']))
       end
       result(items)
@@ -256,6 +262,7 @@ module AdminUI
     def discover_routes
       items = []
       @client.get_cc('v2/routes?inline-relations-depth=1&results-per-page=100').each do |route|
+        Thread.pass
         items.push(route['entity'].merge(route['metadata']))
       end
       result(items)
@@ -268,6 +275,7 @@ module AdminUI
     def discover_services
       items = []
       @client.get_cc('v2/services?results-per-page=100').each do |app|
+        Thread.pass
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -280,6 +288,7 @@ module AdminUI
     def discover_service_bindings
       items = []
       @client.get_cc('v2/service_bindings?results-per-page=100').each do |app|
+        Thread.pass
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -292,6 +301,7 @@ module AdminUI
     def discover_service_brokers
       items = []
       @client.get_cc('v2/service_brokers?results-per-page=100').each do |app|
+        Thread.pass
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -304,6 +314,7 @@ module AdminUI
     def discover_service_instances
       items = []
       @client.get_cc('v2/service_instances?results-per-page=100').each do |app|
+        Thread.pass
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -316,6 +327,7 @@ module AdminUI
     def discover_service_plans
       items = []
       @client.get_cc('v2/service_plans?results-per-page=100').each do |app|
+        Thread.pass
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -328,6 +340,7 @@ module AdminUI
     def discover_spaces
       items = []
       @client.get_cc('v2/spaces?results-per-page=100').each do |app|
+        Thread.pass
         items.push(app['entity'].merge(app['metadata']))
       end
       result(items)
@@ -340,6 +353,7 @@ module AdminUI
     def discover_spaces_auditors(users_deep)
       items = []
       users_deep['items'].each do |user_deep|
+        Thread.pass
         guid = user_deep['metadata']['guid']
 
         audited_spaces = user_deep['entity']['audited_spaces']
@@ -360,6 +374,7 @@ module AdminUI
     def discover_spaces_developers(users_deep)
       items = []
       users_deep['items'].each do |user_deep|
+        Thread.pass
         guid = user_deep['metadata']['guid']
 
         spaces = user_deep['entity']['spaces']
@@ -380,6 +395,7 @@ module AdminUI
     def discover_spaces_managers(users_deep)
       items = []
       users_deep['items'].each do |user_deep|
+        Thread.pass
         guid = user_deep['metadata']['guid']
 
         managed_spaces = user_deep['entity']['managed_spaces']
@@ -408,6 +424,7 @@ module AdminUI
     def discover_users_uaa
       items = []
       @client.get_uaa('Users').each do |user|
+        Thread.pass
         emails = user['emails']
         groups = user['groups']
         meta   = user['meta']

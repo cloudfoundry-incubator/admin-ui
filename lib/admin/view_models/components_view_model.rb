@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class ComponentsViewModel < AdminUI::Base
@@ -18,6 +19,7 @@ module AdminUI
       items = []
 
       components['items'].each do |component|
+        Thread.pass
         row = []
 
         row.push(component['name'])
