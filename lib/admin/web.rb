@@ -20,6 +20,8 @@ module AdminUI
     configure do
       enable :sessions
       set :static_cache_control, :no_cache
+      set :environment, :production
+      set :show_exceptions, false
     end
 
     set(:auth) do |*roles|
@@ -378,6 +380,10 @@ module AdminUI
         @logger.debug(error.backtrace.join("\n"))
         500
       end
+    end
+
+    def route_missing
+      [404, 'Page Not Found']
     end
 
     private
