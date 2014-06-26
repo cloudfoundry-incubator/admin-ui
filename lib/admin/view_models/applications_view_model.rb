@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class ApplicationsViewModel < AdminUI::Base
@@ -28,6 +29,7 @@ module AdminUI
       items = []
 
       applications['items'].each do |application|
+        Thread.pass
         space        = space_hash[application['space_guid']]
         organization = space.nil? ? nil : organization_hash[space['organization_guid']]
 
@@ -92,6 +94,7 @@ module AdminUI
         host = data['host']
         data['instance_registry'].each_value do |application|
           application.each_value do |instance|
+            Thread.pass
             instance_index = instance['instance_index']
 
             row = application_hash[instance['application_id']]

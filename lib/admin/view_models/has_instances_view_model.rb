@@ -1,4 +1,5 @@
 require_relative 'base'
+require 'thread'
 
 module AdminUI
   class HasInstancesViewModel < AdminUI::Base
@@ -21,6 +22,7 @@ module AdminUI
         instance_index_hash = {}
 
         instances.each do |instance|
+          Thread.pass
           instance_index_hash[instance['instance_index']] = nil
 
           counters_hash['used_memory'] += instance['used_memory_in_bytes'] unless instance['used_memory_in_bytes'].nil?
@@ -39,6 +41,7 @@ module AdminUI
         next unless dea['connected']
         dea['data']['instance_registry'].each_value do |application|
           application.each_value do |instance|
+            Thread.pass
             application_id = instance['application_id']
             result[application_id] = [] if result[application_id].nil?
             result[application_id].push(instance)

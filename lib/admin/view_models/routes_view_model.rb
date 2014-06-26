@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class RoutesViewModel < AdminUI::Base
@@ -24,6 +25,7 @@ module AdminUI
       items = []
 
       routes['items'].each do |route|
+        Thread.pass
         space        = space_hash[route['space_guid']]
         organization = space.nil? ? nil : organization_hash[space['organization_guid']]
 

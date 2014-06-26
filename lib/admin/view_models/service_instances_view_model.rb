@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class ServiceInstancesViewModel < AdminUI::Base
@@ -35,6 +36,7 @@ module AdminUI
 
       service_binding_apps_hash = {}
       service_bindings['items'].each do |service_binding|
+        Thread.pass
         service_instance_guid = service_binding['service_instance_guid']
         app_and_binding_array = service_binding_apps_hash[service_instance_guid]
         if app_and_binding_array.nil?
@@ -53,6 +55,7 @@ module AdminUI
       items = []
 
       service_instances['items'].each do |service_instance|
+        Thread.pass
         service_plan   = service_plan_hash[service_instance['service_plan_guid']]
         service        = service_plan.nil? ? nil : service_hash[service_plan['service_guid']]
         service_broker = service.nil? || service['service_broker_guid'].nil? ? nil : service_broker_hash[service['service_broker_guid']]

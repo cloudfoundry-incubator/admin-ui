@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class DevelopersViewModel < AdminUI::Base
@@ -26,6 +27,7 @@ module AdminUI
       items = []
 
       spaces_developers['items'].each do |space_developer|
+        Thread.pass
         user = user_hash[space_developer['user_guid']]
 
         if user

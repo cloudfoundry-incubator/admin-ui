@@ -77,7 +77,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         if table_has_data
           # Need to wait until the table on the page has data
           begin
-            Selenium::WebDriver::Wait.new(:timeout => 10).until { @driver.find_element(:xpath => "//table[@id='#{ tab_id }Table']/tbody/tr").text != 'No data available in table' }
+            Selenium::WebDriver::Wait.new(:timeout => 30).until { @driver.find_element(:xpath => "//table[@id='#{ tab_id }Table']/tbody/tr").text != 'No data available in table' }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
           expect(@driver.find_element(:xpath => "//table[@id='#{ tab_id }Table']/tbody/tr").text).not_to eq('No data available in table')
@@ -174,7 +174,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_operation_result
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[7]").text == 'test_quota_2' }
+              Selenium::WebDriver::Wait.new(:timeout => 10).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[7]").text == 'test_quota_2' }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[8]").text).to eq('test_quota_2')
@@ -286,7 +286,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
           def check_organization_status(status)
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[3]").text == status }
+              Selenium::WebDriver::Wait.new(:timeout => 10).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[3]").text == status }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[3]").text).to eq(status)
@@ -315,7 +315,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             delete_org
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr").text == 'No data available in table' }
+              Selenium::WebDriver::Wait.new(:timeout => 10).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr").text == 'No data available in table' }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr").text).to eq('No data available in table')
@@ -525,7 +525,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           def check_app_state(expect_state)
             # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
             # error happens.
-            Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[3]").text == expect_state }
+            Selenium::WebDriver::Wait.new(:timeout => 30).until { @driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[3]").text == expect_state }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             expect(@driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[3]").text).to eq(expect_state)
           end
@@ -645,7 +645,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_operation_result
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 5).until do
+              Selenium::WebDriver::Wait.new(:timeout => 30).until do
                 begin
                   check_deleted_app_table_data
                 rescue RSpec::Expectations::ExpectationNotMetError

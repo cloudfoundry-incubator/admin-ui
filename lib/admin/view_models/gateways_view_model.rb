@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class GatewaysViewModel < AdminUI::Base
@@ -18,6 +19,7 @@ module AdminUI
       items = []
 
       gateways['items'].each do |gateway|
+        Thread.pass
         row = []
 
         row.push(gateway['name'])
