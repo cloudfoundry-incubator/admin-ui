@@ -525,10 +525,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           def check_app_state(expect_state)
             # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
             # error happens.
-            begin
-              Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[3]").text == expect_state }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
+            Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[3]").text == expect_state }
+          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             expect(@driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[3]").text).to eq(expect_state)
           end
 
@@ -792,8 +790,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has details' do
             check_details([{ :label => 'Host',          :tag => nil, :value => cc_routes['resources'][0]['entity']['host'] },
                            { :label => 'Domain',        :tag => nil, :value => cc_routes['resources'][0]['entity']['domain']['entity']['name'] },
-                           { :label => 'Created',       :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_routes['resources'][0]['metadata']['created_at'] }\")") },
-                           { :label => 'Updated',       :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_routes['resources'][0]['metadata']['updated_at'] }\")") },
+                           { :label => 'Created',       :tag => nil, :value => Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_routes['resources'][0]['metadata']['created_at'] }\")") } },
+                           { :label => 'Updated',       :tag => nil, :value => Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_routes['resources'][0]['metadata']['updated_at'] }\")") } },
                            { :label => 'Applications',  :tag => 'a', :value => cc_routes['resources'][0]['entity']['apps'].length.to_s },
                            { :label => 'Space',         :tag => 'a', :value => cc_spaces['resources'][0]['entity']['name'] },
                            { :label => 'Organization',  :tag => 'a', :value => cc_organizations['resources'][0]['entity']['name'] }

@@ -23,14 +23,31 @@ describe AdminUI::Admin, :type => :integration do
     cookie
   end
 
-  def get_response(path)
+  def _get_request(path)
     request = Net::HTTP::Get.new(path)
     request['Cookie'] = cookie
+    http.request(request)
+  end
 
-    response = http.request(request)
-    expect(response.is_a?(Net::HTTPOK)).to be_true
-
+  def get_response(path)
+    response = _get_request(path)
+    check_ok_response(response)
     response
+  end
+
+  def get_response_for_invalid_path(path)
+    response = _get_request(path)
+    check_notfound_response(response)
+    response
+  end
+
+  def check_ok_response(response)
+    expect(response.is_a?(Net::HTTPOK)).to be_true
+  end
+
+  def check_notfound_response(response)
+    expect(response.is_a?(Net::HTTPNotFound)).to be_true
+    expect(response.body).to eq('Page Not Found')
   end
 
   def get_json(path)
@@ -47,9 +64,12 @@ describe AdminUI::Admin, :type => :integration do
     request['Cookie'] = cookie
     request['Content-Length'] = 0
     request.body = body if body
+    http.request(request)
+  end
 
-    response = http.request(request)
-
+  def post_request_for_invalid_path(path, body)
+    response = post_request(path, body)
+    check_notfound_response(response)
     response
   end
 
@@ -58,9 +78,12 @@ describe AdminUI::Admin, :type => :integration do
     request['Cookie'] = cookie
     request['Content-Length'] = 0
     request.body = body if body
+    http.request(request)
+  end
 
-    response = http.request(request)
-
+  def put_request_for_invalid_path(path, body)
+    response = put_request(path, body)
+    check_notfound_response(response)
     response
   end
 
@@ -68,10 +91,42 @@ describe AdminUI::Admin, :type => :integration do
     request = Net::HTTP::Delete.new(path)
     request['Cookie'] = cookie
     request['Content-Length'] = 0
+    http.request(request)
+  end
 
-    response = http.request(request)
-
+  def delete_request_for_invalid_path(path)
+    response = delete_request(path)
+    check_notfound_response(response)
     response
+  end
+
+  shared_examples 'common_check_request_path' do
+    let(:http)   { create_http }
+    let(:cookie) {}
+    it 'returns the 404 code if the get url is invalid' do
+      get_response_for_invalid_path('/foo')
+    end
+
+    it 'returns the 404 code if the put url is invalid' do
+      put_request_for_invalid_path('/foo', '{"state":"STOPPED"}')
+    end
+
+    it 'returns the 404 code if the post url is invalid' do
+      post_request_for_invalid_path('/foo', '{"name":"new_org"}')
+    end
+
+    it 'returns the 404 code if the delete url is invalid' do
+      delete_request_for_invalid_path('/foo')
+    end
+  end
+
+  context 'returns the 404 code if the url is wrong without login' do
+    it_behaves_like('common_check_request_path')
+  end
+
+  context 'returns the 404 code if the url is wrong with login' do
+    let(:cookie) { login_and_return_cookie(http) }
+    it_behaves_like('common_check_request_path')
   end
 
   context 'manage application' do
