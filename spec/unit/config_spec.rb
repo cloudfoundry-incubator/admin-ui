@@ -389,6 +389,7 @@ describe AdminUI::Config do
       {
         :cloud_controller_uri  => 'http://api.localhost',
         :data_file             => '/tmp/admin_ui_data.json',
+        :db_uri                 => 'sqlite:///tmp/store.db',
         :log_file              => '/tmp/admin_ui.log',
         :mbus                  => 'nats://nats:c1oudc0w@10.10.10.10:4222',
         :port                  => 8070,

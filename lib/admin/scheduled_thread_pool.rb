@@ -7,6 +7,7 @@ module AdminUI
       @logger = logger
       @queue  = []
       @mutex  = Mutex.new
+      @sleep_time_factor = 0.05 + 0.1 * priority * priority
 
       number_threads.times do
         thread = Thread.new do
@@ -28,7 +29,7 @@ module AdminUI
               end
             end
 
-            sleep 1
+            sleep @sleep_time_factor
           end
         end
 

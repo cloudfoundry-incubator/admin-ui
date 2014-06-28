@@ -15,6 +15,7 @@ describe AdminUI::Operation, :type => :integration do
                          :cloud_controller_uri                => 'http://api.cloudfoundry',
                          :data_file                           => data_file,
                          :monitored_components                => [],
+                         :db_uri                              => 'sqlite:///tmp/store.db',
                          :uaa_admin_credentials               => { :username => 'user', :password => 'password' })
   end
 

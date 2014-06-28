@@ -65,7 +65,7 @@ module AdminUI
       puts 'AdminUI files...'
       puts "  data:  #{ @config.data_file }"
       puts "  log:   #{ @config.log_file }"
-      puts "  stats: #{ @config.stats_file }"
+      puts "  stats: #{ @config.db_uri }"
       puts "\n"
     end
 

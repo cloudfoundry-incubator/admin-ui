@@ -272,7 +272,7 @@ describe AdminUI::Admin, :type => :integration do
 
     it 'make service plans private and back to public' do
       # Stub the http request to return
-      cc_service_plans_public_to_private_to_public_stub(AdminUI::Config.load(config))
+      cc_service_plans_private_to_public_stub(AdminUI::Config.load(config))
       expect { make_service_plan_private }.to change { get_json('/service_plans')['items'][0]['public'].to_s }.from('true').to('false')
       make_service_plan_public
       expect { get_json('/service_plans')['items'][0]['public'] }.to be_true

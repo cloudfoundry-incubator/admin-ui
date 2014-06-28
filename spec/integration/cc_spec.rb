@@ -6,6 +6,7 @@ describe AdminUI::CC, :type => :integration do
 
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(log_file) }
+  let(:db_uri) { 'sqlite:///tmp/store.db' }
   let(:config) do
     AdminUI::Config.load(:cloud_controller_discovery_interval => 1,
                          :cloud_controller_uri                => 'http://api.cloudfoundry',
