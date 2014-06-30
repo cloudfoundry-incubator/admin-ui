@@ -39,7 +39,10 @@ shared_context :server_context do
       :stats_file             => stats_file,
       :uaa_admin_credentials  => { :password => 'c1oudc0w', :username => 'admin' },
       :ui_admin_credentials   => { :password => admin_password, :username => admin_user },
-      :ui_credentials         => { :password => user_password, :username => user }
+      :ui_credentials         => { :password => user_password, :username => user },
+      :cloud_controller_discovery_interval    => 3,
+      :nats_discovery_interval                => 3,
+      :varz_discovery_interval                => 3
     }
   end
 
@@ -60,7 +63,7 @@ shared_context :server_context do
       AdminUI::Admin.new(config, true).start
     end
 
-    sleep(1)
+    sleep(5)
   end
 
   after do

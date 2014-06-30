@@ -85,7 +85,7 @@ shared_context :web_context do
   def check_stats_chart(id)
     # As the page refreshes, we need to catch the stale element error and re-find the element on the page
     begin
-      Selenium::WebDriver::Wait.new(:timeout => 10).until { @driver.find_element(:id => "#{ id }Chart").displayed? }
+      Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => "#{ id }Chart").displayed? }
     rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
     end
     chart = @driver.find_element(:id => "#{ id }Chart")
@@ -165,7 +165,7 @@ shared_context :web_context do
     @driver.find_element(:id => 'username').send_keys username
     @driver.find_element(:id => 'password').send_keys password
     @driver.find_element(:id => 'username').submit
-    Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.title == target_page }
+    Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.title == target_page }
   end
 
   def select_first_row

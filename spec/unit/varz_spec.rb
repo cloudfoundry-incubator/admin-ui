@@ -6,11 +6,14 @@ describe AdminUI::NATS do
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(log_file) }
   let(:config) do
-    AdminUI::Config.load(:component_connection_retries => 50,
-                         :data_file                    => data_file,
-                         :mbus                         => 'nats://nats:c1oudc0w@localhost:14222',
-                         :monitored_components         => [],
-                         :nats_discovery_timeout       => 1)
+    AdminUI::Config.load(:component_connection_retries           => 50,
+                         :cloud_controller_discovery_interval    => 3,
+                         :nats_discovery_interval                => 3,
+                         :varz_discovery_interval                => 3,
+                         :data_file                              => data_file,
+                         :mbus                                   => 'nats://nats:c1oudc0w@localhost:14222',
+                         :monitored_components                   => [],
+                         :nats_discovery_timeout                 => 1)
   end
   let(:email) { AdminUI::EMail.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
