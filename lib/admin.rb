@@ -3,6 +3,7 @@ require 'webrick/httprequest'
 require_relative 'admin/config'
 require_relative 'admin/cc'
 require_relative 'admin/cc_rest_client'
+require_relative 'admin/db/dbstore_migration'
 require_relative 'admin/email'
 require_relative 'admin/log_files'
 require_relative 'admin/nats'
@@ -24,6 +25,7 @@ module AdminUI
       setup_traps
       setup_config
       setup_logger
+      setup_dbstore
       setup_components
 
       display_files
@@ -46,6 +48,11 @@ module AdminUI
       @logger.level = Logger::DEBUG
     end
 
+    def setup_dbstore
+      db_conn = DBStoreMigration.new(@config, @logger)
+      db_conn.migrate_to_db
+    end
+
     def setup_components
       client = CCRestClient.new(@config, @logger)
       email  = EMail.new(@config, @logger)
@@ -65,7 +72,7 @@ module AdminUI
       puts 'AdminUI files...'
       puts "  data:  #{ @config.data_file }"
       puts "  log:   #{ @config.log_file }"
-      puts "  stats: #{ @config.stats_file }"
+      puts "  stats: #{ @config.db_uri }"
       puts "\n"
     end
 

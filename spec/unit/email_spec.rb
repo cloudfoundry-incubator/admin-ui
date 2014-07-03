@@ -6,6 +6,8 @@ describe AdminUI::EMail do
 
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(log_file) }
+  let(:db_file)   { '/tmp/admin_ui_store.db' }
+  let(:db_uri)    { "sqlite://#{db_file}" }
   let(:disconnected_component) { [{ 'type' => 'DEA', 'uri' => 'http://bogus/dea' }] }
   let(:disconnected_components) do
     [
@@ -19,7 +21,7 @@ describe AdminUI::EMail do
   end
 
   after do
-    Process.wait(Process.spawn({}, "rm -fr #{ log_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ log_file } #{ db_file }"))
   end
 
   context 'Not configured' do
@@ -44,6 +46,7 @@ describe AdminUI::EMail do
   context 'Configured' do
     let(:config) do
       AdminUI::Config.load(:cloud_controller_uri => 'http://api.bogus',
+                           :db_uri               => db_uri,
                            :receiver_emails      => ['receiver1@bogus.com', 'receiver2@foo.com'],
                            :sender_email         => { :account => 'bogus@bogus.com', :server => 'bogus.com' })
 

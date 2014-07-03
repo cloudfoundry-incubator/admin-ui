@@ -43,6 +43,12 @@ describe AdminUI::Config do
         expect(config.data_file).to eq(data_file)
       end
 
+      it 'db_uri' do
+        db_uri = 'sqlite:///tmp/admin_ui_store.db'
+        config = AdminUI::Config.load('db_uri' => db_uri)
+        expect(config.db_uri).to eq(db_uri)
+      end
+
       it 'log_file' do
         log_file = 'admin_ui.log'
         config = AdminUI::Config.load('log_file' => log_file)
@@ -278,6 +284,10 @@ describe AdminUI::Config do
         expect(config.data_file).to be_nil
       end
 
+      it 'db_uri' do
+        expect(config.db_uri).to be_nil
+      end
+
       it 'log_file' do
         expect(config.log_file).to be_nil
       end
@@ -389,6 +399,7 @@ describe AdminUI::Config do
       {
         :cloud_controller_uri  => 'http://api.localhost',
         :data_file             => '/tmp/admin_ui_data.json',
+        :db_uri                 => 'sqlite:///tmp/admin_ui_store.db',
         :log_file              => '/tmp/admin_ui.log',
         :mbus                  => 'nats://nats:c1oudc0w@10.10.10.10:4222',
         :port                  => 8070,
@@ -426,6 +437,10 @@ describe AdminUI::Config do
 
       it 'data_file' do
         expect { AdminUI::Config.load(config.merge(:data_file => 5)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'db_uri' do
+        expect { AdminUI::Config.load(config.merge(:db_uri => 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'log_file' do
@@ -568,6 +583,10 @@ describe AdminUI::Config do
 
       it 'data_file' do
         expect { AdminUI::Config.load(config.merge(:data_file => nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'db_uri' do
+        expect { AdminUI::Config.load(config.merge(:db_uri => nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'log_file' do

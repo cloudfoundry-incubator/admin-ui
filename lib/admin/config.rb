@@ -34,6 +34,7 @@ module AdminUI
           :cloud_controller_uri                          => %r{(http[s]?://[^\r\n\t]+)},
           optional(:component_connection_retries)        => Integer,
           :data_file                                     => /[^\r\n\t]+/,
+          :db_uri                                        => /[^\r\n\t]+/,
           :log_file                                      => /[^\r\n\t]+/,
           optional(:log_file_sftp_keys)                  => [String],
           optional(:log_file_page_size)                  => Integer,
@@ -50,7 +51,7 @@ module AdminUI
             :account => /[^\r\n\t]+/
           },
 
-          :stats_file                                    => /[^\r\n\t]+/,
+          optional(:stats_file)                          => /[^\r\n\t]+/,
           optional(:stats_refresh_time)                  => Integer,
           optional(:stats_refresh_schedules)             => [/@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/],
           optional(:stats_retries)                       => Integer,
@@ -138,6 +139,10 @@ module AdminUI
 
     def data_file
       @config[:data_file]
+    end
+
+    def db_uri
+      @config[:db_uri]
     end
 
     def log_file

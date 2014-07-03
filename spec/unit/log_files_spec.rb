@@ -4,12 +4,15 @@ require_relative '../spec_helper'
 describe AdminUI::LogFiles do
   include SFTPHelper
 
+  let(:db_file)   { '/tmp/admin_ui_store.db' }
+  let(:db_uri)    { "sqlite://#{db_file}" }
   let(:system_log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(system_log_file) }
 
   let(:log_file_sftp_key) { '/somedir/somefile' }
   let(:config) do
-    AdminUI::Config.load(:log_files         => [log_file_uri],
+    AdminUI::Config.load(:db_uri            => db_uri,
+                         :log_files         => [log_file_uri],
                          :log_file_sftp_key => [log_file_sftp_key])
   end
 
@@ -25,7 +28,7 @@ describe AdminUI::LogFiles do
   end
 
   after do
-    Process.wait(Process.spawn({}, "rm -fr #{ system_log_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ system_log_file } #{ db_file }"))
   end
 
   context 'File' do
@@ -41,7 +44,7 @@ describe AdminUI::LogFiles do
     end
 
     after do
-      Process.wait(Process.spawn({}, "rm -fr #{ log_file_directory }"))
+      Process.wait(Process.spawn({}, "rm -fr #{ log_file_directory } #{ db_file }"))
     end
 
     shared_examples 'common FILE actions' do

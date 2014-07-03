@@ -5,6 +5,7 @@ cloud_controller_ssl_verify_none: true
 cloud_controller_uri: http://api.10.244.0.34.xip.io
 component_connection_retries: 2
 data_file: data/data.json
+db_uri: sqlite://data/store.db
 log_file: admin_ui.log
 log_file_page_size: 51200
 log_file_sftp_keys: [ ]
