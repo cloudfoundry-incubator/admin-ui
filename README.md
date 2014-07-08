@@ -127,6 +127,19 @@ Relative path location to store the Administration UI data file.
 Example: <code>data/data.json</code>
 </dd>
 <dt>
+<code>db_uri</code>
+</dt>
+<dd>
+The URI used to connect to a sqlite database instance.   
+
+If the database instance does not exist, Admin-UI will automatically create an instance.  
+<br>
+Example: <code>sqlite://data/store.db</code> 
+<br>
+In this case, the store.db file is located in the 'data' directory.  Absolute path is allowed in the uri.  For example,
+<code>sqlite:///tmp/store.db</code> indicates the database file 'store.db' is located in the '/tmp' directory.
+</dd>
+<dt>
 <code>log_file</code>
 </dt>
 <dd>
@@ -251,7 +264,11 @@ Example: <code>system@10.10.10.10</code>
 <code>stats_file</code>
 </dt>
 <dd>
-Relative path location to store the Administration UI statistics.
+Deprecated.  Relative path location to store the Administration UI statistics.  
+
+Admin-UI no longer stores its stats data in the stats file.  Instead, the data is now stored in a database.  This property 
+is required only for the purpose of data migration.  When data migration is no longer needed, you can remove this property 
+from the configuration file.  Please see the Data Migration section for details.
 <br>
 Example: <code>data/stats.json</code>
 </dd>
@@ -426,6 +443,43 @@ Seconds between VARZ discoveries
 Example: <code>30</code>
 </dd>
 </dl>
+
+### Data Migration
+
+Prior releases of Admin-UI store stats data in a file as indicated by the stats_file configuration property.  This data is 
+now stored in a database.  Data migration is referring to the transfer of stats information from file to database.
+
+Data migration takes place automatically at the start of admin-UI daemon process when the following conditions are all met:
+  * stats_file property is present and valid in the default.yml file
+  * db_uri property is present and valid in the default.yml file
+  * stats file contains data
+  * the database instance either does not exist or has not yet been initialzed with schema.
+
+When Admin-UI completes the data migration to database, it will rename the original stats file by appending '.bak' file 
+extension. For example, 'stats.json' becomes 'stats.json.bak'.  
+
+Data migration is run only once on a given database instance.  If for some reason you wish to rerun data migration, you 
+must operate on a different database instance.
+
+### Database schema Migration 
+At the start of its daemon process, Admin-UI always checks its database schema migration directory and attempts to bring its 
+database schema up to date.  So it's not required to run schema migration manually.  This migration takes place before data 
+migration.
+
+The database schema migration directory is located at 'db/migrations'. This directory contains files responsible for both
+populating database schema and subsequently migrating the schema.  Migration files are built on the Sequel migration framework,
+and hence adhere to its file naming convention. i.e.  
+
+           <timestamp>_<title>.rb
+
+The schema migration Admin-UI initiated always follows the chronological order as indicated by timestamps embdedded in the 
+migration file names.
+
+More details about Sequal migration framework and ways to perform manual schema migration can be found  at the following URLs:
+
+  * http://sequel.jeremyevans.net/rdoc/classes/Sequel/Migration.html
+  * http://sequel.jeremyevans.net/rdoc/classes/Sequel/Migrator.html
+
 
 ## Execute Administration UI
 

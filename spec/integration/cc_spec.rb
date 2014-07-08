@@ -4,11 +4,14 @@ require_relative '../spec_helper'
 describe AdminUI::CC, :type => :integration do
   include CCHelper
 
-  let(:log_file) { '/tmp/admin_ui.log' }
+  let(:db_file)   { '/tmp/admin_ui_store.db' }
+  let(:db_uri)    { "sqlite://#{ db_file }" }
+  let(:log_file)  { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(log_file) }
   let(:config) do
     AdminUI::Config.load(:cloud_controller_discovery_interval => 1,
                          :cloud_controller_uri                => 'http://api.cloudfoundry',
+                         :db_uri                              => db_uri,
                          :uaa_admin_credentials               => { :username => 'user', :password => 'password' })
   end
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
@@ -27,7 +30,7 @@ describe AdminUI::CC, :type => :integration do
         thread.join
       end
     end
-    Process.wait(Process.spawn({}, "rm -fr #{ log_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ log_file } #{ db_file }"))
   end
 
   context 'Stubbed HTTP' do
