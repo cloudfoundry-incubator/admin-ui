@@ -16,6 +16,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       login(admin_user, admin_password, 'Administration')
     end
 
+    let(:allowscriptaccess) {'sameDomain'}
+
     it 'has a title' do
       # Need to wait until the page has been rendered
       begin
@@ -125,6 +127,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_started_apps['resources'][0]['entity']['package_state'] == 'STAGED'  ? '1' : '0',
                              cc_started_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? '1' : '0'
                            ])
+        end
+
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_5').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_1')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
         end
 
         it 'has a checkbox in the first column' do
@@ -415,6 +423,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_started_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? '1' : '0'
                            ])
         end
+
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_SpacesTable_0').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_5')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
+
         context 'selectable' do
           before do
             select_first_row
@@ -501,6 +516,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
                              nats_dea['host']
                            ])
+        end
+
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_ApplicationsTable_4').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_9')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
         end
 
         it 'has a checkbox in the first column' do
@@ -735,6 +756,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_RoutesTable_1').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_17')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
+
         it 'has a checkbox in the first column' do
           inputs = @driver.find_elements(:xpath => "//table[@id='RoutesTable']/tbody/tr/td[1]/input")
           expect(inputs.length).to eq(1)
@@ -845,6 +872,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }"
                            ])
         end
+
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_ServiceInstancesTable_0').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_21')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
+
         context 'selectable' do
           before do
             select_first_row
@@ -922,6 +956,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatString(\"#{ DateTime.parse(uaa_users['resources'][0]['meta']['lastModified']).rfc3339 }\")")
                            ])
         end
+
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_DevelopersTable_0').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_29')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
+
         context 'selectable' do
           before do
             select_first_row
@@ -989,6 +1030,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_QuotasTable_0').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_33')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
+
         context 'selectable' do
           before do
             select_first_row
@@ -1046,6 +1093,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_brokers['resources'][0]['metadata']['created_at'] }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_brokers['resources'][0]['metadata']['updated_at'] }\")")
                            ])
+        end
+
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_ServicePlansTable_2').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_37')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
         end
 
         context 'selectable' do
@@ -1188,6 +1241,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         it 'has a create DEA button' do
           expect(@driver.find_element(:id => 'ToolTables_DEAsTable_0').text).to eq('Create new DEA')
         end
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_DEAsTable_1').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_41')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
         context 'selectable' do
           before do
             select_first_row
@@ -1235,6 +1293,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              varz_cloud_controller['mem'].to_s
                            ])
         end
+
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_CloudControllersTable_0').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_45')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
+
         context 'selectable' do
           it 'has details' do
             select_first_row
@@ -1276,6 +1341,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              varz_health_manager['total_instances'].to_s
                            ])
         end
+
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_HealthManagersTable_0').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_49')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
+
         context 'selectable' do
           it 'has details' do
             select_first_row
@@ -1327,6 +1399,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @capacity.to_s
                            ])
         end
+
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_GatewaysTable_0').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_53')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
+
         context 'selectable' do
           before do
             select_first_row
@@ -1383,6 +1462,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              varz_router['bad_requests'].to_s
                            ])
         end
+
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_RoutersTable_0').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_61')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
+
         context 'selectable' do
           it 'has details' do
             select_first_row
@@ -1425,6 +1511,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatString(\"#{ varz_cloud_controller['start'] }\")")
                            ])
         end
+
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_ComponentsTable_1').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_65')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
+
         it 'has a remove OFFLINE components button' do
           expect(@driver.find_element(:id => 'ToolTables_ComponentsTable_0').text).to eq('Remove OFFLINE')
         end
@@ -1465,6 +1558,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           expect(@driver.find_element(:id => 'LogLink').text).to eq(columns[0].text)
           expect(@driver.find_element(:id => 'LogContents').text).to eq(log_file_displayed_contents)
         end
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_LogsTable_0').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_69')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
       end
 
       context 'Tasks' do
@@ -1478,6 +1576,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                }
                              ])
         end
+
+        it 'has AllowScriptAccess property set to sameDomain' do
+          expect(@driver.find_element(:id => 'ToolTables_TasksTable_0').text).to eq('Copy')
+          el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_73')
+          expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
+        end
+
         it 'can show task output' do
           expect(@driver.find_element(:xpath => "//table[@id='TasksTable']/tbody/tr").text).to eq('No data available in table')
           @driver.find_element(:id => 'DEAs').click
@@ -1517,6 +1622,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has a table' do
             check_stats_table('Stats')
+          end
+          it 'has AllowScriptAccess property set to sameDomain' do
+            expect(@driver.find_element(:id => 'ToolTables_StatsTable_1').text).to eq('Copy')
+            el = @driver.find_element(:id => 'ZeroClipboard_TableToolsMovie_77')
+            expect(el.attribute("allowscriptaccess")).to eq(allowscriptaccess)
           end
           it 'has a chart' do
             check_stats_chart('Stats')
