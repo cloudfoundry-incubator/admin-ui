@@ -16,9 +16,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       login(admin_user, admin_password, 'Administration')
     end
 
-    let(:allowscriptaccess) {'sameDomain'}
+    let(:allowscriptaccess) { 'sameDomain' }
 
-    def check_AllowScriptAccess_attribute(copy_node_id, flash_node_id)
+    def check_allowscriptaccess_attribute(copy_node_id, flash_node_id)
       expect(@driver.find_element(:id => copy_node_id).text).to eq('Copy')
       el = @driver.find_element(:id => flash_node_id)
       expect(el.attribute('allowscriptaccess')).to eq(allowscriptaccess)
@@ -135,8 +135,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_OrganizationsTable_5', 'ZeroClipboard_TableToolsMovie_1')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_OrganizationsTable_5', 'ZeroClipboard_TableToolsMovie_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -428,8 +428,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_SpacesTable_0', 'ZeroClipboard_TableToolsMovie_5')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_SpacesTable_0', 'ZeroClipboard_TableToolsMovie_5')
         end
 
         context 'selectable' do
@@ -520,8 +520,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_ApplicationsTable_4', 'ZeroClipboard_TableToolsMovie_9')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_ApplicationsTable_4', 'ZeroClipboard_TableToolsMovie_9')
         end
 
         it 'has a checkbox in the first column' do
@@ -757,8 +757,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_RoutesTable_1', 'ZeroClipboard_TableToolsMovie_17')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_RoutesTable_1', 'ZeroClipboard_TableToolsMovie_17')
         end
 
         it 'has a checkbox in the first column' do
@@ -872,8 +872,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_ServiceInstancesTable_0', 'ZeroClipboard_TableToolsMovie_21')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_ServiceInstancesTable_0', 'ZeroClipboard_TableToolsMovie_21')
         end
 
         context 'selectable' do
@@ -954,8 +954,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_DevelopersTable_0', 'ZeroClipboard_TableToolsMovie_29')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_DevelopersTable_0', 'ZeroClipboard_TableToolsMovie_29')
         end
 
         context 'selectable' do
@@ -1025,8 +1025,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_QuotasTable_0', 'ZeroClipboard_TableToolsMovie_33')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_QuotasTable_0', 'ZeroClipboard_TableToolsMovie_33')
         end
 
         context 'selectable' do
@@ -1088,8 +1088,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_ServicePlansTable_2', 'ZeroClipboard_TableToolsMovie_37')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_ServicePlansTable_2', 'ZeroClipboard_TableToolsMovie_37')
         end
 
         context 'selectable' do
@@ -1229,8 +1229,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })")
                            ])
         end
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_DEAsTable_1', 'ZeroClipboard_TableToolsMovie_41')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_DEAsTable_1', 'ZeroClipboard_TableToolsMovie_41')
         end
         it 'has a create DEA button' do
           expect(@driver.find_element(:id => 'ToolTables_DEAsTable_0').text).to eq('Create new DEA')
@@ -1283,8 +1283,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_CloudControllersTable_0', 'ZeroClipboard_TableToolsMovie_45')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_CloudControllersTable_0', 'ZeroClipboard_TableToolsMovie_45')
         end
 
         context 'selectable' do
@@ -1329,8 +1329,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_HealthManagersTable_0', 'ZeroClipboard_TableToolsMovie_49')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_HealthManagersTable_0', 'ZeroClipboard_TableToolsMovie_49')
         end
 
         context 'selectable' do
@@ -1385,8 +1385,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_GatewaysTable_0', 'ZeroClipboard_TableToolsMovie_53')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_GatewaysTable_0', 'ZeroClipboard_TableToolsMovie_53')
         end
 
         context 'selectable' do
@@ -1446,8 +1446,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_RoutersTable_0', 'ZeroClipboard_TableToolsMovie_61')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_RoutersTable_0', 'ZeroClipboard_TableToolsMovie_61')
         end
 
         context 'selectable' do
@@ -1493,8 +1493,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_ComponentsTable_1', 'ZeroClipboard_TableToolsMovie_65')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_ComponentsTable_1', 'ZeroClipboard_TableToolsMovie_65')
         end
 
         it 'has a remove OFFLINE components button' do
@@ -1537,8 +1537,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           expect(@driver.find_element(:id => 'LogLink').text).to eq(columns[0].text)
           expect(@driver.find_element(:id => 'LogContents').text).to eq(log_file_displayed_contents)
         end
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_LogsTable_0', 'ZeroClipboard_TableToolsMovie_69')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_LogsTable_0', 'ZeroClipboard_TableToolsMovie_69')
         end
       end
 
@@ -1554,8 +1554,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              ])
         end
 
-        it 'has AllowScriptAccess property set to sameDomain' do
-          check_AllowScriptAccess_attribute('ToolTables_TasksTable_0', 'ZeroClipboard_TableToolsMovie_73')
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_TasksTable_0', 'ZeroClipboard_TableToolsMovie_73')
         end
 
         it 'can show task output' do
@@ -1598,8 +1598,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has a table' do
             check_stats_table('Stats')
           end
-          it 'has AllowScriptAccess property set to sameDomain' do
-            check_AllowScriptAccess_attribute('ToolTables_StatsTable_1', 'ZeroClipboard_TableToolsMovie_77')
+          it 'has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('ToolTables_StatsTable_1', 'ZeroClipboard_TableToolsMovie_77')
           end
           it 'has a chart' do
             check_stats_chart('Stats')
