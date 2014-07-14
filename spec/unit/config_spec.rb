@@ -149,7 +149,7 @@ describe AdminUI::Config do
       it 'converts stats_refresh_time to stats_refresh_schedules' do
         schedule_minutes = 30
         config = AdminUI::Config.load('stats_refresh_time' => schedule_minutes)
-        expect(config.stats_refresh_schedules).to eq(["#{schedule_minutes} * * * *"])
+        expect(config.stats_refresh_schedules).to eq(["#{ schedule_minutes } * * * *"])
       end
 
       it 'converts stats_refresh_time to stats_refresh_schedules - 66+60*24*31*13 minutes (1 year, 1 month, 1 day, 1 hour, 6 mintues into the future)' do
@@ -211,42 +211,34 @@ describe AdminUI::Config do
         expect(config.tasks_refresh_interval).to eq(tasks_refresh_interval)
       end
 
-      context 'uaa_admin_credentials' do
-        let(:uaa_admin_credentials) { { 'password' => 'uaa_admin_bogus_password', 'username' => 'uaa_admin_bogus_username' } }
-        let(:config) { AdminUI::Config.load('uaa_admin_credentials' => uaa_admin_credentials) }
+      context 'uaa_client' do
+        let(:uaa_client) { { 'id' => 'id', 'secret' => 'secret' } }
+        let(:config) { AdminUI::Config.load('uaa_client' => uaa_client) }
 
-        it 'uaa_admin_credentials_password' do
-          expect(config.uaa_admin_credentials_password).to eq(uaa_admin_credentials['password'])
+        it 'uaa_client_id' do
+          expect(config.uaa_client_id).to eq(uaa_client['id'])
         end
 
-        it 'uaa_admin_credentials_username' do
-          expect(config.uaa_admin_credentials_username).to eq(uaa_admin_credentials['username'])
-        end
-      end
-
-      context 'ui_admin_credentials' do
-        let(:ui_admin_credentials) { { 'password' => 'ui_admin_bogus_password', 'username' => 'ui_admin_bogus_username' } }
-        let(:config) { AdminUI::Config.load('ui_admin_credentials' => ui_admin_credentials) }
-
-        it 'ui_admin_credentials_password' do
-          expect(config.ui_admin_credentials_password).to eq(ui_admin_credentials['password'])
-        end
-
-        it 'ui_admin_credentials_username' do
-          expect(config.ui_admin_credentials_username).to eq(ui_admin_credentials['username'])
+        it 'uaa_client_secret' do
+          expect(config.uaa_client_secret).to eq(uaa_client['secret'])
         end
       end
 
-      context 'ui_credentials' do
-        let(:ui_credentials) { { 'password' => 'ui_bogus_password', 'username' => 'ui_bogus_username' } }
-        let(:config) { AdminUI::Config.load('ui_credentials' => ui_credentials) }
+      context 'uaa_groups_admin' do
+        let(:uaa_groups_admin) { %w(admin1 admin2) }
+        let(:config) { AdminUI::Config.load('uaa_groups_admin' => uaa_groups_admin) }
 
-        it 'ui_credentials_password' do
-          expect(config.ui_credentials_password).to eq(ui_credentials['password'])
+        it 'uaa_groups_admin' do
+          expect(config.uaa_groups_admin).to eq(uaa_groups_admin)
         end
+      end
 
-        it 'ui_credentials_username' do
-          expect(config.ui_credentials_username).to eq(ui_credentials['username'])
+      context 'uaa_groups_user' do
+        let(:uaa_groups_user) { %w(user1 user2) }
+        let(:config) { AdminUI::Config.load('uaa_groups_user' => uaa_groups_user) }
+
+        it 'uaa_groups_user' do
+          expect(config.uaa_groups_user).to eq(uaa_groups_user)
         end
       end
 
@@ -358,33 +350,25 @@ describe AdminUI::Config do
         expect(config.tasks_refresh_interval).to eq(5_000)
       end
 
-      context 'uaa_admin_credentials' do
-        it 'uaa_admin_credentials_password' do
-          expect(config.uaa_admin_credentials_password).to be_nil
+      context 'uaa_client' do
+        it 'uaa_client_id' do
+          expect(config.uaa_client_id).to be_nil
         end
 
-        it 'uaa_admin_credentials_username' do
-          expect(config.uaa_admin_credentials_username).to be_nil
-        end
-      end
-
-      context 'ui_admin_credentials' do
-        it 'ui_admin_credentials_password' do
-          expect(config.ui_admin_credentials_password).to be_nil
-        end
-
-        it 'ui_admin_credentials_username' do
-          expect(config.ui_admin_credentials_username).to be_nil
+        it 'uaa_client_secret' do
+          expect(config.uaa_client_secret).to be_nil
         end
       end
 
-      context 'ui_credentials' do
-        it 'ui_credentials_password' do
-          expect(config.ui_credentials_password).to be_nil
+      context 'uaa_groups.admin' do
+        it 'uaa_groups_admin' do
+          expect(config.uaa_groups_admin).to eq(['admin_ui.admin'])
         end
+      end
 
-        it 'ui_credentials_username' do
-          expect(config.ui_credentials_username).to be_nil
+      context 'uaa_groups_user' do
+        it 'uaa_groups_user' do
+          expect(config.uaa_groups_user).to eq(['admin_ui.user'])
         end
       end
 
@@ -404,9 +388,9 @@ describe AdminUI::Config do
         :mbus                  => 'nats://nats:c1oudc0w@10.10.10.10:4222',
         :port                  => 8070,
         :stats_file            => '/tmp/admin_ui_stats.json',
-        :uaa_admin_credentials => { :username => 'uaa_user', :password => 'uaa_password' },
-        :ui_credentials        => { :username => 'ui_user', :password => 'ui_user_password' },
-        :ui_admin_credentials  => { :username => 'ui_admin_user', :password => 'ui_admin_user_password' }
+        :uaa_client            => { :id => 'id', :secret => 'secret' },
+        :uaa_groups_admin      => ['cloud_controller.admin'],
+        :uaa_groups_user       => ['cloud_controller.admin']
       }
     end
 
@@ -533,34 +517,22 @@ describe AdminUI::Config do
         expect { AdminUI::Config.load(config.merge(:tasks_refresh_interval => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
-      context 'uaa_admin_credentials' do
-        it 'uaa_admin_credentials_password' do
-          expect { AdminUI::Config.load(config.merge(:uaa_admin_credentials => { :password => 5, :username => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+      context 'uaa_client' do
+        it 'uaa_client_id' do
+          expect { AdminUI::Config.load(config.merge(:uaa_client => { :id => 5, :secret => 'secret' })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
-        it 'uaa_admin_credentials_username' do
-          expect { AdminUI::Config.load(config.merge(:uaa_admin_credentials => { :password => 'hi', :username => 5 })) }.to raise_error(Membrane::SchemaValidationError)
+        it 'uaa_client_secret' do
+          expect { AdminUI::Config.load(config.merge(:uaa_client => { :id => 'id', :secret => 5 })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 
-      context 'ui_admin_credentials' do
-        it 'ui_admin_credentials_password' do
-          expect { AdminUI::Config.load(config.merge(:ui_admin_credentials => { :password => 5, :username => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
-        end
-
-        it 'ui_admin_credentials_username' do
-          expect { AdminUI::Config.load(config.merge(:ui_admin_credentials => { :password => 'hi', :username => 5 })) }.to raise_error(Membrane::SchemaValidationError)
-        end
+      it 'uaa_groups_admin' do
+        expect { AdminUI::Config.load(config.merge(:uaa_groups_admin => 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
-      context 'ui_credentials' do
-        it 'ui_credentials_password' do
-          expect { AdminUI::Config.load(config.merge(:ui_credentials => { :password => 5, :username => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
-        end
-
-        it 'ui_credentials_username' do
-          expect { AdminUI::Config.load(config.merge(:ui_credentials => { :password => 'hi', :username => 5 })) }.to raise_error(Membrane::SchemaValidationError)
-        end
+      it 'uaa_groups_user' do
+        expect { AdminUI::Config.load(config.merge(:uaa_groups_user => 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'varz_discovery_interval' do
@@ -605,34 +577,22 @@ describe AdminUI::Config do
         expect { AdminUI::Config.load(config.merge(:stats_file => nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
-      context 'uaa_admin_credentials' do
-        it 'uaa_admin_credentials_password' do
-          expect { AdminUI::Config.load(config.merge(:uaa_admin_credentials => { :username => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+      context 'uaa_client' do
+        it 'uaa_client_id' do
+          expect { AdminUI::Config.load(config.merge(:uaa_client => { :secret => 'secret' })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
-        it 'uaa_admin_credentials_username' do
-          expect { AdminUI::Config.load(config.merge(:uaa_admin_credentials => { :password => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+        it 'uaa_client_secret' do
+          expect { AdminUI::Config.load(config.merge(:uaa_client => { :id => 'id' })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 
-      context 'ui_admin_credentials' do
-        it 'ui_admin_credentials_password' do
-          expect { AdminUI::Config.load(config.merge(:ui_admin_credentials => { :username => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
-        end
-
-        it 'ui_admin_credentials_username' do
-          expect { AdminUI::Config.load(config.merge(:ui_admin_credentials => { :password => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
-        end
+      it 'uaa_groups_admin' do
+        expect { AdminUI::Config.load(config.merge(:uaa_groups_admin => nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
-      context 'ui_credentials' do
-        it 'ui_credentials_password' do
-          expect { AdminUI::Config.load(config.merge(:ui_credentials => { :username => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
-        end
-
-        it 'ui_credentials_username' do
-          expect { AdminUI::Config.load(config.merge(:ui_credentials => { :password => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
-        end
+      it 'uaa_groups_user' do
+        expect { AdminUI::Config.load(config.merge(:uaa_groups_user => nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
     end
   end

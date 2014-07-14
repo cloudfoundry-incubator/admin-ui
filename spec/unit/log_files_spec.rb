@@ -5,7 +5,7 @@ describe AdminUI::LogFiles do
   include SFTPHelper
 
   let(:db_file)   { '/tmp/admin_ui_store.db' }
-  let(:db_uri)    { "sqlite://#{db_file}" }
+  let(:db_uri)    { "sqlite://#{ db_file }" }
   let(:system_log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(system_log_file) }
 
@@ -28,7 +28,7 @@ describe AdminUI::LogFiles do
   end
 
   after do
-    Process.wait(Process.spawn({}, "rm -fr #{ system_log_file } #{ db_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ db_file } #{ system_log_file }"))
   end
 
   context 'File' do
@@ -44,7 +44,7 @@ describe AdminUI::LogFiles do
     end
 
     after do
-      Process.wait(Process.spawn({}, "rm -fr #{ log_file_directory } #{ db_file }"))
+      Process.wait(Process.spawn({}, "rm -fr #{ db_file } #{ log_file_directory }"))
     end
 
     shared_examples 'common FILE actions' do

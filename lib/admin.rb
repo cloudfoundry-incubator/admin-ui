@@ -5,6 +5,7 @@ require_relative 'admin/cc'
 require_relative 'admin/cc_rest_client'
 require_relative 'admin/db/dbstore_migration'
 require_relative 'admin/email'
+require_relative 'admin/login'
 require_relative 'admin/log_files'
 require_relative 'admin/nats'
 require_relative 'admin/operation'
@@ -60,6 +61,7 @@ module AdminUI
 
       @cc          = CC.new(@config, @logger, client, @testing)
       @log_files   = LogFiles.new(@config, @logger)
+      @login       = Login.new(@config, @logger, client)
       @tasks       = Tasks.new(@config, @logger)
       @varz        = VARZ.new(@config, @logger, nats, @testing)
       @stats       = Stats.new(@config, @logger, @cc, @varz)
@@ -80,6 +82,7 @@ module AdminUI
       web = AdminUI::Web.new(@config,
                              @logger,
                              @cc,
+                             @login,
                              @log_files,
                              @operation,
                              @stats,

@@ -5,27 +5,22 @@ require 'uri'
 require_relative '../spec_helper'
 
 describe AdminUI::DBStoreMigration do
-  let(:admin_user)            { 'admin' }
-  let(:admin_password)        { 'admin_passw0rd' }
-  let(:backup_stats_file)     { '/tmp/admin_ui_stats.json.bak' }
+  let(:backup_stats_file)      { '/tmp/admin_ui_stats.json.bak' }
   let(:cloud_controller_uri)   { 'http://api.localhost' }
-  let(:config_file)           { '/tmp/admin_ui.yml' }
-  let(:data_file)             { '/tmp/admin_ui_data.json' }
-  let(:db_file)               { '/tmp/admin_ui_store.db' }
+  let(:config_file)            { '/tmp/admin_ui.yml' }
+  let(:data_file)              { '/tmp/admin_ui_data.json' }
+  let(:db_file)                { '/tmp/admin_ui_store.db' }
   let(:db_migration_dir)       { 'db/migrations' }
   let(:db_migration_spec_dir)  { 'spec/db' }
-  let(:db_uri)                { "sqlite://#{db_file}" }
-  let(:host)                  { 'localhost' }
-  let(:log_file)              { '/tmp/admin_ui.log' }
+  let(:db_uri)                 { "sqlite://#{ db_file }" }
+  let(:host)                   { 'localhost' }
+  let(:log_file)               { '/tmp/admin_ui.log' }
   let(:plans)                  { ['20140530_new_initial_schema.rb', '201405301000_change_table_schema.rb'] }
-  let(:port)                  { 8071 }
-  let(:stats_file)            { '/tmp/admin_ui_stats.json' }
+  let(:port)                   { 8071 }
+  let(:stats_file)             { '/tmp/admin_ui_stats.json' }
   let(:stats_file_spec)        { 'stats.json' }
   let(:tasks_fresh_interval)   { 6000 }
   let(:tasks_refresh_interval) { 6000 }
-
-  let(:user)                   { 'user' }
-  let(:user_password)          { 'user_passw0rd' }
 
   let(:config)                 do
     {
@@ -36,9 +31,7 @@ describe AdminUI::DBStoreMigration do
       :port                   => port,
       :db_uri                 => db_uri,
       :tasks_refresh_interval => tasks_fresh_interval,
-      :uaa_admin_credentials  => { :password => 'c1oudc0w', :username => 'admin' },
-      :ui_admin_credentials   => { :password => admin_password, :username => admin_user },
-      :ui_credentials         => { :password => user_password, :username => user }
+      :uaa_client             => { :id => 'id', :secret => 'secret' }
     }
   end
 
@@ -77,7 +70,7 @@ describe AdminUI::DBStoreMigration do
   def migrate_database
     spawn_opts = { :out   => '/dev/null', :err   => '/dev/null' }
 
-    pid = Process.spawn({}, "sequel -m #{db_migration_dir} sqlite://#{db_file}", spawn_opts)
+    pid = Process.spawn({}, "sequel -m #{ db_migration_dir } sqlite://#{ db_file }", spawn_opts)
     Process.wait(pid)
   end
 
@@ -104,7 +97,7 @@ describe AdminUI::DBStoreMigration do
   context 'when stats file exists and database instance does not' do
     it 'migrates stats persistence from file stats to database' do
       merged_config = config.merge(:stats_file => stats_file)
-      FileUtils.cp("#{db_migration_spec_dir}/#{stats_file_spec}", "#{stats_file}")
+      FileUtils.cp("#{ db_migration_spec_dir }/#{ stats_file_spec }", "#{ stats_file }")
       launch_admin_daemon(merged_config)
       expect(File.file?(db_file)).to be_true
       expect(File.file?(backup_stats_file)).to be_true
@@ -119,7 +112,7 @@ describe AdminUI::DBStoreMigration do
   context 'when there is more than on one database migration plan in db/migrations directory' do
     it 'applies database migration plans according to chronological order' do
       db_migration_1 = plans[1]
-      FileUtils.cp "#{db_migration_spec_dir}/#{db_migration_1}", db_migration_dir
+      FileUtils.cp "#{ db_migration_spec_dir }/#{ db_migration_1 }", db_migration_dir
       launch_admin_daemon(config)
       db_conn = db_connection
       db_conn.fetch('select tbl_name from sqlite_master where sql like :pattern', :pattern => 'CREATE TABLE%extra_column%') do | row |
@@ -130,7 +123,7 @@ describe AdminUI::DBStoreMigration do
         expect(row[:filename]).to eq(plans[i])
         i += 1
       end
-      FileUtils.rm_rf "#{db_migration_dir}/#{db_migration_1}"
+      FileUtils.rm_rf "#{ db_migration_dir }/#{ db_migration_1 }"
       stop_admin_daemon
     end
   end
@@ -139,7 +132,7 @@ describe AdminUI::DBStoreMigration do
     it 'allows one to run sequel migration from another process' do
       launch_admin_daemon(config)
       db_migration_1 = plans[1]
-      FileUtils.cp "#{db_migration_spec_dir}/#{db_migration_1}", db_migration_dir
+      FileUtils.cp "#{ db_migration_spec_dir }/#{ db_migration_1 }", db_migration_dir
       migrate_database
       db_conn = db_connection
       db_conn.fetch('select tbl_name from sqlite_master where sql like :pattern', :pattern => 'CREATE TABLE%extra_column%') do | row |

@@ -7,13 +7,18 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
   include_context :server_context
   include_context :web_context
 
-  it 'requires valid credentials' do
-    login(admin_user, 'bad_password', 'Login')
+  context 'unauthenticated' do
+    before do
+      login_stub_fail
+    end
+    it 'requires valid credentials' do
+      login('Scope Error')
+    end
   end
 
   context 'authenticated' do
     before do
-      login(admin_user, admin_password, 'Administration')
+      login('Administration')
     end
 
     let(:allowscriptaccess) { 'sameDomain' }
@@ -59,7 +64,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
     it 'shows the logged in user' do
       expect(@driver.find_element(:class => 'userContainer').displayed?).to be_true
-      expect(@driver.find_element(:class => 'user').text).to eq(admin_user)
+      expect(@driver.find_element(:class => 'user').text).to eq('admin')
     end
 
     context 'tabs' do
@@ -1118,7 +1123,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Description',            :tag =>   nil, :value => cc_services['resources'][0]['entity']['description'] },
                            { :label => 'Service Display Name',           :tag =>   nil, :value => value_extra_json['displayName'] },
                            { :label => 'Service Provider Display Name',  :tag =>   nil, :value => value_extra_json['providerDisplayName'] },
-                           { :label => 'Service Icon',                   :tag => 'img', :value => @driver.execute_script("return Format.formatIconImage(\"#{value_extra_json['imageUrl']}\", \"service icon\", \"flot:left;\")").gsub(/'/, "\"").gsub(/[ ]+/, ' ').gsub(/ >/, '>') },
+                           { :label => 'Service Icon',                   :tag => 'img', :value => @driver.execute_script("return Format.formatIconImage(\"#{ value_extra_json['imageUrl'] }\", \"service icon\", \"flot:left;\")").gsub(/'/, "\"").gsub(/[ ]+/, ' ').gsub(/ >/, '>') },
                            { :label => 'Service Long Description',       :tag =>   nil, :value => value_extra_json['longDescription'] }
                           ])
           end
@@ -1140,7 +1145,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
             def manage_service_plan(buttonIndex)
               check_first_row
-              @driver.find_element(:id => "ToolTables_ServicePlansTable_#{buttonIndex}").click
+              @driver.find_element(:id => "ToolTables_ServicePlansTable_#{ buttonIndex }").click
               if buttonIndex == 0
                 check_operation_result('public')
               else

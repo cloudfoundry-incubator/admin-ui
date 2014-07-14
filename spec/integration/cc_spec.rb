@@ -12,7 +12,7 @@ describe AdminUI::CC, :type => :integration do
     AdminUI::Config.load(:cloud_controller_discovery_interval => 1,
                          :cloud_controller_uri                => 'http://api.cloudfoundry',
                          :db_uri                              => db_uri,
-                         :uaa_admin_credentials               => { :username => 'user', :password => 'password' })
+                         :uaa_client                          => { :id => 'id', :secret => 'secret' })
   end
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
 
@@ -30,7 +30,7 @@ describe AdminUI::CC, :type => :integration do
         thread.join
       end
     end
-    Process.wait(Process.spawn({}, "rm -fr #{ log_file } #{ db_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ db_file } #{ log_file }"))
   end
 
   context 'Stubbed HTTP' do

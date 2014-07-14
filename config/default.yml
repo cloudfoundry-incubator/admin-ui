@@ -24,14 +24,10 @@ stats_refresh_schedules: [ '0 5 * * *' ]
 stats_retries: 5
 stats_retry_interval: 300
 tasks_refresh_interval: 5000
-uaa_admin_credentials:
-  username: admin
-  password: admin
-ui_credentials:
-  username: user
-  password: passw0rd
-ui_admin_credentials:
-  username: admin
-  password: passw0rd
+uaa_client:
+  id: admin_ui_client
+  secret: admin_ui_secret
+uaa_groups_admin: [ admin_ui.admin ]
+uaa_groups_user: [ admin_ui.user ] 
 varz_discovery_interval: 30
 

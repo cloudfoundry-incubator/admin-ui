@@ -8,7 +8,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
   context 'authenticated' do
     before do
-      login(user, user_password, 'Administration')
+      login_stub_user
+      login('Administration')
+    end
+
+    it 'shows the logged in user' do
+      expect(@driver.find_element(:class => 'userContainer').displayed?).to be_true
+      expect(@driver.find_element(:class => 'user').text).to eq('user')
     end
 
     it 'does not have start, stop, restart or delete app buttons' do

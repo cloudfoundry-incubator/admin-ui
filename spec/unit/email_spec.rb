@@ -7,7 +7,7 @@ describe AdminUI::EMail do
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(log_file) }
   let(:db_file)   { '/tmp/admin_ui_store.db' }
-  let(:db_uri)    { "sqlite://#{db_file}" }
+  let(:db_uri)    { "sqlite://#{ db_file }" }
   let(:disconnected_component) { [{ 'type' => 'DEA', 'uri' => 'http://bogus/dea' }] }
   let(:disconnected_components) do
     [
@@ -21,7 +21,7 @@ describe AdminUI::EMail do
   end
 
   after do
-    Process.wait(Process.spawn({}, "rm -fr #{ log_file } #{ db_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ db_file } #{ log_file }"))
   end
 
   context 'Not configured' do
