@@ -5,7 +5,7 @@ require_relative '../spec_helper'
 describe AdminUI::Stats do
   let(:data_file) { '/tmp/admin_ui_data.json' }
   let(:db_file)   { '/tmp/admin_ui_store.db' }
-  let(:db_uri)    { "sqlite://#{db_file}" }
+  let(:db_uri)    { "sqlite://#{ db_file }" }
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(log_file) }
   let(:email) { AdminUI::EMail.new(config, logger) }
@@ -28,7 +28,7 @@ describe AdminUI::Stats do
   end
 
   after do
-    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ log_file } #{ db_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ db_file } #{ log_file }"))
   end
 
   shared_examples 'common_calculate_time_until_generate_stats' do

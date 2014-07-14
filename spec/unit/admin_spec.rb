@@ -3,75 +3,92 @@ require 'uri'
 require_relative '../spec_helper'
 
 describe AdminUI::Admin do
-  HOST = 'localhost'
-  PORT = 8071
+  include LoginHelper
+  include CCHelper
 
-  CONFIG_FILE = '/tmp/admin_ui.yml'
-  DATA_FILE   = '/tmp/admin_ui_data.json'
-  DB_FILE     = '/tmp/admin_ui_store.db'
-  LOG_FILE    = '/tmp/admin_ui.log'
+  let(:host) { 'localhost' }
+  let(:port) { 8071 }
 
-  STATS_FILE  = '/tmp/admin_ui_stats.json'
-  ADMIN_USER     = 'admin'
-  ADMIN_PASSWORD = 'admin_passw0rd'
+  let(:cloud_controller_uri) { 'http://api.localhost' }
+  let(:data_file) { '/tmp/admin_ui_data.json' }
+  let(:db_file) { '/tmp/admin_ui_store.db' }
+  let(:log_file) { '/tmp/admin_ui.log' }
+  let(:stats_file) { '/tmp/admin_ui_stats.json' }
+  let(:tasks_refresh_interval) { 6000 }
 
-  USER          = 'user'
-  USER_PASSWORD = 'user_passw0rd'
-
-  CLOUD_CONTROLLER_URI = 'http://api.localhost'
-
-  TASKS_REFRESH_INTERVAL = 6000
-
-  before(:all) do
-    File.delete(DB_FILE) if File.exist?(DB_FILE)
-    config =
-    {
-      :cloud_controller_uri   => CLOUD_CONTROLLER_URI,
-      :data_file              => DATA_FILE,
-      :db_uri                 => "sqlite://#{DB_FILE}",
-      :log_file               => LOG_FILE,
+  let(:config) do
+    { :cloud_controller_uri   => cloud_controller_uri,
+      :data_file              => data_file,
+      :db_uri                 => "sqlite://#{ db_file }",
+      :log_file               => log_file,
       :mbus                   => 'nats://nats:c1oudc0w@localhost:14222',
-      :port                   => PORT,
-      :tasks_refresh_interval => TASKS_REFRESH_INTERVAL,
-      :uaa_admin_credentials  => { :password => 'c1oudc0w', :username => 'admin' },
-      :ui_admin_credentials   => { :password => ADMIN_PASSWORD, :username => ADMIN_USER },
-      :ui_credentials         => { :password => USER_PASSWORD, :username => USER }
+      :port                   => port,
+      :stats_file             => stats_file,
+      :tasks_refresh_interval => tasks_refresh_interval,
+      :uaa_client             => { :id => 'id', :secret => 'secret' }
     }
-
-    File.open(CONFIG_FILE, 'w') do |file|
-      file.write(JSON.pretty_generate(config))
-    end
-
-    project_path = File.join(File.dirname(__FILE__), '../..')
-    spawn_opts = { :chdir => project_path,
-                   :out   => '/dev/null',
-                   :err   => '/dev/null' }
-
-    @pid = Process.spawn({}, "ruby bin/admin -c #{ CONFIG_FILE }", spawn_opts)
-
-    sleep(5)
   end
 
-  after(:all) do
-    Process.kill('TERM', @pid)
-    Process.wait(@pid)
+  before do
+    File.delete(db_file) if File.exist?(db_file)
 
-    Process.wait(Process.spawn({}, "rm -fr #{ CONFIG_FILE } #{ DATA_FILE } #{ LOG_FILE } #{ STATS_FILE } #{ DB_FILE }"))
+    ::WEBrick::Log.any_instance.stub(:log)
+
+    Thread.new do
+      AdminUI::Admin.new(config, true).start
+    end
+
+    sleep(1)
+  end
+
+  after do
+    Rack::Handler::WEBrick.shutdown
+
+    Thread.list.each do |thread|
+      unless thread == Thread.main
+        thread.kill
+        thread.join
+      end
+    end
+
+    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ db_file } #{ log_file } #{ stats_file }"))
   end
 
   def create_http
-    Net::HTTP.new(HOST, PORT)
+    Net::HTTP.new(host, port)
   end
 
   def login_and_return_cookie(http)
-    request = Net::HTTP::Post.new("/login?username=#{ ADMIN_USER }&password=#{ ADMIN_PASSWORD }")
-    request['Content-Length'] = 0
+    response = nil
+    cookie = nil
+    uri = URI.parse('/')
+    loop do
+      path  = uri.path
+      path += "?#{ uri.query }" unless uri.query.nil?
+
+      request = Net::HTTP::Get.new(path)
+      request['Cookie'] = cookie
+
+      response = http.request(request)
+      cookie   = response['Set-Cookie'] unless response['Set-Cookie'].nil?
+
+      break unless response['location']
+      uri = URI.parse(response['location'])
+    end
+
+    expect(cookie).to_not be_nil
+
+    cookie
+  end
+
+  def logout(http)
+    request = Net::HTTP::Get.new('/logout')
 
     response = http.request(request)
-    expect(response.is_a?(Net::HTTPSeeOther)).to be_true
+    expect(response.is_a?(Net::HTTPOK)).to be_true
 
-    location = response['location']
-    expect(location).to eq("http://#{ HOST }:#{ PORT }/application.html?user=#{ ADMIN_USER }")
+    body = response.body
+    expect(body['redirect']).not_to be_nil
 
     cookie = response['Set-Cookie']
     expect(cookie).to_not be_nil
@@ -79,46 +96,40 @@ describe AdminUI::Admin do
     cookie
   end
 
-  def logout(http, request_cookie)
-    request = Net::HTTP::Post.new('/login')
-    request['Content-Length'] = 0
-    request['Cookie'] = request_cookie
+  context 'Destroys the session after logout' do
+    before do
+      login_stub_admin
+    end
+    it 'destroys the session after logout' do
+      original_cookie = login_and_return_cookie(create_http)
+      new_cookie      = logout(create_http)
 
-    response = http.request(request)
-    expect(response.is_a?(Net::HTTPSeeOther)).to be_true
-
-    location = response['location']
-    expect(location).to eq("http://#{ HOST }:#{ PORT }/login.html")
-
-    cookie = response['Set-Cookie']
-    expect(cookie).to_not be_nil
-
-    cookie
-  end
-
-  it 'destroys the session after logout' do
-    original_cookie = login_and_return_cookie(create_http)
-    new_cookie      = logout(create_http, original_cookie)
-
-    expect(new_cookie.inspect).not_to eq(original_cookie.inspect)
+      expect(new_cookie.inspect).not_to eq(original_cookie.inspect)
+    end
   end
 
   context 'Login required, performed and failed' do
+    before do
+      login_stub_fail
+    end
     let(:http) { create_http }
 
     it 'login fails as expected' do
-      request = Net::HTTP::Post.new("/login?username=#{ ADMIN_USER }&password=#{ USER_PASSWORD }")
-      request['Content-Length'] = 0
+      request = Net::HTTP::Get.new('/')
 
       response = http.request(request)
       expect(response.is_a?(Net::HTTPSeeOther)).to be_true
 
       location = response['location']
-      expect(location).to eq("http://#{ HOST }:#{ PORT }/login.html?error=true")
+      expect(location).not_to be_nil
     end
   end
 
   context 'Login required, performed and succeeded' do
+    before do
+      login_stub_admin
+    end
+
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
 
@@ -269,8 +280,8 @@ describe AdminUI::Admin do
       json = get_json('/settings')
 
       expect(json).to eq('admin'                  => true,
-                         'cloud_controller_uri'   => CLOUD_CONTROLLER_URI,
-                         'tasks_refresh_interval' => TASKS_REFRESH_INTERVAL)
+                         'cloud_controller_uri'   => cloud_controller_uri,
+                         'tasks_refresh_interval' => tasks_refresh_interval)
 
     end
 
@@ -321,6 +332,10 @@ describe AdminUI::Admin do
   end
 
   context 'Login required, but not performed' do
+    before do
+      login_stub_fail
+    end
+
     let(:http) { create_http }
 
     def get_redirects_as_expected(path)
@@ -350,7 +365,7 @@ describe AdminUI::Admin do
       expect(response.is_a?(Net::HTTPSeeOther)).to be_true
 
       location = response['location']
-      expect(location).to eq("http://#{ HOST }:#{ PORT }/login.html")
+      expect(location).not_to be_nil
     end
 
     it '/applications redirects as expected' do
@@ -507,10 +522,6 @@ describe AdminUI::Admin do
       body
     end
 
-    it '/ succeeds' do
-      get_body('/')
-    end
-
     it '/favicon.ico succeeds' do
       get_response('/favicon.ico')
     end
@@ -545,6 +556,9 @@ describe AdminUI::Admin do
     end
 
     context 'Login required for post' do
+      before do
+        login_stub_admin
+      end
       let(:cookie) { login_and_return_cookie(http) }
       let(:timestamp) { Time.now }
       it '/statistics post succeeds' do
@@ -579,7 +593,7 @@ describe AdminUI::Admin do
         expect(body).to_not be_nil
         json = JSON.parse(body)
 
-        expect(json).to eq('label' => CLOUD_CONTROLLER_URI,
+        expect(json).to eq('label' => cloud_controller_uri,
                            'items' => [{ 'apps'              => 1,
                                          'deas'              => 2,
                                          'organizations'     => 3,

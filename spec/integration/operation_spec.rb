@@ -9,16 +9,16 @@ describe AdminUI::Operation, :type => :integration do
 
   let(:data_file) { '/tmp/admin_ui_data.json' }
   let(:db_file)   { '/tmp/admin_ui_store.db' }
-  let(:db_uri)    { "sqlite://#{db_file}" }
+  let(:db_uri)    { "sqlite://#{ db_file }" }
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(log_file) }
   let(:config) do
     AdminUI::Config.load(:cloud_controller_discovery_interval => 10,
                          :cloud_controller_uri                => 'http://api.cloudfoundry',
                          :data_file                           => data_file,
-                         :db_uri                              => "#{db_uri}",
+                         :db_uri                              => "#{ db_uri }",
                          :monitored_components                => [],
-                         :uaa_admin_credentials               => { :username => 'user', :password => 'password' })
+                         :uaa_client                          => { :id => 'id', :secret => 'secret' })
   end
 
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
@@ -42,7 +42,7 @@ describe AdminUI::Operation, :type => :integration do
   let(:operation) { AdminUI::Operation.new(config, logger, cc, client, varz, view_models) }
 
   after do
-    Process.wait(Process.spawn({}, "rm -fr #{ log_file } #{ db_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ db_file } #{ log_file }"))
   end
 
   context 'Stubbed HTTP' do

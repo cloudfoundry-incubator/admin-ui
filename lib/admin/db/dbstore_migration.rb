@@ -18,9 +18,9 @@ module AdminUI
           @logger.debug('AdminUI::DBStoreMigration.migrate_to_db: found stats_file.  Prepare for data migration from stats_file to database.')
           record_array = JSON.parse(IO.read(file_path))
           store(db_conn, record_array)
-          backup_file_path = "#{@config.stats_file}.bak"
+          backup_file_path = "#{ @config.stats_file }.bak"
           FileUtils.move(@config.stats_file, backup_file_path)
-          @logger.debug("AdminUI::DBStoreMigration.migrate_to_db: completed data migration from stats_file to database.  The stats_file is now renamed to #{backup_file_path}.")
+          @logger.debug("AdminUI::DBStoreMigration.migrate_to_db: completed data migration from stats_file to database.  The stats_file is now renamed to #{ backup_file_path }.")
         end
       ensure
         db_conn.disconnect

@@ -8,16 +8,23 @@ describe AdminUI::Admin, :type => :integration do
   end
 
   def login_and_return_cookie(http)
-    request = Net::HTTP::Post.new("/login?username=#{ admin_user }&password=#{ admin_password }")
-    request['Content-Length'] = 0
+    response = nil
+    cookie = nil
+    uri = URI.parse('/')
+    loop do
+      path  = uri.path
+      path += "?#{ uri.query }" unless uri.query.nil?
 
-    response = http.request(request)
-    expect(response.is_a?(Net::HTTPSeeOther)).to be_true
+      request = Net::HTTP::Get.new(path)
+      request['Cookie'] = cookie
 
-    location = response['location']
-    expect(location).to eq("http://#{ host }:#{ port }/application.html?user=#{ admin_user }")
+      response = http.request(request)
+      cookie   = response['Set-Cookie'] unless response['Set-Cookie'].nil?
 
-    cookie = response['Set-Cookie']
+      break unless response['location']
+      uri = URI.parse(response['location'])
+    end
+
     expect(cookie).to_not be_nil
 
     cookie
@@ -140,17 +147,17 @@ describe AdminUI::Admin, :type => :integration do
 
     def stop_app
       response = put_request('/applications/application1', '{"state":"STOPPED"}')
-      expect(response.is_a? Net::HTTPNoContent).to be_true
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
     end
 
     def start_app
       response = put_request('/applications/application1', '{"state":"STARTED"}')
-      expect(response.is_a? Net::HTTPNoContent).to be_true
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
     end
 
     def delete_app
       response = delete_request('/applications/application1')
-      expect(response.is_a? Net::HTTPNoContent).to be_true
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
     end
 
     it 'stops a running application' do
@@ -184,17 +191,17 @@ describe AdminUI::Admin, :type => :integration do
 
     def create_org
       response = post_request('/organizations', '{"name":"new_org"}')
-      expect(response.is_a? Net::HTTPNoContent).to be_true
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
     end
 
     def delete_org
       response = delete_request('/organizations/organization1')
-      expect(response.is_a? Net::HTTPNoContent).to be_true
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
     end
 
     def set_quota
       response = put_request('/organizations/organization1', '{"quota_definition_guid":"quota2"}')
-      expect(response.is_a? Net::HTTPNoContent).to be_true
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
     end
 
     it 'creates an organization' do
@@ -205,12 +212,12 @@ describe AdminUI::Admin, :type => :integration do
 
     def suspend_org
       response = put_request('/organizations/organization1', '{"status":"suspended"}')
-      expect(response.is_a? Net::HTTPNoContent).to be_true
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
     end
 
     def activate_org
       response = put_request('/organizations/organization1', '{"status":"active"}')
-      expect(response.is_a? Net::HTTPNoContent).to be_true
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
     end
 
     it 'deletes an organization' do
@@ -247,7 +254,7 @@ describe AdminUI::Admin, :type => :integration do
 
     def delete_route
       response = delete_request('/routes/route1')
-      expect(response.is_a? Net::HTTPNoContent).to be_true
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
     end
 
     it 'deletes the specific route' do
@@ -262,12 +269,12 @@ describe AdminUI::Admin, :type => :integration do
 
     def make_service_plan_private
       response = put_request('/service_plans/service_plan1', '{"public": false }')
-      expect(response.is_a? Net::HTTPNoContent).to be_true
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
     end
 
     def make_service_plan_public
       response = put_request('/service_plans/service_plan1', '{"public": true }')
-      expect(response.is_a? Net::HTTPNoContent).to be_true
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
     end
 
     it 'make service plans private and back to public' do

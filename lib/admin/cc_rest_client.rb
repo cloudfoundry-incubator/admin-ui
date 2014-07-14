@@ -1,4 +1,5 @@
 require 'json'
+require 'uri'
 require_relative 'utils'
 
 module AdminUI
@@ -51,6 +52,32 @@ module AdminUI
       cf_request(get_cc_url(path), Utils::HTTP_POST, body)
     end
 
+    def sso_logout(redirect_uri)
+      info
+      "#{ @authorization_endpoint }/logout.do?redirect=#{ redirect_uri }"
+    end
+
+    def sso_login_redirect(redirect_uri)
+      info
+      "#{ @authorization_endpoint }/oauth/authorize?response_type=code&client_id=#{ @config.uaa_client_id }&redirect_uri=#{ redirect_uri }"
+    end
+
+    def sso_login_token_json(code, redirect_uri)
+      info
+      content = URI.encode_www_form('client_id'    => @config.uaa_client_id,
+                                    'grant_type'   => 'authorization_code',
+                                    'code'         => code,
+                                    'redirect_uri' => redirect_uri)
+      response = Utils.http_request(@config,
+                                    "#{ @authorization_endpoint }/oauth/token",
+                                    Utils::HTTP_POST,
+                                    [@config.uaa_client_id, @config.uaa_client_secret],
+                                    content)
+      return JSON.parse(response.body) if response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated)
+      @logger.debug("Unexpected response code from sso_login_token_json is #{ response.code }, message #{ response.message }, body #{ response.body }")
+      nil
+    end
+
     private
 
     def cf_request(url, method, body = nil)
@@ -95,13 +122,11 @@ module AdminUI
 
       @token = nil
 
-      response = Utils.http_request(
-        @config,
-        "#{ @authorization_endpoint }/oauth/token",
-        Utils::HTTP_POST,
-        nil,
-        "grant_type=password&username=#{ @config.uaa_admin_credentials_username }&password=#{ @config.uaa_admin_credentials_password }",
-        'Basic Y2Y6')
+      response = Utils.http_request(@config,
+                                    "#{ @authorization_endpoint }/oauth/token",
+                                    Utils::HTTP_POST,
+                                    [@config.uaa_client_id, @config.uaa_client_secret],
+                                    'grant_type=client_credentials')
 
       if response.is_a?(Net::HTTPOK)
         body_json = JSON.parse(response.body)
@@ -114,7 +139,14 @@ module AdminUI
     def info
       return unless @token_endpoint.nil?
 
-      response = Utils.http_request(@config, get_cc_url('/info'), Utils::HTTP_GET)
+      response = nil
+      begin
+        response = Utils.http_request(@config, get_cc_url('/info'), Utils::HTTP_GET)
+      rescue => error
+        @logger.debug("Error during /info: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        raise "Unable to fetch from #{ get_cc_url('/info') }"
+      end
 
       if response.is_a?(Net::HTTPOK)
         body_json = JSON.parse(response.body)
@@ -129,7 +161,7 @@ module AdminUI
           fail "Information retrieved from #{ get_cc_url('/info') } does not include token_endpoint"
         end
       else
-        fail "Unable to fetch info from #{ get_cc_url('/info') }"
+        fail "Unable to fetch from #{ get_cc_url('/info') }"
       end
     end
   end

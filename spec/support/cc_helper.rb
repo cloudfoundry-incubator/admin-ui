@@ -19,7 +19,7 @@ module CCHelper
       OK.new(cc_info)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ authorization_endpoint }/oauth/token", AdminUI::Utils::HTTP_POST, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ authorization_endpoint }/oauth/token", AdminUI::Utils::HTTP_POST, anything, anything) do
       OK.new(uaa_oauth)
     end
 

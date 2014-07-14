@@ -361,78 +361,82 @@ Seconds between stats collection saving.
 Example: <code>300</code>
 </dd>
 <dt>
-<code><b>uaa_admin_credentials</b></code>
+<code><b>uaa_client</b></code>
 </dt>
 <dd>
-UAA credentials to access the Cloud Controller REST API as an admin user
-<br>
+UAA client to access the Cloud Controller REST API as an admin user
+and also support Single Sign On (SSO) for UI login.
 <dl>
 <dt>
-<code>username</code>
+<code><b>id</b></code>
 <dt>
 <dd>
-User for UAA login.
+Client ID.
 <br>
-Example: <code>admin</code>
+Example: <code>admin_ui_client</code>
 </dd>
 <dt>
-<code>password</code>
+<code><b>secret</b></code>
 </dt>
 <dd>
-Password for UAA login.
+Password for UAA client.
 <br>
-Example: <code>c1oudc0w</code>
+Example: <code>admin_ui_secret</code>
 </dd>
 </dl>
+The UAA client used by the Administration UI must be added to the system via the cf-uaac command-line tool, BOSH deployment or equivalent and is required to consist of the following:
+<ul>
+<li>authorities: cloud_controller.admin,cloud_controller.read,cloud_controller.write,openid,scim.read.
+<li>authorized_grant_types:  authorization_code,client_credentials,refresh_token.
+<li>autoapprove: true 
+<li>scopes: openid as well as those defined in the uaa_groups_admin and uaa_groups_user configuration values.
+</ul>
+Example: 
+<pre>uaac client add admin_ui_client 
+     --authorities cloud_controller.admin,cloud_controller.read,cloud_controller.write,openid,scim.read 
+     --authorized_grant_types authorization_code,client_credentials,refresh_token 
+     --autoapprove true 
+     --scope admin_ui.admin,admin_ui.user,openid 
+     -s admin_ui_secret</code>
+</pre>
 </dd>
 <dt>
-<code><b>ui_credentials</b></code>
-</dt>
-<dd>
-Credentials to access the Administration UI as a standard user.
-<br>
-<dl>
+<code><b>uaa_groups_admin</b></code>
 <dt>
-<code>username</code>
-</dt>
 <dd>
-User for standard login.
+UAA scope(s) in a comma-delimited array to identify qualifying scopes for admin access to the Administration UI.
+If a user has any one scope, that user will be considered authorized to access the Administration UI as an admin.
 <br>
-Example: <code>user</code>
+Example: <code>[admin_ui.admin, cloud_controller.admin]</code>
+<br>
+The previously-unregistered groups referenced by this configuration property must be added to the system
+via the cf-uaac CLI command or equivalent.
+<br>
+Example: <code>uaac group add admin_ui.admin</code>
+<br>
+The group membership then needs to be updated for each user that has admin capabilities
+on the Administration UI.
+<br>
+Example: <code>uaac member add admin_ui.admin your_user_name</code>
 </dd>
 <dt>
-<code>password</code>
-</dt>
-<dd>
-Password for standard login.
-<br>
-Example: <code>passw0rd</code>
-</dd>
-</dl>
-<dt>
-<code><b>ui_admin_credentials</b></code>
-</dt>
-<dd>
-Credentials to access the Administration UI as an admin user
-<br>
-<dl>
-<dt>
-<code>username</code>
+<code><b>uaa_groups_user</b></code>
 <dt>
 <dd>
-User for admin login.
+UAA scope(s) in a comma-delimited array to identify qualifying scopes for user access to the Administration UI.
+If a user has any one scope, that user will be considered authorized to access the Administration UI as a user.
 <br>
-Example: <code>admin</code>
-</dd>
-<dt>
-<code>password</code>
-</dt>
-<dd>
-Password for admin login.
+Example: <code>[admin_ui.user]</code>
 <br>
-Example: <code>passw0rd</code>
-</dd>
-</dl>
+The previously-unregistered groups referenced by this configuration property must be added to the system
+via the cf-uaac CLI command or equivalent.
+<br>
+Example: <code>uaac group add admin_ui.user</code>
+<br>
+The group membership then needs to be updated for each user that has user capabilities
+on the Administration UI.
+<br>
+Example: <code>uaac member add admin_ui.user your_user_name</code>
 </dd>
 <dt>
 <code>varz_discovery_interval</code>

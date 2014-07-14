@@ -20,11 +20,11 @@ module AdminUI
           cron_parser = CronParser.new(spec)
           @data_collection_schedulers.push(cron_parser)
         rescue => error
-          @logger.debug("AdminUI::Stats.initialize: Error detected in the #{spec} of stats_refresh_schedule property as specified in config/default.yml")
+          @logger.debug("AdminUI::Stats.initialize: Error detected in the #{ spec } of stats_refresh_schedule property as specified in config/default.yml")
           @logger.debug(error.backtrace.join("\n"))
           raise error
         end
-        @logger.debug("AdminUI::Stats.initialize: Stats data collection follows schedules #{@config.stats_refresh_schedules}")
+        @logger.debug("AdminUI::Stats.initialize: Stats data collection follows schedules #{ @config.stats_refresh_schedules }")
       end
 
       thread = Thread.new do
@@ -51,7 +51,7 @@ module AdminUI
         items.each do| item |
           item[:timestamp] = item[:timestamp].to_i
         end
-        @logger.debug("AdminUI::Stats.stats: Retrieved #{items.length} records.")
+        @logger.debug("AdminUI::Stats.stats: Retrieved #{ items.length } records.")
         result['items'] = items
       rescue => error
         @logger.debug("AdminUI::Stats.stats: Error retrieving stats data: #{ error }")
@@ -91,13 +91,13 @@ module AdminUI
             target_time = refresh_time
           end
         rescue => error
-          @logger.debug("AdminUI::Stats.calculate_time_until_generate_stats: Error detected in the #{spec} of stats_refresh_schedule property as specified in config/default.yml")
+          @logger.debug("AdminUI::Stats.calculate_time_until_generate_stats: Error detected in the #{ spec } of stats_refresh_schedule property as specified in config/default.yml")
           @logger.debug(error.backtrace.join("\n"))
           raise error
         end
       end
       wait_time = target_time.to_i - current_time_sec
-      @logger.debug("AdminUI::Stats.calculate_time_until_generate_stats:  Next data collection time will be at #{target_time} or #{wait_time} seconds later.")
+      @logger.debug("AdminUI::Stats.calculate_time_until_generate_stats:  Next data collection time will be at #{ target_time } or #{ wait_time } seconds later.")
       wait_time
     end
 

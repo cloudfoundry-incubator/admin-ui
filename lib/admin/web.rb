@@ -3,12 +3,13 @@ require_relative 'view_models/all_actions'
 
 module AdminUI
   class Web < Sinatra::Base
-    def initialize(config, logger, cc, log_files, operation, stats, tasks, varz, view_models)
+    def initialize(config, logger, cc, login, log_files, operation, stats, tasks, varz, view_models)
       super({})
 
       @config      = config
       @logger      = logger
       @cc          = cc
+      @login       = login
       @log_files   = log_files
       @operation   = operation
       @stats       = stats
@@ -34,7 +35,7 @@ module AdminUI
     end
 
     get '/' do
-      send_file File.expand_path('login.html', settings.public_folder)
+      redirect_to_login
     end
 
     get '/applications_view_model', :auth => [:user] do
@@ -113,6 +114,36 @@ module AdminUI
         redirect_to_login
       else
         result.to_json
+      end
+    end
+
+    get '/login' do
+      begin
+        code = params['code']
+        user_name, user_type = @login.login_user(code, local_redirect_uri(request))
+
+        if AdminUI::Login::LOGIN_ADMIN == user_type
+          authenticated(user_name, true)
+        elsif AdminUI::Login::LOGIN_USER == user_type
+          authenticated(user_name, false)
+        else
+          redirect "scopeError.html?user=#{ user_name }", 303
+        end
+      rescue => error
+        @logger.debug("Error during /login: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        halt 500, error.message
+      end
+    end
+
+    get '/logout' do
+      begin
+        session.destroy
+        { 'redirect' => @login.logout(request.base_url) }.to_json
+      rescue => error
+        @logger.debug("Error during /logout: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        halt 500, error.message
       end
     end
 
@@ -257,22 +288,6 @@ module AdminUI
       result.to_json
     end
 
-    post '/login' do
-      username = params['username']
-      password = params['password']
-
-      if username.nil?
-        redirect_to_login
-      elsif @config.ui_credentials_username == username && @config.ui_credentials_password == password
-        authenticated(username, false)
-      elsif @config.ui_admin_credentials_username == username && @config.ui_admin_credentials_password == password
-        authenticated(username, true)
-      else
-        session.destroy
-        redirect 'login.html?error=true'
-      end
-    end
-
     post '/organizations', :auth => [:admin] do
       begin
         control_message = request.body.read.to_s
@@ -393,7 +408,7 @@ module AdminUI
 
       session[:admin] = admin
 
-      redirect "application.html?user=#{ username }"
+      redirect "application.html?user=#{ username }", 303
     end
 
     def redirect_to_login
@@ -402,8 +417,16 @@ module AdminUI
       if request.xhr?
         halt 303
       else
-        redirect 'login.html', 303
+        redirect @login.login_redirect_uri(local_redirect_uri(request)), 303
       end
+    rescue => error
+      @logger.debug("Error during redirect_to_login: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      halt 500, error.message
+    end
+
+    def local_redirect_uri(request)
+      "#{ request.base_url }/login"
     end
   end
 end

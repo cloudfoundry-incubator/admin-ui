@@ -160,12 +160,9 @@ shared_context :web_context do
     @driver.find_elements(:xpath => "//table[@id='#{ tab_id }Table']/tbody/tr")[0]
   end
 
-  def login(username, password, target_page)
+  def login(title)
     @driver.get "http://#{ host }:#{ port }"
-    @driver.find_element(:id => 'username').send_keys username
-    @driver.find_element(:id => 'password').send_keys password
-    @driver.find_element(:id => 'username').submit
-    Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.title == target_page }
+    Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.title == title }
   end
 
   def select_first_row
