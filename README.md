@@ -361,6 +361,14 @@ Seconds between stats collection saving.
 Example: <code>300</code>
 </dd>
 <dt>
+<code>tasks_refresh_interval</code>
+</dt>
+<dd>
+Seconds between task status checks.
+<br>
+Example: <code>5000</code>
+</dd>
+<dt>
 <code><b>uaa_client</b></code>
 </dt>
 <dd>
