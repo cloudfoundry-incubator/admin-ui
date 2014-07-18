@@ -19,11 +19,11 @@
         <script src="js/external/jquery/TableTools-2.1.5/media/js/TableTools.min.js"></script>
 
         <script src="js/external/jquery/plugins/fnSetFilteringDelay.js"></script>
-        
         <script src="js/external/fixes/ZeroClipboard.js"></script>
+        <script src="js/external/i18next/i18next.js"></script>
 
-        <script src="js/app/constants.js"></script>      
-        <script src="js/app/utilities.js"></script>     
+        <script src="js/app/constants.js"></script>
+        <script src="js/app/utilities.js"></script>
         <script src="js/app/format.js"></script>
         <script src="js/app/table.js"></script>
         <script src="js/app/stats.js"></script>
@@ -46,6 +46,7 @@
         <script src="js/app/tabs/statsTab.js"></script>
         <script src="js/app/tabs/tasksTab.js"></script>
         <script src="js/app/adminUI.js"></script>
+        <script src="js/app/i18n.js"></script>
 
         <script src="js/external/jqplot/jquery.jqplot.js"></script>          
         <script src="js/external/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
@@ -72,7 +73,7 @@
 
             <span class="disconnected">
               <img class="disconnectedImage" src="images/red.png" height="16"/>
-              <span>Unable to connect to backend services</span>
+              <span data-i18n="disconnected">Unable to connect to backend services</span>
             </span>
 
             <span class="userContainer">

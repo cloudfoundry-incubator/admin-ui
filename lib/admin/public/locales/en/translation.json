@@ -1,0 +1,88 @@
+{
+  "title-bar": {
+    "title-text": "Cloud Foundry",
+    "disconnected": "Unable to connect to backend services",
+    "sign-out": "Sign Out"
+  },
+  "menu-bar": {
+    "organizations": "Organizations",
+    "spaces": "Spaces",
+    "applications": "Applications",
+    "service-instances": "Service Instances",
+    "developers": "Developers",
+    "quotas": "Quotas",
+    "deas": "DEAs",
+    "cloud-controllers": "Cloud Controllers",
+	"health-managers": "Health Managers",
+	"routers": "Routers",
+	"logs": "Logs",
+	"tasks": "Tasks",
+	"stats": "Stats"
+  },
+  "content": {
+    "details": "Details",
+    "nodes": "Nodes",
+    "service": "Service",
+    "services": "Services",
+    "service-plan": "Service Plan",
+    "service-broker": "Service Broker",
+	"service-instance": "Service Instance",
+	"service-instances": "Service Instances",
+    "check": "Check",
+    "name": "Name",
+    "version": "Version",    
+    "target": "Target",
+	"created": "Created",
+	"updated": "Updated",
+	"public": "Public",
+	"provider": "Provider",
+	"label": "Label",
+	"version": "Version",
+	"created": "Created",
+	"updated": "Updated",
+	"started": "Started",
+	"stopped": "Stopped",
+	"pending": "Pending",
+	"staged": "Staged",
+	"failed": "Failed",
+	"active": "Active",
+	"bindable": "Bindable",
+	"index": "Index",
+	"status": "Status",
+	"stack": "Stack",
+	"cpu": "CPU",
+	"cpu-percentage": "% CPU",
+	"memory": "Memory",
+	"apps": "Apps",
+	"disk": "Disk",
+	"dea": "DEA",
+	"deas": "DEAs",
+	"routes": "Routes",
+	"used": "Used",
+	"unused": "Unused",
+	"reserved": "Reserved",
+	"app-states": "App States",
+	"app-package-states": "App Package States",
+	"developers": "Developers",
+	"total": "Total",
+	"instances": "Instances",
+	"running": "Running",
+    "spaces": "Spaces",
+	"users": "Users",
+	"lavel": "Label",
+	"ok": "OK",
+	"bound-applications": "Bound Applications",
+	"timestamps": "timestamps"
+  },
+
+
+  "errors": {
+  	"error-text": "%%s. Error: %%s",
+  	"disconnected": "Unable to connect to backend services",
+	"services-unavailable": "This page requires data from services that are currently unavailable"  	
+  }
+
+
+
+
+}
