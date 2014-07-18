@@ -1,16 +1,16 @@
 {
   "title-bar": {
     "title-text": "Cloud Foundry",
-    "disconnected": "Unable to connect to backend services",
-    "sign-out": "Выйти"
+    "sign-out": "Sign out"
   },
+
   "menu-bar": {
-    "organizations": "Организации",
-    "spaces": "Пространства",
-    "applications": "Приложения",
+    "organizations": "Organizations",
+    "spaces": "Spaces",
+    "applications": "Applications",
     "service-instances": "Service Instances",
-    "developers": "Разработчики",
-    "quotas": "Квоты",
+    "developers": "Developers",
+    "quotas": "Quotas",
     "deas": "DEAs",
     "cloud-controllers": "Cloud Controllers",
 	"health-managers": "Health Managers",
@@ -19,6 +19,7 @@
 	"tasks": "Tasks",
 	"stats": "Stats"
   },
+
   "content": {
     "details": "Details",
     "nodes": "Nodes",
@@ -75,14 +76,10 @@
 	"timestamps": "timestamps"
   },
 
-
   "errors": {
   	"error-text": "%%s. Error: %%s",
   	"disconnected": "Unable to connect to backend services",
 	"services-unavailable": "This page requires data from services that are currently unavailable"  	
   }
-
-
-
 
 }
