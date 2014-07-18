@@ -20,6 +20,7 @@
 
         <script src="js/external/jquery/plugins/fnSetFilteringDelay.js"></script>
         <script src="js/external/fixes/ZeroClipboard.js"></script>
+
         <script src="js/external/i18next/i18next.js"></script>
 
         <script src="js/app/constants.js"></script>
@@ -63,7 +64,7 @@
 
         <div class="titleBar">
 
-            <span class="titleText">
+            <span data-i18n="title-bar.title-text" class="titleText">
                 Cloud Foundry
             </span>
   
@@ -73,7 +74,7 @@
 
             <span class="disconnected">
               <img class="disconnectedImage" src="images/red.png" height="16"/>
-              <span data-i18n="disconnected">Unable to connect to backend services</span>
+              <span data-i18n="errors.disconnected">Unable to connect to backend services</span>
             </span>
 
             <span class="userContainer">
@@ -82,7 +83,7 @@
                 <img src="images/dropdown.png"/>
             </span>
 
-            <div class="userMenu">
+            <div data-i18n="title-bar.sign-out" class="userMenu">
                 Sign Out
             </div>
 
