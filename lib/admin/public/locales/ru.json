@@ -1,7 +1,7 @@
 {
   "title-bar": {
-    "title-text": "Cloud Foundry",
-    "disconnected": "Unable to connect to backend services",
+    "title-text": "Облочная Литейная",
+    "disconnected": "Невозможно подключиться к сервисам",
     "sign-out": "Sign Out"
   },
   "menu-bar": {
@@ -81,8 +81,4 @@
   	"disconnected": "Unable to connect to backend services",
 	"services-unavailable": "This page requires data from services that are currently unavailable"  	
   }
-
-
-
-
 }
