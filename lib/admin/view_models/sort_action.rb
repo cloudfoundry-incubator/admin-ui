@@ -17,7 +17,7 @@ module AdminUI
           sorted = sorted.sort do |a, b|
             a_col = a[i_sort_col]
             b_col = b[i_sort_col]
-            next a_col.to_s.downcase <=> b_col.to_s.downcase if a_col && b_col
+            next a_col.to_s.casecmp(b_col.to_s) if a_col && b_col
             next 1 if a_col
             next -1 if b_col
             next 0
@@ -26,7 +26,7 @@ module AdminUI
           sorted = sorted.sort do |a, b|
             a_col = a[i_sort_col]
             b_col = b[i_sort_col]
-            next b_col.to_s.downcase <=> a_col.to_s.downcase if a_col && b_col
+            next b_col.to_s.casecmp(a_col.to_s) if a_col && b_col
             next 1 if b_col
             next -1 if a_col
             next 0
