@@ -153,6 +153,7 @@ html.waiting *
 {
     cursor: pointer;
     padding: 15px 10px 12px 10px;
+    line-height: 20px;
     /*
     border-right: 1px solid rgb(0, 65, 125);
     background-color: rgb(20, 120, 180);
