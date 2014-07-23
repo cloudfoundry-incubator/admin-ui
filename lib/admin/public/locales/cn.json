@@ -80,7 +80,9 @@
     "package-state": "包声明",
     "instance-state": "实例声明",
     "bound-applications": "被捆绑的程序",
-    "timestamps": "时间戳"
+    "timestamps": "时间戳",
+    "non-basic-services-allowed": "",
+    "trial-db-allowed": ""
   },
   "errors": {
     "error-text": "%%s. 错误： %%s",

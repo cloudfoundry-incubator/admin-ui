@@ -19,9 +19,6 @@
         <script src="js/external/jquery/DataTables-1.9.4/media/js/jquery.dataTables.min.js"></script>
         <script src="js/external/jquery/TableTools-2.1.5/media/js/TableTools.min.js"></script>
 
-        <script src="js/external/jquery/plugins/fnSetFilteringDelay.js"></script>
-        <script src="js/external/fixes/ZeroClipboard.js"></script>
-
         <script src="js/external/i18next/i18next.js"></script>
 
         <script src="js/app/constants.js"></script>
@@ -515,37 +512,37 @@
                         <thead>
                             <tr class="customTableHeaderGroup">
                                 <th colspan="8"> </th>
-                                <th colspan="3">Routes</th>
-                                <th colspan="5">Used</th>
-                                <th colspan="2">Reserved</th>
-                                <th colspan="3">App States</th>
-                                <th colspan="3">App Package States</th>     
+                                <th colspan="3" data-i18n="content.routes">Routes</th>
+                                <th colspan="5" data-i18n="content.used">Used</th>
+                                <th colspan="2" data-i18n="content.reserved">Reserved</th>
+                                <th colspan="3" data-i18n="content.app-states">App States</th>
+                                <th colspan="3" data-i18n="content.app-package-states">App Package States</th>     
                             </tr>
                             <tr>
-                                <th>Check</th>
-                                <th>Name</th>
-                                <th>Status</th>
-                                <th>Created</th>
-                                <th>Updated</th>
-                                <th>Spaces</th>
-                                <th>Developers</th>
-                                <th>Quota</th>
-                                <th>Total</th>
-                                <th>Used</th>
-                                <th>Unused</th>
-                                <th>Instances</th>
-                                <th>Services</th>
-                                <th>Memory</th>
-                                <th>Disk</th>
+                                <th data-i18n="content.check">Check</th>
+                                <th data-i18n="content.name">Name</th>
+                                <th data-i18n="content.status">Status</th>
+                                <th data-i18n="content.created">Created</th>
+                                <th data-i18n="content.updated">Updated</th>
+                                <th data-i18n="content.spaces">Spaces</th>
+                                <th data-i18n="content.developers">Developers</th>
+                                <th data-i18n="content.quota">Quota</th>
+                                <th data-i18n="content.total">Total</th>
+                                <th data-i18n="content.used">Used</th>
+                                <th data-i18n="content.unused">Unused</th>
+                                <th data-i18n="content.instances">Instances</th>
+                                <th data-i18n="content.services">Services</th>
+                                <th data-i18n="content.memory">Memory</th>
+                                <th data-i18n="content.disk">Disk</th>
                                 <th>% CPU</th>
-                                <th>Memory</th>
-                                <th>Disk</th>
-                                <th>Total</th>
-                                <th>Started</th>
-                                <th>Stopped</th>
-                                <th>Pending</th>
-                                <th>Staged</th>
-                                <th>Failed</th>
+                                <th data-i18n="content.memory">Memory</th>
+                                <th data-i18n="content.disk">Disk</th>
+                                <th data-i18n="content.total">Total</th>
+                                <th data-i18n="content.started">Started</th>
+                                <th data-i18n="content.stopped">Stopped</th>
+                                <th data-i18n="content.pending">Pending</th>
+                                <th data-i18n="content.staged">Staged</th>
+                                <th data-i18n="content.failed">Failed</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -556,7 +553,7 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="OrganizationsDetailsLabel" class="propertyLabel">
+                    <div id="OrganizationsDetailsLabel" class="propertyLabel" data-i18n="content.details">
                         Details
                     </div>
 
@@ -574,15 +571,15 @@
                     <table id="QuotasTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Created</th>
-                                <th>Updated</th>
-                                <th>Total Services</th>
-                                <th>Total Routes</th>
-                                <th>Memory Limit</th>
-                                <th>Non-Basic Services Allowed</th>
-                                <th>Trial-DB Allowed</th>
-                                <th>Organizations</th>
+                                <th data-i18n="content.name">Name</th>
+                                <th data-i18n="content.created">Created</th>
+                                <th data-i18n="content.updated">Updated</th>
+                                <th data-i18n="content.services">Total Services</th>
+                                <th data-i18n="content.total-routes">Total Routes</th>
+                                <th data-i18n="content.memory-limit">Memory Limit</th>
+                                <th data-i18n="content.non-basic-services-allowed">Non-Basic Services Allowed</th>
+                                <th data-i18n="content.trial-db-allowed">Trial-DB Allowed</th>
+                                <th data-i18n="content.organizations">Organizations</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -593,7 +590,7 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="QuotasDetailsLabel" class="propertyLabel">
+                    <div id="QuotasDetailsLabel" class="propertyLabel" data-i18n="content.details">
                         Details
                     </div>
 
@@ -612,34 +609,34 @@
                         <thead>
                             <tr class="customTableHeaderGroup">
                                 <th colspan="5"> </th>
-                                <th colspan="3">Routes</th>
-                                <th colspan="5">Used</th>
-                                <th colspan="2">Reserved</th>
-                                <th colspan="3">App States</th>
-                                <th colspan="3">App Package States</th>
+                                <th colspan="3" data-i18n="content.routes">Routes</th>
+                                <th colspan="5" data-i18n="content.used">Used</th>
+                                <th colspan="2" data-i18n="content.reserved">Reserved</th>
+                                <th colspan="3" data-i18n="content.app-states">App States</th>
+                                <th colspan="3" data-i18n="content.app-package-states">App Package States</th>
                             </tr>
                             <tr>
-                                <th>Name</th>
-                                <th>Target</th>
-                                <th>Created</th>
-                                <th>Updated</th>
-                                <th>Developers</th>
-                                <th>Total</th>
-                                <th>Used</th>
-                                <th>Unused</th>
-                                <th>Instances</th>
-                                <th>Services</th>
-                                <th>Memory</th>
-                                <th>Disk</th>
+                                <th data-i18n="content.name">Name</th>
+                                <th data-i18n="content.target">Target</th>
+                                <th data-i18n="content.created">Created</th>
+                                <th data-i18n="content.updated">Updated</th>
+                                <th data-i18n="content.developers">Developers</th>
+                                <th data-i18n="content.total">Total</th>
+                                <th data-i18n="content.used">Used</th>
+                                <th data-i18n="content.unused">Unused</th>
+                                <th data-i18n="content.instances">Instances</th>
+                                <th data-i18n="content.services">Services</th>
+                                <th data-i18n="content.memory">Memory</th>
+                                <th data-i18n="content.disk">Disk</th>
                                 <th>% CPU</th>
-                                <th>Memory</th>
-                                <th>Disk</th>
-                                <th>Total</th>
-                                <th>Started</th>
-                                <th>Stopped</th>
-                                <th>Pending</th>
-                                <th>Staged</th>
-                                <th>Failed</th>
+                                <th data-i18n="content.memory">Memory</th>
+                                <th data-i18n="content.disk">Disk</th>
+                                <th data-i18n="content.total">Total</th>
+                                <th data-i18n="content.started">Started</th>
+                                <th data-i18n="content.stopped">Stopped</th>
+                                <th data-i18n="content.pending">Pending</th>
+                                <th data-i18n="content.started">Staged</th>
+                                <th data-i18n="content.failed">Failed</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -650,7 +647,7 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="SpacesDetailsLabel" class="propertyLabel">
+                    <div id="SpacesDetailsLabel" class="propertyLabel" data-i18n="content.details">
                         Details
                     </div>
 
@@ -668,31 +665,31 @@
                     <table id="ServiceInstancesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="3">Service Broker</th>
-                                <th colspan="5">Service</th>
-                                <th colspan="5">Service Plan</th>
-                                <th colspan="4">Service Instance</th>
+                                <th colspan="3" data-i18n="content.service-broker">Service Broker</th>
+                                <th colspan="5" data-i18n="content.service">Service</th>
+                                <th colspan="5" data-i18n="content.service-plan">Service Plan</th>
+                                <th colspan="4" data-i18n="content.service-instances">Service Instance</th>
                                 <th colspan="1"> </th>
                             </tr>
                             <tr>
-                                <th>Name</th>
-                                <th>Created</th>
-                                <th>Updated</th>
-                                <th>Provider</th>
-                                <th>Label</th>
-                                <th>Version</th>
-                                <th>Created</th>
-                                <th>Updated</th>
-                                <th>Name</th>
-                                <th>Created</th>
-                                <th>Updated</th>
-                                <th>Public</th>
-                                <th>Target</th>
-                                <th>Name</th>
-                                <th>Created</th>
-                                <th>Updated</th>
-                                <th>Bindings</th>
-                                <th>Target</th>
+                                <th data-i18n="content.name">Name</th>
+                                <th data-i18n="content.created">Created</th>
+                                <th data-i18n="content.updated">Updated</th>
+                                <th data-i18n="content.provider">Provider</th>
+                                <th data-i18n="content.label">Label</th>
+                                <th data-i18n="content.version">Version</th>
+                                <th data-i18n="content.created">Created</th>
+                                <th data-i18n="content.updated">Updated</th>
+                                <th data-i18n="content.name">Name</th>
+                                <th data-i18n="content.created">Created</th>
+                                <th data-i18n="content.updated">Updated</th>
+                                <th data-i18n="content.public">Public</th>
+                                <th data-i18n="content.target">Target</th>
+                                <th data-i18n="content.name">Name</th>
+                                <th data-i18n="content.created">Created</th>
+                                <th data-i18n="content.updated">Updated</th>
+                                <th data-i18n="content.bindings">Bindings</th>
+                                <th data-i18n="content.target">Target</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -704,7 +701,7 @@
                 <div class="verticalPageSection">
 
                     <div class="pageSection">
-                        <div id="ServiceInstancesDetailsLabel" class="propertyLabel">
+                        <div id="ServiceInstancesDetailsLabel" class="propertyLabel" data-i18n="content.details">
                             Details
                         </div>
 
@@ -715,7 +712,7 @@
 
                     <div id="ServiceInstancesApplicationsTableContainer" class="pageSection">
 
-                        <div id="ServiceInstancesApplicationsDetailsLabel" class="propertyLabel">
+                        <div id="ServiceInstancesApplicationsDetailsLabel" class="propertyLabel" data-i18n="content.bound-applications">
                             Bound Applications
                         </div>
 
@@ -739,7 +736,7 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="ComponentsDetailsLabel" class="propertyLabel">
+                    <div id="ComponentsDetailsLabel" class="propertyLabel" data-i18n="content.details">
                         Details
                     </div>
 
@@ -799,7 +796,7 @@
                     <div id="TaskContainer">
 
                         <div class="taskCheckboxContainer">
-                            <input type="checkbox" id="TaskShowTimestamps">timestamps</input>
+                            <input type="checkbox" id="TaskShowTimestamps" data-i18n="content.timestamps">timestamps</input>
                             <input type="checkbox" id="TaskShowStandardOut" checked>stdout</input>
                             <input type="checkbox" id="TaskShowStandardError">stderr</input>
                         </div>
@@ -820,17 +817,17 @@
                         <thead>
                             <tr class="customTableHeaderGroup">
                                 <th colspan="5"> </th>
-                                <th colspan="2">Instances</th>
+                                <th colspan="2" data-i18n="content.instances">Instances</th>
                                 <th colspan="1"> </th>
                             </tr>
                             <tr>
-                                <th>Date</th>
-                                <th>Organizations</th>
-                                <th>Spaces</th>
-                                <th>Users</th>
-                                <th>Apps</th>
-                                <th>Total</th>
-                                <th>Running</th>
+                                <th data-i18n="content.date">Date</th>
+                                <th data-i18n="content.organizations">Organizations</th>
+                                <th data-i18n="content.spaces">Spaces</th>
+                                <th data-i18n="content.users">Users</th>
+                                <th data-i18n="content.apps">Apps</th>
+                                <th data-i18n="content.total">Total</th>
+                                <th data-i18n="content.running">Running</th>
                                 <th>DEAs</th>
                             </tr>
                         </thead>
