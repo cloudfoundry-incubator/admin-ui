@@ -1,4 +1,11 @@
 {
+  "login": {
+    "enter-information": "请输入您的信息",
+    "sign-in": "登录",
+    "username": "用户名", 
+    "password": "密码",
+    "invalid": "邮箱或密码错误"
+  },
   "title-bar": {
     "title-text": "Cloud Foundry",
     "disconnected": "无法连接到后端服务",
@@ -21,9 +28,9 @@
     "tasks": "任务",
     "stats": "Stats",
     "service-plans": "服务计划", 
-    "components": "",
-    "service-gateways": "",
-    "routes": ""
+    "components": "组件",
+    "service-gateways": "服务网关",
+    "routes": "路线"
   },
   "content": {
     "details": "详细说明",
@@ -86,8 +93,8 @@
     "instance-state": "实例声明",
     "bound-applications": "被捆绑的程序",
     "timestamps": "时间戳",
-    "non-basic-services-allowed": "",
-    "trial-db-allowed": ""
+    "non-basic-services-allowed": "非基本服务是允许的",
+    "trial-db-allowed": "试用数据库"
   },
   "errors": {
     "error-text": "%%s. 错误： %%s",

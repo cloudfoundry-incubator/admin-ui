@@ -1,4 +1,11 @@
 {
+  "login": {
+    "enter-information": "Please enter your information:",
+    "sign-in": "Login",
+    "username": "Username:", 
+    "password": "Password:",
+    "invalid": "Invalid user name or password, please try again."
+  },
   "title-bar": {
     "title-text": "Cloud Foundry",
     "disconnected": "Unable to connect to backend services",

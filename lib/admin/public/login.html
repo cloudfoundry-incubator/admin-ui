@@ -6,8 +6,12 @@
         <title>Login</title>
 
         <link rel="stylesheet" href="css/login.css"/>
+        <link rel="stylesheet" type="text/css" href="css/application.css"/>
 
         <script src="js/external/jquery/jquery-1.9.1.js"></script>
+        <script src="js/external/jquery/jquery.cookie.js"></script>
+        <script src="js/external/i18next/i18next.js"></script>
+        <script src="js/app/i18n.js"></script>
 
         <script>
 
@@ -48,13 +52,39 @@
 
     <body>
 
+        <div class="titleBar">
+            <span data-i18n="title-bar.title-text" class="titleText">
+                Cloud Foundry
+            </span>
+
+            <span class="languageContainer">
+                <span class="text">
+                    Language:
+                </span>
+                <span class="languageName">
+                </span>
+                <img src="images/dropdown.png"/>
+            </span>
+
+            <div class="languageMenu">
+                <ul>
+                    <li data-language='en'>English</li>
+                    <li data-language='cn'>中国的</li>
+                    <li data-language='ru'>Русский</li>
+                </ul>                
+            </div>        
+
+        </div>
+        
+        <div class="clear"></div>
+
         <div class="loginContainer">
 
-            <div class="loginLabel">Login</div>
+            <div class="loginLabel" data-i18n="login.sign-in">Login</div>
 
             <br/>
 
-            <div>Please enter your information:</div>
+            <div data-i18n="login.enter-information">Please enter your information:</div>
 
             <br/>
 
@@ -64,7 +94,7 @@
 
                     <div>
                         <span class="required">*</span>
-                        <label for="username">User name:</label>
+                        <label for="username" data-i18n="login.username">User name:</label>
                     </div>
                     <div>
                         <input id="username" type="text" name="username" value="" required="true"/></input>
@@ -72,7 +102,7 @@
 
                     <div class="inputMargin">
                         <span class="required">*</span>
-                        <label for="password">Password:</label>
+                        <label for="password" data-i18n="login.password">Password:</label>
                     </div>
                     <div>
                         <input id="password" type="password" name="password" value="" required="true"/></input>
@@ -81,7 +111,7 @@
                     <br/>
 
                     <div>
-                        <button type="submit">Login</button>
+                        <button type="submit" data-i18n="login.sign-in">Login</button>
                     </div>
 
                 </form>
@@ -94,7 +124,7 @@
         <br/>
         <br/>
 
-        <div class="errorMessage">
+        <div class="errorMessage" data-i18n="login.invalid">
             Invalid user name or password, please try again.
         </div>
 

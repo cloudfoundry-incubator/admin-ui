@@ -11,6 +11,7 @@ html.waiting *
     cursor: wait !important;
 }
 
+.clear { clear:both; }
 .titleBar
 {
     float: left;
