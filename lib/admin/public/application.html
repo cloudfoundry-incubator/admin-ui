@@ -9,6 +9,7 @@
 
         <script src="js/external/jquery/jquery-1.9.1.js"></script>
         <script src="js/external/jquery/jquery.base64.js"></script>
+        <script src="js/external/jquery/jquery.cookie.js"></script>
 
         <link rel="stylesheet" type="text/css" href="js/external/jquery/DataTables-1.9.4/media/css/jquery.dataTables.css"/>
         <link rel="stylesheet" type="text/css" href="js/external/jquery/TableTools-2.1.5/media/css/TableTools.css"/>
@@ -74,6 +75,8 @@
               <span data-i18n="errors.disconnected">Unable to connect to backend services</span>
             </span>
 
+
+
             <span class="userContainer">
                 <span class="user">
                 </span>
@@ -82,6 +85,23 @@
 
             <div data-i18n="title-bar.sign-out" class="userMenu">
                 Sign Out
+            </div>
+
+            <span class="languageContainer">
+                <span class="text">
+                    Language:
+                </span>
+                <span class="languageName">
+                </span>
+                <img src="images/dropdown.png"/>
+            </span>
+
+            <div class="languageMenu">
+                <ul>
+                    <li data-language='en'>English</li>
+                    <li data-language='cn'>中国的</li>
+                    <li data-language='ru'>Русский</li>
+                </ul>                
             </div>
 
         </div>
