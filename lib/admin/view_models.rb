@@ -139,10 +139,6 @@ module AdminUI
     private
 
     def invalidate_cache(key)
-      hash = @caches[key]
-      hash[:semaphore].synchronize do
-        hash[:result] = nil
-      end
       schedule(key)
     end
 
@@ -163,15 +159,24 @@ module AdminUI
 
       finish = Time.now
 
+      connected = result_cache[:connected]
+
       hash = @caches[key]
       hash[:semaphore].synchronize do
         @logger.debug("Caching view model #{ key_string } data.  Compilation time: #{ finish - start } seconds")
-        hash[:result] = result_cache
+
+        # Only replace the cached result if the value is connected or this is the first time
+        hash[:result] = result_cache if connected || hash[:result].nil?
+
         hash[:condition].broadcast
       end
 
+      # If not a connected new value, reschedule the discovery soon
+      interval = @interval
+      interval = 5 if interval > 5 && connected == false
+
       # Set up the next scheduled discovery for this key
-      schedule(key, Time.now + @interval)
+      schedule(key, Time.now + interval)
     end
 
     def result_cache(key)

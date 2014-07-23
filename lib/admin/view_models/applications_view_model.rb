@@ -15,8 +15,8 @@ module AdminUI
       applications = @cc.applications(false)
       deas         = @varz.deas(false)
 
-      # applications or DEA's have to exist.  Other record types are optional
-      return result unless applications['connected'] || deas['connected']
+      # applications and DEA's have to exist.  Other record types are optional
+      return result unless applications['connected'] && deas['connected']
 
       organizations = @cc.organizations(false)
       spaces        = @cc.spaces(false)
