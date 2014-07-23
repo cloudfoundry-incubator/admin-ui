@@ -107,10 +107,10 @@ html.waiting *
     border-right: 2px solid rgb(30, 30, 30);
     border-bottom: 2px solid rgb(30, 30, 30);
     cursor: pointer;
-
+    z-index: 100000;
 }
 
-.languageMenu ul { list-style-type: none; text-align: left; padding: 0 40px 0 5px; margin: 0; }
+.languageMenu ul { list-style-type: none; text-align: left; padding: 0 40px 5px 5px; margin: 0; }
 .languageMenu ul li { text-align: left; line-height: 25px;  }
 .languageMenu ul li:hover { color: rgb(190, 190, 190); }
 

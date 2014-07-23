@@ -83,9 +83,8 @@
     "timestamps": "时间戳"
   },
   "errors": {
-      "error-text": "%%s. 错误： %%s",
-      "disconnected": "无法连接到后端服务",
-    "services-unavailable": "服务目前无法使用，不能提供该页面所需的数据"      
+    "error-text": "%%s. 错误： %%s",
+    "disconnected": "无法连接到后端服务",
+    "services-unavailable": "服务目前无法使用，不能提供该页面所需的数据"
   }
- 
 }
