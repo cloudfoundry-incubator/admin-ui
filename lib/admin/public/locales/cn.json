@@ -19,7 +19,11 @@
     "routers": "路由器",
     "logs": "日志",
     "tasks": "任务",
-    "stats": "Stats"
+    "stats": "Stats",
+    "service-plans": "服务计划", 
+    "components": "",
+    "service-gateways": "",
+    "routes": ""
   },
   "content": {
     "details": "详细说明",
@@ -27,6 +31,7 @@
     "service": "服务",
     "services": "服务",
     "service-plan": "服务计划",
+    "service-plans": "服务计划",
     "service-broker": "服务代理",
     "service-instance": "服务实例",
     "service-instances": "服务实例",
