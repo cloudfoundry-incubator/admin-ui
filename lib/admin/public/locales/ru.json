@@ -2,22 +2,22 @@
   "title-bar": {
     "title-text": "Облочная Литейная",
     "disconnected": "Невозможно подключиться к сервисам",
-    "sign-out": "Sign Out"
+    "sign-out": "Выйти"
   },
   "menu-bar": {
-    "organizations": "Organizations",
-    "spaces": "Spaces",
-    "applications": "Applications",
-    "service-instances": "Service Instances",
-    "developers": "Developers",
-    "quotas": "Quotas",
-    "deas": "DEAs",
-    "cloud-controllers": "Cloud Controllers",
-	"health-managers": "Health Managers",
-	"routers": "Routers",
-	"logs": "Logs",
-	"tasks": "Tasks",
-	"stats": "Stats"
+    "organizations": "Организации",
+    "spaces": "Рабочие пространства",
+    "applications": "Приложения",
+    "service-instances": "Экземпляры сервисов",
+    "developers": "Разработчики",
+    "quotas": "Квоты",
+    "deas": "Экземпляры DEA",
+    "cloud-controllers": "Контроллеры",
+	"health-managers": "Мэнеджеры здоровья",
+	"routers": "Роутеры",
+	"logs": "Логирование",
+	"tasks": "Задачи",
+	"stats": "Статистика"
   },
   "content": {
     "details": "Details",
