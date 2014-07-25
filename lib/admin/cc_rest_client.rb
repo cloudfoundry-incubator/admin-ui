@@ -69,7 +69,7 @@ module AdminUI
                                     'code'         => code,
                                     'redirect_uri' => redirect_uri)
       response = Utils.http_request(@config,
-                                    "#{ @authorization_endpoint }/oauth/token",
+                                    "#{ @token_endpoint }/oauth/token",
                                     Utils::HTTP_POST,
                                     [@config.uaa_client_id, @config.uaa_client_secret],
                                     content)
@@ -123,7 +123,7 @@ module AdminUI
       @token = nil
 
       response = Utils.http_request(@config,
-                                    "#{ @authorization_endpoint }/oauth/token",
+                                    "#{ @token_endpoint }/oauth/token",
                                     Utils::HTTP_POST,
                                     [@config.uaa_client_id, @config.uaa_client_secret],
                                     'grant_type=client_credentials')
