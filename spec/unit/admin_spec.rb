@@ -177,6 +177,23 @@ describe AdminUI::Admin do
       expect(json).to include('connected' => false, 'items' => [])
     end
 
+    def verify_view_model_items(path, connected)
+      json = get_json(path)
+
+      expect(json).to include('iTotalDisplayRecords' => 0, 'iTotalRecords' => 0, 'sEcho' => nil)
+      items = json['items']
+      expect(items).not_to be(nil)
+      expect(items).to include('connected' => connected, 'items' => [])
+    end
+
+    def verify_connected_view_model_empty_items(path)
+      verify_view_model_items(path, true)
+    end
+
+    def verify_disconnected_view_model_items(path)
+      verify_view_model_items(path, false)
+    end
+
     def verify_empty_items(path)
       json = get_json(path)
 
@@ -236,44 +253,92 @@ describe AdminUI::Admin do
       verify_disconnected_items('/applications')
     end
 
+    it '/applications_view_model succeeds' do
+      verify_disconnected_view_model_items('/applications_view_model')
+    end
+
     it '/cloud_controllers succeeds' do
       verify_disconnected_items('/cloud_controllers')
+    end
+
+    it '/cloud_controllers_view_model succeeds' do
+      verify_disconnected_view_model_items('/cloud_controllers_view_model')
     end
 
     it '/components succeeds' do
       verify_disconnected_items('/components')
     end
 
+    it '/components_view_model succeeds' do
+      verify_disconnected_view_model_items('/components_view_model')
+    end
+
     it '/deas succeeds' do
       verify_disconnected_items('/deas')
+    end
+
+    it '/deas_view_model succeeds' do
+      verify_disconnected_view_model_items('/deas_view_model')
+    end
+
+    it '/developers_view_model succeeds' do
+      verify_disconnected_view_model_items('/developers_view_model')
     end
 
     it '/gateways succeeds' do
       verify_disconnected_items('/gateways')
     end
 
+    it '/gateways_view_model succeeds' do
+      verify_disconnected_view_model_items('/gateways_view_model')
+    end
+
     it '/health_managers succeeds' do
       verify_disconnected_items('/health_managers')
+    end
+
+    it '/health_managers_view_model succeeds' do
+      verify_disconnected_view_model_items('/health_managers_view_model')
     end
 
     it '/logs succeeds' do
       verify_empty_items('/logs')
     end
 
+    it '/logs_view_model succeeds' do
+      verify_connected_view_model_empty_items('/logs_view_model')
+    end
+
     it '/organizations succeeds' do
       verify_disconnected_items('/organizations')
+    end
+
+    it '/organizations_view_model succeeds' do
+      verify_disconnected_view_model_items('/organizations_view_model')
     end
 
     it '/quota_definitions succeeds' do
       verify_disconnected_items('/quota_definitions')
     end
 
+    it '/quotas_view_model succeeds' do
+      verify_disconnected_view_model_items('/quotas_view_model')
+    end
+
     it '/routers succeeds' do
       verify_disconnected_items('/routers')
     end
 
+    it '/routers_view_model succeeds' do
+      verify_disconnected_view_model_items('/routers_view_model')
+    end
+
     it '/routes succeeds' do
       verify_disconnected_items('/routes')
+    end
+
+    it '/routes_view_model succeeds' do
+      verify_disconnected_view_model_items('/routes_view_model')
     end
 
     it '/settings succeeds' do
@@ -301,12 +366,24 @@ describe AdminUI::Admin do
       verify_disconnected_items('/service_instances')
     end
 
+    it '/service_instances_view_model succeeds' do
+      verify_disconnected_view_model_items('/service_instances_view_model')
+    end
+
     it '/service_plans succeeds' do
       verify_disconnected_items('/service_plans')
     end
 
+    it '/service_plans_view_model succeeds' do
+      verify_disconnected_view_model_items('/service_plans_view_model')
+    end
+
     it '/spaces succeeds' do
       verify_disconnected_items('/spaces')
+    end
+
+    it '/spaces_view_model succeeds' do
+      verify_disconnected_view_model_items('/spaces_view_model')
     end
 
     it '/spaces_auditors succeeds' do
@@ -325,10 +402,13 @@ describe AdminUI::Admin do
       verify_empty_items('/tasks')
     end
 
+    it '/tasks_view_model succeeds' do
+      verify_connected_view_model_empty_items('/tasks_view_model')
+    end
+
     it '/users succeeds' do
       verify_disconnected_items('/users')
     end
-
   end
 
   context 'Login required, but not performed' do
@@ -372,16 +452,36 @@ describe AdminUI::Admin do
       get_redirects_as_expected('/applications')
     end
 
+    it '/applications_view_model redirects as expected' do
+      get_redirects_as_expected('/applications_view_model')
+    end
+
     it '/cloud_controllers redirects as expected' do
       get_redirects_as_expected('/cloud_controllers')
+    end
+
+    it '/cloud_controllers_view_model redirects as expected' do
+      get_redirects_as_expected('/cloud_controllers_view_model')
     end
 
     it '/components redirects as expected' do
       get_redirects_as_expected('/components')
     end
 
+    it '/components_view_model redirects as expected' do
+      get_redirects_as_expected('/components_view_model')
+    end
+
     it '/deas redirects as expected' do
       get_redirects_as_expected('/deas')
+    end
+
+    it '/deas_view_model redirects as expected' do
+      get_redirects_as_expected('/deas_view_model')
+    end
+
+    it '/developers_view_model redirects as expected' do
+      get_redirects_as_expected('/developers_view_model')
     end
 
     it '/download redirects as expected' do
@@ -392,8 +492,16 @@ describe AdminUI::Admin do
       get_redirects_as_expected('/gateways')
     end
 
+    it '/gateways_view_model redirects as expected' do
+      get_redirects_as_expected('/gateways_view_model')
+    end
+
     it '/health_managers redirects as expected' do
       get_redirects_as_expected('/health_managers')
+    end
+
+    it '/health_managers_view_model redirects as expected' do
+      get_redirects_as_expected('/health_managers_view_model')
     end
 
     it '/log redirects as expected' do
@@ -404,20 +512,40 @@ describe AdminUI::Admin do
       get_redirects_as_expected('/logs')
     end
 
+    it '/logs_view_model redirects as expected' do
+      get_redirects_as_expected('/logs_view_model')
+    end
+
     it '/organizations redirects as expected' do
       get_redirects_as_expected('/organizations')
+    end
+
+    it '/organizations_view_model redirects as expected' do
+      get_redirects_as_expected('/organizations_view_model')
     end
 
     it '/quota_definitions redirects as expected' do
       get_redirects_as_expected('/quota_definitions')
     end
 
+    it '/quotas_view_model redirects as expected' do
+      get_redirects_as_expected('/quotas_view_model')
+    end
+
     it '/routers redirects as expected' do
       get_redirects_as_expected('/routers')
     end
 
+    it '/routers_view_model redirects as expected' do
+      get_redirects_as_expected('/routers_view_model')
+    end
+
     it '/routes redirects as expected' do
       get_redirects_as_expected('/routes')
+    end
+
+    it '/routes_view_model redirects as expected' do
+      get_redirects_as_expected('/routes_view_model')
     end
 
     it '/settings redirects as expected' do
@@ -440,12 +568,24 @@ describe AdminUI::Admin do
       get_redirects_as_expected('/service_instances')
     end
 
+    it '/service_instances_view_model redirects as expected' do
+      get_redirects_as_expected('/service_instances_view_model')
+    end
+
     it '/service_plans redirects as expected' do
       get_redirects_as_expected('/service_plans')
     end
 
+    it '/service_plans_view_model redirects as expected' do
+      get_redirects_as_expected('/service_plans_view_model')
+    end
+
     it '/spaces redirects as expected' do
       get_redirects_as_expected('/spaces')
+    end
+
+    it '/spaces_view_model redirects as expected' do
+      get_redirects_as_expected('/spaces_view_model')
     end
 
     it '/spaces_auditors redirects as expected' do
@@ -462,6 +602,10 @@ describe AdminUI::Admin do
 
     it '/tasks redirects as expected' do
       get_redirects_as_expected('/tasks')
+    end
+
+    it '/tasks_view_model redirects as expected' do
+      get_redirects_as_expected('/tasks_view_model')
     end
 
     it '/task_status redirects as expected' do
@@ -528,6 +672,10 @@ describe AdminUI::Admin do
 
     it '/stats succeeds' do
       get_body('/stats')
+    end
+
+    it '/stats_view_model succeeds' do
+      get_body('/stats_view_model')
     end
 
   end
