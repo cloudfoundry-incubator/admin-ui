@@ -1,5 +1,7 @@
 require 'logger'
+require 'openssl'
 require 'webrick/httprequest'
+require 'webrick/https'
 require_relative 'admin/config'
 require_relative 'admin/cc'
 require_relative 'admin/cc_rest_client'
@@ -9,6 +11,7 @@ require_relative 'admin/login'
 require_relative 'admin/log_files'
 require_relative 'admin/nats'
 require_relative 'admin/operation'
+require_relative 'admin/secure_web'
 require_relative 'admin/stats'
 require_relative 'admin/tasks'
 require_relative 'admin/varz'
@@ -70,25 +73,32 @@ module AdminUI
     end
 
     def display_files
-      puts "\n\n"
-      puts 'AdminUI files...'
-      puts "  data:  #{ @config.data_file }"
-      puts "  log:   #{ @config.log_file }"
-      puts "  stats: #{ @config.db_uri }"
-      puts "\n"
     end
 
     def launch_web
-      web = AdminUI::Web.new(@config,
-                             @logger,
-                             @cc,
-                             @login,
-                             @log_files,
-                             @operation,
-                             @stats,
-                             @tasks,
-                             @varz,
-                             @view_models)
+      if @config.secured_client_connection
+        web = AdminUI::SecureWeb.new(@config,
+                                     @logger,
+                                     @cc,
+                                     @login,
+                                     @log_files,
+                                     @operation,
+                                     @stats,
+                                     @tasks,
+                                     @varz,
+                                     @view_models)
+      else
+        web =       AdminUI::Web.new(@config,
+                                     @logger,
+                                     @cc,
+                                     @login,
+                                     @log_files,
+                                     @operation,
+                                     @stats,
+                                     @tasks,
+                                     @varz,
+                                     @view_models)
+      end
 
       # Only show error and fatal messages
       error_logger = Logger.new(STDERR)
@@ -102,12 +112,31 @@ module AdminUI
         WEBrick::HTTPRequest.const_set('MAX_URI_LENGTH', 10_240)
       end
 
-      Rack::Handler::WEBrick.run(web,
-                                 :AccessLog          => [],
-                                 :BindAddress        => @config.bind_address,
-                                 :DoNotReverseLookup => true,
-                                 :Logger             => error_logger,
-                                 :Port               => @config.port)
+      if @config.secured_client_connection
+        pkey = OpenSSL::PKey::RSA.new(File.open(@config.ssl_private_key_file_path).read, @config.ssl_private_key_pass_phrase)
+        cert = OpenSSL::X509::Certificate.new(File.open(@config.ssl_certificate_file_path).read)
+        names = OpenSSL::X509::Name.parse cert.subject.to_s
+        Rack::Handler::WEBrick.run(web,
+                                   :AccessLog          => [],
+                                   :BindAddress        => @config.bind_address,
+                                   :DoNotReverseLookup => true,
+                                   :Logger             => error_logger,
+                                   :Port               => @config.port,
+                                   :SSLEnable          => true,
+                                   :SSLVerifyClient    => OpenSSL::SSL::VERIFY_NONE,
+                                   :SSLCertificate     => cert,
+                                   :SSLPrivateKey      => pkey,
+                                   :SSLCertName        => names
+                                  )
+      else
+        Rack::Handler::WEBrick.run(web,
+                                   :AccessLog          => [],
+                                   :BindAddress        => @config.bind_address,
+                                   :DoNotReverseLookup => true,
+                                   :Logger             => error_logger,
+                                   :Port               => @config.port
+                                  )
+      end
     end
   end
 end

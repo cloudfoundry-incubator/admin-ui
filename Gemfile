@@ -9,6 +9,7 @@ gem 'net-sftp', '2.1.2'
 gem 'parse-cron', '0.1.4'
 gem 'sequel', '4.10.0'
 gem 'sqlite3', '1.3.9'
+gem 'rack-ssl', '1.4.1'
 
 group :test do
   gem 'rspec'

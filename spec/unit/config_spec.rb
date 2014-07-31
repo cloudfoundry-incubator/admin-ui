@@ -109,6 +109,11 @@ describe AdminUI::Config do
         expect(config.receiver_emails).to eq(receiver_emails)
       end
 
+      it 'secured_client_connection' do
+        config = AdminUI::Config.load('secured_client_connection' => true)
+        expect(config.secured_client_connection).to eq(true)
+      end
+
       context 'sender_email' do
         let(:sender_email) { { 'server' => 'localhost', 'account' => 'bogus@localhost.com' } }
         let(:config) { AdminUI::Config.load('sender_email' => sender_email) }
@@ -119,6 +124,27 @@ describe AdminUI::Config do
 
         it 'sender_email_server' do
           expect(config.sender_email_server).to eq(sender_email['server'])
+        end
+      end
+
+      context 'ssl is in use' do
+        let(:ssl) { { 'certificate_file_path'    => 'certificate_file_path', 'private_key_file_path'    => 'private_key_file_path', 'private_key_pass_phrase'  => 'private_key_pass_phrase', 'max_session_idle_length'  => 4 } }
+        let(:config) { AdminUI::Config.load('ssl' => ssl) }
+
+        it 'ssl_certificate_file_path' do
+          expect(config.ssl_certificate_file_path).to eq('certificate_file_path')
+        end
+
+        it 'ssl_private_key_file_path' do
+          expect(config.ssl_private_key_file_path).to eq('private_key_file_path')
+        end
+
+        it 'ssl_private_key_pass_phrase' do
+          expect(config.ssl_private_key_pass_phrase).to eq('private_key_pass_phrase')
+        end
+
+        it 'max_session_idle_length' do
+          expect(config.ssl_max_session_idle_length).to eq(4)
         end
       end
 
@@ -320,6 +346,10 @@ describe AdminUI::Config do
         expect(config.receiver_emails).to eq([])
       end
 
+      it 'secured_client_connection' do
+        expect(config.secured_client_connection).to eq(false)
+      end
+
       context 'sender_email' do
         it 'sender_email_account' do
           expect(config.sender_email_account).to be_nil
@@ -327,6 +357,24 @@ describe AdminUI::Config do
 
         it 'sender_email_server' do
           expect(config.sender_email_server).to be_nil
+        end
+      end
+
+      context 'ssl' do
+        it 'ssl_certificate_file_path to be nil' do
+          expect(config.ssl_certificate_file_path).to be_nil
+        end
+
+        it 'ssl_private_key_file_path' do
+          expect(config.ssl_private_key_file_path).to be_nil
+        end
+
+        it 'ssl_private_key_pass_phrase' do
+          expect(config.ssl_private_key_pass_phrase).to be_nil
+        end
+
+        it 'max_session_idle_length' do
+          expect(config.ssl_max_session_idle_length).to be_nil
         end
       end
 
@@ -467,6 +515,10 @@ describe AdminUI::Config do
         expect { AdminUI::Config.load(config.merge(:receiver_emails => [1, 2, 3])) }.to raise_error(Membrane::SchemaValidationError)
       end
 
+      it 'secured_client_connection' do
+        expect { AdminUI::Config.load(config.merge(:secured_client_connection => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
       context 'sender_email' do
         it 'sender_email_account' do
           expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 5, :server => 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
@@ -474,6 +526,24 @@ describe AdminUI::Config do
 
         it 'sender_email_server' do
           expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :server => 5  })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+      end
+
+      context 'ssl' do
+        it 'ssl_certificate_file_path' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 1,  :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'ssl_private_key_file_path' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 1, :private_key_pass_phrase => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'ssl_private_key_pass_phrase' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :private_key_pass_phrase => 1, :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'max_session_idle_length' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi', :max_session_idle_length => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 
@@ -573,8 +643,30 @@ describe AdminUI::Config do
         expect { AdminUI::Config.load(config.merge(:port => nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
+      it 'secured_client_connection' do
+        expect { AdminUI::Config.load(config.merge(:secured_client_connection => nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
       it 'stats_file' do
         expect { AdminUI::Config.load(config.merge(:stats_file => nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      context 'ssl' do
+        it 'ssl_certificate_file_path' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'ssl_private_key_file_path' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_pass_phrase => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'ssl_private_key_pass_phrase' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'max_session_idle_length' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+        end
       end
 
       context 'uaa_client' do

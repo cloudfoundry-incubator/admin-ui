@@ -28,6 +28,7 @@ module AdminUI
     set(:auth) do |*roles|
       condition do
         unless session[:username] && (!roles.include?(:admin) || session[:admin])
+          env['rack.session.options'][:expire_after] = @config.ssl_max_session_idle_length.to_i if @config.secured_client_connection
           @logger.debug('Authorization failure, redirecting to login...')
           redirect_to_login
         end

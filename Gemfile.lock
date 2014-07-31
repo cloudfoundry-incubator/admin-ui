@@ -22,6 +22,7 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.1)
       rack
+    rack-ssl (1.4.1)
     rspec (2.14.1)
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
@@ -58,6 +59,7 @@ DEPENDENCIES
   nats (= 0.4.26)
   net-sftp (= 2.1.2)
   parse-cron (= 0.1.4)
+  rack-ssl (= 1.4.1)
   rspec
   selenium-webdriver (= 2.39.0)
   sequel (= 4.10.0)

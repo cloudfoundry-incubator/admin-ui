@@ -27,7 +27,7 @@ This has been tested on Ubuntu 10.04.4 64 bit, Ubuntu 12.04.3 64 bit and Ubuntu 
 ### Ubuntu Prerequisite Libraries
 
 ```
-sudo apt-get install -f -y --no-install-recommends git-core build-essential libssl-dev libsqlite3-dev
+sudo apt-get install -f -y --no-install-recommends git-core build-essential libssl-dev libsqlite3-dev openssl
 ```
 
 ### Ruby
@@ -236,6 +236,22 @@ Example: <code>[ ]</code>
 Example: <code>[bar@10.10.10.10, baz@10.10.10.10]</code>
 </dd>
 <dt>
+<code><b>secured_client_connection</b></code>
+</dt>
+<dd>
+A true/false indicator about whether the Admin-UI server process will operate in secure or unprotected 
+mode.  In the secure mode, Admin-UI uses SSL security mechanism to protect communication with its users.  
+As such, it requires its users to connect via https; in unprotected mode, Admin-UI expects http requests.
+<br>
+When set to 'true', a SSL certificate is required and the 'ssl' property must be present in the 
+configuration file.  Please see configuration property 'ssl' for details about how to configure Admin-UI 
+to work with SSL certificate.<br>
+By default, Admin-UI runs in the unprotected mode.
+<br>
+Example: <code>true</code>
+</dd>
+</dt>
+<dt>
 <code><b>sender_email</b></code>
 </dt>
 <dd>
@@ -257,6 +273,74 @@ Example: <code>10.10.10.10</code>
 The email account.
 <br>
 Example: <code>system@10.10.10.10</code>
+</dd>
+</dl>
+</dd>
+<dt>
+<code><b>ssl</b></code>
+</dt>
+<dd>
+A set of configuration properties for Admin-UI to work with SSL certificate.  It 
+is required when the 'secured_client_connection' is set to true.<br>
+Certificate can be self-signed or signed by Certificate Authority (CA).  Admin-UI 
+supports these certificates. However, intermediate certificate from CA is not yet 
+supported.<br>
+<b>Generate Self-signed certificate</b><br>
+You can generate a self-signed certificate on a server, all without involving 
+third-party CA.  The following steps illustrate a way in how you can generate a 
+self-signed certificate:
+* generate private key
+<pre>
+openssl genrsa -des3 -out /tmp/admin_ui_server.key -3 -passout pass:private_key_pass_phrase 2048
+</pre>
+This command creates a private key at 2048 bit length which is then encrypted with 
+passphrase 'pass:private_key_pass_phrase' by way of DES3.
+* Generate certificate request
+<pre>
+openssl req -new -key /tmp/admin_ui_server.key -out /tmp/admin_ui_server.csr -passin pass:private_key_pass_phrase
+</pre>
+This command yields a certificate request file by supplying the private key and 
+passphrase involved in the previous step.
+* Generate certificate
+<pre>
+openssl x509 -req -days 365 -passin pass:private_key_pass -in /tmp/admin_ui_server.csr -signkey /tmp/admin_ui_server.key -out /tmp/admin_ui_server.crt
+</pre>
+This command generates a certificate that is good for the next 365 days.  At this 
+point, you no longer need to keep the certificate request (dot csr file).
+<br>
+<dl>
+<dt>
+<code>certificate_file_path</code>
+</dt>
+<dd>
+File path string leading to the certificate file.
+<br>
+Example: <code>certificate/server.cert</code>
+</dd>
+<dt>
+<dt>
+<code>max_session_idle_length</code>
+</dt>
+<dd>
+Time duration in seconds in which a https session is allowed to stay idle.
+<br>
+Example: <code>1800</code> for 30 minutes.
+</dd>
+<dt>
+<code>private_key_file_path</code>
+</dt>
+<dd>
+File path string leading to the private key file.
+<br>
+Example: <code>system@10.10.10.10</code>
+</dd>
+<dt>
+<code>private_key_pass_phrase</code>
+</dt>
+<dd>
+Password string that is used to encrypt the private key.
+<br>
+Example: <code>my_secret</code>
 </dd>
 </dl>
 </dd>
