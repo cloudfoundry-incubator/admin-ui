@@ -1,0 +1,15 @@
+[req]
+distinguished_name = req_distinguished_name
+x509_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+C = US
+ST = CA
+L = San Jose
+O = ibm
+CN = localhost
+
+[v3_req]
+subjectKeyIdentifier = hash
+basicConstraints = CA:TRUE

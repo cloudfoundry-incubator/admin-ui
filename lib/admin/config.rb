@@ -17,6 +17,7 @@ module AdminUI
       :nats_discovery_interval             =>                 30,
       :nats_discovery_timeout              =>                 10,
       :receiver_emails                     =>                 [],
+      :secured_client_connection           =>              false,
       :stats_refresh_schedules             =>      ['0 5 * * *'],
       :stats_retries                       =>                  5,
       :stats_retry_interval                =>                300,
@@ -51,6 +52,14 @@ module AdminUI
           {
             :server  => /[^\r\n\t]+/,
             :account => /[^\r\n\t]+/
+          },
+          :secured_client_connection                     => bool,
+          optional(:ssl)                                 =>
+          {
+            :certificate_file_path     => String,
+            :private_key_file_path     => String,
+            :private_key_pass_phrase   => String,
+            :max_session_idle_length   => Integer
           },
           optional(:stats_file)                          => /[^\r\n\t]+/,
           optional(:stats_refresh_time)                  => Integer,
@@ -175,6 +184,10 @@ module AdminUI
       @config[:receiver_emails]
     end
 
+    def secured_client_connection
+      @config[:secured_client_connection]
+    end
+
     def sender_email_account
       return nil if @config[:sender_email].nil?
       @config[:sender_email][:account]
@@ -183,6 +196,26 @@ module AdminUI
     def sender_email_server
       return nil if @config[:sender_email].nil?
       @config[:sender_email][:server]
+    end
+
+    def ssl_certificate_file_path
+      return nil if @config[:ssl].nil?
+      @config[:ssl][:certificate_file_path]
+    end
+
+    def ssl_max_session_idle_length
+      return nil if @config[:ssl].nil?
+      @config[:ssl][:max_session_idle_length]
+    end
+
+    def ssl_private_key_file_path
+      return nil if @config[:ssl].nil?
+      @config[:ssl][:private_key_file_path]
+    end
+
+    def ssl_private_key_pass_phrase
+      return nil if @config[:ssl].nil?
+      @config[:ssl][:private_key_pass_phrase]
     end
 
     def stats_file
