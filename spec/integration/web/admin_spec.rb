@@ -72,6 +72,108 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       expect(@driver.find_element(:class => 'user').text).to eq('admin')
     end
 
+    context 'formatStringCleansed' do
+      it 'removes html tags for iframe' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<iframe src=javascript:alert(1208)></iframe>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for iframe short form' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<iframe src=javascript:alert(1208)/>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for img' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<img src=javascript:alert(1208)></img>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for img short form' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<img src=javascript:alert(1208)>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for img forward slash' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<img/src='' onerror=alert(9)>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for img dangling quoted string' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<a'' href'' onclick=alert(9)>foo</a>\")")).to eq('hellofoo')
+      end
+
+      it 'removes html tags for CRLF instead of space' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<img%0d%0asrc=''%0d%0aonerror=alert(9)>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for javaScript scheme' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<a href='java&#115;cript:alert(9)'>foo</a>\")")).to eq('hellofoo')
+      end
+
+      it 'removes html tags for unquoted' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<input type=text name=foo value=a%20onchange=alert(9)>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for double-quoted' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<input type='text' name='foo' value='\'onclick=alert(9)//'>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for HTML5 autofocus' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<input type='text' name='foo' value=''onclick=alert(9)//'>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for src & href attributes' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<script src='data:,alert(9)'></script>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for src & href attributes 2' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<script src='data:text/javascript,alert(9)'></script>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for Base64 data' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<a href='data:text/html;base64,PHNjcmlwdD5hbGVydCg5KTwvc2NyaXB0Pg'>foo</a>\")")).to eq('hellofoo')
+      end
+
+      it 'removes html tags for alternate character sets' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<a href=data:text/html;charset=utf-16,%ff%fe%3c%00s%00c%00r%00i%00p%00t%00%3e%00a%00l%00e%00r%00t%00(%009%00)%00/%00s%00c%00r%00i%00p%00t%00'>foo</a>\")")).to eq('hellofoo')
+      end
+
+      it 'removes html tags for SVG 1' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<svg onload='javascript:alert(9)' xmlns='http://www.w3.org/2000/svg'></svg>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for SVG 2' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<g onload='javascript:alert(9)'></g></svg>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for SVG 3' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<a xmlns:xlink='http://www.w3.org/1999/xlink' xlink:href='javascript:alert(9)'>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for SVG 4' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<rect width='1000' height='1000' fill='white'/></a></svg>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for missing greater-than sign' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<script%0d%0aalert(9)</script>\")")).to eq('hello')
+      end
+
+      it 'removes html tags for uncommon syntax' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<a''id=a href=''onclick=alert(9)>foo</a>\")")).to eq('hellofoo')
+      end
+
+      it 'removes html tags for orphan entity' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<a href=''&amp;/onclick=alert(9)>foo</a>\")")).to eq('hellofoo')
+      end
+
+      it 'removes any html tags' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<xyz src=javascript:alert(1208)></xzy>\")")).to eq('hello')
+      end
+
+      it 'removes any html tags shorm form 1' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<xyz src=javascript:alert(1208) />\")")).to eq('hello')
+      end
+
+      it 'removes any html tags shorm form 2' do
+        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<xyz src=javascript:alert(1208) >\")")).to eq('hello')
+      end
+    end
+
     context 'tabs' do
       let(:table_has_data) { true }
       before do
