@@ -341,19 +341,51 @@ describe AdminUI::Admin, :type => :integration do
       end
     end
 
-    it_behaves_like('retrieves cc entity/metadata record') do
-      let(:path)      { '/applications' }
-      let(:cc_source) { cc_started_apps }
+    shared_examples 'retrieves view_model' do
+      let(:retrieved) { get_json(path) }
+      it 'retrieves' do
+        expect(retrieved).to_not be(nil)
+        expect(retrieved['iTotalRecords']).to eq(view_model_source.length)
+        expect(retrieved['iTotalDisplayRecords']).to eq(view_model_source.length)
+        outer_items = retrieved['items']
+        expect(outer_items).to_not be(nil)
+        expect(outer_items['connected']).to eq(true)
+        inner_items = outer_items['items']
+        expect(inner_items).to_not be(nil)
+
+        view_model_source.each do |view_model|
+          expect(AdminUI::Utils.symbolize_keys(inner_items)).to include(AdminUI::Utils.symbolize_keys(view_model))
+        end
+      end
     end
 
-    it_behaves_like('retrieves varz record') do
+    context 'applications' do
+      let(:path)      { '/applications' }
+      let(:cc_source) { cc_started_apps }
+      it_behaves_like('retrieves cc entity/metadata record')
+    end
+
+    context 'applications_view_model' do
+      let(:path)              { '/applications_view_model' }
+      let(:view_model_source) { view_models_applications }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'cloud_controllers' do
       let(:varz_data) { varz_cloud_controller }
       let(:varz_name) { nats_cloud_controller['host'] }
       let(:path)      { '/cloud_controllers' }
       let(:varz_uri)  { nats_cloud_controller_varz }
+      it_behaves_like('retrieves varz record')
     end
 
-    context 'multiple varz components' do
+    context 'cloud_controllers_view_model' do
+      let(:path)              { '/cloud_controllers_view_model' }
+      let(:view_model_source) { view_models_cloud_controllers }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'components' do
       let(:retrieved) { get_json('/components') }
       it 'retrieves' do
         expect(retrieved['connected']).to eq(true)
@@ -388,6 +420,12 @@ describe AdminUI::Admin, :type => :integration do
       end
     end
 
+    context 'components_view_model' do
+      let(:path)              { '/components_view_model' }
+      let(:view_model_source) { view_models_components }
+      it_behaves_like('retrieves view_model')
+    end
+
     context 'current_statistics' do
       let(:retrieved) { get_json('/current_statistics') }
       it 'retrieves' do
@@ -401,11 +439,24 @@ describe AdminUI::Admin, :type => :integration do
       end
     end
 
-    it_behaves_like('retrieves varz record') do
+    context 'deas' do
       let(:varz_data) { varz_dea }
       let(:varz_name) { nats_dea['host'] }
       let(:path)      { '/deas' }
       let(:varz_uri)  { nats_dea_varz }
+      it_behaves_like('retrieves varz record')
+    end
+
+    context 'deas_view_model' do
+      let(:path)              { '/deas_view_model' }
+      let(:view_model_source) { view_models_deas }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'developers_view_model' do
+      let(:path)              { '/developers_view_model' }
+      let(:view_model_source) { view_models_developers }
+      it_behaves_like('retrieves view_model')
     end
 
     context 'download' do
@@ -416,18 +467,32 @@ describe AdminUI::Admin, :type => :integration do
       end
     end
 
-    it_behaves_like('retrieves varz record') do
+    context 'gateways' do
       let(:varz_data) { varz_provisioner }
       let(:varz_name) { nats_provisioner['type'].sub('-Provisioner', '') }
       let(:path)      { '/gateways' }
       let(:varz_uri)  { nats_provisioner_varz }
+      it_behaves_like('retrieves varz record')
     end
 
-    it_behaves_like('retrieves varz record') do
+    context 'gateways_view_model' do
+      let(:path)              { '/gateways_view_model' }
+      let(:view_model_source) { view_models_gateways }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'health_managers' do
       let(:varz_data) { varz_health_manager }
       let(:varz_name) { nats_health_manager['host'] }
       let(:path)      { '/health_managers' }
       let(:varz_uri)  { nats_health_manager_varz }
+      it_behaves_like('retrieves varz record')
+    end
+
+    context 'health_managers_view_model' do
+      let(:path)              { '/health_managers_view_model' }
+      let(:view_model_source) { view_models_health_managers }
+      it_behaves_like('retrieves view_model')
     end
 
     context 'log' do
@@ -455,71 +520,139 @@ describe AdminUI::Admin, :type => :integration do
       end
     end
 
-    it_behaves_like('retrieves cc entity/metadata record') do
+    context 'logs_view_model' do
+      let(:path)              { '/logs_view_model' }
+      let(:view_model_source) { view_models_logs(log_file_displayed, log_file_displayed_contents_length, log_file_displayed_modified_milliseconds) }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'organizations' do
       let(:path)      { '/organizations' }
       let(:cc_source) { cc_organizations }
+      it_behaves_like('retrieves cc entity/metadata record')
     end
 
-    it_behaves_like('retrieves cc entity/metadata record') do
+    context 'organizations_view_model' do
+      let(:path)              { '/organizations_view_model' }
+      let(:view_model_source) { view_models_organizations }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'quota_definitions' do
       let(:path)      { '/quota_definitions' }
       let(:cc_source) { cc_quota_definitions }
+      it_behaves_like('retrieves cc entity/metadata record')
     end
 
-    it_behaves_like('retrieves varz record') do
+    context 'quotas_view_model' do
+      let(:path)              { '/quotas_view_model' }
+      let(:view_model_source) { view_models_quotas }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'routers' do
       let(:varz_data) { varz_router }
       let(:varz_name) { nats_router['host'] }
       let(:path)      { '/routers' }
       let(:varz_uri)  { nats_router_varz }
+      it_behaves_like('retrieves varz record')
     end
 
-    it_behaves_like('retrieves cc entity/metadata record') do
+    context 'routers_view_model' do
+      let(:path)              { '/routers_view_model' }
+      let(:view_model_source) { view_models_routers }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'routes' do
       let(:path)      { '/routes' }
       let(:cc_source) { cc_routes }
+      it_behaves_like('retrieves cc entity/metadata record')
     end
 
-    it_behaves_like('retrieves cc entity/metadata record') do
+    context 'routes_view_model' do
+      let(:path)              { '/routes_view_model' }
+      let(:view_model_source) { view_models_routes }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'services' do
       let(:path)      { '/services' }
       let(:cc_source) { cc_services }
+      it_behaves_like('retrieves cc entity/metadata record')
     end
 
-    it_behaves_like('retrieves cc entity/metadata record') do
+    context 'service_bindings' do
       let(:path)      { '/service_bindings' }
       let(:cc_source) { cc_service_bindings }
+      it_behaves_like('retrieves cc entity/metadata record')
     end
 
-    it_behaves_like('retrieves cc entity/metadata record') do
+    context 'service_brokers' do
       let(:path)      { '/service_brokers' }
       let(:cc_source) { cc_service_brokers }
+      it_behaves_like('retrieves cc entity/metadata record')
     end
 
-    it_behaves_like('retrieves cc entity/metadata record') do
+    context 'service_instances' do
       let(:path)      { '/service_instances' }
       let(:cc_source) { cc_service_instances }
+      it_behaves_like('retrieves cc entity/metadata record')
     end
 
-    it_behaves_like('retrieves cc entity/metadata record') do
+    context 'services_instances_view_model' do
+      let(:path)              { '/service_instances_view_model' }
+      let(:view_model_source) { view_models_service_instances }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'service_plans' do
       let(:path)      { '/service_plans' }
       let(:cc_source) { cc_service_plans }
+      it_behaves_like('retrieves cc entity/metadata record')
     end
 
-    it_behaves_like('retrieves cc entity/metadata record') do
+    context 'service_plans_view_model' do
+      let(:path)              { '/service_plans_view_model' }
+      let(:view_model_source) { view_models_service_plans }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'spaces' do
       let(:path)      { '/spaces' }
       let(:cc_source) { cc_spaces }
+      it_behaves_like('retrieves cc entity/metadata record')
     end
 
-    it_behaves_like('retrieves cc space/user record') do
+    context 'spaces_auditors' do
       let(:path)       { '/spaces_auditors' }
       let(:type_space) { 'audited_spaces' }
+      it_behaves_like('retrieves cc space/user record')
     end
 
-    it_behaves_like('retrieves cc space/user record') do
+    context 'spaces_developers' do
       let(:path)       { '/spaces_developers' }
       let(:type_space) { 'spaces' }
+      it_behaves_like('retrieves cc space/user record')
     end
 
-    it_behaves_like('retrieves cc space/user record') do
+    context 'spaces_managers' do
       let(:path)       { '/spaces_managers' }
       let(:type_space) { 'managed_spaces' }
+      it_behaves_like('retrieves cc space/user record')
+    end
+
+    context 'spaces_view_model' do
+      let(:path)              { '/spaces_view_model' }
+      let(:view_model_source) { view_models_spaces }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'stats_view_model' do
+      let(:path)              { '/stats_view_model' }
+      let(:timestamp)         { retrieved['items']['items'][0][8]['timestamp'] } # We have to copy the timestamp from the result since it is variable
+      let(:view_model_source) { view_models_stats(timestamp) }
+      it_behaves_like('retrieves view_model')
     end
 
     context 'users' do

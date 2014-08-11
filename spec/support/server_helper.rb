@@ -6,6 +6,7 @@ shared_context :server_context do
   include LoginHelper
   include NATSHelper
   include VARZHelper
+  include ViewModelsHelper
   include OperationHelper
 
   let(:host) { 'localhost' }
