@@ -8,38 +8,36 @@ describe AdminUI::Admin do
   include LoginHelper
   include CCHelper
 
-  let(:host) { 'localhost' }
-  let(:port) { 8071 }
-
+  let(:certificate_file_path)   { '/tmp/admin_ui_server.crt' }
+  let(:certificate_request_file_path) { '/tmp/admin_ui_server.csr' }
   let(:cloud_controller_uri) { 'http://api.localhost' }
   let(:data_file) { '/tmp/admin_ui_data.json' }
   let(:db_file) { '/tmp/admin_ui_store.db' }
+  let(:host) { 'localhost' }
   let(:log_file) { '/tmp/admin_ui.log' }
-  let(:stats_file) { '/tmp/admin_ui_stats.json' }
-  let(:tasks_refresh_interval) { 6000 }
-  let(:secured_client_connection) { false }
-  let(:certificate_file_path)   { '/tmp/admin_ui_server.crt' }
-  let(:certificate_request_file_path) { '/tmp/admin_ui_server.csr' }
+  let(:openssl_config) { 'spec/ssl/openssl.cnf' }
+  let(:port) { 8071 }
   let(:private_key_file_path)   { '/tmp/admin_ui_server.key' }
   let(:private_key_pass_phrase) { 'private_key_pass_phrase'  }
-  let(:openssl_config) { 'spec/ssl/openssl.cnf' }
-
+  let(:secured_client_connection) { false }
+  let(:stats_file) { '/tmp/admin_ui_stats.json' }
+  let(:tasks_refresh_interval) { 6000 }
   let(:config) do
-    { :cloud_controller_uri                => cloud_controller_uri,
-      :data_file                           => data_file,
-      :db_uri                              => "sqlite://#{ db_file }",
-      :log_file                            => log_file,
-      :mbus                                => 'nats://nats:c1oudc0w@localhost:14222',
-      :port                                => port,
-      :secured_client_connection           => secured_client_connection,
-      :ssl                                 => { :certificate_file_path   => certificate_file_path,
-                                                :private_key_file_path   => private_key_file_path,
-                                                :private_key_pass_phrase => private_key_pass_phrase,
-                                                :max_session_idle_length => 1000
-                                               },
-      :stats_file                          => stats_file,
-      :tasks_refresh_interval              => tasks_refresh_interval,
-      :uaa_client             => { :id => 'id', :secret => 'secret' }
+    { :cloud_controller_uri      => cloud_controller_uri,
+      :data_file                 => data_file,
+      :db_uri                    => "sqlite://#{ db_file }",
+      :log_file                  => log_file,
+      :mbus                      => 'nats://nats:c1oudc0w@localhost:14222',
+      :port                      => port,
+      :secured_client_connection => secured_client_connection,
+      :ssl                       => { :certificate_file_path   => certificate_file_path,
+                                      :max_session_idle_length => 1000,
+                                      :private_key_file_path   => private_key_file_path,
+                                      :private_key_pass_phrase => private_key_pass_phrase
+                                    },
+      :stats_file                => stats_file,
+      :tasks_refresh_interval    => tasks_refresh_interval,
+      :uaa_client                => { :id => 'id', :secret => 'secret' }
     }
   end
 
@@ -386,7 +384,7 @@ describe AdminUI::Admin do
       expect(json).to include('items' => [])
     end
 
-    shared_examples 'common /all tabs succeed' do
+    shared_examples 'common all tabs succeed' do
       before do
         login_stub_admin
       end
@@ -553,14 +551,14 @@ describe AdminUI::Admin do
       end
     end
 
-    context '/applications via http' do
-      it_behaves_like('common /all tabs succeed')
+    context 'all tabs via http' do
+      it_behaves_like('common all tabs succeed')
     end
 
-    context '/applications via https' do
+    context 'all tabs via https' do
       let(:secured_client_connection) { true }
 
-      it_behaves_like('common /all tabs succeed')
+      it_behaves_like('common all tabs succeed')
     end
   end
 
@@ -601,7 +599,7 @@ describe AdminUI::Admin do
       expect(location).not_to be_nil
     end
 
-    shared_examples 'common /all tabs redirect' do
+    shared_examples 'common all tabs redirect' do
       before do
         login_stub_fail
       end
@@ -804,13 +802,13 @@ describe AdminUI::Admin do
       end
     end
 
-    context '/all tabs via http' do
-      it_behaves_like('common /all tabs redirect')
+    context 'all tabs via http' do
+      it_behaves_like('common all tabs redirect')
     end
 
-    context '/all tabs via https' do
+    context 'all tabs via https' do
       let(:secured_client_connection) { true }
-      it_behaves_like('common /all tabs redirect')
+      it_behaves_like('common all tabs redirect')
     end
   end
 

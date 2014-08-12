@@ -84,34 +84,6 @@ module AdminUI
     end
 
     def launch_web
-      if @config.secured_client_connection
-        web = AdminUI::SecureWeb.new(@config,
-                                     @logger,
-                                     @cc,
-                                     @login,
-                                     @log_files,
-                                     @operation,
-                                     @stats,
-                                     @tasks,
-                                     @varz,
-                                     @view_models)
-      else
-        web =       AdminUI::Web.new(@config,
-                                     @logger,
-                                     @cc,
-                                     @login,
-                                     @log_files,
-                                     @operation,
-                                     @stats,
-                                     @tasks,
-                                     @varz,
-                                     @view_models)
-      end
-
-      # Only show error and fatal messages
-      error_logger = Logger.new(STDERR)
-      error_logger.level = Logger::ERROR
-
       if defined?(WEBrick::HTTPRequest)
         # TODO: Look at moving to Thin to avoid this limitation
         # We have to increase the WEBrick HTTPRequest constant MAX_URI_LENGTH from its defined value of 2083
@@ -120,31 +92,45 @@ module AdminUI
         WEBrick::HTTPRequest.const_set('MAX_URI_LENGTH', 10_240)
       end
 
+      # Only show error and fatal messages
+      error_logger = Logger.new(STDERR)
+      error_logger.level = Logger::ERROR
+
+      web_hash = { :AccessLog          => [],
+                   :BindAddress        => @config.bind_address,
+                   :DoNotReverseLookup => true,
+                   :Logger             => error_logger,
+                   :Port               => @config.port
+                 }
+
       if @config.secured_client_connection
-        pkey = OpenSSL::PKey::RSA.new(File.open(@config.ssl_private_key_file_path).read, @config.ssl_private_key_pass_phrase)
-        cert = OpenSSL::X509::Certificate.new(File.open(@config.ssl_certificate_file_path).read)
+        pkey  = OpenSSL::PKey::RSA.new(File.open(@config.ssl_private_key_file_path).read, @config.ssl_private_key_pass_phrase)
+        cert  = OpenSSL::X509::Certificate.new(File.open(@config.ssl_certificate_file_path).read)
         names = OpenSSL::X509::Name.parse cert.subject.to_s
-        Rack::Handler::WEBrick.run(web,
-                                   :AccessLog          => [],
-                                   :BindAddress        => @config.bind_address,
-                                   :DoNotReverseLookup => true,
-                                   :Logger             => error_logger,
-                                   :Port               => @config.port,
-                                   :SSLEnable          => true,
-                                   :SSLVerifyClient    => OpenSSL::SSL::VERIFY_NONE,
-                                   :SSLCertificate     => cert,
-                                   :SSLPrivateKey      => pkey,
-                                   :SSLCertName        => names
-                                  )
+
+        web_hash.merge!(:SSLCertificate     => cert,
+                        :SSLCertName        => names,
+                        :SSLEnable          => true,
+                        :SSLPrivateKey      => pkey,
+                        :SSLVerifyClient    => OpenSSL::SSL::VERIFY_NONE)
+
+        web_class = AdminUI::SecureWeb
       else
-        Rack::Handler::WEBrick.run(web,
-                                   :AccessLog          => [],
-                                   :BindAddress        => @config.bind_address,
-                                   :DoNotReverseLookup => true,
-                                   :Logger             => error_logger,
-                                   :Port               => @config.port
-                                  )
+        web_class = AdminUI::Web
       end
+
+      web = web_class.new(@config,
+                          @logger,
+                          @cc,
+                          @login,
+                          @log_files,
+                          @operation,
+                          @stats,
+                          @tasks,
+                          @varz,
+                          @view_models)
+
+      Rack::Handler::WEBrick.run(web, web_hash)
     end
   end
 end
