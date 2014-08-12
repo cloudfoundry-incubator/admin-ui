@@ -1319,13 +1319,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'DEAs' }
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 2,
-                                :labels          => ['', '% Free'],
-                                :colspans        => %w(8 2)
+                                :expected_length => 3,
+                                :labels          => ['', 'Instances', '% Free'],
+                                :colspans        => %w(8 4 2)
                               },
                               { :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 10,
-                                :labels          => %w(Name Index Status Started Stack CPU Memory Apps Memory Disk),
+                                :expected_length => 14,
+                                :labels          => ['Name', 'Index', 'Status', 'Started', 'Stack', 'CPU', 'Memory', 'Apps', 'Running', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk'],
                                 :colspans        => nil
                               }
                              ])
@@ -1339,6 +1339,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              varz_dea['cpu'].to_s,
                              varz_dea['mem'].to_s,
                              varz_dea['instance_registry'].length.to_s,
+                             varz_dea['instance_registry']['application1'].length.to_s,
+                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s,
+                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s,
+                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s,
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })"),
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })")
                            ])
@@ -1354,20 +1358,24 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             select_first_row
           end
           it 'has details' do
-            check_details([{ :label => 'Name',         :tag => nil, :value => varz_dea['host'] },
-                           { :label => 'Index',        :tag => nil, :value => varz_dea['index'].to_s },
-                           { :label => 'URI',          :tag => 'a', :value => nats_dea_varz },
-                           { :label => 'Host',         :tag => nil, :value => varz_dea['host'] },
-                           { :label => 'Started',      :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")") },
-                           { :label => 'Uptime',       :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_dea['uptime'] }\")") },
-                           { :label => 'Stack',        :tag => nil, :value => varz_dea['stacks'][0] },
-                           { :label => 'Apps',         :tag => 'a', :value => varz_dea['instance_registry'].length.to_s },
-                           { :label => 'Cores',        :tag => nil, :value => varz_dea['num_cores'].to_s },
-                           { :label => 'CPU',          :tag => nil, :value => varz_dea['cpu'].to_s },
-                           { :label => 'CPU Load Avg', :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") }%" },
-                           { :label => 'Memory',       :tag => nil, :value => varz_dea['mem'].to_s },
-                           { :label => 'Memory Free',  :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })") }%" },
-                           { :label => 'Disk Free',    :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") }%" }
+            check_details([{ :label => 'Name',                  :tag => nil, :value => varz_dea['host'] },
+                           { :label => 'Index',                 :tag => nil, :value => varz_dea['index'].to_s },
+                           { :label => 'URI',                   :tag => 'a', :value => nats_dea_varz },
+                           { :label => 'Host',                  :tag => nil, :value => varz_dea['host'] },
+                           { :label => 'Started',               :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")") },
+                           { :label => 'Uptime',                :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_dea['uptime'] }\")") },
+                           { :label => 'Stack',                 :tag => nil, :value => varz_dea['stacks'][0] },
+                           { :label => 'Apps',                  :tag => 'a', :value => varz_dea['instance_registry'].length.to_s },
+                           { :label => 'Cores',                 :tag => nil, :value => varz_dea['num_cores'].to_s },
+                           { :label => 'CPU',                   :tag => nil, :value => varz_dea['cpu'].to_s },
+                           { :label => 'CPU Load Avg',          :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") }%" },
+                           { :label => 'Memory',                :tag => nil, :value => varz_dea['mem'].to_s },
+                           { :label => 'Instances',             :tag => nil, :value => varz_dea['instance_registry']['application1'].length.to_s },
+                           { :label => 'Instances Memory Used', :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
+                           { :label => 'Instances Disk Used',   :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
+                           { :label => 'Instances CPU Used',    :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
+                           { :label => 'Memory Free',           :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })") }%" },
+                           { :label => 'Disk Free',             :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") }%" }
                           ])
           end
           it 'has applications link' do
