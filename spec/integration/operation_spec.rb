@@ -98,7 +98,7 @@ describe AdminUI::Operation, :type => :integration do
 
       it 'deletes specific route' do
         cc_empty_routes_stub(config)
-        expect { operation.manage_route('route1') }.to change { cc.routes['items'].length }.from(1).to(0)
+        expect { operation.delete_route('route1') }.to change { cc.routes['items'].length }.from(1).to(0)
       end
     end
 

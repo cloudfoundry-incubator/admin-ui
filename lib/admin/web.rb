@@ -389,7 +389,7 @@ module AdminUI
 
     delete '/routes/:route_guid', :auth => [:admin] do
       begin
-        @operation.manage_route(params[:route_guid])
+        @operation.delete_route(params[:route_guid])
         204
       rescue => error
         @logger.debug("Error during deleting route: #{ error.inspect }")
