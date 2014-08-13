@@ -24,7 +24,7 @@ describe AdminUI::VARZ, :type => :integration do
 
   let(:email) { AdminUI::EMail.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
-  let(:varz) { AdminUI::VARZ.new(config, logger, nats) }
+  let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
 
   after do
     Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ db_file } #{ log_file }"))

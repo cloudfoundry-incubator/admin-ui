@@ -20,7 +20,7 @@ require_relative 'view_models/tasks_view_model'
 
 module AdminUI
   class ViewModels
-    def initialize(config, logger, cc, log_files, stats, tasks, varz)
+    def initialize(config, logger, cc, log_files, stats, tasks, varz, testing = false)
       @cc        = cc
       @config    = config
       @log_files = log_files
@@ -28,6 +28,8 @@ module AdminUI
       @stats     = stats
       @tasks     = tasks
       @varz      = varz
+      @testing   = testing
+
       # TODO: Need config for number of threads
       @pool      = AdminUI::ScheduledThreadPool.new(logger, 2, -1)
 
@@ -139,6 +141,13 @@ module AdminUI
     private
 
     def invalidate_cache(key)
+      if @testing
+        hash = @caches[key]
+        hash[:semaphore].synchronize do
+          hash[:result] = nil
+        end
+      end
+
       schedule(key)
     end
 

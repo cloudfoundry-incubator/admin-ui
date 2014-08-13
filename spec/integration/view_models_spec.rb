@@ -44,7 +44,7 @@ describe AdminUI::CC, :type => :integration do
   let(:tasks) { AdminUI::Tasks.new(config, logger) }
   let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
   let(:stats) { AdminUI::Stats.new(config, logger, cc, varz) }
-  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, tasks, varz) }
+  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, tasks, varz, true) }
 
   after do
     Thread.list.each do |thread|

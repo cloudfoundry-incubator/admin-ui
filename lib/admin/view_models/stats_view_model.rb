@@ -13,7 +13,7 @@ module AdminUI
 
     def do_items
       statistics        = @stats.stats
-      current_statistic = @stats.current_stats(false)
+      current_statistic = @stats.current_stats
 
       items = []
 

@@ -11,7 +11,7 @@ module AdminUI
     end
 
     def do_items
-      gateways = @varz.gateways(false)
+      gateways = @varz.gateways
 
       # gateways have to exist.  Other record types are optional
       return result unless gateways['connected']

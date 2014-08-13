@@ -43,36 +43,20 @@ module AdminUI
       AllActions.new(@logger, @view_models.applications, params).items.to_json
     end
 
-    get '/applications', :auth => [:user] do
-      @cc.applications.to_json
-    end
-
     get '/cloud_controllers_view_model', :auth => [:user] do
       AllActions.new(@logger, @view_models.cloud_controllers, params).items.to_json
-    end
-
-    get '/cloud_controllers', :auth => [:user] do
-      @varz.cloud_controllers.to_json
     end
 
     get '/components_view_model', :auth => [:user] do
       AllActions.new(@logger, @view_models.components, params).items.to_json
     end
 
-    get '/components', :auth => [:user] do
-      @varz.components.to_json
-    end
-
     get '/current_statistics' do
-      @stats.current_stats(false).to_json
+      @stats.current_stats.to_json
     end
 
     get '/deas_view_model', :auth => [:user] do
       AllActions.new(@logger, @view_models.deas, params).items.to_json
-    end
-
-    get '/deas', :auth => [:user] do
-      @varz.deas.to_json
     end
 
     get '/developers_view_model', :auth => [:user] do
@@ -97,16 +81,8 @@ module AdminUI
       AllActions.new(@logger, @view_models.gateways, params).items.to_json
     end
 
-    get '/gateways', :auth => [:user] do
-      @varz.gateways.to_json
-    end
-
     get '/health_managers_view_model', :auth => [:user] do
       AllActions.new(@logger, @view_models.health_managers, params).items.to_json
-    end
-
-    get '/health_managers', :auth => [:user] do
-      @varz.health_managers.to_json
     end
 
     get '/log', :auth => [:user] do
@@ -152,20 +128,8 @@ module AdminUI
       AllActions.new(@logger, @view_models.logs, params).items.to_json
     end
 
-    get '/logs', :auth => [:user] do
-      { :items => @log_files.infos }.to_json
-    end
-
     get '/organizations_view_model', :auth => [:user] do
       AllActions.new(@logger, @view_models.organizations, params).items.to_json
-    end
-
-    get '/organizations', :auth => [:user] do
-      @cc.organizations.to_json
-    end
-
-    get '/quota_definitions', :auth => [:user] do
-      @cc.quota_definitions.to_json
     end
 
     get '/quotas_view_model', :auth => [:user] do
@@ -180,14 +144,6 @@ module AdminUI
       AllActions.new(@logger, @view_models.routes, params).items.to_json
     end
 
-    get '/routers', :auth => [:user] do
-      @varz.routers.to_json
-    end
-
-    get '/routes', :auth => [:user] do
-      @cc.routes.to_json
-    end
-
     get '/settings', :auth => [:user] do
       {
         :admin                  => session[:admin],
@@ -196,52 +152,16 @@ module AdminUI
       }.to_json
     end
 
-    get '/services', :auth => [:user] do
-      @cc.services.to_json
-    end
-
-    get '/service_bindings', :auth => [:user] do
-      @cc.service_bindings.to_json
-    end
-
-    get '/service_brokers', :auth => [:user] do
-      @cc.service_brokers.to_json
-    end
-
     get '/service_instances_view_model', :auth => [:user] do
       AllActions.new(@logger, @view_models.service_instances, params).items.to_json
-    end
-
-    get '/service_instances', :auth => [:user] do
-      @cc.service_instances.to_json
     end
 
     get '/service_plans_view_model', :auth => [:user] do
       AllActions.new(@logger, @view_models.service_plans, params).items.to_json
     end
 
-    get '/service_plans', :auth => [:user] do
-      @cc.service_plans.to_json
-    end
-
     get '/spaces_view_model', :auth => [:user] do
       AllActions.new(@logger, @view_models.spaces, params).items.to_json
-    end
-
-    get '/spaces', :auth => [:user] do
-      @cc.spaces.to_json
-    end
-
-    get '/spaces_auditors', :auth => [:user] do
-      @cc.spaces_auditors.to_json
-    end
-
-    get '/spaces_developers', :auth => [:user] do
-      @cc.spaces_developers.to_json
-    end
-
-    get '/spaces_managers', :auth => [:user] do
-      @cc.spaces_managers.to_json
     end
 
     get '/statistics' do
@@ -262,10 +182,6 @@ module AdminUI
       AllActions.new(@logger, @view_models.tasks, params).items.to_json
     end
 
-    get '/tasks', :auth => [:user] do
-      { :items => @tasks.tasks }.to_json
-    end
-
     get '/task_status', :auth => [:user] do
       result = @tasks.task(params['task_id'].to_i,
                            params['updates'] || 'false',
@@ -277,10 +193,6 @@ module AdminUI
         session[:last_task_update] = result[:updated]
         result.to_json
       end
-    end
-
-    get '/users', :auth => [:user] do
-      @cc.users.to_json
     end
 
     post '/deas', :auth => [:admin] do

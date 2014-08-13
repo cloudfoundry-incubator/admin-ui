@@ -142,7 +142,7 @@ describe AdminUI::Admin, :type => :integration do
 
     before do
       # Make sure the original application status is STARTED
-      expect(get_json('/applications')['items'][0]['state']).to eq('STARTED')
+      expect(get_json('/applications_view_model')['items']['items'][0][2]).to eq('STARTED')
     end
 
     def stop_app
@@ -163,7 +163,7 @@ describe AdminUI::Admin, :type => :integration do
     it 'stops a running application' do
       # Stub the http request to return
       cc_stopped_apps_stub(AdminUI::Config.load(config))
-      expect { stop_app }.to change { get_json('/applications')['items'][0]['state'] }.from('STARTED').to('STOPPED')
+      expect { stop_app }.to change { get_json('/applications_view_model')['items']['items'][0][2] }.from('STARTED').to('STOPPED')
     end
 
     it 'starts a stopped application' do
@@ -171,12 +171,12 @@ describe AdminUI::Admin, :type => :integration do
       cc_apps_stop_to_start_stub(AdminUI::Config.load(config))
       stop_app
 
-      expect { start_app }.to change { get_json('/applications')['items'][0]['state'] }.from('STOPPED').to('STARTED')
+      expect { start_app }.to change { get_json('/applications_view_model')['items']['items'][0][2] }.from('STOPPED').to('STARTED')
     end
 
     it 'deletes an application' do
       cc_empty_applications_stub(AdminUI::Config.load(config))
-      expect { delete_app }.to change { get_json('/applications')['items'].length }.from(1).to(0)
+      expect { delete_app }.to change { get_json('/applications_view_model')['items']['items'][0][2] }.from('STARTED').to(nil)
     end
   end
 
@@ -186,7 +186,7 @@ describe AdminUI::Admin, :type => :integration do
 
     before do
       # Make sure there is an organization
-      expect(get_json('/organizations')['items'].length).to eq(1)
+      expect(get_json('/organizations_view_model')['items']['items'].length).to eq(1)
     end
 
     def create_org
@@ -206,8 +206,8 @@ describe AdminUI::Admin, :type => :integration do
 
     it 'creates an organization' do
       cc_multiple_organizations_stub(AdminUI::Config.load(config))
-      expect { create_org }.to change { get_json('/organizations')['items'].length }.from(1).to(2)
-      expect(get_json('/organizations')['items'][1]['name']).to eq('new_org')
+      expect { create_org }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(2)
+      expect(get_json('/organizations_view_model')['items']['items'][1][1]).to eq('new_org')
     end
 
     def suspend_org
@@ -222,24 +222,24 @@ describe AdminUI::Admin, :type => :integration do
 
     it 'deletes an organization' do
       cc_empty_organizations_stub(AdminUI::Config.load(config))
-      expect { delete_org }.to change { get_json('/organizations')['items'].length }.from(1).to(0)
+      expect { delete_org }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(0)
     end
 
     it 'sets the specific quota for organization' do
       cc_organization_with_different_quota_stub(AdminUI::Config.load(config))
-      expect { set_quota }.to change { get_json('/organizations')['items'][0]['quota_definition_guid'] }.from('quota1').to('quota2')
+      expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][7] }.from('test_quota_1').to('test_quota_2')
     end
 
     it 'activates the organization' do
       cc_organizations_suspend_active_stub(AdminUI::Config.load(config))
       suspend_org
 
-      expect { activate_org }.to change { get_json('/organizations')['items'][0]['status'] }.from('suspended').to('active')
+      expect { activate_org }.to change { get_json('/organizations_view_model')['items']['items'][0][2] }.from('suspended').to('active')
     end
 
     it 'suspends the organization' do
       cc_suspended_organizations_stub(AdminUI::Config.load(config))
-      expect { suspend_org }.to change { get_json('/organizations')['items'][0]['status'] }.from('active').to('suspended')
+      expect { suspend_org }.to change { get_json('/organizations_view_model')['items']['items'][0][2] }.from('active').to('suspended')
     end
   end
 
@@ -249,7 +249,7 @@ describe AdminUI::Admin, :type => :integration do
 
     before do
       # Make sure there is a route
-      expect(get_json('/routes')['items'].length).to eq(1)
+      expect(get_json('/routes_view_model')['items']['items'].length).to eq(1)
     end
 
     def delete_route
@@ -259,7 +259,7 @@ describe AdminUI::Admin, :type => :integration do
 
     it 'deletes the specific route' do
       cc_empty_routes_stub(AdminUI::Config.load(config))
-      expect { delete_route }.to change { get_json('/routes')['items'].length }.from(1).to(0)
+      expect { delete_route }.to change { get_json('/routes_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -280,66 +280,15 @@ describe AdminUI::Admin, :type => :integration do
     it 'make service plans private and back to public' do
       # Stub the http request to return
       cc_service_plans_private_to_public_stub(AdminUI::Config.load(config))
-      expect { make_service_plan_private }.to change { get_json('/service_plans')['items'][0]['public'].to_s }.from('true').to('false')
+      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][5].to_s }.from('true').to('false')
       make_service_plan_public
-      expect { get_json('/service_plans')['items'][0]['public'] }.to be_true
+      expect { get_json('/service_plans_view_model')['items']['items'][0][5] }.to be_true
     end
   end
 
   context 'retrieves and validates' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
-
-    shared_examples 'retrieves cc entity/metadata record' do
-      let(:retrieved) { get_json(path) }
-      it 'retrieves' do
-        expect(retrieved['connected']).to eq(true)
-        items = retrieved['items']
-
-        resources = cc_source['resources']
-
-        expect(items.length).to eq(resources.length)
-
-        resources.each do |resource|
-          expect(items).to include(resource['entity'].merge(resource['metadata']))
-        end
-      end
-    end
-
-    shared_examples 'retrieves cc space/user record' do
-      let(:retrieved) { get_json(path) }
-      it 'retrieves' do
-        expect(retrieved['connected']).to eq(true)
-        items = retrieved['items']
-
-        resources = cc_users_deep['resources']
-
-        count = 0
-        resources.each do |resource|
-          resource['entity'][type_space].each do |space|
-            count += 1
-            expect(items).to include('user_guid' => resource['metadata']['guid'], 'space_guid' => space['metadata']['guid'])
-          end
-        end
-
-        expect(items.length).to eq(count)
-      end
-    end
-
-    shared_examples 'retrieves varz record' do
-      let(:retrieved) { get_json(path) }
-      it 'retrieves' do
-        expect(retrieved['connected']).to eq(true)
-        items = retrieved['items']
-
-        expect(items.length).to eq(1)
-
-        expect(items).to include('connected' => true,
-                                 'data'      => varz_data,
-                                 'name'      => varz_name,
-                                 'uri'       => varz_uri)
-      end
-    end
 
     shared_examples 'retrieves view_model' do
       let(:retrieved) { get_json(path) }
@@ -359,65 +308,16 @@ describe AdminUI::Admin, :type => :integration do
       end
     end
 
-    context 'applications' do
-      let(:path)      { '/applications' }
-      let(:cc_source) { cc_started_apps }
-      it_behaves_like('retrieves cc entity/metadata record')
-    end
-
     context 'applications_view_model' do
       let(:path)              { '/applications_view_model' }
       let(:view_model_source) { view_models_applications }
       it_behaves_like('retrieves view_model')
     end
 
-    context 'cloud_controllers' do
-      let(:varz_data) { varz_cloud_controller }
-      let(:varz_name) { nats_cloud_controller['host'] }
-      let(:path)      { '/cloud_controllers' }
-      let(:varz_uri)  { nats_cloud_controller_varz }
-      it_behaves_like('retrieves varz record')
-    end
-
     context 'cloud_controllers_view_model' do
       let(:path)              { '/cloud_controllers_view_model' }
       let(:view_model_source) { view_models_cloud_controllers }
       it_behaves_like('retrieves view_model')
-    end
-
-    context 'components' do
-      let(:retrieved) { get_json('/components') }
-      it 'retrieves' do
-        expect(retrieved['connected']).to eq(true)
-        items = retrieved['items']
-
-        expect(items.length).to eq(5)
-
-        expect(items).to include('connected' => true,
-                                 'data'      => varz_cloud_controller,
-                                 'name'      => nats_cloud_controller['host'],
-                                 'uri'       => nats_cloud_controller_varz)
-
-        expect(items).to include('connected' => true,
-                                 'data'      => varz_dea,
-                                 'name'      => nats_dea['host'],
-                                 'uri'       => nats_dea_varz)
-
-        expect(items).to include('connected' => true,
-                                 'data'      => varz_health_manager,
-                                 'name'      => nats_health_manager['host'],
-                                 'uri'       => nats_health_manager_varz)
-
-        expect(items).to include('connected' => true,
-                                 'data'      => varz_router,
-                                 'name'      => nats_router['host'],
-                                 'uri'       => nats_router_varz)
-
-        expect(items).to include('connected' => true,
-                                 'data'      => varz_provisioner,
-                                 'name'      => nats_provisioner['host'],
-                                 'uri'       => nats_provisioner_varz)
-      end
     end
 
     context 'components_view_model' do
@@ -437,14 +337,6 @@ describe AdminUI::Admin, :type => :integration do
                                      'total_instances'   => cc_started_apps['resources'].length,
                                      'users'             => uaa_users['resources'].length)
       end
-    end
-
-    context 'deas' do
-      let(:varz_data) { varz_dea }
-      let(:varz_name) { nats_dea['host'] }
-      let(:path)      { '/deas' }
-      let(:varz_uri)  { nats_dea_varz }
-      it_behaves_like('retrieves varz record')
     end
 
     context 'deas_view_model' do
@@ -467,26 +359,10 @@ describe AdminUI::Admin, :type => :integration do
       end
     end
 
-    context 'gateways' do
-      let(:varz_data) { varz_provisioner }
-      let(:varz_name) { nats_provisioner['type'].sub('-Provisioner', '') }
-      let(:path)      { '/gateways' }
-      let(:varz_uri)  { nats_provisioner_varz }
-      it_behaves_like('retrieves varz record')
-    end
-
     context 'gateways_view_model' do
       let(:path)              { '/gateways_view_model' }
       let(:view_model_source) { view_models_gateways }
       it_behaves_like('retrieves view_model')
-    end
-
-    context 'health_managers' do
-      let(:varz_data) { varz_health_manager }
-      let(:varz_name) { nats_health_manager['host'] }
-      let(:path)      { '/health_managers' }
-      let(:varz_uri)  { nats_health_manager_varz }
-      it_behaves_like('retrieves varz record')
     end
 
     context 'health_managers_view_model' do
@@ -507,29 +383,10 @@ describe AdminUI::Admin, :type => :integration do
       end
     end
 
-    context 'logs' do
-      let(:retrieved) { get_json('/logs') }
-      it 'retrieves' do
-        items = retrieved['items']
-        expect(items).to_not be_nil
-        expect(items.length).to eq(1)
-        item = items[0]
-        expect(item).to include('path' => log_file_displayed,
-                                'size' => log_file_displayed_contents_length,
-                                'time' => log_file_displayed_modified_milliseconds)
-      end
-    end
-
     context 'logs_view_model' do
       let(:path)              { '/logs_view_model' }
       let(:view_model_source) { view_models_logs(log_file_displayed, log_file_displayed_contents_length, log_file_displayed_modified_milliseconds) }
       it_behaves_like('retrieves view_model')
-    end
-
-    context 'organizations' do
-      let(:path)      { '/organizations' }
-      let(:cc_source) { cc_organizations }
-      it_behaves_like('retrieves cc entity/metadata record')
     end
 
     context 'organizations_view_model' do
@@ -538,24 +395,10 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
-    context 'quota_definitions' do
-      let(:path)      { '/quota_definitions' }
-      let(:cc_source) { cc_quota_definitions }
-      it_behaves_like('retrieves cc entity/metadata record')
-    end
-
     context 'quotas_view_model' do
       let(:path)              { '/quotas_view_model' }
       let(:view_model_source) { view_models_quotas }
       it_behaves_like('retrieves view_model')
-    end
-
-    context 'routers' do
-      let(:varz_data) { varz_router }
-      let(:varz_name) { nats_router['host'] }
-      let(:path)      { '/routers' }
-      let(:varz_uri)  { nats_router_varz }
-      it_behaves_like('retrieves varz record')
     end
 
     context 'routers_view_model' do
@@ -564,40 +407,10 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
-    context 'routes' do
-      let(:path)      { '/routes' }
-      let(:cc_source) { cc_routes }
-      it_behaves_like('retrieves cc entity/metadata record')
-    end
-
     context 'routes_view_model' do
       let(:path)              { '/routes_view_model' }
       let(:view_model_source) { view_models_routes }
       it_behaves_like('retrieves view_model')
-    end
-
-    context 'services' do
-      let(:path)      { '/services' }
-      let(:cc_source) { cc_services }
-      it_behaves_like('retrieves cc entity/metadata record')
-    end
-
-    context 'service_bindings' do
-      let(:path)      { '/service_bindings' }
-      let(:cc_source) { cc_service_bindings }
-      it_behaves_like('retrieves cc entity/metadata record')
-    end
-
-    context 'service_brokers' do
-      let(:path)      { '/service_brokers' }
-      let(:cc_source) { cc_service_brokers }
-      it_behaves_like('retrieves cc entity/metadata record')
-    end
-
-    context 'service_instances' do
-      let(:path)      { '/service_instances' }
-      let(:cc_source) { cc_service_instances }
-      it_behaves_like('retrieves cc entity/metadata record')
     end
 
     context 'services_instances_view_model' do
@@ -606,40 +419,10 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
-    context 'service_plans' do
-      let(:path)      { '/service_plans' }
-      let(:cc_source) { cc_service_plans }
-      it_behaves_like('retrieves cc entity/metadata record')
-    end
-
     context 'service_plans_view_model' do
       let(:path)              { '/service_plans_view_model' }
       let(:view_model_source) { view_models_service_plans }
       it_behaves_like('retrieves view_model')
-    end
-
-    context 'spaces' do
-      let(:path)      { '/spaces' }
-      let(:cc_source) { cc_spaces }
-      it_behaves_like('retrieves cc entity/metadata record')
-    end
-
-    context 'spaces_auditors' do
-      let(:path)       { '/spaces_auditors' }
-      let(:type_space) { 'audited_spaces' }
-      it_behaves_like('retrieves cc space/user record')
-    end
-
-    context 'spaces_developers' do
-      let(:path)       { '/spaces_developers' }
-      let(:type_space) { 'spaces' }
-      it_behaves_like('retrieves cc space/user record')
-    end
-
-    context 'spaces_managers' do
-      let(:path)       { '/spaces_managers' }
-      let(:type_space) { 'managed_spaces' }
-      it_behaves_like('retrieves cc space/user record')
     end
 
     context 'spaces_view_model' do
@@ -653,38 +436,6 @@ describe AdminUI::Admin, :type => :integration do
       let(:timestamp)         { retrieved['items']['items'][0][8]['timestamp'] } # We have to copy the timestamp from the result since it is variable
       let(:view_model_source) { view_models_stats(timestamp) }
       it_behaves_like('retrieves view_model')
-    end
-
-    context 'users' do
-      let(:retrieved) { get_json('/users') }
-      it 'retrieves' do
-        expect(retrieved['connected']).to eq(true)
-        items = retrieved['items']
-
-        resources = uaa_users['resources']
-
-        expect(items.length).to eq(resources.length)
-
-        resources.each do |resource|
-          authorities = []
-          resource['groups'].each do |group|
-            authorities.push(group['display'])
-          end
-
-          hash = { 'active'        => resource['active'],
-                   'authorities'   => authorities.sort.join(', '),
-                   'created'       => resource['meta']['created'],
-                   'id'            => resource['id'],
-                   'last_modified' => resource['meta']['lastModified'],
-                   'username'      => resource['userName'],
-                   'version'       => resource['meta']['version'] }
-          hash['email'] = resource['emails'][0]['value'] unless resource['emails'].empty?
-          hash['familyname'] = resource['name']['familyName'] unless resource['name']['familyName'].nil?
-          hash['givenname'] = resource['name']['givenName'] unless resource['name']['givenName'].nil?
-
-          expect(items).to include(hash)
-        end
-      end
     end
   end
 
@@ -707,14 +458,14 @@ describe AdminUI::Admin, :type => :integration do
 
       expect(json).to include('task_id' => 0)
 
-      tasks = get_json('/tasks')
-      items = tasks['items']
+      tasks_view_model = get_json('/tasks_view_model')
+      items = tasks_view_model['items']['items']
       expect(items.length).to eq(1)
       item = items[0]
-      expect(item['command']).to_not be_nil
-      expect(item['id']).to eq(0)
-      expect(item['started']).to be > 0
-      expect(item['state']).to eq('RUNNING')
+      expect(item[0]).to_not be_nil
+      expect(item[1]).to eq('RUNNING')
+      expect(item[2]).to_not be_nil
+      expect(item[3]).to eq(0)
 
       task_status = get_json('/task_status?task_id=0')
       expect(task_status['id']).to eq(0)

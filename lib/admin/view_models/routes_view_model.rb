@@ -11,13 +11,13 @@ module AdminUI
     end
 
     def do_items
-      routes = @cc.routes(false)
+      routes = @cc.routes
 
       # routes have to exist.  Other record types are optional
       return result unless routes['connected']
 
-      organizations = @cc.organizations(false)
-      spaces        = @cc.spaces(false)
+      organizations = @cc.organizations
+      spaces        = @cc.spaces
 
       organization_hash = Hash[*organizations['items'].map { |item| [item['guid'], item] }.flatten]
       space_hash        = Hash[*spaces['items'].map { |item| [item['guid'], item] }.flatten]

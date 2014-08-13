@@ -6,17 +6,17 @@ require_relative '../utils'
 module AdminUI
   class SpacesViewModel < AdminUI::HasInstancesViewModel
     def do_items
-      spaces = @cc.spaces(false)
+      spaces = @cc.spaces
 
       # spaces have to exist.  Other record types are optional
       return result unless spaces['connected']
 
-      applications      = @cc.applications(false)
-      deas              = @varz.deas(false)
-      organizations     = @cc.organizations(false)
-      routes            = @cc.routes(false)
-      service_instances = @cc.service_instances(false)
-      spaces_developers = @cc.spaces_developers(false)
+      applications      = @cc.applications
+      deas              = @varz.deas
+      organizations     = @cc.organizations
+      routes            = @cc.routes
+      service_instances = @cc.service_instances
+      spaces_developers = @cc.spaces_developers
 
       applications_connected      = applications['connected']
       routes_connected            = routes['connected']

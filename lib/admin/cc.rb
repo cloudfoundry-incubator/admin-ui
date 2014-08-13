@@ -23,18 +23,18 @@ module AdminUI
       end
     end
 
-    def applications(wait = true)
-      result_cache(:applications, wait)
+    def applications
+      result_cache(:applications)
     end
 
-    def applications_count(wait = true)
-      hash = applications(wait)
+    def applications_count
+      hash = applications
       return nil unless hash['connected']
       hash['items'].length
     end
 
-    def applications_running_instances(wait = true)
-      hash = applications(wait)
+    def applications_running_instances
+      hash = applications
       return nil unless hash['connected']
       instances = 0
       hash['items'].each do |app|
@@ -44,8 +44,8 @@ module AdminUI
       instances
     end
 
-    def applications_total_instances(wait = true)
-      hash = applications(wait)
+    def applications_total_instances
+      hash = applications
       return nil unless hash['connected']
       instances = 0
       hash['items'].each do |app|
@@ -71,50 +71,50 @@ module AdminUI
       invalidate_cache(:routes)
     end
 
-    def organizations(wait = true)
-      result_cache(:organizations, wait)
+    def organizations
+      result_cache(:organizations)
     end
 
-    def organizations_count(wait = true)
-      hash = organizations(wait)
+    def organizations_count
+      hash = organizations
       return nil unless hash['connected']
       hash['items'].length
     end
 
-    def quota_definitions(wait = true)
-      result_cache(:quota_definitions, wait)
+    def quota_definitions
+      result_cache(:quota_definitions)
     end
 
-    def routes(wait = true)
-      result_cache(:routes, wait)
+    def routes
+      result_cache(:routes)
     end
 
-    def services(wait = true)
-      result_cache(:services, wait)
+    def services
+      result_cache(:services)
     end
 
-    def service_bindings(wait = true)
-      result_cache(:service_bindings, wait)
+    def service_bindings
+      result_cache(:service_bindings)
     end
 
-    def service_brokers(wait = true)
-      result_cache(:service_brokers, wait)
+    def service_brokers
+      result_cache(:service_brokers)
     end
 
-    def service_instances(wait = true)
-      result_cache(:service_instances, wait)
+    def service_instances
+      result_cache(:service_instances)
     end
 
-    def service_plans(wait = true)
-      result_cache(:service_plans, wait)
+    def service_plans
+      result_cache(:service_plans)
     end
 
-    def spaces(wait = true)
-      result_cache(:spaces, wait)
+    def spaces
+      result_cache(:spaces)
     end
 
-    def spaces_auditors(wait = true)
-      users_cc_deep = result_cache(:users_cc_deep, wait)
+    def spaces_auditors
+      users_cc_deep = result_cache(:users_cc_deep)
       if users_cc_deep['connected']
         discover_spaces_auditors(users_cc_deep)
       else
@@ -122,14 +122,14 @@ module AdminUI
       end
     end
 
-    def spaces_count(wait = true)
-      hash = spaces(wait)
+    def spaces_count
+      hash = spaces
       return nil unless hash['connected']
       hash['items'].length
     end
 
-    def spaces_developers(wait = true)
-      users_cc_deep = result_cache(:users_cc_deep, wait)
+    def spaces_developers
+      users_cc_deep = result_cache(:users_cc_deep)
       if users_cc_deep['connected']
         discover_spaces_developers(users_cc_deep)
       else
@@ -137,8 +137,8 @@ module AdminUI
       end
     end
 
-    def spaces_managers(wait = true)
-      users_cc_deep = result_cache(:users_cc_deep, wait)
+    def spaces_managers
+      users_cc_deep = result_cache(:users_cc_deep)
       if users_cc_deep['connected']
         discover_spaces_managers(users_cc_deep)
       else
@@ -146,12 +146,12 @@ module AdminUI
       end
     end
 
-    def users(wait = true)
-      result_cache(:users_uaa, wait)
+    def users
+      result_cache(:users_uaa)
     end
 
-    def users_count(wait = true)
-      hash = users(wait)
+    def users_count
+      hash = users
       return nil unless hash['connected']
       hash['items'].length
     end
@@ -194,10 +194,10 @@ module AdminUI
       schedule(key, Time.now + @config.cloud_controller_discovery_interval)
     end
 
-    def result_cache(key, wait)
+    def result_cache(key)
       hash = @caches[key]
       hash[:semaphore].synchronize do
-        if wait || @testing
+        if @testing
           hash[:condition].wait(hash[:semaphore]) while hash[:result].nil?
         else
           return result if hash[:result].nil?

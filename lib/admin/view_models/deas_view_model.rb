@@ -11,7 +11,7 @@ module AdminUI
     end
 
     def do_items
-      deas = @varz.deas(false)
+      deas = @varz.deas
 
       # deas have to exist.  Other record types are optional
       return result unless deas['connected']

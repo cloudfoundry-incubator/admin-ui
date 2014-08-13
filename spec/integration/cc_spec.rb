@@ -21,7 +21,7 @@ describe AdminUI::CC, :type => :integration do
     cc_stub(config)
   end
 
-  let(:cc) { AdminUI::CC.new(config, logger, client) }
+  let(:cc) { AdminUI::CC.new(config, logger, client, true) }
 
   after do
     Thread.list.each do |thread|

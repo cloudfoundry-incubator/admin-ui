@@ -11,14 +11,14 @@ module AdminUI
     end
 
     def do_items
-      service_plans = @cc.service_plans(false)
+      service_plans = @cc.service_plans
 
       # service_plans have to exist.  Other record types are optional
       return result unless service_plans['connected']
 
-      services          = @cc.services(false)
-      service_brokers   = @cc.service_brokers(false)
-      service_instances = @cc.service_instances(false)
+      services          = @cc.services
+      service_brokers   = @cc.service_brokers
+      service_instances = @cc.service_instances
 
       service_instances_connected = service_instances['connected']
 

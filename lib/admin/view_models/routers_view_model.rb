@@ -11,7 +11,7 @@ module AdminUI
     end
 
     def do_items
-      routers = @varz.routers(false)
+      routers = @varz.routers
 
       # routers have to exist.  Other record types are optional
       return result unless routers['connected']

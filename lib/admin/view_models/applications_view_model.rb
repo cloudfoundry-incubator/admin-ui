@@ -12,14 +12,14 @@ module AdminUI
     end
 
     def do_items
-      applications = @cc.applications(false)
-      deas         = @varz.deas(false)
+      applications = @cc.applications
+      deas         = @varz.deas
 
       # applications and DEA's have to exist.  Other record types are optional
       return result unless applications['connected'] && deas['connected']
 
-      organizations = @cc.organizations(false)
-      spaces        = @cc.spaces(false)
+      organizations = @cc.organizations
+      spaces        = @cc.spaces
 
       organization_hash = Hash[*organizations['items'].map { |item| [item['guid'], item] }.flatten]
       space_hash        = Hash[*spaces['items'].map { |item| [item['guid'], item] }.flatten]
