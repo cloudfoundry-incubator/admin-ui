@@ -48,6 +48,27 @@ describe AdminUI::Admin, :type => :integration do
     response
   end
 
+  def get_sys_log_entries(lines, operations_msgs, escapes = false)
+    tail_entries = %x(tail -n "#{ lines }" "#{ log_file }")
+    found_match = 0
+    entries_array = tail_entries.split(/\r\n|\n|\r/)
+    entries_array.each do |entry|
+      if entry =~ /\[ admin \] : \[ /
+        operations_msgs.each do | op_msg |
+          op  = op_msg[0]
+          msg = op_msg[1]
+          esmsg = msg
+          esmsg = Regexp.escape(msg) if escapes
+          if entry =~ /\[ admin \] : \[ #{ op } \] : #{ esmsg }/
+            found_match += 1
+            break
+          end
+        end
+      end
+    end
+    found_match >= operations_msgs.length
+  end
+
   def check_ok_response(response)
     expect(response.is_a?(Net::HTTPOK)).to be_true
   end
@@ -57,12 +78,12 @@ describe AdminUI::Admin, :type => :integration do
     expect(response.body).to eq('Page Not Found')
   end
 
-  def get_json(path)
+  def get_json(path, escapes = false, tailNum = 60)
     response = get_response(path)
 
     body = response.body
     expect(body).to_not be_nil
-
+    expect(get_sys_log_entries(tailNum, [['get', "#{ path }"]], escapes)).to be_true
     JSON.parse(body)
   end
 
@@ -148,22 +169,29 @@ describe AdminUI::Admin, :type => :integration do
     def stop_app
       response = put_request('/applications/application1', '{"state":"STOPPED"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      expect(get_sys_log_entries(50, [['put', '/applications/application1; body = {"state":"STOPPED"}']], true)).to be_true
     end
 
     def start_app
       response = put_request('/applications/application1', '{"state":"STARTED"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      expect(get_sys_log_entries(50, [['put', '/applications/application1; body = {"state":"STARTED"}']], true)).to be_true
     end
 
     def delete_app
       response = delete_request('/applications/application1')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      expect(get_sys_log_entries(50, [['delete', '/applications/application1']])).to be_true
+    end
+
+    it 'has user name and applications in the log file' do
+      expect(get_sys_log_entries(2, [['authenticated', 'is admin? true'], ['get', '/applications']], true)).to be_true
     end
 
     it 'stops a running application' do
       # Stub the http request to return
       cc_stopped_apps_stub(AdminUI::Config.load(config))
-      expect { stop_app }.to change { get_json('/applications_view_model')['items']['items'][0][2] }.from('STARTED').to('STOPPED')
+      expect { stop_app }.to change { get_json('/applications_view_model', false, 80)['items']['items'][0][2] }.from('STARTED').to('STOPPED')
     end
 
     it 'starts a stopped application' do
@@ -171,12 +199,12 @@ describe AdminUI::Admin, :type => :integration do
       cc_apps_stop_to_start_stub(AdminUI::Config.load(config))
       stop_app
 
-      expect { start_app }.to change { get_json('/applications_view_model')['items']['items'][0][2] }.from('STOPPED').to('STARTED')
+      expect { start_app }.to change { get_json('/applications_view_model', false, 80)['items']['items'][0][2] }.from('STOPPED').to('STARTED')
     end
 
     it 'deletes an application' do
       cc_empty_applications_stub(AdminUI::Config.load(config))
-      expect { delete_app }.to change { get_json('/applications_view_model')['items']['items'][0][2] }.from('STARTED').to(nil)
+      expect { delete_app }.to change { get_json('/applications_view_model', false, 80)['items']['items'][0][2] }.from('STARTED').to(nil)
     end
   end
 
@@ -192,54 +220,63 @@ describe AdminUI::Admin, :type => :integration do
     def create_org
       response = post_request('/organizations', '{"name":"new_org"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      expect(get_sys_log_entries(4, [['post', '/organizations; body = {"name":"new_org"}']], true)).to be_true
     end
 
     def delete_org
       response = delete_request('/organizations/organization1')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      expect(get_sys_log_entries(4, [['delete', '/organizations/organization1']], true)).to be_true
     end
 
     def set_quota
       response = put_request('/organizations/organization1', '{"quota_definition_guid":"quota2"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      expect(get_sys_log_entries(4, [['put', '/organizations/organization1; body = {"quota_definition_guid":"quota2"}']], true)).to be_true
+    end
+
+    it 'has user name and organizations reqeust in the log file' do
+      expect(get_sys_log_entries(10, [['get', '/organizations']])).to be_true
     end
 
     it 'creates an organization' do
       cc_multiple_organizations_stub(AdminUI::Config.load(config))
-      expect { create_org }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(2)
-      expect(get_json('/organizations_view_model')['items']['items'][1][1]).to eq('new_org')
+      expect { create_org }.to change { get_json('/organizations_view_model', false, 60)['items']['items'].length }.from(1).to(2)
+      expect(get_json('/organizations_view_model', false, 60)['items']['items'][1][1]).to eq('new_org')
     end
 
     def suspend_org
       response = put_request('/organizations/organization1', '{"status":"suspended"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      expect(get_sys_log_entries(4, [['put', '/organizations/organization1; body = {"status":"suspended"}']], true)).to be_true
     end
 
     def activate_org
       response = put_request('/organizations/organization1', '{"status":"active"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      expect(get_sys_log_entries(20, [['put', '/organizations/organization1; body = {"status":"active"}']], true)).to be_true
     end
 
     it 'deletes an organization' do
       cc_empty_organizations_stub(AdminUI::Config.load(config))
-      expect { delete_org }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(0)
+      expect { delete_org }.to change { get_json('/organizations_view_model', false, 80)['items']['items'].length }.from(1).to(0)
     end
 
     it 'sets the specific quota for organization' do
       cc_organization_with_different_quota_stub(AdminUI::Config.load(config))
-      expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][7] }.from('test_quota_1').to('test_quota_2')
+      expect { set_quota }.to change { get_json('/organizations_view_model', false, 80)['items']['items'][0][7] }.from('test_quota_1').to('test_quota_2')
     end
 
     it 'activates the organization' do
       cc_organizations_suspend_active_stub(AdminUI::Config.load(config))
       suspend_org
 
-      expect { activate_org }.to change { get_json('/organizations_view_model')['items']['items'][0][2] }.from('suspended').to('active')
+      expect { activate_org }.to change { get_json('/organizations_view_model', false, 80)['items']['items'][0][2] }.from('suspended').to('active')
     end
 
     it 'suspends the organization' do
       cc_suspended_organizations_stub(AdminUI::Config.load(config))
-      expect { suspend_org }.to change { get_json('/organizations_view_model')['items']['items'][0][2] }.from('active').to('suspended')
+      expect { suspend_org }.to change { get_json('/organizations_view_model', false, 80)['items']['items'][0][2] }.from('active').to('suspended')
     end
   end
 
@@ -255,11 +292,16 @@ describe AdminUI::Admin, :type => :integration do
     def delete_route
       response = delete_request('/routes/route1')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      expect(get_sys_log_entries(4, [['delete', '/routes/route1']], true)).to be_true
+    end
+
+    it 'has user name and routes reqeust in the log file' do
+      expect(get_sys_log_entries(2, [['authenticated', 'is admin? true'], ['get', '/routes']], true)).to be_true
     end
 
     it 'deletes the specific route' do
       cc_empty_routes_stub(AdminUI::Config.load(config))
-      expect { delete_route }.to change { get_json('/routes_view_model')['items']['items'].length }.from(1).to(0)
+      expect { delete_route }.to change { get_json('/routes_view_model', false, 80)['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -270,17 +312,19 @@ describe AdminUI::Admin, :type => :integration do
     def make_service_plan_private
       response = put_request('/service_plans/service_plan1', '{"public": false }')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      expect(get_sys_log_entries(40, [['put', '/service_plans/service_plan1; body = {"public": false }']], true)).to be_true
     end
 
     def make_service_plan_public
       response = put_request('/service_plans/service_plan1', '{"public": true }')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      expect(get_sys_log_entries(40, [['put', '/service_plans/service_plan1; body = {"public": true }']], true)).to be_true
     end
 
     it 'make service plans private and back to public' do
       # Stub the http request to return
       cc_service_plans_private_to_public_stub(AdminUI::Config.load(config))
-      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][5].to_s }.from('true').to('false')
+      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model', false, 80)['items']['items'][0][5].to_s }.from('true').to('false')
       make_service_plan_public
       expect { get_json('/service_plans_view_model')['items']['items'][0][5] }.to be_true
     end
@@ -372,7 +416,7 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     context 'log' do
-      let(:retrieved) { get_json("/log?path=#{ log_file_displayed }") }
+      let(:retrieved) { get_json("/log?path=#{ log_file_displayed }", true) }
       it 'retrieves' do
         expect(retrieved['data']).to eq(log_file_displayed_contents)
         expect(retrieved['file_size']).to eq(log_file_displayed_contents_length)
@@ -467,7 +511,7 @@ describe AdminUI::Admin, :type => :integration do
       expect(item[2]).to_not be_nil
       expect(item[3]).to eq(0)
 
-      task_status = get_json('/task_status?task_id=0')
+      task_status = get_json('/task_status?task_id=0', true, 50)
       expect(task_status['id']).to eq(0)
       expect(task_status['state']).to eq('RUNNING')
       expect(task_status['updated']).to be > 0
