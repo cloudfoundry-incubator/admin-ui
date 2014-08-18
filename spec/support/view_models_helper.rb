@@ -10,29 +10,29 @@ module ViewModelsHelper
   def view_models_applications
     [
       [
-        cc_started_apps['resources'][0]['metadata']['guid'],
-        cc_started_apps['resources'][0]['entity']['name'],
-        cc_started_apps['resources'][0]['entity']['state'],
-        cc_started_apps['resources'][0]['entity']['package_state'],
+        cc_app[:guid],
+        cc_app[:name],
+        cc_app[:state],
+        cc_app[:package_state],
         varz_dea['instance_registry']['application1']['application1_instance1']['state'],
-        DateTime.parse(cc_started_apps['resources'][0]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_started_apps['resources'][0]['metadata']['updated_at']).rfc3339,
+        cc_app[:created_at].to_datetime.rfc3339,
+        cc_app[:updated_at].to_datetime.rfc3339,
         DateTime.parse(Time.at(varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp']).to_s).rfc3339,
         varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'],
-        cc_started_apps['resources'][0]['entity']['detected_buildpack'],
+        cc_app[:detected_buildpack],
         varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'],
         varz_dea['instance_registry']['application1']['application1_instance1']['services'].length,
         AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes']),
         AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes']),
         varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100,
-        cc_started_apps['resources'][0]['entity']['memory'],
-        cc_started_apps['resources'][0]['entity']['disk_quota'],
-        "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
+        cc_app[:memory],
+        cc_app[:disk_quota],
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
         nats_dea['host'],
-        { 'application'  => cc_started_apps['resources'][0]['entity'].merge(cc_started_apps['resources'][0]['metadata']),
+        { 'application'  => cc_app,
           'instance'     => varz_dea['instance_registry']['application1']['application1_instance1'],
-          'organization' => cc_organizations['resources'][0]['entity'].merge(cc_organizations['resources'][0]['metadata']),
-          'space'        => cc_spaces['resources'][0]['entity'].merge(cc_spaces['resources'][0]['metadata'])
+          'organization' => cc_organization,
+          'space'        => cc_space
         }
       ]
     ]
@@ -156,22 +156,19 @@ module ViewModelsHelper
   def view_models_developers
     [
       [
-        uaa_users['resources'][0]['emails'][0]['value'],
-        cc_spaces['resources'][0]['entity']['name'],
-        cc_organizations['resources'][0]['entity']['name'],
-        "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
-        DateTime.parse(uaa_users['resources'][0]['meta']['created']).rfc3339,
-        DateTime.parse(uaa_users['resources'][0]['meta']['lastModified']).rfc3339,
-        { 'active'        => uaa_users['resources'][0]['active'],
-          'authorities'   => uaa_users['resources'][0]['groups'].map { |group| group['display'] }.sort.join(', '),
-          'created'       => uaa_users['resources'][0]['meta']['created'],
-          'id'            => uaa_users['resources'][0]['id'],
-          'last_modified' => uaa_users['resources'][0]['meta']['lastModified'],
-          'version'       => uaa_users['resources'][0]['meta']['version'],
-          'email'         => uaa_users['resources'][0]['emails'][0]['value'],
-          'familyname'    => uaa_users['resources'][0]['name']['familyName'],
-          'givenname'     => uaa_users['resources'][0]['name']['givenName'],
-          'username'      => uaa_users['resources'][0]['userName']
+        uaa_user[:email],
+        cc_space[:name],
+        cc_organization[:name],
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+        uaa_user[:created].to_datetime.rfc3339,
+        uaa_user[:lastmodified].to_datetime.rfc3339,
+        {
+          'authorities'     => uaa_group[:displayname],
+          'organization'    => cc_organization,
+          'space'           => cc_space,
+          'space_developer' => cc_space_developer,
+          'user_cc'         => cc_user,
+          'user_uaa'        => uaa_user
         }
       ]
     ]
@@ -237,31 +234,31 @@ module ViewModelsHelper
   def view_models_organizations
     [
       [
-        cc_organizations['resources'][0]['metadata']['guid'],
-        cc_organizations['resources'][0]['entity']['name'],
-        cc_organizations['resources'][0]['entity']['status'],
-        DateTime.parse(cc_organizations['resources'][0]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_organizations['resources'][0]['metadata']['updated_at']).rfc3339,
-        cc_spaces['resources'].length,
-        cc_users_deep['resources'].length,
-        cc_quota_definitions['resources'][0]['entity']['name'],
-        cc_routes['resources'].length,
-        cc_routes['resources'].length,
+        cc_organization[:guid],
+        cc_organization[:name],
+        cc_organization[:status],
+        cc_organization[:created_at].to_datetime.rfc3339,
+        cc_organization[:updated_at].to_datetime.rfc3339,
+        1,
+        1,
+        cc_quota_definition[:name],
+        1,
+        1,
         0,
-        cc_started_apps['resources'][0]['entity']['instances'],
+        cc_app[:instances],
         varz_dea['instance_registry']['application1']['application1_instance1']['services'].length,
         AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes']),
         AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes']),
         varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100,
-        cc_started_apps['resources'][0]['entity']['memory'],
-        cc_started_apps['resources'][0]['entity']['disk_quota'],
-        cc_started_apps['resources'].length,
-        cc_started_apps['resources'][0]['entity']['state'] == 'STARTED' ? 1 : 0,
-        cc_started_apps['resources'][0]['entity']['state'] == 'STOPPED' ? 1 : 0,
-        cc_started_apps['resources'][0]['entity']['package_state'] == 'PENDING' ? 1 : 0,
-        cc_started_apps['resources'][0]['entity']['package_state'] == 'STAGED'  ? 1 : 0,
-        cc_started_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? 1 : 0,
-        cc_organizations['resources'][0]['entity'].merge(cc_organizations['resources'][0]['metadata'])
+        cc_app[:memory],
+        cc_app[:disk_quota],
+        1,
+        cc_app[:state] == 'STARTED' ? 1 : 0,
+        cc_app[:state] == 'STOPPED' ? 1 : 0,
+        cc_app[:package_state] == 'PENDING' ? 1 : 0,
+        cc_app[:package_state] == 'STAGED'  ? 1 : 0,
+        cc_app[:package_state] == 'FAILED'  ? 1 : 0,
+        cc_organization
       ]
     ]
   end
@@ -269,28 +266,16 @@ module ViewModelsHelper
   def view_models_quotas
     [
       [
-        cc_quota_definitions['resources'][0]['entity']['name'],
-        DateTime.parse(cc_quota_definitions['resources'][0]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_quota_definitions['resources'][0]['metadata']['updated_at']).rfc3339,
-        cc_quota_definitions['resources'][0]['entity']['total_services'],
-        cc_quota_definitions['resources'][0]['entity']['total_routes'],
-        cc_quota_definitions['resources'][0]['entity']['memory_limit'],
-        cc_quota_definitions['resources'][0]['entity']['non_basic_services_allowed'],
-        cc_quota_definitions['resources'][0]['entity']['trial_db_allowed'],
+        cc_quota_definition[:name],
+        cc_quota_definition[:created_at].to_datetime.rfc3339,
+        cc_quota_definition[:updated_at].to_datetime.rfc3339,
+        cc_quota_definition[:total_services],
+        cc_quota_definition[:total_routes],
+        cc_quota_definition[:memory_limit],
+        cc_quota_definition[:non_basic_services_allowed],
+        cc_quota_definition[:trial_db_allowed],
         1,
-        cc_quota_definitions['resources'][0]['entity'].merge(cc_quota_definitions['resources'][0]['metadata'])
-      ],
-      [
-        cc_quota_definitions['resources'][1]['entity']['name'],
-        DateTime.parse(cc_quota_definitions['resources'][1]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_quota_definitions['resources'][1]['metadata']['updated_at']).rfc3339,
-        cc_quota_definitions['resources'][1]['entity']['total_services'],
-        cc_quota_definitions['resources'][1]['entity']['total_routes'],
-        cc_quota_definitions['resources'][1]['entity']['memory_limit'],
-        cc_quota_definitions['resources'][1]['entity']['non_basic_services_allowed'],
-        cc_quota_definitions['resources'][1]['entity']['trial_db_allowed'],
-        0,
-        cc_quota_definitions['resources'][1]['entity'].merge(cc_quota_definitions['resources'][1]['metadata'])
+        cc_quota_definition
       ]
     ]
   end
@@ -320,16 +305,17 @@ module ViewModelsHelper
   def view_models_routes
     [
       [
-        cc_routes['resources'][0]['metadata']['guid'],
-        cc_routes['resources'][0]['entity']['host'],
-        cc_routes['resources'][0]['entity']['domain']['entity']['name'],
-        DateTime.parse(cc_routes['resources'][0]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_routes['resources'][0]['metadata']['updated_at']).rfc3339,
-        "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
-        cc_routes['resources'][0]['entity']['apps'].map { |app| app['entity']['name'] },
-        { 'organization' => cc_organizations['resources'][0]['entity'].merge(cc_organizations['resources'][0]['metadata']),
-          'route'        => cc_routes['resources'][0]['entity'].merge(cc_routes['resources'][0]['metadata']),
-          'space'        => cc_spaces['resources'][0]['entity'].merge(cc_spaces['resources'][0]['metadata'])
+        cc_route[:guid],
+        cc_route[:host],
+        cc_domain[:name],
+        cc_route[:created_at].to_datetime.rfc3339,
+        cc_route[:updated_at].to_datetime.rfc3339,
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+        [cc_app[:name]],
+        { 'domain'       => cc_domain,
+          'organization' => cc_organization,
+          'route'        => cc_route,
+          'space'        => cc_space
         }
       ]
     ]
@@ -338,36 +324,36 @@ module ViewModelsHelper
   def view_models_service_instances
     [
       [
-        cc_service_brokers['resources'][0]['entity']['name'],
-        DateTime.parse(cc_service_brokers['resources'][0]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_service_brokers['resources'][0]['metadata']['updated_at']).rfc3339,
-        cc_services['resources'][0]['entity']['provider'],
-        cc_services['resources'][0]['entity']['label'],
-        cc_services['resources'][0]['entity']['version'],
-        DateTime.parse(cc_services['resources'][0]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_services['resources'][0]['metadata']['updated_at']).rfc3339,
-        cc_service_plans['resources'][0]['entity']['name'],
-        DateTime.parse(cc_service_plans['resources'][0]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_service_plans['resources'][0]['metadata']['updated_at']).rfc3339,
-        cc_service_plans['resources'][0]['entity']['public'],
-        "#{ cc_services['resources'][0]['entity']['provider'] }/#{ cc_services['resources'][0]['entity']['label'] }/#{ cc_service_plans['resources'][0]['entity']['name'] }",
-        cc_service_instances['resources'][0]['entity']['name'],
-        DateTime.parse(cc_service_instances['resources'][0]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_service_instances['resources'][0]['metadata']['updated_at']).rfc3339,
-        cc_service_bindings['total_results'],
-        "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
+        cc_service_broker[:name],
+        cc_service_broker[:created_at].to_datetime.rfc3339,
+        cc_service_broker[:updated_at].to_datetime.rfc3339,
+        cc_service[:provider],
+        cc_service[:label],
+        cc_service[:version],
+        cc_service[:created_at].to_datetime.rfc3339,
+        cc_service[:updated_at].to_datetime.rfc3339,
+        cc_service_plan[:name],
+        cc_service_plan[:created_at].to_datetime.rfc3339,
+        cc_service_plan[:updated_at].to_datetime.rfc3339,
+        cc_service_plan[:public],
+        "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }",
+        cc_service_instance[:name],
+        cc_service_instance[:created_at].to_datetime.rfc3339,
+        cc_service_instance[:updated_at].to_datetime.rfc3339,
+        1,
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
         { 'bindingsAndApplications' =>
           [
-            { 'application'    => cc_started_apps['resources'][0]['entity'].merge(cc_started_apps['resources'][0]['metadata']),
-              'serviceBinding' => cc_service_bindings['resources'][0]['entity'].merge(cc_service_bindings['resources'][0]['metadata'])
+            { 'application'    => cc_app,
+              'serviceBinding' => cc_service_binding
             }
           ],
-          'organization'    => cc_organizations['resources'][0]['entity'].merge(cc_organizations['resources'][0]['metadata']),
-          'service'         => cc_services['resources'][0]['entity'].merge(cc_services['resources'][0]['metadata']),
-          'serviceBroker'   => cc_service_brokers['resources'][0]['entity'].merge(cc_service_brokers['resources'][0]['metadata']),
-          'serviceInstance' => cc_service_instances['resources'][0]['entity'].merge(cc_service_instances['resources'][0]['metadata']),
-          'servicePlan'     => cc_service_plans['resources'][0]['entity'].merge(cc_service_plans['resources'][0]['metadata']),
-          'space'           => cc_spaces['resources'][0]['entity'].merge(cc_spaces['resources'][0]['metadata'])
+          'organization'    => cc_organization,
+          'service'         => cc_service,
+          'serviceBroker'   => cc_service_broker,
+          'serviceInstance' => cc_service_instance,
+          'servicePlan'     => cc_service_plan,
+          'space'           => cc_space
         }
       ]
     ]
@@ -376,26 +362,26 @@ module ViewModelsHelper
   def view_models_service_plans
     [
       [
-        cc_service_plans['resources'][0]['entity'].merge(cc_service_plans['resources'][0]['metadata']),
-        cc_service_plans['resources'][0]['entity']['name'],
-        "#{ cc_services['resources'][0]['entity']['provider'] }/#{ cc_services['resources'][0]['entity']['label'] }/#{ cc_service_plans['resources'][0]['entity']['name'] }",
-        DateTime.parse(cc_service_plans['resources'][0]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_service_plans['resources'][0]['metadata']['updated_at']).rfc3339,
-        cc_service_plans['resources'][0]['entity']['public'],
-        cc_service_instances['resources'].length,
-        cc_services['resources'][0]['entity']['provider'],
-        cc_services['resources'][0]['entity']['label'],
-        cc_services['resources'][0]['entity']['version'],
-        DateTime.parse(cc_services['resources'][0]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_services['resources'][0]['metadata']['updated_at']).rfc3339,
-        cc_services['resources'][0]['entity']['active'],
-        cc_services['resources'][0]['entity']['bindable'],
-        cc_service_brokers['resources'][0]['entity']['name'],
-        DateTime.parse(cc_service_brokers['resources'][0]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_service_brokers['resources'][0]['metadata']['updated_at']).rfc3339,
-        { 'service'       => cc_services['resources'][0]['entity'].merge(cc_services['resources'][0]['metadata']),
-          'serviceBroker' => cc_service_brokers['resources'][0]['entity'].merge(cc_service_brokers['resources'][0]['metadata']),
-          'servicePlan'   => cc_service_plans['resources'][0]['entity'].merge(cc_service_plans['resources'][0]['metadata'])
+        cc_service_plan,
+        cc_service_plan[:name],
+        "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }",
+        cc_service_plan[:created_at].to_datetime.rfc3339,
+        cc_service_plan[:updated_at].to_datetime.rfc3339,
+        cc_service_plan[:public],
+        1,
+        cc_service[:provider],
+        cc_service[:label],
+        cc_service[:version],
+        cc_service[:created_at].to_datetime.rfc3339,
+        cc_service[:updated_at].to_datetime.rfc3339,
+        cc_service[:active],
+        cc_service[:bindable],
+        cc_service_broker[:name],
+        cc_service_broker[:created_at].to_datetime.rfc3339,
+        cc_service_broker[:updated_at].to_datetime.rfc3339,
+        { 'service'       => cc_service,
+          'serviceBroker' => cc_service_broker,
+          'servicePlan'   => cc_service_plan
         }
       ]
     ]
@@ -404,29 +390,29 @@ module ViewModelsHelper
   def view_models_spaces
     [
       [
-        cc_spaces['resources'][0]['entity']['name'],
-        "#{ cc_organizations['resources'][0]['entity']['name'] }/#{ cc_spaces['resources'][0]['entity']['name'] }",
-        DateTime.parse(cc_spaces['resources'][0]['metadata']['created_at']).rfc3339,
-        DateTime.parse(cc_spaces['resources'][0]['metadata']['updated_at']).rfc3339,
-        cc_users_deep['resources'].length,
-        cc_routes['resources'].length,
-        cc_routes['resources'].length,
+        cc_space[:name],
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+        cc_space[:created_at].to_datetime.rfc3339,
+        cc_space[:updated_at].to_datetime.rfc3339,
+        1,
+        1,
+        1,
         0,
-        cc_started_apps['resources'][0]['entity']['instances'],
+        cc_app[:instances],
         varz_dea['instance_registry']['application1']['application1_instance1']['services'].length,
         AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes']),
         AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes']),
         varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100,
-        cc_started_apps['resources'][0]['entity']['memory'],
-        cc_started_apps['resources'][0]['entity']['disk_quota'],
-        cc_started_apps['resources'].length,
-        cc_started_apps['resources'][0]['entity']['state'] == 'STARTED' ? 1 : 0,
-        cc_started_apps['resources'][0]['entity']['state'] == 'STOPPED' ? 1 : 0,
-        cc_started_apps['resources'][0]['entity']['package_state'] == 'PENDING' ? 1 : 0,
-        cc_started_apps['resources'][0]['entity']['package_state'] == 'STAGED'  ? 1 : 0,
-        cc_started_apps['resources'][0]['entity']['package_state'] == 'FAILED'  ? 1 : 0,
-        { 'organization' => cc_organizations['resources'][0]['entity'].merge(cc_organizations['resources'][0]['metadata']),
-          'space'        => cc_spaces['resources'][0]['entity'].merge(cc_spaces['resources'][0]['metadata'])
+        cc_app[:memory],
+        cc_app[:disk_quota],
+        1,
+        cc_app[:state] == 'STARTED' ? 1 : 0,
+        cc_app[:state] == 'STOPPED' ? 1 : 0,
+        cc_app[:package_state] == 'PENDING' ? 1 : 0,
+        cc_app[:package_state] == 'STAGED'  ? 1 : 0,
+        cc_app[:package_state] == 'FAILED'  ? 1 : 0,
+        { 'organization' => cc_organization,
+          'space'        => cc_space
         }
       ]
     ]
@@ -436,21 +422,21 @@ module ViewModelsHelper
     [
       [
         DateTime.parse(Time.at(timestamp / 1000.0).to_s).rfc3339,
-        cc_organizations['resources'].length,
-        cc_spaces['resources'].length,
-        cc_users_deep['resources'].length,
-        cc_started_apps['resources'].length,
-        cc_started_apps['resources'][0]['entity']['instances'],
-        cc_started_apps['resources'][0]['entity']['state'] == 'STARTED' ? 1 : 0,
         1,
-        { :apps              => cc_started_apps['resources'].length,
+        1,
+        1,
+        1,
+        cc_app[:instances],
+        cc_app[:state] == 'STARTED' ? 1 : 0,
+        1,
+        { :apps              => 1,
           :deas              => 1,
-          :organizations     => cc_organizations['resources'].length,
-          :running_instances => cc_started_apps['resources'][0]['entity']['state'] == 'STARTED' ? 1 : 0,
-          :spaces            => cc_spaces['resources'].length,
+          :organizations     => 1,
+          :running_instances => cc_app[:state] == 'STARTED' ? 1 : 0,
+          :spaces            => 1,
           :timestamp         => timestamp,
-          :total_instances   => cc_started_apps['resources'][0]['entity']['instances'],
-          :users             => cc_users_deep['resources'].length
+          :total_instances   => cc_app[:instances],
+          :users             => 1
         }
       ]
     ]

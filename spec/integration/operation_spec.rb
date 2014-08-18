@@ -5,30 +5,41 @@ describe AdminUI::Operation, :type => :integration do
   include CCHelper
   include NATSHelper
   include VARZHelper
-  include OperationHelper
 
+  let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri) { "sqlite://#{ ccdb_file }" }
   let(:data_file) { '/tmp/admin_ui_data.json' }
-  let(:db_file)   { '/tmp/admin_ui_store.db' }
-  let(:db_uri)    { "sqlite://#{ db_file }" }
+  let(:db_file) { '/tmp/admin_ui_store.db' }
+  let(:db_uri) { "sqlite://#{ db_file }" }
+  let(:insert_second_quota_definition) { false }
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(log_file) }
+  let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri) { "sqlite://#{ uaadb_file }" }
   let(:config) do
-    AdminUI::Config.load(:cloud_controller_discovery_interval => 10,
+    AdminUI::Config.load(:ccdb_uri                            => ccdb_uri,
+                         :cloud_controller_discovery_interval => 10,
                          :cloud_controller_uri                => 'http://api.cloudfoundry',
                          :data_file                           => data_file,
                          :db_uri                              => "#{ db_uri }",
                          :monitored_components                => [],
+                         :uaadb_uri                           => uaadb_uri,
                          :uaa_client                          => { :id => 'id', :secret => 'secret' })
   end
 
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
 
+  def cleanup_files
+    Process.wait(Process.spawn({}, "rm -fr #{ ccdb_file } #{ db_file } #{ log_file } #{ uaadb_file }"))
+  end
+
   before do
+    cleanup_files
+
     AdminUI::Config.any_instance.stub(:validate)
-    cc_stub(config)
+    cc_stub(config, insert_second_quota_definition)
     nats_stub
     varz_stub
-    operation_stub(config)
   end
 
   let(:cc) { AdminUI::CC.new(config, logger, client, true) }
@@ -42,33 +53,34 @@ describe AdminUI::Operation, :type => :integration do
   let(:operation) { AdminUI::Operation.new(config, logger, cc, client, varz, view_models) }
 
   after do
-    Process.wait(Process.spawn({}, "rm -fr #{ db_file } #{ log_file }"))
+    cleanup_files
   end
 
   context 'Stubbed HTTP' do
     context 'manage application' do
       before do
         # Make sure the original application status is STARTED
-        expect(cc.applications['items'][0]['state']).to eq('STARTED')
+        expect(cc.applications['items'][0][:state]).to eq('STARTED')
+      end
+
+      def stop_application
+        operation.manage_application(cc_app[:guid], '{"state":"STOPPED"}')
       end
 
       it 'stops the running application' do
         # Mock the http request to return stopped application
-        cc_stopped_apps_stub(config)
-        expect { operation.manage_application('application1', '{"state":"STOPPED"}') }.to change { cc.applications['items'][0]['state'] }.from('STARTED').to('STOPPED')
+        expect { stop_application }.to change { cc.applications['items'][0][:state] }.from('STARTED').to('STOPPED')
       end
 
       it 'starts the stopped application' do
         # Make sure the application is stopped at first.
-        cc_apps_stop_to_start_stub(config)
-        operation.manage_application('application1', '{"state":"STOPPED"}')
+        stop_application
 
-        expect { operation.manage_application('application1', '{"state":"STARTED"}') }.to change { cc.applications['items'][0]['state'] }.from('STOPPED').to('STARTED')
+        expect { operation.manage_application(cc_app[:guid], '{"state":"STARTED"}') }.to change { cc.applications['items'][0][:state] }.from('STOPPED').to('STARTED')
       end
 
       it 'deletes the application' do
-        cc_empty_applications_stub(config)
-        expect { operation.delete_application('application1') }.to change { cc.applications['items'].length }.from(1).to(0)
+        expect { operation.delete_application(cc_app[:guid]) }.to change { cc.applications['items'].length }.from(1).to(0)
       end
     end
 
@@ -79,14 +91,23 @@ describe AdminUI::Operation, :type => :integration do
       end
 
       it 'creates a new organization' do
-        cc_multiple_organizations_stub(config)
-        expect { operation.create_organization('{"name":"new_org"}') }.to change { cc.organizations['items'].length }.from(1).to(2)
-        expect(cc.organizations['items'][1]['name']).to eq('new_org')
+        expect { operation.create_organization("{\"name\":\"#{ cc_organization2[:name] }\"}") }.to change { cc.organizations['items'].length }.from(1).to(2)
+        expect(cc.organizations['items'][1][:name]).to eq(cc_organization2[:name])
       end
 
       it 'deletes specific organization' do
-        cc_empty_organizations_stub(config)
-        expect { operation.delete_organization('organization1') }.to change { cc.organizations['items'].length }.from(1).to(0)
+        expect { operation.delete_organization(cc_organization[:guid]) }.to change { cc.organizations['items'].length }.from(1).to(0)
+      end
+
+      context 'sets the quota for an organization' do
+        let(:insert_second_quota_definition) { true }
+        it 'sets the quota for an organization' do
+          expect { operation.manage_organization(cc_organization[:guid], "{\"quota_definition_guid\":\"#{ cc_quota_definition2[:guid] }\"}") }.to change { cc.organizations['items'][0][:quota_definition_id] }.from(cc_quota_definition[:id]).to(cc_quota_definition2[:id])
+        end
+      end
+
+      it 'suspends the organization' do
+        expect { operation.manage_organization(cc_organization[:guid], '{"status":"suspended"}') }.to change { cc.organizations['items'][0][:status] }.from('active').to('suspended')
       end
     end
 
@@ -97,38 +118,18 @@ describe AdminUI::Operation, :type => :integration do
       end
 
       it 'deletes specific route' do
-        cc_empty_routes_stub(config)
-        expect { operation.delete_route('route1') }.to change { cc.routes['items'].length }.from(1).to(0)
+        expect { operation.delete_route(cc_route[:guid]) }.to change { cc.routes['items'].length }.from(1).to(0)
       end
     end
 
     context 'manage service plan' do
       before do
         # Make sure the original service plan's public field is true
-        expect(cc.service_plans['items'][0]['public'].to_s).to eq('true')
+        expect(cc.service_plans['items'][0][:public].to_s).to eq('true')
       end
 
       it 'makes service plan private' do
-        # Mock the http response for private service plan
-        cc_service_plans_private_stub(config)
-        expect { operation.manage_service_plan('service_plan1', '{"public": false }') }.to change { cc.service_plans['items'][0]['public'].to_s }.from('true').to('false')
-      end
-    end
-
-    context 'manage organization' do
-      before do
-        # Make sure there is an organization
-        expect(cc.organizations['items'].length).to eq(1)
-      end
-
-      it 'sets the quota for an organization' do
-        cc_organization_with_different_quota_stub(config)
-        expect { operation.manage_organization('organization1', '{"quota_definition_guid":"quota2"}') }.to change { cc.organizations['items'][0]['quota_definition_guid'] }.from('quota1').to('quota2')
-      end
-
-      it 'suspends the organization' do
-        cc_suspended_organizations_stub(config)
-        expect { operation.manage_organization('organization1', '{"status":"suspended"}') }.to change { cc.organizations['items'][0]['status'] }.from('active').to('suspended')
+        expect { operation.manage_service_plan(cc_service_plan[:guid], '{"public": false }') }.to change { cc.service_plans['items'][0][:public].to_s }.from('true').to('false')
       end
     end
   end

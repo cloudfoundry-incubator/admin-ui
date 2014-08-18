@@ -13,6 +13,12 @@ describe AdminUI::Config do
     end
 
     context 'Values loaded and returned' do
+      it 'ccdb_uri' do
+        ccdb_uri = 'sqlite://bogus.db'
+        config = AdminUI::Config.load('ccdb_uri' => ccdb_uri)
+        expect(config.ccdb_uri).to eq(ccdb_uri)
+      end
+
       it 'cloud_controller_discovery_interval' do
         cloud_controller_discovery_interval = 11
         config = AdminUI::Config.load('cloud_controller_discovery_interval' => cloud_controller_discovery_interval)
@@ -237,6 +243,12 @@ describe AdminUI::Config do
         expect(config.tasks_refresh_interval).to eq(tasks_refresh_interval)
       end
 
+      it 'uaadb_uri' do
+        uaadb_uri = 'sqlite://bogus2.db'
+        config = AdminUI::Config.load('uaadb_uri' => uaadb_uri)
+        expect(config.uaadb_uri).to eq(uaadb_uri)
+      end
+
       context 'uaa_client' do
         let(:uaa_client) { { 'id' => 'id', 'secret' => 'secret' } }
         let(:config) { AdminUI::Config.load('uaa_client' => uaa_client) }
@@ -429,6 +441,7 @@ describe AdminUI::Config do
   context 'Errors' do
     let(:config) do
       {
+        :ccdb_uri              => 'sqlite://tmp/ccdb.db',
         :cloud_controller_uri  => 'http://api.localhost',
         :data_file             => '/tmp/admin_ui_data.json',
         :db_uri                 => 'sqlite:///tmp/admin_ui_store.db',
@@ -436,6 +449,7 @@ describe AdminUI::Config do
         :mbus                  => 'nats://nats:c1oudc0w@10.10.10.10:4222',
         :port                  => 8070,
         :stats_file            => '/tmp/admin_ui_stats.json',
+        :uaadb_uri             => 'sqlite://tmp/uaadb.db',
         :uaa_client            => { :id => 'id', :secret => 'secret' },
         :uaa_groups_admin      => ['cloud_controller.admin'],
         :uaa_groups_user       => ['cloud_controller.admin']
@@ -449,6 +463,10 @@ describe AdminUI::Config do
     context 'Invalid value types' do
       it 'bind_address' do
         expect { AdminUI::Config.load(config.merge(:bind_address => 22)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'ccdb_uri' do
+        expect { AdminUI::Config.load(config.merge(:ccdb_uri => 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'cloud_controller_discovery_interval' do
@@ -587,6 +605,10 @@ describe AdminUI::Config do
         expect { AdminUI::Config.load(config.merge(:tasks_refresh_interval => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
+      it 'uaadb_uri' do
+        expect { AdminUI::Config.load(config.merge(:uaadb_uri => 5)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
       context 'uaa_client' do
         it 'uaa_client_id' do
           expect { AdminUI::Config.load(config.merge(:uaa_client => { :id => 5, :secret => 'secret' })) }.to raise_error(Membrane::SchemaValidationError)
@@ -611,6 +633,10 @@ describe AdminUI::Config do
     end
 
     context 'Missing values' do
+      it 'ccdb_uri' do
+        expect { AdminUI::Config.load(config.merge(:ccdb_uri => nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
       it 'cloud_controller_discovery_interval' do
         expect { AdminUI::Config.load(config.merge(:cloud_controller_discovery_interval => nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
@@ -667,6 +693,10 @@ describe AdminUI::Config do
         it 'max_session_idle_length' do
           expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
+      end
+
+      it 'uaadb_uri' do
+        expect { AdminUI::Config.load(config.merge(:uaadb_uri => nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       context 'uaa_client' do

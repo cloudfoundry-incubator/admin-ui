@@ -3,6 +3,8 @@ AllCops:
     - '.bundle/**/*'
     - 'vendor/**/*'
     # We shouldn't need the above but for now there's a bug in rubocop
+    - 'spec/support/ccdb/*'
+    - 'spec/support/uaadb/*'
 
 ClassLength:
   Enabled: false

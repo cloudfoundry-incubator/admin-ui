@@ -7,6 +7,8 @@ require_relative '../spec_helper'
 describe AdminUI::Admin do
   include LoginHelper
 
+  let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri) { "sqlite://#{ ccdb_file }" }
   let(:certificate_file_path)   { '/tmp/admin_ui_server.crt' }
   let(:certificate_request_file_path) { '/tmp/admin_ui_server.csr' }
   let(:cloud_controller_uri) { 'http://api.localhost' }
@@ -21,8 +23,11 @@ describe AdminUI::Admin do
   let(:secured_client_connection) { false }
   let(:stats_file) { '/tmp/admin_ui_stats.json' }
   let(:tasks_refresh_interval) { 6000 }
+  let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri)  { "sqlite://#{ uaadb_file }" }
   let(:config) do
-    { :cloud_controller_uri      => cloud_controller_uri,
+    { :ccdb_uri                  => ccdb_uri,
+      :cloud_controller_uri      => cloud_controller_uri,
       :data_file                 => data_file,
       :db_uri                    => "sqlite://#{ db_file }",
       :log_file                  => log_file,
@@ -36,6 +41,7 @@ describe AdminUI::Admin do
                                     },
       :stats_file                => stats_file,
       :tasks_refresh_interval    => tasks_refresh_interval,
+      :uaadb_uri                 => uaadb_uri,
       :uaa_client                => { :id => 'id', :secret => 'secret' }
     }
   end
@@ -70,7 +76,7 @@ describe AdminUI::Admin do
       end
     end
 
-    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ db_file } #{ log_file } #{ stats_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ ccdb_file } #{ data_file } #{ db_file } #{ log_file } #{ stats_file } #{ uaadb_file }"))
   end
 
   def generate_certificate

@@ -8,6 +8,7 @@ gem 'membrane', '0.0.2'
 gem 'net-sftp', '2.1.2'
 gem 'parse-cron', '0.1.4'
 gem 'sequel', '4.10.0'
+gem 'sequel_pg', '1.6.10'
 gem 'sqlite3', '1.3.9'
 gem 'rack-ssl', '1.4.1'
 

@@ -4,16 +4,21 @@ require_relative '../spec_helper'
 describe AdminUI::CC, :type => :integration do
   include ViewModelsHelper
 
+  let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri) { "sqlite://#{ ccdb_file }" }
   let(:data_file) { '/tmp/admin_ui.data' }
-  let(:db_file)   { '/tmp/admin_ui_store.db' }
-  let(:db_uri)    { "sqlite://#{ db_file }" }
-  let(:log_file)  { '/tmp/admin_ui.log' }
+  let(:db_file) { '/tmp/admin_ui_store.db' }
+  let(:db_uri) { "sqlite://#{ db_file }" }
+  let(:log_file) { '/tmp/admin_ui.log' }
   let(:log_file_displayed) { '/tmp/admin_ui_displayed.log' }
   let(:log_file_displayed_contents) { 'These are test log file contents' }
   let(:log_file_displayed_modified) { Time.new(1976, 7, 4, 12, 34, 56, 0) }
-  let(:logger)    { Logger.new(log_file) }
+  let(:logger) { Logger.new(log_file) }
+  let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri)  { "sqlite://#{ uaadb_file }" }
   let(:config) do
-    AdminUI::Config.load(:cloud_controller_discovery_interval => 1,
+    AdminUI::Config.load(:ccdb_uri                            => ccdb_uri,
+                         :cloud_controller_discovery_interval => 1,
                          :cloud_controller_uri                => 'http://api.cloudfoundry',
                          :data_file                           => data_file,
                          :db_uri                              => db_uri,
@@ -21,10 +26,17 @@ describe AdminUI::CC, :type => :integration do
                          :log_files                           => [log_file_displayed],
                          :mbus                                => 'nats://nats:c1oudc0w@localhost:14222',
                          :nats_discovery_interval             => 1,
+                         :uaadb_uri                           => uaadb_uri,
                          :varz_discovery_interval             => 1)
   end
 
+  def cleanup_files
+    Process.wait(Process.spawn({}, "rm -fr #{ ccdb_file } #{ data_file } #{ db_file } #{ log_file } #{ log_file_displayed } #{ uaadb_file }"))
+  end
+
   before do
+    cleanup_files
+
     File.open(log_file_displayed, 'w') do |file|
       file << log_file_displayed_contents
     end
@@ -53,7 +65,8 @@ describe AdminUI::CC, :type => :integration do
         thread.join
       end
     end
-    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ db_file } #{ log_file } #{ log_file_displayed }"))
+
+    cleanup_files
   end
 
   context 'Stubbed HTTP' do

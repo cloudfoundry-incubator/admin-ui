@@ -22,50 +22,50 @@ module AdminUI
 
       service_instances_connected = service_instances['connected']
 
-      service_broker_hash = Hash[*service_brokers['items'].map { |item| [item['guid'], item] }.flatten]
-      service_hash        = Hash[*services['items'].map { |item| [item['guid'], item] }.flatten]
+      service_broker_hash = Hash[*service_brokers['items'].map { |item| [item[:id], item] }.flatten]
+      service_hash        = Hash[*services['items'].map { |item| [item[:id], item] }.flatten]
 
       service_instance_counters = {}
 
       service_instances['items'].each do |service_instance|
         Thread.pass
-        service_plan_guid = service_instance['service_plan_guid']
-        service_instance_counters[service_plan_guid] = 0 if service_instance_counters[service_plan_guid].nil?
-        service_instance_counters[service_plan_guid] += 1
+        service_plan_id = service_instance[:service_plan_id]
+        service_instance_counters[service_plan_id] = 0 if service_instance_counters[service_plan_id].nil?
+        service_instance_counters[service_plan_id] += 1
       end
 
       items = []
 
       service_plans['items'].each do |service_plan|
         Thread.pass
-        service        = service_hash[service_plan['service_guid']]
-        service_broker = service.nil? || service['service_broker_guid'].nil? ? nil : service_broker_hash[service['service_broker_guid']]
+        service        = service_hash[service_plan[:service_id]]
+        service_broker = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
 
         row = []
 
         row.push(service_plan)
-        row.push(service_plan['name'])
+        row.push(service_plan[:name])
 
         service_plan_target = ''
         if service
-          service_plan_target = service['provider'] if service['provider']
-          service_plan_target = "#{ service_plan_target }/#{ service['label'] }/"
+          service_plan_target = service[:provider] if service[:provider]
+          service_plan_target = "#{ service_plan_target }/#{ service[:label] }/"
         end
-        service_plan_target = "#{ service_plan_target }#{ service_plan['name'] }"
+        service_plan_target = "#{ service_plan_target }#{ service_plan[:name] }"
         row.push(service_plan_target)
 
-        row.push(DateTime.parse(service_plan['created_at']).rfc3339)
+        row.push(service_plan[:created_at].to_datetime.rfc3339)
 
-        if service_plan['updated_at']
-          row.push(DateTime.parse(service_plan['updated_at']).rfc3339)
+        if service_plan[:updated_at]
+          row.push(service_plan[:updated_at].to_datetime.rfc3339)
         else
           row.push(nil)
         end
 
-        row.push(service_plan['public'])
+        row.push(service_plan[:public])
 
-        if service_instance_counters[service_plan['guid']]
-          row.push(service_instance_counters[service_plan['guid']])
+        if service_instance_counters[service_plan[:id]]
+          row.push(service_instance_counters[service_plan[:id]])
         elsif service_instances_connected
           row.push(0)
         else
@@ -73,29 +73,29 @@ module AdminUI
         end
 
         if service
-          row.push(service['provider'])
-          row.push(service['label'])
-          row.push(service['version'])
-          row.push(DateTime.parse(service['created_at']).rfc3339)
+          row.push(service[:provider])
+          row.push(service[:label])
+          row.push(service[:version])
+          row.push(service[:created_at].to_datetime.rfc3339)
 
-          if service['updated_at']
-            row.push(DateTime.parse(service['updated_at']).rfc3339)
+          if service[:updated_at]
+            row.push(service[:updated_at].to_datetime.rfc3339)
           else
             row.push(nil)
           end
 
-          row.push(service['active'])
-          row.push(service['bindable'])
+          row.push(service[:active])
+          row.push(service[:bindable])
         else
           row.push(nil, nil, nil, nil, nil, nil, nil)
         end
 
         if service_broker
-          row.push(service_broker['name'])
-          row.push(DateTime.parse(service_broker['created_at']).rfc3339)
+          row.push(service_broker[:name])
+          row.push(service_broker[:created_at].to_datetime.rfc3339)
 
-          if service_broker['updated_at']
-            row.push(DateTime.parse(service_broker['updated_at']).rfc3339)
+          if service_broker[:updated_at]
+            row.push(service_broker[:updated_at].to_datetime.rfc3339)
           else
             row.push(nil)
           end

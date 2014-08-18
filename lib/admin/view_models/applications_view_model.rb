@@ -21,8 +21,8 @@ module AdminUI
       organizations = @cc.organizations
       spaces        = @cc.spaces
 
-      organization_hash = Hash[*organizations['items'].map { |item| [item['guid'], item] }.flatten]
-      space_hash        = Hash[*spaces['items'].map { |item| [item['guid'], item] }.flatten]
+      organization_hash = Hash[*organizations['items'].map { |item| [item[:id], item] }.flatten]
+      space_hash        = Hash[*spaces['items'].map { |item| [item[:id], item] }.flatten]
 
       application_hash = {}
 
@@ -30,23 +30,23 @@ module AdminUI
 
       applications['items'].each do |application|
         Thread.pass
-        space        = space_hash[application['space_guid']]
-        organization = space.nil? ? nil : organization_hash[space['organization_guid']]
+        space        = space_hash[application[:space_id]]
+        organization = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         row = []
 
-        row.push(application['guid'])
-        row.push(application['name'])
-        row.push(application['state'])
-        row.push(application['package_state'])
+        row.push(application[:guid])
+        row.push(application[:name])
+        row.push(application[:state])
+        row.push(application[:package_state])
 
         # Instance State
         row.push(nil)
 
-        row.push(DateTime.parse(application['created_at']).rfc3339)
+        row.push(application[:created_at].to_datetime.rfc3339)
 
-        if application['updated_at']
-          row.push(DateTime.parse(application['updated_at']).rfc3339)
+        if application[:updated_at]
+          row.push(application[:updated_at].to_datetime.rfc3339)
         else
           row.push(nil)
         end
@@ -54,10 +54,10 @@ module AdminUI
         # Started and URI
         row.push(nil, nil)
 
-        if application['buildpack']
-          row.push(application['buildpack'])
-        elsif application['detected_buildpack']
-          row.push(application['detected_buildpack'])
+        if application[:buildpack]
+          row.push(application[:buildpack])
+        elsif application[:detected_buildpack]
+          row.push(application[:detected_buildpack])
         else
           row.push(nil)
         end
@@ -65,11 +65,11 @@ module AdminUI
         # Instance index, used services, memory, disk and CPU
         row.push(nil, nil, nil, nil, nil)
 
-        row.push(application['memory'])
-        row.push(application['disk_quota'])
+        row.push(application[:memory])
+        row.push(application[:disk_quota])
 
         if organization && space
-          row.push("#{ organization['name'] }/#{ space['name'] }")
+          row.push("#{ organization[:name] }/#{ space[:name] }")
         else
           row.push(nil)
         end
@@ -81,7 +81,7 @@ module AdminUI
                  'space'        => space,
                  'organization' => organization)
 
-        application_hash[application['guid']] = row
+        application_hash[application[:guid]] = row
 
         items.push(row)
       end
@@ -143,7 +143,7 @@ module AdminUI
               if instance['tags'] && instance['tags']['space']
                 space = space_hash[instance['tags']['space']]
                 if space
-                  organization = organization_hash[space['organization_guid']]
+                  organization = organization_hash[space[:organization_id]]
                 end
               end
 

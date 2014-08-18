@@ -2,14 +2,20 @@ require 'logger'
 require_relative '../spec_helper'
 
 describe AdminUI::CC do
-  let(:db_file)   { '/tmp/admin_ui_store.db' }
-  let(:db_uri)    { "sqlite://#{ db_file }" }
-  let(:log_file) { '/tmp/admin_ui.log' }
-  let(:logger) { Logger.new(log_file) }
+  let(:ccdb_file)  { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri)   { "sqlite://#{ ccdb_file }" }
+  let(:db_file)    { '/tmp/admin_ui_store.db' }
+  let(:db_uri)     { "sqlite://#{ db_file }" }
+  let(:log_file)   { '/tmp/admin_ui.log' }
+  let(:logger)     { Logger.new(log_file) }
+  let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri)  { "sqlite://#{ uaadb_file }" }
   let(:config) do
-    AdminUI::Config.load(:cloud_controller_uri   => 'http://api.localhost',
-                         :db_uri                 => db_uri,
-                         :uaa_client             => { :id => 'id', :secret => 'secret' })
+    AdminUI::Config.load(:ccdb_uri             => ccdb_uri,
+                         :cloud_controller_uri => 'http://api.localhost',
+                         :db_uri               => db_uri,
+                         :uaadb_uri            => uaadb_uri,
+                         :uaa_client           => { :id => 'id', :secret => 'secret' })
   end
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
   let(:cc) { AdminUI::CC.new(config, logger, client) }
@@ -19,7 +25,7 @@ describe AdminUI::CC do
   end
 
   after do
-    Process.wait(Process.spawn({}, "rm -fr #{ db_file } #{ log_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ ccdb_file } #{ db_file } #{ log_file } #{ uaadb_file }"))
   end
 
   context 'No backend connected' do
@@ -44,24 +50,36 @@ describe AdminUI::CC do
       expect(cc.applications_total_instances).to be_nil
     end
 
+    it 'returns zero apps_routes as expected' do
+      verify_disconnected_items(cc.apps_routes)
+    end
+
+    it 'returns zero domains as expected' do
+      verify_disconnected_items(cc.domains)
+    end
+
+    it 'returns zero group_membership expected' do
+      verify_disconnected_items(cc.group_membership)
+    end
+
+    it 'returns zero groups as expected' do
+      verify_disconnected_items(cc.groups)
+    end
+
     it 'returns zero organizations as expected' do
       verify_disconnected_items(cc.organizations)
-    end
-
-    it 'returns zero quotas as expected' do
-      verify_disconnected_items(cc.quota_definitions)
-    end
-
-    it 'returns zero routes as expected' do
-      verify_disconnected_items(cc.routes)
     end
 
     it 'returns nil organizations count as expected' do
       expect(cc.organizations_count).to be_nil
     end
 
-    it 'returns zero services as expected' do
-      verify_disconnected_items(cc.services)
+    it 'returns zero quota_definitions as expected' do
+      verify_disconnected_items(cc.quota_definitions)
+    end
+
+    it 'returns zero routes as expected' do
+      verify_disconnected_items(cc.routes)
     end
 
     it 'returns zero service_bindings as expected' do
@@ -80,12 +98,12 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.service_plans)
     end
 
-    it 'returns zero spaces as expected' do
-      verify_disconnected_items(cc.spaces)
+    it 'returns zero services as expected' do
+      verify_disconnected_items(cc.services)
     end
 
-    it 'returns zero spaces_auditors as expected' do
-      verify_disconnected_items(cc.spaces_auditors)
+    it 'returns zero spaces as expected' do
+      verify_disconnected_items(cc.spaces)
     end
 
     it 'returns nil spaces count as expected' do
@@ -96,16 +114,16 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.spaces_developers)
     end
 
-    it 'returns zero spaces_managers as expected' do
-      verify_disconnected_items(cc.spaces_managers)
-    end
-
-    it 'returns zero users as expected' do
-      verify_disconnected_items(cc.users)
+    it 'returns zero users_cc as expected' do
+      verify_disconnected_items(cc.users_cc)
     end
 
     it 'returns nil users count as expected' do
       expect(cc.users_count).to be_nil
+    end
+
+    it 'returns zero users_uaa as expected' do
+      verify_disconnected_items(cc.users_uaa)
     end
   end
 end

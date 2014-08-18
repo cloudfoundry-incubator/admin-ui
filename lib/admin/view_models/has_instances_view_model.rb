@@ -11,10 +11,10 @@ module AdminUI
     end
 
     def add_instance_metrics(counters_hash, application, instance_hash)
-      counters_hash['reserved_memory'] += application['memory']     * application['instances']
-      counters_hash['reserved_disk']   += application['disk_quota'] * application['instances']
+      counters_hash['reserved_memory'] += application[:memory]     * application[:instances]
+      counters_hash['reserved_disk']   += application[:disk_quota] * application[:instances]
 
-      instances = instance_hash[application['guid']]
+      instances = instance_hash[application[:guid]]
 
       unless instances.nil?
         # We keep a temporary hash of the instance indices encountered to determine actual instance count
