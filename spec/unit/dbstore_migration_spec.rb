@@ -6,6 +6,8 @@ require_relative '../spec_helper'
 
 describe AdminUI::DBStoreMigration do
   let(:backup_stats_file)      { '/tmp/admin_ui_stats.json.bak' }
+  let(:ccdb_file)              { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri)               { "sqlite://#{ ccdb_file }" }
   let(:cloud_controller_uri)   { 'http://api.localhost' }
   let(:config_file)            { '/tmp/admin_ui.yml' }
   let(:data_file)              { '/tmp/admin_ui_data.json' }
@@ -21,9 +23,11 @@ describe AdminUI::DBStoreMigration do
   let(:stats_file_spec)        { 'stats.json' }
   let(:tasks_fresh_interval)   { 6000 }
   let(:tasks_refresh_interval) { 6000 }
-
+  let(:uaadb_file)             { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri)              { "sqlite://#{ uaadb_file }" }
   let(:config)                 do
     {
+      :ccdb_uri               => ccdb_uri,
       :cloud_controller_uri   => cloud_controller_uri,
       :data_file              => data_file,
       :log_file               => log_file,
@@ -31,6 +35,7 @@ describe AdminUI::DBStoreMigration do
       :port                   => port,
       :db_uri                 => db_uri,
       :tasks_refresh_interval => tasks_fresh_interval,
+      :uaadb_uri              => uaadb_uri,
       :uaa_client             => { :id => 'id', :secret => 'secret' }
     }
   end
@@ -58,7 +63,7 @@ describe AdminUI::DBStoreMigration do
     spawn_opts = { :chdir => project_path,
                    :out   => '/dev/null',
                    :err   => '/dev/null' }
-    @pid = Process.spawn({}, "rm -rf  #{ config_file } #{ data_file } #{ log_file } #{ db_file } #{ backup_stats_file } #{ db_migration_dir }/#{ db_migration_1 } ", spawn_opts)
+    @pid = Process.spawn({}, "rm -rf #{ ccdb_file } #{ config_file } #{ data_file } #{ log_file } #{ db_file } #{ uaadb_file } #{ backup_stats_file } #{ db_migration_dir }/#{ db_migration_1 } ", spawn_opts)
     Process.wait(@pid)
     FileUtils.rm_f stats_file if File.exist?(stats_file)
   end

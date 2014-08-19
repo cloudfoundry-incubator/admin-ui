@@ -1,4 +1,5 @@
 require 'date'
+require 'sequel'
 require 'thread'
 require_relative 'scheduled_thread_pool'
 
@@ -10,15 +11,125 @@ module AdminUI
       @logger  = logger
       @testing = testing
 
-      # TODO: Need config for number of threads
-      @pool   = AdminUI::ScheduledThreadPool.new(logger, 6, -2)
+      # TODO: Need config for number of connections/threads
+      # SQLite for testing does not appear to work well with multiple connections
+      @max_connections = testing ? 1 : 4
 
-      @caches = {}
+      @pool = AdminUI::ScheduledThreadPool.new(logger, @max_connections, -2)
 
-      # These keys need to conform to their respective discover_x methods.
-      # For instance applications conforms to discover_applications
-      [:applications, :organizations, :quota_definitions, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_plans, :spaces, :users_cc_deep, :users_uaa].each do |key|
-        @caches[key] = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
+      ccdb_uri  = @config.ccdb_uri
+      uaadb_uri = @config.uaadb_uri
+
+      # These keys need to conform to their respective methods.
+      # For instance applications conforms to applications
+      @caches =
+      {
+        :applications =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :apps,
+          :columns => [:buildpack, :created_at, :detected_buildpack, :disk_quota, :guid, :health_check_timeout, :id, :instances, :memory, :metadata, :name, :package_state, :production, :space_id, :stack_id, :staging_task_id, :state, :updated_at, :version]
+        },
+        :apps_routes =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :apps_routes,
+          :columns => [:app_id, :route_id]
+        },
+        :domains =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :domains,
+          :columns => [:created_at, :guid, :id, :name, :owning_organization_id, :updated_at]
+        },
+        :groups =>
+        {
+          :db_uri  => uaadb_uri,
+          :table   => :groups,
+          :columns => [:created, :displayname, :id, :lastmodified, :version]
+        },
+        :group_membership =>
+        {
+          :db_uri  => uaadb_uri,
+          :table   => :group_membership,
+          :columns => [:group_id, :member_id]
+        },
+        :organizations =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :organizations,
+          :columns => [:billing_enabled, :created_at, :guid, :id, :name, :quota_definition_id, :status, :updated_at]
+        },
+        :quota_definitions =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :quota_definitions,
+          :columns => [:created_at, :guid, :id, :memory_limit, :name, :non_basic_services_allowed, :total_routes, :total_services, :updated_at]
+        },
+        :routes =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :routes,
+          :columns => [:created_at, :domain_id, :guid, :host, :id, :space_id, :updated_at]
+        },
+        :service_bindings =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :service_bindings,
+          :columns => [:app_id, :binding_options, :created_at, :gateway_data, :gateway_name, :guid, :id, :service_instance_id, :syslog_drain_url, :updated_at]
+        },
+        :service_brokers =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :service_brokers,
+          :columns => [:auth_username, :broker_url, :created_at, :guid, :id, :name, :updated_at]
+        },
+        :service_instances =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :service_instances,
+          :columns => [:created_at, :dashboard_url, :gateway_name, :gateway_data, :guid, :id, :name, :service_plan_id, :space_id, :updated_at]
+        },
+        :service_plans =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :service_plans,
+          :columns => [:active, :created_at, :description, :extra, :free, :guid, :id, :name, :public, :service_id, :unique_id, :updated_at]
+        },
+        :services =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :services,
+          :columns => [:active, :bindable, :created_at, :description, :documentation_url, :extra, :guid, :id, :info_url, :label, :long_description, :provider, :requires, :service_broker_id, :tags, :unique_id, :updated_at, :url, :version]
+        },
+        :spaces =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :spaces,
+          :columns => [:created_at, :guid, :id, :name, :organization_id, :updated_at]
+        },
+        :spaces_developers =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :spaces_developers,
+          :columns => [:space_id, :user_id]
+        },
+        :users_cc =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :users,
+          :columns => [:active, :admin, :created_at, :default_space_id, :guid, :id, :updated_at]
+        },
+        :users_uaa =>
+        {
+          :db_uri  => uaadb_uri,
+          :table   => :users,
+          :columns => [:active, :created, :email, :familyname, :givenname, :id, :lastmodified, :username, :version]
+        }
+      }
+
+      @caches.each_pair do |key, cache|
+        cache.merge!(:semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil, :select => nil)
         schedule(key)
       end
     end
@@ -39,7 +150,7 @@ module AdminUI
       instances = 0
       hash['items'].each do |app|
         Thread.pass
-        instances += app['instances'] if app['state'] == 'STARTED'
+        instances += app[:instances] if app[:state] == 'STARTED'
       end
       instances
     end
@@ -50,9 +161,25 @@ module AdminUI
       instances = 0
       hash['items'].each do |app|
         Thread.pass
-        instances += app['instances']
+        instances += app[:instances]
       end
       instances
+    end
+
+    def apps_routes
+      result_cache(:apps_routes)
+    end
+
+    def domains
+      result_cache(:domains)
+    end
+
+    def group_membership
+      result_cache(:group_membership)
+    end
+
+    def groups
+      result_cache(:groups)
     end
 
     def invalidate_applications
@@ -63,12 +190,12 @@ module AdminUI
       invalidate_cache(:organizations)
     end
 
-    def invalidate_service_plans
-      invalidate_cache(:service_plans)
-    end
-
     def invalidate_routes
       invalidate_cache(:routes)
+    end
+
+    def invalidate_service_plans
+      invalidate_cache(:service_plans)
     end
 
     def organizations
@@ -89,10 +216,6 @@ module AdminUI
       result_cache(:routes)
     end
 
-    def services
-      result_cache(:services)
-    end
-
     def service_bindings
       result_cache(:service_bindings)
     end
@@ -109,17 +232,12 @@ module AdminUI
       result_cache(:service_plans)
     end
 
-    def spaces
-      result_cache(:spaces)
+    def services
+      result_cache(:services)
     end
 
-    def spaces_auditors
-      users_cc_deep = result_cache(:users_cc_deep)
-      if users_cc_deep['connected']
-        discover_spaces_auditors(users_cc_deep)
-      else
-        result
-      end
+    def spaces
+      result_cache(:spaces)
     end
 
     def spaces_count
@@ -129,39 +247,50 @@ module AdminUI
     end
 
     def spaces_developers
-      users_cc_deep = result_cache(:users_cc_deep)
-      if users_cc_deep['connected']
-        discover_spaces_developers(users_cc_deep)
-      else
-        result
-      end
+      result_cache(:spaces_developers)
     end
 
-    def spaces_managers
-      users_cc_deep = result_cache(:users_cc_deep)
-      if users_cc_deep['connected']
-        discover_spaces_managers(users_cc_deep)
-      else
-        result
-      end
-    end
-
-    def users
-      result_cache(:users_uaa)
+    def users_cc
+      result_cache(:users_cc)
     end
 
     def users_count
-      hash = users
+      hash = users_uaa
       return nil unless hash['connected']
       hash['items'].length
     end
 
+    def users_uaa
+      result_cache(:users_uaa)
+    end
+
     private
 
+    def discover(key)
+      @logger.debug("[#{ @config.cloud_controller_discovery_interval } second interval] Starting CC #{ key } discovery...")
+
+      cache = @caches[key]
+
+      start = Time.now
+
+      result_cache = select(key, cache)
+
+      finish = Time.now
+
+      cache[:semaphore].synchronize do
+        @logger.debug("Caching CC #{ key } data.  Retrieval time: #{ finish - start } seconds")
+        cache[:result] = result_cache
+        cache[:condition].broadcast
+      end
+
+      # Set up the next scheduled discovery for this key
+      schedule(key, Time.now + @config.cloud_controller_discovery_interval)
+    end
+
     def invalidate_cache(key)
-      hash = @caches[key]
-      hash[:semaphore].synchronize do
-        hash[:result] = nil
+      cache = @caches[key]
+      cache[:semaphore].synchronize do
+        cache[:result] = nil
       end
       schedule(key)
     end
@@ -172,37 +301,15 @@ module AdminUI
       end
     end
 
-    def discover(key)
-      key_string = key.to_s
-
-      @logger.debug("[#{ @config.cloud_controller_discovery_interval } second interval] Starting CC #{ key_string } discovery...")
-
-      start = Time.now
-
-      result_cache = send("discover_#{ key_string }".to_sym)
-
-      finish = Time.now
-
-      hash = @caches[key]
-      hash[:semaphore].synchronize do
-        @logger.debug("Caching CC #{ key_string } data.  Retrieval time: #{ finish - start } seconds")
-        hash[:result] = result_cache
-        hash[:condition].broadcast
-      end
-
-      # Set up the next scheduled discovery for this key
-      schedule(key, Time.now + @config.cloud_controller_discovery_interval)
-    end
-
     def result_cache(key)
-      hash = @caches[key]
-      hash[:semaphore].synchronize do
+      cache = @caches[key]
+      cache[:semaphore].synchronize do
         if @testing
-          hash[:condition].wait(hash[:semaphore]) while hash[:result].nil?
+          cache[:condition].wait(cache[:semaphore]) while cache[:result].nil?
         else
-          return result if hash[:result].nil?
+          return result if cache[:result].nil?
         end
-        hash[:result]
+        cache[:result]
       end
     end
 
@@ -220,238 +327,29 @@ module AdminUI
       end
     end
 
-    def discover_applications
+    def select(key, cache)
       items = []
-      @client.get_cc('v2/apps?results-per-page=100').each do |app|
-        Thread.pass
-        items.push(app['entity'].merge(app['metadata']))
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_applications: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
+      Sequel.connect(cache[:db_uri], :single_threaded => false, :max_connections => @max_connections) do |connection|
+        if cache[:select].nil?
+          # Determine the columns the current level of database supports
+          table          = cache[:table]
+          columns        = cache[:columns]
+          db_columns     = connection[table].columns
+          cache[:select] = connection[table].select(columns & db_columns).sql
+          # TODO: If the sql has parenthesis around the select clause, you get an array of values instead of a hash
+          cache[:select] = cache[:select].sub('(', '').sub(')', '')
 
-    def discover_organizations
-      items = []
-      @client.get_cc('v2/organizations?results-per-page=100').each do |app|
-        Thread.pass
-        items.push(app['entity'].merge(app['metadata']))
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_organizations: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
+          @logger.debug("Columns removed for key #{ key }, table #{ table }: #{ columns - db_columns }")
+        end
 
-    def discover_quota_definitions
-      items = []
-      @client.get_cc('v2/quota_definitions?results-per-page=100').each do |quota|
-        Thread.pass
-        items.push(quota['entity'].merge(quota['metadata']))
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_quota_definitions: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_routes
-      items = []
-      @client.get_cc('v2/routes?inline-relations-depth=1&results-per-page=100').each do |route|
-        Thread.pass
-        items.push(route['entity'].merge(route['metadata']))
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_routes: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_services
-      items = []
-      @client.get_cc('v2/services?results-per-page=100').each do |app|
-        Thread.pass
-        items.push(app['entity'].merge(app['metadata']))
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_services: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_service_bindings
-      items = []
-      @client.get_cc('v2/service_bindings?results-per-page=100').each do |app|
-        Thread.pass
-        items.push(app['entity'].merge(app['metadata']))
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_service_bindings: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_service_brokers
-      items = []
-      @client.get_cc('v2/service_brokers?results-per-page=100').each do |app|
-        Thread.pass
-        items.push(app['entity'].merge(app['metadata']))
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_service_brokers: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_service_instances
-      items = []
-      @client.get_cc('v2/service_instances?results-per-page=100').each do |app|
-        Thread.pass
-        items.push(app['entity'].merge(app['metadata']))
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_service_instances: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_service_plans
-      items = []
-      @client.get_cc('v2/service_plans?results-per-page=100').each do |app|
-        Thread.pass
-        items.push(app['entity'].merge(app['metadata']))
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_service_plans: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_spaces
-      items = []
-      @client.get_cc('v2/spaces?results-per-page=100').each do |app|
-        Thread.pass
-        items.push(app['entity'].merge(app['metadata']))
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_spaces: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_spaces_auditors(users_deep)
-      items = []
-      users_deep['items'].each do |user_deep|
-        Thread.pass
-        guid = user_deep['metadata']['guid']
-
-        audited_spaces = user_deep['entity']['audited_spaces']
-        unless audited_spaces.nil?
-          audited_spaces.each do |space|
-            items.push('user_guid'  => guid,
-                       'space_guid' => space['metadata']['guid'])
-          end
+        connection.fetch(cache[:select]) do |row|
+          Thread.pass
+          items.push(row)
         end
       end
       result(items)
     rescue => error
-      @logger.debug("Error during discover_spaces_auditors: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_spaces_developers(users_deep)
-      items = []
-      users_deep['items'].each do |user_deep|
-        Thread.pass
-        guid = user_deep['metadata']['guid']
-
-        spaces = user_deep['entity']['spaces']
-        unless spaces.nil?
-          spaces.each do |space|
-            items.push('user_guid'  => guid,
-                       'space_guid' => space['metadata']['guid'])
-          end
-        end
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_spaces_developers: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_spaces_managers(users_deep)
-      items = []
-      users_deep['items'].each do |user_deep|
-        Thread.pass
-        guid = user_deep['metadata']['guid']
-
-        managed_spaces = user_deep['entity']['managed_spaces']
-        unless managed_spaces.nil?
-          managed_spaces.each do |space|
-            items.push('user_guid'  => guid,
-                       'space_guid' => space['metadata']['guid'])
-          end
-        end
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_spaces_managers: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_users_cc_deep
-      result(@client.get_cc('v2/users?inline-relations-depth=1&results-per-page=100'))
-    rescue => error
-      @logger.debug("Error during discover_users_cc_deep: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_users_uaa
-      items = []
-      @client.get_uaa('Users').each do |user|
-        Thread.pass
-        emails = user['emails']
-        groups = user['groups']
-        meta   = user['meta']
-        name   = user['name']
-
-        authorities = []
-        groups.each do |group|
-          authorities.push(group['display'])
-        end
-
-        attributes = { 'active'        => user['active'],
-                       'authorities'   => authorities.sort.join(', '),
-                       'created'       => meta['created'],
-                       'id'            => user['id'],
-                       'last_modified' => meta['lastModified'],
-                       'version'       => meta['version'] }
-
-        attributes['email']      = emails[0]['value'] unless emails.nil? || emails.length == 0
-        attributes['familyname'] = name['familyName'] unless name['familyName'].nil?
-        attributes['givenname']  = name['givenName'] unless name['givenName'].nil?
-        attributes['username']   = user['userName'] unless user['userName'].nil?
-
-        items.push(attributes)
-      end
-      result(items)
-    rescue => error
-      @logger.debug("Error during discover_users_uaa: #{ error.inspect }")
+      @logger.debug("Error during discovery of #{ key }: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end

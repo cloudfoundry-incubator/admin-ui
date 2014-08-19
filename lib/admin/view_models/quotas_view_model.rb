@@ -24,9 +24,9 @@ module AdminUI
 
       organizations['items'].each do |organization|
         Thread.pass
-        quota_definition_guid = organization['quota_definition_guid']
-        organization_counters[quota_definition_guid] = 0 if organization_counters[quota_definition_guid].nil?
-        organization_counters[quota_definition_guid] += 1
+        quota_definition_id = organization[:quota_definition_id]
+        organization_counters[quota_definition_id] = 0 if organization_counters[quota_definition_id].nil?
+        organization_counters[quota_definition_id] += 1
       end
 
       items = []
@@ -35,23 +35,23 @@ module AdminUI
         Thread.pass
         row = []
 
-        row.push(quota_definition['name'])
-        row.push(DateTime.parse(quota_definition['created_at']).rfc3339)
+        row.push(quota_definition[:name])
+        row.push(quota_definition[:created_at].to_datetime.rfc3339)
 
-        if quota_definition['updated_at']
-          row.push(DateTime.parse(quota_definition['updated_at']).rfc3339)
+        if quota_definition[:updated_at]
+          row.push(quota_definition[:updated_at].to_datetime.rfc3339)
         else
           row.push(nil)
         end
 
-        row.push(quota_definition['total_services'])
-        row.push(quota_definition['total_routes'])
-        row.push(quota_definition['memory_limit'])
-        row.push(quota_definition['non_basic_services_allowed'])
-        row.push(quota_definition['trial_db_allowed'])
+        row.push(quota_definition[:total_services])
+        row.push(quota_definition[:total_routes])
+        row.push(quota_definition[:memory_limit])
+        row.push(quota_definition[:non_basic_services_allowed])
+        row.push(quota_definition[:trial_db_allowed])
 
-        if organization_counters[quota_definition['guid']]
-          row.push(organization_counters[quota_definition['guid']])
+        if organization_counters[quota_definition[:id]]
+          row.push(organization_counters[quota_definition[:id]])
         elsif organizations_connected
           row.push(0)
         else

@@ -32,6 +32,7 @@ module AdminUI
         schema =
         {
           optional(:bind_address)                        => /[^\r\n\t]+/,
+          :ccdb_uri                                      => /[^\r\n\t]+/,
           optional(:cloud_controller_discovery_interval) => Integer,
           optional(:cloud_controller_ssl_verify_none)    => bool,
           :cloud_controller_uri                          => %r{(http[s]?://[^\r\n\t]+)},
@@ -72,6 +73,7 @@ module AdminUI
             :id     => /[^\r\n\t]+/,
             :secret => /[^\r\n\t]+/
           },
+          :uaadb_uri                                     => /[^\r\n\t]+/,
           :uaa_groups_admin                              => [/[^\r\n\t]+/],
           :uaa_groups_user                               => [/[^\r\n\t]+/],
           optional(:varz_discovery_interval)             => Integer
@@ -118,6 +120,10 @@ module AdminUI
 
     def bind_address
       @config[:bind_address]
+    end
+
+    def ccdb_uri
+      @config[:ccdb_uri]
     end
 
     def cloud_controller_discovery_interval
@@ -246,6 +252,10 @@ module AdminUI
     def uaa_client_secret
       return nil if @config[:uaa_client].nil?
       @config[:uaa_client][:secret]
+    end
+
+    def uaadb_uri
+      @config[:uaadb_uri]
     end
 
     def uaa_groups_admin

@@ -1,5 +1,6 @@
 ---
 bind_address: 0.0.0.0
+ccdb_uri: postgres://ccadmin:admin@10.244.0.30:5524/ccdb
 cloud_controller_discovery_interval: 300
 cloud_controller_ssl_verify_none: true
 cloud_controller_uri: http://api.10.244.0.34.xip.io
@@ -27,6 +28,7 @@ tasks_refresh_interval: 5000
 uaa_client:
   id: admin_ui_client
   secret: admin_ui_secret
+uaadb_uri: postgres://uaaadmin:admin@10.244.0.30:5524/uaadb
 uaa_groups_admin: [ admin_ui.admin ]
 uaa_groups_user: [ admin_ui.user ] 
 varz_discovery_interval: 30

@@ -189,21 +189,15 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     it 'stops a running application' do
-      # Stub the http request to return
-      cc_stopped_apps_stub(AdminUI::Config.load(config))
       expect { stop_app }.to change { get_json('/applications_view_model', false, 80)['items']['items'][0][2] }.from('STARTED').to('STOPPED')
     end
 
     it 'starts a stopped application' do
-      # Stub the http request to return
-      cc_apps_stop_to_start_stub(AdminUI::Config.load(config))
       stop_app
-
       expect { start_app }.to change { get_json('/applications_view_model', false, 80)['items']['items'][0][2] }.from('STOPPED').to('STARTED')
     end
 
     it 'deletes an application' do
-      cc_empty_applications_stub(AdminUI::Config.load(config))
       expect { delete_app }.to change { get_json('/applications_view_model', false, 80)['items']['items'][0][2] }.from('STARTED').to(nil)
     end
   end
@@ -218,9 +212,9 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     def create_org
-      response = post_request('/organizations', '{"name":"new_org"}')
+      response = post_request('/organizations', "{\"name\":\"#{ cc_organization2[:name] }\"}")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      expect(get_sys_log_entries(4, [['post', '/organizations; body = {"name":"new_org"}']], true)).to be_true
+      expect(get_sys_log_entries(4, [['post', "/organizations; body = {\"name\":\"#{ cc_organization2[:name] }\"}"]], true)).to be_true
     end
 
     def delete_org
@@ -235,14 +229,13 @@ describe AdminUI::Admin, :type => :integration do
       expect(get_sys_log_entries(4, [['put', '/organizations/organization1; body = {"quota_definition_guid":"quota2"}']], true)).to be_true
     end
 
-    it 'has user name and organizations reqeust in the log file' do
+    it 'has user name and organizations request in the log file' do
       expect(get_sys_log_entries(10, [['get', '/organizations']])).to be_true
     end
 
     it 'creates an organization' do
-      cc_multiple_organizations_stub(AdminUI::Config.load(config))
       expect { create_org }.to change { get_json('/organizations_view_model', false, 60)['items']['items'].length }.from(1).to(2)
-      expect(get_json('/organizations_view_model', false, 60)['items']['items'][1][1]).to eq('new_org')
+      expect(get_json('/organizations_view_model', false, 60)['items']['items'][1][1]).to eq(cc_organization2[:name])
     end
 
     def suspend_org
@@ -258,24 +251,22 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     it 'deletes an organization' do
-      cc_empty_organizations_stub(AdminUI::Config.load(config))
       expect { delete_org }.to change { get_json('/organizations_view_model', false, 80)['items']['items'].length }.from(1).to(0)
     end
 
-    it 'sets the specific quota for organization' do
-      cc_organization_with_different_quota_stub(AdminUI::Config.load(config))
-      expect { set_quota }.to change { get_json('/organizations_view_model', false, 80)['items']['items'][0][7] }.from('test_quota_1').to('test_quota_2')
+    context 'sets the specific quota for organization' do
+      let(:insert_second_quota_definition) { true }
+      it 'sets the specific quota for organization' do
+        expect { set_quota }.to change { get_json('/organizations_view_model', false, 80)['items']['items'][0][7] }.from('test_quota_1').to('test_quota_2')
+      end
     end
 
     it 'activates the organization' do
-      cc_organizations_suspend_active_stub(AdminUI::Config.load(config))
       suspend_org
-
       expect { activate_org }.to change { get_json('/organizations_view_model', false, 80)['items']['items'][0][2] }.from('suspended').to('active')
     end
 
     it 'suspends the organization' do
-      cc_suspended_organizations_stub(AdminUI::Config.load(config))
       expect { suspend_org }.to change { get_json('/organizations_view_model', false, 80)['items']['items'][0][2] }.from('active').to('suspended')
     end
   end
@@ -295,12 +286,11 @@ describe AdminUI::Admin, :type => :integration do
       expect(get_sys_log_entries(4, [['delete', '/routes/route1']], true)).to be_true
     end
 
-    it 'has user name and routes reqeust in the log file' do
+    it 'has user name and routes request in the log file' do
       expect(get_sys_log_entries(2, [['authenticated', 'is admin? true'], ['get', '/routes']], true)).to be_true
     end
 
     it 'deletes the specific route' do
-      cc_empty_routes_stub(AdminUI::Config.load(config))
       expect { delete_route }.to change { get_json('/routes_view_model', false, 80)['items']['items'].length }.from(1).to(0)
     end
   end
@@ -322,8 +312,6 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     it 'make service plans private and back to public' do
-      # Stub the http request to return
-      cc_service_plans_private_to_public_stub(AdminUI::Config.load(config))
       expect { make_service_plan_private }.to change { get_json('/service_plans_view_model', false, 80)['items']['items'][0][5].to_s }.from('true').to('false')
       make_service_plan_public
       expect { get_json('/service_plans_view_model')['items']['items'][0][5] }.to be_true
@@ -347,7 +335,7 @@ describe AdminUI::Admin, :type => :integration do
         expect(inner_items).to_not be(nil)
 
         view_model_source.each do |view_model|
-          expect(AdminUI::Utils.symbolize_keys(inner_items)).to include(AdminUI::Utils.symbolize_keys(view_model))
+          expect(JSON.parse(inner_items.to_json)).to include(JSON.parse(view_model.to_json))
         end
       end
     end
@@ -373,13 +361,13 @@ describe AdminUI::Admin, :type => :integration do
     context 'current_statistics' do
       let(:retrieved) { get_json('/current_statistics') }
       it 'retrieves' do
-        expect(retrieved).to include('apps'              => cc_started_apps['resources'].length,
+        expect(retrieved).to include('apps'              => 1,
                                      'deas'              => 1,
-                                     'organizations'     => cc_organizations['resources'].length,
-                                     'running_instances' => cc_started_apps['resources'].length,
-                                     'spaces'            => cc_spaces['resources'].length,
-                                     'total_instances'   => cc_started_apps['resources'].length,
-                                     'users'             => uaa_users['resources'].length)
+                                     'organizations'     => 1,
+                                     'running_instances' => cc_app[:instances],
+                                     'spaces'            => 1,
+                                     'total_instances'   => cc_app[:instances],
+                                     'users'             => 1)
       end
     end
 

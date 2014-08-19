@@ -13,7 +13,9 @@ In order to execute, the Administration UI needs to be able to access the follow
 
 - NATS
 - Cloud Controller REST API
+- Cloud Controller DB URI
 - UAA REST API
+- UAA DB URI
 
 Installation of the Administration UI and its prerequisites requires access to the Internet to
 access GitHub.com, RubyGems.org, Ubuntu software repositories, etc. 
@@ -27,7 +29,7 @@ This has been tested on Ubuntu 10.04.4 64 bit, Ubuntu 12.04.3 64 bit and Ubuntu 
 ### Ubuntu Prerequisite Libraries
 
 ```
-sudo apt-get install -f -y --no-install-recommends git-core build-essential libssl-dev libsqlite3-dev openssl
+sudo apt-get install -f -y --no-install-recommends git-core build-essential libssl-dev libsqlite3-dev openssl libpq-dev
 ```
 
 ### Ruby
@@ -85,6 +87,14 @@ Values that <b>must</b> be changed for your environment are marked in <b>bold</b
 The network address on which the server listens for web requests.
 <br>
 Example: <code>0.0.0.0</code>
+</dd>
+<dt>
+<code><b>ccdb_uri</b></code>
+</dt>
+<dd>
+The URI used to connect to the Cloud Controller database for retreival.
+<br>
+Example: <code>postgres://ccadmin:admin@10.244.0.30:5524/ccdb</code>
 </dd>
 <dt>
 <code>cloud_controller_discovery_interval</code>
@@ -529,6 +539,14 @@ The group membership then needs to be updated for each user that has user capabi
 on the Administration UI.
 <br>
 Example: <code>uaac member add admin_ui.user your_user_name</code>
+</dd>
+<dt>
+<code><b>uaadb_uri</b></code>
+</dt>
+<dd>
+The URI used to connect to the UAA database for retreival.
+<br>
+Example: <code>postgres://uaaadmin:admin@10.244.0.30:5524/uaadb</code>
 </dd>
 <dt>
 <code>varz_discovery_interval</code>
