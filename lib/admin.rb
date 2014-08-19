@@ -21,9 +21,10 @@ require_relative 'admin/web'
 
 module AdminUI
   class Admin
-    def initialize(config_hash, testing = false)
-      @config_hash = config_hash
-      @testing     = testing
+    def initialize(config_hash, testing = false, start_callback = nil)
+      @config_hash    = config_hash
+      @testing        = testing
+      @start_callback = start_callback
     end
 
     def start
@@ -102,6 +103,8 @@ module AdminUI
                    :Logger             => error_logger,
                    :Port               => @config.port
                  }
+
+      web_hash[:StartCallback] = @start_callback if @start_callback
 
       if @config.secured_client_connection
         pkey  = OpenSSL::PKey::RSA.new(File.open(@config.ssl_private_key_file_path).read, @config.ssl_private_key_pass_phrase)

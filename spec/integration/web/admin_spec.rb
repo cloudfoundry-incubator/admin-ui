@@ -713,7 +713,6 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
             # start the app
             manage_application(0)
-            sleep(5)
             check_app_state('STARTED')
           end
           it 'restart the selected application' do

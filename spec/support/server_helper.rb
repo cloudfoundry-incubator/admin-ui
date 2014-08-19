@@ -1,3 +1,4 @@
+require 'thread'
 require 'webrick'
 require_relative '../spec_helper'
 
@@ -64,11 +65,23 @@ shared_context :server_context do
 
     ::WEBrick::Log.any_instance.stub(:log)
 
-    Thread.new do
-      AdminUI::Admin.new(config, true).start
+    mutex                  = Mutex.new
+    condition              = ConditionVariable.new
+    start_callback_invoked = false
+    start_callback         = proc do
+      mutex.synchronize do
+        start_callback_invoked = true
+        condition.broadcast
+      end
     end
 
-    sleep(5)
+    Thread.new do
+      AdminUI::Admin.new(config, true, start_callback).start
+    end
+
+    mutex.synchronize do
+      condition.wait(mutex) until start_callback_invoked
+    end
   end
 
   after do

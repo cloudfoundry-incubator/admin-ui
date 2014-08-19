@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'net/https'
 require 'openssl'
+require 'thread'
 require 'uri'
 require_relative '../spec_helper'
 
@@ -53,11 +54,23 @@ describe AdminUI::Admin do
 
     ::WEBrick::Log.any_instance.stub(:log)
 
-    Thread.new do
-      AdminUI::Admin.new(config, true).start
+    mutex                  = Mutex.new
+    condition              = ConditionVariable.new
+    start_callback_invoked = false
+    start_callback         = proc do
+      mutex.synchronize do
+        start_callback_invoked = true
+        condition.broadcast
+      end
     end
 
-    sleep(1)
+    Thread.new do
+      AdminUI::Admin.new(config, true, start_callback).start
+    end
+
+    mutex.synchronize do
+      condition.wait(mutex) until start_callback_invoked
+    end
   end
 
   after do
