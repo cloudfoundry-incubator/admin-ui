@@ -73,6 +73,31 @@ cd admin-ui
 bundle install
 ```
 
+### Running with bosh-lite CloudFoundry
+
+If you are using the default bosh-lite install of CloudFoundry then
+the following commands will help you setup the appropriate UAA
+groups needed.
+
+```
+# Target your bosh-lite UAA and get the 'admin' token
+uaac target http://uaa.10.244.0.34.xip.io
+uaac token client get admin -s admin-secret
+
+# Add 'scim.write' if not already there and re-get token
+uaac client update admin --authorities "`uaac client get admin | \
+    awk '/:/{e=0}/authorities:/{e=1;if(e==1){$1="";print}}'` scim.write"
+uaac token client get admin -s admin-secret
+
+# Create a new group and add the 'admin' user to it
+uaac group add admin_ui.admin
+uaac member add admin_ui.admin admin
+```
+
+After running the above commands you should be able to use the default 
+configuration values for the Administration UI and skip down to the
+[Using the Administration UI](#using) section.
+
 ### Administration UI Configuration 
 
 Default configuration found in config/default.yml
