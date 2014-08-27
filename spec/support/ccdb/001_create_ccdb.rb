@@ -106,6 +106,35 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:env_groups, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :null=>false
+      DateTime :updated_at
+      String :name, :text=>true, :null=>false
+      String :environment_json, :default=>"{}", :text=>true, :null=>false
+      
+      index [:name], :unique=>true
+      index [:created_at], :name=>:evg_created_at_index
+      index [:guid], :name=>:evg_guid_index, :unique=>true
+      index [:updated_at], :name=>:evg_updated_at_index
+    end
+    
+    create_table(:feature_flags, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :null=>false
+      DateTime :updated_at
+      String :name, :text=>true, :null=>false
+      TrueClass :enabled, :null=>false
+      String :error_message, :text=>true
+      
+      index [:created_at], :name=>:feature_flag_created_at_index
+      index [:guid], :name=>:feature_flag_guid_index, :unique=>true
+      index [:updated_at], :name=>:feature_flag_updated_at_index
+      index [:name], :unique=>true
+    end
+    
     create_table(:quota_definitions, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -116,6 +145,7 @@ Sequel.migration do
       Integer :total_services, :null=>false
       Integer :memory_limit, :null=>false
       Integer :total_routes, :null=>false
+      Integer :instance_memory_limit, :default=>-1, :null=>false
       
       index [:created_at], :name=>:qd_created_at_index
       index [:guid], :name=>:qd_guid_index, :unique=>true
@@ -313,6 +343,39 @@ Sequel.migration do
       index [:service_id, :name], :name=>:svc_plan_svc_id_name_index, :unique=>true
     end
     
+    create_table(:space_quota_definitions, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :null=>false
+      DateTime :updated_at
+      String :name, :text=>true, :null=>false
+      TrueClass :non_basic_services_allowed, :null=>false
+      Integer :total_services, :null=>false
+      Integer :memory_limit, :null=>false
+      Integer :total_routes, :null=>false
+      Integer :instance_memory_limit, :default=>-1, :null=>false
+      foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
+      
+      index [:created_at], :name=>:sqd_created_at_index
+      index [:guid], :name=>:sqd_guid_index, :unique=>true
+      index [:organization_id, :name], :name=>:sqd_org_id_index, :unique=>true
+      index [:updated_at], :name=>:sqd_updated_at_index
+    end
+    
+    create_table(:service_plan_visibilities, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :null=>false
+      DateTime :updated_at
+      foreign_key :service_plan_id, :service_plans, :null=>false, :key=>[:id]
+      foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
+      
+      index [:created_at], :name=>:spv_created_at_index
+      index [:guid], :name=>:spv_guid_index, :unique=>true
+      index [:organization_id, :service_plan_id], :name=>:spv_org_id_sp_id_index, :unique=>true
+      index [:updated_at], :name=>:spv_updated_at_index
+    end
+    
     create_table(:spaces, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -320,6 +383,7 @@ Sequel.migration do
       DateTime :updated_at
       String :name, :null=>false
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
+      foreign_key :space_quota_definition_id, :space_quota_definitions, :key=>[:id]
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -359,6 +423,8 @@ Sequel.migration do
       String :detected_buildpack_guid, :text=>true
       String :detected_buildpack_name, :text=>true
       String :staging_failed_reason, :text=>true
+      TrueClass :diego, :default=>false
+      String :docker_image, :text=>true
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -385,6 +451,7 @@ Sequel.migration do
       String :actor_name, :text=>true
       String :actee_name, :text=>true
       
+      index [:actee]
       index [:created_at]
       index [:guid], :unique=>true
       index [:timestamp]
@@ -436,20 +503,6 @@ Sequel.migration do
       index [:guid], :name=>:si_guid_index, :unique=>true
       index [:space_id, :name], :name=>:si_space_id_name_index, :unique=>true
       index [:updated_at], :name=>:si_updated_at_index
-    end
-    
-    create_table(:service_plan_visibilities, :ignore_index_errors=>true) do
-      primary_key :id
-      String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
-      DateTime :updated_at
-      foreign_key :service_plan_id, :service_plans, :null=>false, :key=>[:id]
-      foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
-      
-      index [:created_at], :name=>:spv_created_at_index
-      index [:guid], :name=>:spv_guid_index, :unique=>true
-      index [:organization_id, :service_plan_id], :name=>:spv_org_id_sp_id_index, :unique=>true
-      index [:updated_at], :name=>:spv_updated_at_index
     end
     
     create_table(:users, :ignore_index_errors=>true) do

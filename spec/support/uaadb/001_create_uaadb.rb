@@ -65,10 +65,10 @@ Sequel.migration do
       String :client_id, :size=>256, :null=>false
       String :resource_ids, :size=>1024
       String :client_secret, :size=>256
-      String :scope, :size=>256
+      String :scope, :size=>1024
       String :authorized_grant_types, :size=>256
       String :web_server_redirect_uri, :size=>1024
-      String :authorities, :size=>256
+      String :authorities, :size=>1024
       Integer :access_token_validity
       Integer :refresh_token_validity, :default=>0
       String :additional_information, :size=>4096
