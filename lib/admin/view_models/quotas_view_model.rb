@@ -48,7 +48,6 @@ module AdminUI
         row.push(quota_definition[:total_routes])
         row.push(quota_definition[:memory_limit])
         row.push(quota_definition[:non_basic_services_allowed])
-        row.push(quota_definition[:trial_db_allowed])
 
         if organization_counters[quota_definition[:id]]
           row.push(organization_counters[quota_definition[:id]])
@@ -63,7 +62,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..8).to_a, [0, 1, 2, 6, 7])
+      result(items, (0..7).to_a, [0, 1, 2, 6])
     end
   end
 end

@@ -1076,8 +1076,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Quotas' }
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='QuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 9,
-                                :labels          => ['Name', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Non-Basic Services Allowed', 'Trial-DB Allowed', 'Organizations'],
+                                :expected_length => 8,
+                                :labels          => ['Name', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Non-Basic Services Allowed', 'Organizations'],
                                 :colspans        => nil
                               }
                              ])
@@ -1090,7 +1090,6 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:total_routes] }\")"),
                              @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:memory_limit] }\")"),
                              cc_quota_definition[:non_basic_services_allowed].to_s,
-                             cc_quota_definition[:trial_db_allowed].to_s,
                              '1'
                            ])
         end
@@ -1111,12 +1110,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Total Routes',               :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:total_routes] }\")") },
                            { :label => 'Memory Limit',               :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:memory_limit] }\")") },
                            { :label => 'Non-Basic Services Allowed', :tag =>   nil, :value => cc_quota_definition[:non_basic_services_allowed].to_s },
-                           { :label => 'Trial-DB Allowed',           :tag =>   nil, :value => cc_quota_definition[:trial_db_allowed].to_s },
                            { :label => 'Organizations',              :tag =>   'a', :value => '1' }
                           ])
           end
           it 'has organizations link' do
-            check_filter_link('Quotas', 8, 'Organizations', "#{ cc_quota_definition[:name] }")
+            check_filter_link('Quotas', 7, 'Organizations', "#{ cc_quota_definition[:name] }")
           end
         end
       end
