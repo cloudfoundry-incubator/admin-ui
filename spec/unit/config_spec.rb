@@ -121,15 +121,40 @@ describe AdminUI::Config do
       end
 
       context 'sender_email' do
-        let(:sender_email) { { 'server' => 'localhost', 'account' => 'bogus@localhost.com' } }
+        let(:sender_email) do
+          {
+            'server'     => 'localhost',
+            'port'       => 25,
+            'domain'     => 'localhost',
+            'account'    => 'bogus@localhost.com',
+            'secret'     => 'my password',
+            'authtype'   => 'login'
+          }
+        end
         let(:config) { AdminUI::Config.load('sender_email' => sender_email) }
 
         it 'sender_email_account' do
           expect(config.sender_email_account).to eq(sender_email['account'])
         end
 
+        it 'sender_email_secret' do
+          expect(config.sender_email_secret).to eq(sender_email['secret'])
+        end
+
+        it 'sender_email_authtype' do
+          expect(config.sender_email_authtype).to eq(sender_email['authtype'].to_sym)
+        end
+
         it 'sender_email_server' do
           expect(config.sender_email_server).to eq(sender_email['server'])
+        end
+
+        it 'sender_email_port' do
+          expect(config.sender_email_port).to eq(sender_email['port'])
+        end
+
+        it 'sender_email_domain' do
+          expect(config.sender_email_domain).to eq(sender_email['domain'])
         end
       end
 
@@ -367,8 +392,24 @@ describe AdminUI::Config do
           expect(config.sender_email_account).to be_nil
         end
 
+        it 'sender_email_secret' do
+          expect(config.sender_email_secret).to be_nil
+        end
+
+        it 'sender_email_authtype' do
+          expect(config.sender_email_authtype).to be_nil
+        end
+
         it 'sender_email_server' do
           expect(config.sender_email_server).to be_nil
+        end
+
+        it 'sender_email_port' do
+          expect(config.sender_email_port).to be_nil
+        end
+
+        it 'sender_email_domain' do
+          expect(config.sender_email_domain).to be_nil
         end
       end
 
@@ -539,11 +580,29 @@ describe AdminUI::Config do
 
       context 'sender_email' do
         it 'sender_email_account' do
-          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 5, :server => 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 5, :server => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'sender_email_secret' do
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :secret => 3, :server => 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'sender_email_authtype' do
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :authtype => 3, :server => 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
+
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :authtype => 'logon', :server => 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'sender_email_server' do
-          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :server => 5  })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :server => 5 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'sender_email_port' do
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :server => 'hi', :port => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'sender_email_domain' do
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :server => 'hi', :domain => 3 })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 
