@@ -310,12 +310,42 @@ The email server.
 Example: <code>10.10.10.10</code>
 </dd>
 <dt>
+<code>port</code>
+</dt>
+<dd>
+Port of the email server.
+<br>
+Example: <code>25</code>
+</dd>
+<dt>
+<code>domain</code>
+</dt>
+<dd>
+HELO domain provided by the client to the server, the SMTP server will judge whether it should send or reject the SMTP session by inspecting the HELO domain.
+<br>
+Example: <code>localhost</code>
+</dd>
+<dt>
 <code>account</code>
 </dt>
 <dd>
 The email account.
 <br>
 Example: <code>system@10.10.10.10</code>
+</dd>
+<dt>
+<code>secret</code>
+</dt>
+<dd>
+Secret for the email account.
+</dd>
+<dt>
+<code>authtype</code>
+</dt>
+<dd>
+SMTP authentication scheme, can be one of: <code>plain</code>, <code>login</code>, <code>cram_md5</code>.
+<br>
+Example: <code>login</code>
 </dd>
 </dl>
 </dd>

@@ -51,8 +51,12 @@ module AdminUI
           optional(:receiver_emails)                     => [/[^\r\n\t]+/],
           optional(:sender_email)                        =>
           {
-            :server  => /[^\r\n\t]+/,
-            :account => /[^\r\n\t]+/
+            :server               => /[^\r\n\t]+/,
+            optional(:port)       => Integer,
+            optional(:domain)     => /[^\r\n\t]+/,
+            :account              => /[^\r\n\t]+/,
+            optional(:secret)     => String,
+            optional(:authtype)   => enum('plain', 'login', 'cram_md5')
           },
           :secured_client_connection                     => bool,
           optional(:ssl)                                 =>
@@ -199,9 +203,29 @@ module AdminUI
       @config[:sender_email][:account]
     end
 
+    def sender_email_secret
+      return nil if @config[:sender_email].nil?
+      @config[:sender_email][:secret]
+    end
+
+    def sender_email_authtype
+      return nil if @config[:sender_email].nil?
+      @config[:sender_email][:authtype].to_sym if @config[:sender_email][:authtype]
+    end
+
     def sender_email_server
       return nil if @config[:sender_email].nil?
       @config[:sender_email][:server]
+    end
+
+    def sender_email_port
+      return nil if @config[:sender_email].nil?
+      @config[:sender_email][:port] || 25
+    end
+
+    def sender_email_domain
+      return nil if @config[:sender_email].nil?
+      @config[:sender_email][:domain] || 'localhost'
     end
 
     def ssl_certificate_file_path
