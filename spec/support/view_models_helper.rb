@@ -17,7 +17,7 @@ module ViewModelsHelper
         varz_dea['instance_registry']['application1']['application1_instance1']['state'],
         cc_app[:created_at].to_datetime.rfc3339,
         cc_app[:updated_at].to_datetime.rfc3339,
-        DateTime.parse(Time.at(varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp']).to_s).rfc3339,
+        Time.at(varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp']).to_datetime.rfc3339,
         varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'],
         cc_app[:detected_buildpack],
         varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'],
@@ -222,7 +222,7 @@ module ViewModelsHelper
       [
         log_file_displayed,
         log_file_displayed_contents_length,
-        DateTime.parse(Time.at(log_file_displayed_modified_milliseconds / 1000.0).to_s).rfc3339,
+        Time.at(log_file_displayed_modified_milliseconds / 1000.0).to_datetime.rfc3339,
         { :path => log_file_displayed,
           :size => log_file_displayed_contents_length,
           :time => log_file_displayed_modified_milliseconds
@@ -420,7 +420,7 @@ module ViewModelsHelper
   def view_models_stats(timestamp)
     [
       [
-        DateTime.parse(Time.at(timestamp / 1000.0).to_s).rfc3339,
+        Time.at(timestamp / 1000.0).to_datetime.rfc3339,
         1,
         1,
         1,

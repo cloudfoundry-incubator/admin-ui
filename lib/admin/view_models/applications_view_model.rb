@@ -115,7 +115,7 @@ module AdminUI
               row.push(nil, nil)
 
               if instance['state_running_timestamp']
-                row.push(DateTime.parse(Time.at(instance['state_running_timestamp']).to_s).rfc3339)
+                row.push(Time.at(instance['state_running_timestamp']).to_datetime.rfc3339)
               else
                 row.push(nil)
               end
@@ -177,7 +177,7 @@ module AdminUI
               row[4] = instance['state']
 
               if instance['state_running_timestamp']
-                row[7] = DateTime.parse(Time.at(instance['state_running_timestamp']).to_s).rfc3339
+                row[7] = Time.at(instance['state_running_timestamp']).to_datetime.rfc3339
               end
 
               row[ 8] = instance['application_uris']
