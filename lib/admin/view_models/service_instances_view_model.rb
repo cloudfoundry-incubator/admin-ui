@@ -35,20 +35,22 @@ module AdminUI
       space_hash           = Hash[*spaces['items'].map { |item| [item[:id], item] }.flatten]
 
       service_binding_apps_hash = {}
-      service_bindings['items'].each do |service_binding|
-        Thread.pass
-        service_instance_id = service_binding[:service_instance_id]
-        app_and_binding_array = service_binding_apps_hash[service_instance_id]
-        if app_and_binding_array.nil?
-          app_and_binding_array = []
-          service_binding_apps_hash[service_instance_id] = app_and_binding_array
-        end
+      if service_bindings_connected && applications_connected
+        service_bindings['items'].each do |service_binding|
+          Thread.pass
+          service_instance_id = service_binding[:service_instance_id]
+          app_and_binding_array = service_binding_apps_hash[service_instance_id]
+          if app_and_binding_array.nil?
+            app_and_binding_array = []
+            service_binding_apps_hash[service_instance_id] = app_and_binding_array
+          end
 
-        application = application_hash[service_binding[:app_id]]
+          application = application_hash[service_binding[:app_id]]
 
-        if application
-          app_and_binding_array.push('application'    => application,
-                                     'serviceBinding' => service_binding)
+          if application
+            app_and_binding_array.push('application'    => application,
+                                       'serviceBinding' => service_binding)
+          end
         end
       end
 

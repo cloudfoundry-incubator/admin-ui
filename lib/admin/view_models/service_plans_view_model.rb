@@ -16,17 +16,41 @@ module AdminUI
       # service_plans have to exist.  Other record types are optional
       return result unless service_plans['connected']
 
-      services          = @cc.services
-      service_brokers   = @cc.service_brokers
-      service_instances = @cc.service_instances
+      organizations             = @cc.organizations
+      services                  = @cc.services
+      service_brokers           = @cc.service_brokers
+      service_instances         = @cc.service_instances
+      service_plan_visibilities = @cc.service_plan_visibilities
 
-      service_instances_connected = service_instances['connected']
+      organizations_connected             = organizations['connected']
+      service_instances_connected         = service_instances['connected']
+      service_plan_visibilities_connected = service_plan_visibilities['connected']
 
+      organization_hash   = Hash[*organizations['items'].map { |item| [item[:id], item] }.flatten]
       service_broker_hash = Hash[*service_brokers['items'].map { |item| [item[:id], item] }.flatten]
       service_hash        = Hash[*services['items'].map { |item| [item[:id], item] }.flatten]
 
-      service_instance_counters = {}
+      service_plan_visibilities_organizations_hash = {}
+      if service_plan_visibilities_connected && organizations_connected
+        service_plan_visibilities['items'].each do |service_plan_visibility|
+          Thread.pass
+          service_plan_id = service_plan_visibility[:service_plan_id]
+          service_plan_visibility_and_organization_array = service_plan_visibilities_organizations_hash[service_plan_id]
+          if service_plan_visibility_and_organization_array.nil?
+            service_plan_visibility_and_organization_array = []
+            service_plan_visibilities_organizations_hash[service_plan_id] = service_plan_visibility_and_organization_array
+          end
 
+          organization = organization_hash[service_plan_visibility[:organization_id]]
+
+          if organization
+            service_plan_visibility_and_organization_array.push('organization'          => organization,
+                                                                'servicePlanVisibility' => service_plan_visibility)
+          end
+        end
+      end
+
+      service_instance_counters = {}
       service_instances['items'].each do |service_instance|
         Thread.pass
         service_plan_id = service_instance[:service_plan_id]
@@ -63,6 +87,16 @@ module AdminUI
         end
 
         row.push(service_plan[:public])
+
+        service_plan_visibilities_organizations = service_plan_visibilities_organizations_hash[service_plan[:id]]
+
+        if service_plan_visibilities_organizations
+          row.push(service_plan_visibilities_organizations.length)
+        elsif service_plan_visibilities_connected && organizations_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
 
         if service_instance_counters[service_plan[:id]]
           row.push(service_instance_counters[service_plan[:id]])
@@ -103,14 +137,15 @@ module AdminUI
           row.push(nil, nil, nil)
         end
 
-        row.push('service'       => service,
-                 'serviceBroker' => service_broker,
-                 'servicePlan'   => service_plan)
+        row.push('service'                                 => service,
+                 'serviceBroker'                           => service_broker,
+                 'servicePlan'                             => service_plan,
+                 'servicePlanVisibilitiesAndOrganizations' => service_plan_visibilities_organizations)
 
         items.push(row)
       end
 
-      result(items, (1..16).to_a, (1..16).to_a - [6])
+      result(items, (1..17).to_a, (1..17).to_a - [6, 7])
     end
   end
 end

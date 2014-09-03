@@ -368,6 +368,7 @@ module ViewModelsHelper
         cc_service_plan[:updated_at].to_datetime.rfc3339,
         cc_service_plan[:public],
         1,
+        1,
         cc_service[:provider],
         cc_service[:label],
         cc_service[:version],
@@ -380,7 +381,13 @@ module ViewModelsHelper
         cc_service_broker[:updated_at].to_datetime.rfc3339,
         { 'service'       => cc_service,
           'serviceBroker' => cc_service_broker,
-          'servicePlan'   => cc_service_plan
+          'servicePlan'   => cc_service_plan,
+          'servicePlanVisibilitiesAndOrganizations' =>
+          [
+            { 'organization'          => cc_organization,
+              'servicePlanVisibility' => cc_service_plan_visibility
+            }
+          ]
         }
       ]
     ]

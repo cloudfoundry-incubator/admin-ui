@@ -183,6 +183,13 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected service_plan_visibilities' do
+      let(:results)  { cc.service_plan_visibilities }
+      let(:expected) { cc_service_plan_visibility }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected services' do
       let(:results)  { cc.services }
       let(:expected) { cc_service }
