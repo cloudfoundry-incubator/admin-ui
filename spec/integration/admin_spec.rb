@@ -52,17 +52,15 @@ describe AdminUI::Admin, :type => :integration do
     found_match = 0
     File.readlines(log_file).each do |line|
       line.chomp!
-      if line =~ /\[ admin \] : \[ /
-        operations_msgs.each do | op_msg |
-          op  = op_msg[0]
-          msg = op_msg[1]
-          esmsg = msg
-          esmsg = Regexp.escape(msg) if escapes
-          if line =~ /\[ admin \] : \[ #{ op } \] : #{ esmsg }/
-            found_match += 1
-            break
-          end
-        end
+      next unless line =~ /\[ admin \] : \[ /
+      operations_msgs.each do | op_msg |
+        op  = op_msg[0]
+        msg = op_msg[1]
+        esmsg = msg
+        esmsg = Regexp.escape(msg) if escapes
+        next unless line =~ /\[ admin \] : \[ #{ op } \] : #{ esmsg }/
+        found_match += 1
+        break
       end
     end
     expect(found_match).to be >= operations_msgs.length
@@ -505,12 +503,11 @@ describe AdminUI::Admin, :type => :integration do
       output = task_status['output']
       found_out = false
       output.each do |out|
-        if out['type'] == 'out'
-          found_out = true
-          expect(out['text'].start_with?('Creating new DEA')).to be_true
-          expect(out['time']).to be > 0
-          break
-        end
+        next unless out['type'] == 'out'
+        found_out = true
+        expect(out['text'].start_with?('Creating new DEA')).to be_true
+        expect(out['time']).to be > 0
+        break
       end
       expect(found_out).to be_true
     end

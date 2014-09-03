@@ -1,4 +1,4 @@
-source 'http://rubygems.org' 
+source 'http://rubygems.org'
 
 gem 'membrane', '1.1.0'
 gem 'nats', '0.4.28', :require => 'nats/client'

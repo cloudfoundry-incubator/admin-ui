@@ -164,34 +164,32 @@ module AdminUI
     end
 
     def send_email(disconnected)
-      if @email.configured? && disconnected.length > 0
-        thread = Thread.new do
-          begin
-            @email.send_email(disconnected)
-          rescue => error
-            @logger.debug("Error during send email: #{ error.inspect }")
-            @logger.debug(error.backtrace.join("\n"))
-          end
+      return unless @email.configured? && disconnected.length > 0
+      thread = Thread.new do
+        begin
+          @email.send_email(disconnected)
+        rescue => error
+          @logger.debug("Error during send email: #{ error.inspect }")
+          @logger.debug(error.backtrace.join("\n"))
         end
-
-        thread.priority = -2
       end
+
+      thread.priority = -2
     end
 
     def update_connection_status(type, uri, connected, disconnectedList)
-      if monitored?(type)
-        if connected
-          @cache['notified'].delete(uri)
+      return unless monitored?(type)
+      if connected
+        @cache['notified'].delete(uri)
+      else
+        component_entry = component_entry(type, uri)
+        if component_entry['count'] < @config.component_connection_retries
+          @logger.debug("The #{ type } component #{ uri } is not responding, its status will be checked again next refresh")
+        elsif component_entry['count'] == @config.component_connection_retries
+          @logger.debug("The #{ type } component #{ uri } has been recognized as disconnected")
+          disconnectedList.push(component_entry)
         else
-          component_entry = component_entry(type, uri)
-          if component_entry['count'] < @config.component_connection_retries
-            @logger.debug("The #{ type } component #{ uri } is not responding, its status will be checked again next refresh")
-          elsif component_entry['count'] == @config.component_connection_retries
-            @logger.debug("The #{ type } component #{ uri } has been recognized as disconnected")
-            disconnectedList.push(component_entry)
-          else
-            @logger.debug("The #{ type } component #{ uri } is still not responding")
-          end
+          @logger.debug("The #{ type } component #{ uri } is still not responding")
         end
       end
     end

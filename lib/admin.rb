@@ -74,14 +74,13 @@ module AdminUI
     end
 
     def display_files
-      unless @testing
-        puts "\n\n"
-        puts 'AdminUI files...'
-        puts "  data:  #{ @config.data_file }"
-        puts "  log:   #{ @config.log_file }"
-        puts "  stats: #{ @config.db_uri }"
-        puts "\n"
-      end
+      return if @testing
+      puts "\n\n"
+      puts 'AdminUI files...'
+      puts "  data:  #{ @config.data_file }"
+      puts "  log:   #{ @config.log_file }"
+      puts "  stats: #{ @config.db_uri }"
+      puts "\n"
     end
 
     def launch_web

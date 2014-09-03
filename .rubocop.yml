@@ -30,5 +30,8 @@ MethodLength:
 ParameterLists:
   Enabled: false
   
+PerceivedComplexity:
+  Enabled: false
+
 UselessSetterCall:
   Enabled: false

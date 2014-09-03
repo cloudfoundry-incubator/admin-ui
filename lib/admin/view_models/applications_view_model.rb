@@ -180,7 +180,7 @@ module AdminUI
                 row[7] = Time.at(instance['state_running_timestamp']).to_datetime.rfc3339
               end
 
-              row[ 8] = instance['application_uris']
+              row[8]  = instance['application_uris']
               row[10] = instance_index
               row[11] = instance['services'].length
               row[12] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil

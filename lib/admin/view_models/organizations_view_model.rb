@@ -48,41 +48,38 @@ module AdminUI
       spaces_developers['items'].each do |space_developer|
         Thread.pass
         space = space_hash[space_developer[:space_id]]
-        unless space.nil?
-          organization_id = space[:organization_id]
-          organization_developer_counters[organization_id] = 0 if organization_developer_counters[organization_id].nil?
-          organization_developer_counters[organization_id] += 1
-        end
+        next if space.nil?
+        organization_id = space[:organization_id]
+        organization_developer_counters[organization_id] = 0 if organization_developer_counters[organization_id].nil?
+        organization_developer_counters[organization_id] += 1
       end
 
       service_instances['items'].each do |service_instance|
         Thread.pass
         space = space_hash[service_instance[:space_id]]
-        unless space.nil?
-          organization_id = space[:organization_id]
-          organization_service_instance_counters[organization_id] = 0 if organization_service_instance_counters[organization_id].nil?
-          organization_service_instance_counters[organization_id] += 1
-        end
+        next if space.nil?
+        organization_id = space[:organization_id]
+        organization_service_instance_counters[organization_id] = 0 if organization_service_instance_counters[organization_id].nil?
+        organization_service_instance_counters[organization_id] += 1
       end
 
       routes['items'].each do |route|
         Thread.pass
         space = space_hash[route[:space_id]]
-        unless space.nil?
-          organization_id = space[:organization_id]
-          organization_route_counters = organization_route_counters_hash[organization_id]
-          if organization_route_counters.nil?
-            organization_route_counters = { 'total_routes'  => 0,
-                                            'unused_routes' => 0
-                                          }
-            organization_route_counters_hash[organization_id] = organization_route_counters
-          end
-
-          if apps_routes_connected
-            organization_route_counters['unused_routes'] += 1 unless routes_used_set.include?(route[:id])
-          end
-          organization_route_counters['total_routes'] += 1
+        next if space.nil?
+        organization_id = space[:organization_id]
+        organization_route_counters = organization_route_counters_hash[organization_id]
+        if organization_route_counters.nil?
+          organization_route_counters = { 'total_routes'  => 0,
+                                          'unused_routes' => 0
+                                        }
+          organization_route_counters_hash[organization_id] = organization_route_counters
         end
+
+        if apps_routes_connected
+          organization_route_counters['unused_routes'] += 1 unless routes_used_set.include?(route[:id])
+        end
+        organization_route_counters['total_routes'] += 1
       end
 
       instance_hash = create_instance_hash(deas)
@@ -90,30 +87,29 @@ module AdminUI
       applications['items'].each do |application|
         Thread.pass
         space = space_hash[application[:space_id]]
-        unless space.nil?
-          organization_id = space[:organization_id]
-          organization_app_counters = organization_app_counters_hash[organization_id]
-          if organization_app_counters.nil?
-            organization_app_counters = { 'total'           => 0,
-                                          'reserved_memory' => 0,
-                                          'reserved_disk'   => 0,
-                                          'used_memory'     => 0,
-                                          'used_disk'       => 0,
-                                          'used_cpu'        => 0,
-                                          'instances'       => 0
-                                        }
-            organization_app_counters_hash[organization_id] = organization_app_counters
-          end
-
-          organization_app_counters[application[:state]] = 0 if organization_app_counters[application[:state]].nil?
-          organization_app_counters[application[:package_state]] = 0 if organization_app_counters[application[:package_state]].nil?
-
-          add_instance_metrics(organization_app_counters, application, instance_hash)
-
-          organization_app_counters['total'] += 1
-          organization_app_counters[application[:state]] += 1
-          organization_app_counters[application[:package_state]] += 1
+        next if space.nil?
+        organization_id = space[:organization_id]
+        organization_app_counters = organization_app_counters_hash[organization_id]
+        if organization_app_counters.nil?
+          organization_app_counters = { 'total'           => 0,
+                                        'reserved_memory' => 0,
+                                        'reserved_disk'   => 0,
+                                        'used_memory'     => 0,
+                                        'used_disk'       => 0,
+                                        'used_cpu'        => 0,
+                                        'instances'       => 0
+                                      }
+          organization_app_counters_hash[organization_id] = organization_app_counters
         end
+
+        organization_app_counters[application[:state]] = 0 if organization_app_counters[application[:state]].nil?
+        organization_app_counters[application[:package_state]] = 0 if organization_app_counters[application[:package_state]].nil?
+
+        add_instance_metrics(organization_app_counters, application, instance_hash)
+
+        organization_app_counters['total'] += 1
+        organization_app_counters[application[:state]] += 1
+        organization_app_counters[application[:package_state]] += 1
       end
 
       items = []

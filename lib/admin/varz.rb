@@ -101,15 +101,13 @@ module AdminUI
 
       cache['items'].each do |_, item|
         data = item['data']
-        unless data.nil?
-          type_pattern_index = data['type'] =~ typePattern
-          unless type_pattern_index.nil?
-            result_item = item.clone
-            item_name = type_pattern_index == 0 ? data['host'] : data['type'].sub(typePattern, '')
-            result_item['name'] = item_name unless item_name.nil?
-            result_item_array.push(result_item)
-          end
-        end
+        next if data.nil?
+        type_pattern_index = data['type'] =~ typePattern
+        next if type_pattern_index.nil?
+        result_item = item.clone
+        item_name = type_pattern_index == 0 ? data['host'] : data['type'].sub(typePattern, '')
+        result_item['name'] = item_name unless item_name.nil?
+        result_item_array.push(result_item)
       end
 
       result

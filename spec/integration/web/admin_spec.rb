@@ -837,7 +837,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :labels          => [' ', 'Host', 'Domain', 'Created', 'Updated', 'Target', 'Application'],
                                 :colspans        => nil
                               }
-                              ])
+                             ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='RoutesTable']/tbody/tr/td"),
                            [
                              '',
