@@ -35,6 +35,7 @@ module CCHelper
   def cc_clear_organizations_cache_stub(config)
     sql(config.ccdb_uri, 'DELETE FROM service_bindings')
     sql(config.ccdb_uri, 'DELETE FROM service_instances')
+    sql(config.ccdb_uri, 'DELETE FROM service_plan_visibilities')
     sql(config.ccdb_uri, 'DELETE FROM apps_routes')
     sql(config.ccdb_uri, 'DELETE FROM apps')
     sql(config.ccdb_uri, 'DELETE FROM routes')
@@ -51,6 +52,7 @@ module CCHelper
   def cc_clear_service_plans_cache_stub(config)
     sql(config.ccdb_uri, 'DELETE FROM service_bindings')
     sql(config.ccdb_uri, 'DELETE FROM service_instances')
+    sql(config.ccdb_uri, 'DELETE FROM service_plan_visibilities')
     sql(config.ccdb_uri, 'DELETE FROM service_plans')
   end
 
@@ -259,11 +261,22 @@ module CCHelper
     }
   end
 
+  def cc_service_plan_visibility
+    {
+      :created_at       => Time.new('2014-02-12T09:34:10-06:00'),
+      :guid             => 'service_plan_visibility1',
+      :id               => 11,
+      :organization_id  => cc_organization[:id],
+      :service_plan_id  => cc_service_plan[:id],
+      :updated_at       => Time.new('2014-03-12T09:34:10-06:00')
+    }
+  end
+
   def cc_space
     {
       :created_at      => Time.new('2013-10-16T08:55:54-05:00'),
       :guid            => 'space1',
-      :id              => 11,
+      :id              => 12,
       :name            => 'test_space',
       :organization_id => cc_organization[:id],
       :updated_at      => Time.new('2013-10-17T08:55:54-05:00')
@@ -282,7 +295,7 @@ module CCHelper
       :created_at  => Time.new('2013-10-16T08:55:54-05:00'),
       :description => 'TestStack description',
       :guid        => 'stack1',
-      :id          => 12,
+      :id          => 13,
       :name        => 'lucid64'
     }
   end
@@ -294,7 +307,7 @@ module CCHelper
       :created_at       => Time.new('2013-10-16T08:55:54-05:00'),
       :default_space_id => nil,
       :guid             => 'user1',
-      :id               => 13,
+      :id               => 14,
       :updated_at       => nil
     }
   end
@@ -360,21 +373,22 @@ module CCHelper
   end
 
   def ccdb_inserts(insert_second_quota_definition)
-    result = [[:quota_definitions, cc_quota_definition],
-              [:service_brokers,   cc_service_broker_with_password],
-              [:stacks,            cc_stack],
-              [:organizations,     cc_organization],
-              [:services,          cc_service],
-              [:domains,           cc_domain],
-              [:service_plans,     cc_service_plan],
-              [:spaces,            cc_space],
-              [:apps,              cc_app],
-              [:routes,            cc_route],
-              [:service_instances, cc_service_instance],
-              [:users,             cc_user],
-              [:apps_routes,       cc_app_route],
-              [:service_bindings,  cc_service_binding_with_credentials],
-              [:spaces_developers, cc_space_developer]
+    result = [[:quota_definitions,         cc_quota_definition],
+              [:service_brokers,           cc_service_broker_with_password],
+              [:stacks,                    cc_stack],
+              [:organizations,             cc_organization],
+              [:services,                  cc_service],
+              [:domains,                   cc_domain],
+              [:service_plans,             cc_service_plan],
+              [:service_plan_visibilities, cc_service_plan_visibility],
+              [:spaces,                    cc_space],
+              [:apps,                      cc_app],
+              [:routes,                    cc_route],
+              [:service_instances,         cc_service_instance],
+              [:users,                     cc_user],
+              [:apps_routes,               cc_app_route],
+              [:service_bindings,          cc_service_binding_with_credentials],
+              [:spaces_developers,         cc_space_developer]
              ]
 
     result << [:quota_definitions, cc_quota_definition2] if insert_second_quota_definition

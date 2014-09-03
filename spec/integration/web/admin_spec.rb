@@ -1125,12 +1125,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
                                 :labels          => ['Service Plan', 'Service', 'Service Broker'],
-                                :colspans        => %w(7 7 3)
+                                :colspans        => %w(8 7 3)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 17,
-                                :labels          => [' ', 'Name', 'Target', 'Created', 'Updated', 'Public', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'Created', 'Updated'],
+                                :expected_length => 18,
+                                :labels          => [' ', 'Name', 'Target', 'Created', 'Updated', 'Public', 'Visible Organizations', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'Created', 'Updated'],
                                 :colspans        => nil
                               }
                              ])
@@ -1142,6 +1142,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")"),
                              cc_service_plan[:public].to_s,
+                             '1',
                              '1',
                              cc_service[:provider],
                              cc_service[:label],
@@ -1189,6 +1190,18 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Icon',                   :tag => 'img', :value => @driver.execute_script("return Format.formatIconImage(\"#{ value_extra_json['imageUrl'] }\", \"service icon\", \"flot:left;\")").gsub(/'/, "\"").gsub(/[ ]+/, ' ').gsub(/ >/, '>') },
                            { :label => 'Service Long Description',       :tag =>   nil, :value => value_extra_json['longDescription'] }
                           ])
+          end
+          it 'has visible organizations' do
+            expect(@driver.find_element(:id => 'ServicePlansOrganizationsDetailsLabel').displayed?).to be_true
+            check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansOrganizationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+                                :expected_length => 2,
+                                :labels          => %w(Organization Created),
+                                :colspans        => nil)
+            check_table_data(@driver.find_elements(:xpath => "//table[@id='ServicePlansOrganizationsTable']/tbody/tr/td"),
+                             [
+                               cc_organization[:name],
+                               @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan_visibility[:created_at].to_datetime.rfc3339 }\")")
+                             ])
           end
 
           it 'has a checkbox in the first column' do

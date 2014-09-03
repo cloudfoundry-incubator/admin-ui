@@ -96,6 +96,12 @@ module AdminUI
           :table   => :service_plans,
           :columns => [:active, :created_at, :description, :extra, :free, :guid, :id, :name, :public, :service_id, :unique_id, :updated_at]
         },
+        :service_plan_visibilities =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :service_plan_visibilities,
+          :columns => [:created_at, :guid, :id, :organization_id, :service_plan_id, :updated_at]
+        },
         :services =>
         {
           :db_uri  => ccdb_uri,
@@ -230,6 +236,10 @@ module AdminUI
 
     def service_plans
       result_cache(:service_plans)
+    end
+
+    def service_plan_visibilities
+      result_cache(:service_plan_visibilities)
     end
 
     def services

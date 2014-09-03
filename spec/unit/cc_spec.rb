@@ -98,6 +98,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.service_plans)
     end
 
+    it 'returns zero service_plan_visibilities as expected' do
+      verify_disconnected_items(cc.service_plan_visibilities)
+    end
+
     it 'returns zero services as expected' do
       verify_disconnected_items(cc.services)
     end
