@@ -23,7 +23,12 @@ module AdminUI
                                  email_table_rows(disconnected))
 
       begin
-        Net::SMTP.start(@config.sender_email_server) do |smtp|
+        Net::SMTP.start(@config.sender_email_server,
+                        @config.sender_email_port,
+                        @config.sender_email_domain,
+                        @config.sender_email_account,
+                        @config.sender_email_secret,
+                        @config.sender_email_authtype) do |smtp|
           smtp.send_message(email,
                             @config.sender_email_account,
                             @config.receiver_emails)

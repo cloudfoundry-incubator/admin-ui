@@ -10,10 +10,15 @@ module SMTPHelper
     @smtp_send_message       = false
     @disconnected_components = disconnected_components
 
-    ::Net::SMTP.stub(:start) do |server, &blk|
+    ::Net::SMTP.stub(:start) do |server, port, domain, account, secret, authtype, &blk|
       expect(server).to eq(config.sender_email_server)
+      expect(port).to eq(config.sender_email_port)
+      expect(domain).to eq(config.sender_email_domain)
+      expect(account).to eq(config.sender_email_account)
+      expect(secret).to eq(config.sender_email_secret)
+      expect(authtype).to eq(config.sender_email_authtype)
 
-      blk.call(::Net::SMTP.new(server))
+      blk.call(::Net::SMTP.new(server, port))
 
       @smtp_start = true
     end
