@@ -83,7 +83,7 @@ module AdminUI
             row.push(nil)
           end
 
-          row.push(nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
           row.push(dea['uri'])
         end
