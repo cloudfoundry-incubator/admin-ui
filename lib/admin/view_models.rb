@@ -5,6 +5,7 @@ require_relative 'view_models/cloud_controllers_view_model'
 require_relative 'view_models/components_view_model'
 require_relative 'view_models/deas_view_model'
 require_relative 'view_models/developers_view_model'
+require_relative 'view_models/domains_view_model'
 require_relative 'view_models/gateways_view_model'
 require_relative 'view_models/health_managers_view_model'
 require_relative 'view_models/logs_view_model'
@@ -39,7 +40,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :cloud_controllers, :components, :deas, :developers, :gateways, :health_managers, :logs, :organizations, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces, :stats, :tasks].each do |key|
+      [:applications, :cloud_controllers, :components, :deas, :developers, :domains, :gateways, :health_managers, :logs, :organizations, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces, :stats, :tasks].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
         schedule(key)
@@ -88,6 +89,10 @@ module AdminUI
 
     def developers
       result_cache(:developers)
+    end
+
+    def domains
+      result_cache(:domains)
     end
 
     def gateways
@@ -232,6 +237,14 @@ module AdminUI
       AdminUI::DevelopersViewModel.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_developers: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_domains
+      AdminUI::DomainsViewModel.new(@logger, @cc).items
+    rescue => error
+      @logger.debug("Error during discover_domains: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end

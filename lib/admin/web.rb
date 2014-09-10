@@ -70,6 +70,11 @@ module AdminUI
       AllActions.new(@logger, @view_models.developers, params).items.to_json
     end
 
+    get '/domains_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'get', '/domains_view_model'
+      AllActions.new(@logger, @view_models.domains, params).items.to_json
+    end
+
     get '/download', :auth => [:user] do
       @logger.info_user session[:username], 'get', "/download?path=#{ params['path'] }"
       file = @log_files.file(params['path'])

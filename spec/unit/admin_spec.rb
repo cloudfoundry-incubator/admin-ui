@@ -427,6 +427,10 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/developers_view_model')
       end
 
+      it '/domains_view_model succeeds' do
+        verify_disconnected_view_model_items('/domains_view_model')
+      end
+
       it '/gateways_view_model succeeds' do
         verify_disconnected_view_model_items('/gateways_view_model')
       end
@@ -553,6 +557,10 @@ describe AdminUI::Admin do
 
       it '/developers_view_model redirects as expected' do
         get_redirects_as_expected('/developers_view_model')
+      end
+
+      it '/domains_view_model redirects as expected' do
+        get_redirects_as_expected('/domains_view_model')
       end
 
       it '/download redirects as expected' do

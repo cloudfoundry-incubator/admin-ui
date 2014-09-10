@@ -41,6 +41,7 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM routes')
     sql(config.ccdb_uri, 'DELETE FROM spaces_developers')
     sql(config.ccdb_uri, 'DELETE FROM spaces')
+    sql(config.ccdb_uri, 'DELETE FROM domains')
     sql(config.ccdb_uri, 'DELETE FROM organizations')
   end
 
@@ -95,8 +96,8 @@ module CCHelper
       :guid                   => 'domain1',
       :id                     => 2,
       :name                   => 'test_domain',
-      :owning_organization_id => nil,
-      :updated_at             => nil
+      :owning_organization_id => cc_organization[:id],
+      :updated_at             => Time.new('2014-02-12T09:40:52-06:00')
     }
   end
 

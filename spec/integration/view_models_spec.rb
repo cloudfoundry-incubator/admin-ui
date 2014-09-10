@@ -118,6 +118,13 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common view model retrieval')
     end
 
+    context 'returns connected domains_view_model' do
+      let(:results)  { view_models.domains }
+      let(:expected) { view_models_domains }
+
+      it_behaves_like('common view model retrieval')
+    end
+
     context 'returns connected gateways_view_model' do
       let(:results)  { view_models.gateways }
       let(:expected) { view_models_gateways }

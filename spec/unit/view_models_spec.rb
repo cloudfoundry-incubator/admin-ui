@@ -66,6 +66,10 @@ describe AdminUI::CC do
       verify_disconnected_items(view_models.developers)
     end
 
+    it 'returns zero domains as expected' do
+      verify_disconnected_items(view_models.domains)
+    end
+
     it 'returns zero gateways as expected' do
       verify_disconnected_items(view_models.gateways)
     end
