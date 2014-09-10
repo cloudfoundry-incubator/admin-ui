@@ -20,6 +20,7 @@
 
         <script src="js/external/jquery/plugins/fnSetFilteringDelay.js"></script>
         <script src="js/external/fixes/ZeroClipboard.js"></script>
+
         <script src="js/external/i18next/i18next.js"></script>
 
         <script src="js/app/constants.js"></script>
@@ -63,7 +64,7 @@
 
         <div class="titleBar">
 
-            <span class="titleText">
+            <span data-i18n="title-bar.title-text" class="titleText">
                 Cloud Foundry
             </span>
   
@@ -73,7 +74,7 @@
 
             <span class="disconnected">
               <img class="disconnectedImage" src="images/red.png" height="16"/>
-              <span data-i18n="disconnected">Unable to connect to backend services</span>
+              <span data-i18n="errors.disconnected">Unable to connect to backend services</span>
             </span>
 
             <span class="userContainer">
@@ -82,7 +83,7 @@
                 <img src="images/dropdown.png"/>
             </span>
 
-            <div class="userMenu">
+            <div data-i18n="title-bar.sign-out" class="userMenu">
                 Sign Out
             </div>
 
@@ -90,71 +91,71 @@
 
         <div class="menuBar">
 
-            <span id="Organizations" class="menuItem">
+            <span id="Organizations" class="menuItem" data-i18n="menu-bar.organizations">
                 Organizations
             </span>
 
-            <span id="Spaces" class="menuItem">
+            <span id="Spaces" class="menuItem" data-i18n="menu-bar.spaces">
                 Spaces
             </span>
 
-            <span id="Applications" class="menuItem">
+            <span id="Applications" class="menuItem" data-i18n="menu-bar.apps">
                 Apps
             </span>
 
-            <span id="Routes" class="menuItem">
+            <span id="Routes" class="menuItem" data-i18n="menu-bar.routes">
                 Routes
             </span>
 
-            <span id="ServiceInstances" class="menuItem">
+            <span id="ServiceInstances" class="menuItem" data-i18n="menu-bar.service-instances">
                 Service Instances
             </span>
 
-            <span id="Developers" class="menuItem">
+            <span id="Developers" class="menuItem" data-i18n="menu-bar.developers">
                 Developers
             </span>
 
-            <span id="Quotas" class="menuItem">
+            <span id="Quotas" class="menuItem" data-i18n="menu-bar.quotas">
                 Quotas
             </span>
 
-            <span id="ServicePlans" class="menuItem">
+            <span id="ServicePlans" class="menuItem" data-i18n="menu-bar.service-plans">
                 Service Plans
             </span>
 
-            <span id="DEAs" class="menuItem">
+            <span id="DEAs" class="menuItem" data-i18n="menu-bar.deas">
                 DEAs
             </span>
 
-            <span id="CloudControllers" class="menuItem">
+            <span id="CloudControllers" class="menuItem" data-i18n="menu-bar.cloud-controllers">
                 Cloud Controllers
             </span>
 
-            <span id="HealthManagers" class="menuItem">
+            <span id="HealthManagers" class="menuItem" data-i18n="menu-bar.health-managers">
                 Health Managers
             </span>
 
-            <span id="Gateways" class="menuItem">
+            <span id="Gateways" class="menuItem" data-i18n="menu-bar.service-gateways">
                 Service Gateways
             </span>
 
-            <span id="Routers" class="menuItem">
+            <span id="Routers" class="menuItem" data-i18n="menu-bar.routers">
                 Routers
             </span>
 
-            <span id="Components" class="menuItem">
+            <span id="Components" class="menuItem" data-i18n="menu-bar.components">
                 Components
             </span>
 
-            <span id="Logs" class="menuItem">
+            <span id="Logs" class="menuItem" data-i18n="menu-bar.logs">
                 Logs
             </span>
 
-            <span id="Tasks" class="menuItem hiddenPage">
+            <span id="Tasks" class="menuItem hiddenPage" data-i18n="menu-bar.tasks">
                 Tasks
             </span>
 
-            <span id="Stats" class="menuItem">
+            <span id="Stats" class="menuItem" data-i18n="menu-bar.stats">
                 Stats
             </span>
 
@@ -183,7 +184,7 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="CloudControllersDetailsLabel" class="propertyLabel">
+                    <div id="CloudControllersDetailsLabel" class="propertyLabel" data-i18n="content.details">
                         Details
                     </div>
 
@@ -205,7 +206,7 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="HealthManagersDetailsLabel" class="propertyLabel">
+                    <div id="HealthManagersDetailsLabel" class="propertyLabel" data-i18n="content.details">
                         Details
                     </div>
 
@@ -229,7 +230,7 @@
 
                     <div class="pageSection">
 
-                        <div id="GatewaysDetailsLabel" class="propertyLabel">
+                        <div id="GatewaysDetailsLabel" class="propertyLabel" data-i18n="content.details">
                             Details
                         </div>
 
@@ -240,7 +241,7 @@
 
                     <div id="GatewaysNodesTableContainer" class="pageSection">
 
-                        <div id="GatewaysNodesDetailsLabel" class="propertyLabel">
+                        <div id="GatewaysNodesDetailsLabel" class="propertyLabel" data-i18n="content.nodes">
                             Nodes
                         </div>
 
@@ -264,7 +265,7 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="RoutersDetailsLabel" class="propertyLabel">
+                    <div id="RoutersDetailsLabel" class="propertyLabel" data-i18n="content.details">
                         Details
                     </div>
 
@@ -282,30 +283,30 @@
                     <table id="ServicePlansTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="7">Service Plan</th>
-                                <th colspan="7">Service</th>
-                                <th colspan="3">Service Broker</th>
+                                <th colspan="7" data-i18n="content.service-plan">Service Plan</th>
+                                <th colspan="7" data-i18n="content.service">Service</th>
+                                <th colspan="3" data-i18n="content.service-broker">Service Broker</th>
                             </tr>
                             <tr>
-                                <th>Check</th>
-                                <th>Name</th>
-                                <th>Target</th>
-                                <th>Created</th>
-                                <th>Updated</th>
-                                <th>Public</th>
-                                <th>Service Instances</th>
+                                <th data-i18n="content.check">Check</th>
+                                <th data-i18n="content.name">Name</th>
+                                <th data-i18n="content.target">Target</th>
+                                <th data-i18n="content.created">Created</th>
+                                <th data-i18n="content.updated">Updated</th>
+                                <th data-i18n="content.public">Public</th>
+                                <th data-i18n="content.service-instances">Service Instances</th>
 
-                                <th>Provider</th>
-                                <th>Label</th> 
-                                <th>Version</th>
-                                <th>Created</th>
-                                <th>Updated</th>
-                                <th>Active</th>
-                                <th>Bindable</th>
+                                <th data-i18n="content.provider">Provider</th>
+                                <th data-i18n="content.label">Label</th> 
+                                <th data-i18n="content.version">Version</th>
+                                <th data-i18n="content.created">Created</th>
+                                <th data-i18n="content.updated">Updated</th>
+                                <th data-i18n="content.active">Active</th>
+                                <th data-i18n="content.bindable">Bindable</th>
 
-                                <th>Name</th>
-                                <th>Created</th>
-                                <th>Updated</th>
+                                <th data-i18n="content.name">Name</th>
+                                <th data-i18n="content.created">Created</th>
+                                <th data-i18n="content.updated">Updated</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -316,7 +317,7 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="ServicePlansDetailsLabel" class="propertyLabel">
+                    <div id="ServicePlansDetailsLabel" class="propertyLabel" data-i18n="content.details">
                         Details
                     </div>
 
@@ -334,20 +335,20 @@
                     <table id="RoutesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <tbody>
                         <tr>
-                            <th>Check</th>
-                            <th>Host</th>
-                            <th>Domain</th>
-                            <th>Created</th>
-                            <th>Updated</th>
-                            <th>Target</th>
-                            <th>Applications</th>
+                            <th data-i18n="content.check">Check</th>
+                            <th data-i18n="content.host">Host</th>
+                            <th data-i18n="content.domain">Domain</th>
+                            <th data-i18n="content.created">Created</th>
+                            <th data-i18n="content.updated">Updated</th>
+                            <th data-i18n="content.target">Target</th>
+                            <th data-i18n="content.applications">Applications</th>
                         </tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="verticalPageSection">
-                    <div id="RoutesDetailsLabel" class="propertyLabel">
+                    <div id="RoutesDetailsLabel" class="propertyLabel" data-i18n="content.details">
                         Details
                     </div>
                     <div id="RoutesPropertiesContainer">
@@ -366,16 +367,16 @@
                                 <th colspan="2">% Free</th>
                             </tr>
                             <tr>
-                                <th>Name</th>
-                                <th>Index</th>
-                                <th>Status</th>
-                                <th>Started</th>
-                                <th>Stack</th>
-                                <th>CPU</th>
-                                <th>Memory</th>
-                                <th>Apps</th>
-                                <th>Memory</th>
-                                <th>Disk</th>
+                                <th data-i18n="content.name">Name</th>
+                                <th data-i18n="content.index">Index</th>
+                                <th data-i18n="content.status">Status</th>
+                                <th data-i18n="content.started">Started</th>
+                                <th data-i18n="content.stack">Stack</th>
+                                <th data-i18n="content.cpu">CPU</th>
+                                <th data-i18n="content.memory">Memory</th>
+                                <th data-i18n="content.apps">Apps</th>
+                                <th data-i18n="content.memory">Memory</th>
+                                <th data-i18n="content.disk">Disk</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -387,7 +388,7 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="DEAsDetailsLabel" class="propertyLabel">
+                    <div id="DEAsDetailsLabel" class="propertyLabel" data-i18n="content.details">
                         Details
                     </div>
 
@@ -411,25 +412,25 @@
                                 <th colspan="2"> </th>
                             </tr>
                             <tr>
-                                <th>Check</th>
-                                <th>Name</th>
-                                <th>State</th>
-                                <th>Package State</th>
-                                <th>Instance State</th>
-                                <th>Created</th>
-                                <th>Updated</th>
-                                <th>Started</th>
-                                <th>URI</th>
-                                <th>Buildpack</th>
-                                <th>Instances</th>
-                                <th>Services</th>
-                                <th>Memory</th>
-                                <th>Disk</th>
-                                <th>% CPU</th>
-                                <th>Memory</th>
-                                <th>Disk</th>
-                                <th>Target</th>
-                                <th>DEA</th>
+                                <th data-i18n="content.check">Check</th>
+                                <th data-i18n="content.name">Name</th>
+                                <th data-i18n="content.state">State</th>
+                                <th data-i18n="content.package-state">Package State</th>
+                                <th data-i18n="content.instance-state">Instance State</th>
+                                <th data-i18n="content.created">Created</th>
+                                <th data-i18n="content.updated">Updated</th>
+                                <th data-i18n="content.started">Started</th>
+                                <th data-i18n="content.uri">URI</th>
+                                <th data-i18n="content.buildpack">Buildpack</th>
+                                <th data-i18n="content.instances">Instances</th>
+                                <th data-i18n="content.services">Services</th>
+                                <th data-i18n="content.memory">Memory</th>
+                                <th data-i18n="content.disk">Disk</th>
+                                <th data-i18n="content.cpu-percentage">% CPU</th>
+                                <th data-i18n="content.memory">Memory</th>
+                                <th data-i18n="content.disk">Disk</th>
+                                <th data-i18n="content.target">Target</th>
+                                <th data-i18n="content.dea">DEA</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -442,7 +443,7 @@
 
                     <div class="pageSection">
 
-                        <div id="ApplicationsDetailsLabel" class="propertyLabel">
+                        <div id="ApplicationsDetailsLabel" class="propertyLabel" data-i18n="content.details">
                             Details
                         </div>
 
@@ -453,7 +454,7 @@
 
                     <div id="ApplicationsServicesTableContainer" class="pageSection">
 
-                        <div id="ApplicationsServicesDetailsLabel" class="propertyLabel">
+                        <div id="ApplicationsServicesDetailsLabel" class="propertyLabel" data-i18n="content.services">
                             Services
                         </div>
 
@@ -477,7 +478,7 @@
 
                 <div class="verticalPageSection">
 
-                    <div id="DevelopersDetailsLabel" class="propertyLabel">
+                    <div id="DevelopersDetailsLabel" class="propertyLabel" data-i18n="content.details">
                         Details
                     </div>
 
