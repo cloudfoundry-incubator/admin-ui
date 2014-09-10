@@ -15,6 +15,7 @@ module AdminUI
       applications      = @cc.applications
       apps_routes       = @cc.apps_routes
       deas              = @varz.deas
+      domains           = @cc.domains
       quotas            = @cc.quota_definitions
       routes            = @cc.routes
       service_instances = @cc.service_instances
@@ -23,6 +24,7 @@ module AdminUI
 
       applications_connected      = applications['connected']
       apps_routes_connected       = apps_routes['connected']
+      domains_connected           = domains['connected']
       routes_connected            = routes['connected']
       service_instances_connected = service_instances['connected']
       spaces_connected            = spaces['connected']
@@ -34,6 +36,7 @@ module AdminUI
 
       organization_space_counters            = {}
       organization_developer_counters        = {}
+      organization_domain_counters           = {}
       organization_service_instance_counters = {}
       organization_route_counters_hash       = {}
       organization_app_counters_hash         = {}
@@ -61,6 +64,14 @@ module AdminUI
         organization_id = space[:organization_id]
         organization_service_instance_counters[organization_id] = 0 if organization_service_instance_counters[organization_id].nil?
         organization_service_instance_counters[organization_id] += 1
+      end
+
+      domains['items'].each do |domain|
+        Thread.pass
+        owning_organization_id = domain[:owning_organization_id]
+        next if owning_organization_id.nil?
+        organization_domain_counters[owning_organization_id] = 0 if organization_domain_counters[owning_organization_id].nil?
+        organization_domain_counters[owning_organization_id] += 1
       end
 
       routes['items'].each do |route|
@@ -122,6 +133,7 @@ module AdminUI
         organization_space_counter            = organization_space_counters[organization_id]
         organization_service_instance_counter = organization_service_instance_counters[organization_id]
         organization_app_counters             = organization_app_counters_hash[organization_id]
+        organization_domain_counter           = organization_domain_counters[organization_id]
         organization_route_counters           = organization_route_counters_hash[organization_id]
 
         row = []
@@ -158,6 +170,14 @@ module AdminUI
 
         if quota
           row.push(quota[:name])
+        else
+          row.push(nil)
+        end
+
+        if organization_domain_counter
+          row.push(organization_domain_counter)
+        elsif domains_connected
+          row.push(0)
         else
           row.push(nil)
         end
@@ -211,7 +231,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (1..23).to_a, (1..4).to_a << 7)
+      result(items, (1..24).to_a, (1..4).to_a << 7)
     end
   end
 end

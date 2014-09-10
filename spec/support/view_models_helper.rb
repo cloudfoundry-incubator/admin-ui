@@ -174,6 +174,22 @@ module ViewModelsHelper
     ]
   end
 
+  def view_models_domains
+    [
+      [
+        cc_domain[:name],
+        cc_domain[:created_at].to_datetime.rfc3339,
+        cc_domain[:updated_at].to_datetime.rfc3339,
+        cc_organization[:name],
+        1,
+        {
+          'domain'       => cc_domain,
+          'organization' => cc_organization
+        }
+      ]
+    ]
+  end
+
   def view_models_gateways
     [
       [
@@ -242,6 +258,7 @@ module ViewModelsHelper
         1,
         1,
         cc_quota_definition[:name],
+        1,
         1,
         1,
         0,

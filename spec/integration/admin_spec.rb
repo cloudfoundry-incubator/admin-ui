@@ -380,6 +380,12 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
+    context 'domains_view_model' do
+      let(:path)              { '/domains_view_model' }
+      let(:view_model_source) { view_models_domains }
+      it_behaves_like('retrieves view_model')
+    end
+
     context 'download' do
       let(:response) { get_response("/download?path=#{ log_file_displayed }") }
       it 'retrieves' do

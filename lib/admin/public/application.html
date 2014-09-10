@@ -33,6 +33,7 @@
         <script src="js/app/tabs/componentsTab.js"></script>
         <script src="js/app/tabs/deasTab.js"></script>
         <script src="js/app/tabs/developersTab.js"></script>       
+        <script src="js/app/tabs/domainsTab.js"></script>
         <script src="js/app/tabs/gatewaysTab.js"></script>    
         <script src="js/app/tabs/healthManagersTab.js"></script> 
         <script src="js/app/tabs/logsTab.js"></script>
@@ -111,6 +112,10 @@
 
             <span id="Developers" class="menuItem">
                 Developers
+            </span>
+
+            <span id="Domains" class="menuItem">
+                Domains
             </span>
 
             <span id="Quotas" class="menuItem">
@@ -369,6 +374,28 @@
                     </div>
                 </div>
             </div>
+            
+            <div id="DomainsPage" class="page hiddenPage">
+
+                <div id="DomainsTableContainer" class="pageSection">
+
+                    <table id="DomainsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                    </table>
+
+                </div>
+
+                <div class="verticalPageSection">
+
+                    <div id="DomainsDetailsLabel" class="propertyLabel">
+                        Details
+                    </div>
+
+                    <div id="DomainsPropertiesContainer">
+                    </div>
+
+                </div>
+
+            </div>
 
             <div id="DEAsPage" class="page hiddenPage">
 
@@ -515,7 +542,7 @@
                     <table id="OrganizationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="8"> </th>
+                                <th colspan="9"> </th>
                                 <th colspan="3">Routes</th>
                                 <th colspan="5">Used</th>
                                 <th colspan="2">Reserved</th>
@@ -531,6 +558,7 @@
                                 <th>Spaces</th>
                                 <th>Developers</th>
                                 <th>Quota</th>
+                                <th>Domains</th>
                                 <th>Total</th>
                                 <th>Used</th>
                                 <th>Unused</th>

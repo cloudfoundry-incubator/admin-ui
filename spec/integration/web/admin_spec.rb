@@ -49,6 +49,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       expect(@driver.find_element(:id => 'Applications').displayed?).to be_true
       expect(@driver.find_element(:id => 'ServiceInstances').displayed?).to be_true
       expect(@driver.find_element(:id => 'Developers').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Domains').displayed?).to be_true
       expect(@driver.find_element(:id => 'Quotas').displayed?).to be_true
       expect(@driver.find_element(:id => 'ServicePlans').displayed?).to be_true
       expect(@driver.find_element(:id => 'DEAs').displayed?).to be_true
@@ -210,11 +211,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 6,
                                 :labels          => ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                :colspans        => %w(8 3 5 2 3 3)
+                                :colspans        => %w(9 3 5 2 3 3)
                               },
                               { :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 24,
-                                :labels          => [' ', 'Name', 'Status', 'Created', 'Updated', 'Spaces', 'Developers', 'Quota', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :expected_length => 25,
+                                :labels          => [' ', 'Name', 'Status', 'Created', 'Updated', 'Spaces', 'Developers', 'Quota', 'Domains', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 :colspans        => nil
                               }
                              ])
@@ -228,6 +229,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              '1',
                              '1',
                              cc_quota_definition[:name],
+                             '1',
                              '1',
                              '1',
                              '0',
@@ -254,7 +256,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         it 'has a checkbox in the first column' do
           inputs = @driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")
           expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq("#{ cc_organization[:guid] }")
+          expect(inputs[0].attribute('value')).to eq(cc_organization[:guid])
         end
 
         context 'set quota' do
@@ -448,6 +450,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Spaces',          :tag =>   'a', :value => '1' },
                            { :label => 'Developers',      :tag =>   'a', :value => '1' },
                            { :label => 'Quota',           :tag =>   nil, :value => cc_quota_definition[:name] },
+                           { :label => 'Domains',         :tag =>   'a', :value => '1' },
                            { :label => 'Total Routes',    :tag =>   'a', :value => '1' },
                            { :label => 'Used Routes',     :tag =>   nil, :value => '1' },
                            { :label => 'Unused Routes',   :tag =>   nil, :value => '0' },
@@ -473,19 +476,22 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Organizations', 6, 'Developers', "#{ cc_organization[:name] }/")
           end
           it 'has quota link' do
-            check_filter_link('Organizations', 7, 'Quotas', "#{ cc_quota_definition[:name] }")
+            check_filter_link('Organizations', 7, 'Quotas', cc_quota_definition[:name])
+          end
+          it 'has domain link' do
+            check_filter_link('Organizations', 8, 'Domains', cc_organization[:name])
           end
           it 'has routes link' do
-            check_filter_link('Organizations', 8, 'Routes', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 9, 'Routes', "#{ cc_organization[:name] }/")
           end
           it 'has instances link' do
-            check_filter_link('Organizations', 11, 'Applications', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 12, 'Applications', "#{ cc_organization[:name] }/")
           end
           it 'has services link' do
-            check_filter_link('Organizations', 12, 'ServiceInstances', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 13, 'ServiceInstances', "#{ cc_organization[:name] }/")
           end
           it 'has applications link' do
-            check_filter_link('Organizations', 18, 'Applications', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 19, 'Applications', "#{ cc_organization[:name] }/")
           end
         end
       end
@@ -630,7 +636,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         it 'has a checkbox in the first column' do
           inputs = @driver.find_elements(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[1]/input")
           expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq("#{ cc_app[:guid] }")
+          expect(inputs[0].attribute('value')).to eq(cc_app[:guid])
         end
 
         context 'manage application' do
@@ -857,7 +863,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         it 'has a checkbox in the first column' do
           inputs = @driver.find_elements(:xpath => "//table[@id='RoutesTable']/tbody/tr/td[1]/input")
           expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq("#{ cc_route[:guid]}")
+          expect(inputs[0].attribute('value')).to eq(cc_route[:guid])
         end
 
         context 'manage routes' do
@@ -904,7 +910,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
           it 'has details' do
             check_details([{ :label => 'Host',          :tag => nil, :value => cc_route[:host] },
-                           { :label => 'Domain',        :tag => nil, :value => cc_domain[:name] },
+                           { :label => 'Domain',        :tag => 'a', :value => cc_domain[:name] },
                            { :label => 'Created',       :tag => nil, :value => Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:created_at].to_datetime.rfc3339 }\")") } },
                            { :label => 'Updated',       :tag => nil, :value => Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:updated_at].to_datetime.rfc3339 }\")") } },
                            { :label => 'Applications',  :tag => 'a', :value => '1' },
@@ -913,6 +919,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                           ])
           end
 
+          it 'has domains link' do
+            check_filter_link('Routes', 1, 'Domains', cc_domain[:name])
+          end
           it 'has applications link' do
             check_filter_link('Routes', 4, 'Applications', "#{ cc_route[:host] }.#{ cc_domain[:name] }")
           end
@@ -920,7 +929,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Routes', 5, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name]}")
           end
           it 'has organization link' do
-            check_filter_link('Routes', 6, 'Organizations', "#{ cc_organization[:name] }")
+            check_filter_link('Routes', 6, 'Organizations', cc_organization[:name])
           end
         end
       end
@@ -1037,7 +1046,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='DevelopersTable']/tbody/tr/td"),
                            [
-                             "#{ uaa_user[:email] }",
+                             uaa_user[:email],
                              cc_space[:name],
                              cc_organization[:name],
                              "#{ cc_organization[:name] }/#{ cc_space[:name] }",
@@ -1068,6 +1077,50 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has organization link' do
             check_filter_link('Developers', 5, 'Organizations', cc_organization[:name])
+          end
+        end
+      end
+
+      context 'Domains' do
+        let(:tab_id) { 'Domains' }
+        it 'has a table' do
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DomainsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 5,
+                                :labels          => ['Name', 'Created', 'Updated', 'Owning Organization', 'Routes'],
+                                :colspans        => nil
+                              }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='DomainsTable']/tbody/tr/td"),
+                           [
+                             cc_domain[:name],
+                             @driver.execute_script("return Format.formatString(\"#{ cc_domain[:created_at].to_datetime.rfc3339 }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_domain[:updated_at].to_datetime.rfc3339 }\")"),
+                             cc_organization[:name],
+                             '1'
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_DomainsTable_0', 'ZeroClipboard_TableToolsMovie_33')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+          it 'has details' do
+            check_details([{ :label => 'Name',         :tag => 'div', :value => cc_domain[:name] },
+                           { :label => 'Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:created_at].to_datetime.rfc3339 }\")") },
+                           { :label => 'Updated',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:updated_at].to_datetime.rfc3339 }\")") },
+                           { :label => 'Organization', :tag =>   'a', :value => cc_organization[:name] },
+                           { :label => 'Routes',       :tag =>   'a', :value => '1' }
+                          ])
+          end
+          it 'has organizations link' do
+            check_filter_link('Domains', 3, 'Organizations', cc_organization[:name])
+          end
+          it 'has routes link' do
+            check_filter_link('Domains', 4, 'Routes', cc_domain[:name])
           end
         end
       end
@@ -1114,7 +1167,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                           ])
           end
           it 'has organizations link' do
-            check_filter_link('Quotas', 7, 'Organizations', "#{ cc_quota_definition[:name] }")
+            check_filter_link('Quotas', 7, 'Organizations', cc_quota_definition[:name])
           end
         end
       end
@@ -1207,7 +1260,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has a checkbox in the first column' do
             inputs = @driver.find_elements(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[1]/input")
             expect(inputs.length).to eq(1)
-            expect(inputs[0].attribute('value')).to eq("#{ cc_service_plan[:guid] }")
+            expect(inputs[0].attribute('value')).to eq(cc_service_plan[:guid])
           end
 
           it 'has service instances link to service instances filtered by service plan target' do
@@ -1491,7 +1544,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Cores',                :tag => nil, :value => varz_provisioner['num_cores'].to_s },
                            { :label => 'CPU',                  :tag => nil, :value => varz_provisioner['cpu'].to_s },
                            { :label => 'Memory',               :tag => nil, :value => varz_provisioner['mem'].to_s },
-                           { :label => 'Available Capacity',   :tag => nil, :value => "#{ @capacity}" }
+                           { :label => 'Available Capacity',   :tag => nil, :value => @capacity.to_s }
                           ])
           end
           it 'has nodes' do

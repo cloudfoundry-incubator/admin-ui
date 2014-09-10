@@ -78,8 +78,8 @@ module AdminUI
         row.push(nil)
 
         row.push('application'  => application,
-                 'space'        => space,
-                 'organization' => organization)
+                 'organization' => organization,
+                 'space'        => space)
 
         application_hash[application[:guid]] = row
 
@@ -156,9 +156,10 @@ module AdminUI
               row.push(host)
 
               # No application to push.  Push the instance instead so we can provide details.
-              row.push('instance'     => instance,
-                       'space'        => space,
-                       'organization' => organization)
+              row.push('application'  => nil,
+                       'instance'     => instance,
+                       'organization' => organization,
+                       'space'        => space)
 
               items.push(row)
             else
@@ -191,8 +192,8 @@ module AdminUI
               # Need the specific instance for this row
               row[19] = { 'application'  => row[19]['application'],
                           'instance'     => instance,
-                          'space'        => row[19]['space'],
-                          'organization' => row[19]['organization']
+                          'organization' => row[19]['organization'],
+                          'space'        => row[19]['space']
                         }
             end
           end
