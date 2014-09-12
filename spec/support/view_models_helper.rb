@@ -1,5 +1,7 @@
 require 'time'
 require_relative '../spec_helper'
+require_relative 'cc_helper'
+require_relative 'nats_helper'
 require_relative 'varz_helper'
 
 module ViewModelsHelper

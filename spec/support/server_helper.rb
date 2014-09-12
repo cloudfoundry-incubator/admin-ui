@@ -1,6 +1,11 @@
 require 'thread'
 require 'webrick'
 require_relative '../spec_helper'
+require_relative 'cc_helper'
+require_relative 'login_helper'
+require_relative 'nats_helper'
+require_relative 'varz_helper'
+require_relative 'view_models_helper'
 
 shared_context :server_context do
   include CCHelper

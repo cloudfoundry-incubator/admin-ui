@@ -2,10 +2,12 @@ require 'json'
 require 'net/http'
 require 'uri'
 require_relative '../spec_helper'
-# This shouldn't be required, but is in some environments...
+# These shouldn't be required, but they are in some environments...
+require_relative 'cc_helper'
 require_relative 'nats_helper'
 
 module VARZHelper
+  include CCHelper
   include NATSHelper
 
   # Workaround since I cannot instantiate Net::HTTPOK and have body() function successfully
@@ -74,26 +76,26 @@ module VARZHelper
         {
           'application1_instance1' =>
           {
-            'application_id'          => 'application1',
-            'application_name'        => 'test',
-            'application_uris'        => ['test.localhost.com'],
+            'application_id'          => cc_app[:guid],
+            'application_name'        => cc_app[:name],
+            'application_uris'        => ["#{ cc_route[:host] }.#{ cc_domain[:name]}"],
             'computed_pcpu'           => 0.12118232960961232,
             'droplet_sha1'            => 'droplet1',
             'limits'                  =>
             {
-              'mem'  => 11,
-              'disk' => 12,
+              'mem'  => cc_app[:memory],
+              'disk' => cc_app[:disk_quota],
               'fds'  => 13
             },
             'instance_index'          => 0,
             'services'                =>
             [
               {
-                'name'     => 'TestService-random',
-                'provider' => 'test',
-                'vendor'   => 'TestService',
-                'version'  => '1.0',
-                'plan'     => 'TestServicePlan'
+                'name'     => cc_service_instance[:name],
+                'provider' => cc_service[:provider],
+                'vendor'   => cc_service[:label],
+                'version'  => cc_service[:version],
+                'plan'     => cc_service_plan[:name]
               }
             ],
             'state'                   => 'RUNNING',
@@ -162,21 +164,27 @@ module VARZHelper
 
   def varz_router
     {
-      'bad_requests'  => 1,
-      'cpu'           => 0.2,
-      'droplets'      => 3,
-      'index'         => 0,
-      'mem'           => 4,
-      'num_cores'     => 5,
-      'requests'      => 6,
-      'responses_2xx' => 7,
-      'responses_3xx' => 8,
-      'responses_4xx' => 9,
-      'responses_5xx' => 10,
-      'responses_xxx' => 11,
-      'type'          => nats_router['type'],
-      'start'         => '2013-10-21T07:00:00-05:00',
-      'uptime'        => '12d:13h:14m:15s'
+      'bad_requests'       => 1,
+      'cpu'                => 0.2,
+      'droplets'           => 3,
+      'index'              => 0,
+      'mem'                => 4,
+      'num_cores'          => 5,
+      'requests'           => 6,
+      'responses_2xx'      => 7,
+      'responses_3xx'      => 8,
+      'responses_4xx'      => 9,
+      'responses_5xx'      => 10,
+      'responses_xxx'      => 11,
+      'top10_app_requests' =>
+      {
+        'application_id'   => cc_app[:guid],
+        'rpm'              => 120,
+        'rps'              => 2
+      },
+      'type'               => nats_router['type'],
+      'start'              => '2013-10-21T07:00:00-05:00',
+      'uptime'             => '12d:13h:14m:15s'
     }
   end
 end
