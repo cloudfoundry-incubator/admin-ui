@@ -1591,8 +1591,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         context 'selectable' do
-          it 'has details' do
+          before do
             select_first_row
+          end
+          it 'has details' do
             check_details([{ :label => 'Name',          :tag => nil, :value => nats_router['host'] },
                            { :label => 'Index',         :tag => nil, :value => varz_router['index'].to_s },
                            { :label => 'URI',           :tag => 'a', :value => nats_router_varz },
@@ -1610,6 +1612,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => '5XX Responses', :tag => nil, :value => varz_router['responses_5xx'].to_s },
                            { :label => 'XXX Responses', :tag => nil, :value => varz_router['responses_xxx'].to_s }
                           ])
+          end
+          it 'has top10 applications' do
+            expect(@driver.find_element(:id => 'RoutersTop10ApplicationsDetailsLabel').displayed?).to be_true
+            check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='RoutersTop10ApplicationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+                                :expected_length => 4,
+                                :labels          => %w(Name RPM RPS Target),
+                                :colspans        => nil)
+            check_table_data(@driver.find_elements(:xpath => "//table[@id='RoutersTop10ApplicationsTable']/tbody/tr/td"),
+                             [
+                               cc_app[:name],
+                               varz_router['top10_app_requests'][0]['rpm'].to_s,
+                               varz_router['top10_app_requests'][0]['rps'].to_s,
+                               "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+                             ])
           end
         end
       end

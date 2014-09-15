@@ -177,11 +177,13 @@ module VARZHelper
       'responses_5xx'      => 10,
       'responses_xxx'      => 11,
       'top10_app_requests' =>
-      {
-        'application_id'   => cc_app[:guid],
-        'rpm'              => 120,
-        'rps'              => 2
-      },
+      [
+        {
+          'application_id'   => cc_app[:guid],
+          'rpm'              => 120,
+          'rps'              => 2
+        }
+      ],
       'type'               => nats_router['type'],
       'start'              => '2013-10-21T07:00:00-05:00',
       'uptime'             => '12d:13h:14m:15s'

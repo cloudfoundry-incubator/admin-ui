@@ -311,10 +311,20 @@ module ViewModelsHelper
         varz_router['droplets'],
         varz_router['requests'],
         varz_router['bad_requests'],
-        { 'connected' => true,
-          'data'      => varz_router,
-          'name'      => nats_router['host'],
-          'uri'       => nats_router_varz
+        { 'router' =>
+          { 'connected' => true,
+            'data'      => varz_router,
+            'name'      => nats_router['host'],
+            'uri'       => nats_router_varz
+          },
+          'top10Apps' =>
+          [
+            { 'application' => cc_app[:name],
+              'rpm'         => varz_router['top10_app_requests'][0]['rpm'],
+              'rps'         => varz_router['top10_app_requests'][0]['rps'],
+              'target'      => "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+            }
+          ]
         }
       ]
     ]
