@@ -112,7 +112,8 @@ Sequel.migration do
       DateTime :created_at, :null=>false
       DateTime :updated_at
       String :name, :text=>true, :null=>false
-      String :environment_json, :default=>"{}", :text=>true, :null=>false
+      String :environment_json, :text=>true
+      String :salt, :text=>true
       
       index [:name], :unique=>true
       index [:created_at], :name=>:evg_created_at_index
@@ -425,6 +426,7 @@ Sequel.migration do
       String :staging_failed_reason, :text=>true
       TrueClass :diego, :default=>false
       String :docker_image, :text=>true
+      DateTime :package_updated_at
       
       index [:created_at]
       index [:guid], :unique=>true

@@ -28,7 +28,7 @@ module AdminUI
         {
           :db_uri  => ccdb_uri,
           :table   => :apps,
-          :columns => [:buildpack, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :guid, :health_check_timeout, :id, :instances, :memory, :metadata, :name, :package_state, :production, :space_id, :stack_id, :staging_task_id, :state, :updated_at, :version]
+          :columns => [:buildpack, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :guid, :health_check_timeout, :id, :instances, :memory, :metadata, :name, :package_state, :package_updated_at, :production, :space_id, :stack_id, :staging_task_id, :state, :updated_at, :version]
         },
         :apps_routes =>
         {

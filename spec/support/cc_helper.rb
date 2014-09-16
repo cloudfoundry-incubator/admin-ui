@@ -73,6 +73,7 @@ module CCHelper
       :memory               => 11,
       :name                 => 'test',
       :package_state        => 'STAGED',
+      :package_updated_at   => Time.new('2013-10-18 08:28:35 -0500'),
       :production           => nil,
       :space_id             => cc_space[:id],
       :stack_id             => cc_stack[:id],
