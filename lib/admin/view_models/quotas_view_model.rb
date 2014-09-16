@@ -47,6 +47,14 @@ module AdminUI
         row.push(quota_definition[:total_services])
         row.push(quota_definition[:total_routes])
         row.push(quota_definition[:memory_limit])
+
+        # instance_memory_limit not present in older installations
+        if quota_definition[:instance_memory_limit]
+          row.push(quota_definition[:instance_memory_limit])
+        else
+          row.push(nil)
+        end
+
         row.push(quota_definition[:non_basic_services_allowed])
 
         if organization_counters[quota_definition[:id]]
@@ -62,7 +70,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..7).to_a, [0, 1, 2, 6])
+      result(items, (0..8).to_a, [0, 1, 2, 7])
     end
   end
 end

@@ -291,6 +291,7 @@ module ViewModelsHelper
         cc_quota_definition[:total_services],
         cc_quota_definition[:total_routes],
         cc_quota_definition[:memory_limit],
+        cc_quota_definition[:instance_memory_limit],
         cc_quota_definition[:non_basic_services_allowed],
         1,
         cc_quota_definition
