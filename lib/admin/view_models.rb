@@ -290,7 +290,7 @@ module AdminUI
     end
 
     def discover_routers
-      AdminUI::RoutersViewModel.new(@logger, @varz).items
+      AdminUI::RoutersViewModel.new(@logger, @cc, @varz).items
     rescue => error
       @logger.debug("Error during discover_routers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
