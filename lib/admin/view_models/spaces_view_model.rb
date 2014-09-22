@@ -18,28 +18,27 @@ module AdminUI
       organizations     = @cc.organizations
       routes            = @cc.routes
       service_instances = @cc.service_instances
+      spaces_auditors   = @cc.spaces_auditors
       spaces_developers = @cc.spaces_developers
+      spaces_managers   = @cc.spaces_managers
 
       applications_connected      = applications['connected']
       apps_routes_connected       = apps_routes['connected']
       routes_connected            = routes['connected']
       service_instances_connected = service_instances['connected']
-      spaces_developers_connected = spaces_developers['connected']
+      spaces_roles_connected      = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
 
       organization_hash = Hash[*organizations['items'].map { |item| [item[:id], item] }.flatten]
       routes_used_set   = apps_routes['items'].to_set { |app_route| app_route[:route_id] }
 
-      space_developer_counters        = {}
+      space_role_counters             = {}
       space_service_instance_counters = {}
       space_route_counters_hash       = {}
       space_app_counters_hash         = {}
 
-      spaces_developers['items'].each do |space_developer|
-        Thread.pass
-        space_id = space_developer[:space_id]
-        space_developer_counters[space_id] = 0 if space_developer_counters[space_id].nil?
-        space_developer_counters[space_id] += 1
-      end
+      count_space_roles(spaces_auditors, space_role_counters)
+      count_space_roles(spaces_developers, space_role_counters)
+      count_space_roles(spaces_managers, space_role_counters)
 
       service_instances['items'].each do |service_instance|
         Thread.pass
@@ -100,7 +99,7 @@ module AdminUI
         space_id = space[:id]
 
         organization                   = organization_hash[space[:organization_id]]
-        space_developer_counter        = space_developer_counters[space_id]
+        space_role_counter             = space_role_counters[space_id]
         space_service_instance_counter = space_service_instance_counters[space_id]
         space_app_counters             = space_app_counters_hash[space_id]
         space_route_counters           = space_route_counters_hash[space_id]
@@ -123,9 +122,9 @@ module AdminUI
           row.push(nil)
         end
 
-        if space_developer_counter
-          row.push(space_developer_counter)
-        elsif spaces_developers_connected
+        if space_role_counter
+          row.push(space_role_counter)
+        elsif spaces_roles_connected
           row.push(0)
         else
           row.push(nil)
@@ -182,6 +181,17 @@ module AdminUI
       end
 
       result(items, (0..20).to_a, (0..3).to_a)
+    end
+
+    private
+
+    def count_space_roles(input_space_role_array, output_space_role_counter_hash)
+      input_space_role_array['items'].each do |input_space_role_array_entry|
+        Thread.pass
+        space_id = input_space_role_array_entry[:space_id]
+        output_space_role_counter_hash[space_id] = 0 if output_space_role_counter_hash[space_id].nil?
+        output_space_role_counter_hash[space_id] += 1
+      end
     end
   end
 end

@@ -254,7 +254,7 @@ describe AdminUI::Admin, :type => :integration do
     context 'sets the specific quota for organization' do
       let(:insert_second_quota_definition) { true }
       it 'sets the specific quota for organization' do
-        expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][7] }.from('test_quota_1').to('test_quota_2')
+        expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][8] }.from('test_quota_1').to('test_quota_2')
       end
     end
 
@@ -374,12 +374,6 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
-    context 'developers_view_model' do
-      let(:path)              { '/developers_view_model' }
-      let(:view_model_source) { view_models_developers }
-      it_behaves_like('retrieves view_model')
-    end
-
     context 'domains_view_model' do
       let(:path)              { '/domains_view_model' }
       let(:view_model_source) { view_models_domains }
@@ -430,6 +424,12 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
+    context 'organization_roles_view_model' do
+      let(:path)              { '/organization_roles_view_model' }
+      let(:view_model_source) { view_models_organization_roles }
+      it_behaves_like('retrieves view_model')
+    end
+
     context 'quotas_view_model' do
       let(:path)              { '/quotas_view_model' }
       let(:view_model_source) { view_models_quotas }
@@ -466,10 +466,22 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
+    context 'space_roles_view_model' do
+      let(:path)              { '/space_roles_view_model' }
+      let(:view_model_source) { view_models_space_roles }
+      it_behaves_like('retrieves view_model')
+    end
+
     context 'stats_view_model' do
       let(:path)              { '/stats_view_model' }
       let(:timestamp)         { retrieved['items']['items'][0][8]['timestamp'] } # We have to copy the timestamp from the result since it is variable
       let(:view_model_source) { view_models_stats(timestamp) }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'users_view_model' do
+      let(:path)              { '/users_view_model' }
+      let(:view_model_source) { view_models_users }
       it_behaves_like('retrieves view_model')
     end
   end

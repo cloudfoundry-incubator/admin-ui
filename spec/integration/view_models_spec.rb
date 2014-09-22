@@ -111,13 +111,6 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common view model retrieval')
     end
 
-    context 'returns connected developers_view_model' do
-      let(:results)  { view_models.developers }
-      let(:expected) { view_models_developers }
-
-      it_behaves_like('common view model retrieval')
-    end
-
     context 'returns connected domains_view_model' do
       let(:results)  { view_models.domains }
       let(:expected) { view_models_domains }
@@ -151,6 +144,13 @@ describe AdminUI::CC, :type => :integration do
     context 'returns connected organizations_view_model' do
       let(:results)  { view_models.organizations }
       let(:expected) { view_models_organizations }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected organization_roles_view_model' do
+      let(:results)  { view_models.organization_roles }
+      let(:expected) { view_models_organization_roles }
 
       it_behaves_like('common view model retrieval')
     end
@@ -197,10 +197,24 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common view model retrieval')
     end
 
+    context 'returns connected space_roles_view_model' do
+      let(:results)  { view_models.space_roles }
+      let(:expected) { view_models_space_roles }
+
+      it_behaves_like('common view model retrieval')
+    end
+
     context 'returns connected stats_view_model' do
       let(:results)   { view_models.stats }
       let(:timestamp) { results[:items][0][8][:timestamp] } # We have to copy the timestamp from the result since it is variable
       let(:expected)  { view_models_stats(timestamp) }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected users_view_model' do
+      let(:results)  { view_models.users }
+      let(:expected) { view_models_users }
 
       it_behaves_like('common view model retrieval')
     end

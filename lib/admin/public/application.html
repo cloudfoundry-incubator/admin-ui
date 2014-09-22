@@ -30,20 +30,22 @@
         <script src="js/app/tabs/cloudControllersTab.js"></script>        
         <script src="js/app/tabs/componentsTab.js"></script>
         <script src="js/app/tabs/deasTab.js"></script>
-        <script src="js/app/tabs/developersTab.js"></script>       
         <script src="js/app/tabs/domainsTab.js"></script>
         <script src="js/app/tabs/gatewaysTab.js"></script>    
         <script src="js/app/tabs/healthManagersTab.js"></script> 
         <script src="js/app/tabs/logsTab.js"></script>
+        <script src="js/app/tabs/organizationRolesTab.js"></script>
         <script src="js/app/tabs/organizationsTab.js"></script>
         <script src="js/app/tabs/quotasTab.js"></script>
         <script src="js/app/tabs/routersTab.js"></script>
         <script src="js/app/tabs/routesTab.js"></script>
         <script src="js/app/tabs/serviceInstancesTab.js"></script>
         <script src="js/app/tabs/servicePlansTab.js"></script>
+        <script src="js/app/tabs/spaceRolesTab.js"></script>
         <script src="js/app/tabs/spacesTab.js"></script>
         <script src="js/app/tabs/statsTab.js"></script>
         <script src="js/app/tabs/tasksTab.js"></script>
+        <script src="js/app/tabs/usersTab.js"></script>
         <script src="js/app/adminUI.js"></script>
 
         <script src="js/external/jqplot/jquery.jqplot.js"></script>          
@@ -82,7 +84,9 @@
             <span id="Applications" class="menuItem">Apps</span>
             <span id="Routes" class="menuItem">Routes</span>
             <span id="ServiceInstances" class="menuItem">Service Instances</span>
-            <span id="Developers" class="menuItem">Developers</span>
+            <span id="OrganizationRoles" class="menuItem">Organization Roles</span>
+            <span id="SpaceRoles" class="menuItem">Space Roles</span>
+            <span id="Users" class="menuItem">Users</span>
             <span id="Domains" class="menuItem">Domains</span>
             <span id="Quotas" class="menuItem">Quotas</span>
             <span id="ServicePlans" class="menuItem">Service Plans</span>
@@ -113,7 +117,7 @@
                     <table id="OrganizationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="9"> </th>
+                                <th colspan="10"> </th>
                                 <th colspan="3">Routes</th>
                                 <th colspan="5">Used</th>
                                 <th colspan="2">Reserved</th>
@@ -127,7 +131,8 @@
                                 <th>Created</th>
                                 <th>Updated</th>
                                 <th>Spaces</th>
-                                <th>Developers</th>
+                                <th>Organization Roles</th>
+                                <th>Space Roles</th>
                                 <th>Quota</th>
                                 <th>Domains</th>
                                 
@@ -180,7 +185,7 @@
                                 <th>Target</th>
                                 <th>Created</th>
                                 <th>Updated</th>
-                                <th>Developers</th>
+                                <th>Roles</th>
                                 
                                 <th>Total</th>
                                 <th>Used</th>
@@ -330,14 +335,65 @@
                 </div>
             </div>
 
-            <div id="DevelopersPage" class="page hiddenPage">
-                <div id="DevelopersTableContainer" class="pageSection">
-                    <table id="DevelopersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+            <div id="OrganizationRolesPage" class="page hiddenPage">
+                <div id="OrganizationRolesTableContainer" class="pageSection">
+                    <table id="OrganizationRolesTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
                 </div>
 
                 <div class="verticalPageSection">
-                    <div id="DevelopersDetailsLabel" class="propertyLabel">Details</div>
-                    <div id="DevelopersPropertiesContainer"></div>
+                    <div id="OrganizationRolesDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="OrganizationRolesPropertiesContainer"></div>
+                </div>
+            </div>
+            
+            <div id="SpaceRolesPage" class="page hiddenPage">
+                <div id="SpaceRolesTableContainer" class="pageSection">
+                    <table id="SpaceRolesTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="SpaceRolesDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="SpaceRolesPropertiesContainer"></div>
+                </div>
+            </div>
+            
+            <div id="UsersPage" class="page hiddenPage">
+                <div id="UsersTableContainer" class="pageSection">
+                    <table id="UsersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"> <thead>
+                        <tr class="customTableHeaderGroup">
+                            <th colspan="8"> </th>
+                            <th colspan="5">Organization Roles</th>
+                            <th colspan="4">Space Roles</th>
+                        </tr>
+                        <tr>
+                            <th>Username</th>
+                            <th>Created</th>
+                            <th>Updated</th>
+                            <th>Email</th>
+                            <th>Family Name</th>
+                            <th>Given Name</th>
+                            <th>Active</th>
+                            <th>Version</th>
+                            
+                            <th>Total</th>
+                            <th>Auditor</th>
+                            <th>Billing Manager</th>
+                            <th>Manager</th>
+                            <th>User</th>
+
+                            <th>Total</th>
+                            <th>Auditor</th>
+                            <th>Developer</th>
+                            <th>Manager</th>
+                        </tr>
+                    </thead>
+                    <tbody/>
+                    </table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="UsersDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="UsersPropertiesContainer"></div>
                 </div>
             </div>
             

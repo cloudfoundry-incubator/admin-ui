@@ -60,6 +60,30 @@ module AdminUI
           :table   => :organizations,
           :columns => [:billing_enabled, :created_at, :guid, :id, :name, :quota_definition_id, :status, :updated_at]
         },
+        :organizations_auditors =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :organizations_auditors,
+          :columns => [:organization_id, :user_id]
+        },
+        :organizations_billing_managers =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :organizations_billing_managers,
+          :columns => [:organization_id, :user_id]
+        },
+        :organizations_managers =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :organizations_managers,
+          :columns => [:organization_id, :user_id]
+        },
+        :organizations_users =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :organizations_users,
+          :columns => [:organization_id, :user_id]
+        },
         :quota_definitions =>
         {
           :db_uri  => ccdb_uri,
@@ -114,10 +138,22 @@ module AdminUI
           :table   => :spaces,
           :columns => [:created_at, :guid, :id, :name, :organization_id, :updated_at]
         },
+        :spaces_auditors =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :spaces_auditors,
+          :columns => [:space_id, :user_id]
+        },
         :spaces_developers =>
         {
           :db_uri  => ccdb_uri,
           :table   => :spaces_developers,
+          :columns => [:space_id, :user_id]
+        },
+        :spaces_managers =>
+        {
+          :db_uri  => ccdb_uri,
+          :table   => :spaces_managers,
           :columns => [:space_id, :user_id]
         },
         :users_cc =>
@@ -208,10 +244,26 @@ module AdminUI
       result_cache(:organizations)
     end
 
+    def organizations_auditors
+      result_cache(:organizations_auditors)
+    end
+
+    def organizations_billing_managers
+      result_cache(:organizations_billing_managers)
+    end
+
     def organizations_count
       hash = organizations
       return nil unless hash['connected']
       hash['items'].length
+    end
+
+    def organizations_managers
+      result_cache(:organizations_managers)
+    end
+
+    def organizations_users
+      result_cache(:organizations_users)
     end
 
     def quota_definitions
@@ -256,8 +308,16 @@ module AdminUI
       hash['items'].length
     end
 
+    def spaces_auditors
+      result_cache(:spaces_auditors)
+    end
+
     def spaces_developers
       result_cache(:spaces_developers)
+    end
+
+    def spaces_managers
+      result_cache(:spaces_managers)
     end
 
     def users_cc

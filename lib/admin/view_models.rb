@@ -4,20 +4,22 @@ require_relative 'view_models/applications_view_model'
 require_relative 'view_models/cloud_controllers_view_model'
 require_relative 'view_models/components_view_model'
 require_relative 'view_models/deas_view_model'
-require_relative 'view_models/developers_view_model'
 require_relative 'view_models/domains_view_model'
 require_relative 'view_models/gateways_view_model'
 require_relative 'view_models/health_managers_view_model'
 require_relative 'view_models/logs_view_model'
+require_relative 'view_models/organization_roles_view_model'
 require_relative 'view_models/organizations_view_model'
 require_relative 'view_models/quotas_view_model'
 require_relative 'view_models/routers_view_model'
 require_relative 'view_models/routes_view_model'
 require_relative 'view_models/service_instances_view_model'
 require_relative 'view_models/service_plans_view_model'
+require_relative 'view_models/space_roles_view_model'
 require_relative 'view_models/spaces_view_model'
 require_relative 'view_models/stats_view_model'
 require_relative 'view_models/tasks_view_model'
+require_relative 'view_models/users_view_model'
 
 module AdminUI
   class ViewModels
@@ -40,7 +42,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :cloud_controllers, :components, :deas, :developers, :domains, :gateways, :health_managers, :logs, :organizations, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces, :stats, :tasks].each do |key|
+      [:applications, :cloud_controllers, :components, :deas, :domains, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces, :space_roles, :stats, :tasks, :users].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
         schedule(key)
@@ -87,10 +89,6 @@ module AdminUI
       result_cache(:deas)
     end
 
-    def developers
-      result_cache(:developers)
-    end
-
     def domains
       result_cache(:domains)
     end
@@ -109,6 +107,10 @@ module AdminUI
 
     def organizations
       result_cache(:organizations)
+    end
+
+    def organization_roles
+      result_cache(:organization_roles)
     end
 
     def quotas
@@ -135,12 +137,20 @@ module AdminUI
       result_cache(:spaces)
     end
 
+    def space_roles
+      result_cache(:space_roles)
+    end
+
     def stats
       result_cache(:stats)
     end
 
     def tasks
       result_cache(:tasks)
+    end
+
+    def users
+      result_cache(:users)
     end
 
     private
@@ -233,14 +243,6 @@ module AdminUI
       result
     end
 
-    def discover_developers
-      AdminUI::DevelopersViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_developers: #{ error.inspect }")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
     def discover_domains
       AdminUI::DomainsViewModel.new(@logger, @cc).items
     rescue => error
@@ -277,6 +279,14 @@ module AdminUI
       AdminUI::OrganizationsViewModel.new(@logger, @cc, @varz).items
     rescue => error
       @logger.debug("Error during discover_organizations: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_organization_roles
+      AdminUI::OrganizationRolesViewModel.new(@logger, @cc).items
+    rescue => error
+      @logger.debug("Error during discover_organization_roles: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -329,6 +339,14 @@ module AdminUI
       result
     end
 
+    def discover_space_roles
+      AdminUI::SpaceRolesViewModel.new(@logger, @cc).items
+    rescue => error
+      @logger.debug("Error during discover_space_roles: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
     def discover_stats
       AdminUI::StatsViewModel.new(@logger, @stats).items
     rescue => error
@@ -341,6 +359,14 @@ module AdminUI
       AdminUI::TasksViewModel.new(@logger, @tasks).items
     rescue => error
       @logger.debug("Error during discover_tasks: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_users
+      AdminUI::UsersViewModel.new(@logger, @cc).items
+    rescue => error
+      @logger.debug("Error during discover_users: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
