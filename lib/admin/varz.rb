@@ -101,7 +101,7 @@ module AdminUI
 
       cache['items'].each do |_, item|
         data = item['data']
-        next if data.nil?
+        next unless data.is_a?(Hash) && data['type'].is_a?(String)
         type_pattern_index = data['type'] =~ typePattern
         next if type_pattern_index.nil?
         result_item = item.clone
