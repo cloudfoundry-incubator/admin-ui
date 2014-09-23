@@ -8,7 +8,7 @@ Sequel.migration do
       Integer :organizations
       Integer :running_instances
       Integer :spaces
-      Timestamp :timestamp, :primary_key => true
+      Timestamp :timestamp
       Integer :total_instances
       Integer :users
     end
