@@ -346,10 +346,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             alert.dismiss
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[2]/td[2]").text == cc_organization2[:name] }
+              Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text == cc_organization2[:name] }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[2]/td[2]").text).to eq(cc_organization2[:name])
+            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text).to eq(cc_organization2[:name])
           end
 
           it 'has an activate button' do
