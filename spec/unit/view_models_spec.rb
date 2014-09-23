@@ -62,10 +62,6 @@ describe AdminUI::CC do
       verify_disconnected_items(view_models.deas)
     end
 
-    it 'returns zero developers as expected' do
-      verify_disconnected_items(view_models.developers)
-    end
-
     it 'returns zero domains as expected' do
       verify_disconnected_items(view_models.domains)
     end
@@ -80,6 +76,10 @@ describe AdminUI::CC do
 
     it 'returns zero organizations as expected' do
       verify_disconnected_items(view_models.organizations)
+    end
+
+    it 'returns zero organization_roles as expected' do
+      verify_disconnected_items(view_models.organization_roles)
     end
 
     it 'returns zero quotas as expected' do
@@ -104,6 +104,14 @@ describe AdminUI::CC do
 
     it 'returns zero spaces as expected' do
       verify_disconnected_items(view_models.spaces)
+    end
+
+    it 'returns zero space_roles as expected' do
+      verify_disconnected_items(view_models.space_roles)
+    end
+
+    it 'returns zero users as expected' do
+      verify_disconnected_items(view_models.users)
     end
   end
 

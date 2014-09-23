@@ -155,27 +155,6 @@ module ViewModelsHelper
     ]
   end
 
-  def view_models_developers
-    [
-      [
-        uaa_user[:email],
-        cc_space[:name],
-        cc_organization[:name],
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
-        uaa_user[:created].to_datetime.rfc3339,
-        uaa_user[:lastmodified].to_datetime.rfc3339,
-        {
-          'authorities'     => uaa_group[:displayname],
-          'organization'    => cc_organization,
-          'space'           => cc_space,
-          'space_developer' => cc_space_developer,
-          'user_cc'         => cc_user,
-          'user_uaa'        => uaa_user
-        }
-      ]
-    ]
-  end
-
   def view_models_domains
     [
       [
@@ -258,7 +237,8 @@ module ViewModelsHelper
         cc_organization[:created_at].to_datetime.rfc3339,
         cc_organization[:updated_at].to_datetime.rfc3339,
         1,
-        1,
+        4,
+        3,
         cc_quota_definition[:name],
         1,
         1,
@@ -278,6 +258,55 @@ module ViewModelsHelper
         cc_app[:package_state] == 'STAGED'  ? 1 : 0,
         cc_app[:package_state] == 'FAILED'  ? 1 : 0,
         cc_organization
+      ]
+    ]
+  end
+
+  def view_models_organization_roles
+    [
+      [
+        cc_organization[:name],
+        uaa_user[:username],
+        'Auditor',
+        {
+          'organization' => cc_organization,
+          'role'         => cc_organization_auditor,
+          'user_cc'      => cc_user,
+          'user_uaa'     => uaa_user
+        }
+      ],
+      [
+        cc_organization[:name],
+        uaa_user[:username],
+        'Billing Manager',
+        {
+          'organization' => cc_organization,
+          'role'         => cc_organization_billing_manager,
+          'user_cc'      => cc_user,
+          'user_uaa'     => uaa_user
+        }
+      ],
+      [
+        cc_organization[:name],
+        uaa_user[:username],
+        'Manager',
+        {
+          'organization' => cc_organization,
+          'role'         => cc_organization_manager,
+          'user_cc'      => cc_user,
+          'user_uaa'     => uaa_user
+        }
+      ],
+      [
+        cc_organization[:name],
+        uaa_user[:username],
+        'User',
+        {
+          'organization' => cc_organization,
+          'role'         => cc_organization_user,
+          'user_cc'      => cc_user,
+          'user_uaa'     => uaa_user
+        }
       ]
     ]
   end
@@ -430,7 +459,7 @@ module ViewModelsHelper
         "#{ cc_organization[:name] }/#{ cc_space[:name] }",
         cc_space[:created_at].to_datetime.rfc3339,
         cc_space[:updated_at].to_datetime.rfc3339,
-        1,
+        3,
         1,
         1,
         0,
@@ -449,6 +478,50 @@ module ViewModelsHelper
         cc_app[:package_state] == 'FAILED'  ? 1 : 0,
         { 'organization' => cc_organization,
           'space'        => cc_space
+        }
+      ]
+    ]
+  end
+
+  def view_models_space_roles
+    [
+      [
+        cc_space[:name],
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+        uaa_user[:username],
+        'Auditor',
+        {
+          'organization' => cc_organization,
+          'role'         => cc_space_auditor,
+          'space'        => cc_space,
+          'user_cc'      => cc_user,
+          'user_uaa'     => uaa_user
+        }
+      ],
+      [
+        cc_space[:name],
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+        uaa_user[:username],
+        'Developer',
+        {
+          'organization' => cc_organization,
+          'role'         => cc_space_developer,
+          'space'        => cc_space,
+          'user_cc'      => cc_user,
+          'user_uaa'     => uaa_user
+        }
+      ],
+      [
+        cc_space[:name],
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+        uaa_user[:username],
+        'Manager',
+        {
+          'organization' => cc_organization,
+          'role'         => cc_space_manager,
+          'space'        => cc_space,
+          'user_cc'      => cc_user,
+          'user_uaa'     => uaa_user
         }
       ]
     ]
@@ -473,6 +546,35 @@ module ViewModelsHelper
           :timestamp         => timestamp,
           :total_instances   => cc_app[:instances],
           :users             => 1
+        }
+      ]
+    ]
+  end
+
+  def view_models_users
+    [
+      [
+        uaa_user[:username],
+        uaa_user[:created].to_datetime.rfc3339,
+        uaa_user[:lastmodified].to_datetime.rfc3339,
+        uaa_user[:email],
+        uaa_user[:familyname],
+        uaa_user[:givenname],
+        uaa_user[:active],
+        uaa_user[:version],
+        4,
+        1,
+        1,
+        1,
+        1,
+        3,
+        1,
+        1,
+        1,
+        {
+          'authorities'     => uaa_group[:displayname],
+          'user_cc'         => cc_user,
+          'user_uaa'        => uaa_user
         }
       ]
     ]

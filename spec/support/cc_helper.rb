@@ -39,9 +39,15 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM apps_routes')
     sql(config.ccdb_uri, 'DELETE FROM apps')
     sql(config.ccdb_uri, 'DELETE FROM routes')
+    sql(config.ccdb_uri, 'DELETE FROM spaces_auditors')
     sql(config.ccdb_uri, 'DELETE FROM spaces_developers')
+    sql(config.ccdb_uri, 'DELETE FROM spaces_managers')
     sql(config.ccdb_uri, 'DELETE FROM spaces')
     sql(config.ccdb_uri, 'DELETE FROM domains')
+    sql(config.ccdb_uri, 'DELETE FROM organizations_auditors')
+    sql(config.ccdb_uri, 'DELETE FROM organizations_billing_managers')
+    sql(config.ccdb_uri, 'DELETE FROM organizations_managers')
+    sql(config.ccdb_uri, 'DELETE FROM organizations_users')
     sql(config.ccdb_uri, 'DELETE FROM organizations')
   end
 
@@ -125,6 +131,34 @@ module CCHelper
       :quota_definition_id => cc_quota_definition[:id],
       :status              => 'active',
       :updated_at          => nil
+    }
+  end
+
+  def cc_organization_auditor
+    {
+      :organization_id => cc_organization[:id],
+      :user_id  => cc_user[:id]
+    }
+  end
+
+  def cc_organization_billing_manager
+    {
+      :organization_id => cc_organization[:id],
+      :user_id  => cc_user[:id]
+    }
+  end
+
+  def cc_organization_manager
+    {
+      :organization_id => cc_organization[:id],
+      :user_id  => cc_user[:id]
+    }
+  end
+
+  def cc_organization_user
+    {
+      :organization_id => cc_organization[:id],
+      :user_id  => cc_user[:id]
     }
   end
 
@@ -285,7 +319,21 @@ module CCHelper
     }
   end
 
+  def cc_space_auditor
+    {
+      :space_id => cc_space[:id],
+      :user_id  => cc_user[:id]
+    }
+  end
+
   def cc_space_developer
+    {
+      :space_id => cc_space[:id],
+      :user_id  => cc_user[:id]
+    }
+  end
+
+  def cc_space_manager
     {
       :space_id => cc_space[:id],
       :user_id  => cc_user[:id]
@@ -375,22 +423,28 @@ module CCHelper
   end
 
   def ccdb_inserts(insert_second_quota_definition)
-    result = [[:quota_definitions,         cc_quota_definition],
-              [:service_brokers,           cc_service_broker_with_password],
-              [:stacks,                    cc_stack],
-              [:organizations,             cc_organization],
-              [:services,                  cc_service],
-              [:domains,                   cc_domain],
-              [:service_plans,             cc_service_plan],
-              [:service_plan_visibilities, cc_service_plan_visibility],
-              [:spaces,                    cc_space],
-              [:apps,                      cc_app],
-              [:routes,                    cc_route],
-              [:service_instances,         cc_service_instance],
-              [:users,                     cc_user],
-              [:apps_routes,               cc_app_route],
-              [:service_bindings,          cc_service_binding_with_credentials],
-              [:spaces_developers,         cc_space_developer]
+    result = [[:quota_definitions,              cc_quota_definition],
+              [:service_brokers,                cc_service_broker_with_password],
+              [:stacks,                         cc_stack],
+              [:organizations,                  cc_organization],
+              [:services,                       cc_service],
+              [:domains,                        cc_domain],
+              [:service_plans,                  cc_service_plan],
+              [:service_plan_visibilities,      cc_service_plan_visibility],
+              [:spaces,                         cc_space],
+              [:apps,                           cc_app],
+              [:routes,                         cc_route],
+              [:service_instances,              cc_service_instance],
+              [:users,                          cc_user],
+              [:apps_routes,                    cc_app_route],
+              [:service_bindings,               cc_service_binding_with_credentials],
+              [:organizations_auditors,         cc_organization_auditor],
+              [:organizations_billing_managers, cc_organization_billing_manager],
+              [:organizations_managers,         cc_organization_manager],
+              [:organizations_users,            cc_organization_user],
+              [:spaces_auditors,                cc_space_auditor],
+              [:spaces_developers,              cc_space_developer],
+              [:spaces_managers,                cc_space_manager]
              ]
 
     result << [:quota_definitions, cc_quota_definition2] if insert_second_quota_definition

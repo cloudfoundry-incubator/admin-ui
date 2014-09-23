@@ -423,10 +423,6 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/deas_view_model')
       end
 
-      it '/developers_view_model succeeds' do
-        verify_disconnected_view_model_items('/developers_view_model')
-      end
-
       it '/domains_view_model succeeds' do
         verify_disconnected_view_model_items('/domains_view_model')
       end
@@ -445,6 +441,10 @@ describe AdminUI::Admin do
 
       it '/organizations_view_model succeeds' do
         verify_disconnected_view_model_items('/organizations_view_model')
+      end
+
+      it '/organization_roles_view_model succeeds' do
+        verify_disconnected_view_model_items('/organization_roles_view_model')
       end
 
       it '/quotas_view_model succeeds' do
@@ -478,6 +478,10 @@ describe AdminUI::Admin do
 
       it '/spaces_view_model succeeds' do
         verify_disconnected_view_model_items('/spaces_view_model')
+      end
+
+      it '/space_roles_view_model succeeds' do
+        verify_disconnected_view_model_items('/space_roles_view_model')
       end
 
       it '/tasks_view_model succeeds' do
@@ -555,10 +559,6 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/deas_view_model')
       end
 
-      it '/developers_view_model redirects as expected' do
-        get_redirects_as_expected('/developers_view_model')
-      end
-
       it '/domains_view_model redirects as expected' do
         get_redirects_as_expected('/domains_view_model')
       end
@@ -587,6 +587,10 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/organizations_view_model')
       end
 
+      it '/organization_roles_view_model redirects as expected' do
+        get_redirects_as_expected('/organization_roles_view_model')
+      end
+
       it '/quotas_view_model redirects as expected' do
         get_redirects_as_expected('/quotas_view_model')
       end
@@ -613,6 +617,10 @@ describe AdminUI::Admin do
 
       it '/spaces_view_model redirects as expected' do
         get_redirects_as_expected('/spaces_view_model')
+      end
+
+      it '/space_roles_view_model redirects as expected' do
+        get_redirects_as_expected('/space_roles_view_model')
       end
 
       it '/tasks_view_model redirects as expected' do

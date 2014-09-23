@@ -65,11 +65,6 @@ module AdminUI
       AllActions.new(@logger, @view_models.deas, params).items.to_json
     end
 
-    get '/developers_view_model', :auth => [:user] do
-      @logger.info_user session[:username], 'get', '/developers_view_model'
-      AllActions.new(@logger, @view_models.developers, params).items.to_json
-    end
-
     get '/domains_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/domains_view_model'
       AllActions.new(@logger, @view_models.domains, params).items.to_json
@@ -151,6 +146,11 @@ module AdminUI
       AllActions.new(@logger, @view_models.organizations, params).items.to_json
     end
 
+    get '/organization_roles_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'get', '/organization_roles_view_model'
+      AllActions.new(@logger, @view_models.organization_roles, params).items.to_json
+    end
+
     get '/quotas_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/quotas_view_model'
       AllActions.new(@logger, @view_models.quotas, params).items.to_json
@@ -190,6 +190,11 @@ module AdminUI
       AllActions.new(@logger, @view_models.spaces, params).items.to_json
     end
 
+    get '/space_roles_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'get', '/space_roles_view_model'
+      AllActions.new(@logger, @view_models.space_roles, params).items.to_json
+    end
+
     get '/statistics' do
       @logger.info_user session[:username], 'get', '/statistics'
       @stats.stats.to_json
@@ -224,6 +229,11 @@ module AdminUI
         session[:last_task_update] = result[:updated]
         result.to_json
       end
+    end
+
+    get '/users_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'get', '/users_view_model'
+      AllActions.new(@logger, @view_models.users, params).items.to_json
     end
 
     post '/deas', :auth => [:admin] do

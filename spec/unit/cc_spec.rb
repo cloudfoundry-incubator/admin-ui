@@ -70,8 +70,24 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.organizations)
     end
 
+    it 'returns zero organizations_auditors as expected' do
+      verify_disconnected_items(cc.organizations_auditors)
+    end
+
     it 'returns nil organizations count as expected' do
       expect(cc.organizations_count).to be_nil
+    end
+
+    it 'returns zero organizations_billing_managers as expected' do
+      verify_disconnected_items(cc.organizations_billing_managers)
+    end
+
+    it 'returns zero organizations_managers as expected' do
+      verify_disconnected_items(cc.organizations_managers)
+    end
+
+    it 'returns zero organizations_users as expected' do
+      verify_disconnected_items(cc.organizations_users)
     end
 
     it 'returns zero quota_definitions as expected' do
@@ -110,12 +126,20 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.spaces)
     end
 
+    it 'returns zero spaces_auditors as expected' do
+      verify_disconnected_items(cc.spaces_auditors)
+    end
+
     it 'returns nil spaces count as expected' do
       expect(cc.spaces_count).to be_nil
     end
 
     it 'returns zero spaces_developers as expected' do
       verify_disconnected_items(cc.spaces_developers)
+    end
+
+    it 'returns zero spaces_managers as expected' do
+      verify_disconnected_items(cc.spaces_managers)
     end
 
     it 'returns zero users_cc as expected' do

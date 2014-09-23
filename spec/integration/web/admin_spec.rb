@@ -48,7 +48,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       expect(@driver.find_element(:id => 'Spaces').displayed?).to be_true
       expect(@driver.find_element(:id => 'Applications').displayed?).to be_true
       expect(@driver.find_element(:id => 'ServiceInstances').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Developers').displayed?).to be_true
+      expect(@driver.find_element(:id => 'OrganizationRoles').displayed?).to be_true
+      expect(@driver.find_element(:id => 'SpaceRoles').displayed?).to be_true
+      expect(@driver.find_element(:id => 'Users').displayed?).to be_true
       expect(@driver.find_element(:id => 'Domains').displayed?).to be_true
       expect(@driver.find_element(:id => 'Quotas').displayed?).to be_true
       expect(@driver.find_element(:id => 'ServicePlans').displayed?).to be_true
@@ -211,11 +213,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 6,
                                 :labels          => ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                :colspans        => %w(9 3 5 2 3 3)
+                                :colspans        => %w(10 3 5 2 3 3)
                               },
                               { :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 25,
-                                :labels          => [' ', 'Name', 'Status', 'Created', 'Updated', 'Spaces', 'Developers', 'Quota', 'Domains', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :expected_length => 26,
+                                :labels          => [' ', 'Name', 'Status', 'Created', 'Updated', 'Spaces', 'Organization Roles', 'Space Roles', 'Quota', 'Domains', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 :colspans        => nil
                               }
                              ])
@@ -227,7 +229,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatString(\"#{ cc_organization[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_organization[:updated_at].to_datetime.rfc3339 }\")"),
                              '1',
-                             '1',
+                             '4',
+                             '3',
                              cc_quota_definition[:name],
                              '1',
                              '1',
@@ -299,10 +302,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_operation_result
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 460).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[8]").text == 'test_quota_2' }
+              Selenium::WebDriver::Wait.new(:timeout => 460).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[9]").text == 'test_quota_2' }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[8]").text).to eq('test_quota_2')
+            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[9]").text).to eq('test_quota_2')
           end
         end
 
@@ -442,56 +445,60 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             select_first_row
           end
           it 'has details' do
-            check_details([{ :label => 'Name',            :tag => 'div', :value => cc_organization[:name] },
-                           { :label => 'Status',          :tag =>   nil, :value => cc_organization[:status].upcase },
-                           { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Billing Enabled', :tag =>   nil, :value => cc_organization[:billing_enabled].to_s },
-                           { :label => 'Spaces',          :tag =>   'a', :value => '1' },
-                           { :label => 'Developers',      :tag =>   'a', :value => '1' },
-                           { :label => 'Quota',           :tag =>   nil, :value => cc_quota_definition[:name] },
-                           { :label => 'Domains',         :tag =>   'a', :value => '1' },
-                           { :label => 'Total Routes',    :tag =>   'a', :value => '1' },
-                           { :label => 'Used Routes',     :tag =>   nil, :value => '1' },
-                           { :label => 'Unused Routes',   :tag =>   nil, :value => '0' },
-                           { :label => 'Instances Used',  :tag =>   'a', :value => cc_app[:instances].to_s },
-                           { :label => 'Services Used',   :tag =>   'a', :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
-                           { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
-                           { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
-                           { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
-                           { :label => 'Memory Reserved', :tag =>   nil, :value => cc_app[:memory].to_s },
-                           { :label => 'Disk Reserved',   :tag =>   nil, :value => cc_app[:disk_quota].to_s },
-                           { :label => 'Total Apps',      :tag =>   'a', :value => '1' },
-                           { :label => 'Started Apps',    :tag =>   nil, :value => cc_app[:state] == 'STARTED' ? '1' : '0' },
-                           { :label => 'Stopped Apps',    :tag =>   nil, :value => cc_app[:state] == 'STOPPED' ? '1' : '0' },
-                           { :label => 'Pending Apps',    :tag =>   nil, :value => cc_app[:package_state] == 'PENDING' ? '1' : '0' },
-                           { :label => 'Staged Apps',     :tag =>   nil, :value => cc_app[:package_state] == 'STAGED'  ? '1' : '0' },
-                           { :label => 'Failed Apps',     :tag =>   nil, :value => cc_app[:package_state] == 'FAILED'  ? '1' : '0' }
+            check_details([{ :label => 'Name',               :tag => 'div', :value => cc_organization[:name] },
+                           { :label => 'Status',             :tag =>   nil, :value => cc_organization[:status].upcase },
+                           { :label => 'Created',            :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:created_at].to_datetime.rfc3339 }\")") },
+                           { :label => 'Updated',            :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:updated_at].to_datetime.rfc3339 }\")") },
+                           { :label => 'Billing Enabled',    :tag =>   nil, :value => cc_organization[:billing_enabled].to_s },
+                           { :label => 'Spaces',             :tag =>   'a', :value => '1' },
+                           { :label => 'Organization Roles', :tag =>   'a', :value => '4' },
+                           { :label => 'Space Roles',        :tag =>   'a', :value => '3' },
+                           { :label => 'Quota',              :tag =>   'a', :value => cc_quota_definition[:name] },
+                           { :label => 'Domains',            :tag =>   'a', :value => '1' },
+                           { :label => 'Total Routes',       :tag =>   'a', :value => '1' },
+                           { :label => 'Used Routes',        :tag =>   nil, :value => '1' },
+                           { :label => 'Unused Routes',      :tag =>   nil, :value => '0' },
+                           { :label => 'Instances Used',     :tag =>   'a', :value => cc_app[:instances].to_s },
+                           { :label => 'Services Used',      :tag =>   'a', :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
+                           { :label => 'Memory Used',        :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
+                           { :label => 'Disk Used',          :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
+                           { :label => 'CPU Used',           :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
+                           { :label => 'Memory Reserved',    :tag =>   nil, :value => cc_app[:memory].to_s },
+                           { :label => 'Disk Reserved',      :tag =>   nil, :value => cc_app[:disk_quota].to_s },
+                           { :label => 'Total Apps',         :tag =>   'a', :value => '1' },
+                           { :label => 'Started Apps',       :tag =>   nil, :value => cc_app[:state] == 'STARTED' ? '1' : '0' },
+                           { :label => 'Stopped Apps',       :tag =>   nil, :value => cc_app[:state] == 'STOPPED' ? '1' : '0' },
+                           { :label => 'Pending Apps',       :tag =>   nil, :value => cc_app[:package_state] == 'PENDING' ? '1' : '0' },
+                           { :label => 'Staged Apps',        :tag =>   nil, :value => cc_app[:package_state] == 'STAGED'  ? '1' : '0' },
+                           { :label => 'Failed Apps',        :tag =>   nil, :value => cc_app[:package_state] == 'FAILED'  ? '1' : '0' }
                           ])
           end
           it 'has spaces link' do
             check_filter_link('Organizations', 5, 'Spaces', "#{ cc_organization[:name] }/")
           end
-          it 'has developers link' do
-            check_filter_link('Organizations', 6, 'Developers', "#{ cc_organization[:name] }/")
+          it 'has organization roles link' do
+            check_filter_link('Organizations', 6, 'OrganizationRoles', cc_organization[:name])
+          end
+          it 'has space roles link' do
+            check_filter_link('Organizations', 7, 'SpaceRoles', "#{ cc_organization[:name] }/")
           end
           it 'has quota link' do
-            check_filter_link('Organizations', 7, 'Quotas', cc_quota_definition[:name])
+            check_filter_link('Organizations', 8, 'Quotas', cc_quota_definition[:name])
           end
           it 'has domain link' do
-            check_filter_link('Organizations', 8, 'Domains', cc_organization[:name])
+            check_filter_link('Organizations', 9, 'Domains', cc_organization[:name])
           end
           it 'has routes link' do
-            check_filter_link('Organizations', 9, 'Routes', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 10, 'Routes', "#{ cc_organization[:name] }/")
           end
           it 'has instances link' do
-            check_filter_link('Organizations', 12, 'Applications', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 13, 'Applications', "#{ cc_organization[:name] }/")
           end
           it 'has services link' do
-            check_filter_link('Organizations', 13, 'ServiceInstances', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 14, 'ServiceInstances', "#{ cc_organization[:name] }/")
           end
           it 'has applications link' do
-            check_filter_link('Organizations', 19, 'Applications', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 20, 'Applications', "#{ cc_organization[:name] }/")
           end
         end
       end
@@ -507,7 +514,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 21,
-                                :labels          => ['Name', 'Target', 'Created', 'Updated', 'Developers', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :labels          => ['Name', 'Target', 'Created', 'Updated', 'Roles', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 :colspans        => nil
                               }
                              ])
@@ -517,7 +524,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              "#{ cc_organization[:name] }/#{ cc_space[:name] }",
                              @driver.execute_script("return Format.formatString(\"#{ cc_space[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_space[:updated_at].to_datetime.rfc3339 }\")"),
-                             '1',
+                             '3',
                              '1',
                              '1',
                              '0',
@@ -550,7 +557,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Organization',    :tag =>   'a', :value => cc_organization[:name] },
                            { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_space[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_space[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Developers',      :tag =>   'a', :value => '1' },
+                           { :label => 'Roles',           :tag =>   'a', :value => '3' },
                            { :label => 'Total Routes',    :tag =>   nil, :value => '1' },
                            { :label => 'Used Routes',     :tag =>   nil, :value => '1' },
                            { :label => 'Unused Routes',   :tag =>   nil, :value => '0' },
@@ -572,8 +579,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has organization link' do
             check_filter_link('Spaces', 1, 'Organizations', cc_organization[:name])
           end
-          it 'has developers link' do
-            check_filter_link('Spaces', 4, 'Developers', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+          it 'has space roles link' do
+            check_filter_link('Spaces', 4, 'SpaceRoles', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
           it 'has routes link' do
             check_filter_link('Spaces', 5, 'Routes', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
@@ -1035,28 +1042,25 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
       end
 
-      context 'Developers' do
-        let(:tab_id) { 'Developers' }
+      context 'Organization Roles' do
+        let(:tab_id) { 'OrganizationRoles' }
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DevelopersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 6,
-                                :labels          => %w(Email Space Organization Target Created Updated),
+          check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 3,
+                                :labels          => %w(Organization Username Role),
                                 :colspans        => nil
-                               }
+                              }
                              ])
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='DevelopersTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='OrganizationRolesTable']/tbody/tr/td"),
                            [
-                             uaa_user[:email],
-                             cc_space[:name],
                              cc_organization[:name],
-                             "#{ cc_organization[:name] }/#{ cc_space[:name] }",
-                             @driver.execute_script("return Format.formatString(\"#{ uaa_user[:created].to_datetime.rfc3339 }\")"),
-                             @driver.execute_script("return Format.formatString(\"#{ uaa_user[:lastmodified].to_datetime.rfc3339 }\")")
+                             uaa_user[:username],
+                             'Auditor'
                            ])
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_DevelopersTable_0', 'ZeroClipboard_TableToolsMovie_29')
+          check_allowscriptaccess_attribute('ToolTables_OrganizationRolesTable_0', 'ZeroClipboard_TableToolsMovie_33')
         end
 
         context 'selectable' do
@@ -1064,19 +1068,136 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             select_first_row
           end
           it 'has details' do
-            check_details([{ :label => 'Email',        :tag => 'div', :value => "mailto:#{ uaa_user[:email] }" },
-                           { :label => 'Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_user[:created] }\")") },
-                           { :label => 'Updated',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_user[:lastmodified] }\")") },
-                           { :label => 'Authorities',  :tag =>   nil, :value => uaa_group[:displayname] },
-                           { :label => 'Space',        :tag =>   'a', :value => cc_space[:name] },
-                           { :label => 'Organization', :tag =>   'a', :value => cc_organization[:name] }
+            check_details([{ :label => 'Organization', :tag => 'div', :value => cc_organization[:name] },
+                           { :label => 'Username',     :tag =>   'a', :value => uaa_user[:username] },
+                           { :label => 'Role',         :tag =>   nil, :value => 'Auditor' }
                           ])
           end
-          it 'has space link' do
-            check_filter_link('Developers', 4, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+          it 'has organizations link' do
+            check_filter_link('OrganizationRoles', 0, 'Organizations', cc_organization[:name])
           end
-          it 'has organization link' do
-            check_filter_link('Developers', 5, 'Organizations', cc_organization[:name])
+          it 'has users link' do
+            check_filter_link('OrganizationRoles', 1, 'Users', uaa_user[:username])
+          end
+        end
+      end
+
+      context 'Space Roles' do
+        let(:tab_id) { 'SpaceRoles' }
+        it 'has a table' do
+          check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 4,
+                                :labels          => %w(Space Target Username Role),
+                                :colspans        => nil
+                              }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='SpaceRolesTable']/tbody/tr/td"),
+                           [
+                             cc_space[:name],
+                             "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+                             uaa_user[:username],
+                             'Auditor'
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_SpaceRolesTable_0', 'ZeroClipboard_TableToolsMovie_33')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+          it 'has details' do
+            check_details([{ :label => 'Space',        :tag => 'div', :value => cc_space[:name] },
+                           { :label => 'Organization', :tag =>   'a', :value => cc_organization[:name] },
+                           { :label => 'Username',     :tag =>   'a', :value => uaa_user[:username] },
+                           { :label => 'Role',         :tag =>   nil, :value => 'Auditor' }
+                          ])
+          end
+          it 'has spaces link' do
+            check_filter_link('SpaceRoles', 0, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+          end
+          it 'has organizations link' do
+            check_filter_link('SpaceRoles', 1, 'Organizations', cc_organization[:name])
+          end
+          it 'has users link' do
+            check_filter_link('SpaceRoles', 2, 'Users', uaa_user[:username])
+          end
+        end
+      end
+
+      context 'Users' do
+        let(:tab_id) { 'Users' }
+        it 'has a table' do
+          check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 3,
+                                :labels          => ['', 'Organization Roles', 'Space Roles', ''],
+                                :colspans        => %w(8 5 4)
+                              },
+                              {
+                                :columns         => @driver.find_elements(:xpath => "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                :expected_length => 17,
+                                :labels          => ['Username', 'Created', 'Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
+                                :colspans        => nil
+                              }
+                             ])
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='UsersTable']/tbody/tr/td"),
+                           [
+                             uaa_user[:username],
+                             @driver.execute_script("return Format.formatString(\"#{ uaa_user[:created].to_datetime.rfc3339 }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ uaa_user[:lastmodified].to_datetime.rfc3339 }\")"),
+                             uaa_user[:email],
+                             uaa_user[:familyname],
+                             uaa_user[:givenname],
+                             uaa_user[:active].to_s,
+                             uaa_user[:version].to_s,
+                             '4',
+                             '1',
+                             '1',
+                             '1',
+                             '1',
+                             '3',
+                             '1',
+                             '1',
+                             '1'
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_UsersTable_0', 'ZeroClipboard_TableToolsMovie_33')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+          it 'has details' do
+            check_details([{ :label => 'Username',                           :tag => 'div', :value => uaa_user[:username] },
+                           { :label => 'Created',                            :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_user[:created].to_datetime.rfc3339 }\")") },
+                           { :label => 'Updated',                            :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_user[:lastmodified].to_datetime.rfc3339 }\")") },
+                           { :label => 'Email',                              :tag =>    'a', :value => "mailto:#{ uaa_user[:email] }" },
+                           { :label => 'Family Name',                        :tag =>   nil, :value => uaa_user[:familyname] },
+                           { :label => 'Given Name',                         :tag =>   nil, :value => uaa_user[:givenname] },
+                           { :label => 'Active',                             :tag =>   nil, :value => uaa_user[:active].to_s },
+                           { :label => 'Version',                            :tag =>   nil, :value => uaa_user[:version].to_s },
+                           { :label => 'Organization Total Roles',           :tag =>   'a', :value => '4' },
+                           { :label => 'Organization Auditor Roles',         :tag =>   nil, :value => '1' },
+                           { :label => 'Organization Billing Manager Roles', :tag =>   nil, :value => '1' },
+                           { :label => 'Organization Manager Roles',         :tag =>   nil, :value => '1' },
+                           { :label => 'Organization User Roles',            :tag =>   nil, :value => '1' },
+                           { :label => 'Space Total Roles',                  :tag =>   'a', :value => '3' },
+                           { :label => 'Space Auditor Roles',                :tag =>   nil, :value => '1' },
+                           { :label => 'Space Developer Roles',              :tag =>   nil, :value => '1' },
+                           { :label => 'Space Manager Roles',                :tag =>   nil, :value => '1' },
+                           { :label => 'Authorities',                        :tag =>   nil, :value => uaa_group[:displayname] }
+                          ])
+          end
+          it 'has organization roles link' do
+            check_filter_link('Users', 8, 'OrganizationRoles', uaa_user[:username])
+          end
+          it 'has space roles link' do
+            check_filter_link('Users', 13, 'SpaceRoles', uaa_user[:username])
           end
         end
       end

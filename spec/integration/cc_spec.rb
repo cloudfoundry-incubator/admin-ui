@@ -137,8 +137,36 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected organizations_auditors' do
+      let(:results)  { cc.organizations_auditors }
+      let(:expected) { cc_organization_auditor }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected organizations_billing_managers' do
+      let(:results)  { cc.organizations_billing_managers }
+      let(:expected) { cc_organization_billing_manager }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     it 'returns organizations_count' do
       expect(cc.organizations_count).to be(1)
+    end
+
+    context 'returns connected organizations_managers' do
+      let(:results)  { cc.organizations_managers }
+      let(:expected) { cc_organization_manager }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected organizations_users' do
+      let(:results)  { cc.organizations_users }
+      let(:expected) { cc_organization_user }
+
+      it_behaves_like('common cc retrieval')
     end
 
     context 'returns connected quota_definitions' do
@@ -204,6 +232,13 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected spaces_auditors' do
+      let(:results)  { cc.spaces_auditors }
+      let(:expected) { cc_space_auditor }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     it 'returns spaces_count' do
       expect(cc.spaces_count).to be(1)
     end
@@ -211,6 +246,13 @@ describe AdminUI::CC, :type => :integration do
     context 'returns connected spaces_developers' do
       let(:results)  { cc.spaces_developers }
       let(:expected) { cc_space_developer }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected spaces_managers' do
+      let(:results)  { cc.spaces_managers }
+      let(:expected) { cc_space_manager }
 
       it_behaves_like('common cc retrieval')
     end
