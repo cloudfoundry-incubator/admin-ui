@@ -53,8 +53,32 @@ module AdminUI
       invalidate_cache(:applications)
     end
 
+    def invalidate_cloud_controllers
+      invalidate_cache(:cloud_controllers)
+    end
+
+    def invalidate_components
+      invalidate_cache(:components)
+    end
+
+    def invalidate_deas
+      invalidate_cache(:deas)
+    end
+
+    def invalidate_gateways
+      invalidate_cache(:gateways)
+    end
+
+    def invalidate_health_managers
+      invalidate_cache(:health_managers)
+    end
+
     def invalidate_organizations
       invalidate_cache(:organizations)
+    end
+
+    def invalidate_routers
+      invalidate_cache(:routers)
     end
 
     def invalidate_routes

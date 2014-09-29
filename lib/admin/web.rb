@@ -344,9 +344,14 @@ module AdminUI
 
     delete '/components', :auth => [:user] do
       @logger.info_user session[:username], 'delete', "/components/#{ params[:uri] }"
-      @varz.remove(params['uri'])
-
-      204
+      begin
+        @operation.remove_component(params[:uri])
+        204
+      rescue => error
+        @logger.debug("Error during removing component: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
     end
 
     delete '/organizations/:org_guid', :auth => [:admin] do

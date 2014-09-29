@@ -66,5 +66,16 @@ module AdminUI
       @cc.invalidate_organizations
       @view_models.invalidate_organizations
     end
+
+    def remove_component(uri)
+      @logger.debug("REMOVE component #{ uri }")
+      @varz.remove(uri)
+      @view_models.invalidate_cloud_controllers
+      @view_models.invalidate_components
+      @view_models.invalidate_deas
+      @view_models.invalidate_gateways
+      @view_models.invalidate_health_managers
+      @view_models.invalidate_routers
+    end
   end
 end

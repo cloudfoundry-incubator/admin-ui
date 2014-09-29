@@ -132,5 +132,35 @@ describe AdminUI::Operation, :type => :integration do
         expect { operation.manage_service_plan(cc_service_plan[:guid], '{"public": false }') }.to change { cc.service_plans['items'][0][:public].to_s }.from('true').to('false')
       end
     end
+
+    context 'manage varz components' do
+      before do
+        expect(varz.components['items'].length).to eq(5)
+      end
+
+      after do
+        expect(varz.components['items'].length).to eq(4)
+      end
+
+      it 'removes cloud_controller' do
+        expect { operation.remove_component(nats_cloud_controller_varz) }.to change { varz.cloud_controllers['items'].length }.from(1).to(0)
+      end
+
+      it 'removes dea' do
+        expect { operation.remove_component(nats_dea_varz) }.to change { varz.deas['items'].length }.from(1).to(0)
+      end
+
+      it 'removes gateway' do
+        expect { operation.remove_component(nats_provisioner_varz) }.to change { varz.gateways['items'].length }.from(1).to(0)
+      end
+
+      it 'removes health_manager' do
+        expect { operation.remove_component(nats_health_manager_varz) }.to change { varz.health_managers['items'].length }.from(1).to(0)
+      end
+
+      it 'removes router' do
+        expect { operation.remove_component(nats_router_varz) }.to change { varz.routers['items'].length }.from(1).to(0)
+      end
+    end
   end
 end
