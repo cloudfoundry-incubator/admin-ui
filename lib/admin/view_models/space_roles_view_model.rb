@@ -28,10 +28,10 @@ module AdminUI
 
       organizations = @cc.organizations
 
-      organization_hash = Hash[*organizations['items'].map { |item| [item[:id], item] }.flatten]
-      space_hash        = Hash[*spaces['items'].map { |item| [item[:id], item] }.flatten]
-      user_cc_hash      = Hash[*users_cc['items'].map { |item| [item[:id], item] }.flatten]
-      user_uaa_hash     = Hash[*users_uaa['items'].map { |item| [item[:id], item] }.flatten]
+      organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      user_cc_hash      = Hash[users_cc['items'].map { |item| [item[:id], item] }]
+      user_uaa_hash     = Hash[users_uaa['items'].map { |item| [item[:id], item] }]
 
       items = []
 

@@ -348,7 +348,7 @@ module AdminUI
       finish = Time.now
 
       cache[:semaphore].synchronize do
-        @logger.debug("Caching CC #{ key } data.  Retrieval time: #{ finish - start } seconds")
+        @logger.debug("Caching CC #{ key } data.  Count: #{ result_cache['items'].length }.  Retrieval time: #{ finish - start } seconds")
         cache[:result] = result_cache
         cache[:condition].broadcast
       end

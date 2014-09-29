@@ -21,9 +21,9 @@ module AdminUI
       organizations = @cc.organizations
       spaces        = @cc.spaces
 
-      application_hash  = Hash[*applications['items'].map { |item| [item[:guid], item] }.flatten]
-      organization_hash = Hash[*organizations['items'].map { |item| [item[:id], item] }.flatten]
-      space_hash        = Hash[*spaces['items'].map { |item| [item[:id], item] }.flatten]
+      application_hash  = Hash[applications['items'].map { |item| [item[:guid], item] }]
+      organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
       items = []
 

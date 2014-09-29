@@ -21,7 +21,7 @@ module AdminUI
 
       routes_connected = routes['connected']
 
-      organization_hash = Hash[*organizations['items'].map { |item| [item[:id], item] }.flatten]
+      organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
 
       domain_route_counters = {}
 

@@ -26,9 +26,9 @@ module AdminUI
       service_instances_connected         = service_instances['connected']
       service_plan_visibilities_connected = service_plan_visibilities['connected']
 
-      organization_hash   = Hash[*organizations['items'].map { |item| [item[:id], item] }.flatten]
-      service_broker_hash = Hash[*service_brokers['items'].map { |item| [item[:id], item] }.flatten]
-      service_hash        = Hash[*services['items'].map { |item| [item[:id], item] }.flatten]
+      organization_hash   = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      service_broker_hash = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
+      service_hash        = Hash[services['items'].map { |item| [item[:id], item] }]
 
       service_plan_visibilities_organizations_hash = {}
       if service_plan_visibilities_connected && organizations_connected

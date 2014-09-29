@@ -28,7 +28,7 @@ module AdminUI
       service_instances_connected = service_instances['connected']
       spaces_roles_connected      = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
 
-      organization_hash = Hash[*organizations['items'].map { |item| [item[:id], item] }.flatten]
+      organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
       routes_used_set   = apps_routes['items'].to_set { |app_route| app_route[:route_id] }
 
       space_role_counters             = {}

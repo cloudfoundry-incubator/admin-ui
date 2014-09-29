@@ -39,8 +39,8 @@ module AdminUI
                            users_cc['connected'] &&
                            users_uaa['connected']
 
-      group_hash   = Hash[*groups['items'].map { |item| [item[:id], item] }.flatten]
-      user_cc_hash = Hash[*users_cc['items'].map { |item| [item[:guid], item] }.flatten]
+      group_hash   = Hash[groups['items'].map { |item| [item[:id], item] }]
+      user_cc_hash = Hash[users_cc['items'].map { |item| [item[:guid], item] }]
 
       member_groups = {}
 
