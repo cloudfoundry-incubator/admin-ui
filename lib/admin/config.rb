@@ -6,22 +6,25 @@ module AdminUI
   class Config
     DEFAULTS_CONFIG =
     {
-      :bind_address                        =>   '0.0.0.0',
-      :cloud_controller_discovery_interval =>         300,
-      :cloud_controller_ssl_verify_none    =>       false,
-      :component_connection_retries        =>           2,
-      :log_file_page_size                  =>      51_200,
-      :log_file_sftp_keys                  =>          [],
-      :log_files                           =>          [],
-      :monitored_components                =>          [],
-      :nats_discovery_interval             =>          30,
-      :nats_discovery_timeout              =>          10,
-      :receiver_emails                     =>          [],
-      :stats_refresh_schedules             =>          ['0 5 * * *'],
-      :stats_retries                       =>           5,
-      :stats_retry_interval                =>         300,
-      :tasks_refresh_interval              =>       5_000,
-      :varz_discovery_interval             =>          30
+      :bind_address                        =>          '0.0.0.0',
+      :cloud_controller_discovery_interval =>                300,
+      :cloud_controller_ssl_verify_none    =>              false,
+      :component_connection_retries        =>                  2,
+      :log_file_page_size                  =>             51_200,
+      :log_file_sftp_keys                  =>                 [],
+      :log_files                           =>                 [],
+      :monitored_components                =>                 [],
+      :nats_discovery_interval             =>                 30,
+      :nats_discovery_timeout              =>                 10,
+      :receiver_emails                     =>                 [],
+      :secured_client_connection           =>              false,
+      :stats_refresh_schedules             =>      ['0 5 * * *'],
+      :stats_retries                       =>                  5,
+      :stats_retry_interval                =>                300,
+      :tasks_refresh_interval              =>              5_000,
+      :uaa_groups_admin                    => ['admin_ui.admin'],
+      :uaa_groups_user                     =>  ['admin_ui.user'],
+      :varz_discovery_interval             =>                 30
     }
 
     def self.schema
@@ -29,11 +32,13 @@ module AdminUI
         schema =
         {
           optional(:bind_address)                        => /[^\r\n\t]+/,
+          :ccdb_uri                                      => /[^\r\n\t]+/,
           optional(:cloud_controller_discovery_interval) => Integer,
           optional(:cloud_controller_ssl_verify_none)    => bool,
           :cloud_controller_uri                          => %r{(http[s]?://[^\r\n\t]+)},
           optional(:component_connection_retries)        => Integer,
           :data_file                                     => /[^\r\n\t]+/,
+          :db_uri                                        => /[^\r\n\t]+/,
           :log_file                                      => /[^\r\n\t]+/,
           optional(:log_file_sftp_keys)                  => [String],
           optional(:log_file_page_size)                  => Integer,
@@ -46,34 +51,35 @@ module AdminUI
           optional(:receiver_emails)                     => [/[^\r\n\t]+/],
           optional(:sender_email)                        =>
           {
-            :server  => /[^\r\n\t]+/,
-            :account => /[^\r\n\t]+/
+            :server             => /[^\r\n\t]+/,
+            optional(:port)     => Integer,
+            optional(:domain)   => /[^\r\n\t]+/,
+            :account            => /[^\r\n\t]+/,
+            optional(:secret)   => String,
+            optional(:authtype) => enum('plain', 'login', 'cram_md5')
           },
-
-          :stats_file                                    => /[^\r\n\t]+/,
+          :secured_client_connection                     => bool,
+          optional(:ssl)                                 =>
+          {
+            :certificate_file_path     => String,
+            :private_key_file_path     => String,
+            :private_key_pass_phrase   => String,
+            :max_session_idle_length   => Integer
+          },
+          optional(:stats_file)                          => /[^\r\n\t]+/,
           optional(:stats_refresh_time)                  => Integer,
           optional(:stats_refresh_schedules)             => [/@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/],
           optional(:stats_retries)                       => Integer,
           optional(:stats_retry_interval)                => Integer,
           optional(:tasks_refresh_interval)              => Integer,
-          :uaa_admin_credentials                         =>
+          :uaa_client                                    =>
           {
-            :username => /[^\r\n\t]+/,
-            :password => /[^\r\n\t]+/
+            :id     => /[^\r\n\t]+/,
+            :secret => /[^\r\n\t]+/
           },
-
-          :ui_credentials                                =>
-          {
-            :username => /[^\r\n\t]+/,
-            :password => /[^\r\n\t]+/
-          },
-
-          :ui_admin_credentials                          =>
-          {
-            :username => /[^\r\n\t]+/,
-            :password => /[^\r\n\t]+/
-          },
-
+          :uaadb_uri                                     => /[^\r\n\t]+/,
+          :uaa_groups_admin                              => [/[^\r\n\t]+/],
+          :uaa_groups_user                               => [/[^\r\n\t]+/],
           optional(:varz_discovery_interval)             => Integer
         }
         unless schema[:stats_refresh_schedules].nil?
@@ -107,7 +113,7 @@ module AdminUI
       # post init processing: convert stats_fresh_time
       if to_convert_stats_refresh_time == true
         stats_refresh_time = filtered_select[:stats_refresh_time]
-        config_instance.stats_refresh_schedules.push("#{Utils.minutes_in_an_hour(stats_refresh_time)} #{Utils.hours_in_a_day(stats_refresh_time) > 0 ? Utils.hours_in_a_day(stats_refresh_time) : '*' } * * *")
+        config_instance.stats_refresh_schedules.push("#{ Utils.minutes_in_an_hour(stats_refresh_time) } #{ Utils.hours_in_a_day(stats_refresh_time) > 0 ? Utils.hours_in_a_day(stats_refresh_time) : '*' } * * *")
       end
       @config = config_instance
     end
@@ -118,6 +124,10 @@ module AdminUI
 
     def bind_address
       @config[:bind_address]
+    end
+
+    def ccdb_uri
+      @config[:ccdb_uri]
     end
 
     def cloud_controller_discovery_interval
@@ -138,6 +148,10 @@ module AdminUI
 
     def data_file
       @config[:data_file]
+    end
+
+    def db_uri
+      @config[:db_uri]
     end
 
     def log_file
@@ -180,14 +194,58 @@ module AdminUI
       @config[:receiver_emails]
     end
 
+    def secured_client_connection
+      @config[:secured_client_connection]
+    end
+
     def sender_email_account
       return nil if @config[:sender_email].nil?
       @config[:sender_email][:account]
     end
 
+    def sender_email_authtype
+      return nil if @config[:sender_email].nil?
+      @config[:sender_email][:authtype].to_sym if @config[:sender_email][:authtype]
+    end
+
+    def sender_email_domain
+      return nil if @config[:sender_email].nil?
+      @config[:sender_email][:domain] || 'localhost'
+    end
+
+    def sender_email_port
+      return nil if @config[:sender_email].nil?
+      @config[:sender_email][:port] || 25
+    end
+
+    def sender_email_secret
+      return nil if @config[:sender_email].nil?
+      @config[:sender_email][:secret]
+    end
+
     def sender_email_server
       return nil if @config[:sender_email].nil?
       @config[:sender_email][:server]
+    end
+
+    def ssl_certificate_file_path
+      return nil if @config[:ssl].nil?
+      @config[:ssl][:certificate_file_path]
+    end
+
+    def ssl_max_session_idle_length
+      return nil if @config[:ssl].nil?
+      @config[:ssl][:max_session_idle_length]
+    end
+
+    def ssl_private_key_file_path
+      return nil if @config[:ssl].nil?
+      @config[:ssl][:private_key_file_path]
+    end
+
+    def ssl_private_key_pass_phrase
+      return nil if @config[:ssl].nil?
+      @config[:ssl][:private_key_pass_phrase]
     end
 
     def stats_file
@@ -210,34 +268,26 @@ module AdminUI
       @config[:tasks_refresh_interval]
     end
 
-    def uaa_admin_credentials_password
-      return nil if @config[:uaa_admin_credentials].nil?
-      @config[:uaa_admin_credentials][:password]
+    def uaa_client_id
+      return nil if @config[:uaa_client].nil?
+      @config[:uaa_client][:id]
     end
 
-    def uaa_admin_credentials_username
-      return nil if @config[:uaa_admin_credentials].nil?
-      @config[:uaa_admin_credentials][:username]
+    def uaa_client_secret
+      return nil if @config[:uaa_client].nil?
+      @config[:uaa_client][:secret]
     end
 
-    def ui_admin_credentials_password
-      return nil if @config[:ui_admin_credentials].nil?
-      @config[:ui_admin_credentials][:password]
+    def uaadb_uri
+      @config[:uaadb_uri]
     end
 
-    def ui_admin_credentials_username
-      return nil if @config[:ui_admin_credentials].nil?
-      @config[:ui_admin_credentials][:username]
+    def uaa_groups_admin
+      @config[:uaa_groups_admin]
     end
 
-    def ui_credentials_password
-      return nil if @config[:ui_credentials].nil?
-      @config[:ui_credentials][:password]
-    end
-
-    def ui_credentials_username
-      return nil if @config[:ui_credentials].nil?
-      @config[:ui_credentials][:username]
+    def uaa_groups_user
+      @config[:uaa_groups_user]
     end
 
     def varz_discovery_interval

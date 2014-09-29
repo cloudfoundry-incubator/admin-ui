@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class GatewaysViewModel < AdminUI::Base
@@ -10,7 +11,7 @@ module AdminUI
     end
 
     def do_items
-      gateways = @varz.gateways(false)
+      gateways = @varz.gateways
 
       # gateways have to exist.  Other record types are optional
       return result unless gateways['connected']
@@ -18,6 +19,7 @@ module AdminUI
       items = []
 
       gateways['items'].each do |gateway|
+        Thread.pass
         row = []
 
         row.push(gateway['name'])

@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 require_relative '../utils'
 
 module AdminUI
@@ -12,13 +13,14 @@ module AdminUI
 
     def do_items
       statistics        = @stats.stats
-      current_statistic = @stats.current_stats(false)
+      current_statistic = @stats.current_stats
 
       items = []
 
       items.push(to_row(current_statistic)) if current_statistic
 
       statistics['items'].each do |statistic|
+        Thread.pass
         items.push(to_row(Utils.symbolize_keys(statistic)))
       end
 
@@ -30,7 +32,7 @@ module AdminUI
     def to_row(statistic)
       row = []
 
-      row.push(DateTime.parse(Time.at(statistic[:timestamp] / 1000.0).to_s).rfc3339)
+      row.push(Time.at(statistic[:timestamp] / 1000.0).to_datetime.rfc3339)
       row.push(statistic[:organizations])
       row.push(statistic[:spaces])
       row.push(statistic[:users])

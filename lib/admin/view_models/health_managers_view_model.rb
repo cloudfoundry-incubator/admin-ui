@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class HealthManagersViewModel < AdminUI::Base
@@ -10,7 +11,7 @@ module AdminUI
     end
 
     def do_items
-      health_managers = @varz.health_managers(false)
+      health_managers = @varz.health_managers
 
       # health_managers have to exist.  Other record types are optional
       return result unless health_managers['connected']
@@ -18,6 +19,7 @@ module AdminUI
       items = []
 
       health_managers['items'].each do |health_manager|
+        Thread.pass
         row = []
 
         row.push(health_manager['name'])

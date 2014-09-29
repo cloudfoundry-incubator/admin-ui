@@ -16,7 +16,7 @@ shared_context :web_context do
 
   before do
     @driver = selenium_web_driver
-    @driver.manage.timeouts.implicit_wait = 5
+    @driver.manage.timeouts.implicit_wait = 360
 
     AdminUI::Utils.stub(:time_in_milliseconds) do
       current_date
@@ -41,8 +41,10 @@ shared_context :web_context do
         'tunnel-identifier' => tunnel_identifier)
 
     url = "http://#{ username }:#{ access_key }@localhost:4445/wd/hub"
-
+    client = Selenium::WebDriver::Remote::Http::Default.new
+    client.timeout = 600
     Selenium::WebDriver.for(:remote,
+                            :http_client => client,
                             :desired_capabilities => caps,
                             :url => url)
   rescue => error
@@ -56,9 +58,9 @@ shared_context :web_context do
   end
 
   def check_details(expected_properties)
-    expect(@driver.find_element(:id => "#{ tab_id }DetailsLabel").displayed?).to be_true
-    properties = @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[1]")
-    values     = @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]")
+    expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_element(:id => "#{ tab_id }DetailsLabel").displayed? }).to be_true
+    properties = Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[1]") }
+    values     = Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]") }
     property_index = 0
     expected_properties.each do |expected_property|
       expect(properties[property_index].text).to eq("#{ expected_property[:label] }:")
@@ -75,23 +77,15 @@ shared_context :web_context do
   end
 
   def check_filter_link(tab_id, link_index, target_tab_id, expected_filter)
-    @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(:tag_name => 'a').click
-    expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq(target_tab_id)
-    expect(@driver.find_element(:id => "#{ target_tab_id }Table_filter").find_element(:tag_name => 'input').attribute('value')).to eq(expected_filter)
-  end
-
-  def check_select_link(tab_id, link_index, target_tab_id, expected_name, expected_column_index = 1)
-    @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(:tag_name => 'a').click
-    expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq(target_tab_id)
-    expect(@driver.find_element(:xpath => "//table[@id='#{ target_tab_id }Table']/tbody/tr[contains(@class, 'DTTT_selected')]/td[#{ expected_column_index }]").text).to eq(expected_name)
-    expect(@driver.find_element(:id => "#{ target_tab_id }DetailsLabel").displayed?).to be_true
-    expect(@driver.find_elements(:xpath => "//div[@id='#{ target_tab_id }PropertiesContainer']/table/tr[*]/td[2]")[0].text).to eq(expected_name)
+    Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(:tag_name => 'a').click }
+    expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_element(:class_name => 'menuItemSelected').attribute('id') }).to eq(target_tab_id)
+    expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_element(:id => "#{ target_tab_id }Table_filter").find_element(:tag_name => 'input').attribute('value') }).to eq(expected_filter)
   end
 
   def check_stats_chart(id)
     # As the page refreshes, we need to catch the stale element error and re-find the element on the page
     begin
-      Selenium::WebDriver::Wait.new(:timeout => 10).until { @driver.find_element(:id => "#{ id }Chart").displayed? }
+      Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => "#{ id }Chart").displayed? }
     rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
     end
     chart = @driver.find_element(:id => "#{ id }Chart")
@@ -166,12 +160,9 @@ shared_context :web_context do
     @driver.find_elements(:xpath => "//table[@id='#{ tab_id }Table']/tbody/tr")[0]
   end
 
-  def login(username, password, target_page)
+  def login(title)
     @driver.get "http://#{ host }:#{ port }"
-    @driver.find_element(:id => 'username').send_keys username
-    @driver.find_element(:id => 'password').send_keys password
-    @driver.find_element(:id => 'username').submit
-    Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.title == target_page }
+    Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.title == title }
   end
 
   def select_first_row

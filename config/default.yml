@@ -1,10 +1,12 @@
 ---
 bind_address: 0.0.0.0
+ccdb_uri: postgres://ccadmin:admin@10.244.0.30:5524/ccdb
 cloud_controller_discovery_interval: 300
 cloud_controller_ssl_verify_none: true
 cloud_controller_uri: http://api.10.244.0.34.xip.io
 component_connection_retries: 2
 data_file: data/data.json
+db_uri: sqlite://data/store.db
 log_file: admin_ui.log
 log_file_page_size: 51200
 log_file_sftp_keys: [ ]
@@ -23,14 +25,11 @@ stats_refresh_schedules: [ '0 5 * * *' ]
 stats_retries: 5
 stats_retry_interval: 300
 tasks_refresh_interval: 5000
-uaa_admin_credentials:
-  username: admin
-  password: admin
-ui_credentials:
-  username: user
-  password: passw0rd
-ui_admin_credentials:
-  username: admin
-  password: passw0rd
+uaa_client:
+  id: admin_ui_client
+  secret: admin_ui_secret
+uaadb_uri: postgres://uaaadmin:admin@10.244.0.30:5524/uaadb
+uaa_groups_admin: [ admin_ui.admin ]
+uaa_groups_user: [ admin_ui.user ] 
 varz_discovery_interval: 30
 

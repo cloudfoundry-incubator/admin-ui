@@ -6,6 +6,8 @@ describe AdminUI::VARZ, :type => :integration do
   include VARZHelper
 
   let(:data_file) { '/tmp/admin_ui_data.json' }
+  let(:db_file)   { '/tmp/admin_ui_store.db' }
+  let(:db_uri)    { "sqlite://#{ db_file }" }
   let(:log_file) { '/tmp/admin_ui.log' }
 
   before do
@@ -16,15 +18,16 @@ describe AdminUI::VARZ, :type => :integration do
   let(:logger) { Logger.new(log_file) }
   let(:config) do
     AdminUI::Config.load(:data_file            => data_file,
+                         :db_uri               => db_uri,
                          :monitored_components => [])
   end
 
   let(:email) { AdminUI::EMail.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
-  let(:varz) { AdminUI::VARZ.new(config, logger, nats) }
+  let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
 
   after do
-    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ log_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ db_file } #{ log_file }"))
   end
 
   context 'Stubbed NATS, but not HTTP' do

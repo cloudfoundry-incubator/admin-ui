@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class RoutesViewModel < AdminUI::Base
@@ -10,49 +11,81 @@ module AdminUI
     end
 
     def do_items
-      routes = @cc.routes(false)
+      routes = @cc.routes
 
       # routes have to exist.  Other record types are optional
       return result unless routes['connected']
 
-      organizations = @cc.organizations(false)
-      spaces        = @cc.spaces(false)
+      applications  = @cc.applications
+      apps_routes   = @cc.apps_routes
+      domains       = @cc.domains
+      organizations = @cc.organizations
+      spaces        = @cc.spaces
 
-      organization_hash = Hash[*organizations['items'].map { |item| [item['guid'], item] }.flatten]
-      space_hash        = Hash[*spaces['items'].map { |item| [item['guid'], item] }.flatten]
+      application_hash  = Hash[*applications['items'].map { |item| [item[:id], item] }.flatten]
+      domain_hash       = Hash[*domains['items'].map { |item| [item[:id], item] }.flatten]
+      organization_hash = Hash[*organizations['items'].map { |item| [item[:id], item] }.flatten]
+      space_hash        = Hash[*spaces['items'].map { |item| [item[:id], item] }.flatten]
+
+      route_apps = {}
+
+      apps_routes['items'].each do |app_route|
+        Thread.pass
+        app_id   = app_route[:app_id]
+        route_id = app_route[:route_id]
+        route_apps_entry = route_apps[route_id]
+        if route_apps_entry
+          route_apps_entry.push(app_id)
+        else
+          route_apps[route_id] = [app_id]
+        end
+      end
 
       items = []
 
       routes['items'].each do |route|
-        space        = space_hash[route['space_guid']]
-        organization = space.nil? ? nil : organization_hash[space['organization_guid']]
+        Thread.pass
+        domain       = domain_hash[route[:domain_id]]
+        space        = space_hash[route[:space_id]]
+        organization = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         row = []
 
-        row.push(route['guid'])
-        row.push(route['host'])
-        row.push(route['domain']['entity']['name'])
-        row.push(DateTime.parse(route['created_at']).rfc3339)
+        row.push(route[:guid])
+        row.push(route[:host])
 
-        if route['updated_at']
-          row.push(DateTime.parse(route['updated_at']).rfc3339)
+        if domain
+          row.push(domain[:name])
+        else
+          row.push(nil)
+        end
+
+        row.push(route[:created_at].to_datetime.rfc3339)
+
+        if route[:updated_at]
+          row.push(route[:updated_at].to_datetime.rfc3339)
         else
           row.push(nil)
         end
 
         if organization && space
-          row.push("#{ organization['name'] }/#{ space['name'] }")
+          row.push("#{ organization[:name] }/#{ space[:name] }")
         else
           row.push(nil)
         end
 
         apps = []
-        route['apps'].each do |app|
-          apps.push(app['entity']['name'])
+        route_apps_entry = route_apps[route[:id]]
+        if route_apps_entry
+          route_apps_entry.each do |app_id|
+            app = application_hash[app_id]
+            apps.push(app[:name]) if app
+          end
         end
         row.push(apps)
 
-        row.push('organization' => organization,
+        row.push('domain'       => domain,
+                 'organization' => organization,
                  'route'        => route,
                  'space'        => space)
 

@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class LogsViewModel < AdminUI::Base
@@ -18,11 +19,12 @@ module AdminUI
       items = []
 
       logs.each do |log|
+        Thread.pass
         row = []
 
         row.push(log[:path])
         row.push(log[:size])
-        row.push(DateTime.parse(Time.at(log[:time] / 1000.0).to_s).rfc3339)
+        row.push(Time.at(log[:time] / 1000.0).to_datetime.rfc3339)
 
         row.push(log)
 

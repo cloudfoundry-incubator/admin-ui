@@ -1,5 +1,6 @@
 require_relative 'base'
 require 'date'
+require 'thread'
 
 module AdminUI
   class ApplicationsViewModel < AdminUI::Base
@@ -11,40 +12,41 @@ module AdminUI
     end
 
     def do_items
-      applications = @cc.applications(false)
-      deas         = @varz.deas(false)
+      applications = @cc.applications
+      deas         = @varz.deas
 
-      # applications or DEA's have to exist.  Other record types are optional
-      return result unless applications['connected'] || deas['connected']
+      # applications and DEA's have to exist.  Other record types are optional
+      return result unless applications['connected'] && deas['connected']
 
-      organizations = @cc.organizations(false)
-      spaces        = @cc.spaces(false)
+      organizations = @cc.organizations
+      spaces        = @cc.spaces
 
-      organization_hash = Hash[*organizations['items'].map { |item| [item['guid'], item] }.flatten]
-      space_hash        = Hash[*spaces['items'].map { |item| [item['guid'], item] }.flatten]
+      organization_hash = Hash[*organizations['items'].map { |item| [item[:id], item] }.flatten]
+      space_hash        = Hash[*spaces['items'].map { |item| [item[:id], item] }.flatten]
 
       application_hash = {}
 
       items = []
 
       applications['items'].each do |application|
-        space        = space_hash[application['space_guid']]
-        organization = space.nil? ? nil : organization_hash[space['organization_guid']]
+        Thread.pass
+        space        = space_hash[application[:space_id]]
+        organization = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         row = []
 
-        row.push(application['guid'])
-        row.push(application['name'])
-        row.push(application['state'])
-        row.push(application['package_state'])
+        row.push(application[:guid])
+        row.push(application[:name])
+        row.push(application[:state])
+        row.push(application[:package_state])
 
         # Instance State
         row.push(nil)
 
-        row.push(DateTime.parse(application['created_at']).rfc3339)
+        row.push(application[:created_at].to_datetime.rfc3339)
 
-        if application['updated_at']
-          row.push(DateTime.parse(application['updated_at']).rfc3339)
+        if application[:updated_at]
+          row.push(application[:updated_at].to_datetime.rfc3339)
         else
           row.push(nil)
         end
@@ -52,10 +54,10 @@ module AdminUI
         # Started and URI
         row.push(nil, nil)
 
-        if application['buildpack']
-          row.push(application['buildpack'])
-        elsif application['detected_buildpack']
-          row.push(application['detected_buildpack'])
+        if application[:buildpack]
+          row.push(application[:buildpack])
+        elsif application[:detected_buildpack]
+          row.push(application[:detected_buildpack])
         else
           row.push(nil)
         end
@@ -63,11 +65,11 @@ module AdminUI
         # Instance index, used services, memory, disk and CPU
         row.push(nil, nil, nil, nil, nil)
 
-        row.push(application['memory'])
-        row.push(application['disk_quota'])
+        row.push(application[:memory])
+        row.push(application[:disk_quota])
 
         if organization && space
-          row.push("#{ organization['name'] }/#{ space['name'] }")
+          row.push("#{ organization[:name] }/#{ space[:name] }")
         else
           row.push(nil)
         end
@@ -76,10 +78,10 @@ module AdminUI
         row.push(nil)
 
         row.push('application'  => application,
-                 'space'        => space,
-                 'organization' => organization)
+                 'organization' => organization,
+                 'space'        => space)
 
-        application_hash[application['guid']] = row
+        application_hash[application[:guid]] = row
 
         items.push(row)
       end
@@ -92,6 +94,7 @@ module AdminUI
         host = data['host']
         data['instance_registry'].each_value do |application|
           application.each_value do |instance|
+            Thread.pass
             instance_index = instance['instance_index']
 
             row = application_hash[instance['application_id']]
@@ -112,7 +115,7 @@ module AdminUI
               row.push(nil, nil)
 
               if instance['state_running_timestamp']
-                row.push(DateTime.parse(Time.at(instance['state_running_timestamp']).to_s).rfc3339)
+                row.push(Time.at(instance['state_running_timestamp']).to_datetime.rfc3339)
               else
                 row.push(nil)
               end
@@ -140,7 +143,7 @@ module AdminUI
               if instance['tags'] && instance['tags']['space']
                 space = space_hash[instance['tags']['space']]
                 if space
-                  organization = organization_hash[space['organization_guid']]
+                  organization = organization_hash[space[:organization_id]]
                 end
               end
 
@@ -153,9 +156,10 @@ module AdminUI
               row.push(host)
 
               # No application to push.  Push the instance instead so we can provide details.
-              row.push('instance'     => instance,
-                       'space'        => space,
-                       'organization' => organization)
+              row.push('application'  => nil,
+                       'instance'     => instance,
+                       'organization' => organization,
+                       'space'        => space)
 
               items.push(row)
             else
@@ -174,10 +178,10 @@ module AdminUI
               row[4] = instance['state']
 
               if instance['state_running_timestamp']
-                row[7] = DateTime.parse(Time.at(instance['state_running_timestamp']).to_s).rfc3339
+                row[7] = Time.at(instance['state_running_timestamp']).to_datetime.rfc3339
               end
 
-              row[ 8] = instance['application_uris']
+              row[8]  = instance['application_uris']
               row[10] = instance_index
               row[11] = instance['services'].length
               row[12] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil
@@ -188,8 +192,8 @@ module AdminUI
               # Need the specific instance for this row
               row[19] = { 'application'  => row[19]['application'],
                           'instance'     => instance,
-                          'space'        => row[19]['space'],
-                          'organization' => row[19]['organization']
+                          'organization' => row[19]['organization'],
+                          'space'        => row[19]['space']
                         }
             end
           end

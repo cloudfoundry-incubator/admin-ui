@@ -4,21 +4,35 @@ require_relative '../spec_helper'
 describe AdminUI::CC, :type => :integration do
   include CCHelper
 
-  let(:log_file) { '/tmp/admin_ui.log' }
-  let(:logger) { Logger.new(log_file) }
+  let(:ccdb_file)  { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri)   { "sqlite://#{ ccdb_file }" }
+  let(:db_file)    { '/tmp/admin_ui_store.db' }
+  let(:db_uri)     { "sqlite://#{ db_file }" }
+  let(:log_file)   { '/tmp/admin_ui.log' }
+  let(:logger)     { Logger.new(log_file) }
+  let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri)  { "sqlite://#{ uaadb_file }" }
   let(:config) do
-    AdminUI::Config.load(:cloud_controller_discovery_interval => 1,
+    AdminUI::Config.load(:ccdb_uri                            => ccdb_uri,
                          :cloud_controller_uri                => 'http://api.cloudfoundry',
-                         :uaa_admin_credentials               => { :username => 'user', :password => 'password' })
+                         :db_uri                              => db_uri,
+                         :uaadb_uri                           => uaadb_uri,
+                         :uaa_client                          => { :id => 'id', :secret => 'secret' })
   end
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
 
+  def cleanup_files
+    Process.wait(Process.spawn({}, "rm -fr #{ ccdb_file } #{ db_file } #{ log_file } #{ uaadb_file }"))
+  end
+
   before do
+    cleanup_files
+
     AdminUI::Config.any_instance.stub(:validate)
     cc_stub(config)
   end
 
-  let(:cc) { AdminUI::CC.new(config, logger, client) }
+  let(:cc) { AdminUI::CC.new(config, logger, client, true) }
 
   after do
     Thread.list.each do |thread|
@@ -27,291 +41,238 @@ describe AdminUI::CC, :type => :integration do
         thread.join
       end
     end
-    Process.wait(Process.spawn({}, "rm -fr #{ log_file }"))
+
+    cleanup_files
   end
 
-  context 'Stubbed HTTP' do
+  context 'Stubbed' do
     it 'clears the application cache' do
-      cc_apps_start_to_stop_stub(config)
-      expect { cc.invalidate_applications }.to change { cc.applications['items'][0]['state'] }.from('STARTED').to('STOPPED')
-    end
-
-    it 'clears the route cache' do
-      cc_routes_delete_stub(config)
-      expect { cc.invalidate_routes }.to change { cc.routes['items'].length }.from(1).to(0)
+      expect(cc.applications['items'].length).to eq(1)
+      cc_clear_apps_cache_stub(config)
+      cc.invalidate_applications
+      expect(cc.applications['items'].length).to eq(0)
     end
 
     it 'clears the organizations cache' do
-      cc_clear_organization_cache_stub(config)
-      expect { cc.invalidate_organizations }.to change { cc.organizations['items'].length }.from(1).to(0)
+      expect(cc.organizations['items'].length).to eq(1)
+      cc_clear_organizations_cache_stub(config)
+      cc.invalidate_organizations
+      expect(cc.organizations['items'].length).to eq(0)
+    end
+
+    it 'clears the route cache' do
+      expect(cc.routes['items'].length).to eq(1)
+      cc_clear_routes_cache_stub(config)
+      cc.invalidate_routes
+      expect(cc.routes['items'].length).to eq(0)
     end
 
     it 'clears the service plan cache' do
-      cc_service_plans_public_to_private_stub(config)
-      expect { cc.invalidate_service_plans }.to change { cc.service_plans['items'][0]['public'].to_s }.from('true').to('false')
+      expect(cc.service_plans['items'].length).to eq(1)
+      cc_clear_service_plans_cache_stub(config)
+      cc.invalidate_service_plans
+      expect(cc.service_plans['items'].length).to eq(0)
     end
 
-    it 'returns connected applications' do
-      applications = cc.applications
-
-      expect(applications['connected']).to eq(true)
-      items = applications['items']
-
-      resources = cc_started_apps['resources']
-
-      expect(items.length).to be(resources.length)
-
-      resources.each do |resource|
-        expect(items).to include(resource['entity'].merge(resource['metadata']))
+    shared_examples 'common cc retrieval' do
+      it 'verify cc retrieval' do
+        expect(results['connected']).to eq(true)
+        items = results['items']
+        expect(items.length).to eq(1)
+        expect(items[0]).to include(expected)
       end
+    end
+
+    context 'returns connected applications' do
+      let(:results)  { cc.applications }
+      let(:expected) { cc_app }
+
+      it_behaves_like('common cc retrieval')
     end
 
     it 'returns applications_count' do
-      expect(cc.applications_count).to be(cc_started_apps['resources'].length)
+      expect(cc.applications_count).to be(1)
     end
 
     it 'returns applications_running_instances' do
-      expect(cc.applications_running_instances).to be(cc_started_apps['resources'].length)
+      expect(cc.applications_running_instances).to be(1)
     end
 
     it 'returns applications_total_instances' do
-      expect(cc.applications_total_instances).to be(cc_started_apps['resources'].length)
+      expect(cc.applications_total_instances).to be(1)
     end
 
-    it 'returns connected organizations' do
-      organizations = cc.organizations
+    context 'returns connected apps_routes' do
+      let(:results)  { cc.apps_routes }
+      let(:expected) { cc_app_route }
 
-      expect(organizations['connected']).to eq(true)
-      items = organizations['items']
-
-      resources = cc_organizations['resources']
-
-      expect(items.length).to be(resources.length)
-
-      resources.each do |resource|
-        expect(items).to include(resource['entity'].merge(resource['metadata']))
-      end
+      it_behaves_like('common cc retrieval')
     end
 
-    it 'returns connected quota_definitions' do
-      quotas = cc.quota_definitions
+    context 'returns connected domains' do
+      let(:results)  { cc.domains }
+      let(:expected) { cc_domain }
 
-      expect(quotas['connected']).to eq(true)
-      items = quotas['items']
-
-      resources = cc_quota_definitions['resources']
-
-      expect(items.length).to be(resources.length)
-
-      resources.each do |resource|
-        expect(items).to include(resource['entity'].merge(resource['metadata']))
-      end
+      it_behaves_like('common cc retrieval')
     end
 
-    it 'returns connected routes' do
-      routes = cc.routes
+    context 'returns connected group_membership' do
+      let(:results)  { cc.group_membership }
+      let(:expected) { uaa_group_membership }
 
-      expect(routes['connected']).to eq(true)
-      items = routes['items']
+      it_behaves_like('common cc retrieval')
+    end
 
-      resources = cc_routes['resources']
+    context 'returns connected groups' do
+      let(:results)  { cc.groups }
+      let(:expected) { uaa_group }
 
-      expect(items.length).to be(resources.length)
+      it_behaves_like('common cc retrieval')
+    end
 
-      resources.each do |resource|
-        expect(items).to include(resource['entity'].merge(resource['metadata']))
-      end
+    context 'returns connected organizations' do
+      let(:results)  { cc.organizations }
+      let(:expected) { cc_organization }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected organizations_auditors' do
+      let(:results)  { cc.organizations_auditors }
+      let(:expected) { cc_organization_auditor }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected organizations_billing_managers' do
+      let(:results)  { cc.organizations_billing_managers }
+      let(:expected) { cc_organization_billing_manager }
+
+      it_behaves_like('common cc retrieval')
     end
 
     it 'returns organizations_count' do
-      expect(cc.organizations_count).to be(cc_organizations['resources'].length)
+      expect(cc.organizations_count).to be(1)
     end
 
-    it 'returns connected services' do
-      services = cc.services
+    context 'returns connected organizations_managers' do
+      let(:results)  { cc.organizations_managers }
+      let(:expected) { cc_organization_manager }
 
-      expect(services['connected']).to eq(true)
-      items = services['items']
-
-      resources = cc_services['resources']
-
-      expect(items.length).to be(resources.length)
-
-      resources.each do |resource|
-        expect(items).to include(resource['entity'].merge(resource['metadata']))
-      end
+      it_behaves_like('common cc retrieval')
     end
 
-    it 'returns connected service_bindings' do
-      service_bindings = cc.service_bindings
+    context 'returns connected organizations_users' do
+      let(:results)  { cc.organizations_users }
+      let(:expected) { cc_organization_user }
 
-      expect(service_bindings['connected']).to eq(true)
-      items = service_bindings['items']
-
-      resources = cc_service_bindings['resources']
-
-      expect(items.length).to be(resources.length)
-
-      resources.each do |resource|
-        expect(items).to include(resource['entity'].merge(resource['metadata']))
-      end
+      it_behaves_like('common cc retrieval')
     end
 
-    it 'returns connected service_brokers' do
-      service_brokers = cc.service_brokers
+    context 'returns connected quota_definitions' do
+      let(:results)  { cc.quota_definitions }
+      let(:expected) { cc_quota_definition }
 
-      expect(service_brokers['connected']).to eq(true)
-      items = service_brokers['items']
-
-      resources = cc_service_brokers['resources']
-
-      expect(items.length).to be(resources.length)
-
-      resources.each do |resource|
-        expect(items).to include(resource['entity'].merge(resource['metadata']))
-      end
+      it_behaves_like('common cc retrieval')
     end
 
-    it 'returns connected service_instances' do
-      service_instances = cc.service_instances
+    context 'returns connected routes' do
+      let(:results)  { cc.routes }
+      let(:expected) { cc_route }
 
-      expect(service_instances['connected']).to eq(true)
-      items = service_instances['items']
-
-      resources = cc_service_instances['resources']
-
-      expect(items.length).to be(resources.length)
-
-      resources.each do |resource|
-        expect(items).to include(resource['entity'].merge(resource['metadata']))
-      end
+      it_behaves_like('common cc retrieval')
     end
 
-    it 'returns connected service_plans' do
-      service_plans = cc.service_plans
+    context 'returns connected service_bindings' do
+      let(:results)  { cc.service_bindings }
+      let(:expected) { cc_service_binding }
 
-      expect(service_plans['connected']).to eq(true)
-      items = service_plans['items']
-
-      resources = cc_service_plans['resources']
-
-      expect(items.length).to be(resources.length)
-
-      resources.each do |resource|
-        expect(items).to include(resource['entity'].merge(resource['metadata']))
-      end
+      it_behaves_like('common cc retrieval')
     end
 
-    it 'returns connected spaces' do
-      spaces = cc.spaces
+    context 'returns connected service_brokers' do
+      let(:results)  { cc.service_brokers }
+      let(:expected) { cc_service_broker }
 
-      expect(spaces['connected']).to eq(true)
-      items = spaces['items']
-
-      resources = cc_spaces['resources']
-
-      expect(items.length).to be(resources.length)
-
-      resources.each do |resource|
-        expect(items).to include(resource['entity'].merge(resource['metadata']))
-      end
+      it_behaves_like('common cc retrieval')
     end
 
-    it 'returns connected spaces_auditors' do
-      spaces_auditors = cc.spaces_auditors
+    context 'returns connected service_instances' do
+      let(:results)  { cc.service_instances }
+      let(:expected) { cc_service_instance }
 
-      expect(spaces_auditors['connected']).to eq(true)
-      items = spaces_auditors['items']
+      it_behaves_like('common cc retrieval')
+    end
 
-      resources = cc_users_deep['resources']
+    context 'returns connected service_plans' do
+      let(:results)  { cc.service_plans }
+      let(:expected) { cc_service_plan }
 
-      count = 0
-      resources.each do |resource|
-        resource['entity']['audited_spaces'].each do |audited_space|
-          count += 1
-          expect(items).to include('user_guid' => resource['metadata']['guid'], 'space_guid' => audited_space['metadata']['guid'])
-        end
-      end
+      it_behaves_like('common cc retrieval')
+    end
 
-      expect(items.length).to be(count)
+    context 'returns connected service_plan_visibilities' do
+      let(:results)  { cc.service_plan_visibilities }
+      let(:expected) { cc_service_plan_visibility }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected services' do
+      let(:results)  { cc.services }
+      let(:expected) { cc_service }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected spaces' do
+      let(:results)  { cc.spaces }
+      let(:expected) { cc_space }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected spaces_auditors' do
+      let(:results)  { cc.spaces_auditors }
+      let(:expected) { cc_space_auditor }
+
+      it_behaves_like('common cc retrieval')
     end
 
     it 'returns spaces_count' do
-      expect(cc.spaces_count).to be(cc_spaces['resources'].length)
+      expect(cc.spaces_count).to be(1)
     end
 
-    it 'returns connected spaces_developers' do
-      spaces_developers = cc.spaces_developers
+    context 'returns connected spaces_developers' do
+      let(:results)  { cc.spaces_developers }
+      let(:expected) { cc_space_developer }
 
-      expect(spaces_developers['connected']).to eq(true)
-      items = spaces_developers['items']
-
-      resources = cc_users_deep['resources']
-
-      count = 0
-      resources.each do |resource|
-        resource['entity']['spaces'].each do |space|
-          count += 1
-          expect(items).to include('user_guid' => resource['metadata']['guid'], 'space_guid' => space['metadata']['guid'])
-        end
-      end
-
-      expect(items.length).to be(count)
+      it_behaves_like('common cc retrieval')
     end
 
-    it 'returns connected spaces_managers' do
-      spaces_managers = cc.spaces_managers
+    context 'returns connected spaces_managers' do
+      let(:results)  { cc.spaces_managers }
+      let(:expected) { cc_space_manager }
 
-      expect(spaces_managers['connected']).to eq(true)
-      items = spaces_managers['items']
-
-      resources = cc_users_deep['resources']
-
-      count = 0
-      resources.each do |resource|
-        resource['entity']['managed_spaces'].each do |managed_space|
-          count += 1
-          expect(items).to include('user_guid' => resource['metadata']['guid'], 'space_guid' => managed_space['metadata']['guid'])
-        end
-      end
-
-      expect(items.length).to be(count)
-
+      it_behaves_like('common cc retrieval')
     end
 
-    it 'returns connected users' do
-      users = cc.users
+    context 'returns connected users_cc' do
+      let(:results)  { cc.users_cc }
+      let(:expected) { cc_user }
 
-      expect(users['connected']).to eq(true)
-      items = users['items']
-
-      resources = uaa_users['resources']
-
-      expect(items.length).to be(resources.length)
-
-      resources.each do |resource|
-        authorities = []
-        resource['groups'].each do |group|
-          authorities.push(group['display'])
-        end
-
-        hash = { 'active'        => resource['active'],
-                 'authorities'   => authorities.sort.join(', '),
-                 'created'       => resource['meta']['created'],
-                 'id'            => resource['id'],
-                 'last_modified' => resource['meta']['lastModified'],
-                 'username'      => resource['userName'],
-                 'version'       => resource['meta']['version'] }
-        hash['email'] = resource['emails'][0]['value'] unless resource['emails'].empty?
-        hash['familyname'] = resource['name']['familyName'] unless resource['name']['familyName'].nil?
-        hash['givenname'] = resource['name']['givenName'] unless resource['name']['givenName'].nil?
-
-        expect(items).to include(hash)
-      end
+      it_behaves_like('common cc retrieval')
     end
 
     it 'returns users_count' do
-      expect(cc.users_count).to be(uaa_users['resources'].length)
+      expect(cc.users_count).to be(1)
+    end
+
+    context 'returns connected users_uaa' do
+      let(:results)  { cc.users_uaa }
+      let(:expected) { uaa_user }
+
+      it_behaves_like('common cc retrieval')
     end
   end
 end

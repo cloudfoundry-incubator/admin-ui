@@ -13,7 +13,9 @@ In order to execute, the Administration UI needs to be able to access the follow
 
 - NATS
 - Cloud Controller REST API
+- Cloud Controller DB URI
 - UAA REST API
+- UAA DB URI
 
 Installation of the Administration UI and its prerequisites requires access to the Internet to
 access GitHub.com, RubyGems.org, Ubuntu software repositories, etc. 
@@ -27,7 +29,7 @@ This has been tested on Ubuntu 10.04.4 64 bit, Ubuntu 12.04.3 64 bit and Ubuntu 
 ### Ubuntu Prerequisite Libraries
 
 ```
-sudo apt-get install -f -y --no-install-recommends git-core build-essential libssl-dev
+sudo apt-get install -f -y --no-install-recommends git-core build-essential libssl-dev libsqlite3-dev openssl libpq-dev
 ```
 
 ### Ruby
@@ -71,6 +73,39 @@ cd admin-ui
 bundle install
 ```
 
+### Running with bosh-lite CloudFoundry
+
+If you are using the default bosh-lite install of CloudFoundry then
+the following commands will help you setup the appropriate UAA
+groups needed.
+
+```
+# Target your bosh-lite UAA and get the 'admin' token
+uaac target http://uaa.10.244.0.34.xip.io
+uaac token client get admin -s admin-secret
+
+# Add 'scim.write' if not already there and re-get token
+uaac client update admin --authorities "`uaac client get admin | \
+    awk '/:/{e=0}/authorities:/{e=1;if(e==1){$1="";print}}'` scim.write"
+uaac token client get admin -s admin-secret
+
+# Create a new group and add the 'admin' user to it
+uaac group add admin_ui.admin
+uaac member add admin_ui.admin admin
+
+# Create the new UAA admin_ui_client
+uaac client add admin_ui_client \
+ --authorities cloud_controller.admin,cloud_controller.read,cloud_controller.write,openid,scim.read \
+ --authorized_grant_types authorization_code,client_credentials,refresh_token \
+ --autoapprove true \
+ --scope admin_ui.admin,admin_ui.user,openid \
+ -s admin_ui_secret
+```
+
+After running the above commands you should be able to use the default 
+configuration values for the Administration UI and skip down to the
+[Using the Administration UI](#using) section.
+
 ### Administration UI Configuration 
 
 Default configuration found in config/default.yml
@@ -85,6 +120,14 @@ Values that <b>must</b> be changed for your environment are marked in <b>bold</b
 The network address on which the server listens for web requests.
 <br>
 Example: <code>0.0.0.0</code>
+</dd>
+<dt>
+<code><b>ccdb_uri</b></code>
+</dt>
+<dd>
+The URI used to connect to the Cloud Controller database for retreival.
+<br>
+Example: <code>postgres://ccadmin:admin@10.244.0.30:5524/ccdb</code>
 </dd>
 <dt>
 <code>cloud_controller_discovery_interval</code>
@@ -125,6 +168,19 @@ Example: <code>2</code>
 Relative path location to store the Administration UI data file.  
 <br>
 Example: <code>data/data.json</code>
+</dd>
+<dt>
+<code>db_uri</code>
+</dt>
+<dd>
+The URI used to connect to a sqlite database instance.   
+
+If the database instance does not exist, Admin-UI will automatically create an instance.  
+<br>
+Example: <code>sqlite://data/store.db</code> 
+<br>
+In this case, the store.db file is located in the 'data' directory.  Absolute path is allowed in the uri.  For example,
+<code>sqlite:///tmp/store.db</code> indicates the database file 'store.db' is located in the '/tmp' directory.
 </dd>
 <dt>
 <code>log_file</code>
@@ -223,6 +279,22 @@ Example: <code>[ ]</code>
 Example: <code>[bar@10.10.10.10, baz@10.10.10.10]</code>
 </dd>
 <dt>
+<code><b>secured_client_connection</b></code>
+</dt>
+<dd>
+A true/false indicator about whether the Admin-UI server process will operate in secure or unprotected 
+mode.  In the secure mode, Admin-UI uses SSL security mechanism to protect communication with its users.  
+As such, it requires its users to connect via https; in unprotected mode, Admin-UI expects http requests.
+<br>
+When set to 'true', a SSL certificate is required and the 'ssl' property must be present in the 
+configuration file.  Please see configuration property 'ssl' for details about how to configure Admin-UI 
+to work with SSL certificate.<br>
+By default, Admin-UI runs in the unprotected mode.
+<br>
+Example: <code>true</code>
+</dd>
+</dt>
+<dt>
 <code><b>sender_email</b></code>
 </dt>
 <dd>
@@ -238,6 +310,22 @@ The email server.
 Example: <code>10.10.10.10</code>
 </dd>
 <dt>
+<code>port</code>
+</dt>
+<dd>
+Port of the email server.
+<br>
+Example: <code>25</code>
+</dd>
+<dt>
+<code>domain</code>
+</dt>
+<dd>
+HELO domain provided by the client to the server, the SMTP server will judge whether it should send or reject the SMTP session by inspecting the HELO domain.
+<br>
+Example: <code>localhost</code>
+</dd>
+<dt>
 <code>account</code>
 </dt>
 <dd>
@@ -245,13 +333,99 @@ The email account.
 <br>
 Example: <code>system@10.10.10.10</code>
 </dd>
+<dt>
+<code>secret</code>
+</dt>
+<dd>
+Secret for the email account.
+</dd>
+<dt>
+<code>authtype</code>
+</dt>
+<dd>
+SMTP authentication scheme, can be one of: <code>plain</code>, <code>login</code>, <code>cram_md5</code>.
+<br>
+Example: <code>login</code>
+</dd>
+</dl>
+</dd>
+<dt>
+<code><b>ssl</b></code>
+</dt>
+<dd>
+A set of configuration properties for Admin-UI to work with SSL certificate.  It 
+is required when the 'secured_client_connection' is set to true.<br>
+Certificate can be self-signed or signed by Certificate Authority (CA).  Admin-UI 
+supports these certificates. However, intermediate certificate from CA is not yet 
+supported.<br>
+<b>Generate Self-signed certificate</b><br>
+You can generate a self-signed certificate on a server, all without involving 
+third-party CA.  The following steps illustrate a way in how you can generate a 
+self-signed certificate:
+* generate private key
+<pre>
+openssl genrsa -des3 -out /tmp/admin_ui_server.key -3 -passout pass:private_key_pass_phrase 2048
+</pre>
+This command creates a private key at 2048 bit length which is then encrypted with 
+passphrase 'pass:private_key_pass_phrase' by way of DES3.
+* Generate certificate request
+<pre>
+openssl req -new -key /tmp/admin_ui_server.key -out /tmp/admin_ui_server.csr -passin pass:private_key_pass_phrase
+</pre>
+This command yields a certificate request file by supplying the private key and 
+passphrase involved in the previous step.
+* Generate certificate
+<pre>
+openssl x509 -req -days 365 -passin pass:private_key_pass -in /tmp/admin_ui_server.csr -signkey /tmp/admin_ui_server.key -out /tmp/admin_ui_server.crt
+</pre>
+This command generates a certificate that is good for the next 365 days.  At this 
+point, you no longer need to keep the certificate request (dot csr file).
+<br>
+<dl>
+<dt>
+<code>certificate_file_path</code>
+</dt>
+<dd>
+File path string leading to the certificate file.
+<br>
+Example: <code>certificate/server.cert</code>
+</dd>
+<dt>
+<dt>
+<code>max_session_idle_length</code>
+</dt>
+<dd>
+Time duration in seconds in which a https session is allowed to stay idle.
+<br>
+Example: <code>1800</code> for 30 minutes.
+</dd>
+<dt>
+<code>private_key_file_path</code>
+</dt>
+<dd>
+File path string leading to the private key file.
+<br>
+Example: <code>system@10.10.10.10</code>
+</dd>
+<dt>
+<code>private_key_pass_phrase</code>
+</dt>
+<dd>
+Password string that is used to encrypt the private key.
+<br>
+Example: <code>my_secret</code>
+</dd>
 </dl>
 </dd>
 <dt>
 <code>stats_file</code>
 </dt>
 <dd>
-Relative path location to store the Administration UI statistics.
+Deprecated.  Relative path location to store the Administration UI statistics.  
+
+Admin-UI no longer stores its stats data in the stats file.  Instead, the data is now stored in a database.  This property 
+is required only for the purpose of data migration.  When data migration is no longer needed, you can remove this property 
+from the configuration file.  Please see the Data Migration section for details.
 <br>
 Example: <code>data/stats.json</code>
 </dd>
@@ -344,78 +518,98 @@ Seconds between stats collection saving.
 Example: <code>300</code>
 </dd>
 <dt>
-<code><b>uaa_admin_credentials</b></code>
+<code>tasks_refresh_interval</code>
 </dt>
 <dd>
-UAA credentials to access the Cloud Controller REST API as an admin user
+Seconds between task status checks.
 <br>
+Example: <code>5000</code>
+</dd>
+<dt>
+<code><b>uaa_client</b></code>
+</dt>
+<dd>
+UAA client to access the Cloud Controller REST API as an admin user
+and also support Single Sign On (SSO) for UI login.
 <dl>
 <dt>
-<code>username</code>
+<code><b>id</b></code>
 <dt>
 <dd>
-User for UAA login.
+Client ID.
 <br>
-Example: <code>admin</code>
+Example: <code>admin_ui_client</code>
 </dd>
 <dt>
-<code>password</code>
+<code><b>secret</b></code>
 </dt>
 <dd>
-Password for UAA login.
+Password for UAA client.
 <br>
-Example: <code>c1oudc0w</code>
+Example: <code>admin_ui_secret</code>
 </dd>
 </dl>
+The UAA client used by the Administration UI must be added to the system via the cf-uaac command-line tool, BOSH deployment or equivalent and is required to consist of the following:
+<ul>
+<li>authorities: cloud_controller.admin,cloud_controller.read,cloud_controller.write,openid,scim.read.
+<li>authorized_grant_types:  authorization_code,client_credentials,refresh_token.
+<li>autoapprove: true 
+<li>scopes: openid as well as those defined in the uaa_groups_admin and uaa_groups_user configuration values.
+</ul>
+Example: 
+<pre>uaac client add admin_ui_client \
+     --authorities cloud_controller.admin,cloud_controller.read,cloud_controller.write,openid,scim.read \
+     --authorized_grant_types authorization_code,client_credentials,refresh_token \
+     --autoapprove true \
+     --scope admin_ui.admin,admin_ui.user,openid \
+     -s admin_ui_secret</code>
+</pre>
 </dd>
 <dt>
-<code><b>ui_credentials</b></code>
-</dt>
-<dd>
-Credentials to access the Administration UI as a standard user.
-<br>
-<dl>
+<code><b>uaa_groups_admin</b></code>
 <dt>
-<code>username</code>
-</dt>
 <dd>
-User for standard login.
+UAA scope(s) in a comma-delimited array to identify qualifying scopes for admin access to the Administration UI.
+If a user has any one scope, that user will be considered authorized to access the Administration UI as an admin.
 <br>
-Example: <code>user</code>
+Example: <code>[admin_ui.admin, cloud_controller.admin]</code>
+<br>
+The previously-unregistered groups referenced by this configuration property must be added to the system
+via the cf-uaac CLI command or equivalent.
+<br>
+Example: <code>uaac group add admin_ui.admin</code>
+<br>
+The group membership then needs to be updated for each user that has admin capabilities
+on the Administration UI.
+<br>
+Example: <code>uaac member add admin_ui.admin your_user_name</code>
 </dd>
 <dt>
-<code>password</code>
-</dt>
-<dd>
-Password for standard login.
-<br>
-Example: <code>passw0rd</code>
-</dd>
-</dl>
-<dt>
-<code><b>ui_admin_credentials</b></code>
-</dt>
-<dd>
-Credentials to access the Administration UI as an admin user
-<br>
-<dl>
-<dt>
-<code>username</code>
+<code><b>uaa_groups_user</b></code>
 <dt>
 <dd>
-User for admin login.
+UAA scope(s) in a comma-delimited array to identify qualifying scopes for user access to the Administration UI.
+If a user has any one scope, that user will be considered authorized to access the Administration UI as a user.
 <br>
-Example: <code>admin</code>
+Example: <code>[admin_ui.user]</code>
+<br>
+The previously-unregistered groups referenced by this configuration property must be added to the system
+via the cf-uaac CLI command or equivalent.
+<br>
+Example: <code>uaac group add admin_ui.user</code>
+<br>
+The group membership then needs to be updated for each user that has user capabilities
+on the Administration UI.
+<br>
+Example: <code>uaac member add admin_ui.user your_user_name</code>
 </dd>
 <dt>
-<code>password</code>
+<code><b>uaadb_uri</b></code>
 </dt>
 <dd>
-Password for admin login.
+The URI used to connect to the UAA database for retreival.
 <br>
-Example: <code>passw0rd</code>
-</dd>
-</dl>
+Example: <code>postgres://uaaadmin:admin@10.244.0.30:5524/uaadb</code>
 </dd>
 <dt>
 <code>varz_discovery_interval</code>
@@ -426,6 +620,43 @@ Seconds between VARZ discoveries
 Example: <code>30</code>
 </dd>
 </dl>
+
+### Data Migration
+
+Prior releases of Admin-UI store stats data in a file as indicated by the stats_file configuration property.  This data is 
+now stored in a database.  Data migration is referring to the transfer of stats information from file to database.
+
+Data migration takes place automatically at the start of admin-UI daemon process when the following conditions are all met:
+  * stats_file property is present and valid in the default.yml file
+  * db_uri property is present and valid in the default.yml file
+  * stats file contains data
+  * the database instance either does not exist or has not yet been initialzed with schema.
+
+When Admin-UI completes the data migration to database, it will rename the original stats file by appending '.bak' file 
+extension. For example, 'stats.json' becomes 'stats.json.bak'.  
+
+Data migration is run only once on a given database instance.  If for some reason you wish to rerun data migration, you 
+must operate on a different database instance.
+
+### Database schema Migration 
+At the start of its daemon process, Admin-UI always checks its database schema migration directory and attempts to bring its 
+database schema up to date.  So it's not required to run schema migration manually.  This migration takes place before data 
+migration.
+
+The database schema migration directory is located at 'db/migrations'. This directory contains files responsible for both
+populating database schema and subsequently migrating the schema.  Migration files are built on the Sequel migration framework,
+and hence adhere to its file naming convention. i.e.  
+
+           <timestamp>_<title>.rb
+
+The schema migration Admin-UI initiated always follows the chronological order as indicated by timestamps embdedded in the 
+migration file names.
+
+More details about Sequal migration framework and ways to perform manual schema migration can be found  at the following URLs:
+
+  * http://sequel.jeremyevans.net/rdoc/classes/Sequel/Migration.html
+  * http://sequel.jeremyevans.net/rdoc/classes/Sequel/Migrator.html
+
 
 ## Execute Administration UI
 

@@ -1,5 +1,6 @@
 require 'json'
 require 'net/http'
+require 'thread'
 
 module AdminUI
   class VARZ
@@ -23,34 +24,34 @@ module AdminUI
       thread.priority = -2
     end
 
-    def components(wait = true)
-      filter(//, wait)
+    def components
+      filter(//)
     end
 
-    def cloud_controllers(wait = true)
-      filter(/CloudController/, wait)
+    def cloud_controllers
+      filter(/CloudController/)
     end
 
-    def deas(wait = true)
-      filter(/DEA/, wait)
+    def deas
+      filter(/DEA/)
     end
 
-    def deas_count(wait = true)
-      hash = filter(/DEA/, wait)
+    def deas_count
+      hash = filter(/DEA/)
       return nil unless hash['connected']
       hash['items'].length
     end
 
-    def health_managers(wait = true)
-      filter(/HealthManager/, wait)
+    def health_managers
+      filter(/HealthManager/)
     end
 
-    def gateways(wait = true)
-      filter(/-Provisioner/, wait)
+    def gateways
+      filter(/-Provisioner/)
     end
 
-    def routers(wait = true)
-      filter(/Router/, wait)
+    def routers
+      filter(/Router/)
     end
 
     def invalidate
@@ -84,10 +85,10 @@ module AdminUI
 
     private
 
-    def filter(typePattern, wait)
+    def filter(typePattern)
       cache = {}
       @semaphore.synchronize do
-        if wait || @testing
+        if @testing
           @condition.wait(@semaphore) while @cache.nil?
         else
           return { 'connected' => false, 'items' => [] } if @cache.nil?
@@ -100,15 +101,13 @@ module AdminUI
 
       cache['items'].each do |_, item|
         data = item['data']
-        unless data.nil?
-          type_pattern_index = data['type'] =~ typePattern
-          unless type_pattern_index.nil?
-            result_item = item.clone
-            item_name = type_pattern_index == 0 ? data['host'] : data['type'].sub(typePattern, '')
-            result_item['name'] = item_name unless item_name.nil?
-            result_item_array.push(result_item)
-          end
-        end
+        next unless data.is_a?(Hash) && data['type'].is_a?(String)
+        type_pattern_index = data['type'] =~ typePattern
+        next if type_pattern_index.nil?
+        result_item = item.clone
+        item_name = type_pattern_index == 0 ? data['host'] : data['type'].sub(typePattern, '')
+        result_item['name'] = item_name unless item_name.nil?
+        result_item_array.push(result_item)
       end
 
       result
@@ -126,6 +125,7 @@ module AdminUI
         cache['connected'] = nats_result['connected']
 
         nats_result['items'].each do |uri, item|
+          Thread.pass
           item_hash[uri] = item_result(uri, item)
         end
       rescue => error
