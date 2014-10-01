@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html>
-
     <head>
-
         <title>Administration</title>
 
         <link rel="stylesheet" type="text/css" href="css/application.css"/>
 
         <script src="js/external/jquery/jquery-1.9.1.js"></script>
         <script src="js/external/jquery/jquery.base64.js"></script>
-        <script src="js/external/jquery/jquery.cookie.js"></script>
 
         <link rel="stylesheet" type="text/css" href="js/external/jquery/DataTables-1.9.4/media/css/jquery.dataTables.css"/>
         <link rel="stylesheet" type="text/css" href="js/external/jquery/TableTools-2.1.5/media/css/TableTools.css"/>
@@ -20,12 +17,11 @@
         <script src="js/external/jquery/TableTools-2.1.5/media/js/TableTools.min.js"></script>
 
         <script src="js/external/jquery/plugins/fnSetFilteringDelay.js"></script>
+        
         <script src="js/external/fixes/ZeroClipboard.js"></script>
 
-        <script src="js/external/i18next/i18next.js"></script>
-
-        <script src="js/app/constants.js"></script>
-        <script src="js/app/utilities.js"></script>
+        <script src="js/app/constants.js"></script>      
+        <script src="js/app/utilities.js"></script>     
         <script src="js/app/format.js"></script>
         <script src="js/app/table.js"></script>
         <script src="js/app/stats.js"></script>
@@ -50,7 +46,6 @@
         <script src="js/app/tabs/statsTab.js"></script>
         <script src="js/app/tabs/tasksTab.js"></script>
         <script src="js/app/tabs/usersTab.js"></script>
-        <script src="js/app/i18n.js"></script>
         <script src="js/app/adminUI.js"></script>
 
         <script src="js/external/jqplot/jquery.jqplot.js"></script>          
@@ -65,20 +60,14 @@
     </head>
 
     <body>
-
         <div class="titleBar">
-
-            <span data-i18n="title-bar.title-text" class="titleText">
-                Cloud Foundry
-            </span>
+            <span class="titleText">Cloud Foundry</span>
   
-            <span class="cloudControllerText">
-
-            </span>
+            <span class="cloudControllerText"></span>
 
             <span class="disconnected">
               <img class="disconnectedImage" src="images/red.png" height="16"/>
-              <span data-i18n="errors.disconnected">Unable to connect to backend services</span>
+              <span>Unable to connect to backend services</span>
             </span>
 
             <span class="userContainer">
@@ -86,343 +75,152 @@
                 <img src="images/dropdown.png"/>
             </span>
 
-            <div data-i18n="title-bar.sign-out" class="userMenu">
-                Sign Out
-            </div>
-
-            <span class="languageContainer">
-                <span class="text">
-                    Language:
-                </span>
-                <span class="languageName">
-                </span>
-                <img src="images/dropdown.png"/>
-            </span>
-
-            <div class="languageMenu">
-                <ul>
-                    <li data-language='en'>English</li>
-                    <li data-language='cn'>中国的</li>
-                    <li data-language='ru'>Русский</li>
-                </ul>
-            </div>
-
+            <div class="userMenu">Sign Out</div>
         </div>
 
         <div class="menuBar">
-
-            <span id="Organizations" class="menuItem" data-i18n="menu-bar.organizations">
-                Organizations
-            </span>
-
-            <span id="Spaces" class="menuItem" data-i18n="menu-bar.spaces">
-                Spaces
-            </span>
-
-            <span id="Applications" class="menuItem" data-i18n="menu-bar.applications">
-                Apps
-            </span>
-
-            <span id="Routes" class="menuItem" data-i18n="menu-bar.routes">
-                Routes
-            </span>
-
-            <span id="ServiceInstances" class="menuItem" data-i18n="menu-bar.service-instances">
-                Service Instances
-            </span>
-
-            <span id="Developers" class="menuItem" data-i18n="menu-bar.developers">
-                Developers
-            </span>
-
-            <span id="Quotas" class="menuItem" data-i18n="menu-bar.quotas">
-                Quotas
-            </span>
-
-            <span id="ServicePlans" class="menuItem" data-i18n="menu-bar.service-plans">
-                Service Plans
-            </span>
-
-            <span id="DEAs" class="menuItem" data-i18n="menu-bar.deas">
-                DEAs
-            </span>
-
-            <span id="CloudControllers" class="menuItem" data-i18n="menu-bar.cloud-controllers">
-                Cloud Controllers
-            </span>
-
-            <span id="HealthManagers" class="menuItem" data-i18n="menu-bar.health-managers">
-                Health Managers
-            </span>
-
-            <span id="Gateways" class="menuItem" data-i18n="menu-bar.service-gateways">
-                Service Gateways
-            </span>
-
-            <span id="Routers" class="menuItem" data-i18n="menu-bar.routers">
-                Routers
-            </span>
-
-            <span id="Components" class="menuItem" data-i18n="menu-bar.components">
-                Components
-            </span>
-
-            <span id="Logs" class="menuItem" data-i18n="menu-bar.logs">
-                Logs
-            </span>
-
-            <span id="Tasks" class="menuItem hiddenPage" data-i18n="menu-bar.tasks">
-                Tasks
-            </span>
-
-            <span id="Stats" class="menuItem" data-i18n="menu-bar.stats">
-                Stats
-            </span>
+            <span id="Organizations" class="menuItem">Organizations</span>
+            <span id="Spaces" class="menuItem">Spaces</span>
+            <span id="Applications" class="menuItem">Apps</span>
+            <span id="Routes" class="menuItem">Routes</span>
+            <span id="ServiceInstances" class="menuItem">Service Instances</span>
+            <span id="OrganizationRoles" class="menuItem">Organization Roles</span>
+            <span id="SpaceRoles" class="menuItem">Space Roles</span>
+            <span id="Users" class="menuItem">Users</span>
+            <span id="Domains" class="menuItem">Domains</span>
+            <span id="Quotas" class="menuItem">Quotas</span>
+            <span id="ServicePlans" class="menuItem">Service Plans</span>
+            <span id="DEAs" class="menuItem">DEAs</span>
+            <span id="CloudControllers" class="menuItem">Cloud Controllers</span>
+            <span id="HealthManagers" class="menuItem">Health Managers</span>
+            <span id="Gateways" class="menuItem">Service Gateways</span>
+            <span id="Routers" class="menuItem">Routers</span>
+            <span id="Components" class="menuItem">Components</span>
+            <span id="Logs" class="menuItem">Logs</span>
+            <span id="Tasks" class="menuItem hiddenPage">Tasks</span>
+            <span id="Stats" class="menuItem">Stats</span>
 
             <span>
                 <img id="RefreshButton" src="images/refresh.png" class="refreshButton"/>
             </span>
-
         </div>
 
         <div class="content">
-
             <div class="loadingPage"></div>
             <div class="errorPage">
                 <img class="errorImage" src="images/critical.png"/>
                 <span class="errorText"></span>
             </div>
 
-            <div id="CloudControllersPage" class="page hiddenPage">
-
-                <div id="CloudControllersTableContainer" class="pageSection">
-
-                    <table id="CloudControllersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                    </table>
-
-                </div>
-
-                <div class="verticalPageSection">
-
-                    <div id="CloudControllersDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                        Details
-                    </div>
-
-                    <div id="CloudControllersPropertiesContainer">
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div id="HealthManagersPage" class="page hiddenPage">
-
-                <div id="HealthManagersTableContainer" class="pageSection">
-
-                    <table id="HealthManagersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                    </table>
-
-                </div>
-
-                <div class="verticalPageSection">
-
-                    <div id="HealthManagersDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                        Details
-                    </div>
-
-                    <div id="HealthManagersPropertiesContainer">
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div id="GatewaysPage" class="page hiddenPage">
-
-                <div id="GatewaysTableContainer" class="pageSection">
-
-                    <table id="GatewaysTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                    </table>
-
-                </div>
-
-                <div class="verticalPageSection">
-
-                    <div class="pageSection">
-
-                        <div id="GatewaysDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                            Details
-                        </div>
-
-                        <div id="GatewaysPropertiesContainer">
-                        </div>
-
-                    </div>
-
-                    <div id="GatewaysNodesTableContainer" class="pageSection">
-
-                        <div id="GatewaysNodesDetailsLabel" class="propertyLabel" data-i18n="content.nodes">
-                            Nodes
-                        </div>
-
-                        <table id="GatewaysNodesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                        </table>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div id="RoutersPage" class="page hiddenPage">
-
-                <div id="RoutersTableContainer" class="pageSection">
-
-                    <table id="RoutersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                    </table>
-
-                </div>
-
-                <div class="verticalPageSection">
-
-                    <div id="RoutersDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                        Details
-                    </div>
-
-                    <div id="RoutersPropertiesContainer">
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div id="ServicePlansPage" class="page hiddenPage">
-
-                <div id="ServicePlansTableContainer" class="pageSection">
-
-                    <table id="ServicePlansTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+            <div id="OrganizationsPage" class="page hiddenPage">
+                <div id="OrganizationsTableContainer" class="pageSection">
+                    <table id="OrganizationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="7" data-i18n="content.service-plan">Service Plan</th>
-                                <th colspan="7" data-i18n="content.service">Service</th>
-                                <th colspan="3" data-i18n="content.service-broker">Service Broker</th>
+                                <th colspan="10"> </th>
+                                <th colspan="3">Routes</th>
+                                <th colspan="5">Used</th>
+                                <th colspan="2">Reserved</th>
+                                <th colspan="3">App States</th>
+                                <th colspan="3">App Package States</th>     
                             </tr>
                             <tr>
-                                <th data-i18n="content.check">Check</th>
-                                <th data-i18n="content.name">Name</th>
-                                <th data-i18n="content.target">Target</th>
-                                <th data-i18n="content.created">Created</th>
-                                <th data-i18n="content.updated">Updated</th>
-                                <th data-i18n="content.public">Public</th>
-                                <th data-i18n="content.service-instances">Service Instances</th>
-
-                                <th data-i18n="content.provider">Provider</th>
-                                <th data-i18n="content.label">Label</th> 
-                                <th data-i18n="content.version">Version</th>
-                                <th data-i18n="content.created">Created</th>
-                                <th data-i18n="content.updated">Updated</th>
-                                <th data-i18n="content.active">Active</th>
-                                <th data-i18n="content.bindable">Bindable</th>
-
-                                <th data-i18n="content.name">Name</th>
-                                <th data-i18n="content.created">Created</th>
-                                <th data-i18n="content.updated">Updated</th>
+                                <th>Check</th>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Spaces</th>
+                                <th>Organization Roles</th>
+                                <th>Space Roles</th>
+                                <th>Quota</th>
+                                <th>Domains</th>
+                                
+                                <th>Total</th>
+                                <th>Used</th>
+                                <th>Unused</th>
+                                
+                                <th>Instances</th>
+                                <th>Services</th>
+                                <th>Memory</th>
+                                <th>Disk</th>
+                                <th>% CPU</th>
+                                
+                                <th>Memory</th>
+                                <th>Disk</th>
+                                
+                                <th>Total</th>
+                                <th>Started</th>
+                                <th>Stopped</th>
+                                
+                                <th>Pending</th>
+                                <th>Staged</th>
+                                <th>Failed</th>
                             </tr>
                         </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-
-                </div>
-
-                <div class="verticalPageSection">
-
-                    <div id="ServicePlansDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                        Details
-                    </div>
-
-                    <div id="ServicePlansPropertiesContainer">
-                    </div>
-
-                </div>
-
-            </div>
-
-            </div>  
-
-            <div id="RoutesPage" class="page hiddenPage">
-                <div id="RoutesTableContainer" class="pageSection">
-                    <table id="RoutesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                        <tbody>
-                        <tr>
-                            <th data-i18n="content.check">Check</th>
-                            <th data-i18n="content.host">Host</th>
-                            <th data-i18n="content.domain">Domain</th>
-                            <th data-i18n="content.created">Created</th>
-                            <th data-i18n="content.updated">Updated</th>
-                            <th data-i18n="content.target">Target</th>
-                            <th data-i18n="content.applications">Applications</th>
-                        </tr>
-                        </tbody>
+                        <tbody/>
                     </table>
                 </div>
 
                 <div class="verticalPageSection">
-                    <div id="RoutesDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                        Details
-                    </div>
-                    <div id="RoutesPropertiesContainer">
-                    </div>
+                    <div id="OrganizationsDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="OrganizationsPropertiesContainer"></div>
                 </div>
             </div>
 
-            <div id="DEAsPage" class="page hiddenPage">
-
-                <div id="DEAsTableContainer" class="pageSection">
-
-                    <table id="DEAsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+            <div id="SpacesPage" class="page hiddenPage">
+                <div id="SpacesTableContainer" class="pageSection">
+                    <table id="SpacesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="8"> </th>
-                                <th colspan="2">% Free</th>
+                                <th colspan="5"> </th>
+                                <th colspan="3">Routes</th>
+                                <th colspan="5">Used</th>
+                                <th colspan="2">Reserved</th>
+                                <th colspan="3">App States</th>
+                                <th colspan="3">App Package States</th>
                             </tr>
                             <tr>
-                                <th data-i18n="content.name">Name</th>
-                                <th data-i18n="content.index">Index</th>
-                                <th data-i18n="content.status">Status</th>
-                                <th data-i18n="content.started">Started</th>
-                                <th data-i18n="content.stack">Stack</th>
-                                <th data-i18n="content.cpu">CPU</th>
-                                <th data-i18n="content.memory">Memory</th>
-                                <th data-i18n="content.apps">Apps</th>
-                                <th data-i18n="content.memory">Memory</th>
-                                <th data-i18n="content.disk">Disk</th>
+                                <th>Name</th>
+                                <th>Target</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Roles</th>
+                                
+                                <th>Total</th>
+                                <th>Used</th>
+                                <th>Unused</th>
+                                
+                                <th>Instances</th>
+                                <th>Services</th>
+                                <th>Memory</th>
+                                <th>Disk</th>
+                                <th>% CPU</th>
+                                
+                                <th>Memory</th>
+                                <th>Disk</th>
+                                
+                                <th>Total</th>
+                                <th>Started</th>
+                                <th>Stopped</th>
+                                
+                                <th>Pending</th>
+                                <th>Staged</th>
+                                <th>Failed</th>
                             </tr>
                         </thead>
-                        <tbody>
-
-                        </tbody>
+                        <tbody/>
                     </table>
-
                 </div>
 
                 <div class="verticalPageSection">
-
-                    <div id="DEAsDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                        Details
-                    </div>
-
-                    <div id="DEAsPropertiesContainer">
-                    </div>
-
+                    <div id="SpacesDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="SpacesPropertiesContainer"></div>
                 </div>
-
-            </div>
+           </div>
 
             <div id="ApplicationsPage" class="page hiddenPage">
-
                 <div id="ApplicationsTableContainer" class="pageSection">
-
                     <table id="ApplicationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
@@ -432,338 +230,358 @@
                                 <th colspan="2"> </th>
                             </tr>
                             <tr>
-                                <th data-i18n="content.check">Check</th>
-                                <th data-i18n="content.name">Name</th>
-                                <th data-i18n="content.state">State</th>
-                                <th data-i18n="content.package-state">Package State</th>
-                                <th data-i18n="content.instance-state">Instance State</th>
-                                <th data-i18n="content.created">Created</th>
-                                <th data-i18n="content.updated">Updated</th>
-                                <th data-i18n="content.started">Started</th>
-                                <th data-i18n="content.uri">URI</th>
-                                <th data-i18n="content.buildpack">Buildpack</th>
-                                <th data-i18n="content.instances">Instances</th>
-                                <th data-i18n="content.services">Services</th>
-                                <th data-i18n="content.memory">Memory</th>
-                                <th data-i18n="content.disk">Disk</th>
-                                <th data-i18n="content.cpu-percentage">% CPU</th>
-                                <th data-i18n="content.memory">Memory</th>
-                                <th data-i18n="content.disk">Disk</th>
-                                <th data-i18n="content.target">Target</th>
-                                <th data-i18n="content.dea">DEA</th>
+                                <th>Check</th>
+                                <th>Name</th>
+                                <th>State</th>
+                                <th>Package State</th>
+                                <th>Instance State</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Started</th>
+                                <th>URI</th>
+                                <th>Buildpack</th>
+                                <th>Instances</th>
+                                
+                                <th>Services</th>
+                                <th>Memory</th>
+                                <th>Disk</th>
+                                <th>% CPU</th>
+                                
+                                <th>Memory</th>
+                                <th>Disk</th>
+                                
+                                <th>Target</th>
+                                <th>DEA</th>
                             </tr>
                         </thead>
-                        <tbody>
-                        </tbody>
+                        <tbody/>
                     </table>
-
                 </div>
 
                 <div class="verticalPageSection">
-
                     <div class="pageSection">
-
-                        <div id="ApplicationsDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                            Details
-                        </div>
-
-                        <div id="ApplicationsPropertiesContainer">
-                        </div>
-
+                        <div id="ApplicationsDetailsLabel" class="propertyLabel">Details</div>
+                        <div id="ApplicationsPropertiesContainer"></div>
                     </div>
 
                     <div id="ApplicationsServicesTableContainer" class="pageSection">
-
-                        <div id="ApplicationsServicesDetailsLabel" class="propertyLabel" data-i18n="content.services">
-                            Services
-                        </div>
-
-                        <table id="ApplicationsServicesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                        </table>
-
+                        <div id="ApplicationsServicesDetailsLabel" class="propertyLabel">Services</div>
+                        <table id="ApplicationsServicesTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
                     </div>
-
                 </div>
-
             </div>
 
-            <div id="DevelopersPage" class="page hiddenPage">
-
-                <div id="DevelopersTableContainer" class="pageSection">
-
-                    <table id="DevelopersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                    </table>
-
+            <div id="RoutesPage" class="page hiddenPage">
+                <div id="RoutesTableContainer" class="pageSection">
+                    <table id="RoutesTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
                 </div>
 
                 <div class="verticalPageSection">
-
-                    <div id="DevelopersDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                        Details
-                    </div>
-
-                    <div id="DevelopersPropertiesContainer">
-                    </div>
-
+                    <div id="RoutesDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="RoutesPropertiesContainer"></div>
                 </div>
-
-            </div>
-
-            <div id="OrganizationsPage" class="page hiddenPage">
-
-                <div id="OrganizationsTableContainer" class="pageSection">
-
-                    <table id="OrganizationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                        <thead>
-                            <tr class="customTableHeaderGroup">
-                                <th colspan="8"> </th>
-                                <th colspan="3" data-i18n="content.routes">Routes</th>
-                                <th colspan="5" data-i18n="content.used">Used</th>
-                                <th colspan="2" data-i18n="content.reserved">Reserved</th>
-                                <th colspan="3" data-i18n="content.app-states">App States</th>
-                                <th colspan="3" data-i18n="content.app-package-states">App Package States</th>     
-                            </tr>
-                            <tr>
-                                <th data-i18n="content.check">Check</th>
-                                <th data-i18n="content.name">Name</th>
-                                <th data-i18n="content.status">Status</th>
-                                <th data-i18n="content.created">Created</th>
-                                <th data-i18n="content.updated">Updated</th>
-                                <th data-i18n="content.spaces">Spaces</th>
-                                <th data-i18n="content.developers">Developers</th>
-                                <th data-i18n="content.quota">Quota</th>
-                                <th data-i18n="content.total">Total</th>
-                                <th data-i18n="content.used">Used</th>
-                                <th data-i18n="content.unused">Unused</th>
-                                <th data-i18n="content.instances">Instances</th>
-                                <th data-i18n="content.services">Services</th>
-                                <th data-i18n="content.memory">Memory</th>
-                                <th data-i18n="content.disk">Disk</th>
-                                <th>% CPU</th>
-                                <th data-i18n="content.memory">Memory</th>
-                                <th data-i18n="content.disk">Disk</th>
-                                <th data-i18n="content.total">Total</th>
-                                <th data-i18n="content.started">Started</th>
-                                <th data-i18n="content.stopped">Stopped</th>
-                                <th data-i18n="content.pending">Pending</th>
-                                <th data-i18n="content.staged">Staged</th>
-                                <th data-i18n="content.failed">Failed</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-
-                </div>
-
-                <div class="verticalPageSection">
-
-                    <div id="OrganizationsDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                        Details
-                    </div>
-
-                    <div id="OrganizationsPropertiesContainer">
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div id="QuotasPage" class="page hiddenPage">
-
-                <div id="QuotasTableContainer" class="pageSection">
-
-                    <table id="QuotasTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                        <thead>
-                            <tr>
-                                <th data-i18n="content.name">Name</th>
-                                <th data-i18n="content.created">Created</th>
-                                <th data-i18n="content.updated">Updated</th>
-                                <th data-i18n="content.services">Total Services</th>
-                                <th data-i18n="content.total-routes">Total Routes</th>
-                                <th data-i18n="content.memory-limit">Memory Limit</th>
-                                <th data-i18n="content.non-basic-services-allowed">Non-Basic Services Allowed</th>
-                                <th data-i18n="content.trial-db-allowed">Trial-DB Allowed</th>
-                                <th data-i18n="content.organizations">Organizations</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-
-                </div>
-
-                <div class="verticalPageSection">
-
-                    <div id="QuotasDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                        Details
-                    </div>
-
-                    <div id="QuotasPropertiesContainer">
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div id="SpacesPage" class="page hiddenPage">
-
-                <div id="SpacesTableContainer" class="pageSection">
-
-                    <table id="SpacesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                        <thead>
-                            <tr class="customTableHeaderGroup">
-                                <th colspan="5"> </th>
-                                <th colspan="3" data-i18n="content.routes">Routes</th>
-                                <th colspan="5" data-i18n="content.used">Used</th>
-                                <th colspan="2" data-i18n="content.reserved">Reserved</th>
-                                <th colspan="3" data-i18n="content.app-states">App States</th>
-                                <th colspan="3" data-i18n="content.app-package-states">App Package States</th>
-                            </tr>
-                            <tr>
-                                <th data-i18n="content.name">Name</th>
-                                <th data-i18n="content.target">Target</th>
-                                <th data-i18n="content.created">Created</th>
-                                <th data-i18n="content.updated">Updated</th>
-                                <th data-i18n="content.developers">Developers</th>
-                                <th data-i18n="content.total">Total</th>
-                                <th data-i18n="content.used">Used</th>
-                                <th data-i18n="content.unused">Unused</th>
-                                <th data-i18n="content.instances">Instances</th>
-                                <th data-i18n="content.services">Services</th>
-                                <th data-i18n="content.memory">Memory</th>
-                                <th data-i18n="content.disk">Disk</th>
-                                <th>% CPU</th>
-                                <th data-i18n="content.memory">Memory</th>
-                                <th data-i18n="content.disk">Disk</th>
-                                <th data-i18n="content.total">Total</th>
-                                <th data-i18n="content.started">Started</th>
-                                <th data-i18n="content.stopped">Stopped</th>
-                                <th data-i18n="content.pending">Pending</th>
-                                <th data-i18n="content.started">Staged</th>
-                                <th data-i18n="content.failed">Failed</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-
-                </div>
-
-                <div class="verticalPageSection">
-
-                    <div id="SpacesDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                        Details
-                    </div>
-
-                    <div id="SpacesPropertiesContainer">
-                    </div>
-
-                </div>
-
             </div>
 
            <div id="ServiceInstancesPage" class="page hiddenPage">
-
                 <div id="ServiceInstancesTableContainer" class="pageSection">
-
                     <table id="ServiceInstancesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="3" data-i18n="content.service-broker">Service Broker</th>
-                                <th colspan="5" data-i18n="content.service">Service</th>
-                                <th colspan="5" data-i18n="content.service-plan">Service Plan</th>
-                                <th colspan="4" data-i18n="content.service-instances">Service Instance</th>
+                                <th colspan="3">Service Broker</th>
+                                <th colspan="5">Service</th>
+                                <th colspan="5">Service Plan</th>
+                                <th colspan="4">Service Instance</th>
                                 <th colspan="1"> </th>
                             </tr>
                             <tr>
-                                <th data-i18n="content.name">Name</th>
-                                <th data-i18n="content.created">Created</th>
-                                <th data-i18n="content.updated">Updated</th>
-                                <th data-i18n="content.provider">Provider</th>
-                                <th data-i18n="content.label">Label</th>
-                                <th data-i18n="content.version">Version</th>
-                                <th data-i18n="content.created">Created</th>
-                                <th data-i18n="content.updated">Updated</th>
-                                <th data-i18n="content.name">Name</th>
-                                <th data-i18n="content.created">Created</th>
-                                <th data-i18n="content.updated">Updated</th>
-                                <th data-i18n="content.public">Public</th>
-                                <th data-i18n="content.target">Target</th>
-                                <th data-i18n="content.name">Name</th>
-                                <th data-i18n="content.created">Created</th>
-                                <th data-i18n="content.updated">Updated</th>
-                                <th data-i18n="content.bindings">Bindings</th>
-                                <th data-i18n="content.target">Target</th>
+                                <th>Name</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                
+                                <th>Provider</th>
+                                <th>Label</th>
+                                <th>Version</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                
+                                <th>Name</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Public</th>
+                                <th>Target</th>
+                                
+                                <th>Name</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Bindings</th>
+                                
+                                <th>Target</th>
                             </tr>
                         </thead>
-                        <tbody>
-                        </tbody>
+                        <tbody/>
                     </table>
-
                 </div>
 
                 <div class="verticalPageSection">
-
                     <div class="pageSection">
-                        <div id="ServiceInstancesDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                            Details
-                        </div>
-
-                        <div id="ServiceInstancesPropertiesContainer">
-                        </div>
-
+                        <div id="ServiceInstancesDetailsLabel" class="propertyLabel">Details</div>
+                        <div id="ServiceInstancesPropertiesContainer"></div>
                     </div>
 
                     <div id="ServiceInstancesApplicationsTableContainer" class="pageSection">
-
-                        <div id="ServiceInstancesApplicationsDetailsLabel" class="propertyLabel" data-i18n="content.bound-applications">
-                            Bound Applications
-                        </div>
-
-                        <table id="ServiceInstancesApplicationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                        </table>
-
+                        <div id="ServiceInstancesApplicationsDetailsLabel" class="propertyLabel">Bound Applications</div>
+                        <table id="ServiceInstancesApplicationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
                     </div>
-
                 </div>
-
             </div>
 
-            <div id="ComponentsPage" class="page hiddenPage">
-
-                <div id="ComponentsTableContainer" class="pageSection">
-
-                    <table id="ComponentsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
-                    </table>
-
+            <div id="OrganizationRolesPage" class="page hiddenPage">
+                <div id="OrganizationRolesTableContainer" class="pageSection">
+                    <table id="OrganizationRolesTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
                 </div>
 
                 <div class="verticalPageSection">
-
-                    <div id="ComponentsDetailsLabel" class="propertyLabel" data-i18n="content.details">
-                        Details
-                    </div>
-
-                    <div id="ComponentsPropertiesContainer">
-                    </div>
-
+                    <div id="OrganizationRolesDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="OrganizationRolesPropertiesContainer"></div>
+                </div>
+            </div>
+            
+            <div id="SpaceRolesPage" class="page hiddenPage">
+                <div id="SpaceRolesTableContainer" class="pageSection">
+                    <table id="SpaceRolesTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
                 </div>
 
+                <div class="verticalPageSection">
+                    <div id="SpaceRolesDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="SpaceRolesPropertiesContainer"></div>
+                </div>
+            </div>
+            
+            <div id="UsersPage" class="page hiddenPage">
+                <div id="UsersTableContainer" class="pageSection">
+                    <table id="UsersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"> <thead>
+                        <tr class="customTableHeaderGroup">
+                            <th colspan="8"> </th>
+                            <th colspan="5">Organization Roles</th>
+                            <th colspan="4">Space Roles</th>
+                        </tr>
+                        <tr>
+                            <th>Username</th>
+                            <th>Created</th>
+                            <th>Updated</th>
+                            <th>Email</th>
+                            <th>Family Name</th>
+                            <th>Given Name</th>
+                            <th>Active</th>
+                            <th>Version</th>
+                            
+                            <th>Total</th>
+                            <th>Auditor</th>
+                            <th>Billing Manager</th>
+                            <th>Manager</th>
+                            <th>User</th>
+
+                            <th>Total</th>
+                            <th>Auditor</th>
+                            <th>Developer</th>
+                            <th>Manager</th>
+                        </tr>
+                    </thead>
+                    <tbody/>
+                    </table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="UsersDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="UsersPropertiesContainer"></div>
+                </div>
+            </div>
+            
+            <div id="DomainsPage" class="page hiddenPage">
+                <div id="DomainsTableContainer" class="pageSection">
+                    <table id="DomainsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="DomainsDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="DomainsPropertiesContainer"></div>
+                </div>
+            </div>
+
+            <div id="QuotasPage" class="page hiddenPage">
+                <div id="QuotasTableContainer" class="pageSection">
+                    <table id="QuotasTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="QuotasDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="QuotasPropertiesContainer"></div>
+                </div>
+            </div>
+
+            <div id="ServicePlansPage" class="page hiddenPage">
+                <div id="ServicePlansTableContainer" class="pageSection">
+                    <table id="ServicePlansTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr class="customTableHeaderGroup">
+                                <th colspan="8">Service Plan</th>
+                                <th colspan="7">Service</th>
+                                <th colspan="3">Service Broker</th>
+                            </tr>
+                            <tr>
+                                <th>Check</th>
+                                <th>Name</th>
+                                <th>Target</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Public</th>
+                                <th>Visible Organizations</th>
+                                <th>Service Instances</th>
+
+                                <th>Provider</th>
+                                <th>Label</th> 
+                                <th>Version</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Active</th>
+                                <th>Bindable</th>
+
+                                <th>Name</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody/>
+                    </table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div class="pageSection">
+                        <div id="ServicePlansDetailsLabel" class="propertyLabel">Details</div>
+                        <div id="ServicePlansPropertiesContainer"></div>
+                    </div>
+                    
+                    <div id="ServicePlansOrganizationsTableContainer" class="pageSection">
+                        <div id="ServicePlansOrganizationsDetailsLabel" class="propertyLabel">Visible Organizations</div>
+                        <table id="ServicePlansOrganizationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="DEAsPage" class="page hiddenPage">
+                <div id="DEAsTableContainer" class="pageSection">
+                    <table id="DEAsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr class="customTableHeaderGroup">
+                                <th colspan="8"> </th>
+                                <th colspan="4">Instances</th>
+                                <th colspan="2">% Free</th>
+                            </tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Index</th>
+                                <th>Status</th>
+                                <th>Started</th>
+                                <th>Stack</th>
+                                <th>CPU</th>
+                                <th>Memory</th>
+                                <th>Apps</th>
+                                
+                                <th>Running</th>
+                                <th>Memory</th>
+                                <th>Disk</th>
+                                <th>% CPU</th>
+                                
+                                <th>Memory</th>
+                                <th>Disk</th>
+                            </tr>
+                        </thead>
+                        <tbody/>
+                    </table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="DEAsDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="DEAsPropertiesContainer"></div>
+                </div>
+            </div>
+
+            <div id="CloudControllersPage" class="page hiddenPage">
+                <div id="CloudControllersTableContainer" class="pageSection">
+                    <table id="CloudControllersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"/></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="CloudControllersDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="CloudControllersPropertiesContainer"></div>
+                </div>
+            </div>
+
+            <div id="HealthManagersPage" class="page hiddenPage">
+                <div id="HealthManagersTableContainer" class="pageSection">
+                    <table id="HealthManagersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="HealthManagersDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="HealthManagersPropertiesContainer"></div>
+                </div>
+            </div>
+
+            <div id="GatewaysPage" class="page hiddenPage">
+                <div id="GatewaysTableContainer" class="pageSection">
+                    <table id="GatewaysTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div class="pageSection">
+                        <div id="GatewaysDetailsLabel" class="propertyLabel">Details</div>
+                        <div id="GatewaysPropertiesContainer"></div>
+                    </div>
+
+                    <div id="GatewaysNodesTableContainer" class="pageSection">
+                        <div id="GatewaysNodesDetailsLabel" class="propertyLabel">Nodes</div>
+                        <table id="GatewaysNodesTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="RoutersPage" class="page hiddenPage">
+                <div id="RoutersTableContainer" class="pageSection">
+                    <table id="RoutersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div class="pageSection">
+                        <div id="RoutersDetailsLabel" class="propertyLabel">Details</div>
+                        <div id="RoutersPropertiesContainer"></div>
+                    </div>
+                    
+                    <div id="RoutersTop10ApplicationsTableContainer" class="pageSection">
+                        <div id="RoutersTop10ApplicationsDetailsLabel" class="propertyLabel">Top 10 Applications</div>
+                        <table id="RoutersTop10ApplicationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="ComponentsPage" class="page hiddenPage">
+                <div id="ComponentsTableContainer" class="pageSection">
+                    <table id="ComponentsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="ComponentsDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="ComponentsPropertiesContainer"></div>
+                </div>
             </div>
 
             <div id="LogsPage" class="page hiddenPage">
-
                 <div id="LogsTableContainer" class="pageSection">
-
                     <table id="LogsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
-
                 </div>
 
                 <div class="verticalPageSection">
-
                     <div id="LogContainer">
-
                         <div>
                             <button id="LogFirstButton"   class="logButton"><img id="LogFirstButtonImage"   class="logButtonImage" src="images/first.png"/></button>
                             <button id="LogBackButton"    class="logButton"><img id="LogBackButtonImage"    class="logButtonImage" src="images/back.png"/></button>
@@ -779,75 +597,59 @@
                             </div>
                         </div>
 
-
                         <pre id="LogContents" class="logContents"></pre>
-
                     </div>
-
                 </div>
-
             </div>
 
             <div id="TasksPage" class="page hiddenPage">
-
                 <div id="TasksTableContainer" class="pageSection">
-
                     <table id="TasksTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
-
                 </div>
 
                 <div class="verticalPageSection">
-
                     <div id="TaskContainer">
-
                         <div class="taskCheckboxContainer">
-                            <input type="checkbox" id="TaskShowTimestamps" data-i18n="content.timestamps">timestamps</input>
+                            <input type="checkbox" id="TaskShowTimestamps">timestamps</input>
                             <input type="checkbox" id="TaskShowStandardOut" checked>stdout</input>
                             <input type="checkbox" id="TaskShowStandardError">stderr</input>
                         </div>
 
                         <pre id="TaskContents" class="logContents"></pre>
-
                     </div>
-
                 </div>
-
             </div>
 
             <div id="StatsPage" class="page hiddenPage">
-
                 <div id="StatsTableContainer" class="pageSection">
-
                     <table id="StatsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
                                 <th colspan="5"> </th>
-                                <th colspan="2" data-i18n="content.instances">Instances</th>
+                                <th colspan="2">Instances</th>
                                 <th colspan="1"> </th>
                             </tr>
                             <tr>
-                                <th data-i18n="content.date">Date</th>
-                                <th data-i18n="content.organizations">Organizations</th>
-                                <th data-i18n="content.spaces">Spaces</th>
-                                <th data-i18n="content.users">Users</th>
-                                <th data-i18n="content.apps">Apps</th>
-                                <th data-i18n="content.total">Total</th>
-                                <th data-i18n="content.running">Running</th>
+                                <th>Date</th>
+                                <th>Organizations</th>
+                                <th>Spaces</th>
+                                <th>Users</th>
+                                <th>Apps</th>
+                                
+                                <th>Total</th>
+                                <th>Running</th>
+                                
                                 <th>DEAs</th>
                             </tr>
                         </thead>
-                        <tbody>
-                        </tbody>
+                        <tbody/>
                     </table>
-
                 </div>
 
                 <div class="pageSection" style="margin-right: 0px;">
                     <div id="StatsChart" style="height: 420px; width: 730px;"></div>
                 </div>
-
             </div>
-
         </div>
 
         <div id="ModalDialogDiv" class="modal_dialog_div_content">
@@ -856,10 +658,10 @@
             <hr id="ModalDialogButtonsLine" class="modal_dialog_div_buttonline">
             <div id="ModalDialogButtonsDiv" class="modal_dialog_div_buttoncontainer"></div>
         </div>
+        
         <div id="ModalDialogBackgroundDiv" class="modal_dialog_div_overlay"></div>
 
         <div id="Dialog" class="dialog hiddenPage">
-
             <div class="dialogTitleBarContainer">
                 <div class="dialogTitleBar">
                     <span id="DialogTitle"></span>  
@@ -867,7 +669,6 @@
             </div>
 
             <div class="dialogContents">
-
                 <div>
                     <span id="DialogText" class="dialogText"></span>    
                 </div>
@@ -877,12 +678,8 @@
                         <button id="DialogCancelButton" class="dialogButton"></button>
                         <button id="DialogOkayButton"   class="dialogButton">OK</button>
                     </div>    
-                <div>
-
-            <div>
-
+                </div>
+            </div>
         </div>
-
     </body>
-
 </html>
