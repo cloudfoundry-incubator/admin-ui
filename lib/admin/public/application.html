@@ -19,6 +19,7 @@
         <script src="js/external/jquery/plugins/fnSetFilteringDelay.js"></script>
         
         <script src="js/external/fixes/ZeroClipboard.js"></script>
+        <script src="js/external/i18next/i18next.js"></script>
 
         <script src="js/app/constants.js"></script>      
         <script src="js/app/utilities.js"></script>     
@@ -46,6 +47,7 @@
         <script src="js/app/tabs/statsTab.js"></script>
         <script src="js/app/tabs/tasksTab.js"></script>
         <script src="js/app/tabs/usersTab.js"></script>
+        <script src="js/app/i18n.js"></script>
         <script src="js/app/adminUI.js"></script>
 
         <script src="js/external/jqplot/jquery.jqplot.js"></script>          
@@ -74,6 +76,23 @@
                 <span class="user"></span>
                 <img src="images/dropdown.png"/>
             </span>
+
+            <span class="languageContainer">
+                <span class="text">
+                    Language:
+                </span>
+                <span class="languageName">
+                </span>
+                <img src="images/dropdown.png"/>
+            </span>
+
+            <div class="languageMenu">
+                <ul>
+                    <li data-language='en'>English</li>
+                    <li data-language='cn'>中国的</li>
+                    <li data-language='ru'>Русский</li>
+                </ul>
+            </div>
 
             <div class="userMenu">Sign Out</div>
         </div>
