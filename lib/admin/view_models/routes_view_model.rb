@@ -22,10 +22,10 @@ module AdminUI
       organizations = @cc.organizations
       spaces        = @cc.spaces
 
-      application_hash  = Hash[*applications['items'].map { |item| [item[:id], item] }.flatten]
-      domain_hash       = Hash[*domains['items'].map { |item| [item[:id], item] }.flatten]
-      organization_hash = Hash[*organizations['items'].map { |item| [item[:id], item] }.flatten]
-      space_hash        = Hash[*spaces['items'].map { |item| [item[:id], item] }.flatten]
+      application_hash  = Hash[applications['items'].map { |item| [item[:id], item] }]
+      domain_hash       = Hash[domains['items'].map { |item| [item[:id], item] }]
+      organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
       route_apps = {}
 

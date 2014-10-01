@@ -27,12 +27,12 @@ module AdminUI
       applications_connected     = applications['connected']
       service_bindings_connected = service_bindings['connected']
 
-      application_hash     = Hash[*applications['items'].map { |item| [item[:id], item] }.flatten]
-      organization_hash    = Hash[*organizations['items'].map { |item| [item[:id], item] }.flatten]
-      service_broker_hash  = Hash[*service_brokers['items'].map { |item| [item[:id], item] }.flatten]
-      service_plan_hash    = Hash[*service_plans['items'].map { |item| [item[:id], item] }.flatten]
-      service_hash         = Hash[*services['items'].map { |item| [item[:id], item] }.flatten]
-      space_hash           = Hash[*spaces['items'].map { |item| [item[:id], item] }.flatten]
+      application_hash     = Hash[applications['items'].map { |item| [item[:id], item] }]
+      organization_hash    = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      service_broker_hash  = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
+      service_plan_hash    = Hash[service_plans['items'].map { |item| [item[:id], item] }]
+      service_hash         = Hash[services['items'].map { |item| [item[:id], item] }]
+      space_hash           = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
       service_binding_apps_hash = {}
       if service_bindings_connected && applications_connected
