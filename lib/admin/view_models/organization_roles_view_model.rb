@@ -40,7 +40,7 @@ module AdminUI
       add_rows(organizations_managers, 'Manager', organization_hash, user_cc_hash, user_uaa_hash, items)
       add_rows(organizations_users, 'User', organization_hash, user_cc_hash, user_uaa_hash, items)
 
-      result(items, (0..2).to_a, (0..2).to_a)
+      result(items, (0..4).to_a, (0..4).to_a)
     end
 
     private
@@ -61,7 +61,9 @@ module AdminUI
         next if user_uaa.nil?
 
         row.push(organization[:name])
+        row.push(organization[:guid])
         row.push(user_uaa[:username])
+        row.push(user_uaa[:id])
         row.push(role)
 
         row.push('organization' => organization,

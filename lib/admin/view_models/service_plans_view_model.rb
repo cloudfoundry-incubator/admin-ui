@@ -69,6 +69,7 @@ module AdminUI
 
         row.push(service_plan)
         row.push(service_plan[:name])
+        row.push(service_plan[:guid])
 
         service_plan_target = ''
         if service
@@ -109,6 +110,7 @@ module AdminUI
         if service
           row.push(service[:provider])
           row.push(service[:label])
+          row.push(service[:guid])
           row.push(service[:version])
           row.push(service[:created_at].to_datetime.rfc3339)
 
@@ -121,11 +123,12 @@ module AdminUI
           row.push(service[:active])
           row.push(service[:bindable])
         else
-          row.push(nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil, nil, nil, nil)
         end
 
         if service_broker
           row.push(service_broker[:name])
+          row.push(service_broker[:guid])
           row.push(service_broker[:created_at].to_datetime.rfc3339)
 
           if service_broker[:updated_at]
@@ -134,7 +137,7 @@ module AdminUI
             row.push(nil)
           end
         else
-          row.push(nil, nil, nil)
+          row.push(nil, nil, nil, nil)
         end
 
         row.push('service'                                 => service,
@@ -145,7 +148,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (1..17).to_a, (1..17).to_a - [6, 7])
+      result(items, (1..20).to_a, (1..20).to_a - [7, 8])
     end
   end
 end

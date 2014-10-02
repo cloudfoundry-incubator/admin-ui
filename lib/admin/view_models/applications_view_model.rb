@@ -37,6 +37,7 @@ module AdminUI
 
         row.push(application[:guid])
         row.push(application[:name])
+        row.push(application[:guid])
         row.push(application[:state])
         row.push(application[:package_state])
 
@@ -105,6 +106,7 @@ module AdminUI
 
               row.push(instance['application_id'])
               row.push(instance['application_name'])
+              row.push(instance['application_id'])
 
               # State and Package State not available.
               row.push(nil, nil)
@@ -175,25 +177,25 @@ module AdminUI
                 row = new_row
               end
 
-              row[4] = instance['state']
+              row[5] = instance['state']
 
               if instance['state_running_timestamp']
-                row[7] = Time.at(instance['state_running_timestamp']).to_datetime.rfc3339
+                row[8] = Time.at(instance['state_running_timestamp']).to_datetime.rfc3339
               end
 
-              row[8]  = instance['application_uris']
-              row[10] = instance_index
-              row[11] = instance['services'].length
-              row[12] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil
-              row[13] = instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : nil
-              row[14] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil
-              row[18] = host
+              row[9]  = instance['application_uris']
+              row[11] = instance_index
+              row[12] = instance['services'].length
+              row[13] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil
+              row[14] = instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : nil
+              row[15] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil
+              row[19] = host
 
               # Need the specific instance for this row
-              row[19] = { 'application'  => row[19]['application'],
+              row[20] = { 'application'  => row[20]['application'],
                           'instance'     => instance,
-                          'organization' => row[19]['organization'],
-                          'space'        => row[19]['space']
+                          'organization' => row[20]['organization'],
+                          'space'        => row[20]['space']
                         }
             end
           end
@@ -202,7 +204,7 @@ module AdminUI
         dea_index += 1
       end
 
-      result(items, (1..18).to_a, (1..9).to_a << 17)
+      result(items, (1..19).to_a, (1..10).to_a << 18)
     end
   end
 end

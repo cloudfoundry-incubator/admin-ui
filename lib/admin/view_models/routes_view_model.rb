@@ -53,6 +53,7 @@ module AdminUI
 
         row.push(route[:guid])
         row.push(route[:host])
+        row.push(route[:guid])
 
         if domain
           row.push(domain[:name])
@@ -92,7 +93,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (1..6).to_a, (1..6).to_a)
+      result(items, (1..7).to_a, (1..7).to_a)
     end
   end
 end

@@ -36,6 +36,7 @@ module AdminUI
         row = []
 
         row.push(quota_definition[:name])
+        row.push(quota_definition[:guid])
         row.push(quota_definition[:created_at].to_datetime.rfc3339)
 
         if quota_definition[:updated_at]
@@ -70,7 +71,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..8).to_a, [0, 1, 2, 7])
+      result(items, (0..9).to_a, [0, 1, 2, 3, 8])
     end
   end
 end

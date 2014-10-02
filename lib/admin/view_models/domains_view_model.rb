@@ -43,6 +43,7 @@ module AdminUI
         row = []
 
         row.push(domain[:name])
+        row.push(domain[:guid])
         row.push(domain[:created_at].to_datetime.rfc3339)
 
         if domain[:updated_at]
@@ -71,7 +72,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..4).to_a, (0..3).to_a)
+      result(items, (0..5).to_a, (0..4).to_a)
     end
   end
 end

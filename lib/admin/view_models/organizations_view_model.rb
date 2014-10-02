@@ -148,8 +148,8 @@ module AdminUI
         row = []
 
         row.push(organization[:guid])
-
         row.push(organization[:name])
+        row.push(organization[:guid])
         row.push(organization[:status])
         row.push(organization[:created_at].to_datetime.rfc3339)
 
@@ -248,7 +248,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (1..25).to_a, (1..4).to_a << 8)
+      result(items, (1..26).to_a, (1..5).to_a << 9)
     end
 
     private
