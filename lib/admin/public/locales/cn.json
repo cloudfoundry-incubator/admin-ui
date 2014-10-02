@@ -181,6 +181,9 @@
       "top_10_applications":"Top 10 Applications"
    },
    "error":{
-      "unable_to_connect_to_backend_services":"Unable to connect to backend services"
+      "unable_to_connect_to_backend_services":"Unable to connect to backend services",
+      "error-text": "%%s. Error: %%s",
+      "disconnected": "Unable to connect to backend services",
+      "services-unavailable": "This page requires data from services that are currently unavailable"        
    }
 }
