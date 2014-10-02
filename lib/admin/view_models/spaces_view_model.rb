@@ -107,6 +107,7 @@ module AdminUI
         row = []
 
         row.push(space[:name])
+        row.push(space[:guid])
 
         if organization
           row.push("#{ organization[:name] }/#{ space[:name] }")
@@ -180,7 +181,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..20).to_a, (0..3).to_a)
+      result(items, (0..21).to_a, (0..4).to_a)
     end
 
     private

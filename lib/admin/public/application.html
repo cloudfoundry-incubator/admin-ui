@@ -117,7 +117,7 @@
                     <table id="OrganizationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="10"> </th>
+                                <th colspan="11"> </th>
                                 <th colspan="3">Routes</th>
                                 <th colspan="5">Used</th>
                                 <th colspan="2">Reserved</th>
@@ -127,6 +127,7 @@
                             <tr>
                                 <th>Check</th>
                                 <th>Name</th>
+                                <th>GUID</th>
                                 <th>Status</th>
                                 <th>Created</th>
                                 <th>Updated</th>
@@ -173,7 +174,7 @@
                     <table id="SpacesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="5"> </th>
+                                <th colspan="6"> </th>
                                 <th colspan="3">Routes</th>
                                 <th colspan="5">Used</th>
                                 <th colspan="2">Reserved</th>
@@ -182,6 +183,7 @@
                             </tr>
                             <tr>
                                 <th>Name</th>
+                                <th>GUID</th>
                                 <th>Target</th>
                                 <th>Created</th>
                                 <th>Updated</th>
@@ -224,7 +226,7 @@
                     <table id="ApplicationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="11"> </th>
+                                <th colspan="12"> </th>
                                 <th colspan="4">Used</th>
                                 <th colspan="2">Reserved</th>
                                 <th colspan="2"> </th>
@@ -232,6 +234,7 @@
                             <tr>
                                 <th>Check</th>
                                 <th>Name</th>
+                                <th>GUID</th>
                                 <th>State</th>
                                 <th>Package State</th>
                                 <th>Instance State</th>
@@ -287,30 +290,34 @@
                     <table id="ServiceInstancesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="3">Service Broker</th>
-                                <th colspan="5">Service</th>
-                                <th colspan="5">Service Plan</th>
-                                <th colspan="4">Service Instance</th>
+                                <th colspan="4">Service Broker</th>
+                                <th colspan="6">Service</th>
+                                <th colspan="6">Service Plan</th>
+                                <th colspan="5">Service Instance</th>
                                 <th colspan="1"> </th>
                             </tr>
                             <tr>
                                 <th>Name</th>
+                                <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
                                 
                                 <th>Provider</th>
                                 <th>Label</th>
+                                <th>GUID</th>
                                 <th>Version</th>
                                 <th>Created</th>
                                 <th>Updated</th>
                                 
                                 <th>Name</th>
+                                <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
                                 <th>Public</th>
                                 <th>Target</th>
                                 
                                 <th>Name</th>
+                                <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
                                 <th>Bindings</th>
@@ -337,7 +344,25 @@
 
             <div id="OrganizationRolesPage" class="page hiddenPage">
                 <div id="OrganizationRolesTableContainer" class="pageSection">
-                    <table id="OrganizationRolesTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                    <table id="OrganizationRolesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                    	<thead>
+	                    	<tr class="customTableHeaderGroup">
+	                            <th colspan="2">Organization</th>
+	                            <th colspan="2">User</th>
+	                            <th colspan="1"> </th>
+	                        </tr>
+	                        <tr>
+	                            <th>Name</th>
+	                            <th>GUID</th>
+	                            
+	                            <th>Name</th>
+	                            <th>GUID</th>
+	                            
+	                            <th>Role</th>
+	                        </tr>
+                    	</thead>
+                   		<tbody/>
+                    </table>
                 </div>
 
                 <div class="verticalPageSection">
@@ -348,7 +373,26 @@
             
             <div id="SpaceRolesPage" class="page hiddenPage">
                 <div id="SpaceRolesTableContainer" class="pageSection">
-                    <table id="SpaceRolesTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                    <table id="SpaceRolesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                    	<thead>
+	                    	<tr class="customTableHeaderGroup">
+	                            <th colspan="3">Space</th>
+	                            <th colspan="2">User</th>
+	                            <th colspan="1"> </th>
+	                        </tr>
+	                        <tr>
+	                            <th>Name</th>
+	                            <th>GUID</th>
+	                            <th>Target</th>
+	                            
+	                            <th>Name</th>
+	                            <th>GUID</th>
+	                            
+	                            <th>Role</th>
+	                        </tr>
+                    	</thead>
+                   		<tbody/>
+                    </table>
                 </div>
 
                 <div class="verticalPageSection">
@@ -361,12 +405,13 @@
                 <div id="UsersTableContainer" class="pageSection">
                     <table id="UsersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"> <thead>
                         <tr class="customTableHeaderGroup">
-                            <th colspan="8"> </th>
+                            <th colspan="9"> </th>
                             <th colspan="5">Organization Roles</th>
                             <th colspan="4">Space Roles</th>
                         </tr>
                         <tr>
                             <th>Username</th>
+                            <th>GUID</th>
                             <th>Created</th>
                             <th>Updated</th>
                             <th>Email</th>
@@ -424,13 +469,14 @@
                     <table id="ServicePlansTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="8">Service Plan</th>
-                                <th colspan="7">Service</th>
-                                <th colspan="3">Service Broker</th>
+                                <th colspan="9">Service Plan</th>
+                                <th colspan="8">Service</th>
+                                <th colspan="4">Service Broker</th>
                             </tr>
                             <tr>
                                 <th>Check</th>
                                 <th>Name</th>
+                                <th>GUID</th>
                                 <th>Target</th>
                                 <th>Created</th>
                                 <th>Updated</th>
@@ -439,7 +485,8 @@
                                 <th>Service Instances</th>
 
                                 <th>Provider</th>
-                                <th>Label</th> 
+                                <th>Label</th>
+                                <th>GUID</th>
                                 <th>Version</th>
                                 <th>Created</th>
                                 <th>Updated</th>
@@ -447,6 +494,7 @@
                                 <th>Bindable</th>
 
                                 <th>Name</th>
+                                <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
                             </tr>

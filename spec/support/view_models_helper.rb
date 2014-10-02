@@ -14,6 +14,7 @@ module ViewModelsHelper
       [
         cc_app[:guid],
         cc_app[:name],
+        cc_app[:guid],
         cc_app[:state],
         cc_app[:package_state],
         varz_dea['instance_registry']['application1']['application1_instance1']['state'],
@@ -159,6 +160,7 @@ module ViewModelsHelper
     [
       [
         cc_domain[:name],
+        cc_domain[:guid],
         cc_domain[:created_at].to_datetime.rfc3339,
         cc_domain[:updated_at].to_datetime.rfc3339,
         cc_organization[:name],
@@ -233,6 +235,7 @@ module ViewModelsHelper
       [
         cc_organization[:guid],
         cc_organization[:name],
+        cc_organization[:guid],
         cc_organization[:status],
         cc_organization[:created_at].to_datetime.rfc3339,
         cc_organization[:updated_at].to_datetime.rfc3339,
@@ -266,7 +269,9 @@ module ViewModelsHelper
     [
       [
         cc_organization[:name],
+        cc_organization[:guid],
         uaa_user[:username],
+        uaa_user[:id],
         'Auditor',
         {
           'organization' => cc_organization,
@@ -277,7 +282,9 @@ module ViewModelsHelper
       ],
       [
         cc_organization[:name],
+        cc_organization[:guid],
         uaa_user[:username],
+        uaa_user[:id],
         'Billing Manager',
         {
           'organization' => cc_organization,
@@ -288,7 +295,9 @@ module ViewModelsHelper
       ],
       [
         cc_organization[:name],
+        cc_organization[:guid],
         uaa_user[:username],
+        uaa_user[:id],
         'Manager',
         {
           'organization' => cc_organization,
@@ -299,7 +308,9 @@ module ViewModelsHelper
       ],
       [
         cc_organization[:name],
+        cc_organization[:guid],
         uaa_user[:username],
+        uaa_user[:id],
         'User',
         {
           'organization' => cc_organization,
@@ -315,6 +326,7 @@ module ViewModelsHelper
     [
       [
         cc_quota_definition[:name],
+        cc_quota_definition[:guid],
         cc_quota_definition[:created_at].to_datetime.rfc3339,
         cc_quota_definition[:updated_at].to_datetime.rfc3339,
         cc_quota_definition[:total_services],
@@ -365,6 +377,7 @@ module ViewModelsHelper
       [
         cc_route[:guid],
         cc_route[:host],
+        cc_route[:guid],
         cc_domain[:name],
         cc_route[:created_at].to_datetime.rfc3339,
         cc_route[:updated_at].to_datetime.rfc3339,
@@ -383,19 +396,23 @@ module ViewModelsHelper
     [
       [
         cc_service_broker[:name],
+        cc_service_broker[:guid],
         cc_service_broker[:created_at].to_datetime.rfc3339,
         cc_service_broker[:updated_at].to_datetime.rfc3339,
         cc_service[:provider],
         cc_service[:label],
+        cc_service[:guid],
         cc_service[:version],
         cc_service[:created_at].to_datetime.rfc3339,
         cc_service[:updated_at].to_datetime.rfc3339,
         cc_service_plan[:name],
+        cc_service_plan[:guid],
         cc_service_plan[:created_at].to_datetime.rfc3339,
         cc_service_plan[:updated_at].to_datetime.rfc3339,
         cc_service_plan[:public],
         "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }",
         cc_service_instance[:name],
+        cc_service_instance[:guid],
         cc_service_instance[:created_at].to_datetime.rfc3339,
         cc_service_instance[:updated_at].to_datetime.rfc3339,
         1,
@@ -422,6 +439,7 @@ module ViewModelsHelper
       [
         cc_service_plan,
         cc_service_plan[:name],
+        cc_service_plan[:guid],
         "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }",
         cc_service_plan[:created_at].to_datetime.rfc3339,
         cc_service_plan[:updated_at].to_datetime.rfc3339,
@@ -430,12 +448,14 @@ module ViewModelsHelper
         1,
         cc_service[:provider],
         cc_service[:label],
+        cc_service[:guid],
         cc_service[:version],
         cc_service[:created_at].to_datetime.rfc3339,
         cc_service[:updated_at].to_datetime.rfc3339,
         cc_service[:active],
         cc_service[:bindable],
         cc_service_broker[:name],
+        cc_service_broker[:guid],
         cc_service_broker[:created_at].to_datetime.rfc3339,
         cc_service_broker[:updated_at].to_datetime.rfc3339,
         { 'service'       => cc_service,
@@ -456,6 +476,7 @@ module ViewModelsHelper
     [
       [
         cc_space[:name],
+        cc_space[:guid],
         "#{ cc_organization[:name] }/#{ cc_space[:name] }",
         cc_space[:created_at].to_datetime.rfc3339,
         cc_space[:updated_at].to_datetime.rfc3339,
@@ -487,8 +508,10 @@ module ViewModelsHelper
     [
       [
         cc_space[:name],
+        cc_space[:guid],
         "#{ cc_organization[:name] }/#{ cc_space[:name] }",
         uaa_user[:username],
+        uaa_user[:id],
         'Auditor',
         {
           'organization' => cc_organization,
@@ -500,8 +523,10 @@ module ViewModelsHelper
       ],
       [
         cc_space[:name],
+        cc_space[:guid],
         "#{ cc_organization[:name] }/#{ cc_space[:name] }",
         uaa_user[:username],
+        uaa_user[:id],
         'Developer',
         {
           'organization' => cc_organization,
@@ -513,8 +538,10 @@ module ViewModelsHelper
       ],
       [
         cc_space[:name],
+        cc_space[:guid],
         "#{ cc_organization[:name] }/#{ cc_space[:name] }",
         uaa_user[:username],
+        uaa_user[:id],
         'Manager',
         {
           'organization' => cc_organization,
@@ -555,6 +582,7 @@ module ViewModelsHelper
     [
       [
         uaa_user[:username],
+        uaa_user[:id],
         uaa_user[:created].to_datetime.rfc3339,
         uaa_user[:lastmodified].to_datetime.rfc3339,
         uaa_user[:email],

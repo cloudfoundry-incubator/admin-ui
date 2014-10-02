@@ -39,7 +39,7 @@ module AdminUI
       add_rows(spaces_developers, 'Developer', space_hash, organization_hash, user_cc_hash, user_uaa_hash, items)
       add_rows(spaces_managers,   'Manager',   space_hash, organization_hash, user_cc_hash, user_uaa_hash, items)
 
-      result(items, (0..3).to_a, (0..3).to_a)
+      result(items, (0..5).to_a, (0..5).to_a)
     end
 
     private
@@ -62,6 +62,7 @@ module AdminUI
         organization = organization_hash[space[:organization_id]]
 
         row.push(space[:name])
+        row.push(space[:guid])
 
         if organization
           row.push("#{ organization[:name] }/#{ space[:name] }")
@@ -70,6 +71,7 @@ module AdminUI
         end
 
         row.push(user_uaa[:username])
+        row.push(user_uaa[:id])
         row.push(role)
 
         row.push('organization' => organization,

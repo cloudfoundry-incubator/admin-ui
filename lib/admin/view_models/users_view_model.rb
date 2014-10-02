@@ -82,6 +82,7 @@ module AdminUI
         row = []
 
         row.push(user_uaa[:username])
+        row.push(guid)
         row.push(user_uaa[:created].to_datetime.rfc3339)
 
         if user_uaa[:lastmodified]
@@ -144,7 +145,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..16).to_a, (0..7).to_a)
+      result(items, (0..17).to_a, (0..8).to_a)
     end
 
     private

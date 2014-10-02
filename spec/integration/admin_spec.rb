@@ -160,7 +160,7 @@ describe AdminUI::Admin, :type => :integration do
 
     before do
       # Make sure the original application status is STARTED
-      expect(get_json('/applications_view_model')['items']['items'][0][2]).to eq('STARTED')
+      expect(get_json('/applications_view_model')['items']['items'][0][3]).to eq('STARTED')
     end
 
     def stop_app
@@ -186,16 +186,16 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     it 'stops a running application' do
-      expect { stop_app }.to change { get_json('/applications_view_model')['items']['items'][0][2] }.from('STARTED').to('STOPPED')
+      expect { stop_app }.to change { get_json('/applications_view_model')['items']['items'][0][3] }.from('STARTED').to('STOPPED')
     end
 
     it 'starts a stopped application' do
       stop_app
-      expect { start_app }.to change { get_json('/applications_view_model')['items']['items'][0][2] }.from('STOPPED').to('STARTED')
+      expect { start_app }.to change { get_json('/applications_view_model')['items']['items'][0][3] }.from('STOPPED').to('STARTED')
     end
 
     it 'deletes an application' do
-      expect { delete_app }.to change { get_json('/applications_view_model')['items']['items'][0][2] }.from('STARTED').to(nil)
+      expect { delete_app }.to change { get_json('/applications_view_model')['items']['items'][0][3] }.from('STARTED').to(nil)
     end
   end
 
@@ -254,17 +254,17 @@ describe AdminUI::Admin, :type => :integration do
     context 'sets the specific quota for organization' do
       let(:insert_second_quota_definition) { true }
       it 'sets the specific quota for organization' do
-        expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][8] }.from('test_quota_1').to('test_quota_2')
+        expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][9] }.from('test_quota_1').to('test_quota_2')
       end
     end
 
     it 'activates the organization' do
       suspend_org
-      expect { activate_org }.to change { get_json('/organizations_view_model')['items']['items'][0][2] }.from('suspended').to('active')
+      expect { activate_org }.to change { get_json('/organizations_view_model')['items']['items'][0][3] }.from('suspended').to('active')
     end
 
     it 'suspends the organization' do
-      expect { suspend_org }.to change { get_json('/organizations_view_model')['items']['items'][0][2] }.from('active').to('suspended')
+      expect { suspend_org }.to change { get_json('/organizations_view_model')['items']['items'][0][3] }.from('active').to('suspended')
     end
   end
 
@@ -309,9 +309,9 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     it 'make service plans private and back to public' do
-      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][5].to_s }.from('true').to('false')
+      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][6].to_s }.from('true').to('false')
       make_service_plan_public
-      expect { get_json('/service_plans_view_model')['items']['items'][0][5] }.to be_true
+      expect { get_json('/service_plans_view_model')['items']['items'][0][6] }.to be_true
     end
   end
 

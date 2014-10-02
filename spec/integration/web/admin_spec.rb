@@ -213,11 +213,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 6,
                                 :labels          => ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                :colspans        => %w(10 3 5 2 3 3)
+                                :colspans        => %w(11 3 5 2 3 3)
                               },
                               { :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 26,
-                                :labels          => [' ', 'Name', 'Status', 'Created', 'Updated', 'Spaces', 'Organization Roles', 'Space Roles', 'Quota', 'Domains', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :expected_length => 27,
+                                :labels          => [' ', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Spaces', 'Organization Roles', 'Space Roles', 'Quota', 'Domains', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 :colspans        => nil
                               }
                              ])
@@ -225,6 +225,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            [
                              '',
                              cc_organization[:name],
+                             cc_organization[:guid],
                              cc_organization[:status].upcase,
                              @driver.execute_script("return Format.formatString(\"#{ cc_organization[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_organization[:updated_at].to_datetime.rfc3339 }\")"),
@@ -302,10 +303,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_operation_result
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 460).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[9]").text == 'test_quota_2' }
+              Selenium::WebDriver::Wait.new(:timeout => 460).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[10]").text == 'test_quota_2' }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[9]").text).to eq('test_quota_2')
+            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[10]").text).to eq('test_quota_2')
           end
         end
 
@@ -411,9 +412,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           def check_organization_status(status)
-            Selenium::WebDriver::Wait.new(:timeout => 560).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[3]").text == status }
+            Selenium::WebDriver::Wait.new(:timeout => 560).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text == status }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[3]").text }).to eq(status)
+            expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text }).to eq(status)
           end
 
           it 'activates the selected organization' do
@@ -446,6 +447,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has details' do
             check_details([{ :label => 'Name',               :tag => 'div', :value => cc_organization[:name] },
+                           { :label => 'GUID',               :tag =>   nil, :value => cc_organization[:guid] },
                            { :label => 'Status',             :tag =>   nil, :value => cc_organization[:status].upcase },
                            { :label => 'Created',            :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Updated',            :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:updated_at].to_datetime.rfc3339 }\")") },
@@ -474,31 +476,31 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                           ])
           end
           it 'has spaces link' do
-            check_filter_link('Organizations', 5, 'Spaces', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 6, 'Spaces', "#{ cc_organization[:name] }/")
           end
           it 'has organization roles link' do
-            check_filter_link('Organizations', 6, 'OrganizationRoles', cc_organization[:name])
+            check_filter_link('Organizations', 7, 'OrganizationRoles', cc_organization[:name])
           end
           it 'has space roles link' do
-            check_filter_link('Organizations', 7, 'SpaceRoles', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 8, 'SpaceRoles', "#{ cc_organization[:name] }/")
           end
           it 'has quota link' do
-            check_filter_link('Organizations', 8, 'Quotas', cc_quota_definition[:name])
+            check_filter_link('Organizations', 9, 'Quotas', cc_quota_definition[:name])
           end
           it 'has domain link' do
-            check_filter_link('Organizations', 9, 'Domains', cc_organization[:name])
+            check_filter_link('Organizations', 10, 'Domains', cc_organization[:name])
           end
           it 'has routes link' do
-            check_filter_link('Organizations', 10, 'Routes', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 11, 'Routes', "#{ cc_organization[:name] }/")
           end
           it 'has instances link' do
-            check_filter_link('Organizations', 13, 'Applications', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 14, 'Applications', "#{ cc_organization[:name] }/")
           end
           it 'has services link' do
-            check_filter_link('Organizations', 14, 'ServiceInstances', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 15, 'ServiceInstances', "#{ cc_organization[:name] }/")
           end
           it 'has applications link' do
-            check_filter_link('Organizations', 20, 'Applications', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 21, 'Applications', "#{ cc_organization[:name] }/")
           end
         end
       end
@@ -509,18 +511,19 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 6,
                                 :labels          => ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                :colspans        => %w(5 3 5 2 3 3)
+                                :colspans        => %w(6 3 5 2 3 3)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 21,
-                                :labels          => ['Name', 'Target', 'Created', 'Updated', 'Roles', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                :expected_length => 22,
+                                :labels          => ['Name', 'GUID', 'Target', 'Created', 'Updated', 'Roles', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 :colspans        => nil
                               }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='SpacesTable']/tbody/tr/td"),
                            [
                              cc_space[:name],
+                             cc_space[:guid],
                              "#{ cc_organization[:name] }/#{ cc_space[:name] }",
                              @driver.execute_script("return Format.formatString(\"#{ cc_space[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_space[:updated_at].to_datetime.rfc3339 }\")"),
@@ -554,6 +557,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has details' do
             check_details([{ :label => 'Name',            :tag => 'div', :value => cc_space[:name] },
+                           { :label => 'GUID',            :tag =>   nil, :value => cc_space[:guid] },
                            { :label => 'Organization',    :tag =>   'a', :value => cc_organization[:name] },
                            { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_space[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_space[:updated_at].to_datetime.rfc3339 }\")") },
@@ -577,22 +581,22 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                           ])
           end
           it 'has organization link' do
-            check_filter_link('Spaces', 1, 'Organizations', cc_organization[:name])
+            check_filter_link('Spaces', 2, 'Organizations', cc_organization[:name])
           end
           it 'has space roles link' do
-            check_filter_link('Spaces', 4, 'SpaceRoles', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 5, 'SpaceRoles', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
           it 'has routes link' do
-            check_filter_link('Spaces', 5, 'Routes', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 6, 'Routes', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
           it 'has instances link' do
-            check_filter_link('Spaces', 8, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 9, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
           it 'has services link' do
-            check_filter_link('Spaces', 9, 'ServiceInstances', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 10, 'ServiceInstances', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
           it 'has applications link' do
-            check_filter_link('Spaces', 15, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 16, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
         end
       end
@@ -603,12 +607,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 4,
                                 :labels          => ['', 'Used', 'Reserved', ''],
-                                :colspans        => %w(11 4 2 2)
+                                :colspans        => %w(12 4 2 2)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 19,
-                                :labels          => [' ', 'Name', 'State', "Package\nState", "Instance\nState", 'Created', 'Updated', 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                :expected_length => 20,
+                                :labels          => [' ', 'Name', 'GUID', 'State', "Package\nState", "Instance\nState", 'Created', 'Updated', 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
                                 :colspans        => nil
                               }
                              ])
@@ -616,6 +620,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            [
                              '',
                              cc_app[:name],
+                             cc_app[:guid],
                              cc_app[:state],
                              @driver.execute_script('return Constants.STATUS__STAGED'),
                              varz_dea['instance_registry']['application1']['application1_instance1']['state'],
@@ -660,9 +665,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           def check_app_state(expect_state)
             # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
             # error happens.
-            Selenium::WebDriver::Wait.new(:timeout => 560).until { refresh_button && @driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[3]").text == expect_state }
+            Selenium::WebDriver::Wait.new(:timeout => 560).until { refresh_button && @driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text == expect_state }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            expect(@driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[3]").text).to eq(expect_state)
+            expect(@driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text).to eq(expect_state)
           end
 
           def check_operation_result
@@ -743,6 +748,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              [
                                '',
                                cc_app[:name],
+                               cc_app[:guid],
                                '',
                                '',
                                varz_dea['instance_registry']['application1']['application1_instance1']['state'],
@@ -794,6 +800,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has details' do
             check_details([{ :label => 'Name',            :tag => 'div', :value => cc_app[:name] },
+                           { :label => 'GUID',            :tag =>   nil, :value => cc_app[:guid] },
                            { :label => 'State',           :tag =>   nil, :value => cc_app[:state] },
                            { :label => 'Package State',   :tag =>   nil, :value => cc_app[:package_state] },
                            { :label => 'Instance State',  :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['state'] },
@@ -831,13 +838,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              ])
           end
           it 'has space link' do
-            check_filter_link('Applications', 17, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Applications', 18, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
           it 'has organization link' do
-            check_filter_link('Applications', 18, 'Organizations', cc_organization[:name])
+            check_filter_link('Applications', 19, 'Organizations', cc_organization[:name])
           end
           it 'has DEA link' do
-            check_filter_link('Applications', 19, 'DEAs', nats_dea['host'])
+            check_filter_link('Applications', 20, 'DEAs', nats_dea['host'])
           end
         end
       end
@@ -846,8 +853,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Routes' }
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='RoutesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 7,
-                                :labels          => [' ', 'Host', 'Domain', 'Created', 'Updated', 'Target', 'Application'],
+                                :expected_length => 8,
+                                :labels          => [' ', 'Host', 'GUID', 'Domain', 'Created', 'Updated', 'Target', 'Application'],
                                 :colspans        => nil
                               }
                              ])
@@ -855,6 +862,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            [
                              '',
                              cc_route[:host],
+                             cc_route[:guid],
                              cc_domain[:name],
                              @driver.execute_script("return Format.formatString(\"#{ cc_route[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_route[:updated_at].to_datetime.rfc3339 }\")"),
@@ -917,6 +925,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
           it 'has details' do
             check_details([{ :label => 'Host',          :tag => nil, :value => cc_route[:host] },
+                           { :label => 'GUID',          :tag => nil, :value => cc_route[:guid] },
                            { :label => 'Domain',        :tag => 'a', :value => cc_domain[:name] },
                            { :label => 'Created',       :tag => nil, :value => Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:created_at].to_datetime.rfc3339 }\")") } },
                            { :label => 'Updated',       :tag => nil, :value => Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:updated_at].to_datetime.rfc3339 }\")") } },
@@ -927,16 +936,16 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has domains link' do
-            check_filter_link('Routes', 1, 'Domains', cc_domain[:name])
+            check_filter_link('Routes', 2, 'Domains', cc_domain[:name])
           end
           it 'has applications link' do
-            check_filter_link('Routes', 4, 'Applications', "#{ cc_route[:host] }.#{ cc_domain[:name] }")
+            check_filter_link('Routes', 5, 'Applications', "#{ cc_route[:host] }.#{ cc_domain[:name] }")
           end
           it 'has space link' do
-            check_filter_link('Routes', 5, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name]}")
+            check_filter_link('Routes', 6, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name]}")
           end
           it 'has organization link' do
-            check_filter_link('Routes', 6, 'Organizations', cc_organization[:name])
+            check_filter_link('Routes', 7, 'Organizations', cc_organization[:name])
           end
         end
       end
@@ -947,31 +956,35 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 5,
                                 :labels          => ['Service Broker', 'Service', 'Service Plan', 'Service Instance', ''],
-                                :colspans        => %w(3 5 5 4 1)
+                                :colspans        => %w(4 6 6 5 1)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 18,
-                                :labels          => %w(Name Created Updated Provider Label Version Created Updated Name Created Updated Public Target Name Created Updated Bindings Target),
+                                :expected_length => 22,
+                                :labels          => %w(Name GUID Created Updated Provider Label GUID Version Created Updated Name GUID Created Updated Public Target Name GUID Created Updated Bindings Target),
                                 :colspans        => nil
                               }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='ServiceInstancesTable']/tbody/tr/td"),
                            [
                              cc_service_broker[:name],
+                             cc_service_broker[:guid],
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")"),
                              cc_service[:provider],
                              cc_service[:label],
+                             cc_service[:guid],
                              cc_service[:version],
                              @driver.execute_script("return Format.formatString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")"),
                              cc_service_plan[:name],
+                             cc_service_plan[:guid],
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")"),
                              cc_service_plan[:public].to_s,
                              @driver.execute_script("return Format.formatTarget(\"#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }\")").gsub(/<\/?[^>]+>/, ''),
                              cc_service_instance[:name],
+                             cc_service_instance[:guid],
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_instance[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_instance[:updated_at].to_datetime.rfc3339 }\")"),
                              '1',
@@ -990,14 +1003,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has details' do
             tags = JSON.parse(cc_service[:tags])
             check_details([{ :label => 'Service Instance Name',          :tag => 'div', :value => cc_service_instance[:name] },
+                           { :label => 'Service Instance GUID',          :tag =>   nil, :value => cc_service_instance[:guid] },
                            { :label => 'Service Instance Created',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Instance Updated',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:updated_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Instance Dashboard URL', :tag =>   nil, :value => cc_service_instance[:dashboard_url] },
                            { :label => 'Service Broker Name',            :tag =>   nil, :value => cc_service_broker[:name] },
+                           { :label => 'Service Broker GUID',            :tag =>   nil, :value => cc_service_broker[:guid] },
                            { :label => 'Service Broker Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Broker Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Provider',               :tag =>   nil, :value => cc_service[:provider] },
                            { :label => 'Service Label',                  :tag =>   nil, :value => cc_service[:label] },
+                           { :label => 'Service GUID',                   :tag =>   nil, :value => cc_service[:guid] },
                            { :label => 'Service Version',                :tag =>   nil, :value => cc_service[:version] },
                            { :label => 'Service Created',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Updated',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
@@ -1009,6 +1025,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Documentation URL',      :tag =>   nil, :value => cc_service[:documentation_url] },
                            { :label => 'Service Info URL',               :tag =>   nil, :value => cc_service[:info_url] },
                            { :label => 'Service Plan Name',              :tag =>   'a', :value => cc_service_plan[:name] },
+                           { :label => 'Service Plan GUID',              :tag =>   nil, :value => cc_service_plan[:guid] },
                            { :label => 'Service Plan Created',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Plan Updated',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Plan Public',            :tag =>   nil, :value => cc_service_plan[:public].to_s },
@@ -1031,13 +1048,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              ])
           end
           it 'has service plan name link' do
-            check_filter_link('ServiceInstances', 19, 'ServicePlans', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
+            check_filter_link('ServiceInstances', 22, 'ServicePlans', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
           end
           it 'has space link' do
-            check_filter_link('ServiceInstances', 25, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('ServiceInstances', 29, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
           it 'has organization link' do
-            check_filter_link('ServiceInstances', 26, 'Organizations', cc_organization[:name])
+            check_filter_link('ServiceInstances', 30, 'Organizations', cc_organization[:name])
           end
         end
       end
@@ -1045,16 +1062,23 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       context 'Organization Roles' do
         let(:tab_id) { 'OrganizationRoles' }
         it 'has a table' do
-          check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
-                                :labels          => %w(Organization Username Role),
+                                :labels          => ['Organization', 'User', ''],
+                                :colspans        => %w(2 2 1)
+                              },
+                              { :columns => @driver.find_elements(:xpath => "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                :expected_length => 5,
+                                :labels          => %w(Name GUID Name GUID Role),
                                 :colspans        => nil
                               }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='OrganizationRolesTable']/tbody/tr/td"),
                            [
                              cc_organization[:name],
+                             cc_organization[:guid],
                              uaa_user[:username],
+                             uaa_user[:id],
                              'Auditor'
                            ])
         end
@@ -1068,16 +1092,18 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             select_first_row
           end
           it 'has details' do
-            check_details([{ :label => 'Organization', :tag => 'div', :value => cc_organization[:name] },
-                           { :label => 'Username',     :tag =>   'a', :value => uaa_user[:username] },
-                           { :label => 'Role',         :tag =>   nil, :value => 'Auditor' }
+            check_details([{ :label => 'Organization',      :tag => 'div', :value => cc_organization[:name] },
+                           { :label => 'Organization GUID', :tag =>   nil, :value => cc_organization[:guid] },
+                           { :label => 'User',              :tag =>   'a', :value => uaa_user[:username] },
+                           { :label => 'User GUID',         :tag =>   nil, :value => uaa_user[:id] },
+                           { :label => 'Role',              :tag =>   nil, :value => 'Auditor' }
                           ])
           end
           it 'has organizations link' do
             check_filter_link('OrganizationRoles', 0, 'Organizations', cc_organization[:name])
           end
           it 'has users link' do
-            check_filter_link('OrganizationRoles', 1, 'Users', uaa_user[:username])
+            check_filter_link('OrganizationRoles', 2, 'Users', uaa_user[:username])
           end
         end
       end
@@ -1086,16 +1112,23 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'SpaceRoles' }
         it 'has a table' do
           check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 4,
-                                :labels          => %w(Space Target Username Role),
+                                :expected_length => 3,
+                                :labels          => ['Space', 'User', ''],
+                                :colspans        => %w(3 2 1)
+                              },
+                              { :columns => @driver.find_elements(:xpath => "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                :expected_length => 6,
+                                :labels          => %w(Name GUID Target Name GUID Role),
                                 :colspans        => nil
-                              }
+                                          }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='SpaceRolesTable']/tbody/tr/td"),
                            [
                              cc_space[:name],
+                             cc_space[:guid],
                              "#{ cc_organization[:name] }/#{ cc_space[:name] }",
                              uaa_user[:username],
+                             uaa_user[:id],
                              'Auditor'
                            ])
         end
@@ -1110,8 +1143,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has details' do
             check_details([{ :label => 'Space',        :tag => 'div', :value => cc_space[:name] },
+                           { :label => 'Space GUID',   :tag =>   nil, :value => cc_space[:guid] },
                            { :label => 'Organization', :tag =>   'a', :value => cc_organization[:name] },
-                           { :label => 'Username',     :tag =>   'a', :value => uaa_user[:username] },
+                           { :label => 'User',         :tag =>   'a', :value => uaa_user[:username] },
+                           { :label => 'User GUID',    :tag =>   nil, :value => uaa_user[:id] },
                            { :label => 'Role',         :tag =>   nil, :value => 'Auditor' }
                           ])
           end
@@ -1119,10 +1154,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('SpaceRoles', 0, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
           it 'has organizations link' do
-            check_filter_link('SpaceRoles', 1, 'Organizations', cc_organization[:name])
+            check_filter_link('SpaceRoles', 2, 'Organizations', cc_organization[:name])
           end
           it 'has users link' do
-            check_filter_link('SpaceRoles', 2, 'Users', uaa_user[:username])
+            check_filter_link('SpaceRoles', 3, 'Users', uaa_user[:username])
           end
         end
       end
@@ -1133,18 +1168,19 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
                                 :labels          => ['', 'Organization Roles', 'Space Roles', ''],
-                                :colspans        => %w(8 5 4)
+                                :colspans        => %w(9 5 4)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 17,
-                                :labels          => ['Username', 'Created', 'Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
+                                :expected_length => 18,
+                                :labels          => ['Username', 'GUID', 'Created', 'Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
                                 :colspans        => nil
                               }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='UsersTable']/tbody/tr/td"),
                            [
                              uaa_user[:username],
+                             uaa_user[:id],
                              @driver.execute_script("return Format.formatString(\"#{ uaa_user[:created].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ uaa_user[:lastmodified].to_datetime.rfc3339 }\")"),
                              uaa_user[:email],
@@ -1174,6 +1210,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has details' do
             check_details([{ :label => 'Username',                           :tag => 'div', :value => uaa_user[:username] },
+                           { :label => 'GUID',                               :tag =>   nil, :value => uaa_user[:id] },
                            { :label => 'Created',                            :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_user[:created].to_datetime.rfc3339 }\")") },
                            { :label => 'Updated',                            :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_user[:lastmodified].to_datetime.rfc3339 }\")") },
                            { :label => 'Email',                              :tag =>    'a', :value => "mailto:#{ uaa_user[:email] }" },
@@ -1194,10 +1231,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                           ])
           end
           it 'has organization roles link' do
-            check_filter_link('Users', 8, 'OrganizationRoles', uaa_user[:username])
+            check_filter_link('Users', 9, 'OrganizationRoles', uaa_user[:username])
           end
           it 'has space roles link' do
-            check_filter_link('Users', 13, 'SpaceRoles', uaa_user[:username])
+            check_filter_link('Users', 14, 'SpaceRoles', uaa_user[:username])
           end
         end
       end
@@ -1206,14 +1243,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Domains' }
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DomainsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 5,
-                                :labels          => ['Name', 'Created', 'Updated', 'Owning Organization', 'Routes'],
+                                :expected_length => 6,
+                                :labels          => ['Name', 'GUID', 'Created', 'Updated', 'Owning Organization', 'Routes'],
                                 :colspans        => nil
                               }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='DomainsTable']/tbody/tr/td"),
                            [
                              cc_domain[:name],
+                             cc_domain[:guid],
                              @driver.execute_script("return Format.formatString(\"#{ cc_domain[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_domain[:updated_at].to_datetime.rfc3339 }\")"),
                              cc_organization[:name],
@@ -1231,6 +1269,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has details' do
             check_details([{ :label => 'Name',         :tag => 'div', :value => cc_domain[:name] },
+                           { :label => 'GUID',         :tag =>   nil, :value => cc_domain[:guid] },
                            { :label => 'Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Updated',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:updated_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Organization', :tag =>   'a', :value => cc_organization[:name] },
@@ -1238,10 +1277,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                           ])
           end
           it 'has organizations link' do
-            check_filter_link('Domains', 3, 'Organizations', cc_organization[:name])
+            check_filter_link('Domains', 4, 'Organizations', cc_organization[:name])
           end
           it 'has routes link' do
-            check_filter_link('Domains', 4, 'Routes', cc_domain[:name])
+            check_filter_link('Domains', 5, 'Routes', cc_domain[:name])
           end
         end
       end
@@ -1250,14 +1289,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Quotas' }
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='QuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 9,
-                                :labels          => ['Name', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Organizations'],
+                                :expected_length => 10,
+                                :labels          => ['Name', 'GUID', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Organizations'],
                                 :colspans        => nil
                               }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='QuotasTable']/tbody/tr/td"),
                            [
                              cc_quota_definition[:name],
+                             cc_quota_definition[:guid],
                              @driver.execute_script("return Format.formatString(\"#{ cc_quota_definition[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_quota_definition[:updated_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:total_services] }\")"),
@@ -1279,6 +1319,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
           it 'has details' do
             check_details([{ :label => 'Name',                       :tag => 'div', :value => cc_quota_definition[:name] },
+                           { :label => 'GUID',                       :tag =>   nil, :value => cc_quota_definition[:guid] },
                            { :label => 'Created',                    :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Updated',                    :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:updated_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Total Services',             :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:total_services] }\")") },
@@ -1290,7 +1331,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                           ])
           end
           it 'has organizations link' do
-            check_filter_link('Quotas', 8, 'Organizations', cc_quota_definition[:name])
+            check_filter_link('Quotas', 9, 'Organizations', cc_quota_definition[:name])
           end
         end
       end
@@ -1301,12 +1342,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
                                 :labels          => ['Service Plan', 'Service', 'Service Broker'],
-                                :colspans        => %w(8 7 3)
+                                :colspans        => %w(9 8 4)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 18,
-                                :labels          => [' ', 'Name', 'Target', 'Created', 'Updated', 'Public', 'Visible Organizations', 'Service Instances', 'Provider', 'Label', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'Created', 'Updated'],
+                                :expected_length => 21,
+                                :labels          => [' ', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Public', 'Visible Organizations', 'Service Instances', 'Provider', 'Label', 'GUID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated'],
                                 :colspans        => nil
                               }
                              ])
@@ -1314,6 +1355,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            [
                              '',
                              cc_service_plan[:name],
+                             cc_service_plan[:guid],
                              @driver.execute_script("return Format.formatTarget(\"#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }\")").gsub(/<\/?[^>]+>/, ''),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")"),
@@ -1322,12 +1364,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              '1',
                              cc_service[:provider],
                              cc_service[:label],
+                             cc_service[:guid],
                              cc_service[:version],
                              @driver.execute_script("return Format.formatString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")"),
                              cc_service[:active].to_s,
                              cc_service[:bindable].to_s,
                              cc_service_broker[:name],
+                             cc_service_broker[:guid],
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")")
                            ])
@@ -1345,16 +1389,19 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has details' do
             value_extra_json = JSON.parse(cc_service[:extra])
             check_details([{ :label => 'Service Plan Name',              :tag => 'div', :value => cc_service_plan[:name] },
+                           { :label => 'Service Plan GUID',              :tag =>   nil, :value => cc_service_plan[:guid] },
                            { :label => 'Service Plan Created',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Plan Updated',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Plan Public',            :tag =>   nil, :value => cc_service_plan[:public].to_s },
                            { :label => 'Service Plan Description',       :tag =>   nil, :value => cc_service_plan[:description] },
                            { :label => 'Service Instances',              :tag =>   'a', :value => '1' },
                            { :label => 'Service Broker Name',            :tag =>   nil, :value => cc_service_broker[:name] },
+                           { :label => 'Service Broker GUID',            :tag =>   nil, :value => cc_service_broker[:guid] },
                            { :label => 'Service Broker Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Broker Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Provider',               :tag =>   nil, :value => cc_service[:provider] },
                            { :label => 'Service Label',                  :tag =>   nil, :value => cc_service[:label] },
+                           { :label => 'Service GUID',                   :tag =>   nil, :value => cc_service[:guid] },
                            { :label => 'Service Version',                :tag =>   nil, :value => cc_service[:version] },
                            { :label => 'Service Created',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Updated',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
@@ -1387,7 +1434,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has service instances link to service instances filtered by service plan target' do
-            check_filter_link('ServicePlans', 5, 'ServiceInstances', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
+            check_filter_link('ServicePlans', 6, 'ServiceInstances', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
           end
 
           context 'manage service plans' do
@@ -1409,10 +1456,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
               # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
               # error happens.
               begin
-                Selenium::WebDriver::Wait.new(:timeout => 60).until { refresh_button && @driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[6]").text == expect_state }
+                Selenium::WebDriver::Wait.new(:timeout => 60).until { refresh_button && @driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[7]").text == expect_state }
               rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
               end
-              expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[6]").text).to eq(expect_state)
+              expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[7]").text).to eq(expect_state)
             end
 
             def check_operation_result(_visibility)
