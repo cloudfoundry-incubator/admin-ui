@@ -93,10 +93,12 @@ module AdminUI
       end
 
       items = []
+      hash  = {}
 
       spaces['items'].each do |space|
         Thread.pass
-        space_id = space[:id]
+        space_id   = space[:id]
+        space_guid = space[:guid]
 
         organization                   = organization_hash[space[:organization_id]]
         space_role_counter             = space_role_counters[space_id]
@@ -107,7 +109,7 @@ module AdminUI
         row = []
 
         row.push(space[:name])
-        row.push(space[:guid])
+        row.push(space_guid)
 
         if organization
           row.push("#{ organization[:name] }/#{ space[:name] }")
@@ -175,13 +177,16 @@ module AdminUI
           row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
         end
 
-        row.push('organization' => organization,
-                 'space'        => space)
-
         items.push(row)
+
+        hash[space_guid] =
+        {
+          'organization' => organization,
+          'space'        => space
+        }
       end
 
-      result(items, (0..21).to_a, (0..4).to_a)
+      result(true, items, hash, (0..21).to_a, (0..4).to_a)
     end
 
     private

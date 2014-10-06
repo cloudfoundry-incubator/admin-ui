@@ -17,6 +17,7 @@ module AdminUI
       return result unless gateways['connected']
 
       items = []
+      hash  = {}
 
       gateways['items'].each do |gateway|
         Thread.pass
@@ -54,7 +55,7 @@ module AdminUI
 
           row.push(capacity)
 
-          row.push(gateway)
+          hash[gateway['name']] = gateway
         else
           row.push(nil)
           row.push('OFFLINE')
@@ -73,7 +74,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..8).to_a, [0, 2, 3, 4])
+      result(true, items, hash, (0..8).to_a, [0, 2, 3, 4])
     end
   end
 end

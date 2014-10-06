@@ -34,17 +34,18 @@ module AdminUI
       user_uaa_hash     = Hash[users_uaa['items'].map { |item| [item[:id], item] }]
 
       items = []
+      hash  = {}
 
-      add_rows(spaces_auditors,   'Auditor',   space_hash, organization_hash, user_cc_hash, user_uaa_hash, items)
-      add_rows(spaces_developers, 'Developer', space_hash, organization_hash, user_cc_hash, user_uaa_hash, items)
-      add_rows(spaces_managers,   'Manager',   space_hash, organization_hash, user_cc_hash, user_uaa_hash, items)
+      add_rows(spaces_auditors,   'Auditor',   space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
+      add_rows(spaces_developers, 'Developer', space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
+      add_rows(spaces_managers,   'Manager',   space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
 
-      result(items, (0..5).to_a, (0..5).to_a)
+      result(true, items, hash, (0..5).to_a, (0..5).to_a)
     end
 
     private
 
-    def add_rows(space_role_array, role, space_hash, organization_hash, user_cc_hash, user_uaa_hash, items)
+    def add_rows(space_role_array, role, space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
       space_role_array['items'].each do |space_role|
         Thread.pass
 
@@ -74,13 +75,17 @@ module AdminUI
         row.push(user_uaa[:id])
         row.push(role)
 
-        row.push('organization' => organization,
-                 'role'         => space_role,
-                 'space'        => space,
-                 'user_cc'      => user_cc,
-                 'user_uaa'     => user_uaa)
-
         items.push(row)
+
+        key = "#{ space[:guid] }/#{ user_cc[:guid] }/#{ role }"
+        hash[key] =
+        {
+          'organization' => organization,
+          'role'         => space_role,
+          'space'        => space,
+          'user_cc'      => user_cc,
+          'user_uaa'     => user_uaa
+        }
       end
     end
   end

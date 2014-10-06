@@ -132,6 +132,7 @@ module AdminUI
       end
 
       items = []
+      hash  = {}
 
       organizations['items'].each do |organization|
         Thread.pass
@@ -243,12 +244,12 @@ module AdminUI
           row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
         end
 
-        row.push(organization)
-
         items.push(row)
+
+        hash[organization[:guid]] = organization
       end
 
-      result(items, (1..26).to_a, (1..5).to_a << 9)
+      result(true, items, hash, (1..26).to_a, (1..5).to_a << 9)
     end
 
     private

@@ -97,28 +97,58 @@ module AdminUI
       invalidate_cache(:tasks)
     end
 
+    def application(guid, instance = nil)
+      key = guid
+      key += "/#{ instance }" if instance
+      details(:applications, key)
+    end
+
     def applications
       result_cache(:applications)
+    end
+
+    def cloud_controller(name)
+      details(:cloud_controllers, name)
     end
 
     def cloud_controllers
       result_cache(:cloud_controllers)
     end
 
+    def component(name)
+      details(:components, name)
+    end
+
     def components
       result_cache(:components)
+    end
+
+    def dea(name)
+      details(:deas, name)
     end
 
     def deas
       result_cache(:deas)
     end
 
+    def domain(guid)
+      details(:domains, guid)
+    end
+
     def domains
       result_cache(:domains)
     end
 
+    def gateway(name)
+      details(:gateways, name)
+    end
+
     def gateways
       result_cache(:gateways)
+    end
+
+    def health_manager(name)
+      details(:health_managers, name)
     end
 
     def health_managers
@@ -129,36 +159,72 @@ module AdminUI
       result_cache(:logs)
     end
 
+    def organization(guid)
+      details(:organizations, guid)
+    end
+
     def organizations
       result_cache(:organizations)
+    end
+
+    def organization_role(organization_guid, user_guid, role)
+      details(:organization_roles, "#{ organization_guid }/#{ user_guid }/#{ role }")
     end
 
     def organization_roles
       result_cache(:organization_roles)
     end
 
+    def quota(guid)
+      details(:quotas, guid)
+    end
+
     def quotas
       result_cache(:quotas)
+    end
+
+    def router(name)
+      details(:routers, name)
     end
 
     def routers
       result_cache(:routers)
     end
 
+    def route(guid)
+      details(:routes, guid)
+    end
+
     def routes
       result_cache(:routes)
+    end
+
+    def service_instance(guid)
+      details(:service_instances, guid)
     end
 
     def service_instances
       result_cache(:service_instances)
     end
 
+    def service_plan(guid)
+      details(:service_plans, guid)
+    end
+
     def service_plans
       result_cache(:service_plans)
     end
 
+    def space(guid)
+      details(:spaces, guid)
+    end
+
     def spaces
       result_cache(:spaces)
+    end
+
+    def space_role(space_guid, user_guid, role)
+      details(:space_roles, "#{ space_guid }/#{ user_guid }/#{ role }")
     end
 
     def space_roles
@@ -171,6 +237,10 @@ module AdminUI
 
     def tasks
       result_cache(:tasks)
+    end
+
+    def user(guid)
+      details(:users, guid)
     end
 
     def users
@@ -233,6 +303,11 @@ module AdminUI
         hash[:condition].wait(hash[:semaphore]) while hash[:result].nil?
         hash[:result]
       end
+    end
+
+    def details(key, hash_key)
+      detail_hash = result_cache(key)[:detail_hash]
+      return detail_hash[hash_key] if detail_hash
     end
 
     def discover_applications
