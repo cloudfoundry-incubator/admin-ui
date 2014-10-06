@@ -83,7 +83,6 @@ module AdminUI
       return -1 if @config.stats_refresh_schedules.length == 0
       target_time = Time.now
       init_time = target_time
-      current_time_sec = target_time.to_i
       @data_collection_schedulers.each do | scheduler |
         begin
           refresh_time = scheduler.next(init_time)
@@ -96,19 +95,22 @@ module AdminUI
           raise error
         end
       end
-      wait_time = target_time.to_i - current_time_sec
-      @logger.debug("AdminUI::Stats.calculate_time_until_generate_stats:  Next data collection time will be at #{ target_time } or #{ wait_time } seconds later.")
-      wait_time
+      @logger.debug("AdminUI::Stats.calculate_time_until_generate_stats:  Next data collection time will be at #{ target_time }.")
+      target_time.to_i
     end
 
     private
 
     def schedule_stats
-      wait_time = calculate_time_until_generate_stats
-      return -1 if wait_time <= 0
-      sleep(wait_time)
+      target_time = calculate_time_until_generate_stats
+      return -1 if target_time < 0
+      while Time.now.to_i < target_time
+        wait_time = target_time - Time.now.to_i
+        @logger.debug("AdminUI::Stats.schedule_stats(in loop): wait_time #{wait_time} second; now #{ Time.now }.")
+        sleep(wait_time)
+      end
       generate_stats
-      wait_time
+      target_time
     rescue => error
       @logger.debug("AdminUI::Stats.schedule_stats: Error generating stats: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
