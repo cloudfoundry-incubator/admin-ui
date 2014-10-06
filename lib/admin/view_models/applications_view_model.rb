@@ -27,6 +27,7 @@ module AdminUI
       application_hash = {}
 
       items = []
+      hash  = {}
 
       applications['items'].each do |application|
         Thread.pass
@@ -78,13 +79,22 @@ module AdminUI
         # DEA
         row.push(nil)
 
-        row.push('application'  => application,
-                 'organization' => organization,
-                 'space'        => space)
+        hash_entry =
+        {
+          'application'  => application,
+          'organization' => organization,
+          'space'        => space
+        }
 
-        application_hash[application[:guid]] = row
+        application_hash[application[:guid]] =
+        {
+          'row'        => row,
+          'hash_entry' => hash_entry
+        }
 
         items.push(row)
+
+        hash[application[:guid]] = hash_entry
       end
 
       dea_index = 0
@@ -98,10 +108,10 @@ module AdminUI
             Thread.pass
             instance_index = instance['instance_index']
 
-            row = application_hash[instance['application_id']]
+            prior = application_hash[instance['application_id']]
 
             # In some cases, we will not find an existing row.  Create the row as much as possible from the DEA data.
-            if row.nil?
+            if prior.nil?
               row = []
 
               row.push(instance['application_id'])
@@ -157,14 +167,21 @@ module AdminUI
 
               row.push(host)
 
-              # No application to push.  Push the instance instead so we can provide details.
-              row.push('application'  => nil,
-                       'instance'     => instance,
-                       'organization' => organization,
-                       'space'        => space)
-
               items.push(row)
+
+              key = "#{ instance['application_id'] }/#{ instance_index }"
+              # No application to push.  Push the instance instead so we can provide details.
+              hash[key] =
+              {
+                'application'  => nil,
+                'instance'     => instance,
+                'organization' => organization,
+                'space'        => space
+              }
             else
+              row        = prior['row']
+              hash_entry = prior['hash_entry']
+
               # We will add instance info to the 0th row, but other instances have to be cloned so we can have instance specific information
               if instance_index > 0
                 new_row = []
@@ -191,12 +208,15 @@ module AdminUI
               row[15] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil
               row[19] = host
 
+              key = "#{ instance['application_id'] }/#{ instance_index }"
               # Need the specific instance for this row
-              row[20] = { 'application'  => row[20]['application'],
-                          'instance'     => instance,
-                          'organization' => row[20]['organization'],
-                          'space'        => row[20]['space']
-                        }
+              hash[key] =
+              {
+                'application'  => hash_entry['application'],
+                'instance'     => instance,
+                'organization' => hash_entry['organization'],
+                'space'        => hash_entry['space']
+              }
             end
           end
         end
@@ -204,7 +224,7 @@ module AdminUI
         dea_index += 1
       end
 
-      result(items, (1..19).to_a, (1..10).to_a << 18)
+      result(true, items, hash, (1..19).to_a, (1..10).to_a << 18)
     end
   end
 end

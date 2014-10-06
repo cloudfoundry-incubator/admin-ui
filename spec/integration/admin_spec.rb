@@ -337,10 +337,23 @@ describe AdminUI::Admin, :type => :integration do
       end
     end
 
+    shared_examples 'retrieves view_model detail' do
+      let(:retrieved) { get_json(path) }
+      it 'retrieves' do
+        expect(JSON.parse(view_model_source.to_json)).to eq(JSON.parse(retrieved.to_json))
+      end
+    end
+
     context 'applications_view_model' do
       let(:path)              { '/applications_view_model' }
       let(:view_model_source) { view_models_applications }
       it_behaves_like('retrieves view_model')
+    end
+
+    context 'applications_view_model detail' do
+      let(:path)              { "/applications_view_model/#{ cc_app[:guid] }/#{ varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'] }" }
+      let(:view_model_source) { view_models_applications_detail }
+      it_behaves_like('retrieves view_model detail')
     end
 
     context 'cloud_controllers_view_model' do
@@ -349,10 +362,22 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
+    context 'cloud_controllers_view_model detail' do
+      let(:path)              { "/cloud_controllers_view_model/#{ nats_cloud_controller['host'] }" }
+      let(:view_model_source) { view_models_cloud_controllers_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'components_view_model' do
       let(:path)              { '/components_view_model' }
       let(:view_model_source) { view_models_components }
       it_behaves_like('retrieves view_model')
+    end
+
+    context 'components_view_model detail' do
+      let(:path)              { "/components_view_model/#{ nats_cloud_controller['host'] }" }
+      let(:view_model_source) { view_models_cloud_controllers_detail }
+      it_behaves_like('retrieves view_model detail')
     end
 
     context 'current_statistics' do
@@ -374,10 +399,22 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
+    context 'deas_view_model detail' do
+      let(:path)              { "/deas_view_model/#{ nats_dea['host'] }" }
+      let(:view_model_source) { view_models_deas_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'domains_view_model' do
       let(:path)              { '/domains_view_model' }
       let(:view_model_source) { view_models_domains }
       it_behaves_like('retrieves view_model')
+    end
+
+    context 'domains_view_model detail' do
+      let(:path)              { "/domains_view_model/#{ cc_domain[:guid] }" }
+      let(:view_model_source) { view_models_domains_detail }
+      it_behaves_like('retrieves view_model detail')
     end
 
     context 'download' do
@@ -394,10 +431,22 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
+    context 'gateways_view_model detail' do
+      let(:path)              { "/gateways_view_model/#{ nats_provisioner['type'].sub('-Provisioner', '') }" }
+      let(:view_model_source) { view_models_gateways_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'health_managers_view_model' do
       let(:path)              { '/health_managers_view_model' }
       let(:view_model_source) { view_models_health_managers }
       it_behaves_like('retrieves view_model')
+    end
+
+    context 'health_managers_view_model detail' do
+      let(:path)              { "/health_managers_view_model/#{ nats_health_manager['host'] }" }
+      let(:view_model_source) { view_models_health_managers_detail }
+      it_behaves_like('retrieves view_model detail')
     end
 
     context 'log' do
@@ -424,10 +473,22 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
+    context 'organizations_view_model detail' do
+      let(:path)              { "/organizations_view_model/#{ cc_organization[:guid] }" }
+      let(:view_model_source) { view_models_organizations_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'organization_roles_view_model' do
       let(:path)              { '/organization_roles_view_model' }
       let(:view_model_source) { view_models_organization_roles }
       it_behaves_like('retrieves view_model')
+    end
+
+    context 'organization_roles_view_model detail' do
+      let(:path)              { "/organization_roles_view_model/#{ cc_organization[:guid] }/#{ cc_user[:guid] }/Auditor" }
+      let(:view_model_source) { view_models_organization_roles_detail }
+      it_behaves_like('retrieves view_model detail')
     end
 
     context 'quotas_view_model' do
@@ -436,10 +497,22 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
+    context 'quotas_view_model detail' do
+      let(:path)              { "/quotas_view_model/#{ cc_quota_definition[:guid] }" }
+      let(:view_model_source) { view_models_quotas_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'routers_view_model' do
       let(:path)              { '/routers_view_model' }
       let(:view_model_source) { view_models_routers }
       it_behaves_like('retrieves view_model')
+    end
+
+    context 'routers_view_model detail' do
+      let(:path)              { "/routers_view_model/#{ nats_router['host'] }" }
+      let(:view_model_source) { view_models_routers_detail }
+      it_behaves_like('retrieves view_model detail')
     end
 
     context 'routes_view_model' do
@@ -448,10 +521,22 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
+    context 'routes_view_model detail' do
+      let(:path)              { "/routes_view_model/#{ cc_route[:guid] }" }
+      let(:view_model_source) { view_models_routes_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'services_instances_view_model' do
       let(:path)              { '/service_instances_view_model' }
       let(:view_model_source) { view_models_service_instances }
       it_behaves_like('retrieves view_model')
+    end
+
+    context 'services_instances_view_model detail' do
+      let(:path)              { "/service_instances_view_model/#{ cc_service_instance[:guid] }" }
+      let(:view_model_source) { view_models_service_instances_detail }
+      it_behaves_like('retrieves view_model detail')
     end
 
     context 'service_plans_view_model' do
@@ -460,16 +545,34 @@ describe AdminUI::Admin, :type => :integration do
       it_behaves_like('retrieves view_model')
     end
 
+    context 'service_plans_view_model detail' do
+      let(:path)              { "/service_plans_view_model/#{ cc_service_plan[:guid] }" }
+      let(:view_model_source) { view_models_service_plans_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'spaces_view_model' do
       let(:path)              { '/spaces_view_model' }
       let(:view_model_source) { view_models_spaces }
       it_behaves_like('retrieves view_model')
     end
 
+    context 'spaces_view_model detail' do
+      let(:path)              { "/spaces_view_model/#{ cc_space[:guid] }" }
+      let(:view_model_source) { view_models_spaces_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'space_roles_view_model' do
       let(:path)              { '/space_roles_view_model' }
       let(:view_model_source) { view_models_space_roles }
       it_behaves_like('retrieves view_model')
+    end
+
+    context 'space_roles_view_model detail' do
+      let(:path)              { "/space_roles_view_model/#{ cc_space[:guid] }/#{ cc_user[:guid] }/Auditor" }
+      let(:view_model_source) { view_models_space_roles_detail }
+      it_behaves_like('retrieves view_model detail')
     end
 
     context 'stats_view_model' do
@@ -483,6 +586,12 @@ describe AdminUI::Admin, :type => :integration do
       let(:path)              { '/users_view_model' }
       let(:view_model_source) { view_models_users }
       it_behaves_like('retrieves view_model')
+    end
+
+    context 'users_view_model detail' do
+      let(:path)              { "/users_view_model/#{ cc_user[:guid] }" }
+      let(:view_model_source) { view_models_users_detail }
+      it_behaves_like('retrieves view_model detail')
     end
   end
 

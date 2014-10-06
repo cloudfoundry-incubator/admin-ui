@@ -30,6 +30,7 @@ module AdminUI
       end
 
       items = []
+      hash  = {}
 
       quota_definitions['items'].each do |quota_definition|
         Thread.pass
@@ -66,12 +67,12 @@ module AdminUI
           row.push(nil)
         end
 
-        row.push(quota_definition)
-
         items.push(row)
+
+        hash[quota_definition[:guid]] = quota_definition
       end
 
-      result(items, (0..9).to_a, [0, 1, 2, 3, 8])
+      result(true, items, hash, (0..9).to_a, [0, 1, 2, 3, 8])
     end
   end
 end

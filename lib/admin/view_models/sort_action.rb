@@ -54,7 +54,7 @@ module AdminUI
         end
       end
 
-      result(sorted, @source[:visible_columns], @source[:case_insensitive_sort_columns])
+      result(@source[:connected], sorted, @source[:detail_hash], @source[:searchable_columns], @source[:case_insensitive_sort_columns])
     end
   end
 end

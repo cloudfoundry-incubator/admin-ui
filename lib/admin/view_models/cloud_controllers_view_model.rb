@@ -17,6 +17,7 @@ module AdminUI
       return result unless cloud_controllers['connected']
 
       items = []
+      hash  = {}
 
       cloud_controllers['items'].each do |cloud_controller|
         Thread.pass
@@ -42,7 +43,7 @@ module AdminUI
             row.push(nil)
           end
 
-          row.push(cloud_controller)
+          hash[cloud_controller['name']] = cloud_controller
         else
           row.push(nil)
           row.push('OFFLINE')
@@ -61,7 +62,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..6).to_a, [0, 2, 3])
+      result(true, items, hash, (0..6).to_a, [0, 2, 3])
     end
   end
 end

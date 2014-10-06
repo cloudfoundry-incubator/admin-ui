@@ -24,7 +24,7 @@ module AdminUI
         items.push(to_row(Utils.symbolize_keys(statistic)))
       end
 
-      result(items, (0..7).to_a, [0])
+      result(true, items, nil, (0..7).to_a, [0])
     end
 
     private

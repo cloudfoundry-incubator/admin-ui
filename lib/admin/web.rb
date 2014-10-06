@@ -45,14 +45,42 @@ module AdminUI
       AllActions.new(@logger, @view_models.applications, params).items.to_json
     end
 
+    get '/applications_view_model/:guid', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/applications_view_model/#{ params[:guid] }"
+      result = @view_models.application(params[:guid])
+      return result.to_json if result
+      404
+    end
+
+    get '/applications_view_model/:guid/:instance', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/applications_view_model/#{ params[:guid] }/#{ params[:instance] }"
+      result = @view_models.application(params[:guid], params[:instance])
+      return result.to_json if result
+      404
+    end
+
     get '/cloud_controllers_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/cloud_controllers_view_model'
       AllActions.new(@logger, @view_models.cloud_controllers, params).items.to_json
     end
 
+    get '/cloud_controllers_view_model/:name', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/cloud_controllers_view_model/#{ params[:name] }"
+      result = @view_models.cloud_controller(params[:name])
+      return result.to_json if result
+      404
+    end
+
     get '/components_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/components_view_model'
       AllActions.new(@logger, @view_models.components, params).items.to_json
+    end
+
+    get '/components_view_model/:name', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/components_view_model/#{ params[:name] }"
+      result = @view_models.component(params[:name])
+      return result.to_json if result
+      404
     end
 
     get '/current_statistics' do
@@ -65,9 +93,23 @@ module AdminUI
       AllActions.new(@logger, @view_models.deas, params).items.to_json
     end
 
+    get '/deas_view_model/:name', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/deas_view_model/#{ params[:name] }"
+      result = @view_models.dea(params[:name])
+      return result.to_json if result
+      404
+    end
+
     get '/domains_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/domains_view_model'
       AllActions.new(@logger, @view_models.domains, params).items.to_json
+    end
+
+    get '/domains_view_model/:guid', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/domains_view_model/#{ params[:guid] }"
+      result = @view_models.domain(params[:guid])
+      return result.to_json if result
+      404
     end
 
     get '/download', :auth => [:user] do
@@ -90,9 +132,23 @@ module AdminUI
       AllActions.new(@logger, @view_models.gateways, params).items.to_json
     end
 
+    get '/gateways_view_model/:name', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/gateways_view_model/#{ params[:name] }"
+      result = @view_models.gateway(params[:name])
+      return result.to_json if result
+      404
+    end
+
     get '/health_managers_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/health_managers_view_model'
       AllActions.new(@logger, @view_models.health_managers, params).items.to_json
+    end
+
+    get '/health_managers_view_model/:name', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/health_managers_view_model/#{ params[:name] }"
+      result = @view_models.health_manager(params[:name])
+      return result.to_json if result
+      404
     end
 
     get '/log', :auth => [:user] do
@@ -146,9 +202,23 @@ module AdminUI
       AllActions.new(@logger, @view_models.organizations, params).items.to_json
     end
 
+    get '/organizations_view_model/:guid', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/organizations_view_model/#{ params[:guid] }"
+      result = @view_models.organization(params[:guid])
+      return result.to_json if result
+      404
+    end
+
     get '/organization_roles_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/organization_roles_view_model'
       AllActions.new(@logger, @view_models.organization_roles, params).items.to_json
+    end
+
+    get '/organization_roles_view_model/:organization_guid/:user_guid/:role', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/organization_roles_view_model/#{ params[:organization_guid] }/#{ params[:user_guid] }/#{ params[:role] }"
+      result = @view_models.organization_role(params[:organization_guid], params[:user_guid], params[:role])
+      return result.to_json if result
+      404
     end
 
     get '/quotas_view_model', :auth => [:user] do
@@ -156,14 +226,35 @@ module AdminUI
       AllActions.new(@logger, @view_models.quotas, params).items.to_json
     end
 
+    get '/quotas_view_model/:guid', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/quotas_view_model/#{ params[:guid] }"
+      result = @view_models.quota(params[:guid])
+      return result.to_json if result
+      404
+    end
+
     get '/routers_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/routers_view_model'
       AllActions.new(@logger, @view_models.routers, params).items.to_json
     end
 
+    get '/routers_view_model/:name', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/routers_view_model/#{ params[:name] }"
+      result = @view_models.router(params[:name])
+      return result.to_json if result
+      404
+    end
+
     get '/routes_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/routes_view_model'
       AllActions.new(@logger, @view_models.routes, params).items.to_json
+    end
+
+    get '/routes_view_model/:guid', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/routes_view_model/#{ params[:guid] }"
+      result = @view_models.route(params[:guid])
+      return result.to_json if result
+      404
     end
 
     get '/settings', :auth => [:user] do
@@ -180,9 +271,23 @@ module AdminUI
       AllActions.new(@logger, @view_models.service_instances, params).items.to_json
     end
 
+    get '/service_instances_view_model/:guid', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/service_instances_view_model/#{ params[:guid] }"
+      result = @view_models.service_instance(params[:guid])
+      return result.to_json if result
+      404
+    end
+
     get '/service_plans_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/service_plans_view_model'
       AllActions.new(@logger, @view_models.service_plans, params).items.to_json
+    end
+
+    get '/service_plans_view_model/:guid', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/service_plans_view_model/#{ params[:guid] }"
+      result = @view_models.service_plan(params[:guid])
+      return result.to_json if result
+      404
     end
 
     get '/spaces_view_model', :auth => [:user] do
@@ -190,9 +295,23 @@ module AdminUI
       AllActions.new(@logger, @view_models.spaces, params).items.to_json
     end
 
+    get '/spaces_view_model/:guid', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/spaces_view_model/#{ params[:guid] }"
+      result = @view_models.space(params[:guid])
+      return result.to_json if result
+      404
+    end
+
     get '/space_roles_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/space_roles_view_model'
       AllActions.new(@logger, @view_models.space_roles, params).items.to_json
+    end
+
+    get '/space_roles_view_model/:space_guid/:user_guid/:role', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/space_roles_view_model/#{ params[:space_guid] }/#{ params[:user_guid] }/#{ params[:role] }"
+      result = @view_models.space_role(params[:space_guid], params[:user_guid], params[:role])
+      return result.to_json if result
+      404
     end
 
     get '/statistics' do
@@ -234,6 +353,13 @@ module AdminUI
     get '/users_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/users_view_model'
       AllActions.new(@logger, @view_models.users, params).items.to_json
+    end
+
+    get '/users_view_model/:guid', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/users_view_model/#{ params[:guid] }"
+      result = @view_models.user(params[:guid])
+      return result.to_json if result
+      404
     end
 
     post '/deas', :auth => [:admin] do

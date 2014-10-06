@@ -34,18 +34,19 @@ module AdminUI
       user_uaa_hash     = Hash[users_uaa['items'].map { |item| [item[:id], item] }]
 
       items = []
+      hash  = {}
 
-      add_rows(organizations_auditors, 'Auditor', organization_hash, user_cc_hash, user_uaa_hash, items)
-      add_rows(organizations_billing_managers, 'Billing Manager', organization_hash, user_cc_hash, user_uaa_hash, items)
-      add_rows(organizations_managers, 'Manager', organization_hash, user_cc_hash, user_uaa_hash, items)
-      add_rows(organizations_users, 'User', organization_hash, user_cc_hash, user_uaa_hash, items)
+      add_rows(organizations_auditors, 'Auditor', organization_hash, user_cc_hash, user_uaa_hash, items, hash)
+      add_rows(organizations_billing_managers, 'Billing Manager', organization_hash, user_cc_hash, user_uaa_hash, items, hash)
+      add_rows(organizations_managers, 'Manager', organization_hash, user_cc_hash, user_uaa_hash, items, hash)
+      add_rows(organizations_users, 'User', organization_hash, user_cc_hash, user_uaa_hash, items, hash)
 
-      result(items, (0..4).to_a, (0..4).to_a)
+      result(true, items, hash, (0..4).to_a, (0..4).to_a)
     end
 
     private
 
-    def add_rows(organization_role_array, role, organization_hash, user_cc_hash, user_uaa_hash, items)
+    def add_rows(organization_role_array, role, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
       organization_role_array['items'].each do |organization_role|
         Thread.pass
 
@@ -66,12 +67,16 @@ module AdminUI
         row.push(user_uaa[:id])
         row.push(role)
 
-        row.push('organization' => organization,
-                 'role'         => organization_role,
-                 'user_cc'      => user_cc,
-                 'user_uaa'     => user_uaa)
-
         items.push(row)
+
+        key = "#{ organization[:guid] }/#{ user_cc[:guid] }/#{ role }"
+        hash[key] =
+        {
+          'organization' => organization,
+          'role'         => organization_role,
+          'user_cc'      => user_cc,
+          'user_uaa'     => user_uaa
+        }
       end
     end
   end

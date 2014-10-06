@@ -55,6 +55,7 @@ module AdminUI
       end
 
       items = []
+      hash  = {}
 
       service_instances['items'].each do |service_instance|
         Thread.pass
@@ -148,18 +149,21 @@ module AdminUI
           row.push(nil)
         end
 
-        row.push('bindingsAndApplications' => service_binding_apps,
-                 'organization'            => organization,
-                 'service'                 => service,
-                 'serviceBroker'           => service_broker,
-                 'serviceInstance'         => service_instance,
-                 'servicePlan'             => service_plan,
-                 'space'                   => space)
-
         items.push(row)
+
+        hash[service_instance[:guid]] =
+        {
+          'bindingsAndApplications' => service_binding_apps,
+          'organization'            => organization,
+          'service'                 => service,
+          'serviceBroker'           => service_broker,
+          'serviceInstance'         => service_instance,
+          'servicePlan'             => service_plan,
+          'space'                   => space
+        }
       end
 
-      result(items, (0..21).to_a, (0..19).to_a << 21)
+      result(true, items, hash, (0..21).to_a, (0..19).to_a << 21)
     end
   end
 end

@@ -59,6 +59,7 @@ module AdminUI
       end
 
       items = []
+      hash  = {}
 
       service_plans['items'].each do |service_plan|
         Thread.pass
@@ -67,7 +68,7 @@ module AdminUI
 
         row = []
 
-        row.push(service_plan)
+        row.push(service_plan[:guid])
         row.push(service_plan[:name])
         row.push(service_plan[:guid])
 
@@ -140,15 +141,18 @@ module AdminUI
           row.push(nil, nil, nil, nil)
         end
 
-        row.push('service'                                 => service,
-                 'serviceBroker'                           => service_broker,
-                 'servicePlan'                             => service_plan,
-                 'servicePlanVisibilitiesAndOrganizations' => service_plan_visibilities_organizations)
-
         items.push(row)
+
+        hash[service_plan[:guid]] =
+        {
+          'service'                                 => service,
+          'serviceBroker'                           => service_broker,
+          'servicePlan'                             => service_plan,
+          'servicePlanVisibilitiesAndOrganizations' => service_plan_visibilities_organizations
+        }
       end
 
-      result(items, (1..20).to_a, (1..20).to_a - [7, 8])
+      result(true, items, hash, (1..20).to_a, (1..20).to_a - [7, 8])
     end
   end
 end
