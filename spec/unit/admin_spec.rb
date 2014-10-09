@@ -595,7 +595,7 @@ describe AdminUI::Admin do
       do_redirect_request(Net::HTTP::Get.new(path))
     end
 
-    def post_redirects_as_expected(path, body)
+    def post_redirects_as_expected(path, body = nil)
       request = Net::HTTP::Post.new(path)
       request.body = body if body
       do_redirect_request(request)
@@ -799,8 +799,88 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/routes/route1')
       end
 
+      it 'posts /applications_view_model redirects as expected' do
+        post_redirects_as_expected('/applications_view_model')
+      end
+
+      it 'posts /cloud_controllers_view_model redirects as expected' do
+        post_redirects_as_expected('/cloud_controllers_view_model')
+      end
+
+      it 'posts /components_view_model redirects as expected' do
+        post_redirects_as_expected('/components_view_model')
+      end
+
       it 'posts /organizations redirects as expected' do
         post_redirects_as_expected('/organizations', '{"name":"new_org"}')
+      end
+
+      it 'posts /deas_view_model redirects as expected' do
+        post_redirects_as_expected('/deas_view_model')
+      end
+
+      it 'posts /domains_view_model redirects as expected' do
+        post_redirects_as_expected('/domains_view_model')
+      end
+
+      it 'posts /gateways_view_model redirects as expected' do
+        post_redirects_as_expected('/gateways_view_model')
+      end
+
+      it 'posts /health_managers_view_model redirects as expected' do
+        post_redirects_as_expected('/health_managers_view_model')
+      end
+
+      it 'posts /logs_view_model redirects as expected' do
+        post_redirects_as_expected('/logs_view_model')
+      end
+
+      it 'posts /organizations_view_model redirects as expected' do
+        post_redirects_as_expected('/organizations_view_model')
+      end
+
+      it 'posts /organization_roles_view_model redirects as expected' do
+        post_redirects_as_expected('/organization_roles_view_model')
+      end
+
+      it 'posts /quotas_view_model redirects as expected' do
+        post_redirects_as_expected('/quotas_view_model')
+      end
+
+      it 'posts /routers_view_model redirects as expected' do
+        post_redirects_as_expected('/routers_view_model')
+      end
+
+      it 'posts /routes_view_model redirects as expected' do
+        post_redirects_as_expected('/routes_view_model')
+      end
+
+      it 'posts /service_instances_view_model redirects as expected' do
+        post_redirects_as_expected('/service_instances_view_model')
+      end
+
+      it 'posts /service_plans_view_model redirects as expected' do
+        post_redirects_as_expected('/service_plans_view_model')
+      end
+
+      it 'posts /spaces_view_model redirects as expected' do
+        post_redirects_as_expected('/spaces_view_model')
+      end
+
+      it 'posts /space_roles_view_model redirects as expected' do
+        post_redirects_as_expected('/space_roles_view_model')
+      end
+
+      it 'posts /stats_view_model redirects as expected' do
+        post_redirects_as_expected('/stats_view_model')
+      end
+
+      it 'posts /tasks_view_model redirects as expected' do
+        post_redirects_as_expected('/tasks_view_model')
+      end
+
+      it 'posts /users_view_model redirects as expected' do
+        post_redirects_as_expected('/users_view_model')
       end
 
       it 'puts /applications/:app_guid redirects as expected' do

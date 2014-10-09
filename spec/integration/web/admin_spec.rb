@@ -612,7 +612,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 20,
-                                :labels          => [' ', 'Name', 'GUID', 'State', "Package\nState", "Instance\nState", 'Created', 'Updated', 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                :labels          => [' ', 'Name', 'GUID', 'State', 'Package State', 'Instance State', 'Created', 'Updated', 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
                                 :colspans        => nil
                               }
                              ])
@@ -1677,7 +1677,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='GatewaysTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                 :expected_length => 9,
-                                :labels          => ['Name', 'Index', 'State', 'Started', 'Description', 'CPU', 'Memory', 'Nodes', "Available\nCapacity"],
+                                :labels          => ['Name', 'Index', 'State', 'Started', 'Description', 'CPU', 'Memory', 'Nodes', 'Available Capacity'],
                                 :colspans        => nil
                                }
                              ])

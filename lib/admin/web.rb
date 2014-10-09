@@ -1,6 +1,7 @@
 require 'sinatra'
 require_relative 'logger'
 require_relative 'view_models/all_actions'
+require_relative 'view_models/download'
 
 module AdminUI
   class Web < Sinatra::Base
@@ -362,11 +363,75 @@ module AdminUI
       404
     end
 
+    post '/applications_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/applications_view_model'
+      file = Download.download(request.body.read, 'applications', @view_models.applications)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'applications.csv')
+    end
+
+    post '/cloud_controllers_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/cloud_controllers_view_model'
+      file = Download.download(request.body.read, 'cloud_controllers', @view_models.cloud_controllers)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'cloud_controllers.csv')
+    end
+
+    post '/components_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/components_view_model'
+      file = Download.download(request.body.read, 'components', @view_models.components)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'components.csv')
+    end
+
     post '/deas', :auth => [:admin] do
       @logger.info_user session[:username], 'post', '/deas'
       result = { :task_id => @tasks.new_dea }
       @view_models.invalidate_tasks
       result.to_json
+    end
+
+    post '/deas_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/deas_view_model'
+      file = Download.download(request.body.read, 'deas', @view_models.deas)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'deas.csv')
+    end
+
+    post '/domains_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/domains_view_model'
+      file = Download.download(request.body.read, 'domains', @view_models.domains)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'domains.csv')
+    end
+
+    post '/gateways_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/gateways_view_model'
+      file = Download.download(request.body.read, 'gateways', @view_models.gateways)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'gateways.csv')
+    end
+
+    post '/health_managers_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/health_managers_view_model'
+      file = Download.download(request.body.read, 'health_managers', @view_models.health_managers)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'health_managers.csv')
+    end
+
+    post '/logs_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/logs_view_model'
+      file = Download.download(request.body.read, 'logs', @view_models.logs)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'logs.csv')
     end
 
     post '/organizations', :auth => [:admin] do
@@ -381,6 +446,78 @@ module AdminUI
         @logger.debug(error.backtrace.join("\n"))
         500
       end
+    end
+
+    post '/organizations_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/organizations_view_model'
+      file = Download.download(request.body.read, 'organizations', @view_models.organizations)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'organizations.csv')
+    end
+
+    post '/organization_roles_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/organization_roles_view_model'
+      file = Download.download(request.body.read, 'organization_roles', @view_models.organization_roles)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'organization_roles.csv')
+    end
+
+    post '/quotas_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/quotas_view_model'
+      file = Download.download(request.body.read, 'quotas', @view_models.quotas)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'quotas.csv')
+    end
+
+    post '/routers_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/routers_view_model'
+      file = Download.download(request.body.read, 'routers', @view_models.routers)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'routers.csv')
+    end
+
+    post '/routes_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/routes_view_model'
+      file = Download.download(request.body.read, 'routes', @view_models.routes)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'routes.csv')
+    end
+
+    post '/service_instances_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/service_instances_view_model'
+      file = Download.download(request.body.read, 'service_instances', @view_models.service_instances)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'service_instances.csv')
+    end
+
+    post '/service_plans_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/service_plans_view_model'
+      file = Download.download(request.body.read, 'service_plans', @view_models.service_plans)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'service_plans.csv')
+    end
+
+    post '/spaces_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/spaces_view_model'
+      file = Download.download(request.body.read, 'spaces', @view_models.spaces)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'spaces.csv')
+    end
+
+    post '/space_roles_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/space_roles_view_model'
+      file = Download.download(request.body.read, 'space_roles', @view_models.space_roles)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'space_roles.csv')
     end
 
     post '/statistics', :auth => [:admin] do
@@ -412,6 +549,30 @@ module AdminUI
 
       [200, stats.to_json]
 
+    end
+
+    post '/stats_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/stats_view_model'
+      file = Download.download(request.body.read, 'stats', @view_models.stats)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'stats.csv')
+    end
+
+    post '/tasks_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/tasks_view_model'
+      file = Download.download(request.body.read, 'tasks', @view_models.tasks)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'tasks.csv')
+    end
+
+    post '/users_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/users_view_model'
+      file = Download.download(request.body.read, 'users', @view_models.users)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'users.csv')
     end
 
     put '/applications/:app_guid', :auth => [:admin] do
