@@ -382,8 +382,8 @@ a
     cursor: pointer;
 }
 
-.modal_dialog_div_overlay{
-    display: none;
+.modalDialogBackground
+{
     position: fixed;
     top: 0%;
     left: 0%;
@@ -396,64 +396,11 @@ a
     filter: alpha(opacity=60);
 }
 
-.modal_dialog_div_content {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 280px;
-    margin-left:-140px;
-    padding: 0;
-    margin-top:-80px;
-    border: 2px solid gray;
-    background-color: #F0F5F8;
-    _position:absolute;
+.modalDialog
+{
+	position: absolute;
+    background-color: rgb(220, 220, 220);
+    border: 2px outset rgb(140, 140, 140);
     z-index:1011;
     overflow: hidden;
-}
-
-.modal_dialog_div_title
-{
-    color: #000000;
-    font-weight: bold;
-    text-align: left;
-    padding-left: 6px;
-    padding-top: 6px;
-    padding-bottom: 6px;
-    background-color: #d3d3d3;
-}
-
-.modal_dialog_div_buttoncontainer
-{
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    text-align: right;
-}
-
-.modal_dialog_div_buttonline
-{
-    width: 100%;
-    border-color: #d3d3d3;
-}
-
-.modal_dialog_div_messageshow
-{
-    line-height:30px;
-    text-align:center;
-    /* margin:0 auto; */
-    color:#000;
-    font-size:13px;
-    font-weight:bold;
-    overflow:hidden;
-    /* margin-top:10px;*/
-}
-
-.quota_management_div, .organization_creation_div
-{
-    text-align: left;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-left: 10px;
 }

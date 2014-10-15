@@ -292,7 +292,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             @driver.find_element(:id => 'ToolTables_OrganizationsTable_1').click
 
             # Check whether the dialog is displayed
-            expect(@driver.find_element(:id => 'ModalDialogMessageDiv').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
             expect(@driver.find_element(:id => 'quotaSelector').displayed?).to be_true
             expect(@driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[1]').text).to eq('test_quota_1')
             expect(@driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[2]').text).to eq('test_quota_2')
@@ -327,8 +327,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             @driver.find_element(:id => 'ToolTables_OrganizationsTable_0').click
 
             # Check whether the dialog is displayed
-            expect(@driver.find_element(:id => 'ModalDialogMessageDiv').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitleDiv').text).to eq('Create new organization')
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Create Organization')
             expect(@driver.find_element(:id => 'organizationName').displayed?).to be_true
 
             # Click the create button without input an organization name
@@ -1047,7 +1047,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                @driver.execute_script("return Format.formatDateString(\"#{ cc_service_binding[:created_at].to_datetime.rfc3339 }\")")
                              ])
           end
-          it 'has service plan name link' do
+          it 'has service plan link' do
             check_filter_link('ServiceInstances', 22, 'ServicePlans', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
           end
           it 'has space link' do
