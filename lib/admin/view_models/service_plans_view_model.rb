@@ -88,7 +88,9 @@ module AdminUI
           row.push(nil)
         end
 
+        row.push(service_plan[:active])
         row.push(service_plan[:public])
+        row.push(service_plan[:free])
 
         service_plan_visibilities_organizations = service_plan_visibilities_organizations_hash[service_plan[:id]]
 
@@ -152,7 +154,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..20).to_a, (1..20).to_a - [7, 8])
+      result(true, items, hash, (1..22).to_a, (1..22).to_a - [9, 10])
     end
   end
 end

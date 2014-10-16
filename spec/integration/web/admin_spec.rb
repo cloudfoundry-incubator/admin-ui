@@ -1355,12 +1355,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
                                 :labels          => ['Service Plan', 'Service', 'Service Broker'],
-                                :colspans        => %w(9 8 4)
+                                :colspans        => %w(11 8 4)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 21,
-                                :labels          => [' ', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Public', 'Visible Organizations', 'Service Instances', 'Provider', 'Label', 'GUID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated'],
+                                :expected_length => 23,
+                                :labels          => [' ', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Visible Organizations', 'Service Instances', 'Provider', 'Label', 'GUID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated'],
                                 :colspans        => nil
                               }
                              ])
@@ -1372,7 +1372,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatTarget(\"#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }\")").gsub(/<\/?[^>]+>/, ''),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")"),
+                             cc_service_plan[:active].to_s,
                              cc_service_plan[:public].to_s,
+                             cc_service_plan[:free].to_s,
                              '1',
                              '1',
                              cc_service[:provider],
@@ -1405,7 +1407,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Plan GUID',              :tag =>   nil, :value => cc_service_plan[:guid] },
                            { :label => 'Service Plan Created',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Plan Updated',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")") },
+                           { :label => 'Service Plan Active',            :tag =>   nil, :value => cc_service_plan[:active].to_s },
                            { :label => 'Service Plan Public',            :tag =>   nil, :value => cc_service_plan[:public].to_s },
+                           { :label => 'Service Plan Free',              :tag =>   nil, :value => cc_service_plan[:free].to_s },
                            { :label => 'Service Plan Description',       :tag =>   nil, :value => cc_service_plan[:description] },
                            { :label => 'Service Instances',              :tag =>   'a', :value => '1' },
                            { :label => 'Service Broker Name',            :tag =>   nil, :value => cc_service_broker[:name] },
@@ -1447,7 +1451,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has service instances link to service instances filtered by service plan target' do
-            check_filter_link('ServicePlans', 6, 'ServiceInstances', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
+            check_filter_link('ServicePlans', 8, 'ServiceInstances', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
           end
 
           context 'manage service plans' do
@@ -1469,10 +1473,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
               # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
               # error happens.
               begin
-                Selenium::WebDriver::Wait.new(:timeout => 60).until { refresh_button && @driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[7]").text == expect_state }
+                Selenium::WebDriver::Wait.new(:timeout => 60).until { refresh_button && @driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[8]").text == expect_state }
               rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
               end
-              expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[7]").text).to eq(expect_state)
+              expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[8]").text).to eq(expect_state)
             end
 
             def check_operation_result(_visibility)

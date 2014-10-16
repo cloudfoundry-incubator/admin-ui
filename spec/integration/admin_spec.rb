@@ -309,9 +309,9 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     it 'make service plans private and back to public' do
-      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][6].to_s }.from('true').to('false')
+      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][7].to_s }.from('true').to('false')
       make_service_plan_public
-      expect { get_json('/service_plans_view_model')['items']['items'][0][6] }.to be_true
+      expect { get_json('/service_plans_view_model')['items']['items'][0][7] }.to be_true
     end
   end
 
