@@ -340,48 +340,6 @@ a
     margin-bottom: 2px;  
 }
 
-.dialog
-{
-    position: absolute;
-    background-color: rgb(220, 220, 220);
-    border: 2px outset rgb(140, 140, 140);
-}
-
-.dialogTitleBarContainer
-{
-    background-color: rgb(140, 140, 140);
-    color: rgb(250, 250, 250);
-    width: 100%;
-}
-
-.dialogTitleBar
-{
-    padding: 4px 15px;
-}
-
-.dialogContents
-{
-    padding: 15px;
-}
-
-.dialogText
-{
-    font-size: .9em;
-    color: rgb(20, 20, 20);
-}
-
-.dialogButtonContainer
-{
-    margin-top: 20px;
-    margin-bottom: 15px;
-    float: right;
-}
-
-.dialogButton
-{
-    cursor: pointer;
-}
-
 .modalDialogBackground
 {
     position: fixed;
@@ -403,4 +361,39 @@ a
     border: 2px outset rgb(140, 140, 140);
     z-index:1011;
     overflow: hidden;
+}
+
+.modalDialogTitleBarContainer
+{
+    background-color: rgb(140, 140, 140);
+    color: rgb(250, 250, 250);
+    width: 100%;
+}
+
+.modalDialogTitleBar
+{
+    padding: 4px 15px;
+}
+
+.modalDialogContainer
+{
+    padding: 15px;
+}
+
+.modalDialogContents
+{
+    font-size: .9em;
+    color: rgb(20, 20, 20);
+}
+
+.modalDialogButtonContainer
+{
+    margin-top: 20px;
+    margin-bottom: 15px;
+    float: right;
+}
+
+.modalDialogButton
+{
+    cursor: pointer;
 }

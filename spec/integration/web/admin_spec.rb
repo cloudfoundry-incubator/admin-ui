@@ -270,10 +270,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           def check_operation_result
-            alert = nil
-            Selenium::WebDriver::Wait.new(:timeout => 60).until { alert = @driver.switch_to.alert }
-            expect(alert.text).to eq("The operation finished without error.\nPlease refresh the page later for the updated result.")
-            alert.dismiss
+            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(:id => 'modalDialogButton0').click
           end
 
           it 'has a set quota button' do
@@ -282,9 +282,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
           it 'alerts the user to select at least one row when clicking the button without selecting a row' do
             @driver.find_element(:id => 'ToolTables_OrganizationsTable_1').click
-            alert = @driver.switch_to.alert
-            expect(alert.text).to eq('Please select at least one row!')
-            alert.dismiss
+
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
+            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
+            @driver.find_element(:id => 'modalDialogButton0').click
           end
 
           it 'sets the specific quota for the organization' do
@@ -341,10 +343,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             @driver.find_element(:id => 'organizationName').send_keys cc_organization2[:name]
             @driver.find_element(:id => 'modalDialogButton0').click
 
-            alert = nil
-            Selenium::WebDriver::Wait.new(:timeout => 60).until { alert = @driver.switch_to.alert }
-            expect(alert.text).to eq("The operation finished without error.\nPlease refresh the page later for the updated result.")
-            alert.dismiss
+            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(:id => 'modalDialogButton0').click
 
             begin
               Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text == cc_organization2[:name] }
@@ -364,9 +366,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           shared_examples 'click button without selecting a single row' do
             it 'alerts the user to select at least one row when clicking the button' do
               @driver.find_element(:id => buttonId).click
-              alert = @driver.switch_to.alert
-              expect(alert.text).to eq('Please select at least one row!')
-              alert.dismiss
+              expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+              expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
+              expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
+              @driver.find_element(:id => 'modalDialogButton0').click
             end
           end
 
@@ -389,26 +392,28 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_first_row
 
             @driver.find_element(:id => button_id).click
-            confirm = @driver.switch_to.alert
-            expect(confirm.text).to eq(message)
-            confirm.accept
 
-            alert = nil
-            Selenium::WebDriver::Wait.new(:timeout => 360).until { alert = @driver.switch_to.alert }
-            expect(alert.text).to eq(result_message)
-            alert.dismiss
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq(message)
+            @driver.find_element(:id => 'modalDialogButton0').click
+
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
+            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq(result_message)
+            @driver.find_element(:id => 'modalDialogButton0').click
           end
 
           def suspend_org
-            manage_org('ToolTables_OrganizationsTable_4', 'Are you sure you want to suspend the selected organizations?', "The operation finished without error.\nPlease refresh the page later for the updated result.")
+            manage_org('ToolTables_OrganizationsTable_4', 'Are you sure you want to suspend the selected organizations?', 'The operation finished without error. Please refresh the page later for the updated result.')
           end
 
           def activate_org
-            manage_org('ToolTables_OrganizationsTable_3', 'Are you sure you want to activate the selected organizations?', "The operation finished without error.\nPlease refresh the page later for the updated result.")
+            manage_org('ToolTables_OrganizationsTable_3', 'Are you sure you want to activate the selected organizations?', 'The operation finished without error. Please refresh the page later for the updated result.')
           end
 
           def delete_org
-            manage_org('ToolTables_OrganizationsTable_2', 'Are you sure you want to delete the selected organizations?', 'Organizations successfully deleted.')
+            manage_org('ToolTables_OrganizationsTable_2', 'Are you sure you want to delete the selected organizations?', 'The operation finished without error. Please refresh the page later for the updated result.')
           end
 
           def check_organization_status(status)
@@ -671,10 +676,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           def check_operation_result
-            alert = nil
-            Selenium::WebDriver::Wait.new(:timeout => 60).until { alert = @driver.switch_to.alert }
-            expect(alert.text).to eq("The operation finished without error.\nPlease refresh the page later for the updated result.")
-            alert.dismiss
+            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(:id => 'modalDialogButton0').click
           end
 
           it 'has a start button' do
@@ -696,9 +701,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           shared_examples 'click start button without selecting a single row' do
             it 'alerts the user to select at least one row when clicking the button' do
               @driver.find_element(:id => buttonId).click
-              alert = @driver.switch_to.alert
-              expect(alert.text).to eq('Please select at least one row!')
-              alert.dismiss
+
+              expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+              expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
+              expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
+              @driver.find_element(:id => 'modalDialogButton0').click
             end
           end
 
@@ -773,9 +780,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             # delete the application
             check_first_row
             @driver.find_element(:id => 'ToolTables_ApplicationsTable_3').click
-            confirm = @driver.switch_to.alert
-            expect(confirm.text).to eq('Are you sure you want to delete the selected applications?')
-            confirm.accept
+
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected applications?')
+            @driver.find_element(:id => 'modalDialogButton0').click
 
             check_operation_result
 
@@ -892,23 +901,27 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
           it 'alerts the user to select at least one row when clicking the delete button' do
             @driver.find_element(:id => 'ToolTables_RoutesTable_0').click
-            alert = @driver.switch_to.alert
-            expect(alert.text).to eq('Please select at least one row!')
-            alert.dismiss
+
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
+            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
+            @driver.find_element(:id => 'modalDialogButton0').click
           end
 
           it 'deletes the selected route' do
             # delete the route
             check_first_row
             @driver.find_element(:id => 'ToolTables_RoutesTable_0').click
-            confirm = @driver.switch_to.alert
-            expect(confirm.text).to eq('Are you sure you want to delete the selected routes?')
-            confirm.accept
 
-            alert = nil
-            Selenium::WebDriver::Wait.new(:timeout => 60).until { alert = @driver.switch_to.alert }
-            expect(alert.text).to eq('Routes successfully deleted.')
-            alert.dismiss
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected routes?')
+            @driver.find_element(:id => 'modalDialogButton0').click
+
+            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(:id => 'modalDialogButton0').click
 
             begin
               Selenium::WebDriver::Wait.new(:timeout => 240).until { refresh_button && @driver.find_element(:xpath => "//table[@id='RoutesTable']/tbody/tr").text == 'No data available in table' }
@@ -1463,10 +1476,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             end
 
             def check_operation_result(_visibility)
-              alert = nil
-              Selenium::WebDriver::Wait.new(:timeout => 100).until { alert = @driver.switch_to.alert }
-              expect(alert.text.sub(/\n/, '')).to eq('The operation finished without error.Please refresh the page later for the updated result.')
-              alert.dismiss
+              Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
+              expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+              expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
+              @driver.find_element(:id => 'modalDialogButton0').click
             end
 
             it 'has a Public button' do
@@ -1480,9 +1493,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             shared_examples 'click public or private button without selecting a single row' do
               it 'alerts the user to select at least one row when clicking the button' do
                 @driver.find_element(:id => buttonId).click
-                alert = @driver.switch_to.alert
-                expect(alert.text).to eq('Please select at least one row!')
-                alert.dismiss
+
+                expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+                expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
+                expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
+                @driver.find_element(:id => 'modalDialogButton0').click
               end
             end
 
@@ -1888,7 +1903,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           expect(@driver.find_element(:xpath => "//table[@id='TasksTable']/tbody/tr").text).to eq('No data available in table')
           @driver.find_element(:id => 'DEAs').click
           @driver.find_element(:id => 'ToolTables_DEAsTable_0').click
-          @driver.find_element(:id => 'DialogOkayButton').click
+          @driver.find_element(:id => 'modalDialogButton0').click
+          @driver.find_element(:id => 'modalDialogButton0').click
           @driver.find_element(:id => 'Tasks').click
 
           # As the page refreshes, we need to catch the stale element error and re-find the element on the page
@@ -1950,18 +1966,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         it 'can show current stats' do
           check_default_stats_table
           @driver.find_element(:id => 'ToolTables_StatsTable_0').click
-          expect(@driver.find_element(:xpath => "//span[@id='DialogText']/span").text.length > 0).to be_true
-          rows = @driver.find_elements(:xpath => "//span[@id='DialogText']/div/table/tbody/tr")
+          Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
+          expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+          expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
+          rows = @driver.find_elements(:xpath => "//span[@id='ModalDialogContents']/div/table/tbody/tr")
           rows.each do |row|
             expect(row.find_element(:class_name => 'cellRightAlign').text).to eq('1')
           end
-          @driver.find_element(:id => 'DialogCancelButton').click
+          @driver.find_element(:id => 'modalDialogButton1').click
           check_default_stats_table
         end
         it 'can create stats' do
           check_default_stats_table
           @driver.find_element(:id => 'ToolTables_StatsTable_0').click
-          @driver.find_element(:id => 'DialogOkayButton').click
+          @driver.find_element(:id => 'modalDialogButton0').click
 
           # As the page refreshes, we need to catch the stale element error and re-find the element on the page
           begin
