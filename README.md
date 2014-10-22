@@ -29,7 +29,7 @@ This has been tested on Ubuntu 10.04.4 64 bit, Ubuntu 12.04.3 64 bit and Ubuntu 
 ### Ubuntu Prerequisite Libraries
 
 ```
-sudo apt-get install -f -y --no-install-recommends git-core build-essential libssl-dev libsqlite3-dev openssl libpq-dev
+sudo apt-get install -f -y --no-install-recommends git-core build-essential libssl-dev libsqlite3-dev openssl libpq-dev libmysqlclient-dev
 ```
 
 ### Ruby
