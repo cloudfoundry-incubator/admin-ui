@@ -131,7 +131,7 @@ Example: <code>0.0.0.0</code>
 <dd>
 The URI used to connect to the Cloud Controller database for retreival.
 <br>
-URI format: <code>\<protocol\>://\<db-user\>:\<db-user-password\>@\<host\>:\<port\>/\<db-name\></code>
+URI format: <code>{protocol}://{db-user}:{db-user-password}@{host}:{port}/{db-name}</code>
 <br>
 Examples: 
 <br>
@@ -623,10 +623,9 @@ Example: <code>uaac member add admin_ui.user your_user_name</code>
 <dd>
 The URI used to connect to the UAA database for retreival.
 <br>
-URI format: <code>\<protocol\>://\<db-user\>:\<db-user-password\>@\<host\>:\<port\>/\<db-name\></code>
+URI format: <code>{protocol}://{db-user}:{db-user-password}@{host}:{port}/{db-name}</code>
 <br>
-<br>
-Example: 
+Examples: 
 <br>
 <code>postgres://uaaadmin:admin@10.244.0.30:5524/uaadb</code>
 <br>
