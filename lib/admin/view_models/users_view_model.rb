@@ -107,6 +107,10 @@ module AdminUI
           end
         end
 
+        authorities = authorities.sort
+
+        row.push(authorities)
+
         user_cc = user_cc_hash[guid]
 
         if user_cc
@@ -138,13 +142,13 @@ module AdminUI
 
         hash[guid] =
         {
-          'authorities' => authorities.sort.join(', '),
-          'user_cc'     => user_cc,
-          'user_uaa'    => user_uaa
+          'groups'   => authorities,
+          'user_cc'  => user_cc,
+          'user_uaa' => user_uaa
         }
       end
 
-      result(true, items, hash, (0..17).to_a, (0..8).to_a)
+      result(true, items, hash, (0..18).to_a, (0..9).to_a)
     end
 
     private

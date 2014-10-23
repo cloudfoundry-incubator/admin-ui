@@ -1181,12 +1181,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
                                 :labels          => ['', 'Organization Roles', 'Space Roles', ''],
-                                :colspans        => %w(9 5 4)
+                                :colspans        => %w(10 5 4)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 18,
-                                :labels          => ['Username', 'GUID', 'Created', 'Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
+                                :expected_length => 19,
+                                :labels          => ['Username', 'GUID', 'Created', 'Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
                                 :colspans        => nil
                               }
                              ])
@@ -1201,6 +1201,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              uaa_user[:givenname],
                              uaa_user[:active].to_s,
                              uaa_user[:version].to_s,
+                             uaa_group[:displayname],
                              '4',
                              '1',
                              '1',
@@ -1231,6 +1232,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Given Name',                         :tag =>   nil, :value => uaa_user[:givenname] },
                            { :label => 'Active',                             :tag =>   nil, :value => uaa_user[:active].to_s },
                            { :label => 'Version',                            :tag =>   nil, :value => uaa_user[:version].to_s },
+                           { :label => 'Group',                              :tag =>   nil, :value => uaa_group[:displayname] },
                            { :label => 'Organization Total Roles',           :tag =>   'a', :value => '4' },
                            { :label => 'Organization Auditor Roles',         :tag =>   nil, :value => '1' },
                            { :label => 'Organization Billing Manager Roles', :tag =>   nil, :value => '1' },
@@ -1239,15 +1241,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Space Total Roles',                  :tag =>   'a', :value => '3' },
                            { :label => 'Space Auditor Roles',                :tag =>   nil, :value => '1' },
                            { :label => 'Space Developer Roles',              :tag =>   nil, :value => '1' },
-                           { :label => 'Space Manager Roles',                :tag =>   nil, :value => '1' },
-                           { :label => 'Authorities',                        :tag =>   nil, :value => uaa_group[:displayname] }
+                           { :label => 'Space Manager Roles',                :tag =>   nil, :value => '1' }
                           ])
           end
           it 'has organization roles link' do
-            check_filter_link('Users', 9, 'OrganizationRoles', uaa_user[:username])
+            check_filter_link('Users', 10, 'OrganizationRoles', uaa_user[:username])
           end
           it 'has space roles link' do
-            check_filter_link('Users', 14, 'SpaceRoles', uaa_user[:username])
+            check_filter_link('Users', 15, 'SpaceRoles', uaa_user[:username])
           end
         end
       end

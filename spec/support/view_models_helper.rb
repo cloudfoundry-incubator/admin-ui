@@ -580,6 +580,7 @@ module ViewModelsHelper
         uaa_user[:givenname],
         uaa_user[:active],
         uaa_user[:version],
+        [uaa_group[:displayname]],
         4,
         1,
         1,
@@ -595,9 +596,9 @@ module ViewModelsHelper
 
   def view_models_users_detail
     {
-      'authorities'     => uaa_group[:displayname],
-      'user_cc'         => cc_user,
-      'user_uaa'        => uaa_user
+      'groups'   => [uaa_group[:displayname]],
+      'user_cc'  => cc_user,
+      'user_uaa' => uaa_user
     }
   end
 end
