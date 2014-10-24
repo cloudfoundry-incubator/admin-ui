@@ -10,6 +10,7 @@ gem 'sequel_pg', '1.6.10'
 gem 'sinatra', '1.4.5'
 gem 'sqlite3', '1.3.9'
 gem 'yajl-ruby', '1.2.1'
+gem 'mysql2', '0.3.16'
 
 group :test do
   gem 'rspec', '2.14.1'
