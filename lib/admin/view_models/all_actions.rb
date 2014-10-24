@@ -10,7 +10,7 @@ module AdminUI
       sorted    = SortAction.new(@logger, searched, @params).items
       displayed = DisplayAction.new(@logger, sorted, @params).items
 
-      { :sEcho                => @params[:sEcho],
+      { :sEcho                => @params[:sEcho].to_i, # Cast sEcho to an integer to avoid cross-site scripting
         :iTotalRecords        => @source[:items].length,
         :iTotalDisplayRecords => sorted[:items].length,
         :items                => result(displayed[:connected], displayed[:items])

@@ -377,7 +377,7 @@ describe AdminUI::Admin do
     def verify_view_model_items(path, connected)
       json = get_json(path)
 
-      expect(json).to include('iTotalDisplayRecords' => 0, 'iTotalRecords' => 0, 'sEcho' => nil)
+      expect(json).to include('iTotalDisplayRecords' => 0, 'iTotalRecords' => 0, 'sEcho' => 0)
       items = json['items']
       expect(items).not_to be(nil)
       expect(items).to include('connected' => connected, 'items' => [])
