@@ -11,6 +11,7 @@ html.waiting *
     cursor: wait !important;
 }
 
+.clear { clear:both; }
 .titleBar
 {
     float: left;
@@ -61,6 +62,8 @@ html.waiting *
     margin-top: 3px;
     margin-right: 20px;
     cursor: pointer;
+    width: 80px;
+    text-align: right;
 }
 
 .user
@@ -81,6 +84,37 @@ html.waiting *
     border-bottom: 2px solid rgb(30, 30, 30);
     cursor: pointer;
 }
+
+
+.languageContainer
+{
+    float: right;
+    margin-top: 3px;
+    margin-right: 20px;
+    cursor: pointer;
+    font-size: .8em;
+    width: 120px;
+}
+
+.languageMenu
+{
+    display: none;
+    padding: 3px 5px;
+    background-color: rgb(80, 80, 80);
+    color: rgb(230, 230, 230);
+    font-size: .8em;
+    border-top: 1px solid rgb(120, 120, 120);
+    border-left: 1px solid rgb(105, 105, 105);
+    border-right: 2px solid rgb(30, 30, 30);
+    border-bottom: 2px solid rgb(30, 30, 30);
+    cursor: pointer;
+    z-index: 100000;
+}
+
+.languageMenu ul { list-style-type: none; text-align: left; padding: 0 40px 5px 5px; margin: 0; }
+.languageMenu ul li { text-align: left; line-height: 25px;  }
+.languageMenu ul li:hover { color: rgb(190, 190, 190); }
+
 
 .refreshButton
 {
@@ -119,6 +153,7 @@ html.waiting *
 {
     cursor: pointer;
     padding: 15px 10px 12px 10px;
+    line-height: 20px;
     /*
     border-right: 1px solid rgb(0, 65, 125);
     background-color: rgb(20, 120, 180);

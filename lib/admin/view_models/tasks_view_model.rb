@@ -24,7 +24,7 @@ module AdminUI
 
         row.push(task[:command])
         row.push(task[:state])
-        row.push(DateTime.parse(Time.at(task[:started] / 1000.0).to_s).rfc3339)
+        row.push(Time.at(task[:started] / 1000.0).to_datetime.rfc3339)
         row.push(task[:id])
 
         items.push(row)

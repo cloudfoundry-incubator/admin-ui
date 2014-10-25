@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
-
     <head>
-
         <title>Scope Error</title>
 
         <link rel="stylesheet" href="css/scopeError.css"/>
@@ -11,7 +9,6 @@
         <script src="js/external/jquery/jquery-1.9.1.js"></script>
 
         <script>
-        
             $(document).ready(function()
             {
                 var user = decodeURIComponent((new RegExp('[?|&]user=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
@@ -38,15 +35,11 @@
 	                }
 	            });
 	        };
-
         </script>
-
     </head>
 
     <body>
-
         <div class="scopeErrorContainer">
-
             <div class="scopeErrorLabel">Scope Error</div>
             
             <br>
@@ -54,7 +47,7 @@
             <div class="errorMessage">
                 Insufficient scope for user 
                 <br>
-                <span id="user"/>
+                <span id="user"></span>
             </div>
             
             <br>
@@ -62,12 +55,10 @@
             <div class="buttonContainer">
                 <button onclick="logout()">Logout and try again</button>
             </div>
-
         </div>
 
         <br/>
         <br/>
         <br/>
     </body>
-
 </html>

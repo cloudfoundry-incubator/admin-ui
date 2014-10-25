@@ -17,6 +17,7 @@ module AdminUI
       :nats_discovery_interval             =>                 30,
       :nats_discovery_timeout              =>                 10,
       :receiver_emails                     =>                 [],
+      :secured_client_connection           =>              false,
       :stats_refresh_schedules             =>      ['0 5 * * *'],
       :stats_retries                       =>                  5,
       :stats_retry_interval                =>                300,
@@ -31,6 +32,7 @@ module AdminUI
         schema =
         {
           optional(:bind_address)                        => /[^\r\n\t]+/,
+          :ccdb_uri                                      => /[^\r\n\t]+/,
           optional(:cloud_controller_discovery_interval) => Integer,
           optional(:cloud_controller_ssl_verify_none)    => bool,
           :cloud_controller_uri                          => %r{(http[s]?://[^\r\n\t]+)},
@@ -49,8 +51,20 @@ module AdminUI
           optional(:receiver_emails)                     => [/[^\r\n\t]+/],
           optional(:sender_email)                        =>
           {
-            :server  => /[^\r\n\t]+/,
-            :account => /[^\r\n\t]+/
+            :server             => /[^\r\n\t]+/,
+            optional(:port)     => Integer,
+            optional(:domain)   => /[^\r\n\t]+/,
+            :account            => /[^\r\n\t]+/,
+            optional(:secret)   => String,
+            optional(:authtype) => enum('plain', 'login', 'cram_md5')
+          },
+          :secured_client_connection                     => bool,
+          optional(:ssl)                                 =>
+          {
+            :certificate_file_path     => String,
+            :private_key_file_path     => String,
+            :private_key_pass_phrase   => String,
+            :max_session_idle_length   => Integer
           },
           optional(:stats_file)                          => /[^\r\n\t]+/,
           optional(:stats_refresh_time)                  => Integer,
@@ -63,6 +77,7 @@ module AdminUI
             :id     => /[^\r\n\t]+/,
             :secret => /[^\r\n\t]+/
           },
+          :uaadb_uri                                     => /[^\r\n\t]+/,
           :uaa_groups_admin                              => [/[^\r\n\t]+/],
           :uaa_groups_user                               => [/[^\r\n\t]+/],
           optional(:varz_discovery_interval)             => Integer
@@ -109,6 +124,10 @@ module AdminUI
 
     def bind_address
       @config[:bind_address]
+    end
+
+    def ccdb_uri
+      @config[:ccdb_uri]
     end
 
     def cloud_controller_discovery_interval
@@ -175,14 +194,58 @@ module AdminUI
       @config[:receiver_emails]
     end
 
+    def secured_client_connection
+      @config[:secured_client_connection]
+    end
+
     def sender_email_account
       return nil if @config[:sender_email].nil?
       @config[:sender_email][:account]
     end
 
+    def sender_email_authtype
+      return nil if @config[:sender_email].nil?
+      @config[:sender_email][:authtype].to_sym if @config[:sender_email][:authtype]
+    end
+
+    def sender_email_domain
+      return nil if @config[:sender_email].nil?
+      @config[:sender_email][:domain] || 'localhost'
+    end
+
+    def sender_email_port
+      return nil if @config[:sender_email].nil?
+      @config[:sender_email][:port] || 25
+    end
+
+    def sender_email_secret
+      return nil if @config[:sender_email].nil?
+      @config[:sender_email][:secret]
+    end
+
     def sender_email_server
       return nil if @config[:sender_email].nil?
       @config[:sender_email][:server]
+    end
+
+    def ssl_certificate_file_path
+      return nil if @config[:ssl].nil?
+      @config[:ssl][:certificate_file_path]
+    end
+
+    def ssl_max_session_idle_length
+      return nil if @config[:ssl].nil?
+      @config[:ssl][:max_session_idle_length]
+    end
+
+    def ssl_private_key_file_path
+      return nil if @config[:ssl].nil?
+      @config[:ssl][:private_key_file_path]
+    end
+
+    def ssl_private_key_pass_phrase
+      return nil if @config[:ssl].nil?
+      @config[:ssl][:private_key_pass_phrase]
     end
 
     def stats_file
@@ -213,6 +276,10 @@ module AdminUI
     def uaa_client_secret
       return nil if @config[:uaa_client].nil?
       @config[:uaa_client][:secret]
+    end
+
+    def uaadb_uri
+      @config[:uaadb_uri]
     end
 
     def uaa_groups_admin

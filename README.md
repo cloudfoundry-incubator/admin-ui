@@ -13,7 +13,9 @@ In order to execute, the Administration UI needs to be able to access the follow
 
 - NATS
 - Cloud Controller REST API
+- Cloud Controller DB URI
 - UAA REST API
+- UAA DB URI
 
 Installation of the Administration UI and its prerequisites requires access to the Internet to
 access GitHub.com, RubyGems.org, Ubuntu software repositories, etc. 
@@ -27,7 +29,7 @@ This has been tested on Ubuntu 10.04.4 64 bit, Ubuntu 12.04.3 64 bit and Ubuntu 
 ### Ubuntu Prerequisite Libraries
 
 ```
-sudo apt-get install -f -y --no-install-recommends git-core build-essential libssl-dev
+sudo apt-get install -f -y --no-install-recommends git-core build-essential libssl-dev libsqlite3-dev openssl libpq-dev
 ```
 
 ### Ruby
@@ -71,6 +73,39 @@ cd admin-ui
 bundle install
 ```
 
+### Running with bosh-lite CloudFoundry
+
+If you are using the default bosh-lite install of CloudFoundry then
+the following commands will help you setup the appropriate UAA
+groups needed.
+
+```
+# Target your bosh-lite UAA and get the 'admin' token
+uaac target http://uaa.10.244.0.34.xip.io
+uaac token client get admin -s admin-secret
+
+# Add 'scim.write' if not already there and re-get token
+uaac client update admin --authorities "`uaac client get admin | \
+    awk '/:/{e=0}/authorities:/{e=1;if(e==1){$1="";print}}'` scim.write"
+uaac token client get admin -s admin-secret
+
+# Create a new group and add the 'admin' user to it
+uaac group add admin_ui.admin
+uaac member add admin_ui.admin admin
+
+# Create the new UAA admin_ui_client
+uaac client add admin_ui_client \
+ --authorities cloud_controller.admin,cloud_controller.read,cloud_controller.write,openid,scim.read \
+ --authorized_grant_types authorization_code,client_credentials,refresh_token \
+ --autoapprove true \
+ --scope admin_ui.admin,admin_ui.user,openid \
+ -s admin_ui_secret
+```
+
+After running the above commands you should be able to use the default 
+configuration values for the Administration UI and skip down to the
+[Using the Administration UI](#using) section.
+
 ### Administration UI Configuration 
 
 Default configuration found in config/default.yml
@@ -85,6 +120,14 @@ Values that <b>must</b> be changed for your environment are marked in <b>bold</b
 The network address on which the server listens for web requests.
 <br>
 Example: <code>0.0.0.0</code>
+</dd>
+<dt>
+<code><b>ccdb_uri</b></code>
+</dt>
+<dd>
+The URI used to connect to the Cloud Controller database for retreival.
+<br>
+Example: <code>postgres://ccadmin:admin@10.244.0.30:5524/ccdb</code>
 </dd>
 <dt>
 <code>cloud_controller_discovery_interval</code>
@@ -236,6 +279,22 @@ Example: <code>[ ]</code>
 Example: <code>[bar@10.10.10.10, baz@10.10.10.10]</code>
 </dd>
 <dt>
+<code><b>secured_client_connection</b></code>
+</dt>
+<dd>
+A true/false indicator about whether the Admin-UI server process will operate in secure or unprotected 
+mode.  In the secure mode, Admin-UI uses SSL security mechanism to protect communication with its users.  
+As such, it requires its users to connect via https; in unprotected mode, Admin-UI expects http requests.
+<br>
+When set to 'true', a SSL certificate is required and the 'ssl' property must be present in the 
+configuration file.  Please see configuration property 'ssl' for details about how to configure Admin-UI 
+to work with SSL certificate.<br>
+By default, Admin-UI runs in the unprotected mode.
+<br>
+Example: <code>true</code>
+</dd>
+</dt>
+<dt>
 <code><b>sender_email</b></code>
 </dt>
 <dd>
@@ -251,12 +310,110 @@ The email server.
 Example: <code>10.10.10.10</code>
 </dd>
 <dt>
+<code>port</code>
+</dt>
+<dd>
+Port of the email server.
+<br>
+Example: <code>25</code>
+</dd>
+<dt>
+<code>domain</code>
+</dt>
+<dd>
+HELO domain provided by the client to the server, the SMTP server will judge whether it should send or reject the SMTP session by inspecting the HELO domain.
+<br>
+Example: <code>localhost</code>
+</dd>
+<dt>
 <code>account</code>
 </dt>
 <dd>
 The email account.
 <br>
 Example: <code>system@10.10.10.10</code>
+</dd>
+<dt>
+<code>secret</code>
+</dt>
+<dd>
+Secret for the email account.
+</dd>
+<dt>
+<code>authtype</code>
+</dt>
+<dd>
+SMTP authentication scheme, can be one of: <code>plain</code>, <code>login</code>, <code>cram_md5</code>.
+<br>
+Example: <code>login</code>
+</dd>
+</dl>
+</dd>
+<dt>
+<code><b>ssl</b></code>
+</dt>
+<dd>
+A set of configuration properties for Admin-UI to work with SSL certificate.  It 
+is required when the 'secured_client_connection' is set to true.<br>
+Certificate can be self-signed or signed by Certificate Authority (CA).  Admin-UI 
+supports these certificates. However, intermediate certificate from CA is not yet 
+supported.<br>
+<b>Generate Self-signed certificate</b><br>
+You can generate a self-signed certificate on a server, all without involving 
+third-party CA.  The following steps illustrate a way in how you can generate a 
+self-signed certificate:
+* generate private key
+<pre>
+openssl genrsa -des3 -out /tmp/admin_ui_server.key -3 -passout pass:private_key_pass_phrase 2048
+</pre>
+This command creates a private key at 2048 bit length which is then encrypted with 
+passphrase 'pass:private_key_pass_phrase' by way of DES3.
+* Generate certificate request
+<pre>
+openssl req -new -key /tmp/admin_ui_server.key -out /tmp/admin_ui_server.csr -passin pass:private_key_pass_phrase
+</pre>
+This command yields a certificate request file by supplying the private key and 
+passphrase involved in the previous step.
+* Generate certificate
+<pre>
+openssl x509 -req -days 365 -passin pass:private_key_pass -in /tmp/admin_ui_server.csr -signkey /tmp/admin_ui_server.key -out /tmp/admin_ui_server.crt
+</pre>
+This command generates a certificate that is good for the next 365 days.  At this 
+point, you no longer need to keep the certificate request (dot csr file).
+<br>
+<dl>
+<dt>
+<code>certificate_file_path</code>
+</dt>
+<dd>
+File path string leading to the certificate file.
+<br>
+Example: <code>certificate/server.cert</code>
+</dd>
+<dt>
+<dt>
+<code>max_session_idle_length</code>
+</dt>
+<dd>
+Time duration in seconds in which a https session is allowed to stay idle.
+<br>
+Example: <code>1800</code> for 30 minutes.
+</dd>
+<dt>
+<code>private_key_file_path</code>
+</dt>
+<dd>
+File path string leading to the private key file.
+<br>
+Example: <code>system@10.10.10.10</code>
+</dd>
+<dt>
+<code>private_key_pass_phrase</code>
+</dt>
+<dd>
+Password string that is used to encrypt the private key.
+<br>
+Example: <code>my_secret</code>
 </dd>
 </dl>
 </dd>
@@ -445,6 +602,14 @@ The group membership then needs to be updated for each user that has user capabi
 on the Administration UI.
 <br>
 Example: <code>uaac member add admin_ui.user your_user_name</code>
+</dd>
+<dt>
+<code><b>uaadb_uri</b></code>
+</dt>
+<dd>
+The URI used to connect to the UAA database for retreival.
+<br>
+Example: <code>postgres://uaaadmin:admin@10.244.0.30:5524/uaadb</code>
 </dd>
 <dt>
 <code>varz_discovery_interval</code>

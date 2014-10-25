@@ -34,6 +34,14 @@ module AdminUI
       @view_models.invalidate_organizations
     end
 
+    def delete_route(route_guid)
+      url = "v2/routes/#{ route_guid }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_routes
+      @view_models.invalidate_routes
+    end
+
     def manage_application(app_guid, control_message)
       url = "v2/apps/#{ app_guid }"
       @logger.debug("PUT #{ url }, #{ control_message }")
@@ -41,14 +49,6 @@ module AdminUI
       @cc.invalidate_applications
       @varz.invalidate
       @view_models.invalidate_applications
-    end
-
-    def manage_route(route_guid)
-      url = "v2/routes/#{ route_guid }"
-      @logger.debug("DELETE #{ url }")
-      @client.delete_cc(url)
-      @cc.invalidate_routes
-      @view_models.invalidate_routes
     end
 
     def manage_service_plan(service_plan_guid, control_message)
@@ -65,6 +65,17 @@ module AdminUI
       @client.put_cc(url, control_message)
       @cc.invalidate_organizations
       @view_models.invalidate_organizations
+    end
+
+    def remove_component(uri)
+      @logger.debug("REMOVE component #{ uri }")
+      @varz.remove(uri)
+      @view_models.invalidate_cloud_controllers
+      @view_models.invalidate_components
+      @view_models.invalidate_deas
+      @view_models.invalidate_gateways
+      @view_models.invalidate_health_managers
+      @view_models.invalidate_routers
     end
   end
 end
