@@ -7,13 +7,13 @@ module AdminUI
 
       return @source if s_search.nil? || s_search == ''
 
-      visible_columns = @source[:visible_columns]
+      searchable_columns = @source[:searchable_columns]
 
       downcase_s_search = s_search.downcase
 
       searched = @source[:items].select do |row|
         included = false
-        visible_columns.each do |column|
+        searchable_columns.each do |column|
           value = row[column]
           next if value.nil?
           next unless value.to_s.downcase.include?(downcase_s_search)
@@ -23,7 +23,7 @@ module AdminUI
         included
       end
 
-      result(searched, @source[:visible_columns], @source[:case_insensitive_sort_columns])
+      result(@source[:connected], searched, @source[:detail_hash], @source[:searchable_columns], @source[:case_insensitive_sort_columns])
     end
   end
 end

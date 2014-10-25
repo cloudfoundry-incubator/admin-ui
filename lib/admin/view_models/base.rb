@@ -13,9 +13,11 @@ module AdminUI
     end
 
     # Subclasses should override and return values in the following format:
-    # { :connected => whether the fetch is successful
-    #   :items => array of rows.  Each row is an array of objects.
-    #   :visible_columns => array of visible column indices,
+    # {
+    #   :connected => whether the fetch is successful
+    #   :items => array of rows.  Each row is an array of objects
+    #   :detail_hash => hash of values where the key is used to find the row object details
+    #   :searchable_columns => array of searchable column indices
     #   ::case_insensitive_sort_columns => array of column indices where values need downcasing prior to comparison
     # }
     # Any raised exception will be logged and treated as not connected with no results
@@ -24,22 +26,26 @@ module AdminUI
     end
 
     # Useful method for subclasses to return items object
-    def result(items                         = nil,
-               visible_columns               = nil,
+    def result(connected                     = false,
+               items                         = nil,
+               detail_hash                   = nil,
+               searchable_columns            = nil,
                case_insensitive_sort_columns = nil)
-      if items.nil?
+      if connected
+        answer =
         {
-          :connected                     => false,
-          :items                         => [],
-          :visible_columns               => [],
-          :case_insensitive_sort_columns => []
+          :connected => true,
+          :items     => items
         }
+
+        answer[:detail_hash]                   = detail_hash if detail_hash
+        answer[:searchable_columns]            = searchable_columns if searchable_columns
+        answer[:case_insensitive_sort_columns] = case_insensitive_sort_columns if case_insensitive_sort_columns
+        answer
       else
         {
-          :connected                     => true,
-          :items                         => items,
-          :visible_columns               => visible_columns,
-          :case_insensitive_sort_columns => case_insensitive_sort_columns
+          :connected => false,
+          :items     => []
         }
       end
     end

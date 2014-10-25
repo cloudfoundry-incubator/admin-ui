@@ -4,22 +4,16 @@ require_relative 'search_action'
 require_relative 'sort_action'
 
 module AdminUI
-  class AllActions
-    def initialize(logger, source, params)
-      @logger = logger
-      @params = params
-      @source = source
-    end
-
+  class AllActions < AdminUI::BaseAction
     def items
       searched  = SearchAction.new(@logger, @source, @params).items
       sorted    = SortAction.new(@logger, searched, @params).items
       displayed = DisplayAction.new(@logger, sorted, @params).items
 
-      { :sEcho                => @params[:sEcho],
+      { :sEcho                => @params[:sEcho].to_i, # Cast sEcho to an integer to avoid cross-site scripting
         :iTotalRecords        => @source[:items].length,
         :iTotalDisplayRecords => sorted[:items].length,
-        :items                => displayed
+        :items                => result(displayed[:connected], displayed[:items])
       }
     end
   end

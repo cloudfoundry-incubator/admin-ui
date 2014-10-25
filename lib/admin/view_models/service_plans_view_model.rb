@@ -59,6 +59,7 @@ module AdminUI
       end
 
       items = []
+      hash  = {}
 
       service_plans['items'].each do |service_plan|
         Thread.pass
@@ -67,8 +68,9 @@ module AdminUI
 
         row = []
 
-        row.push(service_plan)
+        row.push(service_plan[:guid])
         row.push(service_plan[:name])
+        row.push(service_plan[:guid])
 
         service_plan_target = ''
         if service
@@ -86,7 +88,9 @@ module AdminUI
           row.push(nil)
         end
 
+        row.push(service_plan[:active])
         row.push(service_plan[:public])
+        row.push(service_plan[:free])
 
         service_plan_visibilities_organizations = service_plan_visibilities_organizations_hash[service_plan[:id]]
 
@@ -109,6 +113,7 @@ module AdminUI
         if service
           row.push(service[:provider])
           row.push(service[:label])
+          row.push(service[:guid])
           row.push(service[:version])
           row.push(service[:created_at].to_datetime.rfc3339)
 
@@ -121,11 +126,12 @@ module AdminUI
           row.push(service[:active])
           row.push(service[:bindable])
         else
-          row.push(nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil, nil, nil, nil)
         end
 
         if service_broker
           row.push(service_broker[:name])
+          row.push(service_broker[:guid])
           row.push(service_broker[:created_at].to_datetime.rfc3339)
 
           if service_broker[:updated_at]
@@ -134,18 +140,21 @@ module AdminUI
             row.push(nil)
           end
         else
-          row.push(nil, nil, nil)
+          row.push(nil, nil, nil, nil)
         end
 
-        row.push('service'                                 => service,
-                 'serviceBroker'                           => service_broker,
-                 'servicePlan'                             => service_plan,
-                 'servicePlanVisibilitiesAndOrganizations' => service_plan_visibilities_organizations)
-
         items.push(row)
+
+        hash[service_plan[:guid]] =
+        {
+          'service'                                 => service,
+          'serviceBroker'                           => service_broker,
+          'servicePlan'                             => service_plan,
+          'servicePlanVisibilitiesAndOrganizations' => service_plan_visibilities_organizations
+        }
       end
 
-      result(items, (1..17).to_a, (1..17).to_a - [6, 7])
+      result(true, items, hash, (1..22).to_a, (1..22).to_a - [9, 10])
     end
   end
 end

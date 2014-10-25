@@ -36,10 +36,8 @@ describe AdminUI::Stats do
       time_last_run = Time.now
       stats_refresh_schedules.each do |spec|
         cron_parser = CronParser.new(spec)
-        current_time = Time.now.to_i
         refresh_time = cron_parser.next(time_last_run).to_i
-        sec_to_next_run = refresh_time - current_time
-        expect(equal_in_range(stats.calculate_time_until_generate_stats, sec_to_next_run, 2)).to be(true)
+        expect(equal_in_range(stats.calculate_time_until_generate_stats, refresh_time.to_i, 2)).to be(true)
       end
     end
   end
@@ -127,8 +125,7 @@ describe AdminUI::Stats do
           target_time = refresh_time
         end
       end
-      sec_to_next_run = target_time - time_last_run.to_i
-      expect(equal_in_range(stats.calculate_time_until_generate_stats, sec_to_next_run, 2)).to be(true)
+      expect(equal_in_range(stats.calculate_time_until_generate_stats, target_time.to_i, 2)).to be(true)
     end
   end
 
@@ -185,8 +182,7 @@ describe AdminUI::Stats do
           target_time = refresh_time
         end
       end
-      sec_to_next_run = target_time - time_last_run.to_i
-      expect(equal_in_range(stats.calculate_time_until_generate_stats, sec_to_next_run, 2)).to be(true)
+      expect(equal_in_range(stats.calculate_time_until_generate_stats, target_time.to_i, 2)).to be(true)
     end
   end
 end

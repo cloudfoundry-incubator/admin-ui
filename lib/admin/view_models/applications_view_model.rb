@@ -27,6 +27,7 @@ module AdminUI
       application_hash = {}
 
       items = []
+      hash  = {}
 
       applications['items'].each do |application|
         Thread.pass
@@ -37,6 +38,7 @@ module AdminUI
 
         row.push(application[:guid])
         row.push(application[:name])
+        row.push(application[:guid])
         row.push(application[:state])
         row.push(application[:package_state])
 
@@ -77,13 +79,22 @@ module AdminUI
         # DEA
         row.push(nil)
 
-        row.push('application'  => application,
-                 'organization' => organization,
-                 'space'        => space)
+        hash_entry =
+        {
+          'application'  => application,
+          'organization' => organization,
+          'space'        => space
+        }
 
-        application_hash[application[:guid]] = row
+        application_hash[application[:guid]] =
+        {
+          'row'        => row,
+          'hash_entry' => hash_entry
+        }
 
         items.push(row)
+
+        hash[application[:guid]] = hash_entry
       end
 
       dea_index = 0
@@ -97,14 +108,15 @@ module AdminUI
             Thread.pass
             instance_index = instance['instance_index']
 
-            row = application_hash[instance['application_id']]
+            prior = application_hash[instance['application_id']]
 
             # In some cases, we will not find an existing row.  Create the row as much as possible from the DEA data.
-            if row.nil?
+            if prior.nil?
               row = []
 
               row.push(instance['application_id'])
               row.push(instance['application_name'])
+              row.push(instance['application_id'])
 
               # State and Package State not available.
               row.push(nil, nil)
@@ -155,14 +167,21 @@ module AdminUI
 
               row.push(host)
 
-              # No application to push.  Push the instance instead so we can provide details.
-              row.push('application'  => nil,
-                       'instance'     => instance,
-                       'organization' => organization,
-                       'space'        => space)
-
               items.push(row)
+
+              key = "#{ instance['application_id'] }/#{ instance_index }"
+              # No application to push.  Push the instance instead so we can provide details.
+              hash[key] =
+              {
+                'application'  => nil,
+                'instance'     => instance,
+                'organization' => organization,
+                'space'        => space
+              }
             else
+              row        = prior['row']
+              hash_entry = prior['hash_entry']
+
               # We will add instance info to the 0th row, but other instances have to be cloned so we can have instance specific information
               if instance_index > 0
                 new_row = []
@@ -175,26 +194,29 @@ module AdminUI
                 row = new_row
               end
 
-              row[4] = instance['state']
+              row[5] = instance['state']
 
               if instance['state_running_timestamp']
-                row[7] = Time.at(instance['state_running_timestamp']).to_datetime.rfc3339
+                row[8] = Time.at(instance['state_running_timestamp']).to_datetime.rfc3339
               end
 
-              row[8]  = instance['application_uris']
-              row[10] = instance_index
-              row[11] = instance['services'].length
-              row[12] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil
-              row[13] = instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : nil
-              row[14] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil
-              row[18] = host
+              row[9]  = instance['application_uris']
+              row[11] = instance_index
+              row[12] = instance['services'].length
+              row[13] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil
+              row[14] = instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : nil
+              row[15] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil
+              row[19] = host
 
+              key = "#{ instance['application_id'] }/#{ instance_index }"
               # Need the specific instance for this row
-              row[19] = { 'application'  => row[19]['application'],
-                          'instance'     => instance,
-                          'organization' => row[19]['organization'],
-                          'space'        => row[19]['space']
-                        }
+              hash[key] =
+              {
+                'application'  => hash_entry['application'],
+                'instance'     => instance,
+                'organization' => hash_entry['organization'],
+                'space'        => hash_entry['space']
+              }
             end
           end
         end
@@ -202,7 +224,7 @@ module AdminUI
         dea_index += 1
       end
 
-      result(items, (1..18).to_a, (1..9).to_a << 17)
+      result(true, items, hash, (1..19).to_a, (1..10).to_a << 18)
     end
   end
 end

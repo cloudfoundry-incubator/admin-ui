@@ -42,6 +42,7 @@ module AdminUI
       end
 
       items = []
+      hash  = {}
 
       routes['items'].each do |route|
         Thread.pass
@@ -53,6 +54,7 @@ module AdminUI
 
         row.push(route[:guid])
         row.push(route[:host])
+        row.push(route[:guid])
 
         if domain
           row.push(domain[:name])
@@ -84,15 +86,18 @@ module AdminUI
         end
         row.push(apps)
 
-        row.push('domain'       => domain,
-                 'organization' => organization,
-                 'route'        => route,
-                 'space'        => space)
-
         items.push(row)
+
+        hash[route[:guid]] =
+        {
+          'domain'       => domain,
+          'organization' => organization,
+          'route'        => route,
+          'space'        => space
+        }
       end
 
-      result(items, (1..6).to_a, (1..6).to_a)
+      result(true, items, hash, (1..7).to_a, (1..7).to_a)
     end
   end
 end
