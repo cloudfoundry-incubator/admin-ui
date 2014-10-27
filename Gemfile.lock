@@ -1,15 +1,16 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    childprocess (0.5.3)
+    childprocess (0.5.5)
       ffi (~> 1.0, >= 1.0.11)
     daemons (1.1.9)
     diff-lcs (1.2.5)
     eventmachine (0.12.10)
-    ffi (1.9.3)
+    ffi (1.9.6)
     json_pure (1.8.1)
     membrane (1.1.0)
     multi_json (1.10.1)
+    mysql2 (0.3.16)
     nats (0.4.28)
       daemons (>= 1.1.5)
       eventmachine (= 0.12.10)
@@ -61,6 +62,7 @@ PLATFORMS
 
 DEPENDENCIES
   membrane (= 1.1.0)
+  mysql2 (= 0.3.16)
   nats (= 0.4.28)
   net-sftp (= 2.1.2)
   parse-cron (= 0.1.4)

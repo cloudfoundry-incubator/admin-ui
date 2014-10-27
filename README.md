@@ -29,7 +29,10 @@ This has been tested on Ubuntu 10.04.4 64 bit, Ubuntu 12.04.3 64 bit and Ubuntu 
 ### Ubuntu Prerequisite Libraries
 
 ```
-sudo apt-get install -f -y --no-install-recommends git-core build-essential libssl-dev libsqlite3-dev openssl libpq-dev
+# Update your package listing
+sudo apt-get update
+
+sudo apt-get install -f -y --no-install-recommends git-core build-essential libssl-dev libsqlite3-dev openssl libpq-dev libmysqlclient-dev
 ```
 
 ### Ruby
@@ -73,11 +76,9 @@ cd admin-ui
 bundle install
 ```
 
-### Running with bosh-lite CloudFoundry
+### Setup Admin UI group and user using uaac.
 
-If you are using the default bosh-lite install of CloudFoundry then
-the following commands will help you setup the appropriate UAA
-groups needed.
+The following steps are the same if you are using the default bosh-lite install of cloud foundry or AWS install using [BOSH AWS Bootstrap](http://docs.cloudfoundry.org/deploying/ec2/bootstrap-aws-vpc.html).
 
 ```
 # Target your bosh-lite UAA and get the 'admin' token
@@ -102,9 +103,12 @@ uaac client add admin_ui_client \
  -s admin_ui_secret
 ```
 
-After running the above commands you should be able to use the default 
-configuration values for the Administration UI and skip down to the
+**Note:** 
+If you are using the default bosh-lite install then running the above commands should enable you to use the default 
+configuration values for the Administration UI and you can skip down to the
 [Using the Administration UI](#using) section.
+
+If you have installed Cloud foundry on AWS using the AWS Bosh Bootstrap. Then you will have to modify the Adminitration UI before moving forward.
 
 ### Administration UI Configuration 
 
@@ -127,7 +131,17 @@ Example: <code>0.0.0.0</code>
 <dd>
 The URI used to connect to the Cloud Controller database for retreival.
 <br>
-Example: <code>postgres://ccadmin:admin@10.244.0.30:5524/ccdb</code>
+URI format: <code>{protocol}://{db-user}:{db-user-password}@{host}:{port}/{db-name}</code>
+<br>
+Examples: 
+<br>
+<code>postgres://ccadmin:admin@10.244.0.30:5524/ccdb</code>
+<br>
+<code>mysql2://ccadmin:admin@10.244.0.30:3306/ccdb</code>
+<br>
+If you have mysql database use <code>mysql2</code> protocol instead of <code>mysql</code>. Only postgres and MySql have been tested to work with admin-ui.
+<br>
+You can try other Databases by adding relevant db gems to the <code>Gemfile</code> and do a <code>bundle update</code>. 
 </dd>
 <dt>
 <code>cloud_controller_discovery_interval</code>
@@ -609,7 +623,17 @@ Example: <code>uaac member add admin_ui.user your_user_name</code>
 <dd>
 The URI used to connect to the UAA database for retreival.
 <br>
-Example: <code>postgres://uaaadmin:admin@10.244.0.30:5524/uaadb</code>
+URI format: <code>{protocol}://{db-user}:{db-user-password}@{host}:{port}/{db-name}</code>
+<br>
+Examples: 
+<br>
+<code>postgres://uaaadmin:admin@10.244.0.30:5524/uaadb</code>
+<br>
+<code>mysql2://uaaadmin:admin@10.244.0.30:3306/uaadb</code>
+<br>
+If you have mysql database use <code>mysql2</code> protocol instead of <code>mysql</code>. Only postgres and MySql have been tested to work with admin-ui.
+<br>
+You can try other Databases by adding relevant db gems to the <code>Gemfile</code> and do a <code>bundle update</code>. 
 </dd>
 <dt>
 <code>varz_discovery_interval</code>
