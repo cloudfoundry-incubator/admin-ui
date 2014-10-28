@@ -11,7 +11,7 @@ module AdminUI
     end
 
     def do_items
-      deas = @varz.deas(false)
+      deas = @varz.deas
 
       # deas have to exist.  Other record types are optional
       return result unless deas['connected']
@@ -42,10 +42,31 @@ module AdminUI
             row.push(nil)
           end
 
-          if data['instance_registry']
-            row.push(data['instance_registry'].length)
+          instance_registry = data['instance_registry']
+          if instance_registry
+            instances_count = 0
+            memory          = 0
+            disk            = 0
+            pcpu            = 0.0
+
+            instance_registry.each_value do |instances|
+              instances_count += instances.length
+              instances.each_value do |instance|
+                next unless instance['state'] == 'RUNNING'
+
+                memory += instance['used_memory_in_bytes'] if instance['used_memory_in_bytes']
+                disk   += instance['used_disk_in_bytes']   if instance['used_disk_in_bytes']
+                pcpu   += instance['computed_pcpu']        if instance['computed_pcpu']
+              end
+            end
+
+            row.push(instance_registry.length,
+                     instances_count,
+                     Utils.convert_bytes_to_megabytes(memory),
+                     Utils.convert_bytes_to_megabytes(disk),
+                     pcpu * 100)
           else
-            row.push(nil)
+            row.push(nil, nil, nil, nil, nil)
           end
 
           row.push(data['available_memory_ratio'] * 100)
@@ -62,7 +83,7 @@ module AdminUI
             row.push(nil)
           end
 
-          row.push(nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
           row.push(dea['uri'])
         end
@@ -70,7 +91,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..9).to_a, [0, 2, 3, 4])
+      result(items, (0..13).to_a, [0, 2, 3, 4])
     end
   end
 end

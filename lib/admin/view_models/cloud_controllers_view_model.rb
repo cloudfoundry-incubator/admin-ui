@@ -11,7 +11,7 @@ module AdminUI
     end
 
     def do_items
-      cloud_controllers = @varz.cloud_controllers(false)
+      cloud_controllers = @varz.cloud_controllers
 
       # cloud_controllers have to exist.  Other record types are optional
       return result unless cloud_controllers['connected']

@@ -13,6 +13,12 @@ describe AdminUI::Config do
     end
 
     context 'Values loaded and returned' do
+      it 'ccdb_uri' do
+        ccdb_uri = 'sqlite://bogus.db'
+        config = AdminUI::Config.load('ccdb_uri' => ccdb_uri)
+        expect(config.ccdb_uri).to eq(ccdb_uri)
+      end
+
       it 'cloud_controller_discovery_interval' do
         cloud_controller_discovery_interval = 11
         config = AdminUI::Config.load('cloud_controller_discovery_interval' => cloud_controller_discovery_interval)
@@ -109,16 +115,67 @@ describe AdminUI::Config do
         expect(config.receiver_emails).to eq(receiver_emails)
       end
 
+      it 'secured_client_connection' do
+        config = AdminUI::Config.load('secured_client_connection' => true)
+        expect(config.secured_client_connection).to eq(true)
+      end
+
       context 'sender_email' do
-        let(:sender_email) { { 'server' => 'localhost', 'account' => 'bogus@localhost.com' } }
+        let(:sender_email) do
+          {
+            'server'     => 'localhost',
+            'port'       => 25,
+            'domain'     => 'localhost',
+            'account'    => 'bogus@localhost.com',
+            'secret'     => 'my password',
+            'authtype'   => 'login'
+          }
+        end
         let(:config) { AdminUI::Config.load('sender_email' => sender_email) }
 
         it 'sender_email_account' do
           expect(config.sender_email_account).to eq(sender_email['account'])
         end
 
+        it 'sender_email_authtype' do
+          expect(config.sender_email_authtype).to eq(sender_email['authtype'].to_sym)
+        end
+
+        it 'sender_email_domain' do
+          expect(config.sender_email_domain).to eq(sender_email['domain'])
+        end
+
+        it 'sender_email_port' do
+          expect(config.sender_email_port).to eq(sender_email['port'])
+        end
+
+        it 'sender_email_secret' do
+          expect(config.sender_email_secret).to eq(sender_email['secret'])
+        end
+
         it 'sender_email_server' do
           expect(config.sender_email_server).to eq(sender_email['server'])
+        end
+      end
+
+      context 'ssl is in use' do
+        let(:ssl) { { 'certificate_file_path'    => 'certificate_file_path', 'private_key_file_path'    => 'private_key_file_path', 'private_key_pass_phrase'  => 'private_key_pass_phrase', 'max_session_idle_length'  => 4 } }
+        let(:config) { AdminUI::Config.load('ssl' => ssl) }
+
+        it 'ssl_certificate_file_path' do
+          expect(config.ssl_certificate_file_path).to eq('certificate_file_path')
+        end
+
+        it 'ssl_private_key_file_path' do
+          expect(config.ssl_private_key_file_path).to eq('private_key_file_path')
+        end
+
+        it 'ssl_private_key_pass_phrase' do
+          expect(config.ssl_private_key_pass_phrase).to eq('private_key_pass_phrase')
+        end
+
+        it 'max_session_idle_length' do
+          expect(config.ssl_max_session_idle_length).to eq(4)
         end
       end
 
@@ -209,6 +266,12 @@ describe AdminUI::Config do
         tasks_refresh_interval = 99
         config = AdminUI::Config.load('tasks_refresh_interval' => tasks_refresh_interval)
         expect(config.tasks_refresh_interval).to eq(tasks_refresh_interval)
+      end
+
+      it 'uaadb_uri' do
+        uaadb_uri = 'sqlite://bogus2.db'
+        config = AdminUI::Config.load('uaadb_uri' => uaadb_uri)
+        expect(config.uaadb_uri).to eq(uaadb_uri)
       end
 
       context 'uaa_client' do
@@ -320,13 +383,51 @@ describe AdminUI::Config do
         expect(config.receiver_emails).to eq([])
       end
 
+      it 'secured_client_connection' do
+        expect(config.secured_client_connection).to eq(false)
+      end
+
       context 'sender_email' do
         it 'sender_email_account' do
           expect(config.sender_email_account).to be_nil
         end
 
+        it 'sender_email_authtype' do
+          expect(config.sender_email_authtype).to be_nil
+        end
+
+        it 'sender_email_domain' do
+          expect(config.sender_email_domain).to be_nil
+        end
+
+        it 'sender_email_port' do
+          expect(config.sender_email_port).to be_nil
+        end
+
+        it 'sender_email_secret' do
+          expect(config.sender_email_secret).to be_nil
+        end
+
         it 'sender_email_server' do
           expect(config.sender_email_server).to be_nil
+        end
+      end
+
+      context 'ssl' do
+        it 'ssl_certificate_file_path to be nil' do
+          expect(config.ssl_certificate_file_path).to be_nil
+        end
+
+        it 'ssl_private_key_file_path' do
+          expect(config.ssl_private_key_file_path).to be_nil
+        end
+
+        it 'ssl_private_key_pass_phrase' do
+          expect(config.ssl_private_key_pass_phrase).to be_nil
+        end
+
+        it 'max_session_idle_length' do
+          expect(config.ssl_max_session_idle_length).to be_nil
         end
       end
 
@@ -381,6 +482,7 @@ describe AdminUI::Config do
   context 'Errors' do
     let(:config) do
       {
+        :ccdb_uri              => 'sqlite://tmp/ccdb.db',
         :cloud_controller_uri  => 'http://api.localhost',
         :data_file             => '/tmp/admin_ui_data.json',
         :db_uri                 => 'sqlite:///tmp/admin_ui_store.db',
@@ -388,6 +490,7 @@ describe AdminUI::Config do
         :mbus                  => 'nats://nats:c1oudc0w@10.10.10.10:4222',
         :port                  => 8070,
         :stats_file            => '/tmp/admin_ui_stats.json',
+        :uaadb_uri             => 'sqlite://tmp/uaadb.db',
         :uaa_client            => { :id => 'id', :secret => 'secret' },
         :uaa_groups_admin      => ['cloud_controller.admin'],
         :uaa_groups_user       => ['cloud_controller.admin']
@@ -401,6 +504,10 @@ describe AdminUI::Config do
     context 'Invalid value types' do
       it 'bind_address' do
         expect { AdminUI::Config.load(config.merge(:bind_address => 22)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'ccdb_uri' do
+        expect { AdminUI::Config.load(config.merge(:ccdb_uri => 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'cloud_controller_discovery_interval' do
@@ -467,13 +574,53 @@ describe AdminUI::Config do
         expect { AdminUI::Config.load(config.merge(:receiver_emails => [1, 2, 3])) }.to raise_error(Membrane::SchemaValidationError)
       end
 
+      it 'secured_client_connection' do
+        expect { AdminUI::Config.load(config.merge(:secured_client_connection => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
       context 'sender_email' do
         it 'sender_email_account' do
-          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 5, :server => 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 5, :server => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'sender_email_authtype' do
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :authtype => 3, :server => 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
+
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :authtype => 'logon', :server => 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'sender_email_domain' do
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :server => 'hi', :domain => 3 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'sender_email_port' do
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :server => 'hi', :port => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'sender_email_secret' do
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :secret => 3, :server => 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'sender_email_server' do
-          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :server => 5  })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :server => 5 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+      end
+
+      context 'ssl' do
+        it 'ssl_certificate_file_path' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 1,  :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'ssl_private_key_file_path' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 1, :private_key_pass_phrase => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'ssl_private_key_pass_phrase' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :private_key_pass_phrase => 1, :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'max_session_idle_length' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi', :max_session_idle_length => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 
@@ -486,19 +633,19 @@ describe AdminUI::Config do
       end
 
       it 'stats_refresh_schedules' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['hi'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value hi doesn\'t match regexp (?-mix:@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))) }')
+        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['hi'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value hi doesn\'t match regexp /@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/ }')
       end
 
       it 'stats_refresh_schedules with specs not compliant to crontab format - extra commma' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 1,,2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 1,,2 * * * doesn\'t match regexp (?-mix:@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))) }')
+        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 1,,2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 1,,2 * * * doesn\'t match regexp /@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/ }')
       end
 
       it 'stats_refresh_schedules with specs not compliant to crontab format - extra range symbol' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 1--2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 1--2 * * * doesn\'t match regexp (?-mix:@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))) }')
+        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 1--2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 1--2 * * * doesn\'t match regexp /@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/ }')
       end
 
       it 'stats_refresh_schedules with specs not compliant to crontab format - use of step' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 /2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 /2 * * * doesn\'t match regexp (?-mix:@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))) }')
+        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 /2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 /2 * * * doesn\'t match regexp /@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/ }')
       end
 
       it 'has both stats_refresh_time and stats_refresh_schedules entry' do
@@ -515,6 +662,10 @@ describe AdminUI::Config do
 
       it 'tasks_refresh_interval' do
         expect { AdminUI::Config.load(config.merge(:tasks_refresh_interval => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'uaadb_uri' do
+        expect { AdminUI::Config.load(config.merge(:uaadb_uri => 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       context 'uaa_client' do
@@ -541,6 +692,10 @@ describe AdminUI::Config do
     end
 
     context 'Missing values' do
+      it 'ccdb_uri' do
+        expect { AdminUI::Config.load(config.merge(:ccdb_uri => nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
       it 'cloud_controller_discovery_interval' do
         expect { AdminUI::Config.load(config.merge(:cloud_controller_discovery_interval => nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
@@ -573,8 +728,34 @@ describe AdminUI::Config do
         expect { AdminUI::Config.load(config.merge(:port => nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
+      it 'secured_client_connection' do
+        expect { AdminUI::Config.load(config.merge(:secured_client_connection => nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
       it 'stats_file' do
         expect { AdminUI::Config.load(config.merge(:stats_file => nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      context 'ssl' do
+        it 'ssl_certificate_file_path' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'ssl_private_key_file_path' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_pass_phrase => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'ssl_private_key_pass_phrase' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'max_session_idle_length' do
+          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+      end
+
+      it 'uaadb_uri' do
+        expect { AdminUI::Config.load(config.merge(:uaadb_uri => nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       context 'uaa_client' do

@@ -22,6 +22,9 @@ data
 .README.md.html
 .project
 
+.ruby-gemset
+data.json
+!config/default.yml
+config/*
 manifest.yml
-config/*.yml
 

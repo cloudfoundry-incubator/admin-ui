@@ -1,0 +1,3 @@
+In order to generate the current uaadb database schema using the default configuration:
+
+sequel -d postgres://uaaadmin:admin@10.244.0.30:5524/uaadb >001_create_uaadb.rb

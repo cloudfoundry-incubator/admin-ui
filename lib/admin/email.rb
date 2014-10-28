@@ -15,24 +15,28 @@ module AdminUI
     end
 
     def send_email(disconnected)
-      if configured? && disconnected.length > 0
-        recipients = @config.receiver_emails.join(', ')
-        title      = email_title(disconnected)
-        email      = email_content(recipients,
-                                   title,
-                                   email_table_rows(disconnected))
+      return unless configured? && disconnected.length > 0
+      recipients = @config.receiver_emails.join(', ')
+      title      = email_title(disconnected)
+      email      = email_content(recipients,
+                                 title,
+                                 email_table_rows(disconnected))
 
-        begin
-          Net::SMTP.start(@config.sender_email_server) do |smtp|
-            smtp.send_message(email,
-                              @config.sender_email_account,
-                              @config.receiver_emails)
-          end
-
-          @logger.debug("Email '#{ title }' sent to #{ recipients }")
-        rescue => error
-          @logger.debug("Error sending email '#{ title }' to addresses #{ recipients }: #{ error }")
+      begin
+        Net::SMTP.start(@config.sender_email_server,
+                        @config.sender_email_port,
+                        @config.sender_email_domain,
+                        @config.sender_email_account,
+                        @config.sender_email_secret,
+                        @config.sender_email_authtype) do |smtp|
+          smtp.send_message(email,
+                            @config.sender_email_account,
+                            @config.receiver_emails)
         end
+
+        @logger.debug("Email '#{ title }' sent to #{ recipients }")
+      rescue => error
+        @logger.debug("Error sending email '#{ title }' to addresses #{ recipients }: #{ error }")
       end
     end
 

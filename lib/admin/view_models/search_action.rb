@@ -15,12 +15,10 @@ module AdminUI
         included = false
         visible_columns.each do |column|
           value = row[column]
-          unless value.nil?
-            if value.to_s.downcase.include?(downcase_s_search)
-              included = true
-              break
-            end
-          end
+          next if value.nil?
+          next unless value.to_s.downcase.include?(downcase_s_search)
+          included = true
+          break
         end
         included
       end

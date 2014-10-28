@@ -11,61 +11,95 @@ module AdminUI
     end
 
     def do_items
-      service_plans = @cc.service_plans(false)
+      service_plans = @cc.service_plans
 
       # service_plans have to exist.  Other record types are optional
       return result unless service_plans['connected']
 
-      services          = @cc.services(false)
-      service_brokers   = @cc.service_brokers(false)
-      service_instances = @cc.service_instances(false)
+      organizations             = @cc.organizations
+      services                  = @cc.services
+      service_brokers           = @cc.service_brokers
+      service_instances         = @cc.service_instances
+      service_plan_visibilities = @cc.service_plan_visibilities
 
-      service_instances_connected = service_instances['connected']
+      organizations_connected             = organizations['connected']
+      service_instances_connected         = service_instances['connected']
+      service_plan_visibilities_connected = service_plan_visibilities['connected']
 
-      service_broker_hash = Hash[*service_brokers['items'].map { |item| [item['guid'], item] }.flatten]
-      service_hash        = Hash[*services['items'].map { |item| [item['guid'], item] }.flatten]
+      organization_hash   = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      service_broker_hash = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
+      service_hash        = Hash[services['items'].map { |item| [item[:id], item] }]
+
+      service_plan_visibilities_organizations_hash = {}
+      if service_plan_visibilities_connected && organizations_connected
+        service_plan_visibilities['items'].each do |service_plan_visibility|
+          Thread.pass
+          service_plan_id = service_plan_visibility[:service_plan_id]
+          service_plan_visibility_and_organization_array = service_plan_visibilities_organizations_hash[service_plan_id]
+          if service_plan_visibility_and_organization_array.nil?
+            service_plan_visibility_and_organization_array = []
+            service_plan_visibilities_organizations_hash[service_plan_id] = service_plan_visibility_and_organization_array
+          end
+
+          organization = organization_hash[service_plan_visibility[:organization_id]]
+
+          if organization
+            service_plan_visibility_and_organization_array.push('organization'          => organization,
+                                                                'servicePlanVisibility' => service_plan_visibility)
+          end
+        end
+      end
 
       service_instance_counters = {}
-
       service_instances['items'].each do |service_instance|
         Thread.pass
-        service_plan_guid = service_instance['service_plan_guid']
-        service_instance_counters[service_plan_guid] = 0 if service_instance_counters[service_plan_guid].nil?
-        service_instance_counters[service_plan_guid] += 1
+        service_plan_id = service_instance[:service_plan_id]
+        service_instance_counters[service_plan_id] = 0 if service_instance_counters[service_plan_id].nil?
+        service_instance_counters[service_plan_id] += 1
       end
 
       items = []
 
       service_plans['items'].each do |service_plan|
         Thread.pass
-        service        = service_hash[service_plan['service_guid']]
-        service_broker = service.nil? || service['service_broker_guid'].nil? ? nil : service_broker_hash[service['service_broker_guid']]
+        service        = service_hash[service_plan[:service_id]]
+        service_broker = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
 
         row = []
 
         row.push(service_plan)
-        row.push(service_plan['name'])
+        row.push(service_plan[:name])
 
         service_plan_target = ''
         if service
-          service_plan_target = service['provider'] if service['provider']
-          service_plan_target = "#{ service_plan_target }/#{ service['label'] }/"
+          service_plan_target = service[:provider] if service[:provider]
+          service_plan_target = "#{ service_plan_target }/#{ service[:label] }/"
         end
-        service_plan_target = "#{ service_plan_target }#{ service_plan['name'] }"
+        service_plan_target = "#{ service_plan_target }#{ service_plan[:name] }"
         row.push(service_plan_target)
 
-        row.push(DateTime.parse(service_plan['created_at']).rfc3339)
+        row.push(service_plan[:created_at].to_datetime.rfc3339)
 
-        if service_plan['updated_at']
-          row.push(DateTime.parse(service_plan['updated_at']).rfc3339)
+        if service_plan[:updated_at]
+          row.push(service_plan[:updated_at].to_datetime.rfc3339)
         else
           row.push(nil)
         end
 
-        row.push(service_plan['public'])
+        row.push(service_plan[:public])
 
-        if service_instance_counters[service_plan['guid']]
-          row.push(service_instance_counters[service_plan['guid']])
+        service_plan_visibilities_organizations = service_plan_visibilities_organizations_hash[service_plan[:id]]
+
+        if service_plan_visibilities_organizations
+          row.push(service_plan_visibilities_organizations.length)
+        elsif service_plan_visibilities_connected && organizations_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if service_instance_counters[service_plan[:id]]
+          row.push(service_instance_counters[service_plan[:id]])
         elsif service_instances_connected
           row.push(0)
         else
@@ -73,29 +107,29 @@ module AdminUI
         end
 
         if service
-          row.push(service['provider'])
-          row.push(service['label'])
-          row.push(service['version'])
-          row.push(DateTime.parse(service['created_at']).rfc3339)
+          row.push(service[:provider])
+          row.push(service[:label])
+          row.push(service[:version])
+          row.push(service[:created_at].to_datetime.rfc3339)
 
-          if service['updated_at']
-            row.push(DateTime.parse(service['updated_at']).rfc3339)
+          if service[:updated_at]
+            row.push(service[:updated_at].to_datetime.rfc3339)
           else
             row.push(nil)
           end
 
-          row.push(service['active'])
-          row.push(service['bindable'])
+          row.push(service[:active])
+          row.push(service[:bindable])
         else
           row.push(nil, nil, nil, nil, nil, nil, nil)
         end
 
         if service_broker
-          row.push(service_broker['name'])
-          row.push(DateTime.parse(service_broker['created_at']).rfc3339)
+          row.push(service_broker[:name])
+          row.push(service_broker[:created_at].to_datetime.rfc3339)
 
-          if service_broker['updated_at']
-            row.push(DateTime.parse(service_broker['updated_at']).rfc3339)
+          if service_broker[:updated_at]
+            row.push(service_broker[:updated_at].to_datetime.rfc3339)
           else
             row.push(nil)
           end
@@ -103,14 +137,15 @@ module AdminUI
           row.push(nil, nil, nil)
         end
 
-        row.push('service'       => service,
-                 'serviceBroker' => service_broker,
-                 'servicePlan'   => service_plan)
+        row.push('service'                                 => service,
+                 'serviceBroker'                           => service_broker,
+                 'servicePlan'                             => service_plan,
+                 'servicePlanVisibilitiesAndOrganizations' => service_plan_visibilities_organizations)
 
         items.push(row)
       end
 
-      result(items, (1..16).to_a, (1..16).to_a - [6])
+      result(items, (1..17).to_a, (1..17).to_a - [6, 7])
     end
   end
 end

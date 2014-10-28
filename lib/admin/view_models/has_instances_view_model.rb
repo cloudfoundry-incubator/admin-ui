@@ -11,27 +11,27 @@ module AdminUI
     end
 
     def add_instance_metrics(counters_hash, application, instance_hash)
-      counters_hash['reserved_memory'] += application['memory']     * application['instances']
-      counters_hash['reserved_disk']   += application['disk_quota'] * application['instances']
+      counters_hash['reserved_memory'] += application[:memory]     * application[:instances]
+      counters_hash['reserved_disk']   += application[:disk_quota] * application[:instances]
 
-      instances = instance_hash[application['guid']]
+      instances = instance_hash[application[:guid]]
 
-      unless instances.nil?
-        # We keep a temporary hash of the instance indices encountered to determine actual instance count
-        # Multiple crashed instances can have the same instance_index
-        instance_index_hash = {}
+      return if instances.nil?
 
-        instances.each do |instance|
-          Thread.pass
-          instance_index_hash[instance['instance_index']] = nil
+      # We keep a temporary hash of the instance indices encountered to determine actual instance count
+      # Multiple crashed instances can have the same instance_index
+      instance_index_hash = {}
 
-          counters_hash['used_memory'] += instance['used_memory_in_bytes'] unless instance['used_memory_in_bytes'].nil?
-          counters_hash['used_disk']   += instance['used_disk_in_bytes']   unless instance['used_disk_in_bytes'].nil?
-          counters_hash['used_cpu']    += instance['computed_pcpu']        unless instance['computed_pcpu'].nil?
-        end
+      instances.each do |instance|
+        Thread.pass
+        instance_index_hash[instance['instance_index']] = nil
 
-        counters_hash['instances']  += instance_index_hash.length
+        counters_hash['used_memory'] += instance['used_memory_in_bytes'] unless instance['used_memory_in_bytes'].nil?
+        counters_hash['used_disk']   += instance['used_disk_in_bytes']   unless instance['used_disk_in_bytes'].nil?
+        counters_hash['used_cpu']    += instance['computed_pcpu']        unless instance['computed_pcpu'].nil?
       end
+
+      counters_hash['instances']  += instance_index_hash.length
     end
 
     def create_instance_hash(deas)

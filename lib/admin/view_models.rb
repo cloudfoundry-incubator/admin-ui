@@ -4,23 +4,26 @@ require_relative 'view_models/applications_view_model'
 require_relative 'view_models/cloud_controllers_view_model'
 require_relative 'view_models/components_view_model'
 require_relative 'view_models/deas_view_model'
-require_relative 'view_models/developers_view_model'
+require_relative 'view_models/domains_view_model'
 require_relative 'view_models/gateways_view_model'
 require_relative 'view_models/health_managers_view_model'
 require_relative 'view_models/logs_view_model'
+require_relative 'view_models/organization_roles_view_model'
 require_relative 'view_models/organizations_view_model'
 require_relative 'view_models/quotas_view_model'
 require_relative 'view_models/routers_view_model'
 require_relative 'view_models/routes_view_model'
 require_relative 'view_models/service_instances_view_model'
 require_relative 'view_models/service_plans_view_model'
+require_relative 'view_models/space_roles_view_model'
 require_relative 'view_models/spaces_view_model'
 require_relative 'view_models/stats_view_model'
 require_relative 'view_models/tasks_view_model'
+require_relative 'view_models/users_view_model'
 
 module AdminUI
   class ViewModels
-    def initialize(config, logger, cc, log_files, stats, tasks, varz)
+    def initialize(config, logger, cc, log_files, stats, tasks, varz, testing = false)
       @cc        = cc
       @config    = config
       @log_files = log_files
@@ -28,6 +31,8 @@ module AdminUI
       @stats     = stats
       @tasks     = tasks
       @varz      = varz
+      @testing   = testing
+
       # TODO: Need config for number of threads
       @pool      = AdminUI::ScheduledThreadPool.new(logger, 2, -1)
 
@@ -37,7 +42,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :cloud_controllers, :components, :deas, :developers, :gateways, :health_managers, :logs, :organizations, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces, :stats, :tasks].each do |key|
+      [:applications, :cloud_controllers, :components, :deas, :domains, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :service_instances, :service_plans, :spaces, :space_roles, :stats, :tasks, :users].each do |key|
         hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
         @caches[key] = hash
         schedule(key)
@@ -48,8 +53,32 @@ module AdminUI
       invalidate_cache(:applications)
     end
 
+    def invalidate_cloud_controllers
+      invalidate_cache(:cloud_controllers)
+    end
+
+    def invalidate_components
+      invalidate_cache(:components)
+    end
+
+    def invalidate_deas
+      invalidate_cache(:deas)
+    end
+
+    def invalidate_gateways
+      invalidate_cache(:gateways)
+    end
+
+    def invalidate_health_managers
+      invalidate_cache(:health_managers)
+    end
+
     def invalidate_organizations
       invalidate_cache(:organizations)
+    end
+
+    def invalidate_routers
+      invalidate_cache(:routers)
     end
 
     def invalidate_routes
@@ -84,8 +113,8 @@ module AdminUI
       result_cache(:deas)
     end
 
-    def developers
-      result_cache(:developers)
+    def domains
+      result_cache(:domains)
     end
 
     def gateways
@@ -102,6 +131,10 @@ module AdminUI
 
     def organizations
       result_cache(:organizations)
+    end
+
+    def organization_roles
+      result_cache(:organization_roles)
     end
 
     def quotas
@@ -128,6 +161,10 @@ module AdminUI
       result_cache(:spaces)
     end
 
+    def space_roles
+      result_cache(:space_roles)
+    end
+
     def stats
       result_cache(:stats)
     end
@@ -136,13 +173,20 @@ module AdminUI
       result_cache(:tasks)
     end
 
+    def users
+      result_cache(:users)
+    end
+
     private
 
     def invalidate_cache(key)
-      hash = @caches[key]
-      hash[:semaphore].synchronize do
-        hash[:result] = nil
+      if @testing
+        hash = @caches[key]
+        hash[:semaphore].synchronize do
+          hash[:result] = nil
+        end
       end
+
       schedule(key)
     end
 
@@ -163,15 +207,24 @@ module AdminUI
 
       finish = Time.now
 
+      connected = result_cache[:connected]
+
       hash = @caches[key]
       hash[:semaphore].synchronize do
         @logger.debug("Caching view model #{ key_string } data.  Compilation time: #{ finish - start } seconds")
-        hash[:result] = result_cache
+
+        # Only replace the cached result if the value is connected or this is the first time
+        hash[:result] = result_cache if connected || hash[:result].nil?
+
         hash[:condition].broadcast
       end
 
+      # If not a connected new value, reschedule the discovery soon
+      interval = @interval
+      interval = 5 if interval > 5 && connected == false
+
       # Set up the next scheduled discovery for this key
-      schedule(key, Time.now + @interval)
+      schedule(key, Time.now + interval)
     end
 
     def result_cache(key)
@@ -214,10 +267,10 @@ module AdminUI
       result
     end
 
-    def discover_developers
-      AdminUI::DevelopersViewModel.new(@logger, @cc).items
+    def discover_domains
+      AdminUI::DomainsViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_developers: #{ error.inspect }")
+      @logger.debug("Error during discover_domains: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -254,6 +307,14 @@ module AdminUI
       result
     end
 
+    def discover_organization_roles
+      AdminUI::OrganizationRolesViewModel.new(@logger, @cc).items
+    rescue => error
+      @logger.debug("Error during discover_organization_roles: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
     def discover_quotas
       AdminUI::QuotasViewModel.new(@logger, @cc).items
     rescue => error
@@ -263,7 +324,7 @@ module AdminUI
     end
 
     def discover_routers
-      AdminUI::RoutersViewModel.new(@logger, @varz).items
+      AdminUI::RoutersViewModel.new(@logger, @cc, @varz).items
     rescue => error
       @logger.debug("Error during discover_routers: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
@@ -302,6 +363,14 @@ module AdminUI
       result
     end
 
+    def discover_space_roles
+      AdminUI::SpaceRolesViewModel.new(@logger, @cc).items
+    rescue => error
+      @logger.debug("Error during discover_space_roles: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
     def discover_stats
       AdminUI::StatsViewModel.new(@logger, @stats).items
     rescue => error
@@ -314,6 +383,14 @@ module AdminUI
       AdminUI::TasksViewModel.new(@logger, @tasks).items
     rescue => error
       @logger.debug("Error during discover_tasks: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_users
+      AdminUI::UsersViewModel.new(@logger, @cc).items
+    rescue => error
+      @logger.debug("Error during discover_users: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end

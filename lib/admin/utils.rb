@@ -63,13 +63,17 @@ module AdminUI
       minutes_in_a_day % 60
     end
 
-    def self.symbolize_keys(hash)
-      if hash.is_a? Hash
+    def self.symbolize_keys(object)
+      if object.is_a? Array
+        new_array = []
+        object.each { |item| new_array.push(symbolize_keys(item)) }
+        new_array
+      elsif object.is_a? Hash
         new_hash = {}
-        hash.each { |k, v| new_hash[k.to_sym] = symbolize_keys(v) }
+        object.each { |key, value| new_hash[key.to_sym] = symbolize_keys(value) }
         new_hash
       else
-        hash
+        object
       end
     end
 
