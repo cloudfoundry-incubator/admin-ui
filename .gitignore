@@ -22,3 +22,6 @@ data
 .README.md.html
 .project
 
+manifest.yml
+config/*.yml
+
