@@ -77,6 +77,10 @@ module AdminUI
       invalidate_cache(:organizations)
     end
 
+    def invalidate_organization_roles
+      invalidate_cache(:organization_roles)
+    end
+
     def invalidate_routers
       invalidate_cache(:routers)
     end
@@ -87,6 +91,10 @@ module AdminUI
 
     def invalidate_service_plans
       invalidate_cache(:service_plans)
+    end
+
+    def invalidate_space_roles
+      invalidate_cache(:space_roles)
     end
 
     def invalidate_stats
@@ -167,8 +175,8 @@ module AdminUI
       result_cache(:organizations)
     end
 
-    def organization_role(organization_guid, user_guid, role)
-      details(:organization_roles, "#{ organization_guid }/#{ user_guid }/#{ role }")
+    def organization_role(organization_guid, role, user_guid)
+      details(:organization_roles, "#{ organization_guid }/#{ role }/#{ user_guid }")
     end
 
     def organization_roles
@@ -223,8 +231,8 @@ module AdminUI
       result_cache(:spaces)
     end
 
-    def space_role(space_guid, user_guid, role)
-      details(:space_roles, "#{ space_guid }/#{ user_guid }/#{ role }")
+    def space_role(space_guid, role, user_guid)
+      details(:space_roles, "#{ space_guid }/#{ role }/#{ user_guid }")
     end
 
     def space_roles

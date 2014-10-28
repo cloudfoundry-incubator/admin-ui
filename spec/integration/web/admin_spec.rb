@@ -238,10 +238,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              '1',
                              '0',
                              cc_app[:instances].to_s,
-                             varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s,
-                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s,
-                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s,
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s,
+                             varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s,
+                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s,
+                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s,
+                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s,
                              cc_app[:memory].to_s,
                              cc_app[:disk_quota].to_s,
                              '1',
@@ -296,8 +296,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             # Check whether the dialog is displayed
             expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
             expect(@driver.find_element(:id => 'quotaSelector').displayed?).to be_true
-            expect(@driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[1]').text).to eq('test_quota_1')
-            expect(@driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[2]').text).to eq('test_quota_2')
+            expect(@driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[1]').text).to eq(cc_quota_definition[:name])
+            expect(@driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[2]').text).to eq(cc_quota_definition2[:name])
 
             # Select another quota and click the set button
             @driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[2]').click
@@ -305,10 +305,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_operation_result
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 460).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[10]").text == 'test_quota_2' }
+              Selenium::WebDriver::Wait.new(:timeout => 460).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[10]").text == cc_quota_definition2[:name] }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[10]").text).to eq('test_quota_2')
+            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[10]").text).to eq(cc_quota_definition2[:name])
           end
         end
 
@@ -466,10 +466,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Used Routes',        :tag =>   nil, :value => '1' },
                            { :label => 'Unused Routes',      :tag =>   nil, :value => '0' },
                            { :label => 'Instances Used',     :tag =>   'a', :value => cc_app[:instances].to_s },
-                           { :label => 'Services Used',      :tag =>   'a', :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
-                           { :label => 'Memory Used',        :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
-                           { :label => 'Disk Used',          :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
-                           { :label => 'CPU Used',           :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
+                           { :label => 'Services Used',      :tag =>   'a', :value => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s },
+                           { :label => 'Memory Used',        :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
+                           { :label => 'Disk Used',          :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
+                           { :label => 'CPU Used',           :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s },
                            { :label => 'Memory Reserved',    :tag =>   nil, :value => cc_app[:memory].to_s },
                            { :label => 'Disk Reserved',      :tag =>   nil, :value => cc_app[:disk_quota].to_s },
                            { :label => 'Total Apps',         :tag =>   'a', :value => '1' },
@@ -537,10 +537,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              '1',
                              '0',
                              cc_app[:instances].to_s,
-                             varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s,
-                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s,
-                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s,
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s,
+                             varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s,
+                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s,
+                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s,
+                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s,
                              cc_app[:memory].to_s,
                              cc_app[:disk_quota].to_s,
                              '1',
@@ -571,10 +571,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Used Routes',     :tag =>   nil, :value => '1' },
                            { :label => 'Unused Routes',   :tag =>   nil, :value => '0' },
                            { :label => 'Instances Used',  :tag =>   'a', :value => cc_app[:instances].to_s },
-                           { :label => 'Services Used',   :tag =>   'a', :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
-                           { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
-                           { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
-                           { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
+                           { :label => 'Services Used',   :tag =>   'a', :value => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s },
+                           { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
+                           { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
+                           { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s },
                            { :label => 'Memory Reserved', :tag =>   nil, :value => cc_app[:memory].to_s },
                            { :label => 'Disk Reserved',   :tag =>   nil, :value => cc_app[:disk_quota].to_s },
                            { :label => 'Total Apps',      :tag =>   'a', :value => '1' },
@@ -628,17 +628,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              cc_app[:guid],
                              cc_app[:state],
                              @driver.execute_script('return Constants.STATUS__STAGED'),
-                             varz_dea['instance_registry']['application1']['application1_instance1']['state'],
+                             varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
                              @driver.execute_script("return Format.formatString(\"#{ cc_app[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_app[:updated_at].to_datetime.rfc3339 }\")"),
-                             @driver.execute_script("return Format.formatString(\"#{ Time.at(varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp']).to_datetime.rfc3339 }\")"),
-                             "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }",
+                             @driver.execute_script("return Format.formatString(\"#{ Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339 }\")"),
+                             "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
                              cc_app[:detected_buildpack],
-                             varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'].to_s,
-                             varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s,
-                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s,
-                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s,
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s,
+                             varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'].to_s,
+                             varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s,
+                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s,
+                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s,
+                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s,
                              cc_app[:memory].to_s,
                              cc_app[:disk_quota].to_s,
                              "#{ cc_organization[:name] }/#{ cc_space[:name] }",
@@ -758,17 +758,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                cc_app[:guid],
                                '',
                                '',
-                               varz_dea['instance_registry']['application1']['application1_instance1']['state'],
+                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
                                '',
                                '',
-                               @driver.execute_script("return Format.formatString(\"#{ Time.at(varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp']).to_datetime.rfc3339 }\")"),
-                               "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }",
+                               @driver.execute_script("return Format.formatString(\"#{ Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339 }\")"),
+                               "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
                                '',
                                '0',
-                               varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s,
-                               @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s,
-                               @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s,
-                               @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s,
+                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s,
+                               @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s,
+                               @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s,
+                               @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s,
                                cc_app[:memory].to_s,
                                cc_app[:disk_quota].to_s,
                                '',
@@ -812,18 +812,18 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'GUID',            :tag =>   nil, :value => cc_app[:guid] },
                            { :label => 'State',           :tag =>   nil, :value => cc_app[:state] },
                            { :label => 'Package State',   :tag =>   nil, :value => cc_app[:package_state] },
-                           { :label => 'Instance State',  :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['state'] },
+                           { :label => 'Instance State',  :tag =>   nil, :value => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] },
                            { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Started',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp'] * 1000) })") },
-                           { :label => 'URI',             :tag =>   'a', :value => "http://#{ varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'][0] }" },
+                           { :label => 'Started',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp'] * 1000) })") },
+                           { :label => 'URI',             :tag =>   'a', :value => "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }" },
                            { :label => 'Buildpack',       :tag =>   nil, :value => cc_app[:detected_buildpack] },
-                           { :label => 'Instance Index',  :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'].to_s },
-                           { :label => 'Droplet Hash',    :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['droplet_sha1'].to_s },
-                           { :label => 'Services Used',   :tag =>   nil, :value => varz_dea['instance_registry']['application1']['application1_instance1']['services'].length.to_s },
-                           { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
-                           { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
-                           { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
+                           { :label => 'Instance Index',  :tag =>   nil, :value => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'].to_s },
+                           { :label => 'Droplet Hash',    :tag =>   nil, :value => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['droplet_sha1'].to_s },
+                           { :label => 'Services Used',   :tag =>   nil, :value => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s },
+                           { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
+                           { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
+                           { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s },
                            { :label => 'Memory Reserved', :tag =>   nil, :value => cc_app[:memory].to_s },
                            { :label => 'Disk Reserved',   :tag =>   nil, :value => cc_app[:disk_quota].to_s },
                            { :label => 'Space',           :tag =>   'a', :value => cc_space[:name] },
@@ -839,11 +839,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil)
             check_table_data(@driver.find_elements(:xpath => "//table[@id='ApplicationsServicesTable']/tbody/tr/td"),
                              [
-                               varz_dea['instance_registry']['application1']['application1_instance1']['services'][0]['name'],
-                               varz_dea['instance_registry']['application1']['application1_instance1']['services'][0]['provider'],
-                               varz_dea['instance_registry']['application1']['application1_instance1']['services'][0]['vendor'],
-                               varz_dea['instance_registry']['application1']['application1_instance1']['services'][0]['version'],
-                               varz_dea['instance_registry']['application1']['application1_instance1']['services'][0]['plan']
+                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['name'],
+                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['provider'],
+                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['vendor'],
+                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['version'],
+                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['plan']
                              ])
           end
           it 'has space link' do
@@ -1078,16 +1078,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
                                 :labels          => ['Organization', 'User', ''],
-                                :colspans        => %w(2 2 1)
+                                :colspans        => %w(3 2 1)
                               },
                               { :columns => @driver.find_elements(:xpath => "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 5,
-                                :labels          => %w(Name GUID Name GUID Role),
+                                :expected_length => 6,
+                                :labels          => [' ', 'Name', 'GUID', 'Name', 'GUID', 'Role'],
                                 :colspans        => nil
                               }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='OrganizationRolesTable']/tbody/tr/td"),
                            [
+                             '',
                              cc_organization[:name],
                              cc_organization[:guid],
                              uaa_user[:username],
@@ -1097,7 +1098,41 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_OrganizationRolesTable_0', 'ZeroClipboard_TableToolsMovie_33')
+          check_allowscriptaccess_attribute('ToolTables_OrganizationRolesTable_1', 'ZeroClipboard_TableToolsMovie_33')
+        end
+
+        context 'manage organization roles' do
+          def check_first_row
+            @driver.find_elements(:xpath => "//table[@id='OrganizationRolesTable']/tbody/tr/td[1]/input")[0].click
+          end
+
+          it 'has a delete button' do
+            expect(@driver.find_element(:id => 'ToolTables_OrganizationRolesTable_0').text).to eq('Delete')
+          end
+
+          it 'alerts the user to select at least one row when clicking the delete button' do
+            @driver.find_element(:id => 'ToolTables_OrganizationRolesTable_0').click
+
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
+            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
+            @driver.find_element(:id => 'modalDialogButton0').click
+          end
+
+          it 'deletes the selected organization role' do
+            check_first_row
+            @driver.find_element(:id => 'ToolTables_OrganizationRolesTable_0').click
+
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected organization roles?')
+            @driver.find_element(:id => 'modalDialogButton0').click
+
+            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(:id => 'modalDialogButton0').click
+          end
         end
 
         context 'selectable' do
@@ -1127,16 +1162,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
                                 :labels          => ['Space', 'User', ''],
-                                :colspans        => %w(3 2 1)
+                                :colspans        => %w(4 2 1)
                               },
                               { :columns => @driver.find_elements(:xpath => "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 6,
-                                :labels          => %w(Name GUID Target Name GUID Role),
+                                :expected_length => 7,
+                                :labels          => [' ', 'Name', 'GUID', 'Target', 'Name', 'GUID', 'Role'],
                                 :colspans        => nil
                                           }
                              ])
           check_table_data(@driver.find_elements(:xpath => "//table[@id='SpaceRolesTable']/tbody/tr/td"),
                            [
+                             '',
                              cc_space[:name],
                              cc_space[:guid],
                              "#{ cc_organization[:name] }/#{ cc_space[:name] }",
@@ -1147,7 +1183,41 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_SpaceRolesTable_0', 'ZeroClipboard_TableToolsMovie_33')
+          check_allowscriptaccess_attribute('ToolTables_SpaceRolesTable_1', 'ZeroClipboard_TableToolsMovie_33')
+        end
+
+        context 'manage space roles' do
+          def check_first_row
+            @driver.find_elements(:xpath => "//table[@id='SpaceRolesTable']/tbody/tr/td[1]/input")[0].click
+          end
+
+          it 'has a delete button' do
+            expect(@driver.find_element(:id => 'ToolTables_SpaceRolesTable_0').text).to eq('Delete')
+          end
+
+          it 'alerts the user to select at least one row when clicking the delete button' do
+            @driver.find_element(:id => 'ToolTables_SpaceRolesTable_0').click
+
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
+            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
+            @driver.find_element(:id => 'modalDialogButton0').click
+          end
+
+          it 'deletes the selected space role' do
+            check_first_row
+            @driver.find_element(:id => 'ToolTables_SpaceRolesTable_0').click
+
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected space roles?')
+            @driver.find_element(:id => 'modalDialogButton0').click
+
+            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(:id => 'modalDialogButton0').click
+          end
         end
 
         context 'selectable' do
@@ -1547,10 +1617,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              varz_dea['cpu'].to_s,
                              varz_dea['mem'].to_s,
                              varz_dea['instance_registry'].length.to_s,
-                             varz_dea['instance_registry']['application1'].length.to_s,
-                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s,
-                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s,
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s,
+                             varz_dea['instance_registry'][cc_app[:guid]].length.to_s,
+                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s,
+                             @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s,
+                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s,
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })"),
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })")
                            ])
@@ -1578,10 +1648,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'CPU',                   :tag => nil, :value => varz_dea['cpu'].to_s },
                            { :label => 'CPU Load Avg',          :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") }%" },
                            { :label => 'Memory',                :tag => nil, :value => varz_dea['mem'].to_s },
-                           { :label => 'Instances',             :tag => nil, :value => varz_dea['instance_registry']['application1'].length.to_s },
-                           { :label => 'Instances Memory Used', :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes'] })").to_s },
-                           { :label => 'Instances Disk Used',   :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes'] })").to_s },
-                           { :label => 'Instances CPU Used',    :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100 })").to_s },
+                           { :label => 'Instances',             :tag => nil, :value => varz_dea['instance_registry'][cc_app[:guid]].length.to_s },
+                           { :label => 'Instances Memory Used', :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
+                           { :label => 'Instances Disk Used',   :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
+                           { :label => 'Instances CPU Used',    :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s },
                            { :label => 'Memory Free',           :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })") }%" },
                            { :label => 'Disk Free',             :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") }%" }
                           ])

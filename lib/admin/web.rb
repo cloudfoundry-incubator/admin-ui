@@ -215,9 +215,9 @@ module AdminUI
       AllActions.new(@logger, @view_models.organization_roles, params).items.to_json
     end
 
-    get '/organization_roles_view_model/:organization_guid/:user_guid/:role', :auth => [:user] do
-      @logger.info_user session[:username], 'get', "/organization_roles_view_model/#{ params[:organization_guid] }/#{ params[:user_guid] }/#{ params[:role] }"
-      result = @view_models.organization_role(params[:organization_guid], params[:user_guid], params[:role])
+    get '/organization_roles_view_model/:organization_guid/:role/:user_guid', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/organization_roles_view_model/#{ params[:organization_guid] }/#{ params[:role] }/#{ params[:user_guid] }"
+      result = @view_models.organization_role(params[:organization_guid], params[:role], params[:user_guid])
       return result.to_json if result
       404
     end
@@ -308,9 +308,9 @@ module AdminUI
       AllActions.new(@logger, @view_models.space_roles, params).items.to_json
     end
 
-    get '/space_roles_view_model/:space_guid/:user_guid/:role', :auth => [:user] do
-      @logger.info_user session[:username], 'get', "/space_roles_view_model/#{ params[:space_guid] }/#{ params[:user_guid] }/#{ params[:role] }"
-      result = @view_models.space_role(params[:space_guid], params[:user_guid], params[:role])
+    get '/space_roles_view_model/:space_guid/:role/:user_guid', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/space_roles_view_model/#{ params[:space_guid] }/#{ params[:role] }/#{ params[:user_guid] }"
+      result = @view_models.space_role(params[:space_guid], params[:role], params[:user_guid])
       return result.to_json if result
       404
     end
@@ -653,6 +653,18 @@ module AdminUI
       end
     end
 
+    delete '/organizations/:org_guid/:role/:user_guid', :auth => [:admin] do
+      @logger.info_user session[:username], 'delete', "/organizations/#{ params[:org_guid] }/#{ params[:role] }/#{ params[:user_guid] }"
+      begin
+        @operation.delete_organization_role(params[:org_guid], params[:role], params[:user_guid])
+        204
+      rescue => error
+        @logger.debug("Error during deleting organization role: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/routes/:route_guid', :auth => [:admin] do
       @logger.info_user session[:username], 'delete', "/routes/#{ params[:route_guid] }"
       begin
@@ -660,6 +672,18 @@ module AdminUI
         204
       rescue => error
         @logger.debug("Error during deleting route: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/spaces/:space_guid/:role/:user_guid', :auth => [:admin] do
+      @logger.info_user session[:username], 'delete', "/spaces/#{ params[:space_guid] }/#{ params[:role] }/#{ params[:user_guid] }"
+      begin
+        @operation.delete_space_role(params[:space_guid], params[:role], params[:user_guid])
+        204
+      rescue => error
+        @logger.debug("Error during deleting space role: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
         500
       end

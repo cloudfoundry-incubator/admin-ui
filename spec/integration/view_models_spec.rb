@@ -97,7 +97,7 @@ describe AdminUI::CC, :type => :integration do
     end
 
     context 'returns connected applications_view_model detail' do
-      let(:results)  { view_models.application(cc_app[:guid], varz_dea['instance_registry']['application1']['application1_instance1']['instance_index']) }
+      let(:results)  { view_models.application(cc_app[:guid], varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index']) }
       let(:expected) { view_models_applications_detail }
 
       it_behaves_like('common view model retrieval detail')
@@ -218,7 +218,7 @@ describe AdminUI::CC, :type => :integration do
     end
 
     context 'returns connected organization_roles_view_model detail' do
-      let(:results)  { view_models.organization_role(cc_organization[:guid], cc_user[:guid], 'Auditor') }
+      let(:results)  { view_models.organization_role(cc_organization[:guid], 'auditors', cc_user[:guid]) }
       let(:expected) { view_models_organization_roles_detail }
 
       it_behaves_like('common view model retrieval detail')
@@ -316,7 +316,7 @@ describe AdminUI::CC, :type => :integration do
     end
 
     context 'returns connected space_roles_view_model detail' do
-      let(:results)  { view_models.space_role(cc_space[:guid], cc_user[:guid], 'Auditor') }
+      let(:results)  { view_models.space_role(cc_space[:guid], 'auditors', cc_user[:guid]) }
       let(:expected) { view_models_space_roles_detail }
 
       it_behaves_like('common view model retrieval detail')

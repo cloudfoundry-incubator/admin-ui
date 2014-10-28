@@ -164,25 +164,25 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     def stop_app
-      response = put_request('/applications/application1', '{"state":"STOPPED"}')
+      response = put_request("/applications/#{ cc_app[:guid] }", '{"state":"STOPPED"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['put', '/applications/application1; body = {"state":"STOPPED"}']], true)
+      verify_sys_log_entries([['put', "/applications/#{ cc_app[:guid] }; body = {\"state\":\"STOPPED\"}"]], true)
     end
 
     def start_app
-      response = put_request('/applications/application1', '{"state":"STARTED"}')
+      response = put_request("/applications/#{ cc_app[:guid] }", '{"state":"STARTED"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['put', '/applications/application1; body = {"state":"STARTED"}']], true)
+      verify_sys_log_entries([['put', "/applications/#{ cc_app[:guid] }; body = {\"state\":\"STARTED\"}"]], true)
     end
 
     def delete_app
-      response = delete_request('/applications/application1')
+      response = delete_request("/applications/#{ cc_app[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', '/applications/application1']])
+      verify_sys_log_entries([['delete', "/applications/#{ cc_app[:guid] }"]])
     end
 
     it 'has user name and applications in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/applications']], true)
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/applications_view_model']], true)
     end
 
     it 'stops a running application' do
@@ -215,19 +215,19 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     def delete_org
-      response = delete_request('/organizations/organization1')
+      response = delete_request("/organizations/#{ cc_organization[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', '/organizations/organization1']], true)
+      verify_sys_log_entries([['delete', "/organizations/#{ cc_organization[:guid] }"]], true)
     end
 
     def set_quota
-      response = put_request('/organizations/organization1', '{"quota_definition_guid":"quota2"}')
+      response = put_request("/organizations/#{ cc_organization[:guid] }", "{\"quota_definition_guid\":\"#{ cc_quota_definition2[:guid] }\"}")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['put', '/organizations/organization1; body = {"quota_definition_guid":"quota2"}']], true)
+      verify_sys_log_entries([['put', "/organizations/#{ cc_organization[:guid] }; body = {\"quota_definition_guid\":\"#{ cc_quota_definition2[:guid] }\"}"]], true)
     end
 
     it 'has user name and organizations request in the log file' do
-      verify_sys_log_entries([['get', '/organizations']])
+      verify_sys_log_entries([['get', '/organizations_view_model']])
     end
 
     it 'creates an organization' do
@@ -236,15 +236,15 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     def suspend_org
-      response = put_request('/organizations/organization1', '{"status":"suspended"}')
+      response = put_request("/organizations/#{ cc_organization[:guid] }", '{"status":"suspended"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['put', '/organizations/organization1; body = {"status":"suspended"}']], true)
+      verify_sys_log_entries([['put', "/organizations/#{ cc_organization[:guid] }; body = {\"status\":\"suspended\"}"]], true)
     end
 
     def activate_org
-      response = put_request('/organizations/organization1', '{"status":"active"}')
+      response = put_request("/organizations/#{ cc_organization[:guid] }", '{"status":"active"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['put', '/organizations/organization1; body = {"status":"active"}']], true)
+      verify_sys_log_entries([['put', "/organizations/#{ cc_organization[:guid] }; body = {\"status\":\"active\"}"]], true)
     end
 
     it 'deletes an organization' do
@@ -254,7 +254,7 @@ describe AdminUI::Admin, :type => :integration do
     context 'sets the specific quota for organization' do
       let(:insert_second_quota_definition) { true }
       it 'sets the specific quota for organization' do
-        expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][9] }.from('test_quota_1').to('test_quota_2')
+        expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][9] }.from(cc_quota_definition[:name]).to(cc_quota_definition2[:name])
       end
     end
 
@@ -268,6 +268,30 @@ describe AdminUI::Admin, :type => :integration do
     end
   end
 
+  context 'manage organization role' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there are organization roles
+      expect(get_json('/organization_roles_view_model')['items']['items'].length).to eq(4)
+    end
+
+    def delete_organization_role
+      response = delete_request("/organizations/#{ cc_organization[:guid] }/auditors/#{ cc_user[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/organizations/#{ cc_organization[:guid] }/auditors/#{ cc_user[:guid] }"]], true)
+    end
+
+    it 'has user name and organization roles request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/organization_roles_view_model']], true)
+    end
+
+    it 'deletes the specific organization role' do
+      expect { delete_organization_role }.to change { get_json('/organization_roles_view_model')['items']['items'].length }.from(4).to(3)
+    end
+  end
+
   context 'manage route' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -278,13 +302,13 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     def delete_route
-      response = delete_request('/routes/route1')
+      response = delete_request("/routes/#{ cc_route[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', '/routes/route1']], true)
+      verify_sys_log_entries([['delete', "/routes/#{ cc_route[:guid] }"]], true)
     end
 
     it 'has user name and routes request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/routes']], true)
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/routes_view_model']], true)
     end
 
     it 'deletes the specific route' do
@@ -297,21 +321,45 @@ describe AdminUI::Admin, :type => :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     def make_service_plan_private
-      response = put_request('/service_plans/service_plan1', '{"public": false }')
+      response = put_request("/service_plans/#{ cc_service_plan[:guid] }", '{"public": false }')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['put', '/service_plans/service_plan1; body = {"public": false }']], true)
+      verify_sys_log_entries([['put', "/service_plans/#{ cc_service_plan[:guid] }; body = {\"public\": false }"]], true)
     end
 
     def make_service_plan_public
-      response = put_request('/service_plans/service_plan1', '{"public": true }')
+      response = put_request("/service_plans/#{ cc_service_plan[:guid] }", '{"public": true }')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['put', '/service_plans/service_plan1; body = {"public": true }']], true)
+      verify_sys_log_entries([['put', "/service_plans/#{ cc_service_plan[:guid] }; body = {\"public\": true }"]], true)
     end
 
     it 'make service plans private and back to public' do
       expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][7].to_s }.from('true').to('false')
       make_service_plan_public
       expect { get_json('/service_plans_view_model')['items']['items'][0][7] }.to be_true
+    end
+  end
+
+  context 'manage space role' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there are space roles
+      expect(get_json('/space_roles_view_model')['items']['items'].length).to eq(3)
+    end
+
+    def delete_space_role
+      response = delete_request("/spaces/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/spaces/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }"]], true)
+    end
+
+    it 'has user name and space roles request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/space_roles_view_model']], true)
+    end
+
+    it 'deletes the specific space role' do
+      expect { delete_space_role }.to change { get_json('/space_roles_view_model')['items']['items'].length }.from(3).to(2)
     end
   end
 
@@ -351,7 +399,7 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     context 'applications_view_model detail' do
-      let(:path)              { "/applications_view_model/#{ cc_app[:guid] }/#{ varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'] }" }
+      let(:path)              { "/applications_view_model/#{ cc_app[:guid] }/#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] }" }
       let(:view_model_source) { view_models_applications_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -486,7 +534,7 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     context 'organization_roles_view_model detail' do
-      let(:path)              { "/organization_roles_view_model/#{ cc_organization[:guid] }/#{ cc_user[:guid] }/Auditor" }
+      let(:path)              { "/organization_roles_view_model/#{ cc_organization[:guid] }/auditors/#{ cc_user[:guid] }" }
       let(:view_model_source) { view_models_organization_roles_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -570,7 +618,7 @@ describe AdminUI::Admin, :type => :integration do
     end
 
     context 'space_roles_view_model detail' do
-      let(:path)              { "/space_roles_view_model/#{ cc_space[:guid] }/#{ cc_user[:guid] }/Auditor" }
+      let(:path)              { "/space_roles_view_model/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }" }
       let(:view_model_source) { view_models_space_roles_detail }
       it_behaves_like('retrieves view_model detail')
     end
