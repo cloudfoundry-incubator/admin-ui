@@ -56,6 +56,10 @@ module VARZHelper
     }
   end
 
+  def varz_dea_app_instance
+    "#{ cc_app[:guid] }_instance1"
+  end
+
   def varz_dea
     {
       'available_disk_ratio'   => 0.1,
@@ -72,9 +76,9 @@ module VARZHelper
       'uptime'                 => '7d:8h:9m:10s',
       'instance_registry'      =>
       {
-        'application1' =>
+        cc_app[:guid] =>
         {
-          'application1_instance1' =>
+          varz_dea_app_instance =>
           {
             'application_id'          => cc_app[:guid],
             'application_name'        => cc_app[:name],

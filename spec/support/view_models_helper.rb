@@ -17,17 +17,17 @@ module ViewModelsHelper
         cc_app[:guid],
         cc_app[:state],
         cc_app[:package_state],
-        varz_dea['instance_registry']['application1']['application1_instance1']['state'],
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
         cc_app[:created_at].to_datetime.rfc3339,
         cc_app[:updated_at].to_datetime.rfc3339,
-        Time.at(varz_dea['instance_registry']['application1']['application1_instance1']['state_running_timestamp']).to_datetime.rfc3339,
-        varz_dea['instance_registry']['application1']['application1_instance1']['application_uris'],
+        Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'],
         cc_app[:detected_buildpack],
-        varz_dea['instance_registry']['application1']['application1_instance1']['instance_index'],
-        varz_dea['instance_registry']['application1']['application1_instance1']['services'].length,
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes']),
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes']),
-        varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100,
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'],
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length,
+        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
+        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
         "#{ cc_organization[:name] }/#{ cc_space[:name] }",
@@ -38,7 +38,7 @@ module ViewModelsHelper
 
   def view_models_applications_detail
     { 'application'  => cc_app,
-      'instance'     => varz_dea['instance_registry']['application1']['application1_instance1'],
+      'instance'     => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance],
       'organization' => cc_organization,
       'space'        => cc_space
     }
@@ -122,10 +122,10 @@ module ViewModelsHelper
         varz_dea['cpu'],
         varz_dea['mem'],
         varz_dea['instance_registry'].length,
-        varz_dea['instance_registry']['application1'].length,
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes']),
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes']),
-        varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100,
+        varz_dea['instance_registry'][cc_app[:guid]].length,
+        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
+        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
         varz_dea['available_memory_ratio'] * 100,
         varz_dea['available_disk_ratio'] * 100
       ]
@@ -241,10 +241,10 @@ module ViewModelsHelper
         1,
         0,
         cc_app[:instances],
-        varz_dea['instance_registry']['application1']['application1_instance1']['services'].length,
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes']),
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes']),
-        varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100,
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length,
+        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
+        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
         1,
@@ -264,6 +264,7 @@ module ViewModelsHelper
   def view_models_organization_roles
     [
       [
+        "#{ cc_organization[:guid] }/auditors/#{ uaa_user[:id] }",
         cc_organization[:name],
         cc_organization[:guid],
         uaa_user[:username],
@@ -271,6 +272,7 @@ module ViewModelsHelper
         'Auditor'
       ],
       [
+        "#{ cc_organization[:guid] }/billing_managers/#{ uaa_user[:id] }",
         cc_organization[:name],
         cc_organization[:guid],
         uaa_user[:username],
@@ -278,6 +280,7 @@ module ViewModelsHelper
         'Billing Manager'
       ],
       [
+        "#{ cc_organization[:guid] }/managers/#{ uaa_user[:id] }",
         cc_organization[:name],
         cc_organization[:guid],
         uaa_user[:username],
@@ -285,6 +288,7 @@ module ViewModelsHelper
         'Manager'
       ],
       [
+        "#{ cc_organization[:guid] }/users/#{ uaa_user[:id] }",
         cc_organization[:name],
         cc_organization[:guid],
         uaa_user[:username],
@@ -483,10 +487,10 @@ module ViewModelsHelper
         1,
         0,
         cc_app[:instances],
-        varz_dea['instance_registry']['application1']['application1_instance1']['services'].length,
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_memory_in_bytes']),
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry']['application1']['application1_instance1']['used_disk_in_bytes']),
-        varz_dea['instance_registry']['application1']['application1_instance1']['computed_pcpu'] * 100,
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length,
+        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
+        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
         1,
@@ -508,6 +512,7 @@ module ViewModelsHelper
   def view_models_space_roles
     [
       [
+        "#{ cc_space[:guid] }/auditors/#{ uaa_user[:id] }",
         cc_space[:name],
         cc_space[:guid],
         "#{ cc_organization[:name] }/#{ cc_space[:name] }",
@@ -516,6 +521,7 @@ module ViewModelsHelper
         'Auditor'
       ],
       [
+        "#{ cc_space[:guid] }/developers/#{ uaa_user[:id] }",
         cc_space[:name],
         cc_space[:guid],
         "#{ cc_organization[:name] }/#{ cc_space[:name] }",
@@ -524,6 +530,7 @@ module ViewModelsHelper
         'Developer'
       ],
       [
+        "#{ cc_space[:guid] }/managers/#{ uaa_user[:id] }",
         cc_space[:name],
         cc_space[:guid],
         "#{ cc_organization[:name] }/#{ cc_space[:name] }",

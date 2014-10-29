@@ -111,6 +111,24 @@ describe AdminUI::Operation, :type => :integration do
       end
     end
 
+    context 'manage organization roles' do
+      it 'deletes specific organization auditor role' do
+        expect { operation.delete_organization_role(cc_organization[:guid], 'auditors', cc_user[:guid]) }.to change { cc.organizations_auditors['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes specific organization billing_manager role' do
+        expect { operation.delete_organization_role(cc_organization[:guid], 'billing_managers', cc_user[:guid]) }.to change { cc.organizations_billing_managers['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes specific organization manager role' do
+        expect { operation.delete_organization_role(cc_organization[:guid], 'managers', cc_user[:guid]) }.to change { cc.organizations_managers['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes specific organization user role' do
+        expect { operation.delete_organization_role(cc_organization[:guid], 'users', cc_user[:guid]) }.to change { cc.organizations_users['items'].length }.from(1).to(0)
+      end
+    end
+
     context 'manage route' do
       before do
         # Make sure there is a route
@@ -130,6 +148,20 @@ describe AdminUI::Operation, :type => :integration do
 
       it 'makes service plan private' do
         expect { operation.manage_service_plan(cc_service_plan[:guid], '{"public": false }') }.to change { cc.service_plans['items'][0][:public].to_s }.from('true').to('false')
+      end
+    end
+
+    context 'manage space roles' do
+      it 'deletes specific space auditor role' do
+        expect { operation.delete_space_role(cc_space[:guid], 'auditors', cc_user[:guid]) }.to change { cc.spaces_auditors['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes specific space developer role' do
+        expect { operation.delete_space_role(cc_space[:guid], 'developers', cc_user[:guid]) }.to change { cc.spaces_developers['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes specific space manager role' do
+        expect { operation.delete_space_role(cc_space[:guid], 'managers', cc_user[:guid]) }.to change { cc.spaces_managers['items'].length }.from(1).to(0)
       end
     end
 

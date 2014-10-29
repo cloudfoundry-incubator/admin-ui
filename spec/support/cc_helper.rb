@@ -24,6 +24,7 @@ module CCHelper
     cc_organization_stubs(config)
     cc_route_stubs(config)
     cc_service_plan_stubs(config)
+    cc_space_stubs(config)
   end
 
   def cc_clear_apps_cache_stub(config)
@@ -507,6 +508,26 @@ module CCHelper
       Net::HTTPNoContent.new(1.0, 204, 'OK')
     end
 
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }/auditors/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      sql(config.ccdb_uri, "DELETE FROM organizations_auditors WHERE organization_id = '#{ cc_organization[:id] }' AND user_id = '#{ cc_user[:id] }'")
+      Net::HTTPCreated.new(1.0, 201, 'Created')
+    end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }/billing_managers/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      sql(config.ccdb_uri, "DELETE FROM organizations_billing_managers WHERE organization_id = '#{ cc_organization[:id] }' AND user_id = '#{ cc_user[:id] }'")
+      Net::HTTPCreated.new(1.0, 201, 'Created')
+    end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }/managers/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      sql(config.ccdb_uri, "DELETE FROM organizations_managers WHERE organization_id = '#{ cc_organization[:id] }' AND user_id = '#{ cc_user[:id] }'")
+      Net::HTTPCreated.new(1.0, 201, 'Created')
+    end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }/users/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      sql(config.ccdb_uri, "DELETE FROM organizations_users WHERE organization_id = '#{ cc_organization[:id] }' AND user_id = '#{ cc_user[:id] }'")
+      Net::HTTPCreated.new(1.0, 201, 'Created')
+    end
+
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }", AdminUI::Utils::HTTP_PUT, anything, "{\"quota_definition_guid\":\"#{ cc_quota_definition2[:guid] }\"}", anything) do
       sql(config.ccdb_uri, "UPDATE organizations SET quota_definition_id = (SELECT id FROM quota_definitions WHERE guid = '#{ cc_quota_definition2[:guid] }')")
       OK.new('{}')
@@ -539,6 +560,23 @@ module CCHelper
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans/#{ cc_service_plan[:guid] }", AdminUI::Utils::HTTP_PUT, anything, '{"public": false }', anything) do
       sql(config.ccdb_uri, "UPDATE service_plans SET public = 'false' WHERE guid = '#{ cc_service_plan[:guid] }'")
       OK.new('{}')
+    end
+  end
+
+  def cc_space_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      sql(config.ccdb_uri, "DELETE FROM spaces_auditors WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")
+      Net::HTTPCreated.new(1.0, 201, 'Created')
+    end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces/#{ cc_space[:guid] }/developers/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      sql(config.ccdb_uri, "DELETE FROM spaces_developers WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")
+      Net::HTTPCreated.new(1.0, 201, 'Created')
+    end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces/#{ cc_space[:guid] }/managers/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      sql(config.ccdb_uri, "DELETE FROM spaces_managers WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")
+      Net::HTTPCreated.new(1.0, 201, 'Created')
     end
   end
 
