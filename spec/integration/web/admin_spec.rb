@@ -23,10 +23,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
     let(:allowscriptaccess) { 'sameDomain' }
 
-    def check_allowscriptaccess_attribute(copy_node_id, flash_node_id)
+    def check_allowscriptaccess_attribute(copy_node_id)
       expect(@driver.find_element(:id => copy_node_id).text).to eq('Copy')
-      el = @driver.find_element(:id => flash_node_id)
-      expect(el.attribute('allowscriptaccess')).to eq(allowscriptaccess)
+      expect(@driver.find_element(:xpath => "//a[@id='#{ copy_node_id }']/div/embed").attribute('allowscriptaccess')).to eq('sameDomain')
     end
 
     def refresh_button
@@ -179,6 +178,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
     context 'tabs' do
       let(:table_has_data) { true }
+
       before do
         # Move click action into the wait blog to ensure relevant tab has been clicked and rendered
         # This part is modified to fit Travis CI system.
@@ -209,6 +209,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Organizations' do
         let(:tab_id) { 'Organizations' }
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 6,
@@ -221,6 +222,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                               }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td"),
                            [
                              '',
@@ -254,7 +256,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_OrganizationsTable_5', 'ZeroClipboard_TableToolsMovie_1')
+          check_allowscriptaccess_attribute('ToolTables_OrganizationsTable_5')
         end
 
         it 'has a checkbox in the first column' do
@@ -265,6 +267,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
         context 'set quota' do
           let(:insert_second_quota_definition) { true }
+
           def check_first_row
             @driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")[0].click
           end
@@ -450,6 +453,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           before do
             select_first_row
           end
+
           it 'has details' do
             check_details([{ :label => 'Name',               :tag => 'div', :value => cc_organization[:name] },
                            { :label => 'GUID',               :tag =>   nil, :value => cc_organization[:guid] },
@@ -480,30 +484,39 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Failed Apps',        :tag =>   nil, :value => cc_app[:package_state] == 'FAILED'  ? '1' : '0' }
                           ])
           end
+
           it 'has spaces link' do
             check_filter_link('Organizations', 6, 'Spaces', "#{ cc_organization[:name] }/")
           end
+
           it 'has organization roles link' do
             check_filter_link('Organizations', 7, 'OrganizationRoles', cc_organization[:name])
           end
+
           it 'has space roles link' do
             check_filter_link('Organizations', 8, 'SpaceRoles', "#{ cc_organization[:name] }/")
           end
+
           it 'has quota link' do
             check_filter_link('Organizations', 9, 'Quotas', cc_quota_definition[:name])
           end
+
           it 'has domain link' do
             check_filter_link('Organizations', 10, 'Domains', cc_organization[:name])
           end
+
           it 'has routes link' do
             check_filter_link('Organizations', 11, 'Routes', "#{ cc_organization[:name] }/")
           end
+
           it 'has instances link' do
             check_filter_link('Organizations', 14, 'Applications', "#{ cc_organization[:name] }/")
           end
+
           it 'has services link' do
             check_filter_link('Organizations', 15, 'ServiceInstances', "#{ cc_organization[:name] }/")
           end
+
           it 'has applications link' do
             check_filter_link('Organizations', 21, 'Applications', "#{ cc_organization[:name] }/")
           end
@@ -512,6 +525,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Spaces' do
         let(:tab_id) { 'Spaces' }
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 6,
@@ -525,6 +539,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                               }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='SpacesTable']/tbody/tr/td"),
                            [
                              cc_space[:name],
@@ -553,13 +568,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_SpacesTable_0', 'ZeroClipboard_TableToolsMovie_5')
+          check_allowscriptaccess_attribute('ToolTables_SpacesTable_0')
         end
 
         context 'selectable' do
           before do
             select_first_row
           end
+
           it 'has details' do
             check_details([{ :label => 'Name',            :tag => 'div', :value => cc_space[:name] },
                            { :label => 'GUID',            :tag =>   nil, :value => cc_space[:guid] },
@@ -585,21 +601,27 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Failed Apps',     :tag =>   nil, :value => cc_app[:package_state] == 'FAILED'  ? '1' : '0' }
                           ])
           end
+
           it 'has organization link' do
             check_filter_link('Spaces', 2, 'Organizations', cc_organization[:name])
           end
+
           it 'has space roles link' do
             check_filter_link('Spaces', 5, 'SpaceRoles', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
+
           it 'has routes link' do
             check_filter_link('Spaces', 6, 'Routes', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
+
           it 'has instances link' do
             check_filter_link('Spaces', 9, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
+
           it 'has services link' do
             check_filter_link('Spaces', 10, 'ServiceInstances', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
+
           it 'has applications link' do
             check_filter_link('Spaces', 16, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
@@ -608,6 +630,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Applications' do
         let(:tab_id) { 'Applications' }
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 4,
@@ -621,6 +644,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                               }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td"),
                            [
                              '',
@@ -647,7 +671,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ApplicationsTable_4', 'ZeroClipboard_TableToolsMovie_9')
+          check_allowscriptaccess_attribute('ToolTables_ApplicationsTable_4')
         end
 
         it 'has a checkbox in the first column' do
@@ -713,14 +737,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it_behaves_like('click start button without selecting a single row') do
             let(:buttonId) { 'ToolTables_ApplicationsTable_0' }
           end
+
           # Stop button
           it_behaves_like('click start button without selecting a single row') do
             let(:buttonId) { 'ToolTables_ApplicationsTable_1' }
           end
+
           # Restart button
           it_behaves_like('click start button without selecting a single row') do
             let(:buttonId) { 'ToolTables_ApplicationsTable_2' }
           end
+
           # Delete button
           it_behaves_like('click start button without selecting a single row') do
             let(:buttonId) { 'ToolTables_ApplicationsTable_3' }
@@ -731,6 +758,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             manage_application(1)
             check_app_state('STOPPED')
           end
+
           it 'starts the selected application' do
             # let app in stopped state first
             manage_application(1)
@@ -740,6 +768,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             manage_application(0)
             check_app_state('STARTED')
           end
+
           it 'restart the selected application' do
             # let app in stopped state first
             manage_application(1)
@@ -807,6 +836,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           before do
             select_first_row
           end
+
           it 'has details' do
             check_details([{ :label => 'Name',            :tag => 'div', :value => cc_app[:name] },
                            { :label => 'GUID',            :tag =>   nil, :value => cc_app[:guid] },
@@ -831,6 +861,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'DEA',             :tag =>   'a', :value => nats_dea['host'] }
                           ])
           end
+
           it 'has services' do
             expect(@driver.find_element(:id => 'ApplicationsServicesDetailsLabel').displayed?).to be_true
             check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsServicesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
@@ -846,12 +877,19 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['plan']
                              ])
           end
+
+          it 'services subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('ToolTables_ApplicationsServicesTable_0')
+          end
+
           it 'has space link' do
             check_filter_link('Applications', 18, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
+
           it 'has organization link' do
             check_filter_link('Applications', 19, 'Organizations', cc_organization[:name])
           end
+
           it 'has DEA link' do
             check_filter_link('Applications', 20, 'DEAs', nats_dea['host'])
           end
@@ -860,6 +898,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Routes' do
         let(:tab_id) { 'Routes' }
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='RoutesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 8,
@@ -867,6 +906,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                               }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='RoutesTable']/tbody/tr/td"),
                            [
                              '',
@@ -881,7 +921,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_RoutesTable_1', 'ZeroClipboard_TableToolsMovie_17')
+          check_allowscriptaccess_attribute('ToolTables_RoutesTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -951,12 +991,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has domains link' do
             check_filter_link('Routes', 2, 'Domains', cc_domain[:name])
           end
+
           it 'has applications link' do
             check_filter_link('Routes', 5, 'Applications', "#{ cc_route[:host] }.#{ cc_domain[:name] }")
           end
+
           it 'has space link' do
             check_filter_link('Routes', 6, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name]}")
           end
+
           it 'has organization link' do
             check_filter_link('Routes', 7, 'Organizations', cc_organization[:name])
           end
@@ -965,6 +1008,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Service Instances' do
         let(:tab_id) { 'ServiceInstances' }
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 5,
@@ -978,6 +1022,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                               }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='ServiceInstancesTable']/tbody/tr/td"),
                            [
                              cc_service_broker[:name],
@@ -1006,13 +1051,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ServiceInstancesTable_0', 'ZeroClipboard_TableToolsMovie_21')
+          check_allowscriptaccess_attribute('ToolTables_ServiceInstancesTable_0')
         end
 
         context 'selectable' do
           before do
             select_first_row
           end
+
           it 'has details' do
             tags = JSON.parse(cc_service[:tags])
             check_details([{ :label => 'Service Instance Name',          :tag => 'div', :value => cc_service_instance[:name] },
@@ -1048,6 +1094,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Organization',                   :tag =>   'a', :value => cc_organization[:name] }
                           ])
           end
+
           it 'has bound applications' do
             expect(@driver.find_element(:id => 'ServiceInstancesApplicationsDetailsLabel').displayed?).to be_true
             check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesApplicationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
@@ -1060,12 +1107,19 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                @driver.execute_script("return Format.formatDateString(\"#{ cc_service_binding[:created_at].to_datetime.rfc3339 }\")")
                              ])
           end
+
+          it 'apps subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('ToolTables_ServiceInstancesApplicationsTable_0')
+          end
+
           it 'has service plan link' do
             check_filter_link('ServiceInstances', 22, 'ServicePlans', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
           end
+
           it 'has space link' do
             check_filter_link('ServiceInstances', 29, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
+
           it 'has organization link' do
             check_filter_link('ServiceInstances', 30, 'Organizations', cc_organization[:name])
           end
@@ -1074,6 +1128,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Organization Roles' do
         let(:tab_id) { 'OrganizationRoles' }
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
@@ -1086,6 +1141,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                               }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='OrganizationRolesTable']/tbody/tr/td"),
                            [
                              '',
@@ -1098,7 +1154,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_OrganizationRolesTable_1', 'ZeroClipboard_TableToolsMovie_33')
+          check_allowscriptaccess_attribute('ToolTables_OrganizationRolesTable_1')
         end
 
         context 'manage organization roles' do
@@ -1139,6 +1195,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           before do
             select_first_row
           end
+
           it 'has details' do
             check_details([{ :label => 'Organization',      :tag => 'div', :value => cc_organization[:name] },
                            { :label => 'Organization GUID', :tag =>   nil, :value => cc_organization[:guid] },
@@ -1147,9 +1204,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Role',              :tag =>   nil, :value => 'Auditor' }
                           ])
           end
+
           it 'has organizations link' do
             check_filter_link('OrganizationRoles', 0, 'Organizations', cc_organization[:name])
           end
+
           it 'has users link' do
             check_filter_link('OrganizationRoles', 2, 'Users', uaa_user[:username])
           end
@@ -1158,6 +1217,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Space Roles' do
         let(:tab_id) { 'SpaceRoles' }
+
         it 'has a table' do
           check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
@@ -1170,6 +1230,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                                           }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='SpaceRolesTable']/tbody/tr/td"),
                            [
                              '',
@@ -1183,7 +1244,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_SpaceRolesTable_1', 'ZeroClipboard_TableToolsMovie_33')
+          check_allowscriptaccess_attribute('ToolTables_SpaceRolesTable_1')
         end
 
         context 'manage space roles' do
@@ -1224,6 +1285,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           before do
             select_first_row
           end
+
           it 'has details' do
             check_details([{ :label => 'Space',        :tag => 'div', :value => cc_space[:name] },
                            { :label => 'Space GUID',   :tag =>   nil, :value => cc_space[:guid] },
@@ -1233,12 +1295,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Role',         :tag =>   nil, :value => 'Auditor' }
                           ])
           end
+
           it 'has spaces link' do
             check_filter_link('SpaceRoles', 0, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
+
           it 'has organizations link' do
             check_filter_link('SpaceRoles', 2, 'Organizations', cc_organization[:name])
           end
+
           it 'has users link' do
             check_filter_link('SpaceRoles', 3, 'Users', uaa_user[:username])
           end
@@ -1247,6 +1312,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Users' do
         let(:tab_id) { 'Users' }
+
         it 'has a table' do
           check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
@@ -1260,6 +1326,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                               }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='UsersTable']/tbody/tr/td"),
                            [
                              uaa_user[:username],
@@ -1285,13 +1352,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_UsersTable_0', 'ZeroClipboard_TableToolsMovie_33')
+          check_allowscriptaccess_attribute('ToolTables_UsersTable_0')
         end
 
         context 'selectable' do
           before do
             select_first_row
           end
+
           it 'has details' do
             check_details([{ :label => 'Username',                           :tag => 'div', :value => uaa_user[:username] },
                            { :label => 'GUID',                               :tag =>   nil, :value => uaa_user[:id] },
@@ -1314,9 +1382,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Space Manager Roles',                :tag =>   nil, :value => '1' }
                           ])
           end
+
           it 'has organization roles link' do
             check_filter_link('Users', 10, 'OrganizationRoles', uaa_user[:username])
           end
+
           it 'has space roles link' do
             check_filter_link('Users', 15, 'SpaceRoles', uaa_user[:username])
           end
@@ -1325,6 +1395,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Domains' do
         let(:tab_id) { 'Domains' }
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DomainsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 6,
@@ -1332,6 +1403,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                               }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='DomainsTable']/tbody/tr/td"),
                            [
                              cc_domain[:name],
@@ -1344,13 +1416,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_DomainsTable_0', 'ZeroClipboard_TableToolsMovie_33')
+          check_allowscriptaccess_attribute('ToolTables_DomainsTable_0')
         end
 
         context 'selectable' do
           before do
             select_first_row
           end
+
           it 'has details' do
             check_details([{ :label => 'Name',         :tag => 'div', :value => cc_domain[:name] },
                            { :label => 'GUID',         :tag =>   nil, :value => cc_domain[:guid] },
@@ -1360,9 +1433,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Routes',       :tag =>   'a', :value => '1' }
                           ])
           end
+
           it 'has organizations link' do
             check_filter_link('Domains', 4, 'Organizations', cc_organization[:name])
           end
+
           it 'has routes link' do
             check_filter_link('Domains', 5, 'Routes', cc_domain[:name])
           end
@@ -1371,6 +1446,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Quotas' do
         let(:tab_id) { 'Quotas' }
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='QuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 10,
@@ -1378,6 +1454,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                               }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='QuotasTable']/tbody/tr/td"),
                            [
                              cc_quota_definition[:name],
@@ -1394,13 +1471,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_QuotasTable_0', 'ZeroClipboard_TableToolsMovie_33')
+          check_allowscriptaccess_attribute('ToolTables_QuotasTable_0')
         end
 
         context 'selectable' do
           before do
             select_first_row
           end
+
           it 'has details' do
             check_details([{ :label => 'Name',                       :tag => 'div', :value => cc_quota_definition[:name] },
                            { :label => 'GUID',                       :tag =>   nil, :value => cc_quota_definition[:guid] },
@@ -1414,6 +1492,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Organizations',              :tag =>   'a', :value => '1' }
                           ])
           end
+
           it 'has organizations link' do
             check_filter_link('Quotas', 9, 'Organizations', cc_quota_definition[:name])
           end
@@ -1422,6 +1501,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Service Plans' do
         let(:tab_id) { 'ServicePlans' }
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
@@ -1435,6 +1515,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                               }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td"),
                            [
                              '',
@@ -1464,7 +1545,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ServicePlansTable_2', 'ZeroClipboard_TableToolsMovie_37')
+          check_allowscriptaccess_attribute('ToolTables_ServicePlansTable_2')
         end
 
         context 'selectable' do
@@ -1502,6 +1583,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Long Description',       :tag =>   nil, :value => value_extra_json['longDescription'] }
                           ])
           end
+
           it 'has visible organizations' do
             expect(@driver.find_element(:id => 'ServicePlansOrganizationsDetailsLabel').displayed?).to be_true
             check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansOrganizationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
@@ -1513,6 +1595,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                cc_organization[:name],
                                @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan_visibility[:created_at].to_datetime.rfc3339 }\")")
                              ])
+          end
+
+          it 'organizations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('ToolTables_ServicePlansOrganizationsTable_0')
           end
 
           it 'has a checkbox in the first column' do
@@ -1595,6 +1681,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'DEAs' do
         let(:tab_id) { 'DEAs' }
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 3,
@@ -1607,6 +1694,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                               }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='DEAsTable']/tbody/tr/td"),
                            [
                              varz_dea['host'],
@@ -1625,16 +1713,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })")
                            ])
         end
+
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_DEAsTable_1', 'ZeroClipboard_TableToolsMovie_41')
+          check_allowscriptaccess_attribute('ToolTables_DEAsTable_1')
         end
+
         it 'has a create DEA button' do
           expect(@driver.find_element(:id => 'ToolTables_DEAsTable_0').text).to eq('Create new DEA')
         end
+
         context 'selectable' do
           before do
             select_first_row
           end
+
           it 'has details' do
             check_details([{ :label => 'Name',                  :tag => nil, :value => varz_dea['host'] },
                            { :label => 'Index',                 :tag => nil, :value => varz_dea['index'].to_s },
@@ -1656,6 +1748,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Disk Free',             :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") }%" }
                           ])
           end
+
           it 'has applications link' do
             check_filter_link('DEAs', 7, 'Applications', varz_dea['host'])
           end
@@ -1664,6 +1757,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Cloud Controllers' do
         let(:tab_id) { 'CloudControllers' }
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='CloudControllersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                 :expected_length => 7,
@@ -1671,6 +1765,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                               }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='CloudControllersTable']/tbody/tr/td"),
                            [
                              nats_cloud_controller['host'],
@@ -1684,7 +1779,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_CloudControllersTable_0', 'ZeroClipboard_TableToolsMovie_45')
+          check_allowscriptaccess_attribute('ToolTables_CloudControllersTable_0')
         end
 
         context 'selectable' do
@@ -1707,6 +1802,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Health Managers' do
         let(:tab_id) { 'HealthManagers' }
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='HealthManagersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                 :expected_length => 10,
@@ -1714,6 +1810,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                                }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='HealthManagersTable']/tbody/tr/td"),
                            [
                              nats_health_manager['host'],
@@ -1730,7 +1827,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_HealthManagersTable_0', 'ZeroClipboard_TableToolsMovie_49')
+          check_allowscriptaccess_attribute('ToolTables_HealthManagersTable_0')
         end
 
         context 'selectable' do
@@ -1756,6 +1853,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Service Gateways' do
         let(:tab_id) { 'Gateways' }
+
         before do
           @capacity = 0
           varz_provisioner['nodes'].each do |node|
@@ -1764,6 +1862,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             end
           end
         end
+
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='GatewaysTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                 :expected_length => 9,
@@ -1771,6 +1870,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                 :colspans        => nil
                                }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='GatewaysTable']/tbody/tr/td"),
                            [
                              nats_provisioner['type'][0..-13],
@@ -1786,13 +1886,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_GatewaysTable_0', 'ZeroClipboard_TableToolsMovie_53')
+          check_allowscriptaccess_attribute('ToolTables_GatewaysTable_0')
         end
 
         context 'selectable' do
           before do
             select_first_row
           end
+
           it 'has details' do
             check_details([{ :label => 'Name',                 :tag => nil, :value => nats_provisioner['type'][0..-13] },
                            { :label => 'Index',                :tag => nil, :value => varz_provisioner['index'].to_s },
@@ -1807,6 +1908,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Available Capacity',   :tag => nil, :value => @capacity.to_s }
                           ])
           end
+
           it 'has nodes' do
             expect(@driver.find_element(:id => 'GatewaysNodesDetailsLabel').displayed?).to be_true
             check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='GatewaysNodesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
@@ -1819,11 +1921,16 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                varz_provisioner['nodes'][varz_provisioner['nodes'].keys[0]]['available_capacity'].to_s
                              ])
           end
+
+          it 'nodes subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('ToolTables_GatewaysNodesTable_0')
+          end
         end
       end
 
       context 'Routers' do
         let(:tab_id) { 'Routers' }
+
         it 'has a table' do
           check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='RoutersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                  :expected_length => 10,
@@ -1831,6 +1938,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                  :colspans        => nil
                                }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='RoutersTable']/tbody/tr/td"),
                            [
                              nats_router['host'],
@@ -1847,13 +1955,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_RoutersTable_0', 'ZeroClipboard_TableToolsMovie_61')
+          check_allowscriptaccess_attribute('ToolTables_RoutersTable_0')
         end
 
         context 'selectable' do
           before do
             select_first_row
           end
+
           it 'has details' do
             check_details([{ :label => 'Name',          :tag => nil, :value => nats_router['host'] },
                            { :label => 'Index',         :tag => nil, :value => varz_router['index'].to_s },
@@ -1873,12 +1982,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'XXX Responses', :tag => nil, :value => varz_router['responses_xxx'].to_s }
                           ])
           end
+
           it 'has top10 applications' do
             expect(@driver.find_element(:id => 'RoutersTop10ApplicationsDetailsLabel').displayed?).to be_true
             check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='RoutersTop10ApplicationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
                                 :expected_length => 4,
                                 :labels          => %w(Name RPM RPS Target),
                                 :colspans        => nil)
+
             check_table_data(@driver.find_elements(:xpath => "//table[@id='RoutersTop10ApplicationsTable']/tbody/tr/td"),
                              [
                                cc_app[:name],
@@ -1887,11 +1998,16 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                "#{ cc_organization[:name] }/#{ cc_space[:name] }"
                              ])
           end
+
+          it 'top10 subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('ToolTables_RoutersTop10ApplicationsTable_0')
+          end
         end
       end
 
       context 'Components' do
         let(:tab_id) { 'Components' }
+
         it 'has a table' do
           check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='ComponentsTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                  :expected_length => 5,
@@ -1899,6 +2015,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                  :colspans        => nil
                                }
                              ])
+
           check_table_data(@driver.find_elements(:xpath => "//table[@id='ComponentsTable']/tbody/tr/td"),
                            [
                              nats_cloud_controller['host'],
@@ -1910,12 +2027,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ComponentsTable_1', 'ZeroClipboard_TableToolsMovie_65')
+          check_allowscriptaccess_attribute('ToolTables_ComponentsTable_1')
         end
 
         it 'has a remove OFFLINE components button' do
           expect(@driver.find_element(:id => 'ToolTables_ComponentsTable_0').text).to eq('Remove OFFLINE')
         end
+
         context 'selectable' do
           it 'has details' do
             select_first_row
@@ -1932,6 +2050,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Logs' do
         let(:tab_id) { 'Logs' }
+
         it 'has a table' do
           check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='LogsTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                  :expected_length => 3,
@@ -1940,6 +2059,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                                }
                              ])
         end
+
         it 'has contents' do
           row = first_row
           row.click
@@ -1953,14 +2073,16 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           expect(@driver.find_element(:id => 'LogLink').text).to eq(columns[0].text)
           expect(@driver.find_element(:id => 'LogContents').text).to eq(log_file_displayed_contents)
         end
+
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_LogsTable_0', 'ZeroClipboard_TableToolsMovie_69')
+          check_allowscriptaccess_attribute('ToolTables_LogsTable_0')
         end
       end
 
       context 'Tasks' do
         let(:tab_id) { 'Tasks' }
         let(:table_has_data) { false }
+
         it 'has a table' do
           check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='TasksTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
                                  :expected_length => 3,
@@ -1971,7 +2093,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_TasksTable_0', 'ZeroClipboard_TableToolsMovie_73')
+          check_allowscriptaccess_attribute('ToolTables_TasksTable_0')
         end
 
         it 'can show task output' do
@@ -2009,16 +2131,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
       context 'Stats' do
         let(:tab_id) { 'Stats' }
+
         context 'statistics' do
           before do
             refresh_button
           end
+
           it 'has a table' do
             check_stats_table('Stats')
           end
+
           it 'has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('ToolTables_StatsTable_1', 'ZeroClipboard_TableToolsMovie_77')
+            check_allowscriptaccess_attribute('ToolTables_StatsTable_1')
           end
+
           it 'has a chart' do
             check_stats_chart('Stats')
           end
@@ -2051,6 +2177,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           @driver.find_element(:id => 'modalDialogButton1').click
           check_default_stats_table
         end
+
         it 'can create stats' do
           check_default_stats_table
           @driver.find_element(:id => 'ToolTables_StatsTable_0').click
