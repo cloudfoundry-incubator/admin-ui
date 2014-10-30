@@ -212,9 +212,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 6,
-                                :labels          => ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                :colspans        => %w(11 3 5 2 3 3)
+                                :expected_length => 7,
+                                :labels          => ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
+                                :colspans        => %w(1 10 3 5 2 3 3)
                               },
                               { :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 27,
@@ -633,9 +633,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 4,
-                                :labels          => ['', 'Used', 'Reserved', ''],
-                                :colspans        => %w(12 4 2 2)
+                                :expected_length => 5,
+                                :labels          => ['', '', 'Used', 'Reserved', ''],
+                                :colspans        => %w(1 11 4 2 2)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
@@ -1131,9 +1131,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 3,
-                                :labels          => ['Organization', 'User', ''],
-                                :colspans        => %w(3 2 1)
+                                :expected_length => 4,
+                                :labels          => ['', 'Organization', 'User', ''],
+                                :colspans        => %w(1 2 2 1)
                               },
                               { :columns => @driver.find_elements(:xpath => "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 6,
@@ -1220,9 +1220,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
         it 'has a table' do
           check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 3,
-                                :labels          => ['Space', 'User', ''],
-                                :colspans        => %w(4 2 1)
+                                :expected_length => 4,
+                                :labels          => ['', 'Space', 'User', ''],
+                                :colspans        => %w(1 3 2 1)
                               },
                               { :columns => @driver.find_elements(:xpath => "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 :expected_length => 7,
@@ -1504,9 +1504,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
         it 'has a table' do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 3,
-                                :labels          => ['Service Plan', 'Service', 'Service Broker'],
-                                :colspans        => %w(11 8 4)
+                                :expected_length => 4,
+                                :labels          => ['', 'Service Plan', 'Service', 'Service Broker'],
+                                :colspans        => %w(1 10 8 4)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
