@@ -1060,7 +1060,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            tags = JSON.parse(cc_service[:tags])
+            service_tags_json = JSON.parse(cc_service[:tags])
             check_details([{ :label => 'Service Instance Name',          :tag => 'div', :value => cc_service_instance[:name] },
                            { :label => 'Service Instance GUID',          :tag =>   nil, :value => cc_service_instance[:guid] },
                            { :label => 'Service Instance Created',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:created_at].to_datetime.rfc3339 }\")") },
@@ -1079,8 +1079,8 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Description',            :tag =>   nil, :value => cc_service[:description] },
                            { :label => 'Service Bindable',               :tag =>   nil, :value => cc_service[:bindable].to_s },
                            { :label => 'Service Extra',                  :tag =>   nil, :value => cc_service[:extra] },
-                           { :label => 'Service Tag',                    :tag =>   nil, :value => tags[0] },
-                           { :label => 'Service Tag',                    :tag =>   nil, :value => tags[1] },
+                           { :label => 'Service Tag',                    :tag =>   nil, :value => service_tags_json[0] },
+                           { :label => 'Service Tag',                    :tag =>   nil, :value => service_tags_json[1] },
                            { :label => 'Service Documentation URL',      :tag =>   nil, :value => cc_service[:documentation_url] },
                            { :label => 'Service Info URL',               :tag =>   nil, :value => cc_service[:info_url] },
                            { :label => 'Service Plan Name',              :tag =>   'a', :value => cc_service_plan[:name] },
@@ -1554,7 +1554,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            value_extra_json = JSON.parse(cc_service[:extra])
+            service_tags_json = JSON.parse(cc_service[:tags])
+            service_extra_json = JSON.parse(cc_service[:extra])
+            service_plan_extra_json = JSON.parse(cc_service_plan[:extra])
             check_details([{ :label => 'Service Plan Name',              :tag => 'div', :value => cc_service_plan[:name] },
                            { :label => 'Service Plan GUID',              :tag =>   nil, :value => cc_service_plan[:guid] },
                            { :label => 'Service Plan Created',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
@@ -1563,6 +1565,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Plan Public',            :tag =>   nil, :value => cc_service_plan[:public].to_s },
                            { :label => 'Service Plan Free',              :tag =>   nil, :value => cc_service_plan[:free].to_s },
                            { :label => 'Service Plan Description',       :tag =>   nil, :value => cc_service_plan[:description] },
+                           { :label => 'Service Plan Display Name',      :tag =>   nil, :value => service_plan_extra_json['displayName'] },
+                           { :label => 'Service Plan Bullet',            :tag =>   nil, :value => service_plan_extra_json['bullets'][0] },
+                           { :label => 'Service Plan Bullet',            :tag =>   nil, :value => service_plan_extra_json['bullets'][1] },
                            { :label => 'Service Instances',              :tag =>   'a', :value => '1' },
                            { :label => 'Service Broker Name',            :tag =>   nil, :value => cc_service_broker[:name] },
                            { :label => 'Service Broker GUID',            :tag =>   nil, :value => cc_service_broker[:guid] },
@@ -1577,10 +1582,16 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Active',                 :tag =>   nil, :value => cc_service[:active].to_s },
                            { :label => 'Service Bindable',               :tag =>   nil, :value => cc_service[:bindable].to_s },
                            { :label => 'Service Description',            :tag =>   nil, :value => cc_service[:description] },
-                           { :label => 'Service Display Name',           :tag =>   nil, :value => value_extra_json['displayName'] },
-                           { :label => 'Service Provider Display Name',  :tag =>   nil, :value => value_extra_json['providerDisplayName'] },
-                           { :label => 'Service Icon',                   :tag => 'img', :value => @driver.execute_script("return Format.formatIconImage(\"#{ value_extra_json['imageUrl'] }\", \"service icon\", \"flot:left;\")").gsub(/'/, "\"").gsub(/[ ]+/, ' ').gsub(/ >/, '>') },
-                           { :label => 'Service Long Description',       :tag =>   nil, :value => value_extra_json['longDescription'] }
+                           { :label => 'Service Tag',                    :tag =>   nil, :value => service_tags_json[0] },
+                           { :label => 'Service Tag',                    :tag =>   nil, :value => service_tags_json[1] },
+                           { :label => 'Service Documentation URL',      :tag =>   'a', :value => cc_service[:documentation_url] },
+                           { :label => 'Service Info URL',               :tag =>   'a', :value => cc_service[:info_url] },
+                           { :label => 'Service Display Name',           :tag =>   nil, :value => service_extra_json['displayName'] },
+                           { :label => 'Service Provider Display Name',  :tag =>   nil, :value => service_extra_json['providerDisplayName'] },
+                           { :label => 'Service Icon',                   :tag => 'img', :value => @driver.execute_script("return Format.formatIconImage(\"#{ service_extra_json['imageUrl'] }\", \"service icon\", \"flot:left;\")").gsub(/'/, "\"").gsub(/[ ]+/, ' ').gsub(/ >/, '>') },
+                           { :label => 'Service Long Description',       :tag =>   nil, :value => service_extra_json['longDescription'] },
+                           { :label => 'Service Documentation URL',      :tag =>   'a', :value => service_extra_json['documentationUrl'] },
+                           { :label => 'Service Support URL',            :tag =>   'a', :value => service_extra_json['supportUrl'] }
                           ])
           end
 
@@ -1608,7 +1619,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has service instances link to service instances filtered by service plan target' do
-            check_filter_link('ServicePlans', 8, 'ServiceInstances', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
+            check_filter_link('ServicePlans', 11, 'ServiceInstances', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
           end
 
           context 'manage service plans' do
