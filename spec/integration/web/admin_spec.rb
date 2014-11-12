@@ -2181,7 +2181,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
           expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
           expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
-          rows = @driver.find_elements(:xpath => "//span[@id='ModalDialogContents']/div/table/tbody/tr")
+          rows = @driver.find_elements(:xpath => "//div[@id='ModalDialogContentsSimple']/div/table/tbody/tr")
           rows.each do |row|
             expect(row.find_element(:class_name => 'cellRightAlign').text).to eq('1')
           end

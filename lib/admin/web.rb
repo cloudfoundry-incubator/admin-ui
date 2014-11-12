@@ -1,4 +1,5 @@
 require 'sinatra'
+require_relative 'cc_rest_client_response_error'
 require_relative 'logger'
 require_relative 'view_models/all_actions'
 require_relative 'view_models/download'
@@ -441,8 +442,13 @@ module AdminUI
         @operation.create_organization(control_message)
 
         204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during create organization: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
       rescue => error
-        @logger.debug("Error during creating organization: #{ error.inspect }")
+        @logger.debug("Error during create organization: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -582,6 +588,11 @@ module AdminUI
         @operation.manage_application(params[:app_guid], control_message)
 
         204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during update application: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
       rescue => error
         @logger.debug("Error during update application: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -596,6 +607,11 @@ module AdminUI
         @operation.manage_organization(params[:org_guid], control_message)
 
         204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during update organization: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
       rescue => error
         @logger.debug("Error during update organization: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -610,8 +626,13 @@ module AdminUI
         @operation.manage_service_plan(params[:service_plan_guid], control_message)
 
         204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during update service plan: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
       rescue => error
-        @logger.debug("Error during update to service plan #{ error.inspect }")
+        @logger.debug("Error during update service plan #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -622,8 +643,13 @@ module AdminUI
       begin
         @operation.delete_application(params[:app_guid])
         204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete application: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
       rescue => error
-        @logger.debug("Error during deleting application: #{ error.inspect }")
+        @logger.debug("Error during delete application: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -646,8 +672,13 @@ module AdminUI
       begin
         @operation.delete_organization(params[:org_guid])
         204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete organization: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
       rescue => error
-        @logger.debug("Error during deleting organization: #{ error.inspect }")
+        @logger.debug("Error during delete organization: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -658,8 +689,13 @@ module AdminUI
       begin
         @operation.delete_organization_role(params[:org_guid], params[:role], params[:user_guid])
         204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete organization role: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
       rescue => error
-        @logger.debug("Error during deleting organization role: #{ error.inspect }")
+        @logger.debug("Error during delete organization role: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -670,8 +706,13 @@ module AdminUI
       begin
         @operation.delete_route(params[:route_guid])
         204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete route: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
       rescue => error
-        @logger.debug("Error during deleting route: #{ error.inspect }")
+        @logger.debug("Error during delete route: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -682,8 +723,13 @@ module AdminUI
       begin
         @operation.delete_space_role(params[:space_guid], params[:role], params[:user_guid])
         204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete space role: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
       rescue => error
-        @logger.debug("Error during deleting space role: #{ error.inspect }")
+        @logger.debug("Error during delete space role: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
