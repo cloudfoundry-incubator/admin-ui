@@ -1,6 +1,7 @@
 require_relative '../lib/admin'
 require_relative '../lib/admin/cc'
 require_relative '../lib/admin/cc_rest_client'
+require_relative '../lib/admin/cc_rest_client_response_error'
 require_relative '../lib/admin/config'
 require_relative '../lib/admin/login'
 require_relative '../lib/admin/nats'

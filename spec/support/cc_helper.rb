@@ -15,7 +15,34 @@ module CCHelper
     end
   end
 
+  # Workaround since I cannot instantiate Net::HTTPNotFound and have body() function successfully
+  # Failing with NoMethodError: undefined method `closed?
+  class NotFound < Net::HTTPNotFound
+    attr_reader :body
+    def initialize(hash)
+      super(1.0, 404, 'NotFound')
+      @body = hash.to_json
+    end
+  end
+
+  # Workaround since I cannot instantiate Net::HTTPBadRequest and have body() function successfully
+  # Failing with NoMethodError: undefined method `closed?
+  class BadRequest < Net::HTTPBadRequest
+    attr_reader :body
+    def initialize(hash)
+      super(1.0, 400, 'BadRequest')
+      @body = hash.to_json
+    end
+  end
+
   def cc_stub(config, insert_second_quota_definition = false)
+    @cc_apps_deleted          = false
+    @cc_organizations_deleted = false
+    @cc_routes_deleted        = false
+    @cc_service_plans_deleted = false
+
+    @cc_organization_created = false
+
     populate_db(config.ccdb_uri,  File.join(File.dirname(__FILE__), './ccdb'), ccdb_inserts(insert_second_quota_definition))
     populate_db(config.uaadb_uri, File.join(File.dirname(__FILE__), './uaadb'), uaadb_inserts)
 
@@ -31,6 +58,8 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM service_bindings')
     sql(config.ccdb_uri, 'DELETE FROM apps_routes')
     sql(config.ccdb_uri, 'DELETE FROM apps')
+
+    @cc_apps_deleted = true
   end
 
   def cc_clear_organizations_cache_stub(config)
@@ -50,11 +79,16 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM organizations_managers')
     sql(config.ccdb_uri, 'DELETE FROM organizations_users')
     sql(config.ccdb_uri, 'DELETE FROM organizations')
+
+    @cc_organizations_deleted = true
+    @cc_organization_created  = false
   end
 
   def cc_clear_routes_cache_stub(config)
     sql(config.ccdb_uri, 'DELETE FROM apps_routes')
     sql(config.ccdb_uri, 'DELETE FROM routes')
+
+    @cc_routes_deleted = true
   end
 
   def cc_clear_service_plans_cache_stub(config)
@@ -62,6 +96,8 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM service_instances')
     sql(config.ccdb_uri, 'DELETE FROM service_plan_visibilities')
     sql(config.ccdb_uri, 'DELETE FROM service_plans')
+
+    @cc_service_plans_deleted = true
   end
 
   def cc_app
@@ -459,20 +495,38 @@ module CCHelper
     ]
   end
 
+  def cc_app_not_found
+    NotFound.new('code'        => 100_004,
+                 'description' => "The app name could not be found: #{ cc_app[:guid] }",
+                 'error_code'  => 'CF-AppNotFound')
+  end
+
   def cc_app_stubs(config)
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps/#{ cc_app[:guid] }", AdminUI::Utils::HTTP_PUT, anything, '{"state":"STOPPED"}', anything) do
-      sql(config.ccdb_uri, "UPDATE apps SET state = 'STOPPED' WHERE guid = '#{ cc_app[:guid] }'")
-      OK.new('{}')
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE apps SET state = 'STOPPED' WHERE guid = '#{ cc_app[:guid] }'")
+        OK.new('{}')
+      end
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps/#{ cc_app[:guid] }", AdminUI::Utils::HTTP_PUT, anything, '{"state":"STARTED"}', anything) do
-      sql(config.ccdb_uri, "UPDATE apps SET state = 'STARTED' WHERE guid = '#{ cc_app[:guid] }'")
-      OK.new('{}')
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE apps SET state = 'STARTED' WHERE guid = '#{ cc_app[:guid] }'")
+        OK.new('{}')
+      end
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps/#{ cc_app[:guid] }?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      cc_clear_apps_cache_stub(config)
-      Net::HTTPNoContent.new(1.0, 204, 'OK')
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        cc_clear_apps_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
     end
   end
 
@@ -486,102 +540,193 @@ module CCHelper
     end
   end
 
+  def cc_organization_not_found
+    NotFound.new('code'        => 30_003,
+                 'description' => "The organization could not be found: #{ cc_organization[:guid] }",
+                 'error_code'  => 'CF-OrganizationNotFound')
+  end
+
+  def cc_organization_taken
+    BadRequest.new('code'        => 30_002,
+                   'description' => "The organization name is taken: #{ cc_organization2[:name] }",
+                   'error_code'  => 'CF-OrganizationNameTaken')
+  end
+
   def cc_organization_stubs(config)
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations", AdminUI::Utils::HTTP_POST, anything, "{\"name\":\"#{ cc_organization2[:name] }\"}", anything) do
-      Sequel.connect(config.ccdb_uri, :single_threaded => false, :max_connections => 1) do |connection|
-        items = connection[:organizations]
-        loop do
-          begin
-            items.insert(cc_organization2)
-            break
-          rescue Sequel::DatabaseError => error
-            wrapped_exception = error.wrapped_exception
-            raise unless wrapped_exception && wrapped_exception.instance_of?(SQLite3::BusyException)
+      if @cc_organization_created
+        cc_organization_taken
+      else
+        Sequel.connect(config.ccdb_uri, :single_threaded => false, :max_connections => 1, :timeout => 1) do |connection|
+          items = connection[:organizations]
+          loop do
+            begin
+              items.insert(cc_organization2)
+              break
+            rescue Sequel::DatabaseError => error
+              wrapped_exception = error.wrapped_exception
+              raise unless wrapped_exception && wrapped_exception.instance_of?(SQLite3::BusyException)
+            end
           end
         end
+        @cc_organization_created = true
+        OK.new('{}')
       end
-      OK.new('{}')
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      cc_clear_organizations_cache_stub(config)
-      Net::HTTPNoContent.new(1.0, 204, 'OK')
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        cc_clear_organizations_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }/auditors/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      sql(config.ccdb_uri, "DELETE FROM organizations_auditors WHERE organization_id = '#{ cc_organization[:id] }' AND user_id = '#{ cc_user[:id] }'")
-      Net::HTTPCreated.new(1.0, 201, 'Created')
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "DELETE FROM organizations_auditors WHERE organization_id = '#{ cc_organization[:id] }' AND user_id = '#{ cc_user[:id] }'")
+        Net::HTTPCreated.new(1.0, 201, 'Created')
+      end
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }/billing_managers/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      sql(config.ccdb_uri, "DELETE FROM organizations_billing_managers WHERE organization_id = '#{ cc_organization[:id] }' AND user_id = '#{ cc_user[:id] }'")
-      Net::HTTPCreated.new(1.0, 201, 'Created')
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "DELETE FROM organizations_billing_managers WHERE organization_id = '#{ cc_organization[:id] }' AND user_id = '#{ cc_user[:id] }'")
+        Net::HTTPCreated.new(1.0, 201, 'Created')
+      end
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }/managers/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      sql(config.ccdb_uri, "DELETE FROM organizations_managers WHERE organization_id = '#{ cc_organization[:id] }' AND user_id = '#{ cc_user[:id] }'")
-      Net::HTTPCreated.new(1.0, 201, 'Created')
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "DELETE FROM organizations_managers WHERE organization_id = '#{ cc_organization[:id] }' AND user_id = '#{ cc_user[:id] }'")
+        Net::HTTPCreated.new(1.0, 201, 'Created')
+      end
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }/users/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      sql(config.ccdb_uri, "DELETE FROM organizations_users WHERE organization_id = '#{ cc_organization[:id] }' AND user_id = '#{ cc_user[:id] }'")
-      Net::HTTPCreated.new(1.0, 201, 'Created')
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "DELETE FROM organizations_users WHERE organization_id = '#{ cc_organization[:id] }' AND user_id = '#{ cc_user[:id] }'")
+        Net::HTTPCreated.new(1.0, 201, 'Created')
+      end
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }", AdminUI::Utils::HTTP_PUT, anything, "{\"quota_definition_guid\":\"#{ cc_quota_definition2[:guid] }\"}", anything) do
-      sql(config.ccdb_uri, "UPDATE organizations SET quota_definition_id = (SELECT id FROM quota_definitions WHERE guid = '#{ cc_quota_definition2[:guid] }')")
-      OK.new('{}')
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE organizations SET quota_definition_id = (SELECT id FROM quota_definitions WHERE guid = '#{ cc_quota_definition2[:guid] }')")
+        OK.new('{}')
+      end
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }", AdminUI::Utils::HTTP_PUT, anything, '{"status":"suspended"}', anything) do
-      sql(config.ccdb_uri, "UPDATE organizations SET status = 'suspended' WHERE guid = '#{ cc_organization[:guid] }'")
-      OK.new('{}')
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE organizations SET status = 'suspended' WHERE guid = '#{ cc_organization[:guid] }'")
+        OK.new('{}')
+      end
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }", AdminUI::Utils::HTTP_PUT, anything, '{"status":"active"}', anything) do
-      sql(config.ccdb_uri, "UPDATE organizations SET status = 'active' WHERE guid = '#{ cc_organization[:guid] }'")
-      OK.new('{}')
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE organizations SET status = 'active' WHERE guid = '#{ cc_organization[:guid] }'")
+        OK.new('{}')
+      end
     end
+  end
+
+  def cc_route_not_found
+    NotFound.new('code'        => 210_002,
+                 'description' => "The route could not be found: #{ cc_route[:guid] }",
+                 'error_code'  => 'CF-RouteNotFound')
   end
 
   def cc_route_stubs(config)
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/routes/#{ cc_route[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      cc_clear_routes_cache_stub(config)
-      Net::HTTPNoContent.new(1.0, 204, 'OK')
+      if @cc_routes_deleted
+        cc_route_not_found
+      else
+        cc_clear_routes_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
     end
+  end
+
+  def cc_service_plan_not_found
+    NotFound.new('code'        => 110_003,
+                 'description' => "The service plan could not be found: #{ cc_service_plan[:guid] }",
+                 'error_code'  => 'CF-ServicePlanNotFound')
   end
 
   def cc_service_plan_stubs(config)
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans/#{ cc_service_plan[:guid] }", AdminUI::Utils::HTTP_PUT, anything, '{"public": true }', anything) do
-      sql(config.ccdb_uri, "UPDATE service_plans SET public = 'true' WHERE guid = '#{ cc_service_plan[:guid] }'")
-      OK.new('{}')
+      if @cc_service_plans_deleted
+        cc_service_plan_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE service_plans SET public = 'true' WHERE guid = '#{ cc_service_plan[:guid] }'")
+        OK.new('{}')
+      end
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans/#{ cc_service_plan[:guid] }", AdminUI::Utils::HTTP_PUT, anything, '{"public": false }', anything) do
-      sql(config.ccdb_uri, "UPDATE service_plans SET public = 'false' WHERE guid = '#{ cc_service_plan[:guid] }'")
-      OK.new('{}')
+      if @cc_service_plans_deleted
+        cc_service_plan_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE service_plans SET public = 'false' WHERE guid = '#{ cc_service_plan[:guid] }'")
+        OK.new('{}')
+      end
     end
+  end
+
+  def cc_space_not_found
+    NotFound.new('code'        => 40_004,
+                 'description' => "The app space could not be found: #{ cc_space[:guid] }",
+                 'error_code'  => 'CF-SpaceNotFound')
   end
 
   def cc_space_stubs(config)
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      sql(config.ccdb_uri, "DELETE FROM spaces_auditors WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")
-      Net::HTTPCreated.new(1.0, 201, 'Created')
+      if @cc_organizations_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "DELETE FROM spaces_auditors WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")
+        Net::HTTPCreated.new(1.0, 201, 'Created')
+      end
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces/#{ cc_space[:guid] }/developers/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      sql(config.ccdb_uri, "DELETE FROM spaces_developers WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")
-      Net::HTTPCreated.new(1.0, 201, 'Created')
+      if @cc_organizations_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "DELETE FROM spaces_developers WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")
+        Net::HTTPCreated.new(1.0, 201, 'Created')
+      end
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces/#{ cc_space[:guid] }/managers/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      sql(config.ccdb_uri, "DELETE FROM spaces_managers WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")
-      Net::HTTPCreated.new(1.0, 201, 'Created')
+      if @cc_organizations_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "DELETE FROM spaces_managers WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")
+        Net::HTTPCreated.new(1.0, 201, 'Created')
+      end
     end
   end
 
   def populate_db(db_uri, path, ordered_inserts)
-    Sequel.connect(db_uri, :single_threaded => false, :max_connections => 1) do |connection|
+    Sequel.connect(db_uri, :single_threaded => false, :max_connections => 1, :timeout => 1) do |connection|
       Sequel::Migrator.apply(connection, path)
 
       ordered_inserts.each do |entry|
