@@ -83,11 +83,24 @@ describe AdminUI::CC, :type => :integration do
       end
     end
 
+    shared_examples 'common view model retrieval detail' do
+      it 'verify view model retrieval detail' do
+        expect(expected).to eq(results)
+      end
+    end
+
     context 'returns connected applications_view_model' do
       let(:results)  { view_models.applications }
       let(:expected) { view_models_applications }
 
       it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected applications_view_model detail' do
+      let(:results)  { view_models.application(cc_app[:guid], varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index']) }
+      let(:expected) { view_models_applications_detail }
+
+      it_behaves_like('common view model retrieval detail')
     end
 
     context 'returns connected cloud_controllers_view_model' do
@@ -97,11 +110,25 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common view model retrieval')
     end
 
+    context 'returns connected cloud_controllers_view_model detail' do
+      let(:results)  { view_models.cloud_controller(nats_cloud_controller['host']) }
+      let(:expected) { view_models_cloud_controllers_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected components_view_model' do
       let(:results)  { view_models.components }
       let(:expected) { view_models_components }
 
       it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected components_view_model detail' do
+      let(:results)  { view_models.component(nats_cloud_controller['host']) }
+      let(:expected) { view_models_cloud_controllers_detail }
+
+      it_behaves_like('common view model retrieval detail')
     end
 
     context 'returns connected deas_view_model' do
@@ -111,11 +138,25 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common view model retrieval')
     end
 
+    context 'returns connected deas_view_model detail' do
+      let(:results)  { view_models.dea(nats_dea['host']) }
+      let(:expected) { view_models_deas_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected domains_view_model' do
       let(:results)  { view_models.domains }
       let(:expected) { view_models_domains }
 
       it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected domains_view_model detail' do
+      let(:results)  { view_models.domain(cc_domain[:guid]) }
+      let(:expected) { view_models_domains_detail }
+
+      it_behaves_like('common view model retrieval detail')
     end
 
     context 'returns connected gateways_view_model' do
@@ -125,11 +166,25 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common view model retrieval')
     end
 
+    context 'returns connected gateways_view_model detail' do
+      let(:results)  { view_models.gateway(nats_provisioner['type'].sub('-Provisioner', '')) }
+      let(:expected) { view_models_gateways_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected health_managers_view_model' do
       let(:results)  { view_models.health_managers }
       let(:expected) { view_models_health_managers }
 
       it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected health_managers_view_model detail' do
+      let(:results)  { view_models.health_manager(nats_health_manager['host']) }
+      let(:expected) { view_models_health_managers_detail }
+
+      it_behaves_like('common view model retrieval detail')
     end
 
     context 'returns connected logs_view_model' do
@@ -148,11 +203,25 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common view model retrieval')
     end
 
+    context 'returns connected organizations_view_model detail' do
+      let(:results)  { view_models.organization(cc_organization[:guid]) }
+      let(:expected) { view_models_organizations_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected organization_roles_view_model' do
       let(:results)  { view_models.organization_roles }
       let(:expected) { view_models_organization_roles }
 
       it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected organization_roles_view_model detail' do
+      let(:results)  { view_models.organization_role(cc_organization[:guid], 'auditors', cc_user[:guid]) }
+      let(:expected) { view_models_organization_roles_detail }
+
+      it_behaves_like('common view model retrieval detail')
     end
 
     context 'returns connected quotas_view_model' do
@@ -162,11 +231,25 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common view model retrieval')
     end
 
+    context 'returns connected quotas_view_model detail' do
+      let(:results)  { view_models.quota(cc_quota_definition[:guid]) }
+      let(:expected) { view_models_quotas_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected routers_view_model' do
       let(:results)  { view_models.routers }
       let(:expected) { view_models_routers }
 
       it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected routers_view_model detail' do
+      let(:results)  { view_models.router(nats_router['host']) }
+      let(:expected) { view_models_routers_detail }
+
+      it_behaves_like('common view model retrieval detail')
     end
 
     context 'returns connected routes_view_model' do
@@ -176,11 +259,25 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common view model retrieval')
     end
 
+    context 'returns connected routes_view_model detail' do
+      let(:results)  { view_models.route(cc_route[:guid]) }
+      let(:expected) { view_models_routes_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected service_instances_view_model' do
       let(:results)  { view_models.service_instances }
       let(:expected) { view_models_service_instances }
 
       it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected service_instances_view_model detail' do
+      let(:results)  { view_models.service_instance(cc_service_instance[:guid]) }
+      let(:expected) { view_models_service_instances_detail }
+
+      it_behaves_like('common view model retrieval detail')
     end
 
     context 'returns connected service_plans_view_model' do
@@ -190,6 +287,13 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common view model retrieval')
     end
 
+    context 'returns connected service_plans_view_model detail' do
+      let(:results)  { view_models.service_plan(cc_service_plan[:guid]) }
+      let(:expected) { view_models_service_plans_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected spaces_view_model' do
       let(:results)  { view_models.spaces }
       let(:expected) { view_models_spaces }
@@ -197,11 +301,25 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common view model retrieval')
     end
 
+    context 'returns connected spaces_view_model detail' do
+      let(:results)  { view_models.space(cc_space[:guid]) }
+      let(:expected) { view_models_spaces_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected space_roles_view_model' do
       let(:results)  { view_models.space_roles }
       let(:expected) { view_models_space_roles }
 
       it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected space_roles_view_model detail' do
+      let(:results)  { view_models.space_role(cc_space[:guid], 'auditors', cc_user[:guid]) }
+      let(:expected) { view_models_space_roles_detail }
+
+      it_behaves_like('common view model retrieval detail')
     end
 
     context 'returns connected stats_view_model' do
@@ -217,6 +335,13 @@ describe AdminUI::CC, :type => :integration do
       let(:expected) { view_models_users }
 
       it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected users_view_model detail' do
+      let(:results)  { view_models.user(cc_user[:guid]) }
+      let(:expected) { view_models_users_detail }
+
+      it_behaves_like('common view model retrieval detail')
     end
   end
 end

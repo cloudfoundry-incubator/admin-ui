@@ -34,18 +34,19 @@ module AdminUI
       user_uaa_hash     = Hash[users_uaa['items'].map { |item| [item[:id], item] }]
 
       items = []
+      hash  = {}
 
-      add_rows(organizations_auditors, 'Auditor', organization_hash, user_cc_hash, user_uaa_hash, items)
-      add_rows(organizations_billing_managers, 'Billing Manager', organization_hash, user_cc_hash, user_uaa_hash, items)
-      add_rows(organizations_managers, 'Manager', organization_hash, user_cc_hash, user_uaa_hash, items)
-      add_rows(organizations_users, 'User', organization_hash, user_cc_hash, user_uaa_hash, items)
+      add_rows(organizations_auditors,         'auditors',         'Auditor', organization_hash, user_cc_hash, user_uaa_hash, items, hash)
+      add_rows(organizations_billing_managers, 'billing_managers', 'Billing Manager', organization_hash, user_cc_hash, user_uaa_hash, items, hash)
+      add_rows(organizations_managers,         'managers',         'Manager', organization_hash, user_cc_hash, user_uaa_hash, items, hash)
+      add_rows(organizations_users,            'users',            'User', organization_hash, user_cc_hash, user_uaa_hash, items, hash)
 
-      result(items, (0..2).to_a, (0..2).to_a)
+      result(true, items, hash, (1..5).to_a, (1..5).to_a)
     end
 
     private
 
-    def add_rows(organization_role_array, role, organization_hash, user_cc_hash, user_uaa_hash, items)
+    def add_rows(organization_role_array, path_role, human_role, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
       organization_role_array['items'].each do |organization_role|
         Thread.pass
 
@@ -60,16 +61,24 @@ module AdminUI
         user_uaa = user_uaa_hash[user_cc[:guid]]
         next if user_uaa.nil?
 
-        row.push(organization[:name])
-        row.push(user_uaa[:username])
-        row.push(role)
+        key = "#{ organization[:guid] }/#{ path_role }/#{ user_cc[:guid] }"
 
-        row.push('organization' => organization,
-                 'role'         => organization_role,
-                 'user_cc'      => user_cc,
-                 'user_uaa'     => user_uaa)
+        row.push(key)
+        row.push(organization[:name])
+        row.push(organization[:guid])
+        row.push(user_uaa[:username])
+        row.push(user_uaa[:id])
+        row.push(human_role)
 
         items.push(row)
+
+        hash[key] =
+        {
+          'organization' => organization,
+          'role'         => organization_role,
+          'user_cc'      => user_cc,
+          'user_uaa'     => user_uaa
+        }
       end
     end
   end

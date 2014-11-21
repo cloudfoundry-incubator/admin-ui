@@ -232,12 +232,40 @@ module AdminUI
       invalidate_cache(:organizations)
     end
 
+    def invalidate_organizations_auditors
+      invalidate_cache(:organizations_auditors)
+    end
+
+    def invalidate_organizations_billing_managers
+      invalidate_cache(:organizations_billing_managers)
+    end
+
+    def invalidate_organizations_managers
+      invalidate_cache(:organizations_managers)
+    end
+
+    def invalidate_organizations_users
+      invalidate_cache(:organizations_users)
+    end
+
     def invalidate_routes
       invalidate_cache(:routes)
     end
 
     def invalidate_service_plans
       invalidate_cache(:service_plans)
+    end
+
+    def invalidate_spaces_auditors
+      invalidate_cache(:spaces_auditors)
+    end
+
+    def invalidate_spaces_developers
+      invalidate_cache(:spaces_developers)
+    end
+
+    def invalidate_spaces_managers
+      invalidate_cache(:spaces_managers)
     end
 
     def organizations

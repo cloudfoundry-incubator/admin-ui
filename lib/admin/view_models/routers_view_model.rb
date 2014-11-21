@@ -26,6 +26,7 @@ module AdminUI
       space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
       items = []
+      hash  = {}
 
       routers['items'].each do |router|
         Thread.pass
@@ -71,8 +72,11 @@ module AdminUI
                                 'target'       => target)
           end
 
-          row.push('router'    => router,
-                   'top10Apps' => top10_app_rows)
+          hash[router['name']] =
+          {
+            'router'    => router,
+            'top10Apps' => top10_app_rows
+          }
         else
           row.push(nil)
           row.push('OFFLINE')
@@ -91,7 +95,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..9).to_a, [0, 2, 3])
+      result(true, items, hash, (0..9).to_a, [0, 2, 3])
     end
   end
 end

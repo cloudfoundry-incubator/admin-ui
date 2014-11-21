@@ -17,6 +17,7 @@ module AdminUI
       return result unless health_managers['connected']
 
       items = []
+      hash  = {}
 
       health_managers['items'].each do |health_manager|
         Thread.pass
@@ -45,7 +46,7 @@ module AdminUI
           row.push(data['total_users'])
           row.push(data['total_apps'])
           row.push(data['total_instances'])
-          row.push(health_manager)
+          hash[health_manager['name']] = health_manager
         else
           row.push(nil)
           row.push('OFFLINE')
@@ -64,7 +65,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..9).to_a, [0, 2, 3])
+      result(true, items, hash, (0..9).to_a, [0, 2, 3])
     end
   end
 end

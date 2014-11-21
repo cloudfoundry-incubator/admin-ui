@@ -73,6 +73,7 @@ module AdminUI
       count_roles(spaces_managers,                users_spaces_managers)
 
       items = []
+      hash  = {}
 
       users_uaa['items'].each do |user_uaa|
         Thread.pass
@@ -82,6 +83,7 @@ module AdminUI
         row = []
 
         row.push(user_uaa[:username])
+        row.push(guid)
         row.push(user_uaa[:created].to_datetime.rfc3339)
 
         if user_uaa[:lastmodified]
@@ -105,14 +107,11 @@ module AdminUI
           end
         end
 
-        objects =
-        {
-          'authorities' => authorities.sort.join(', '),
-          'user_uaa'    => user_uaa
-        }
+        authorities = authorities.sort
+
+        row.push(authorities)
 
         user_cc = user_cc_hash[guid]
-        objects['user_cc'] = user_cc
 
         if user_cc
           id = user_cc[:id]
@@ -139,12 +138,17 @@ module AdminUI
           row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil)
         end
 
-        row.push(objects)
-
         items.push(row)
+
+        hash[guid] =
+        {
+          'groups'   => authorities,
+          'user_cc'  => user_cc,
+          'user_uaa' => user_uaa
+        }
       end
 
-      result(items, (0..16).to_a, (0..7).to_a)
+      result(true, items, hash, (0..18).to_a, (0..9).to_a)
     end
 
     private

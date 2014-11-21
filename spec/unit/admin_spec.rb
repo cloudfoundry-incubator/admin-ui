@@ -288,6 +288,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete organization')
     end
 
+    shared_examples 'common delete organization role' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/organizations/organization1/auditors/user1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete organization role via http' do
+      it_behaves_like('common delete organization role')
+    end
+
+    context 'delete organization role via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete organization role')
+    end
+
     shared_examples 'common delete route' do
       it 'returns failure code due to disconnection' do
         response = delete('/routes/route1')
@@ -303,6 +320,23 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete route')
+    end
+
+    shared_examples 'common delete space role' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/spaces/space1/auditors/user1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete space role via http' do
+      it_behaves_like('common delete space role')
+    end
+
+    context 'delete space role via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete space role')
     end
 
     shared_examples 'common manage application' do
@@ -377,7 +411,7 @@ describe AdminUI::Admin do
     def verify_view_model_items(path, connected)
       json = get_json(path)
 
-      expect(json).to include('iTotalDisplayRecords' => 0, 'iTotalRecords' => 0, 'sEcho' => nil)
+      expect(json).to include('iTotalDisplayRecords' => 0, 'iTotalRecords' => 0, 'sEcho' => 0)
       items = json['items']
       expect(items).not_to be(nil)
       expect(items).to include('connected' => connected, 'items' => [])
@@ -402,6 +436,14 @@ describe AdminUI::Admin do
       expect(json).to include('items' => [])
     end
 
+    def verify_not_found(path)
+      request = Net::HTTP::Get.new(path)
+      request['Cookie'] = cookie
+
+      response = http.request(request)
+      expect(response.is_a?(Net::HTTPNotFound)).to be_true
+    end
+
     shared_examples 'common all tabs succeed' do
       before do
         login_stub_admin
@@ -411,28 +453,60 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/applications_view_model')
       end
 
+      it '/applications_view_model/:guid returns not found' do
+        verify_not_found('/applications_view_model/application1')
+      end
+
+      it '/applications_view_model/:guid/:instance returns not found' do
+        verify_not_found('/applications_view_model/application1/instance')
+      end
+
       it '/cloud_controllers_view_model succeeds' do
         verify_disconnected_view_model_items('/cloud_controllers_view_model')
+      end
+
+      it '/cloud_controllers_view_model/:name returns not found' do
+        verify_not_found('/cloud_controllers_view_model/name')
       end
 
       it '/components_view_model succeeds' do
         verify_disconnected_view_model_items('/components_view_model')
       end
 
+      it '/components_view_model/:name returns not found' do
+        verify_not_found('/components_view_model/name')
+      end
+
       it '/deas_view_model succeeds' do
         verify_disconnected_view_model_items('/deas_view_model')
+      end
+
+      it '/deas_view_model/:name returns not found' do
+        verify_not_found('/deas_view_model/name')
       end
 
       it '/domains_view_model succeeds' do
         verify_disconnected_view_model_items('/domains_view_model')
       end
 
+      it '/domains_view_model/:guid returns not found' do
+        verify_not_found('/domains_view_model/domain1')
+      end
+
       it '/gateways_view_model succeeds' do
         verify_disconnected_view_model_items('/gateways_view_model')
       end
 
+      it '/gateways_view_model/:name returns not found' do
+        verify_not_found('/gateways_view_model/name')
+      end
+
       it '/health_managers_view_model succeeds' do
         verify_disconnected_view_model_items('/health_managers_view_model')
+      end
+
+      it '/health_managers_view_model/:name returns not found' do
+        verify_not_found('/health_managers_view_model/name')
       end
 
       it '/logs_view_model succeeds' do
@@ -443,20 +517,40 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/organizations_view_model')
       end
 
+      it '/organizations_view_model/:guid returns not found' do
+        verify_not_found('/organizations_view_model/organization1')
+      end
+
       it '/organization_roles_view_model succeeds' do
         verify_disconnected_view_model_items('/organization_roles_view_model')
+      end
+
+      it '/organization_roles_view_model/:guid/:role/:guid returns not found' do
+        verify_not_found('/organization_roles_view_model/organization1/auditors/user1')
       end
 
       it '/quotas_view_model succeeds' do
         verify_disconnected_view_model_items('/quotas_view_model')
       end
 
+      it '/quotas_view_model/:guid returns not found' do
+        verify_not_found('/quotas_view_model/quota1')
+      end
+
       it '/routers_view_model succeeds' do
         verify_disconnected_view_model_items('/routers_view_model')
       end
 
+      it '/routers_view_model/:name returns not found' do
+        verify_not_found('/routers_view_model/name')
+      end
+
       it '/routes_view_model succeeds' do
         verify_disconnected_view_model_items('/routes_view_model')
+      end
+
+      it '/routes_view_model/:guid returns not found' do
+        verify_not_found('/routes_view_model/route1')
       end
 
       it '/settings succeeds' do
@@ -472,20 +566,44 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/service_instances_view_model')
       end
 
+      it '/service_instances_view_model/:guid returns not found' do
+        verify_not_found('/service_instances_view_model/service_instance1')
+      end
+
       it '/service_plans_view_model succeeds' do
         verify_disconnected_view_model_items('/service_plans_view_model')
+      end
+
+      it '/service_plans_view_model/:guid returns not found' do
+        verify_not_found('/service_plans_view_model/service_plan1')
       end
 
       it '/spaces_view_model succeeds' do
         verify_disconnected_view_model_items('/spaces_view_model')
       end
 
+      it '/spaces_view_model/:guid returns not found' do
+        verify_not_found('/spaces_view_model/space1')
+      end
+
       it '/space_roles_view_model succeeds' do
         verify_disconnected_view_model_items('/space_roles_view_model')
       end
 
+      it '/space_roles_view_model/:guid/:role/:guid returns not found' do
+        verify_not_found('/space_roles_view_model/space1/auditors/user1')
+      end
+
       it '/tasks_view_model succeeds' do
         verify_connected_view_model_empty_items('/tasks_view_model')
+      end
+
+      it '/users_view_model succeeds' do
+        verify_disconnected_view_model_items('/users_view_model')
+      end
+
+      it '/users_view_model/:guid returns not found' do
+        verify_not_found('/users_view_model/user1')
       end
     end
 
@@ -511,7 +629,7 @@ describe AdminUI::Admin do
       do_redirect_request(Net::HTTP::Get.new(path))
     end
 
-    def post_redirects_as_expected(path, body)
+    def post_redirects_as_expected(path, body = nil)
       request = Net::HTTP::Post.new(path)
       request.body = body if body
       do_redirect_request(request)
@@ -547,20 +665,40 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/applications_view_model')
       end
 
+      it '/applications_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/applications_view_model/application1')
+      end
+
       it '/cloud_controllers_view_model redirects as expected' do
         get_redirects_as_expected('/cloud_controllers_view_model')
+      end
+
+      it '/cloud_controllers_view_model/:name redirects as expected' do
+        get_redirects_as_expected('/cloud_controllers_view_model/name')
       end
 
       it '/components_view_model redirects as expected' do
         get_redirects_as_expected('/components_view_model')
       end
 
+      it '/components_view_model/:name redirects as expected' do
+        get_redirects_as_expected('/components_view_model/name')
+      end
+
       it '/deas_view_model redirects as expected' do
         get_redirects_as_expected('/deas_view_model')
       end
 
+      it '/deas_view_model/:name redirects as expected' do
+        get_redirects_as_expected('/deas_view_model/name')
+      end
+
       it '/domains_view_model redirects as expected' do
         get_redirects_as_expected('/domains_view_model')
+      end
+
+      it '/domains_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/domains_view_model/domain1')
       end
 
       it '/download redirects as expected' do
@@ -571,8 +709,16 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/gateways_view_model')
       end
 
+      it '/gateways_view_model/:name redirects as expected' do
+        get_redirects_as_expected('/gateways_view_model/name')
+      end
+
       it '/health_managers_view_model redirects as expected' do
         get_redirects_as_expected('/health_managers_view_model')
+      end
+
+      it '/health_managers_view_model/:name redirects as expected' do
+        get_redirects_as_expected('/health_managers_view_model/name')
       end
 
       it '/log redirects as expected' do
@@ -583,24 +729,44 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/logs_view_model')
       end
 
+      it '/organization_roles_view_model redirects as expected' do
+        get_redirects_as_expected('/organization_roles_view_model')
+      end
+
+      it '/organization_roles_view_model/:guid/:role/:guid redirects as expected' do
+        get_redirects_as_expected('/organization_roles_view_model/organization1/auditors/user1')
+      end
+
       it '/organizations_view_model redirects as expected' do
         get_redirects_as_expected('/organizations_view_model')
       end
 
-      it '/organization_roles_view_model redirects as expected' do
-        get_redirects_as_expected('/organization_roles_view_model')
+      it '/organizations_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/organizations_view_model/organization1')
       end
 
       it '/quotas_view_model redirects as expected' do
         get_redirects_as_expected('/quotas_view_model')
       end
 
+      it '/quotas_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/quotas_view_model/quota1')
+      end
+
       it '/routers_view_model redirects as expected' do
         get_redirects_as_expected('/routers_view_model')
       end
 
+      it '/routers_view_model/:name redirects as expected' do
+        get_redirects_as_expected('/routers_view_model/name')
+      end
+
       it '/routes_view_model redirects as expected' do
         get_redirects_as_expected('/routes_view_model')
+      end
+
+      it '/routes_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/routes_view_model/route1')
       end
 
       it '/settings redirects as expected' do
@@ -611,16 +777,32 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/service_instances_view_model')
       end
 
+      it '/service_instances_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/service_instances_view_model/service_instance1')
+      end
+
       it '/service_plans_view_model redirects as expected' do
         get_redirects_as_expected('/service_plans_view_model')
+      end
+
+      it '/service_plans_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/service_plans_view_model/service_plan1')
+      end
+
+      it '/space_roles_view_model redirects as expected' do
+        get_redirects_as_expected('/space_roles_view_model')
+      end
+
+      it '/space_roles_view_model/:guid/:role/:guid redirects as expected' do
+        get_redirects_as_expected('/space_roles_view_model/space1/auditors/user1')
       end
 
       it '/spaces_view_model redirects as expected' do
         get_redirects_as_expected('/spaces_view_model')
       end
 
-      it '/space_roles_view_model redirects as expected' do
-        get_redirects_as_expected('/space_roles_view_model')
+      it '/spaces_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/spaces_view_model/space1')
       end
 
       it '/tasks_view_model redirects as expected' do
@@ -631,31 +813,127 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/task_status')
       end
 
-      it 'deletes /applications/:app_guid redirects as expected' do
+      it '/users_view_model redirects as expected' do
+        get_redirects_as_expected('/users_view_model')
+      end
+
+      it '/users_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/users_view_model/user1')
+      end
+
+      it 'deletes /applications/:guid redirects as expected' do
         delete_redirects_as_expected('/applications/application1')
       end
 
-      it 'deletes /organizations/:org_guid redirects as expected' do
+      it 'deletes /organizations/:guid redirects as expected' do
         delete_redirects_as_expected('/organizations/organization1')
       end
 
-      it 'deletes /routes/:route_guid redirects as expected' do
+      it 'deletes /organizations/:guid/:role/:guid redirects as expected' do
+        delete_redirects_as_expected('/organizations/organization1/auditors/user1')
+      end
+
+      it 'deletes /routes/:guid redirects as expected' do
         delete_redirects_as_expected('/routes/route1')
+      end
+
+      it 'deletes /spaces/:guid/:role/:guid redirects as expected' do
+        delete_redirects_as_expected('/spaces/space1/auditors/user1')
+      end
+
+      it 'posts /applications_view_model redirects as expected' do
+        post_redirects_as_expected('/applications_view_model')
+      end
+
+      it 'posts /cloud_controllers_view_model redirects as expected' do
+        post_redirects_as_expected('/cloud_controllers_view_model')
+      end
+
+      it 'posts /components_view_model redirects as expected' do
+        post_redirects_as_expected('/components_view_model')
       end
 
       it 'posts /organizations redirects as expected' do
         post_redirects_as_expected('/organizations', '{"name":"new_org"}')
       end
 
-      it 'puts /applications/:app_guid redirects as expected' do
+      it 'posts /deas_view_model redirects as expected' do
+        post_redirects_as_expected('/deas_view_model')
+      end
+
+      it 'posts /domains_view_model redirects as expected' do
+        post_redirects_as_expected('/domains_view_model')
+      end
+
+      it 'posts /gateways_view_model redirects as expected' do
+        post_redirects_as_expected('/gateways_view_model')
+      end
+
+      it 'posts /health_managers_view_model redirects as expected' do
+        post_redirects_as_expected('/health_managers_view_model')
+      end
+
+      it 'posts /logs_view_model redirects as expected' do
+        post_redirects_as_expected('/logs_view_model')
+      end
+
+      it 'posts /organizations_view_model redirects as expected' do
+        post_redirects_as_expected('/organizations_view_model')
+      end
+
+      it 'posts /organization_roles_view_model redirects as expected' do
+        post_redirects_as_expected('/organization_roles_view_model')
+      end
+
+      it 'posts /quotas_view_model redirects as expected' do
+        post_redirects_as_expected('/quotas_view_model')
+      end
+
+      it 'posts /routers_view_model redirects as expected' do
+        post_redirects_as_expected('/routers_view_model')
+      end
+
+      it 'posts /routes_view_model redirects as expected' do
+        post_redirects_as_expected('/routes_view_model')
+      end
+
+      it 'posts /service_instances_view_model redirects as expected' do
+        post_redirects_as_expected('/service_instances_view_model')
+      end
+
+      it 'posts /service_plans_view_model redirects as expected' do
+        post_redirects_as_expected('/service_plans_view_model')
+      end
+
+      it 'posts /spaces_view_model redirects as expected' do
+        post_redirects_as_expected('/spaces_view_model')
+      end
+
+      it 'posts /space_roles_view_model redirects as expected' do
+        post_redirects_as_expected('/space_roles_view_model')
+      end
+
+      it 'posts /stats_view_model redirects as expected' do
+        post_redirects_as_expected('/stats_view_model')
+      end
+
+      it 'posts /tasks_view_model redirects as expected' do
+        post_redirects_as_expected('/tasks_view_model')
+      end
+
+      it 'posts /users_view_model redirects as expected' do
+        post_redirects_as_expected('/users_view_model')
+      end
+
+      it 'puts /applications/:guid redirects as expected' do
         put_redirects_as_expected('/applications/application1', '{"state":"STARTED"}')
       end
 
-      it 'puts /organizations/:org_guid redirects as expected' do
+      it 'puts /organizations/:guid redirects as expected' do
         put_redirects_as_expected('/organizations/organization1', '{"quota_definition_guid":"quota1"}')
       end
 
-      it 'puts /service_plans/:service_plan_guid redirects as expected' do
+      it 'puts /service_plans/:guid redirects as expected' do
         put_redirects_as_expected('/service_plans/application1', '{"public":true}')
       end
     end

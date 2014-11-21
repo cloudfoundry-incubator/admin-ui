@@ -14,7 +14,7 @@ module AdminUI
 
       displayed = source_items.values_at(first..last)
 
-      result(displayed, @source[:visible_columns], @source[:case_insensitive_sort_columns])
+      result(@source[:connected], displayed, @source[:detail_hash], @source[:searchable_columns], @source[:case_insensitive_sort_columns])
     end
   end
 end

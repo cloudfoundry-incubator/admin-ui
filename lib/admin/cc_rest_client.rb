@@ -94,7 +94,7 @@ module AdminUI
           return JSON.parse(response.body)
         elsif method == Utils::HTTP_PUT && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
           return JSON.parse(response.body)
-        elsif method == Utils::HTTP_DELETE && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPNoContent))
+        elsif method == Utils::HTTP_DELETE && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated) || response.is_a?(Net::HTTPNoContent))
           return
         elsif method == Utils::HTTP_POST && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
           return JSON.parse(response.body)
@@ -104,7 +104,7 @@ module AdminUI
           login
           recent_login = true
         else
-          fail "Unexected response code from #{ method } is #{ response.code }, message #{ response.message }"
+          fail AdminUI::CCRestClientResponseError, response
         end
       end
     end
@@ -132,7 +132,7 @@ module AdminUI
         body_json = JSON.parse(response.body)
         @token = "#{ body_json['token_type'] } #{ body_json['access_token'] }"
       else
-        fail "Unexpected response code from login is #{ response.code }, message #{ response.message}"
+        fail AdminUI::CCRestClientResponseError, response
       end
     end
 

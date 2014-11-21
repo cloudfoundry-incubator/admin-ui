@@ -31,7 +31,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, [0, 1, 2], [0, 2])
+      result(true, items, nil, [0, 1, 2], [0, 2])
     end
   end
 end

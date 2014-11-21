@@ -17,6 +17,7 @@ module AdminUI
       return result unless deas['connected']
 
       items = []
+      hash  = {}
 
       deas['items'].each do |dea|
         Thread.pass
@@ -72,7 +73,7 @@ module AdminUI
           row.push(data['available_memory_ratio'] * 100)
           row.push(data['available_disk_ratio'] * 100)
 
-          row.push(dea)
+          hash[dea['name']] = dea
         else
           row.push(nil)
           row.push('OFFLINE')
@@ -91,7 +92,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(items, (0..13).to_a, [0, 2, 3, 4])
+      result(true, items, hash, (0..13).to_a, [0, 2, 3, 4])
     end
   end
 end

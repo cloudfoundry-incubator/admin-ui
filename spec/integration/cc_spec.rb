@@ -60,6 +60,34 @@ describe AdminUI::CC, :type => :integration do
       expect(cc.organizations['items'].length).to eq(0)
     end
 
+    it 'clears the organizations auditors cache' do
+      expect(cc.organizations_auditors['items'].length).to eq(1)
+      cc_clear_organizations_cache_stub(config)
+      cc.invalidate_organizations_auditors
+      expect(cc.organizations_auditors['items'].length).to eq(0)
+    end
+
+    it 'clears the organizations billing_managers cache' do
+      expect(cc.organizations_billing_managers['items'].length).to eq(1)
+      cc_clear_organizations_cache_stub(config)
+      cc.invalidate_organizations_billing_managers
+      expect(cc.organizations_billing_managers['items'].length).to eq(0)
+    end
+
+    it 'clears the organizations managers cache' do
+      expect(cc.organizations_managers['items'].length).to eq(1)
+      cc_clear_organizations_cache_stub(config)
+      cc.invalidate_organizations_managers
+      expect(cc.organizations_managers['items'].length).to eq(0)
+    end
+
+    it 'clears the organizations users cache' do
+      expect(cc.organizations_users['items'].length).to eq(1)
+      cc_clear_organizations_cache_stub(config)
+      cc.invalidate_organizations_users
+      expect(cc.organizations_users['items'].length).to eq(0)
+    end
+
     it 'clears the route cache' do
       expect(cc.routes['items'].length).to eq(1)
       cc_clear_routes_cache_stub(config)
@@ -72,6 +100,27 @@ describe AdminUI::CC, :type => :integration do
       cc_clear_service_plans_cache_stub(config)
       cc.invalidate_service_plans
       expect(cc.service_plans['items'].length).to eq(0)
+    end
+
+    it 'clears the spaces auditors cache' do
+      expect(cc.spaces_auditors['items'].length).to eq(1)
+      cc_clear_organizations_cache_stub(config)
+      cc.invalidate_spaces_auditors
+      expect(cc.spaces_auditors['items'].length).to eq(0)
+    end
+
+    it 'clears the spaces developers cache' do
+      expect(cc.spaces_developers['items'].length).to eq(1)
+      cc_clear_organizations_cache_stub(config)
+      cc.invalidate_spaces_developers
+      expect(cc.spaces_developers['items'].length).to eq(0)
+    end
+
+    it 'clears the spaces managers cache' do
+      expect(cc.spaces_managers['items'].length).to eq(1)
+      cc_clear_organizations_cache_stub(config)
+      cc.invalidate_spaces_managers
+      expect(cc.spaces_managers['items'].length).to eq(0)
     end
 
     shared_examples 'common cc retrieval' do

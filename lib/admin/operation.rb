@@ -34,12 +34,33 @@ module AdminUI
       @view_models.invalidate_organizations
     end
 
+    def delete_organization_role(org_guid, role, user_guid)
+      url = "v2/organizations/#{ org_guid }/#{ role }/#{ user_guid }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_organizations_auditors if role == 'auditors'
+      @cc.invalidate_organizations_billing_managers if role == 'billing_managers'
+      @cc.invalidate_organizations_managers if role == 'managers'
+      @cc.invalidate_organizations_users if role == 'users'
+      @view_models.invalidate_organization_roles
+    end
+
     def delete_route(route_guid)
       url = "v2/routes/#{ route_guid }"
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_routes
       @view_models.invalidate_routes
+    end
+
+    def delete_space_role(space_guid, role, user_guid)
+      url = "v2/spaces/#{ space_guid }/#{ role }/#{ user_guid }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_spaces_auditors if role == 'auditors'
+      @cc.invalidate_spaces_developers if role == 'developers'
+      @cc.invalidate_spaces_managers if role == 'managers'
+      @view_models.invalidate_space_roles
     end
 
     def manage_application(app_guid, control_message)
