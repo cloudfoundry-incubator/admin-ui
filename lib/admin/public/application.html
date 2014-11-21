@@ -7,6 +7,7 @@
 
         <script src="js/external/jquery/jquery-1.9.1.js"></script>
         <script src="js/external/jquery/jquery.base64.js"></script>
+        <script src="js/external/jquery/jquery.cookie.js"></script>
 
         <link rel="stylesheet" type="text/css" href="js/external/jquery/DataTables-1.9.4/media/css/jquery.dataTables.css"/>
         <link rel="stylesheet" type="text/css" href="js/external/jquery/TableTools-2.1.5/media/css/TableTools.css"/>
@@ -19,6 +20,7 @@
         <script src="js/external/jquery/plugins/fnSetFilteringDelay.js"></script>
         
         <script src="js/external/fixes/ZeroClipboard.js"></script>
+        <script src="js/external/i18next/i18next.js"></script>
 
         <script src="js/app/constants.js"></script>      
         <script src="js/app/utilities.js"></script>     
@@ -46,6 +48,7 @@
         <script src="js/app/tabs/statsTab.js"></script>
         <script src="js/app/tabs/tasksTab.js"></script>
         <script src="js/app/tabs/usersTab.js"></script>
+        <script src="js/app/i18n.js"></script>
         <script src="js/app/adminUI.js"></script>
 
         <script src="js/external/jqplot/jquery.jqplot.js"></script>          
@@ -67,7 +70,7 @@
 
             <span class="disconnected">
               <img class="disconnectedImage" src="images/red.png" height="16"/>
-              <span>Unable to connect to backend services</span>
+              <span class="error">Unable to connect to backend services</span>
             </span>
 
             <span class="userContainer">
@@ -75,7 +78,24 @@
                 <img src="images/dropdown.png"/>
             </span>
 
-            <div class="userMenu">Sign Out</div>
+            <span class="languageContainer">
+                <span class="text">
+                    Language:
+                </span>
+                <span class="languageName">
+                </span>
+                <img src="images/dropdown.png"/>
+            </span>
+
+            <div class="languageMenu">
+                <ul>
+                    <li data-language='en'>English</li>
+                    <li data-language='cn'>中国的</li>
+                    <li data-language='ru'>Русский</li>
+                </ul>
+            </div>
+
+            <div class="userMenu" id='signOut'>Sign Out</div>
         </div>
 
         <div class="menuBar">
