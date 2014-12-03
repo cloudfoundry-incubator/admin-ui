@@ -13,7 +13,6 @@ html.waiting *
 
 .titleBar
 {
-    float: left;
     width: 100%;
     background-image: -moz-linear-gradient(top, rgb(20, 20, 20) 60%, rgb(50, 50, 50) 100%);
     background-image: -webkit-linear-gradient(top, rgb(20, 20, 20) 60%, rgb(50, 50, 50) 100%);
@@ -23,6 +22,8 @@ html.waiting *
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.6, rgb(20, 20, 20)), color-stop(1.0, rgb(50, 50, 50)));
     color: rgb(250, 250, 250);
     white-space: nowrap;
+    overflow: hidden;
+    height: 32px;
 }
 
 .titleText
@@ -80,27 +81,13 @@ html.waiting *
     border-right: 2px solid rgb(30, 30, 30);
     border-bottom: 2px solid rgb(30, 30, 30);
     cursor: pointer;
-}
-
-.refreshButton
-{
-    float: left;
-    cursor: pointer;
-    margin-top: 10px;
-    margin-right: 20px;
-    margin-left: 20px;
-}
-
-.toolbarButton
-{
-    margin-bottom: 5px;
-    cursor: pointer; 
+    z-index: 10
 }
 
 .menuBar
 {
-    float: left;
     width: 100%;
+    height: 28px;
     font-size: .9em;
     background-color: rgb(140, 140, 140);
     color: rgb(255, 255, 255);
@@ -115,14 +102,23 @@ html.waiting *
     user-select: none;
 }
 
+.menuItemContainer
+{
+	position: absolute;
+	height: 28px;
+    left: 32px;
+    right: 58px;
+	letter-spacing: -4px;
+	overflow: hidden;
+}
+
 .menuItem
 {
+	display: inline-block;
+	letter-spacing: normal;
     cursor: pointer;
-    padding: 15px 10px 12px 10px;
-    /*
-    border-right: 1px solid rgb(0, 65, 125);
-    background-color: rgb(20, 120, 180);
-    */
+    padding: 5px 10px 7px 10px;
+    border-left: 1px solid rgb(0, 65, 125);
     border-right: 1px solid rgb(0, 65, 125);
     background-image: -moz-linear-gradient(top, rgb(15, 115, 185) 0%, rgb(0, 90, 150) 40%);
     background-image: -webkit-linear-gradient(top, rgb(15, 115, 185) 0%, rgb(0, 90, 150) 40%);
@@ -131,14 +127,10 @@ html.waiting *
     background-image: -ms-linear-gradient(top, rgb(15, 115, 185) 0%, rgb(0, 90, 150) 40%);
     background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, rgb(15, 115, 185)), color-stop(0.4, rgb(0, 90, 150)));
     color: rgb(255, 255, 255);
-    float: left;
 }
 
 .menuItemHighlighted
 {
-    /*
-    background-color: rgb(60, 160, 220);
-    */
     background-image: -moz-linear-gradient(top, rgb(85, 185, 255) 0%, rgb(30, 130, 200) 40%);
     background-image: -webkit-linear-gradient(top, rgb(85, 185, 255) 0%, rgb(30, 130, 200) 40%);
     background-image: linear-gradient(top, rgb(85, 185, 255) 0%, rgb(30, 130, 200) 40%);
@@ -158,6 +150,35 @@ html.waiting *
 .menuItemHighlighted.menuItemSelected
 {
     color: rgb(120, 120, 120);
+}
+
+.menuButtonLeft
+{
+	cursor: pointer;
+	padding: 6px 4px 0px 4px;
+	position: absolute;
+    left: 0px;
+}   
+
+.menuButtonRight
+{
+	cursor: pointer;
+	padding: 6px 4px 0px 4px;
+	position: absolute;
+    right: 28px;
+}
+
+.menuButtonRefresh
+{
+	cursor: pointer;
+	padding: 3px 4px 0px 4px;
+	position: absolute;
+    right: 6px;
+}
+
+.menuButtonDisabled
+{
+    cursor: default;
 }
 
 a

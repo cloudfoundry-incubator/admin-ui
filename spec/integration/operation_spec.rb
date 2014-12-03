@@ -22,6 +22,7 @@ describe AdminUI::Operation, :type => :integration do
                          :cloud_controller_uri                => 'http://api.cloudfoundry',
                          :data_file                           => data_file,
                          :db_uri                              => "#{ db_uri }",
+                         :mbus                                => 'nats://nats:c1oudc0w@localhost:14222',
                          :monitored_components                => [],
                          :uaadb_uri                           => uaadb_uri,
                          :uaa_client                          => { :id => 'id', :secret => 'secret' })

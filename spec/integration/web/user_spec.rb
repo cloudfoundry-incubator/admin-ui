@@ -20,7 +20,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     it 'Organizations tab does not have create, set quota, delete, activate and suspend buttons' do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'Organizations').click
+          scroll_tab_into_view('Organizations').click
           @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Organizations'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
@@ -43,7 +43,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       # Move the click operation into the wait block to ensure the action has been taken, this is used to fit Travis CI system.
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'Applications').click
+          scroll_tab_into_view('Applications').click
           @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Applications'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
@@ -64,7 +64,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     it 'Routes tab does not have delete button' do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'Routes').click
+          scroll_tab_into_view('Routes').click
           @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Routes'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
@@ -85,7 +85,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     it 'Organization Roles tab does not have delete button' do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'OrganizationRoles').click
+          scroll_tab_into_view('OrganizationRoles').click
           @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'OrganizationRoles'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
@@ -106,7 +106,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     it 'Space Roles tab does not have delete button' do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'SpaceRoles').click
+          scroll_tab_into_view('SpaceRoles').click
           @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'SpaceRoles'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
@@ -127,7 +127,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     it 'Service Plans tab does not have public and private buttons' do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'ServicePlans').click
+          scroll_tab_into_view('ServicePlans').click
           @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'ServicePlans'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
@@ -148,7 +148,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     it 'DEAs tab does not have a create DEA button' do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'DEAs').click
+          scroll_tab_into_view('DEAs').click
           @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'DEAs'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
@@ -169,7 +169,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     it 'Components tab does not have a remove all components button' do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'Components').click
+          scroll_tab_into_view('Components').click
           @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Components'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
@@ -188,13 +188,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     end
 
     it 'Tasks tab does not exist' do
-      expect(@driver.find_element(:id => 'Tasks').displayed?).to be_false
+      expect(scroll_tab_into_view('Tasks').displayed?).to be_false
     end
 
     it 'Stats tab does not have a create stats button' do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'Stats').click
+          scroll_tab_into_view('Stats').click
           @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Stats'
         end
       rescue Selenium::WebDriver::Error::TimeOutError

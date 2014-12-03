@@ -79,6 +79,7 @@ shared_context :web_context do
   def check_filter_link(tab_id, link_index, target_tab_id, expected_filter)
     Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_elements(:xpath => "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(:tag_name => 'a').click }
     expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_element(:class_name => 'menuItemSelected').attribute('id') }).to eq(target_tab_id)
+    expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_element(:id => target_tab_id).displayed? }).to eq(true)
     expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_element(:id => "#{ target_tab_id }Table_filter").find_element(:tag_name => 'input').attribute('value') }).to eq(expected_filter)
   end
 
@@ -167,5 +168,22 @@ shared_context :web_context do
 
   def select_first_row
     first_row.click
+  end
+
+  def scroll_tab_into_view(id)
+    element = @driver.find_element(:id => id)
+    expect(element).to_not be_nil
+    return element if element.displayed?
+    left = @driver.find_element(:id => 'MenuButtonLeft')
+    5.times do
+      left.click
+      return element if element.displayed?
+    end
+    right = @driver.find_element(:id => 'MenuButtonRight')
+    5.times do
+      right.click
+      return element if element.displayed?
+    end
+    element
   end
 end

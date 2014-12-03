@@ -29,7 +29,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     end
 
     def refresh_button
-      @driver.find_element(:id => 'RefreshButton').click
+      @driver.find_element(:id => 'MenuButtonRefresh').click
       true
     end
 
@@ -43,30 +43,38 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     end
 
     it 'has tabs' do
-      expect(@driver.find_element(:id => 'Organizations').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Spaces').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Applications').displayed?).to be_true
-      expect(@driver.find_element(:id => 'ServiceInstances').displayed?).to be_true
-      expect(@driver.find_element(:id => 'OrganizationRoles').displayed?).to be_true
-      expect(@driver.find_element(:id => 'SpaceRoles').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Users').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Domains').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Quotas').displayed?).to be_true
-      expect(@driver.find_element(:id => 'ServicePlans').displayed?).to be_true
-      expect(@driver.find_element(:id => 'DEAs').displayed?).to be_true
-      expect(@driver.find_element(:id => 'CloudControllers').displayed?).to be_true
-      expect(@driver.find_element(:id => 'HealthManagers').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Gateways').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Routers').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Routes').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Components').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Logs').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Tasks').displayed?).to be_true
-      expect(@driver.find_element(:id => 'Stats').displayed?).to be_true
+      expect(scroll_tab_into_view('Organizations').displayed?).to be_true
+      expect(scroll_tab_into_view('Spaces').displayed?).to be_true
+      expect(scroll_tab_into_view('Applications').displayed?).to be_true
+      expect(scroll_tab_into_view('ServiceInstances').displayed?).to be_true
+      expect(scroll_tab_into_view('OrganizationRoles').displayed?).to be_true
+      expect(scroll_tab_into_view('SpaceRoles').displayed?).to be_true
+      expect(scroll_tab_into_view('Users').displayed?).to be_true
+      expect(scroll_tab_into_view('Domains').displayed?).to be_true
+      expect(scroll_tab_into_view('Quotas').displayed?).to be_true
+      expect(scroll_tab_into_view('ServicePlans').displayed?).to be_true
+      expect(scroll_tab_into_view('DEAs').displayed?).to be_true
+      expect(scroll_tab_into_view('CloudControllers').displayed?).to be_true
+      expect(scroll_tab_into_view('HealthManagers').displayed?).to be_true
+      expect(scroll_tab_into_view('Gateways').displayed?).to be_true
+      expect(scroll_tab_into_view('Routers').displayed?).to be_true
+      expect(scroll_tab_into_view('Routes').displayed?).to be_true
+      expect(scroll_tab_into_view('Components').displayed?).to be_true
+      expect(scroll_tab_into_view('Logs').displayed?).to be_true
+      expect(scroll_tab_into_view('Tasks').displayed?).to be_true
+      expect(scroll_tab_into_view('Stats').displayed?).to be_true
+    end
+
+    it 'has a left scroll button' do
+      expect(@driver.find_element(:id => 'MenuButtonLeft').displayed?).to be_true
+    end
+
+    it 'has a right scroll button' do
+      expect(@driver.find_element(:id => 'MenuButtonRight').displayed?).to be_true
     end
 
     it 'has a refresh button' do
-      expect(@driver.find_element(:id => 'RefreshButton').displayed?).to be_true
+      expect(@driver.find_element(:id => 'MenuButtonRefresh').displayed?).to be_true
     end
 
     it 'shows the logged in user' do
@@ -184,7 +192,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         # This part is modified to fit Travis CI system.
         begin
           Selenium::WebDriver::Wait.new(:timeout => 60).until do
-            @driver.find_element(:id => tab_id).click
+            scroll_tab_into_view(tab_id).click
             @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == tab_id
           end
         rescue Selenium::WebDriver::Error::TimeOutError
@@ -352,7 +360,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             @driver.find_element(:id => 'modalDialogButton0').click
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text == cc_organization2[:name] }
+              Selenium::WebDriver::Wait.new(:timeout => 60).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text == cc_organization2[:name] }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text).to eq(cc_organization2[:name])
