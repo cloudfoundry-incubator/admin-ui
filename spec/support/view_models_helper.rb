@@ -474,6 +474,33 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_services
+    [
+      [
+        cc_service[:provider],
+        cc_service[:label],
+        cc_service[:guid],
+        cc_service[:version],
+        cc_service[:created_at].to_datetime.rfc3339,
+        cc_service[:updated_at].to_datetime.rfc3339,
+        cc_service[:active],
+        cc_service[:bindable],
+        1,
+        1,
+        cc_service_broker[:name],
+        cc_service_broker[:guid],
+        cc_service_broker[:created_at].to_datetime.rfc3339,
+        cc_service_broker[:updated_at].to_datetime.rfc3339
+      ]
+    ]
+  end
+
+  def view_models_services_detail
+    { 'service'       => cc_service,
+      'serviceBroker' => cc_service_broker
+    }
+  end
+
   def view_models_spaces
     [
       [

@@ -162,6 +162,14 @@ describe AdminUI::CC do
       verify_disconnected_items(view_models.service_plans)
     end
 
+    it 'returns nil service as expected' do
+      expect(view_models.service('bogus')).to be_nil
+    end
+
+    it 'returns zero services as expected' do
+      verify_disconnected_items(view_models.services)
+    end
+
     it 'returns nil space as expected' do
       expect(view_models.space('bogus')).to be_nil
     end

@@ -41,6 +41,7 @@
         <script src="js/app/tabs/routesTab.js"></script>
         <script src="js/app/tabs/serviceInstancesTab.js"></script>
         <script src="js/app/tabs/servicePlansTab.js"></script>
+        <script src="js/app/tabs/servicesTab.js"></script>
         <script src="js/app/tabs/spaceRolesTab.js"></script>
         <script src="js/app/tabs/spacesTab.js"></script>
         <script src="js/app/tabs/statsTab.js"></script>
@@ -91,6 +92,7 @@
 	            <span id="Users" class="menuItem">Users</span>
 	            <span id="Domains" class="menuItem">Domains</span>
 	            <span id="Quotas" class="menuItem">Quotas</span>
+	            <span id="Services" class="menuItem">Services</span>
 	            <span id="ServicePlans" class="menuItem">Service Plans</span>
 	            <span id="DEAs" class="menuItem">DEAs</span>
 	            <span id="CloudControllers" class="menuItem">Cloud Controllers</span>
@@ -473,6 +475,42 @@
                 <div class="verticalPageSection">
                     <div id="QuotasDetailsLabel" class="propertyLabel">Details</div>
                     <div id="QuotasPropertiesContainer"></div>
+                </div>
+            </div>
+
+            <div id="ServicesPage" class="page hiddenPage">
+                <div id="ServicesTableContainer" class="pageSection">
+                    <table id="ServicesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr class="customTableHeaderGroup">
+                                <th colspan="10">Service</th>
+                                <th colspan="4">Service Broker</th>
+                            </tr>
+                            <tr>
+                                <th>Provider</th>
+                                <th>Label</th>
+                                <th>GUID</th>
+                                <th>Version</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Active</th>
+                                <th>Bindable</th>
+                                <th>Service Plans</th>
+                                <th>Service Instances</th>
+
+                                <th>Name</th>
+                                <th>GUID</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody/>
+                    </table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="ServicesDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="ServicesPropertiesContainer"></div>
                 </div>
             </div>
 
