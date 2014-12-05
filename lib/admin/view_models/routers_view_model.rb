@@ -66,10 +66,11 @@ module AdminUI
             organization = space.nil? ? nil : organization_hash[space[:organization_id]]
             target       = organization.nil? ? nil : "#{ organization[:name] }/#{ space[:name]}"
 
-            top10_app_rows.push('application'  => application[:name],
-                                'rpm'          => top10_app['rpm'],
-                                'rps'          => top10_app['rps'],
-                                'target'       => target)
+            top10_app_rows.push('guid'   => application[:guid],
+                                'name'   => application[:name],
+                                'rpm'    => top10_app['rpm'],
+                                'rps'    => top10_app['rps'],
+                                'target' => target)
           end
 
           hash[router['name']] =

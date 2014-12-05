@@ -354,10 +354,11 @@ module ViewModelsHelper
       },
       'top10Apps' =>
       [
-        { 'application' => cc_app[:name],
-          'rpm'         => varz_router['top10_app_requests'][0]['rpm'],
-          'rps'         => varz_router['top10_app_requests'][0]['rps'],
-          'target'      => "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+        { 'guid'   => cc_app[:guid],
+          'name'   => cc_app[:name],
+          'rpm'    => varz_router['top10_app_requests'][0]['rpm'],
+          'rps'    => varz_router['top10_app_requests'][0]['rps'],
+          'target' => "#{ cc_organization[:name] }/#{ cc_space[:name] }"
         }
       ]
     }
