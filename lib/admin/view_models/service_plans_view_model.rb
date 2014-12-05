@@ -54,6 +54,7 @@ module AdminUI
       service_instances['items'].each do |service_instance|
         Thread.pass
         service_plan_id = service_instance[:service_plan_id]
+        next if service_plan_id.nil?
         service_instance_counters[service_plan_id] = 0 if service_instance_counters[service_plan_id].nil?
         service_instance_counters[service_plan_id] += 1
       end

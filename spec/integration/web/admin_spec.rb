@@ -52,6 +52,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       expect(scroll_tab_into_view('Users').displayed?).to be_true
       expect(scroll_tab_into_view('Domains').displayed?).to be_true
       expect(scroll_tab_into_view('Quotas').displayed?).to be_true
+      expect(scroll_tab_into_view('ServiceBrokers').displayed?).to be_true
       expect(scroll_tab_into_view('Services').displayed?).to be_true
       expect(scroll_tab_into_view('ServicePlans').displayed?).to be_true
       expect(scroll_tab_into_view('DEAs').displayed?).to be_true
@@ -506,11 +507,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Organizations', 8, 'SpaceRoles', "#{ cc_organization[:name] }/")
           end
 
-          it 'has quota link' do
+          it 'has quotas link' do
             check_filter_link('Organizations', 9, 'Quotas', cc_quota_definition[:name])
           end
 
-          it 'has domain link' do
+          it 'has domains link' do
             check_filter_link('Organizations', 10, 'Domains', cc_organization[:name])
           end
 
@@ -522,7 +523,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Organizations', 14, 'Applications', "#{ cc_organization[:name] }/")
           end
 
-          it 'has services link' do
+          it 'has services instances link' do
             check_filter_link('Organizations', 15, 'ServiceInstances', "#{ cc_organization[:name] }/")
           end
 
@@ -611,7 +612,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                           ])
           end
 
-          it 'has organization link' do
+          it 'has organizations link' do
             check_filter_link('Spaces', 2, 'Organizations', cc_organization[:name])
           end
 
@@ -891,15 +892,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_allowscriptaccess_attribute('ToolTables_ApplicationsServicesTable_0')
           end
 
-          it 'has space link' do
+          it 'has spaces link' do
             check_filter_link('Applications', 18, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
 
-          it 'has organization link' do
+          it 'has organizations link' do
             check_filter_link('Applications', 19, 'Organizations', cc_organization[:name])
           end
 
-          it 'has DEA link' do
+          it 'has DEAs link' do
             check_filter_link('Applications', 20, 'DEAs', nats_dea['host'])
           end
         end
@@ -1005,11 +1006,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_filter_link('Routes', 5, 'Applications', "#{ cc_route[:host] }.#{ cc_domain[:name] }")
           end
 
-          it 'has space link' do
+          it 'has spaces link' do
             check_filter_link('Routes', 6, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name]}")
           end
 
-          it 'has organization link' do
+          it 'has organizations link' do
             check_filter_link('Routes', 7, 'Organizations', cc_organization[:name])
           end
         end
@@ -1075,7 +1076,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Instance Created',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Instance Updated',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:updated_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Instance Dashboard URL', :tag =>   nil, :value => cc_service_instance[:dashboard_url] },
-                           { :label => 'Service Broker Name',            :tag =>   nil, :value => cc_service_broker[:name] },
+                           { :label => 'Service Broker Name',            :tag =>   'a', :value => cc_service_broker[:name] },
                            { :label => 'Service Broker GUID',            :tag =>   nil, :value => cc_service_broker[:guid] },
                            { :label => 'Service Broker Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Broker Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
@@ -1121,19 +1122,23 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             check_allowscriptaccess_attribute('ToolTables_ServiceInstancesApplicationsTable_0')
           end
 
-          it 'has service link' do
+          it 'has service brokers link' do
+            check_filter_link('ServiceInstances', 5, 'ServiceBrokers', cc_service_broker[:guid])
+          end
+
+          it 'has services link' do
             check_filter_link('ServiceInstances', 10, 'Services', cc_service[:guid])
           end
 
-          it 'has service plan link' do
+          it 'has service plans link' do
             check_filter_link('ServiceInstances', 22, 'ServicePlans', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
           end
 
-          it 'has space link' do
+          it 'has spaces link' do
             check_filter_link('ServiceInstances', 29, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
 
-          it 'has organization link' do
+          it 'has organizations link' do
             check_filter_link('ServiceInstances', 30, 'Organizations', cc_organization[:name])
           end
         end
@@ -1512,6 +1517,63 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
       end
 
+      context 'Service Brokers' do
+        let(:tab_id) { 'ServiceBrokers' }
+
+        it 'has a table' do
+          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceBrokersTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                :expected_length => 7,
+                                :labels          => ['Name', 'GUID', 'Created', 'Updated', 'Services', 'Service Plans', 'Service Instances'],
+                                :colspans        => nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(:xpath => "//table[@id='ServiceBrokersTable']/tbody/tr/td"),
+                           [
+                             cc_service_broker[:name],
+                             cc_service_broker[:guid],
+                             @driver.execute_script("return Format.formatString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")"),
+                             @driver.execute_script("return Format.formatString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")"),
+                             '1',
+                             '1',
+                             '1'
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_ServiceBrokersTable_0')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ :label => 'Service Broker Name',    :tag => 'div', :value => cc_service_broker[:name] },
+                           { :label => 'Service Broker GUID',    :tag =>   nil, :value => cc_service_broker[:guid] },
+                           { :label => 'Service Broker Created', :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
+                           { :label => 'Service Broker Updated', :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
+                           { :label => 'Services',               :tag =>   'a', :value => '1' },
+                           { :label => 'Service Plans',          :tag =>   'a', :value => '1' },
+                           { :label => 'Service Instances',      :tag =>   'a', :value => '1' }
+                          ])
+          end
+
+          it 'has services link' do
+            check_filter_link('ServiceBrokers', 4, 'Services', cc_service_broker[:guid])
+          end
+
+          it 'has service plans link' do
+            check_filter_link('ServiceBrokers', 5, 'ServicePlans', cc_service_broker[:guid])
+          end
+
+          it 'has service instances link' do
+            check_filter_link('ServiceBrokers', 6, 'ServiceInstances', cc_service_broker[:guid])
+          end
+        end
+      end
+
       context 'Services' do
         let(:tab_id) { 'Services' }
 
@@ -1581,19 +1643,23 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Support URL',            :tag =>   'a', :value => service_extra_json['supportUrl'] },
                            { :label => 'Service Plans',                  :tag =>   'a', :value => '1' },
                            { :label => 'Service Instances',              :tag =>   'a', :value => '1' },
-                           { :label => 'Service Broker Name',            :tag =>   nil, :value => cc_service_broker[:name] },
+                           { :label => 'Service Broker Name',            :tag =>   'a', :value => cc_service_broker[:name] },
                            { :label => 'Service Broker GUID',            :tag =>   nil, :value => cc_service_broker[:guid] },
                            { :label => 'Service Broker Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Broker Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") }
                           ])
           end
 
-          it 'has service plans link to service plans filtered by service target' do
+          it 'has service plans link' do
             check_filter_link('Services', 19, 'ServicePlans', "#{ cc_service[:provider] }/#{ cc_service[:label] }/")
           end
 
-          it 'has service instances link to service instances filtered by service target' do
+          it 'has service instances link' do
             check_filter_link('Services', 20, 'ServiceInstances', "#{ cc_service[:provider] }/#{ cc_service[:label] }/")
+          end
+
+          it 'has service brokers link' do
+            check_filter_link('Services', 21, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end
@@ -1668,7 +1734,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Plan Bullet',            :tag =>   nil, :value => service_plan_extra_json['bullets'][0] },
                            { :label => 'Service Plan Bullet',            :tag =>   nil, :value => service_plan_extra_json['bullets'][1] },
                            { :label => 'Service Instances',              :tag =>   'a', :value => '1' },
-                           { :label => 'Service Broker Name',            :tag =>   nil, :value => cc_service_broker[:name] },
+                           { :label => 'Service Broker Name',            :tag =>   'a', :value => cc_service_broker[:name] },
                            { :label => 'Service Broker GUID',            :tag =>   nil, :value => cc_service_broker[:guid] },
                            { :label => 'Service Broker Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
                            { :label => 'Service Broker Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
@@ -1717,11 +1783,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             expect(inputs[0].attribute('value')).to eq(cc_service_plan[:guid])
           end
 
-          it 'has service instances link to service instances filtered by service plan target' do
+          it 'has service instances link' do
             check_filter_link('ServicePlans', 11, 'ServiceInstances', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
           end
 
-          it 'has services link to services filtered by service guid' do
+          it 'has service brokers link' do
+            check_filter_link('ServicePlans', 12, 'ServiceBrokers', cc_service_broker[:guid])
+          end
+
+          it 'has services link' do
             check_filter_link('ServicePlans', 17, 'Services', cc_service[:guid])
           end
 

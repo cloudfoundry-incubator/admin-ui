@@ -39,6 +39,7 @@
         <script src="js/app/tabs/quotasTab.js"></script>
         <script src="js/app/tabs/routersTab.js"></script>
         <script src="js/app/tabs/routesTab.js"></script>
+        <script src="js/app/tabs/serviceBrokersTab.js"></script>
         <script src="js/app/tabs/serviceInstancesTab.js"></script>
         <script src="js/app/tabs/servicePlansTab.js"></script>
         <script src="js/app/tabs/servicesTab.js"></script>
@@ -92,6 +93,7 @@
 	            <span id="Users" class="menuItem">Users</span>
 	            <span id="Domains" class="menuItem">Domains</span>
 	            <span id="Quotas" class="menuItem">Quotas</span>
+	            <span id="ServiceBrokers" class="menuItem">Service Brokers</span>
 	            <span id="Services" class="menuItem">Services</span>
 	            <span id="ServicePlans" class="menuItem">Service Plans</span>
 	            <span id="DEAs" class="menuItem">DEAs</span>
@@ -475,6 +477,17 @@
                 <div class="verticalPageSection">
                     <div id="QuotasDetailsLabel" class="propertyLabel">Details</div>
                     <div id="QuotasPropertiesContainer"></div>
+                </div>
+            </div>
+
+            <div id="ServiceBrokersPage" class="page hiddenPage">
+                <div id="ServiceBrokersTableContainer" class="pageSection">
+                    <table id="ServiceBrokersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="ServiceBrokersDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="ServiceBrokersPropertiesContainer"></div>
                 </div>
             </div>
 

@@ -386,6 +386,24 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_service_brokers
+    [
+      [
+        cc_service_broker[:name],
+        cc_service_broker[:guid],
+        cc_service_broker[:created_at].to_datetime.rfc3339,
+        cc_service_broker[:updated_at].to_datetime.rfc3339,
+        1,
+        1,
+        1
+      ]
+    ]
+  end
+
+  def view_models_service_brokers_detail
+    cc_service_broker
+  end
+
   def view_models_service_instances
     [
       [

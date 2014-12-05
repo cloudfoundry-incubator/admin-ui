@@ -146,6 +146,14 @@ describe AdminUI::CC do
       verify_disconnected_items(view_models.routes)
     end
 
+    it 'returns nil service_broker as expected' do
+      expect(view_models.service_broker('bogus')).to be_nil
+    end
+
+    it 'returns zero service_brokers as expected' do
+      verify_disconnected_items(view_models.service_brokers)
+    end
+
     it 'returns nil service_instance as expected' do
       expect(view_models.service_instance('bogus')).to be_nil
     end

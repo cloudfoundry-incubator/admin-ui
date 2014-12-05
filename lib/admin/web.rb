@@ -268,6 +268,18 @@ module AdminUI
       }.to_json
     end
 
+    get '/service_brokers_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'get', '/service_brokers_view_model'
+      AllActions.new(@logger, @view_models.service_brokers, params).items.to_json
+    end
+
+    get '/service_brokers_view_model/:guid', :auth => [:user] do
+      @logger.info_user session[:username], 'get', "/service_brokers_view_model/#{ params[:guid] }"
+      result = @view_models.service_broker(params[:guid])
+      return result.to_json if result
+      404
+    end
+
     get '/service_instances_view_model', :auth => [:user] do
       @logger.info_user session[:username], 'get', '/service_instances_view_model'
       AllActions.new(@logger, @view_models.service_instances, params).items.to_json
@@ -504,6 +516,14 @@ module AdminUI
       send_file(file.path,
                 :disposition => 'attachment',
                 :filename    => 'routes.csv')
+    end
+
+    post '/service_brokers_view_model', :auth => [:user] do
+      @logger.info_user session[:username], 'post', '/service_brokers_view_model'
+      file = Download.download(request.body.read, 'service_brokers', @view_models.service_brokers)
+      send_file(file.path,
+                :disposition => 'attachment',
+                :filename    => 'service_brokers.csv')
     end
 
     post '/service_instances_view_model', :auth => [:user] do

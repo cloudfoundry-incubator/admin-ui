@@ -266,6 +266,20 @@ describe AdminUI::CC, :type => :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected service_brokers_view_model' do
+      let(:results)  { view_models.service_brokers }
+      let(:expected) { view_models_service_brokers }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected service_brokers_view_model detail' do
+      let(:results)  { view_models.service_broker(cc_service_broker[:guid]) }
+      let(:expected) { view_models_service_brokers_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected service_instances_view_model' do
       let(:results)  { view_models.service_instances }
       let(:expected) { view_models_service_instances }

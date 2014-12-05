@@ -59,11 +59,12 @@ module AdminUI
 
       service_instances['items'].each do |service_instance|
         Thread.pass
-        service_plan   = service_plan_hash[service_instance[:service_plan_id]]
-        service        = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
-        service_broker = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
-        space          = space_hash[service_instance[:space_id]]
-        organization   = space.nil? ? nil : organization_hash[space[:organization_id]]
+        service_plan_id = service_instance[:service_plan_id]
+        service_plan    = service_plan_id.nil? ? nil : service_plan_hash[service_plan_id]
+        service         = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
+        service_broker  = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
+        space           = space_hash[service_instance[:space_id]]
+        organization    = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         row = []
 
