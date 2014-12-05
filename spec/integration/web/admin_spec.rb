@@ -500,7 +500,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has organization roles link' do
-            check_filter_link('Organizations', 7, 'OrganizationRoles', cc_organization[:name])
+            check_filter_link('Organizations', 7, 'OrganizationRoles', cc_organization[:guid])
           end
 
           it 'has space roles link' do
@@ -613,11 +613,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has organizations link' do
-            check_filter_link('Spaces', 2, 'Organizations', cc_organization[:name])
+            check_filter_link('Spaces', 2, 'Organizations', cc_organization[:guid])
           end
 
           it 'has space roles link' do
-            check_filter_link('Spaces', 5, 'SpaceRoles', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 5, 'SpaceRoles', cc_space[:guid])
           end
 
           it 'has routes link' do
@@ -893,11 +893,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has spaces link' do
-            check_filter_link('Applications', 18, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Applications', 18, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Applications', 19, 'Organizations', cc_organization[:name])
+            check_filter_link('Applications', 19, 'Organizations', cc_organization[:guid])
           end
 
           it 'has DEAs link' do
@@ -999,7 +999,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has domains link' do
-            check_filter_link('Routes', 2, 'Domains', cc_domain[:name])
+            check_filter_link('Routes', 2, 'Domains', cc_domain[:guid])
           end
 
           it 'has applications link' do
@@ -1007,11 +1007,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has spaces link' do
-            check_filter_link('Routes', 6, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name]}")
+            check_filter_link('Routes', 6, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Routes', 7, 'Organizations', cc_organization[:name])
+            check_filter_link('Routes', 7, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -1023,12 +1023,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 5,
                                 :labels          => ['Service Broker', 'Service', 'Service Plan', 'Service Instance', ''],
-                                :colspans        => %w(4 6 6 5 1)
+                                :colspans        => %w(4 6 5 5 1)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 22,
-                                :labels          => %w(Name GUID Created Updated Provider Label GUID Version Created Updated Name GUID Created Updated Public Target Name GUID Created Updated Bindings Target),
+                                :expected_length => 21,
+                                :labels          => %w(Name GUID Created Updated Provider Label GUID Version Created Updated Name GUID Created Updated Public Name GUID Created Updated Bindings Target),
                                 :colspans        => nil
                               }
                              ])
@@ -1050,7 +1050,6 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")"),
                              cc_service_plan[:public].to_s,
-                             @driver.execute_script("return Format.formatTarget(\"#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }\")").gsub(/<\/?[^>]+>/, ''),
                              cc_service_instance[:name],
                              cc_service_instance[:guid],
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_instance[:created_at].to_datetime.rfc3339 }\")"),
@@ -1131,15 +1130,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has service plans link' do
-            check_filter_link('ServiceInstances', 22, 'ServicePlans', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
+            check_filter_link('ServiceInstances', 22, 'ServicePlans', cc_service_plan[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('ServiceInstances', 29, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('ServiceInstances', 29, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceInstances', 30, 'Organizations', cc_organization[:name])
+            check_filter_link('ServiceInstances', 30, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -1224,11 +1223,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has organizations link' do
-            check_filter_link('OrganizationRoles', 0, 'Organizations', cc_organization[:name])
+            check_filter_link('OrganizationRoles', 0, 'Organizations', cc_organization[:guid])
           end
 
           it 'has users link' do
-            check_filter_link('OrganizationRoles', 2, 'Users', uaa_user[:username])
+            check_filter_link('OrganizationRoles', 2, 'Users', uaa_user[:id])
           end
         end
       end
@@ -1315,15 +1314,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has spaces link' do
-            check_filter_link('SpaceRoles', 0, 'Spaces', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('SpaceRoles', 0, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('SpaceRoles', 2, 'Organizations', cc_organization[:name])
+            check_filter_link('SpaceRoles', 2, 'Organizations', cc_organization[:guid])
           end
 
           it 'has users link' do
-            check_filter_link('SpaceRoles', 3, 'Users', uaa_user[:username])
+            check_filter_link('SpaceRoles', 3, 'Users', uaa_user[:id])
           end
         end
       end
@@ -1402,11 +1401,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has organization roles link' do
-            check_filter_link('Users', 10, 'OrganizationRoles', uaa_user[:username])
+            check_filter_link('Users', 10, 'OrganizationRoles', uaa_user[:id])
           end
 
           it 'has space roles link' do
-            check_filter_link('Users', 15, 'SpaceRoles', uaa_user[:username])
+            check_filter_link('Users', 15, 'SpaceRoles', uaa_user[:id])
           end
         end
       end
@@ -1453,7 +1452,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has organizations link' do
-            check_filter_link('Domains', 4, 'Organizations', cc_organization[:name])
+            check_filter_link('Domains', 4, 'Organizations', cc_organization[:guid])
           end
 
           it 'has routes link' do
@@ -1651,11 +1650,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has service plans link' do
-            check_filter_link('Services', 19, 'ServicePlans', "#{ cc_service[:provider] }/#{ cc_service[:label] }/")
+            check_filter_link('Services', 19, 'ServicePlans', cc_service[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('Services', 20, 'ServiceInstances', "#{ cc_service[:provider] }/#{ cc_service[:label] }/")
+            check_filter_link('Services', 20, 'ServiceInstances', cc_service[:guid])
           end
 
           it 'has service brokers link' do
@@ -1671,12 +1670,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 :expected_length => 4,
                                 :labels          => ['', 'Service Plan', 'Service', 'Service Broker'],
-                                :colspans        => %w(1 10 8 4)
+                                :colspans        => %w(1 9 8 4)
                               },
                               {
                                 :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 23,
-                                :labels          => [' ', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Visible Organizations', 'Service Instances', 'Provider', 'Label', 'GUID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated'],
+                                :expected_length => 22,
+                                :labels          => [' ', 'Name', 'GUID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Visible Organizations', 'Service Instances', 'Provider', 'Label', 'GUID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated'],
                                 :colspans        => nil
                               }
                              ])
@@ -1686,7 +1685,6 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                              '',
                              cc_service_plan[:name],
                              cc_service_plan[:guid],
-                             @driver.execute_script("return Format.formatTarget(\"#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }\")").gsub(/<\/?[^>]+>/, ''),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")"),
                              cc_service_plan[:active].to_s,
@@ -1784,7 +1782,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has service instances link' do
-            check_filter_link('ServicePlans', 11, 'ServiceInstances', "#{ cc_service[:provider] }/#{ cc_service[:label] }/#{ cc_service_plan[:name] }")
+            check_filter_link('ServicePlans', 11, 'ServiceInstances', cc_service_plan[:guid])
           end
 
           it 'has service brokers link' do
@@ -1814,10 +1812,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
               # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
               # error happens.
               begin
-                Selenium::WebDriver::Wait.new(:timeout => 60).until { refresh_button && @driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[8]").text == expect_state }
+                Selenium::WebDriver::Wait.new(:timeout => 60).until { refresh_button && @driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[7]").text == expect_state }
               rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
               end
-              expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[8]").text).to eq(expect_state)
+              expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[7]").text).to eq(expect_state)
             end
 
             def check_operation_result(_visibility)

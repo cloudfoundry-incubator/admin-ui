@@ -72,15 +72,6 @@ module AdminUI
         row.push(service_plan[:guid])
         row.push(service_plan[:name])
         row.push(service_plan[:guid])
-
-        service_plan_target = ''
-        if service
-          service_plan_target = service[:provider] if service[:provider]
-          service_plan_target = "#{ service_plan_target }/#{ service[:label] }/"
-        end
-        service_plan_target = "#{ service_plan_target }#{ service_plan[:name] }"
-        row.push(service_plan_target)
-
         row.push(service_plan[:created_at].to_datetime.rfc3339)
 
         if service_plan[:updated_at]
@@ -155,7 +146,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..22).to_a, (1..22).to_a - [9, 10])
+      result(true, items, hash, (1..21).to_a, (1..21).to_a - [8, 9])
     end
   end
 end

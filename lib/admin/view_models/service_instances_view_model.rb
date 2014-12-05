@@ -110,18 +110,8 @@ module AdminUI
           end
 
           row.push(service_plan[:public])
-
-          service_plan_target = ''
-          if service
-            service_plan_target = service[:provider] if service[:provider]
-            service_plan_target += "/#{ service[:label] }/"
-          end
-
-          service_plan_target += service_plan[:name]
-
-          row.push(service_plan_target)
         else
-          row.push(nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil)
         end
 
         row.push(service_instance[:name])
@@ -164,7 +154,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..21).to_a, (0..19).to_a << 21)
+      result(true, items, hash, (0..20).to_a, (0..18).to_a << 20)
     end
   end
 end
