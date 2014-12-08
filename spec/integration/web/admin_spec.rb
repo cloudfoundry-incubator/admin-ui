@@ -1549,26 +1549,28 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Service Broker Name',    :tag => 'div', :value => cc_service_broker[:name] },
-                           { :label => 'Service Broker GUID',    :tag =>   nil, :value => cc_service_broker[:guid] },
-                           { :label => 'Service Broker Created', :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Broker Updated', :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Services',               :tag =>   'a', :value => '1' },
-                           { :label => 'Service Plans',          :tag =>   'a', :value => '1' },
-                           { :label => 'Service Instances',      :tag =>   'a', :value => '1' }
+            check_details([{ :label => 'Service Broker Name',          :tag => 'div', :value => cc_service_broker[:name] },
+                           { :label => 'Service Broker GUID',          :tag =>   nil, :value => cc_service_broker[:guid] },
+                           { :label => 'Service Broker Created',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
+                           { :label => 'Service Broker Updated',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
+                           { :label => 'Service Broker Auth Username', :tag =>   nil, :value => cc_service_broker[:auth_username] },
+                           { :label => 'Service Broker Broker URL',    :tag =>   nil, :value => cc_service_broker[:broker_url] },
+                           { :label => 'Services',                     :tag =>   'a', :value => '1' },
+                           { :label => 'Service Plans',                :tag =>   'a', :value => '1' },
+                           { :label => 'Service Instances',            :tag =>   'a', :value => '1' }
                           ])
           end
 
           it 'has services link' do
-            check_filter_link('ServiceBrokers', 4, 'Services', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 6, 'Services', cc_service_broker[:guid])
           end
 
           it 'has service plans link' do
-            check_filter_link('ServiceBrokers', 5, 'ServicePlans', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 7, 'ServicePlans', cc_service_broker[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('ServiceBrokers', 6, 'ServiceInstances', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 8, 'ServiceInstances', cc_service_broker[:guid])
           end
         end
       end
