@@ -68,18 +68,42 @@ module AdminUI
 
         row = []
 
-        if service_broker
-          row.push(service_broker[:name])
-          row.push(service_broker[:guid])
-          row.push(service_broker[:created_at].to_datetime.rfc3339)
+        row.push(service_instance[:name])
+        row.push(service_instance[:guid])
+        row.push(service_instance[:created_at].to_datetime.rfc3339)
 
-          if service_broker[:updated_at]
-            row.push(service_broker[:updated_at].to_datetime.rfc3339)
+        if service_instance[:updated_at]
+          row.push(service_instance[:updated_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
+        service_binding_apps = service_binding_apps_hash[service_instance[:id]]
+
+        if service_binding_apps
+          row.push(service_binding_apps.length)
+        elsif service_bindings_connected && applications_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if service_plan
+          row.push(service_plan[:name])
+          row.push(service_plan[:guid])
+          row.push(service_plan[:created_at].to_datetime.rfc3339)
+
+          if service_plan[:updated_at]
+            row.push(service_plan[:updated_at].to_datetime.rfc3339)
           else
             row.push(nil)
           end
+
+          row.push(service_plan[:active])
+          row.push(service_plan[:public])
+          row.push(service_plan[:free])
         else
-          row.push(nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil, nil, nil)
         end
 
         if service
@@ -101,42 +125,18 @@ module AdminUI
           row.push(nil, nil, nil, nil, nil, nil, nil, nil)
         end
 
-        if service_plan
-          row.push(service_plan[:name])
-          row.push(service_plan[:guid])
-          row.push(service_plan[:created_at].to_datetime.rfc3339)
+        if service_broker
+          row.push(service_broker[:name])
+          row.push(service_broker[:guid])
+          row.push(service_broker[:created_at].to_datetime.rfc3339)
 
-          if service_plan[:updated_at]
-            row.push(service_plan[:updated_at].to_datetime.rfc3339)
+          if service_broker[:updated_at]
+            row.push(service_broker[:updated_at].to_datetime.rfc3339)
           else
             row.push(nil)
           end
-
-          row.push(service_plan[:active])
-          row.push(service_plan[:public])
-          row.push(service_plan[:free])
         else
-          row.push(nil, nil, nil, nil, nil, nil, nil)
-        end
-
-        row.push(service_instance[:name])
-        row.push(service_instance[:guid])
-        row.push(service_instance[:created_at].to_datetime.rfc3339)
-
-        if service_instance[:updated_at]
-          row.push(service_instance[:updated_at].to_datetime.rfc3339)
-        else
-          row.push(nil)
-        end
-
-        service_binding_apps = service_binding_apps_hash[service_instance[:id]]
-
-        if service_binding_apps
-          row.push(service_binding_apps.length)
-        elsif service_bindings_connected && applications_connected
-          row.push(0)
-        else
-          row.push(nil)
+          row.push(nil, nil, nil, nil)
         end
 
         if organization && space
@@ -159,7 +159,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..24).to_a, (0..22).to_a << 24)
+      result(true, items, hash, (0..24).to_a, (0..24).to_a - [4])
     end
   end
 end
