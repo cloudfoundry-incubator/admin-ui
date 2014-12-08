@@ -1632,6 +1632,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
                            { :label => 'Service Active',                 :tag =>   nil, :value => cc_service[:active].to_s },
                            { :label => 'Service Bindable',               :tag =>   nil, :value => cc_service[:bindable].to_s },
                            { :label => 'Service Description',            :tag =>   nil, :value => cc_service[:description] },
+                           { :label => 'Service Unique ID',              :tag =>   nil, :value => cc_service[:unique_id] },
                            { :label => 'Service Tag',                    :tag =>   nil, :value => service_tags_json[0] },
                            { :label => 'Service Tag',                    :tag =>   nil, :value => service_tags_json[1] },
                            { :label => 'Service Documentation URL',      :tag =>   'a', :value => cc_service[:documentation_url] },
@@ -1652,15 +1653,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has service plans link' do
-            check_filter_link('Services', 19, 'ServicePlans', cc_service[:guid])
+            check_filter_link('Services', 20, 'ServicePlans', cc_service[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('Services', 20, 'ServiceInstances', cc_service[:guid])
+            check_filter_link('Services', 21, 'ServiceInstances', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Services', 21, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Services', 22, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end
