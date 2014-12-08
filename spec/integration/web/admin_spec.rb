@@ -1105,12 +1105,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has bound applications' do
             expect(@driver.find_element(:id => 'ServiceInstancesApplicationsDetailsLabel').displayed?).to be_true
             check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesApplicationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 2,
-                                :labels          => %w(Application Bound),
+                                :expected_length => 3,
+                                :labels          => %w(Application GUID Bound),
                                 :colspans        => nil)
             check_table_data(@driver.find_elements(:xpath => "//table[@id='ServiceInstancesApplicationsTable']/tbody/tr/td"),
                              [
                                cc_app[:name],
+                               cc_app[:guid],
                                @driver.execute_script("return Format.formatDateString(\"#{ cc_service_binding[:created_at].to_datetime.rfc3339 }\")")
                              ])
           end
@@ -1750,12 +1751,13 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has visible organizations' do
             expect(@driver.find_element(:id => 'ServicePlansOrganizationsDetailsLabel').displayed?).to be_true
             check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansOrganizationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 2,
-                                :labels          => %w(Organization Created),
+                                :expected_length => 3,
+                                :labels          => %w(Organization GUID Created),
                                 :colspans        => nil)
             check_table_data(@driver.find_elements(:xpath => "//table[@id='ServicePlansOrganizationsTable']/tbody/tr/td"),
                              [
                                cc_organization[:name],
+                               cc_organization[:guid],
                                @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan_visibility[:created_at].to_datetime.rfc3339 }\")")
                              ])
           end
