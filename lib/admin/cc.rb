@@ -433,6 +433,7 @@ module AdminUI
           table          = cache[:table]
           columns        = cache[:columns]
           db_columns     = connection[table].columns
+          db_columns     = db_columns.map(&:downcase)
           cache[:select] = connection[table].select(columns & db_columns).sql
           # TODO: If the sql has parenthesis around the select clause, you get an array of values instead of a hash
           cache[:select] = cache[:select].sub('(', '').sub(')', '')
