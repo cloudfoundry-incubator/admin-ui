@@ -24,7 +24,9 @@ module AdminUI
       :tasks_refresh_interval              =>              5_000,
       :uaa_groups_admin                    => ['admin_ui.admin'],
       :uaa_groups_user                     =>  ['admin_ui.user'],
-      :varz_discovery_interval             =>                 30
+      :varz_discovery_interval             =>                 30,
+      :default_page_size                   =>                 10,
+      :table_height                        =>            '300px'
     }
 
     def self.schema
@@ -80,7 +82,9 @@ module AdminUI
           :uaadb_uri                                     => /[^\r\n\t]+/,
           :uaa_groups_admin                              => [/[^\r\n\t]+/],
           :uaa_groups_user                               => [/[^\r\n\t]+/],
-          optional(:varz_discovery_interval)             => Integer
+          optional(:varz_discovery_interval)             => Integer,
+          optional(:default_page_size)                   => Integer,
+          optional(:table_height)                        => /[^\r\n\t]+/
         }
         unless schema[:stats_refresh_schedules].nil?
           schema[:stats_refresh_schedules].each do | spec |
@@ -292,6 +296,14 @@ module AdminUI
 
     def varz_discovery_interval
       @config[:varz_discovery_interval]
+    end
+
+    def default_page_size
+      @config[:default_page_size]
+    end
+
+    def table_height
+      @config[:table_height]
     end
 
     private
