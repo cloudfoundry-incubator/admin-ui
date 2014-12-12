@@ -21,12 +21,12 @@ module AdminUI
       :stats_refresh_schedules             =>      ['0 5 * * *'],
       :stats_retries                       =>                  5,
       :stats_retry_interval                =>                300,
+      :table_height                        =>            '300px',
+      :table_page_size                     =>                 10,
       :tasks_refresh_interval              =>              5_000,
       :uaa_groups_admin                    => ['admin_ui.admin'],
       :uaa_groups_user                     =>  ['admin_ui.user'],
-      :varz_discovery_interval             =>                 30,
-      :default_page_size                   =>                 10,
-      :table_height                        =>            '300px'
+      :varz_discovery_interval             =>                 30
     }
 
     def self.schema
@@ -73,6 +73,8 @@ module AdminUI
           optional(:stats_refresh_schedules)             => [/@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/],
           optional(:stats_retries)                       => Integer,
           optional(:stats_retry_interval)                => Integer,
+          optional(:table_height)                        => /[^\r\n\t]+/,
+          optional(:table_page_size)                     => enum(5, 10, 25, 50, 100, 250, 500, 1000),
           optional(:tasks_refresh_interval)              => Integer,
           :uaa_client                                    =>
           {
@@ -82,9 +84,7 @@ module AdminUI
           :uaadb_uri                                     => /[^\r\n\t]+/,
           :uaa_groups_admin                              => [/[^\r\n\t]+/],
           :uaa_groups_user                               => [/[^\r\n\t]+/],
-          optional(:varz_discovery_interval)             => Integer,
-          optional(:default_page_size)                   => Integer,
-          optional(:table_height)                        => /[^\r\n\t]+/
+          optional(:varz_discovery_interval)             => Integer
         }
         unless schema[:stats_refresh_schedules].nil?
           schema[:stats_refresh_schedules].each do | spec |
@@ -268,6 +268,14 @@ module AdminUI
       @config[:stats_retry_interval]
     end
 
+    def table_height
+      @config[:table_height]
+    end
+
+    def table_page_size
+      @config[:table_page_size]
+    end
+
     def tasks_refresh_interval
       @config[:tasks_refresh_interval]
     end
@@ -296,14 +304,6 @@ module AdminUI
 
     def varz_discovery_interval
       @config[:varz_discovery_interval]
-    end
-
-    def default_page_size
-      @config[:default_page_size]
-    end
-
-    def table_height
-      @config[:table_height]
     end
 
     private

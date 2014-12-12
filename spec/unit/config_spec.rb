@@ -262,6 +262,18 @@ describe AdminUI::Config do
         expect(config.stats_retry_interval).to eq(stats_retry_interval)
       end
 
+      it 'table_height' do
+        table_height = '300px'
+        config = AdminUI::Config.load('table_height' => table_height)
+        expect(config.table_height).to eq(table_height)
+      end
+
+      it 'table_page_size' do
+        table_page_size = '10'
+        config = AdminUI::Config.load('table_page_size' => table_page_size)
+        expect(config.table_page_size).to eq(table_page_size)
+      end
+
       it 'tasks_refresh_interval' do
         tasks_refresh_interval = 99
         config = AdminUI::Config.load('tasks_refresh_interval' => tasks_refresh_interval)
@@ -445,6 +457,14 @@ describe AdminUI::Config do
 
       it 'stats_retry_interval' do
         expect(config.stats_retry_interval).to eq(300)
+      end
+
+      it 'table_height' do
+        expect(config.table_height).to eq('300px')
+      end
+
+      it 'table_page_size' do
+        expect(config.table_page_size).to eq(10)
       end
 
       it 'tasks_refresh_interval' do
@@ -658,6 +678,14 @@ describe AdminUI::Config do
 
       it 'stats_retry_interval' do
         expect { AdminUI::Config.load(config.merge(:stats_retry_interval => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'table_height' do
+        expect { AdminUI::Config.load(config.merge(:table_height => 5)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'table_page_size' do
+        expect { AdminUI::Config.load(config.merge(:table_page_size => 6)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'tasks_refresh_interval' do
