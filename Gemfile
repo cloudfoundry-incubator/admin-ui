@@ -11,6 +11,10 @@ gem 'sinatra', '1.4.5'
 gem 'sqlite3', '1.3.9'
 gem 'yajl-ruby', '1.2.1'
 
+group :mysql do
+  gem 'mysql2', '0.3.16'
+end
+
 group :test do
   gem 'rspec', '2.14.1'
   gem 'selenium-webdriver', '2.42.0'
