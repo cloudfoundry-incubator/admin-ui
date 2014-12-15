@@ -264,6 +264,8 @@ module AdminUI
       {
         :admin                  => session[:admin],
         :cloud_controller_uri   => @config.cloud_controller_uri,
+        :table_height           => @config.table_height,
+        :table_page_size        => @config.table_page_size,
         :tasks_refresh_interval => @config.tasks_refresh_interval
       }.to_json
     end

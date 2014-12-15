@@ -23,6 +23,8 @@ describe AdminUI::Admin do
   let(:private_key_pass_phrase) { 'private_key_pass_phrase'  }
   let(:secured_client_connection) { false }
   let(:stats_file) { '/tmp/admin_ui_stats.json' }
+  let(:table_height) { '300px' }
+  let(:table_page_size) { 10 }
   let(:tasks_refresh_interval) { 6000 }
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)  { "sqlite://#{ uaadb_file }" }
@@ -41,6 +43,8 @@ describe AdminUI::Admin do
                                       :private_key_pass_phrase => private_key_pass_phrase
                                     },
       :stats_file                => stats_file,
+      :table_height              => table_height,
+      :table_page_size           => table_page_size,
       :tasks_refresh_interval    => tasks_refresh_interval,
       :uaadb_uri                 => uaadb_uri,
       :uaa_client                => { :id => 'id', :secret => 'secret' }
@@ -558,6 +562,8 @@ describe AdminUI::Admin do
 
         expect(json).to eq('admin'                  => true,
                            'cloud_controller_uri'   => cloud_controller_uri,
+                           'table_height'           => table_height,
+                           'table_page_size'        => table_page_size,
                            'tasks_refresh_interval' => tasks_refresh_interval)
 
       end

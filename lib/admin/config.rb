@@ -21,6 +21,8 @@ module AdminUI
       :stats_refresh_schedules             =>      ['0 5 * * *'],
       :stats_retries                       =>                  5,
       :stats_retry_interval                =>                300,
+      :table_height                        =>            '300px',
+      :table_page_size                     =>                 10,
       :tasks_refresh_interval              =>              5_000,
       :uaa_groups_admin                    => ['admin_ui.admin'],
       :uaa_groups_user                     =>  ['admin_ui.user'],
@@ -71,6 +73,8 @@ module AdminUI
           optional(:stats_refresh_schedules)             => [/@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/],
           optional(:stats_retries)                       => Integer,
           optional(:stats_retry_interval)                => Integer,
+          optional(:table_height)                        => /[^\r\n\t]+/,
+          optional(:table_page_size)                     => enum(5, 10, 25, 50, 100, 250, 500, 1000),
           optional(:tasks_refresh_interval)              => Integer,
           :uaa_client                                    =>
           {
@@ -262,6 +266,14 @@ module AdminUI
 
     def stats_retry_interval
       @config[:stats_retry_interval]
+    end
+
+    def table_height
+      @config[:table_height]
+    end
+
+    def table_page_size
+      @config[:table_page_size]
     end
 
     def tasks_refresh_interval
