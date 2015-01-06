@@ -3,6 +3,7 @@ require_relative '../spec_helper'
 
 describe AdminUI::VARZ, :type => :integration do
   include NATSHelper
+  include ThreadHelper
   include VARZHelper
 
   let(:data_file) { '/tmp/admin_ui_data.json' }
@@ -27,6 +28,8 @@ describe AdminUI::VARZ, :type => :integration do
   let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
 
   after do
+    kill_threads
+
     Process.wait(Process.spawn({}, "rm -fr #{ data_file } #{ db_file } #{ log_file }"))
   end
 

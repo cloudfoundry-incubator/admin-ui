@@ -4,6 +4,7 @@ require_relative '../spec_helper'
 describe AdminUI::Operation, :type => :integration do
   include CCHelper
   include NATSHelper
+  include ThreadHelper
   include VARZHelper
 
   let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
@@ -54,6 +55,7 @@ describe AdminUI::Operation, :type => :integration do
   let(:operation) { AdminUI::Operation.new(config, logger, cc, client, varz, view_models) }
 
   after do
+    kill_threads
     cleanup_files
   end
 

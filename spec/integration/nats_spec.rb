@@ -4,6 +4,7 @@ require_relative '../spec_helper'
 
 describe AdminUI::NATS, :type => :integration do
   include NATSHelper
+  include ThreadHelper
 
   let(:data_file) { '/tmp/admin_ui_data.json' }
   let(:db_file)   { '/tmp/admin_ui_store.db' }
@@ -13,6 +14,10 @@ describe AdminUI::NATS, :type => :integration do
   before do
     AdminUI::Config.any_instance.stub(:validate)
     nats_stub
+  end
+
+  after do
+    kill_threads
   end
 
   let(:logger) { Logger.new(log_file) }

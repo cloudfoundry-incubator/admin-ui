@@ -2,6 +2,7 @@ require 'logger'
 require_relative '../spec_helper'
 
 describe AdminUI::CC, :type => :integration do
+  include ThreadHelper
   include ViewModelsHelper
 
   let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
@@ -59,13 +60,7 @@ describe AdminUI::CC, :type => :integration do
   let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, tasks, varz, true) }
 
   after do
-    Thread.list.each do |thread|
-      unless thread == Thread.main
-        thread.kill
-        thread.join
-      end
-    end
-
+    kill_threads
     cleanup_files
   end
 

@@ -7,6 +7,7 @@ require_relative '../spec_helper'
 
 describe AdminUI::Admin do
   include LoginHelper
+  include ThreadHelper
 
   let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
   let(:ccdb_uri) { "sqlite://#{ ccdb_file }" }
@@ -86,12 +87,7 @@ describe AdminUI::Admin do
 
     Rack::Handler::WEBrick.shutdown
 
-    Thread.list.each do |thread|
-      unless thread == Thread.main
-        thread.kill
-        thread.join
-      end
-    end
+    kill_threads
 
     Process.wait(Process.spawn({}, "rm -fr #{ ccdb_file } #{ data_file } #{ db_file } #{ log_file } #{ stats_file } #{ uaadb_file }"))
   end

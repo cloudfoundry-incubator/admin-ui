@@ -32,7 +32,7 @@ module AdminUI
           wait_time = schedule_stats
           if  wait_time <= 0
             @logger.debug('AdminUI::Stats.initialize: Stats collection is disabled.')
-            fail
+            break
           end
         end
       end

@@ -3,6 +3,7 @@ require_relative '../spec_helper'
 
 describe AdminUI::CC, :type => :integration do
   include CCHelper
+  include ThreadHelper
 
   let(:ccdb_file)  { '/tmp/admin_ui_ccdb.db' }
   let(:ccdb_uri)   { "sqlite://#{ ccdb_file }" }
@@ -35,13 +36,7 @@ describe AdminUI::CC, :type => :integration do
   let(:cc) { AdminUI::CC.new(config, logger, client, true) }
 
   after do
-    Thread.list.each do |thread|
-      unless thread == Thread.main
-        thread.kill
-        thread.join
-      end
-    end
-
+    kill_threads
     cleanup_files
   end
 

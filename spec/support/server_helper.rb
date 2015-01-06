@@ -11,6 +11,7 @@ shared_context :server_context do
   include CCHelper
   include LoginHelper
   include NATSHelper
+  include ThreadHelper
   include VARZHelper
   include ViewModelsHelper
 
@@ -91,14 +92,7 @@ shared_context :server_context do
 
   after do
     Rack::Handler::WEBrick.shutdown
-
-    Thread.list.each do |thread|
-      unless thread == Thread.main
-        thread.kill
-        thread.join
-      end
-    end
-
+    kill_threads
     cleanup_files
   end
 end
