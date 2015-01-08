@@ -30,7 +30,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
           @driver.find_element(:id => 'OrganizationsPage').displayed? &&
-              @driver.find_element(:id => 'ToolTables_OrganizationsTable_0').text == 'Copy'
+            @driver.find_element(:id => 'ToolTables_OrganizationsTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
@@ -53,7 +53,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
           @driver.find_element(:id => 'ApplicationsPage').displayed? &&
-          @driver.find_element(:id => 'ToolTables_ApplicationsTable_0').text == 'Copy'
+            @driver.find_element(:id => 'ToolTables_ApplicationsTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
@@ -74,7 +74,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
           @driver.find_element(:id => 'RoutesPage').displayed? &&
-          @driver.find_element(:id => 'ToolTables_RoutesTable_0').text == 'Copy'
+            @driver.find_element(:id => 'ToolTables_RoutesTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
@@ -95,7 +95,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
           @driver.find_element(:id => 'OrganizationRolesPage').displayed? &&
-          @driver.find_element(:id => 'ToolTables_OrganizationRolesTable_0').text == 'Copy'
+            @driver.find_element(:id => 'ToolTables_OrganizationRolesTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
@@ -116,7 +116,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
           @driver.find_element(:id => 'SpaceRolesPage').displayed? &&
-          @driver.find_element(:id => 'ToolTables_SpaceRolesTable_0').text == 'Copy'
+            @driver.find_element(:id => 'ToolTables_SpaceRolesTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
@@ -137,7 +137,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 10).until do
           @driver.find_element(:id => 'ServicePlansPage').displayed? &&
-          @driver.find_element(:id => 'ToolTables_ServicePlansTable_0').text == 'Copy'
+            @driver.find_element(:id => 'ToolTables_ServicePlansTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
@@ -158,7 +158,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
           @driver.find_element(:id => 'DEAsPage').displayed? &&
-          @driver.find_element(:id => 'ToolTables_DEAsTable_0').text == 'Copy'
+            @driver.find_element(:id => 'ToolTables_DEAsTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
@@ -179,7 +179,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
           @driver.find_element(:id => 'ComponentsPage').displayed? &&
-          @driver.find_element(:id => 'ToolTables_ComponentsTable_0').text == 'Copy'
+            @driver.find_element(:id => 'ToolTables_ComponentsTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
@@ -204,7 +204,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
       begin
         Selenium::WebDriver::Wait.new(:timeout => 5).until do
           @driver.find_element(:id => 'StatsPage').displayed? &&
-          @driver.find_element(:id => 'ToolTables_StatsTable_0').text == 'Copy'
+            @driver.find_element(:id => 'ToolTables_StatsTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end

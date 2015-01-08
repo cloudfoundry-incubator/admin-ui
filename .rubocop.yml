@@ -6,6 +6,9 @@ AllCops:
     - 'spec/support/ccdb/*'
     - 'spec/support/uaadb/*'
 
+AbcSize:
+  Enabled: false
+  
 ClassLength:
   Enabled: false
 

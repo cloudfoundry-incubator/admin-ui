@@ -185,7 +185,6 @@ describe AdminUI::Admin do
       location = response['location']
       expect(location).not_to be_nil
     end
-
   end
 
   context 'Login required, performed and failed via http' do
@@ -561,7 +560,6 @@ describe AdminUI::Admin do
                            'table_height'           => table_height,
                            'table_page_size'        => table_page_size,
                            'tasks_refresh_interval' => tasks_refresh_interval)
-
       end
 
       it '/service_brokers_view_model succeeds' do
@@ -991,7 +989,6 @@ describe AdminUI::Admin do
   end
 
   context 'Login not required' do
-
     def get_response(path)
       request = Net::HTTP::Get.new(path)
 

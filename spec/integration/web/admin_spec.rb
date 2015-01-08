@@ -2290,7 +2290,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
               refresh_button
               cells = @driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr/td")
               cells[0].text == File.join(File.dirname(__FILE__)[0..-22], 'lib/admin/scripts', 'newDEA.sh') &&
-              cells[1].text == @driver.execute_script('return Constants.STATUS__RUNNING')
+                cells[1].text == @driver.execute_script('return Constants.STATUS__RUNNING')
             end
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end

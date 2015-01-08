@@ -8,10 +8,10 @@ module AdminUI
     end
 
     def configured?
-      @config.sender_email_server  &&
-      @config.sender_email_account &&
-      @config.receiver_emails      &&
-      @config.receiver_emails.length > 0
+      @config.sender_email_server    &&
+        @config.sender_email_account &&
+        @config.receiver_emails      &&
+        @config.receiver_emails.length > 0
     end
 
     def send_email(disconnected)

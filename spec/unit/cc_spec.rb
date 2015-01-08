@@ -33,7 +33,6 @@ describe AdminUI::CC do
   end
 
   context 'No backend connected' do
-
     def verify_disconnected_items(result)
       expect(result).to include('connected' => false, 'items' => [])
     end

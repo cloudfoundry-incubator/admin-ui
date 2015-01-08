@@ -596,7 +596,6 @@ module AdminUI
       @view_models.invalidate_stats
 
       [200, stats.to_json]
-
     end
 
     post '/stats_view_model', :auth => [:user] do

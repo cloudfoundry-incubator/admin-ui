@@ -56,7 +56,6 @@ describe AdminUI::EMail do
                                                       :domain   => 'bogus.com'
                                                     }
                           )
-
     end
     let(:email) { AdminUI::EMail.new(config, logger) }
 
