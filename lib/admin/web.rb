@@ -42,43 +42,43 @@ module AdminUI
       redirect_to_login
     end
 
-    get '/applications_view_model', :auth => [:user] do
+    get '/applications_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/applications_view_model'
       AllActions.new(@logger, @view_models.applications, params).items.to_json
     end
 
-    get '/applications_view_model/:guid', :auth => [:user] do
+    get '/applications_view_model/:guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/applications_view_model/#{ params[:guid] }"
       result = @view_models.application(params[:guid])
       return result.to_json if result
       404
     end
 
-    get '/applications_view_model/:guid/:instance', :auth => [:user] do
+    get '/applications_view_model/:guid/:instance', auth: [:user] do
       @logger.info_user session[:username], 'get', "/applications_view_model/#{ params[:guid] }/#{ params[:instance] }"
       result = @view_models.application(params[:guid], params[:instance])
       return result.to_json if result
       404
     end
 
-    get '/cloud_controllers_view_model', :auth => [:user] do
+    get '/cloud_controllers_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/cloud_controllers_view_model'
       AllActions.new(@logger, @view_models.cloud_controllers, params).items.to_json
     end
 
-    get '/cloud_controllers_view_model/:name', :auth => [:user] do
+    get '/cloud_controllers_view_model/:name', auth: [:user] do
       @logger.info_user session[:username], 'get', "/cloud_controllers_view_model/#{ params[:name] }"
       result = @view_models.cloud_controller(params[:name])
       return result.to_json if result
       404
     end
 
-    get '/components_view_model', :auth => [:user] do
+    get '/components_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/components_view_model'
       AllActions.new(@logger, @view_models.components, params).items.to_json
     end
 
-    get '/components_view_model/:name', :auth => [:user] do
+    get '/components_view_model/:name', auth: [:user] do
       @logger.info_user session[:username], 'get', "/components_view_model/#{ params[:name] }"
       result = @view_models.component(params[:name])
       return result.to_json if result
@@ -90,70 +90,70 @@ module AdminUI
       @stats.current_stats.to_json
     end
 
-    get '/deas_view_model', :auth => [:user] do
+    get '/deas_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/deas_view_model'
       AllActions.new(@logger, @view_models.deas, params).items.to_json
     end
 
-    get '/deas_view_model/:name', :auth => [:user] do
+    get '/deas_view_model/:name', auth: [:user] do
       @logger.info_user session[:username], 'get', "/deas_view_model/#{ params[:name] }"
       result = @view_models.dea(params[:name])
       return result.to_json if result
       404
     end
 
-    get '/domains_view_model', :auth => [:user] do
+    get '/domains_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/domains_view_model'
       AllActions.new(@logger, @view_models.domains, params).items.to_json
     end
 
-    get '/domains_view_model/:guid', :auth => [:user] do
+    get '/domains_view_model/:guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/domains_view_model/#{ params[:guid] }"
       result = @view_models.domain(params[:guid])
       return result.to_json if result
       404
     end
 
-    get '/download', :auth => [:user] do
+    get '/download', auth: [:user] do
       @logger.info_user session[:username], 'get', "/download?path=#{ params['path'] }"
       file = @log_files.file(params['path'])
       if file.nil?
         redirect_to_login
       else
         send_file(file,
-                  :disposition => 'attachment',
-                  :filename    => File.basename(file))
+                  disposition: 'attachment',
+                  filename:    File.basename(file))
       end
     end
 
     get '/favicon.ico' do
     end
 
-    get '/gateways_view_model', :auth => [:user] do
+    get '/gateways_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/gateways_view_model'
       AllActions.new(@logger, @view_models.gateways, params).items.to_json
     end
 
-    get '/gateways_view_model/:name', :auth => [:user] do
+    get '/gateways_view_model/:name', auth: [:user] do
       @logger.info_user session[:username], 'get', "/gateways_view_model/#{ params[:name] }"
       result = @view_models.gateway(params[:name])
       return result.to_json if result
       404
     end
 
-    get '/health_managers_view_model', :auth => [:user] do
+    get '/health_managers_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/health_managers_view_model'
       AllActions.new(@logger, @view_models.health_managers, params).items.to_json
     end
 
-    get '/health_managers_view_model/:name', :auth => [:user] do
+    get '/health_managers_view_model/:name', auth: [:user] do
       @logger.info_user session[:username], 'get', "/health_managers_view_model/#{ params[:name] }"
       result = @view_models.health_manager(params[:name])
       return result.to_json if result
       404
     end
 
-    get '/log', :auth => [:user] do
+    get '/log', auth: [:user] do
       @logger.info_user session[:username], 'get', "/log?path=#{ params['path'] }"
       result = @log_files.content(params['path'], params['start'])
       if result.nil?
@@ -194,148 +194,148 @@ module AdminUI
       end
     end
 
-    get '/logs_view_model', :auth => [:user] do
+    get '/logs_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/logs_view_model'
       AllActions.new(@logger, @view_models.logs, params).items.to_json
     end
 
-    get '/organizations_view_model', :auth => [:user] do
+    get '/organizations_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/organizations_view_model'
       AllActions.new(@logger, @view_models.organizations, params).items.to_json
     end
 
-    get '/organizations_view_model/:guid', :auth => [:user] do
+    get '/organizations_view_model/:guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/organizations_view_model/#{ params[:guid] }"
       result = @view_models.organization(params[:guid])
       return result.to_json if result
       404
     end
 
-    get '/organization_roles_view_model', :auth => [:user] do
+    get '/organization_roles_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/organization_roles_view_model'
       AllActions.new(@logger, @view_models.organization_roles, params).items.to_json
     end
 
-    get '/organization_roles_view_model/:organization_guid/:role/:user_guid', :auth => [:user] do
+    get '/organization_roles_view_model/:organization_guid/:role/:user_guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/organization_roles_view_model/#{ params[:organization_guid] }/#{ params[:role] }/#{ params[:user_guid] }"
       result = @view_models.organization_role(params[:organization_guid], params[:role], params[:user_guid])
       return result.to_json if result
       404
     end
 
-    get '/quotas_view_model', :auth => [:user] do
+    get '/quotas_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/quotas_view_model'
       AllActions.new(@logger, @view_models.quotas, params).items.to_json
     end
 
-    get '/quotas_view_model/:guid', :auth => [:user] do
+    get '/quotas_view_model/:guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/quotas_view_model/#{ params[:guid] }"
       result = @view_models.quota(params[:guid])
       return result.to_json if result
       404
     end
 
-    get '/routers_view_model', :auth => [:user] do
+    get '/routers_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/routers_view_model'
       AllActions.new(@logger, @view_models.routers, params).items.to_json
     end
 
-    get '/routers_view_model/:name', :auth => [:user] do
+    get '/routers_view_model/:name', auth: [:user] do
       @logger.info_user session[:username], 'get', "/routers_view_model/#{ params[:name] }"
       result = @view_models.router(params[:name])
       return result.to_json if result
       404
     end
 
-    get '/routes_view_model', :auth => [:user] do
+    get '/routes_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/routes_view_model'
       AllActions.new(@logger, @view_models.routes, params).items.to_json
     end
 
-    get '/routes_view_model/:guid', :auth => [:user] do
+    get '/routes_view_model/:guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/routes_view_model/#{ params[:guid] }"
       result = @view_models.route(params[:guid])
       return result.to_json if result
       404
     end
 
-    get '/settings', :auth => [:user] do
+    get '/settings', auth: [:user] do
       @logger.info_user session[:username], 'get', '/settings'
       {
-        :admin                  => session[:admin],
-        :cloud_controller_uri   => @config.cloud_controller_uri,
-        :table_height           => @config.table_height,
-        :table_page_size        => @config.table_page_size,
-        :tasks_refresh_interval => @config.tasks_refresh_interval
+        admin:                  session[:admin],
+        cloud_controller_uri:   @config.cloud_controller_uri,
+        table_height:           @config.table_height,
+        table_page_size:        @config.table_page_size,
+        tasks_refresh_interval: @config.tasks_refresh_interval
       }.to_json
     end
 
-    get '/service_brokers_view_model', :auth => [:user] do
+    get '/service_brokers_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/service_brokers_view_model'
       AllActions.new(@logger, @view_models.service_brokers, params).items.to_json
     end
 
-    get '/service_brokers_view_model/:guid', :auth => [:user] do
+    get '/service_brokers_view_model/:guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/service_brokers_view_model/#{ params[:guid] }"
       result = @view_models.service_broker(params[:guid])
       return result.to_json if result
       404
     end
 
-    get '/service_instances_view_model', :auth => [:user] do
+    get '/service_instances_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/service_instances_view_model'
       AllActions.new(@logger, @view_models.service_instances, params).items.to_json
     end
 
-    get '/service_instances_view_model/:guid', :auth => [:user] do
+    get '/service_instances_view_model/:guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/service_instances_view_model/#{ params[:guid] }"
       result = @view_models.service_instance(params[:guid])
       return result.to_json if result
       404
     end
 
-    get '/service_plans_view_model', :auth => [:user] do
+    get '/service_plans_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/service_plans_view_model'
       AllActions.new(@logger, @view_models.service_plans, params).items.to_json
     end
 
-    get '/service_plans_view_model/:guid', :auth => [:user] do
+    get '/service_plans_view_model/:guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/service_plans_view_model/#{ params[:guid] }"
       result = @view_models.service_plan(params[:guid])
       return result.to_json if result
       404
     end
 
-    get '/services_view_model', :auth => [:user] do
+    get '/services_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/services_view_model'
       AllActions.new(@logger, @view_models.services, params).items.to_json
     end
 
-    get '/services_view_model/:guid', :auth => [:user] do
+    get '/services_view_model/:guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/services_view_model/#{ params[:guid] }"
       result = @view_models.service(params[:guid])
       return result.to_json if result
       404
     end
 
-    get '/spaces_view_model', :auth => [:user] do
+    get '/spaces_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/spaces_view_model'
       AllActions.new(@logger, @view_models.spaces, params).items.to_json
     end
 
-    get '/spaces_view_model/:guid', :auth => [:user] do
+    get '/spaces_view_model/:guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/spaces_view_model/#{ params[:guid] }"
       result = @view_models.space(params[:guid])
       return result.to_json if result
       404
     end
 
-    get '/space_roles_view_model', :auth => [:user] do
+    get '/space_roles_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/space_roles_view_model'
       AllActions.new(@logger, @view_models.space_roles, params).items.to_json
     end
 
-    get '/space_roles_view_model/:space_guid/:role/:user_guid', :auth => [:user] do
+    get '/space_roles_view_model/:space_guid/:role/:user_guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/space_roles_view_model/#{ params[:space_guid] }/#{ params[:role] }/#{ params[:user_guid] }"
       result = @view_models.space_role(params[:space_guid], params[:role], params[:user_guid])
       return result.to_json if result
@@ -359,12 +359,12 @@ module AdminUI
       send_file File.expand_path('stats.html', settings.public_folder)
     end
 
-    get '/tasks_view_model', :auth => [:user] do
+    get '/tasks_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/tasks_view_model'
       AllActions.new(@logger, @view_models.tasks, params).items.to_json
     end
 
-    get '/task_status', :auth => [:user] do
+    get '/task_status', auth: [:user] do
       @logger.info_user session[:username], 'get', "/task_status?task_id=#{ params['task_id'] };updates=#{ params['updates'] }"
       result = @tasks.task(params['task_id'].to_i,
                            params['updates'] || 'false',
@@ -378,90 +378,90 @@ module AdminUI
       end
     end
 
-    get '/users_view_model', :auth => [:user] do
+    get '/users_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/users_view_model'
       AllActions.new(@logger, @view_models.users, params).items.to_json
     end
 
-    get '/users_view_model/:guid', :auth => [:user] do
+    get '/users_view_model/:guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/users_view_model/#{ params[:guid] }"
       result = @view_models.user(params[:guid])
       return result.to_json if result
       404
     end
 
-    post '/applications_view_model', :auth => [:user] do
+    post '/applications_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/applications_view_model'
       file = Download.download(request.body.read, 'applications', @view_models.applications)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'applications.csv')
+                disposition: 'attachment',
+                filename:    'applications.csv')
     end
 
-    post '/cloud_controllers_view_model', :auth => [:user] do
+    post '/cloud_controllers_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/cloud_controllers_view_model'
       file = Download.download(request.body.read, 'cloud_controllers', @view_models.cloud_controllers)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'cloud_controllers.csv')
+                disposition: 'attachment',
+                filename:    'cloud_controllers.csv')
     end
 
-    post '/components_view_model', :auth => [:user] do
+    post '/components_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/components_view_model'
       file = Download.download(request.body.read, 'components', @view_models.components)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'components.csv')
+                disposition: 'attachment',
+                filename:    'components.csv')
     end
 
-    post '/deas', :auth => [:admin] do
+    post '/deas', auth: [:admin] do
       @logger.info_user session[:username], 'post', '/deas'
-      result = { :task_id => @tasks.new_dea }
+      result = { task_id: @tasks.new_dea }
       @view_models.invalidate_tasks
       result.to_json
     end
 
-    post '/deas_view_model', :auth => [:user] do
+    post '/deas_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/deas_view_model'
       file = Download.download(request.body.read, 'deas', @view_models.deas)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'deas.csv')
+                disposition: 'attachment',
+                filename:    'deas.csv')
     end
 
-    post '/domains_view_model', :auth => [:user] do
+    post '/domains_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/domains_view_model'
       file = Download.download(request.body.read, 'domains', @view_models.domains)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'domains.csv')
+                disposition: 'attachment',
+                filename:    'domains.csv')
     end
 
-    post '/gateways_view_model', :auth => [:user] do
+    post '/gateways_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/gateways_view_model'
       file = Download.download(request.body.read, 'gateways', @view_models.gateways)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'gateways.csv')
+                disposition: 'attachment',
+                filename:    'gateways.csv')
     end
 
-    post '/health_managers_view_model', :auth => [:user] do
+    post '/health_managers_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/health_managers_view_model'
       file = Download.download(request.body.read, 'health_managers', @view_models.health_managers)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'health_managers.csv')
+                disposition: 'attachment',
+                filename:    'health_managers.csv')
     end
 
-    post '/logs_view_model', :auth => [:user] do
+    post '/logs_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/logs_view_model'
       file = Download.download(request.body.read, 'logs', @view_models.logs)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'logs.csv')
+                disposition: 'attachment',
+                filename:    'logs.csv')
     end
 
-    post '/organizations', :auth => [:admin] do
+    post '/organizations', auth: [:admin] do
       begin
         control_message = request.body.read.to_s
         @logger.info_user session[:username], 'post', "/organizations; body = #{ control_message }"
@@ -480,103 +480,103 @@ module AdminUI
       end
     end
 
-    post '/organizations_view_model', :auth => [:user] do
+    post '/organizations_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/organizations_view_model'
       file = Download.download(request.body.read, 'organizations', @view_models.organizations)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'organizations.csv')
+                disposition: 'attachment',
+                filename:    'organizations.csv')
     end
 
-    post '/organization_roles_view_model', :auth => [:user] do
+    post '/organization_roles_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/organization_roles_view_model'
       file = Download.download(request.body.read, 'organization_roles', @view_models.organization_roles)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'organization_roles.csv')
+                disposition: 'attachment',
+                filename:    'organization_roles.csv')
     end
 
-    post '/quotas_view_model', :auth => [:user] do
+    post '/quotas_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/quotas_view_model'
       file = Download.download(request.body.read, 'quotas', @view_models.quotas)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'quotas.csv')
+                disposition: 'attachment',
+                filename:    'quotas.csv')
     end
 
-    post '/routers_view_model', :auth => [:user] do
+    post '/routers_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/routers_view_model'
       file = Download.download(request.body.read, 'routers', @view_models.routers)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'routers.csv')
+                disposition: 'attachment',
+                filename:    'routers.csv')
     end
 
-    post '/routes_view_model', :auth => [:user] do
+    post '/routes_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/routes_view_model'
       file = Download.download(request.body.read, 'routes', @view_models.routes)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'routes.csv')
+                disposition: 'attachment',
+                filename:    'routes.csv')
     end
 
-    post '/service_brokers_view_model', :auth => [:user] do
+    post '/service_brokers_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/service_brokers_view_model'
       file = Download.download(request.body.read, 'service_brokers', @view_models.service_brokers)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'service_brokers.csv')
+                disposition: 'attachment',
+                filename:    'service_brokers.csv')
     end
 
-    post '/service_instances_view_model', :auth => [:user] do
+    post '/service_instances_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/service_instances_view_model'
       file = Download.download(request.body.read, 'service_instances', @view_models.service_instances)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'service_instances.csv')
+                disposition: 'attachment',
+                filename:    'service_instances.csv')
     end
 
-    post '/service_plans_view_model', :auth => [:user] do
+    post '/service_plans_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/service_plans_view_model'
       file = Download.download(request.body.read, 'service_plans', @view_models.service_plans)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'service_plans.csv')
+                disposition: 'attachment',
+                filename:    'service_plans.csv')
     end
 
-    post '/services_view_model', :auth => [:user] do
+    post '/services_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/services_view_model'
       file = Download.download(request.body.read, 'services', @view_models.services)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'servicess.csv')
+                disposition: 'attachment',
+                filename:    'servicess.csv')
     end
 
-    post '/spaces_view_model', :auth => [:user] do
+    post '/spaces_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/spaces_view_model'
       file = Download.download(request.body.read, 'spaces', @view_models.spaces)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'spaces.csv')
+                disposition: 'attachment',
+                filename:    'spaces.csv')
     end
 
-    post '/space_roles_view_model', :auth => [:user] do
+    post '/space_roles_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/space_roles_view_model'
       file = Download.download(request.body.read, 'space_roles', @view_models.space_roles)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'space_roles.csv')
+                disposition: 'attachment',
+                filename:    'space_roles.csv')
     end
 
-    post '/statistics', :auth => [:admin] do
-      stats = @stats.create_stats(:apps              => params['apps'].empty? ? nil : params['apps'].to_i,
-                                  :deas              => params['deas'].empty? ? nil : params['deas'].to_i,
-                                  :organizations     => params['organizations'].empty? ? nil : params['organizations'].to_i,
-                                  :running_instances => params['running_instances'].empty? ? nil : params['running_instances'].to_i,
-                                  :spaces            => params['spaces'].empty? ? nil : params['spaces'].to_i,
-                                  :timestamp         => params['timestamp'].to_i,
-                                  :total_instances   => params['total_instances'].empty? ? nil : params['total_instances'].to_i,
-                                  :users             => params['users'].empty? ? nil : params['users'].to_i)
+    post '/statistics', auth: [:admin] do
+      stats = @stats.create_stats(apps:              params['apps'].empty? ? nil : params['apps'].to_i,
+                                  deas:              params['deas'].empty? ? nil : params['deas'].to_i,
+                                  organizations:     params['organizations'].empty? ? nil : params['organizations'].to_i,
+                                  running_instances: params['running_instances'].empty? ? nil : params['running_instances'].to_i,
+                                  spaces:            params['spaces'].empty? ? nil : params['spaces'].to_i,
+                                  timestamp:         params['timestamp'].to_i,
+                                  total_instances:   params['total_instances'].empty? ? nil : params['total_instances'].to_i,
+                                  users:             params['users'].empty? ? nil : params['users'].to_i)
 
       query = '/statistics?'
       query += "apps=#{ params['apps'] };" unless params['apps'].empty?
@@ -598,31 +598,31 @@ module AdminUI
       [200, stats.to_json]
     end
 
-    post '/stats_view_model', :auth => [:user] do
+    post '/stats_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/stats_view_model'
       file = Download.download(request.body.read, 'stats', @view_models.stats)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'stats.csv')
+                disposition: 'attachment',
+                filename:    'stats.csv')
     end
 
-    post '/tasks_view_model', :auth => [:user] do
+    post '/tasks_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/tasks_view_model'
       file = Download.download(request.body.read, 'tasks', @view_models.tasks)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'tasks.csv')
+                disposition: 'attachment',
+                filename:    'tasks.csv')
     end
 
-    post '/users_view_model', :auth => [:user] do
+    post '/users_view_model', auth: [:user] do
       @logger.info_user session[:username], 'post', '/users_view_model'
       file = Download.download(request.body.read, 'users', @view_models.users)
       send_file(file.path,
-                :disposition => 'attachment',
-                :filename    => 'users.csv')
+                disposition: 'attachment',
+                filename:    'users.csv')
     end
 
-    put '/applications/:app_guid', :auth => [:admin] do
+    put '/applications/:app_guid', auth: [:admin] do
       begin
         control_message = request.body.read.to_s
         @logger.info_user session[:username], 'put', "/applications/#{ params[:app_guid] }; body = #{ control_message}"
@@ -641,7 +641,7 @@ module AdminUI
       end
     end
 
-    put '/organizations/:org_guid', :auth => [:admin] do
+    put '/organizations/:org_guid', auth: [:admin] do
       begin
         control_message = request.body.read.to_s
         @logger.info_user session[:username], 'put', "/organizations/#{ params[:org_guid] }; body = #{ control_message }"
@@ -660,7 +660,7 @@ module AdminUI
       end
     end
 
-    put '/service_plans/:service_plan_guid', :auth => [:admin] do
+    put '/service_plans/:service_plan_guid', auth: [:admin] do
       begin
         control_message = request.body.read.to_s
         @logger.info_user session[:username], 'put', "/service_plans/#{ params[:service_plan_guid] }; body = #{ control_message }"
@@ -679,7 +679,7 @@ module AdminUI
       end
     end
 
-    delete '/applications/:app_guid', :auth => [:admin] do
+    delete '/applications/:app_guid', auth: [:admin] do
       @logger.info_user session[:username], 'delete', "/applications/#{ params[:app_guid] }"
       begin
         @operation.delete_application(params[:app_guid])
@@ -696,7 +696,7 @@ module AdminUI
       end
     end
 
-    delete '/components', :auth => [:user] do
+    delete '/components', auth: [:user] do
       @logger.info_user session[:username], 'delete', "/components/#{ params[:uri] }"
       begin
         @operation.remove_component(params[:uri])
@@ -708,7 +708,7 @@ module AdminUI
       end
     end
 
-    delete '/organizations/:org_guid', :auth => [:admin] do
+    delete '/organizations/:org_guid', auth: [:admin] do
       @logger.info_user session[:username], 'delete', "/organizations/#{ params[:org_guid] }"
       begin
         @operation.delete_organization(params[:org_guid])
@@ -725,7 +725,7 @@ module AdminUI
       end
     end
 
-    delete '/organizations/:org_guid/:role/:user_guid', :auth => [:admin] do
+    delete '/organizations/:org_guid/:role/:user_guid', auth: [:admin] do
       @logger.info_user session[:username], 'delete', "/organizations/#{ params[:org_guid] }/#{ params[:role] }/#{ params[:user_guid] }"
       begin
         @operation.delete_organization_role(params[:org_guid], params[:role], params[:user_guid])
@@ -742,7 +742,7 @@ module AdminUI
       end
     end
 
-    delete '/routes/:route_guid', :auth => [:admin] do
+    delete '/routes/:route_guid', auth: [:admin] do
       @logger.info_user session[:username], 'delete', "/routes/#{ params[:route_guid] }"
       begin
         @operation.delete_route(params[:route_guid])
@@ -759,7 +759,7 @@ module AdminUI
       end
     end
 
-    delete '/spaces/:space_guid/:role/:user_guid', :auth => [:admin] do
+    delete '/spaces/:space_guid/:role/:user_guid', auth: [:admin] do
       @logger.info_user session[:username], 'delete', "/spaces/#{ params[:space_guid] }/#{ params[:role] }/#{ params[:user_guid] }"
       begin
         @operation.delete_space_role(params[:space_guid], params[:role], params[:user_guid])

@@ -63,14 +63,14 @@ module AdminUI
 
     def current_stats
       {
-        :apps              => @cc.applications_count,
-        :deas              => @varz.deas_count,
-        :organizations     => @cc.organizations_count,
-        :running_instances => @cc.applications_running_instances,
-        :spaces            => @cc.spaces_count,
-        :timestamp         => Utils.time_in_milliseconds,
-        :total_instances   => @cc.applications_total_instances,
-        :users             => @cc.users_count
+        apps:              @cc.applications_count,
+        deas:              @varz.deas_count,
+        organizations:     @cc.organizations_count,
+        running_instances: @cc.applications_running_instances,
+        spaces:            @cc.spaces_count,
+        timestamp:         Utils.time_in_milliseconds,
+        total_instances:   @cc.applications_total_instances,
+        users:             @cc.users_count
       }
     end
 

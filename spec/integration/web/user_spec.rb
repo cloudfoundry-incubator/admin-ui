@@ -2,7 +2,7 @@ require 'rubygems'
 require_relative '../../spec_helper'
 require_relative '../../support/web_helper'
 
-describe AdminUI::Admin, :type => :integration, :firefox_available => true do
+describe AdminUI::Admin, type: :integration, firefox_available: true do
   include_context :server_context
   include_context :web_context
 
@@ -13,178 +13,178 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     end
 
     it 'shows the logged in user' do
-      expect(@driver.find_element(:class => 'userContainer').displayed?).to be_true
-      expect(@driver.find_element(:class => 'user').text).to eq('user')
+      expect(@driver.find_element(class: 'userContainer').displayed?).to be_true
+      expect(@driver.find_element(class: 'user').text).to eq('user')
     end
 
     it 'Organizations tab does not have create, set quota, delete, activate and suspend buttons' do
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
           scroll_tab_into_view('Organizations').click
-          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Organizations'
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Organizations'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('Organizations')
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Organizations')
 
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'OrganizationsPage').displayed? &&
-            @driver.find_element(:id => 'ToolTables_OrganizationsTable_0').text == 'Copy'
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'OrganizationsPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_OrganizationsTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:id => 'OrganizationsPage').displayed?).to eq(true)
-      expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_0').text).to eq('Copy')
+      expect(@driver.find_element(id: 'OrganizationsPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_0').text).to eq('Copy')
     end
 
     it 'Applications tab does not have start, stop, restart or delete buttons' do
       # Need to wait until the page has been rendered.
       # Move the click operation into the wait block to ensure the action has been taken, this is used to fit Travis CI system.
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
           scroll_tab_into_view('Applications').click
-          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Applications'
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Applications'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('Applications')
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Applications')
 
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'ApplicationsPage').displayed? &&
-            @driver.find_element(:id => 'ToolTables_ApplicationsTable_0').text == 'Copy'
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'ApplicationsPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_ApplicationsTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:id => 'ApplicationsPage').displayed?).to eq(true)
-      expect(@driver.find_element(:id => 'ToolTables_ApplicationsTable_0').text).to eq('Copy')
+      expect(@driver.find_element(id: 'ApplicationsPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_0').text).to eq('Copy')
     end
 
     it 'Routes tab does not have delete button' do
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
           scroll_tab_into_view('Routes').click
-          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Routes'
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Routes'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('Routes')
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Routes')
 
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'RoutesPage').displayed? &&
-            @driver.find_element(:id => 'ToolTables_RoutesTable_0').text == 'Copy'
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'RoutesPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_RoutesTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:id => 'RoutesPage').displayed?).to eq(true)
-      expect(@driver.find_element(:id => 'ToolTables_RoutesTable_0').text).to eq('Copy')
+      expect(@driver.find_element(id: 'RoutesPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_RoutesTable_0').text).to eq('Copy')
     end
 
     it 'Organization Roles tab does not have delete button' do
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
           scroll_tab_into_view('OrganizationRoles').click
-          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'OrganizationRoles'
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'OrganizationRoles'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('OrganizationRoles')
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('OrganizationRoles')
 
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'OrganizationRolesPage').displayed? &&
-            @driver.find_element(:id => 'ToolTables_OrganizationRolesTable_0').text == 'Copy'
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'OrganizationRolesPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_OrganizationRolesTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:id => 'OrganizationRolesPage').displayed?).to eq(true)
-      expect(@driver.find_element(:id => 'ToolTables_OrganizationRolesTable_0').text).to eq('Copy')
+      expect(@driver.find_element(id: 'OrganizationRolesPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_OrganizationRolesTable_0').text).to eq('Copy')
     end
 
     it 'Space Roles tab does not have delete button' do
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
           scroll_tab_into_view('SpaceRoles').click
-          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'SpaceRoles'
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'SpaceRoles'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('SpaceRoles')
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('SpaceRoles')
 
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'SpaceRolesPage').displayed? &&
-            @driver.find_element(:id => 'ToolTables_SpaceRolesTable_0').text == 'Copy'
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'SpaceRolesPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_SpaceRolesTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:id => 'SpaceRolesPage').displayed?).to eq(true)
-      expect(@driver.find_element(:id => 'ToolTables_SpaceRolesTable_0').text).to eq('Copy')
+      expect(@driver.find_element(id: 'SpaceRolesPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_SpaceRolesTable_0').text).to eq('Copy')
     end
 
     it 'Service Plans tab does not have public and private buttons' do
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
           scroll_tab_into_view('ServicePlans').click
-          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'ServicePlans'
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'ServicePlans'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('ServicePlans')
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('ServicePlans')
 
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 10).until do
-          @driver.find_element(:id => 'ServicePlansPage').displayed? &&
-            @driver.find_element(:id => 'ToolTables_ServicePlansTable_0').text == 'Copy'
+        Selenium::WebDriver::Wait.new(timeout: 10).until do
+          @driver.find_element(id: 'ServicePlansPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_ServicePlansTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:id => 'ServicePlansPage').displayed?).to eq(true)
-      expect(@driver.find_element(:id => 'ToolTables_ServicePlansTable_0').text).to eq('Copy')
+      expect(@driver.find_element(id: 'ServicePlansPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_ServicePlansTable_0').text).to eq('Copy')
     end
 
     it 'DEAs tab does not have a create DEA button' do
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
           scroll_tab_into_view('DEAs').click
-          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'DEAs'
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'DEAs'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('DEAs')
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('DEAs')
 
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'DEAsPage').displayed? &&
-            @driver.find_element(:id => 'ToolTables_DEAsTable_0').text == 'Copy'
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'DEAsPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_DEAsTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:id => 'DEAsPage').displayed?).to eq(true)
-      expect(@driver.find_element(:id => 'ToolTables_DEAsTable_0').text).to eq('Copy')
+      expect(@driver.find_element(id: 'DEAsPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_DEAsTable_0').text).to eq('Copy')
     end
 
     it 'Components tab does not have a remove all components button' do
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
           scroll_tab_into_view('Components').click
-          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Components'
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Components'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('Components')
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Components')
 
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'ComponentsPage').displayed? &&
-            @driver.find_element(:id => 'ToolTables_ComponentsTable_0').text == 'Copy'
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'ComponentsPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_ComponentsTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:id => 'ComponentsPage').displayed?).to eq(true)
-      expect(@driver.find_element(:id => 'ToolTables_ComponentsTable_0').text).to eq('Copy')
+      expect(@driver.find_element(id: 'ComponentsPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_ComponentsTable_0').text).to eq('Copy')
     end
 
     it 'Tasks tab does not exist' do
@@ -193,23 +193,23 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
     it 'Stats tab does not have a create stats button' do
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
           scroll_tab_into_view('Stats').click
-          @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == 'Stats'
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Stats'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq('Stats')
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Stats')
 
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 5).until do
-          @driver.find_element(:id => 'StatsPage').displayed? &&
-            @driver.find_element(:id => 'ToolTables_StatsTable_0').text == 'Copy'
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'StatsPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_StatsTable_0').text == 'Copy'
         end
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:id => 'StatsPage').displayed?).to eq(true)
-      expect(@driver.find_element(:id => 'ToolTables_StatsTable_0').text).to eq('Copy')
+      expect(@driver.find_element(id: 'StatsPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_StatsTable_0').text).to eq('Copy')
     end
   end
 end

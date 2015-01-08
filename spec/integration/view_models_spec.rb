@@ -1,7 +1,7 @@
 require 'logger'
 require_relative '../spec_helper'
 
-describe AdminUI::CC, :type => :integration do
+describe AdminUI::CC, type: :integration do
   include ThreadHelper
   include ViewModelsHelper
 
@@ -18,17 +18,17 @@ describe AdminUI::CC, :type => :integration do
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)  { "sqlite://#{ uaadb_file }" }
   let(:config) do
-    AdminUI::Config.load(:ccdb_uri                            => ccdb_uri,
-                         :cloud_controller_discovery_interval => 1,
-                         :cloud_controller_uri                => 'http://api.cloudfoundry',
-                         :data_file                           => data_file,
-                         :db_uri                              => db_uri,
-                         :log_file                            => log_file,
-                         :log_files                           => [log_file_displayed],
-                         :mbus                                => 'nats://nats:c1oudc0w@localhost:14222',
-                         :nats_discovery_interval             => 1,
-                         :uaadb_uri                           => uaadb_uri,
-                         :varz_discovery_interval             => 1)
+    AdminUI::Config.load(ccdb_uri:                            ccdb_uri,
+                         cloud_controller_discovery_interval: 1,
+                         cloud_controller_uri:                'http://api.cloudfoundry',
+                         data_file:                           data_file,
+                         db_uri:                              db_uri,
+                         log_file:                            log_file,
+                         log_files:                           [log_file_displayed],
+                         mbus:                                'nats://nats:c1oudc0w@localhost:14222',
+                         nats_discovery_interval:             1,
+                         uaadb_uri:                           uaadb_uri,
+                         varz_discovery_interval:             1)
   end
 
   def cleanup_files

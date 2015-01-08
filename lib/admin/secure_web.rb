@@ -14,8 +14,8 @@ module AdminUI
       set :static_cache_control, :no_cache
       set :environment, :production
       set :show_exceptions, false
-      use Rack::SSL, :exclude => ->(env) { env['RACK_ENV'] != 'production' }
-      use Rack::Session::Cookie, :secure => true, :expire_after => 60, :secret => 'mysecre'
+      use Rack::SSL, exclude: ->(env) { env['RACK_ENV'] != 'production' }
+      use Rack::Session::Cookie, secure: true, expire_after: 60, secret: 'mysecre'
     end
   end
 end

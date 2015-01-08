@@ -51,9 +51,9 @@ module SFTPHelper
     ::Net::SFTP.stub(:start) do |host, user, options, &blk|
       expect(host).to eq(uri.host)
       expect(user).to eq(uri.user)
-      expect(options).to include(:port => uri.port) unless uri.port.nil?
-      expect(options).to include(:password => uri.password) unless uri.password.nil?
-      expect(options).to include(:keys => config.log_file_sftp_keys) if uri.password.nil?
+      expect(options).to include(port: uri.port) unless uri.port.nil?
+      expect(options).to include(password: uri.password) unless uri.password.nil?
+      expect(options).to include(keys: config.log_file_sftp_keys) if uri.password.nil?
 
       blk.call(MockSession.new)
       @sftp_start = true

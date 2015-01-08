@@ -14,11 +14,11 @@ module AdminUI
 
     # Subclasses should override and return values in the following format:
     # {
-    #   :connected => whether the fetch is successful
-    #   :items => array of rows.  Each row is an array of objects
-    #   :detail_hash => hash of values where the key is used to find the row object details
-    #   :searchable_columns => array of searchable column indices
-    #   ::case_insensitive_sort_columns => array of column indices where values need downcasing prior to comparison
+    #   connected:                     whether the fetch is successful
+    #   items:                         array of rows.  Each row is an array of objects
+    #   detail_hash:                   hash of values where the key is used to find the row object details
+    #   searchable_columns:            array of searchable column indices
+    #   case_insensitive_sort_columns: array of column indices where values need downcasing prior to comparison
     # }
     # Any raised exception will be logged and treated as not connected with no results
     def do_items
@@ -34,8 +34,8 @@ module AdminUI
       if connected
         answer =
         {
-          :connected => true,
-          :items     => items
+          connected: true,
+          items:     items
         }
 
         answer[:detail_hash]                   = detail_hash if detail_hash
@@ -44,8 +44,8 @@ module AdminUI
         answer
       else
         {
-          :connected => false,
-          :items     => []
+          connected: false,
+          items:     []
         }
       end
     end

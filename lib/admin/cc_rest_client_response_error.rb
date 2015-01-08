@@ -26,10 +26,10 @@ module AdminUI
 
     def to_h
       {
-        :cf_code       => cf_code,
-        :cf_error_code => cf_error_code,
-        :http_code     => http_code,
-        :message       => message
+        cf_code:       cf_code,
+        cf_error_code: cf_error_code,
+        http_code:     http_code,
+        message:       message
       }
     end
   end

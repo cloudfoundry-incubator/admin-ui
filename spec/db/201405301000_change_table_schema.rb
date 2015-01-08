@@ -3,7 +3,7 @@ Sequel.migration do
 
   up do
     alter_table(:stats) do
-      add_column :extra_column, Integer, :default => 0
+      add_column :extra_column, Integer, default: 0
     end
   end
 

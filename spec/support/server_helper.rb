@@ -35,20 +35,20 @@ shared_context :server_context do
   let(:uaadb_uri) { "sqlite://#{ uaadb_file }" }
   let(:config) do
     {
-      :ccdb_uri                            => ccdb_uri,
-      :cloud_controller_discovery_interval => 3,
-      :cloud_controller_uri                => cloud_controller_uri,
-      :data_file                           => data_file,
-      :db_uri                              => db_uri,
-      :log_file                            => log_file,
-      :log_file_page_size                  => log_file_page_size,
-      :log_files                           => [log_file_displayed],
-      :mbus                                => 'nats://nats:c1oudc0w@localhost:14222',
-      :nats_discovery_interval             => 3,
-      :port                                => port,
-      :uaadb_uri                           => uaadb_uri,
-      :uaa_client                          => { :id => 'id', :secret => 'secret' },
-      :varz_discovery_interval             => 3
+      ccdb_uri:                            ccdb_uri,
+      cloud_controller_discovery_interval: 3,
+      cloud_controller_uri:                cloud_controller_uri,
+      data_file:                           data_file,
+      db_uri:                              db_uri,
+      log_file:                            log_file,
+      log_file_page_size:                  log_file_page_size,
+      log_files:                           [log_file_displayed],
+      mbus:                                'nats://nats:c1oudc0w@localhost:14222',
+      nats_discovery_interval:             3,
+      port:                                port,
+      uaadb_uri:                           uaadb_uri,
+      uaa_client:                          { id: 'id', secret: 'secret' },
+      varz_discovery_interval:             3
     }
   end
 

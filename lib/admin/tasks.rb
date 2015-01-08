@@ -27,10 +27,10 @@ module AdminUI
       end
 
       tasks.each do |_task_id, task|
-        result.push(:command => task[:command],
-                    :id      => task[:id],
-                    :started => task[:started],
-                    :state   => task[:state])
+        result.push(command: task[:command],
+                    id:      task[:id],
+                    started: task[:started],
+                    state:   task[:state])
       end
 
       result
@@ -59,10 +59,10 @@ module AdminUI
         end
 
         {
-          :id      =>  task[:id],
-          :output  =>  data,
-          :state   =>  task[:state],
-          :updated => task[:updated]
+          id:      task[:id],
+          output:  data,
+          state:   task[:state],
+          updated: task[:updated]
         }
       end
     end
@@ -84,13 +84,13 @@ module AdminUI
     def create_task(command)
       current_time = Utils.time_in_milliseconds
 
-      task = { :command   => command,
-               :condition => ConditionVariable.new,
-               :output    => [],
-               :semaphore => Mutex.new,
-               :started   => current_time,
-               :state     => 'RUNNING',
-               :updated   => current_time
+      task = { command:   command,
+               condition: ConditionVariable.new,
+               output:    [],
+               semaphore: Mutex.new,
+               started:   current_time,
+               state:     'RUNNING',
+               updated:   current_time
              }
 
       task[:in], task[:out], task[:err], task[:external] = Open3.popen3(command)
@@ -119,9 +119,9 @@ module AdminUI
       task[:semaphore].synchronize do
         current_time = Utils.time_in_milliseconds
         task[:updated] = current_time
-        task[:output].push(:text => line,
-                           :time => current_time,
-                           :type => type)
+        task[:output].push(text: line,
+                           time: current_time,
+                           type: type)
         task[:condition].signal
       end
     end

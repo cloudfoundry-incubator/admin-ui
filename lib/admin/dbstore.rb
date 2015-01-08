@@ -20,7 +20,7 @@ module AdminUI
         @logger.debug("AdminUI::DBStore.connect: creating new instance of sqlite database at #{ filename }")
         FileUtils.mkpath File.dirname(filename)
       end
-      Sequel.connect(@db_uri, :logger => @logger, :single_threaded => false, :max_connections => 14)
+      Sequel.connect(@db_uri, logger: @logger, single_threaded: false, max_connections: 14)
     end
   end
 end

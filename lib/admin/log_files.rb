@@ -65,24 +65,24 @@ module AdminUI
       end
 
       def create_content_result(file_size, start, read_size, contents)
-        result = { :data      => contents.nil? ? '' : contents,
-                   :file_size => file_size,
-                   :page_size => @config.log_file_page_size,
-                   :path      => @path,
-                   :read_size => read_size,
-                   :start     => start
+        result = { data:      contents.nil? ? '' : contents,
+                   file_size: file_size,
+                   page_size: @config.log_file_page_size,
+                   path:      @path,
+                   read_size: read_size,
+                   start:     start
                  }
 
         if read_size < file_size
           if start > 0
             back = [start - @config.log_file_page_size, 0].max
-            result.merge!(:first => 0, :back => back)
+            result.merge!(first: 0, back: back)
           end
 
           if start + read_size < file_size
             forward = [start + @config.log_file_page_size,
                        file_size - @config.log_file_page_size].min
-            result.merge!(:forward => forward, :last => -1)
+            result.merge!(forward: forward, last: -1)
           end
         end
         result
@@ -122,9 +122,9 @@ module AdminUI
         begin
           paths.each do |path|
             stat = File.stat(path)
-            results.push(:path => path,
-                         :size => stat.size,
-                         :time => Utils.time_in_milliseconds(stat.mtime))
+            results.push(path: path,
+                         size: stat.size,
+                         time: Utils.time_in_milliseconds(stat.mtime))
           end
         rescue => error
           @logger.debug("Error retreiving infos of log file #{ @path }: #{ error.inspect }")
@@ -256,9 +256,9 @@ module AdminUI
         uri_string += "#{ path }"
 
         {
-          :path => uri_string,
-          :size => size,
-          :time => Utils.time_in_milliseconds(mtime)
+          path: uri_string,
+          size: size,
+          time: Utils.time_in_milliseconds(mtime)
         }
       end
 

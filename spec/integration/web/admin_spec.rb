@@ -3,7 +3,7 @@ require 'rubygems'
 require_relative '../../spec_helper'
 require_relative '../../support/web_helper'
 
-describe AdminUI::Admin, :type => :integration, :firefox_available => true do
+describe AdminUI::Admin, type: :integration, firefox_available: true do
   include_context :server_context
   include_context :web_context
 
@@ -24,22 +24,22 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     let(:allowscriptaccess) { 'sameDomain' }
 
     def check_allowscriptaccess_attribute(copy_node_id)
-      expect(@driver.find_element(:id => copy_node_id).text).to eq('Copy')
-      expect(@driver.find_element(:xpath => "//a[@id='#{ copy_node_id }']/div/embed").attribute('allowscriptaccess')).to eq('sameDomain')
+      expect(@driver.find_element(id: copy_node_id).text).to eq('Copy')
+      expect(@driver.find_element(xpath: "//a[@id='#{ copy_node_id }']/div/embed").attribute('allowscriptaccess')).to eq('sameDomain')
     end
 
     def refresh_button
-      @driver.find_element(:id => 'MenuButtonRefresh').click
+      @driver.find_element(id: 'MenuButtonRefresh').click
       true
     end
 
     it 'has a title' do
       # Need to wait until the page has been rendered
       begin
-        Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:class => 'cloudControllerText').text == cloud_controller_uri }
+        Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(class: 'cloudControllerText').text == cloud_controller_uri }
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(:class => 'cloudControllerText').text).to eq(cloud_controller_uri)
+      expect(@driver.find_element(class: 'cloudControllerText').text).to eq(cloud_controller_uri)
     end
 
     it 'has tabs' do
@@ -68,20 +68,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
     end
 
     it 'has a left scroll button' do
-      expect(@driver.find_element(:id => 'MenuButtonLeft').displayed?).to be_true
+      expect(@driver.find_element(id: 'MenuButtonLeft').displayed?).to be_true
     end
 
     it 'has a right scroll button' do
-      expect(@driver.find_element(:id => 'MenuButtonRight').displayed?).to be_true
+      expect(@driver.find_element(id: 'MenuButtonRight').displayed?).to be_true
     end
 
     it 'has a refresh button' do
-      expect(@driver.find_element(:id => 'MenuButtonRefresh').displayed?).to be_true
+      expect(@driver.find_element(id: 'MenuButtonRefresh').displayed?).to be_true
     end
 
     it 'shows the logged in user' do
-      expect(@driver.find_element(:class => 'userContainer').displayed?).to be_true
-      expect(@driver.find_element(:class => 'user').text).to eq('admin')
+      expect(@driver.find_element(class: 'userContainer').displayed?).to be_true
+      expect(@driver.find_element(class: 'user').text).to eq('admin')
     end
 
     context 'formatStringCleansed' do
@@ -193,27 +193,27 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         # Move click action into the wait blog to ensure relevant tab has been clicked and rendered
         # This part is modified to fit Travis CI system.
         begin
-          Selenium::WebDriver::Wait.new(:timeout => 60).until do
+          Selenium::WebDriver::Wait.new(timeout: 60).until do
             scroll_tab_into_view(tab_id).click
-            @driver.find_element(:class_name => 'menuItemSelected').attribute('id') == tab_id
+            @driver.find_element(class_name: 'menuItemSelected').attribute('id') == tab_id
           end
         rescue Selenium::WebDriver::Error::TimeOutError
         end
-        expect(@driver.find_element(:class_name => 'menuItemSelected').attribute('id')).to eq(tab_id)
+        expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq(tab_id)
         # Need to wait until the page has been rendered
         begin
-          Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => "#{ tab_id }Page").displayed? }
+          Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: "#{ tab_id }Page").displayed? }
         rescue Selenium::WebDriver::Error::TimeOutError
         end
-        expect(@driver.find_element(:id => "#{ tab_id }Page").displayed?).to eq(true)
+        expect(@driver.find_element(id: "#{ tab_id }Page").displayed?).to eq(true)
 
         if table_has_data
           # Need to wait until the table on the page has data
           begin
-            Selenium::WebDriver::Wait.new(:timeout => 360).until { @driver.find_element(:xpath => "//table[@id='#{ tab_id }Table']/tbody/tr").text != 'No data available in table' }
+            Selenium::WebDriver::Wait.new(timeout: 360).until { @driver.find_element(xpath: "//table[@id='#{ tab_id }Table']/tbody/tr").text != 'No data available in table' }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
-          expect(@driver.find_element(:xpath => "//table[@id='#{ tab_id }Table']/tbody/tr").text).not_to eq('No data available in table')
+          expect(@driver.find_element(xpath: "//table[@id='#{ tab_id }Table']/tbody/tr").text).not_to eq('No data available in table')
         end
       end
 
@@ -221,19 +221,19 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Organizations' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 7,
-                                :labels          => ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                :colspans        => %w(1 10 3 5 2 3 3)
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 7,
+                                labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
+                                colspans:        %w(1 10 3 5 2 3 3)
                               },
-                              { :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 27,
-                                :labels          => [' ', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Spaces', 'Organization Roles', 'Space Roles', 'Quota', 'Domains', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
-                                :colspans        => nil
+                              { columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 27,
+                                labels:          [' ', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Spaces', 'Organization Roles', 'Space Roles', 'Quota', 'Domains', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td"),
                            [
                              '',
                              cc_organization[:name],
@@ -270,7 +270,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")
+          inputs = @driver.find_elements(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")
           expect(inputs.length).to eq(1)
           expect(inputs[0].attribute('value')).to eq(cc_organization[:guid])
         end
@@ -279,110 +279,110 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           let(:insert_second_quota_definition) { true }
 
           def check_first_row
-            @driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")[0].click
+            @driver.find_elements(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")[0].click
           end
 
           def check_operation_result
-            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(id: 'modalDialogButton0').click
           end
 
           it 'has a set quota button' do
-            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_1').text).to eq('Set Quota')
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_1').text).to eq('Set Quota')
           end
 
           it 'alerts the user to select at least one row when clicking the button without selecting a row' do
-            @driver.find_element(:id => 'ToolTables_OrganizationsTable_1').click
+            @driver.find_element(id: 'ToolTables_OrganizationsTable_1').click
 
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+            @driver.find_element(id: 'modalDialogButton0').click
           end
 
           it 'sets the specific quota for the organization' do
             check_first_row
-            @driver.find_element(:id => 'ToolTables_OrganizationsTable_1').click
+            @driver.find_element(id: 'ToolTables_OrganizationsTable_1').click
 
             # Check whether the dialog is displayed
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'quotaSelector').displayed?).to be_true
-            expect(@driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[1]').text).to eq(cc_quota_definition[:name])
-            expect(@driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[2]').text).to eq(cc_quota_definition2[:name])
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'quotaSelector').displayed?).to be_true
+            expect(@driver.find_element(xpath: '//select[@id="quotaSelector"]/option[1]').text).to eq(cc_quota_definition[:name])
+            expect(@driver.find_element(xpath: '//select[@id="quotaSelector"]/option[2]').text).to eq(cc_quota_definition2[:name])
 
             # Select another quota and click the set button
-            @driver.find_element(:xpath => '//select[@id="quotaSelector"]/option[2]').click
-            @driver.find_element(:id => 'modalDialogButton0').click
+            @driver.find_element(xpath: '//select[@id="quotaSelector"]/option[2]').click
+            @driver.find_element(id: 'modalDialogButton0').click
             check_operation_result
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 460).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[10]").text == cc_quota_definition2[:name] }
+              Selenium::WebDriver::Wait.new(timeout: 460).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[10]").text == cc_quota_definition2[:name] }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[10]").text).to eq(cc_quota_definition2[:name])
+            expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[10]").text).to eq(cc_quota_definition2[:name])
           end
         end
 
         context 'manage organization' do
           def check_first_row
-            @driver.find_elements(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")[0].click
+            @driver.find_elements(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")[0].click
           end
 
           it 'has a create button' do
-            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_0').text).to eq('Create')
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_0').text).to eq('Create')
           end
 
           it 'has a delete button' do
-            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_2').text).to eq('Delete')
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_2').text).to eq('Delete')
           end
 
           it 'creates an organization' do
-            @driver.find_element(:id => 'ToolTables_OrganizationsTable_0').click
+            @driver.find_element(id: 'ToolTables_OrganizationsTable_0').click
 
             # Check whether the dialog is displayed
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Create Organization')
-            expect(@driver.find_element(:id => 'organizationName').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Create Organization')
+            expect(@driver.find_element(id: 'organizationName').displayed?).to be_true
 
             # Click the create button without input an organization name
-            @driver.find_element(:id => 'modalDialogButton0').click
+            @driver.find_element(id: 'modalDialogButton0').click
             alert = @driver.switch_to.alert
             expect(alert.text).to eq('Please input the name of the organization first!')
             alert.dismiss
 
             # Input the name of the organization and click 'Create'
-            @driver.find_element(:id => 'organizationName').send_keys cc_organization2[:name]
-            @driver.find_element(:id => 'modalDialogButton0').click
+            @driver.find_element(id: 'organizationName').send_keys cc_organization2[:name]
+            @driver.find_element(id: 'modalDialogButton0').click
 
-            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(id: 'modalDialogButton0').click
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 60).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text == cc_organization2[:name] }
+              Selenium::WebDriver::Wait.new(timeout: 60).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text == cc_organization2[:name] }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text).to eq(cc_organization2[:name])
+            expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text).to eq(cc_organization2[:name])
           end
 
           it 'has an activate button' do
-            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_3').text).to eq('Activate')
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_3').text).to eq('Activate')
           end
 
           it 'has a suspend button' do
-            expect(@driver.find_element(:id => 'ToolTables_OrganizationsTable_4').text).to eq('Suspend')
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_4').text).to eq('Suspend')
           end
 
           shared_examples 'click button without selecting a single row' do
             it 'alerts the user to select at least one row when clicking the button' do
-              @driver.find_element(:id => buttonId).click
-              expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-              expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
-              expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
-              @driver.find_element(:id => 'modalDialogButton0').click
+              @driver.find_element(id: buttonId).click
+              expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+              expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+              expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+              @driver.find_element(id: 'modalDialogButton0').click
             end
           end
 
@@ -404,17 +404,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           def manage_org(button_id, message, result_message)
             check_first_row
 
-            @driver.find_element(:id => button_id).click
+            @driver.find_element(id: button_id).click
 
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq(message)
-            @driver.find_element(:id => 'modalDialogButton0').click
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq(message)
+            @driver.find_element(id: 'modalDialogButton0').click
 
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
-            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq(result_message)
-            @driver.find_element(:id => 'modalDialogButton0').click
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq(result_message)
+            @driver.find_element(id: 'modalDialogButton0').click
           end
 
           def suspend_org
@@ -430,9 +430,9 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           def check_organization_status(status)
-            Selenium::WebDriver::Wait.new(:timeout => 560).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text == status }
+            Selenium::WebDriver::Wait.new(timeout: 560).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text == status }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            expect(Selenium::WebDriver::Wait.new(:timeout => 360).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text }).to eq(status)
+            expect(Selenium::WebDriver::Wait.new(timeout: 360).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text }).to eq(status)
           end
 
           it 'activates the selected organization' do
@@ -452,10 +452,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
             delete_org
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 60).until { refresh_button && @driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr").text == 'No data available in table' }
+              Selenium::WebDriver::Wait.new(timeout: 60).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr").text == 'No data available in table' }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(:xpath => "//table[@id='OrganizationsTable']/tbody/tr").text).to eq('No data available in table')
+            expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr").text).to eq('No data available in table')
           end
         end
 
@@ -465,33 +465,33 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Name',               :tag => 'div', :value => cc_organization[:name] },
-                           { :label => 'GUID',               :tag =>   nil, :value => cc_organization[:guid] },
-                           { :label => 'Status',             :tag =>   nil, :value => cc_organization[:status].upcase },
-                           { :label => 'Created',            :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Updated',            :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Billing Enabled',    :tag =>   nil, :value => cc_organization[:billing_enabled].to_s },
-                           { :label => 'Spaces',             :tag =>   'a', :value => '1' },
-                           { :label => 'Organization Roles', :tag =>   'a', :value => '4' },
-                           { :label => 'Space Roles',        :tag =>   'a', :value => '3' },
-                           { :label => 'Quota',              :tag =>   'a', :value => cc_quota_definition[:name] },
-                           { :label => 'Domains',            :tag =>   'a', :value => '1' },
-                           { :label => 'Total Routes',       :tag =>   'a', :value => '1' },
-                           { :label => 'Used Routes',        :tag =>   nil, :value => '1' },
-                           { :label => 'Unused Routes',      :tag =>   nil, :value => '0' },
-                           { :label => 'Instances Used',     :tag =>   'a', :value => cc_app[:instances].to_s },
-                           { :label => 'Services Used',      :tag =>   'a', :value => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s },
-                           { :label => 'Memory Used',        :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
-                           { :label => 'Disk Used',          :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
-                           { :label => 'CPU Used',           :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s },
-                           { :label => 'Memory Reserved',    :tag =>   nil, :value => cc_app[:memory].to_s },
-                           { :label => 'Disk Reserved',      :tag =>   nil, :value => cc_app[:disk_quota].to_s },
-                           { :label => 'Total Apps',         :tag =>   'a', :value => '1' },
-                           { :label => 'Started Apps',       :tag =>   nil, :value => cc_app[:state] == 'STARTED' ? '1' : '0' },
-                           { :label => 'Stopped Apps',       :tag =>   nil, :value => cc_app[:state] == 'STOPPED' ? '1' : '0' },
-                           { :label => 'Pending Apps',       :tag =>   nil, :value => cc_app[:package_state] == 'PENDING' ? '1' : '0' },
-                           { :label => 'Staged Apps',        :tag =>   nil, :value => cc_app[:package_state] == 'STAGED'  ? '1' : '0' },
-                           { :label => 'Failed Apps',        :tag =>   nil, :value => cc_app[:package_state] == 'FAILED'  ? '1' : '0' }
+            check_details([{ label: 'Name',               tag: 'div', value: cc_organization[:name] },
+                           { label: 'GUID',               tag:   nil, value: cc_organization[:guid] },
+                           { label: 'Status',             tag:   nil, value: cc_organization[:status].upcase },
+                           { label: 'Created',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Updated',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Billing Enabled',    tag:   nil, value: cc_organization[:billing_enabled].to_s },
+                           { label: 'Spaces',             tag:   'a', value: '1' },
+                           { label: 'Organization Roles', tag:   'a', value: '4' },
+                           { label: 'Space Roles',        tag:   'a', value: '3' },
+                           { label: 'Quota',              tag:   'a', value: cc_quota_definition[:name] },
+                           { label: 'Domains',            tag:   'a', value: '1' },
+                           { label: 'Total Routes',       tag:   'a', value: '1' },
+                           { label: 'Used Routes',        tag:   nil, value: '1' },
+                           { label: 'Unused Routes',      tag:   nil, value: '0' },
+                           { label: 'Instances Used',     tag:   'a', value: cc_app[:instances].to_s },
+                           { label: 'Services Used',      tag:   'a', value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s },
+                           { label: 'Memory Used',        tag:   nil, value: @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
+                           { label: 'Disk Used',          tag:   nil, value: @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
+                           { label: 'CPU Used',           tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s },
+                           { label: 'Memory Reserved',    tag:   nil, value: cc_app[:memory].to_s },
+                           { label: 'Disk Reserved',      tag:   nil, value: cc_app[:disk_quota].to_s },
+                           { label: 'Total Apps',         tag:   'a', value: '1' },
+                           { label: 'Started Apps',       tag:   nil, value: cc_app[:state] == 'STARTED' ? '1' : '0' },
+                           { label: 'Stopped Apps',       tag:   nil, value: cc_app[:state] == 'STOPPED' ? '1' : '0' },
+                           { label: 'Pending Apps',       tag:   nil, value: cc_app[:package_state] == 'PENDING' ? '1' : '0' },
+                           { label: 'Staged Apps',        tag:   nil, value: cc_app[:package_state] == 'STAGED'  ? '1' : '0' },
+                           { label: 'Failed Apps',        tag:   nil, value: cc_app[:package_state] == 'FAILED'  ? '1' : '0' }
                           ])
           end
 
@@ -537,20 +537,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Spaces' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 6,
-                                :labels          => ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                :colspans        => %w(6 3 5 2 3 3)
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 6,
+                                labels:          ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
+                                colspans:        %w(6 3 5 2 3 3)
                               },
                               {
-                                :columns         => @driver.find_elements(:xpath => "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 22,
-                                :labels          => ['Name', 'GUID', 'Target', 'Created', 'Updated', 'Roles', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
-                                :colspans        => nil
+                                columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 22,
+                                labels:          ['Name', 'GUID', 'Target', 'Created', 'Updated', 'Roles', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='SpacesTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='SpacesTable']/tbody/tr/td"),
                            [
                              cc_space[:name],
                              cc_space[:guid],
@@ -587,28 +587,28 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Name',            :tag => 'div', :value => cc_space[:name] },
-                           { :label => 'GUID',            :tag =>   nil, :value => cc_space[:guid] },
-                           { :label => 'Organization',    :tag =>   'a', :value => cc_organization[:name] },
-                           { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_space[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_space[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Roles',           :tag =>   'a', :value => '3' },
-                           { :label => 'Total Routes',    :tag =>   nil, :value => '1' },
-                           { :label => 'Used Routes',     :tag =>   nil, :value => '1' },
-                           { :label => 'Unused Routes',   :tag =>   nil, :value => '0' },
-                           { :label => 'Instances Used',  :tag =>   'a', :value => cc_app[:instances].to_s },
-                           { :label => 'Services Used',   :tag =>   'a', :value => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s },
-                           { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
-                           { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
-                           { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s },
-                           { :label => 'Memory Reserved', :tag =>   nil, :value => cc_app[:memory].to_s },
-                           { :label => 'Disk Reserved',   :tag =>   nil, :value => cc_app[:disk_quota].to_s },
-                           { :label => 'Total Apps',      :tag =>   'a', :value => '1' },
-                           { :label => 'Started Apps',    :tag =>   nil, :value => cc_app[:state] == 'STARTED' ? '1' : '0' },
-                           { :label => 'Stopped Apps',    :tag =>   nil, :value => cc_app[:state] == 'STOPPED' ? '1' : '0' },
-                           { :label => 'Pending Apps',    :tag =>   nil, :value => cc_app[:package_state] == 'PENDING' ? '1' : '0' },
-                           { :label => 'Staged Apps',     :tag =>   nil, :value => cc_app[:package_state] == 'STAGED'  ? '1' : '0' },
-                           { :label => 'Failed Apps',     :tag =>   nil, :value => cc_app[:package_state] == 'FAILED'  ? '1' : '0' }
+            check_details([{ label: 'Name',            tag: 'div', value: cc_space[:name] },
+                           { label: 'GUID',            tag:   nil, value: cc_space[:guid] },
+                           { label: 'Organization',    tag:   'a', value: cc_organization[:name] },
+                           { label: 'Created',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_space[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Updated',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_space[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Roles',           tag:   'a', value: '3' },
+                           { label: 'Total Routes',    tag:   nil, value: '1' },
+                           { label: 'Used Routes',     tag:   nil, value: '1' },
+                           { label: 'Unused Routes',   tag:   nil, value: '0' },
+                           { label: 'Instances Used',  tag:   'a', value: cc_app[:instances].to_s },
+                           { label: 'Services Used',   tag:   'a', value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s },
+                           { label: 'Memory Used',     tag:   nil, value: @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
+                           { label: 'Disk Used',       tag:   nil, value: @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
+                           { label: 'CPU Used',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s },
+                           { label: 'Memory Reserved', tag:   nil, value: cc_app[:memory].to_s },
+                           { label: 'Disk Reserved',   tag:   nil, value: cc_app[:disk_quota].to_s },
+                           { label: 'Total Apps',      tag:   'a', value: '1' },
+                           { label: 'Started Apps',    tag:   nil, value: cc_app[:state] == 'STARTED' ? '1' : '0' },
+                           { label: 'Stopped Apps',    tag:   nil, value: cc_app[:state] == 'STOPPED' ? '1' : '0' },
+                           { label: 'Pending Apps',    tag:   nil, value: cc_app[:package_state] == 'PENDING' ? '1' : '0' },
+                           { label: 'Staged Apps',     tag:   nil, value: cc_app[:package_state] == 'STAGED'  ? '1' : '0' },
+                           { label: 'Failed Apps',     tag:   nil, value: cc_app[:package_state] == 'FAILED'  ? '1' : '0' }
                           ])
           end
 
@@ -642,20 +642,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Applications' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 5,
-                                :labels          => ['', '', 'Used', 'Reserved', ''],
-                                :colspans        => %w(1 11 4 2 2)
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 5,
+                                labels:          ['', '', 'Used', 'Reserved', ''],
+                                colspans:        %w(1 11 4 2 2)
                               },
                               {
-                                :columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 20,
-                                :labels          => [' ', 'Name', 'GUID', 'State', 'Package State', 'Instance State', 'Created', 'Updated', 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
-                                :colspans        => nil
+                                columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 20,
+                                labels:          [' ', 'Name', 'GUID', 'State', 'Package State', 'Instance State', 'Created', 'Updated', 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td"),
                            [
                              '',
                              cc_app[:name],
@@ -685,7 +685,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[1]/input")
+          inputs = @driver.find_elements(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[1]/input")
           expect(inputs.length).to eq(1)
           expect(inputs[0].attribute('value')).to eq(cc_app[:guid])
         end
@@ -693,53 +693,53 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         context 'manage application' do
           def manage_application(buttonIndex)
             check_first_row
-            @driver.find_element(:id => 'ToolTables_ApplicationsTable_' + buttonIndex.to_s).click
+            @driver.find_element(id: 'ToolTables_ApplicationsTable_' + buttonIndex.to_s).click
             check_operation_result
           end
 
           def check_first_row
-            @driver.find_elements(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[1]/input")[0].click
+            @driver.find_elements(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[1]/input")[0].click
           end
 
           def check_app_state(expect_state)
             # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
             # error happens.
-            Selenium::WebDriver::Wait.new(:timeout => 560).until { refresh_button && @driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text == expect_state }
+            Selenium::WebDriver::Wait.new(timeout: 560).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text == expect_state }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            expect(@driver.find_element(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text).to eq(expect_state)
+            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text).to eq(expect_state)
           end
 
           def check_operation_result
-            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(id: 'modalDialogButton0').click
           end
 
           it 'has a start button' do
-            expect(@driver.find_element(:id => 'ToolTables_ApplicationsTable_0').text).to eq('Start')
+            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_0').text).to eq('Start')
           end
 
           it 'has a stop button' do
-            expect(@driver.find_element(:id => 'ToolTables_ApplicationsTable_1').text).to eq('Stop')
+            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_1').text).to eq('Stop')
           end
 
           it 'has a restart button' do
-            expect(@driver.find_element(:id => 'ToolTables_ApplicationsTable_2').text).to eq('Restart')
+            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_2').text).to eq('Restart')
           end
 
           it 'has a delete button' do
-            expect(@driver.find_element(:id => 'ToolTables_ApplicationsTable_3').text).to eq('Delete')
+            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_3').text).to eq('Delete')
           end
 
           shared_examples 'click start button without selecting a single row' do
             it 'alerts the user to select at least one row when clicking the button' do
-              @driver.find_element(:id => buttonId).click
+              @driver.find_element(id: buttonId).click
 
-              expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-              expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
-              expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
-              @driver.find_element(:id => 'modalDialogButton0').click
+              expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+              expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+              expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+              @driver.find_element(id: 'modalDialogButton0').click
             end
           end
 
@@ -790,7 +790,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           def check_deleted_app_table_data
-            check_table_data(Selenium::WebDriver::Wait.new(:timeout => 360).until { refresh_button && @driver.find_elements(:xpath => "//table[@id='ApplicationsTable']/tbody/tr/td") },
+            check_table_data(Selenium::WebDriver::Wait.new(timeout: 360).until { refresh_button && @driver.find_elements(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td") },
                              [
                                '',
                                cc_app[:name],
@@ -818,17 +818,17 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'deletes the selected application' do
             # delete the application
             check_first_row
-            @driver.find_element(:id => 'ToolTables_ApplicationsTable_3').click
+            @driver.find_element(id: 'ToolTables_ApplicationsTable_3').click
 
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected applications?')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected applications?')
+            @driver.find_element(id: 'modalDialogButton0').click
 
             check_operation_result
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 560).until do
+              Selenium::WebDriver::Wait.new(timeout: 560).until do
                 begin
                   check_deleted_app_table_data
                   # If this works, no reason to continue in this loop
@@ -848,37 +848,39 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Name',            :tag => 'div', :value => cc_app[:name] },
-                           { :label => 'GUID',            :tag =>   nil, :value => cc_app[:guid] },
-                           { :label => 'State',           :tag =>   nil, :value => cc_app[:state] },
-                           { :label => 'Package State',   :tag =>   nil, :value => cc_app[:package_state] },
-                           { :label => 'Instance State',  :tag =>   nil, :value => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] },
-                           { :label => 'Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Started',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp'] * 1000) })") },
-                           { :label => 'URI',             :tag =>   'a', :value => "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }" },
-                           { :label => 'Buildpack',       :tag =>   nil, :value => cc_app[:detected_buildpack] },
-                           { :label => 'Instance Index',  :tag =>   nil, :value => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'].to_s },
-                           { :label => 'Droplet Hash',    :tag =>   nil, :value => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['droplet_sha1'].to_s },
-                           { :label => 'Services Used',   :tag =>   nil, :value => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s },
-                           { :label => 'Memory Used',     :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
-                           { :label => 'Disk Used',       :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
-                           { :label => 'CPU Used',        :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s },
-                           { :label => 'Memory Reserved', :tag =>   nil, :value => cc_app[:memory].to_s },
-                           { :label => 'Disk Reserved',   :tag =>   nil, :value => cc_app[:disk_quota].to_s },
-                           { :label => 'Space',           :tag =>   'a', :value => cc_space[:name] },
-                           { :label => 'Organization',    :tag =>   'a', :value => cc_organization[:name] },
-                           { :label => 'DEA',             :tag =>   'a', :value => nats_dea['host'] }
+            check_details([{ label: 'Name',            tag: 'div', value: cc_app[:name] },
+                           { label: 'GUID',            tag:   nil, value: cc_app[:guid] },
+                           { label: 'State',           tag:   nil, value: cc_app[:state] },
+                           { label: 'Package State',   tag:   nil, value: cc_app[:package_state] },
+                           { label: 'Instance State',  tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] },
+                           { label: 'Created',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Updated',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Started',         tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp'] * 1000) })") },
+                           { label: 'URI',             tag:   'a', value: "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }" },
+                           { label: 'Buildpack',       tag:   nil, value: cc_app[:detected_buildpack] },
+                           { label: 'Instance Index',  tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'].to_s },
+                           { label: 'Droplet Hash',    tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['droplet_sha1'].to_s },
+                           { label: 'Services Used',   tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s },
+                           { label: 'Memory Used',     tag:   nil, value: @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
+                           { label: 'Disk Used',       tag:   nil, value: @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
+                           { label: 'CPU Used',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s },
+                           { label: 'Memory Reserved', tag:   nil, value: cc_app[:memory].to_s },
+                           { label: 'Disk Reserved',   tag:   nil, value: cc_app[:disk_quota].to_s },
+                           { label: 'Space',           tag:   'a', value: cc_space[:name] },
+                           { label: 'Organization',    tag:   'a', value: cc_organization[:name] },
+                           { label: 'DEA',             tag:   'a', value: nats_dea['host'] }
                           ])
           end
 
           it 'has services' do
-            expect(@driver.find_element(:id => 'ApplicationsServicesDetailsLabel').displayed?).to be_true
-            check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='ApplicationsServicesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 5,
-                                :labels          => ['Instance Name', 'Provider', 'Service Name', 'Version', 'Plan Name'],
-                                :colspans        => nil)
-            check_table_data(@driver.find_elements(:xpath => "//table[@id='ApplicationsServicesTable']/tbody/tr/td"),
+            expect(@driver.find_element(id: 'ApplicationsServicesDetailsLabel').displayed?).to be_true
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsServicesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+                                expected_length: 5,
+                                labels:          ['Instance Name', 'Provider', 'Service Name', 'Version', 'Plan Name'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ApplicationsServicesTable']/tbody/tr/td"),
                              [
                                varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['name'],
                                varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['provider'],
@@ -910,14 +912,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Routes' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='RoutesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 8,
-                                :labels          => [' ', 'Host', 'GUID', 'Domain', 'Created', 'Updated', 'Target', 'Application'],
-                                :colspans        => nil
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='RoutesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 8,
+                                labels:          [' ', 'Host', 'GUID', 'Domain', 'Created', 'Updated', 'Target', 'Application'],
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='RoutesTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='RoutesTable']/tbody/tr/td"),
                            [
                              '',
                              cc_route[:host],
@@ -935,49 +937,49 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(:xpath => "//table[@id='RoutesTable']/tbody/tr/td[1]/input")
+          inputs = @driver.find_elements(xpath: "//table[@id='RoutesTable']/tbody/tr/td[1]/input")
           expect(inputs.length).to eq(1)
           expect(inputs[0].attribute('value')).to eq(cc_route[:guid])
         end
 
         context 'manage routes' do
           def check_first_row
-            @driver.find_elements(:xpath => "//table[@id='RoutesTable']/tbody/tr/td[1]/input")[0].click
+            @driver.find_elements(xpath: "//table[@id='RoutesTable']/tbody/tr/td[1]/input")[0].click
           end
 
           it 'has a delete button' do
-            expect(@driver.find_element(:id => 'ToolTables_RoutesTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'ToolTables_RoutesTable_0').text).to eq('Delete')
           end
 
           it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(:id => 'ToolTables_RoutesTable_0').click
+            @driver.find_element(id: 'ToolTables_RoutesTable_0').click
 
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+            @driver.find_element(id: 'modalDialogButton0').click
           end
 
           it 'deletes the selected route' do
             # delete the route
             check_first_row
-            @driver.find_element(:id => 'ToolTables_RoutesTable_0').click
+            @driver.find_element(id: 'ToolTables_RoutesTable_0').click
 
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected routes?')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected routes?')
+            @driver.find_element(id: 'modalDialogButton0').click
 
-            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(id: 'modalDialogButton0').click
 
             begin
-              Selenium::WebDriver::Wait.new(:timeout => 240).until { refresh_button && @driver.find_element(:xpath => "//table[@id='RoutesTable']/tbody/tr").text == 'No data available in table' }
+              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='RoutesTable']/tbody/tr").text == 'No data available in table' }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(:xpath => "//table[@id='RoutesTable']/tbody/tr").text).to eq('No data available in table')
+            expect(@driver.find_element(xpath: "//table[@id='RoutesTable']/tbody/tr").text).to eq('No data available in table')
           end
         end
 
@@ -987,14 +989,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Host',         :tag => nil, :value => cc_route[:host] },
-                           { :label => 'GUID',         :tag => nil, :value => cc_route[:guid] },
-                           { :label => 'Domain',       :tag => 'a', :value => cc_domain[:name] },
-                           { :label => 'Created',      :tag => nil, :value => Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:created_at].to_datetime.rfc3339 }\")") } },
-                           { :label => 'Updated',      :tag => nil, :value => Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:updated_at].to_datetime.rfc3339 }\")") } },
-                           { :label => 'Applications', :tag => 'a', :value => '1' },
-                           { :label => 'Space',        :tag => 'a', :value => cc_space[:name] },
-                           { :label => 'Organization', :tag => 'a', :value => cc_organization[:name] }
+            check_details([{ label: 'Host',         tag: nil, value: cc_route[:host] },
+                           { label: 'GUID',         tag: nil, value: cc_route[:guid] },
+                           { label: 'Domain',       tag: 'a', value: cc_domain[:name] },
+                           { label: 'Created',      tag: nil, value: Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:created_at].to_datetime.rfc3339 }\")") } },
+                           { label: 'Updated',      tag: nil, value: Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:updated_at].to_datetime.rfc3339 }\")") } },
+                           { label: 'Applications', tag: 'a', value: '1' },
+                           { label: 'Space',        tag: 'a', value: cc_space[:name] },
+                           { label: 'Organization', tag: 'a', value: cc_organization[:name] }
                           ])
           end
 
@@ -1020,20 +1022,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'ServiceInstances' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 5,
-                                :labels          => ['Service Instance', 'Service Plan', 'Service', 'Service Broker', ''],
-                                :colspans        => %w(5 7 8 4 1)
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 5,
+                                labels:          ['Service Instance', 'Service Plan', 'Service', 'Service Broker', ''],
+                                colspans:        %w(5 7 8 4 1)
                               },
                               {
-                                :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 25,
-                                :labels          => %w(Name GUID Created Updated Bindings Name GUID Created Updated Active Public Free Provider Label GUID Version Created Updated Active Bindable Name GUID Created Updated Target),
-                                :colspans        => nil
+                                columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 25,
+                                labels:          %w(Name GUID Created Updated Bindings Name GUID Created Updated Active Public Free Provider Label GUID Version Created Updated Active Bindable Name GUID Created Updated Target),
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='ServiceInstancesTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceInstancesTable']/tbody/tr/td"),
                            [
                              cc_service_instance[:name],
                              cc_service_instance[:guid],
@@ -1073,42 +1075,44 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Service Instance Name',          :tag => 'div', :value => cc_service_instance[:name] },
-                           { :label => 'Service Instance GUID',          :tag =>   nil, :value => cc_service_instance[:guid] },
-                           { :label => 'Service Instance Created',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Instance Updated',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Instance Dashboard URL', :tag =>   nil, :value => cc_service_instance[:dashboard_url] },
-                           { :label => 'Service Plan Name',              :tag =>   'a', :value => cc_service_plan[:name] },
-                           { :label => 'Service Plan GUID',              :tag =>   nil, :value => cc_service_plan[:guid] },
-                           { :label => 'Service Plan Created',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Plan Updated',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Plan Active',            :tag =>   nil, :value => @driver.execute_script("return Format.formatBoolean(\"#{ cc_service_plan[:active] }\")") },
-                           { :label => 'Service Plan Public',            :tag =>   nil, :value => @driver.execute_script("return Format.formatBoolean(\"#{ cc_service_plan[:public] }\")") },
-                           { :label => 'Service Plan Free',              :tag =>   nil, :value => @driver.execute_script("return Format.formatBoolean(\"#{ cc_service_plan[:free] }\")") },
-                           { :label => 'Service Provider',               :tag =>   nil, :value => cc_service[:provider] },
-                           { :label => 'Service Label',                  :tag =>   'a', :value => cc_service[:label] },
-                           { :label => 'Service GUID',                   :tag =>   nil, :value => cc_service[:guid] },
-                           { :label => 'Service Version',                :tag =>   nil, :value => cc_service[:version] },
-                           { :label => 'Service Created',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Updated',                :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Active',                 :tag =>   nil, :value => @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:active] }\")") },
-                           { :label => 'Service Bindable',               :tag =>   nil, :value => @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:bindable] }\")") },
-                           { :label => 'Service Broker Name',            :tag =>   'a', :value => cc_service_broker[:name] },
-                           { :label => 'Service Broker GUID',            :tag =>   nil, :value => cc_service_broker[:guid] },
-                           { :label => 'Service Broker Created',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Broker Updated',         :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Space',                          :tag =>   'a', :value => cc_space[:name] },
-                           { :label => 'Organization',                   :tag =>   'a', :value => cc_organization[:name] }
+            check_details([{ label: 'Service Instance Name',          tag: 'div', value: cc_service_instance[:name] },
+                           { label: 'Service Instance GUID',          tag:   nil, value: cc_service_instance[:guid] },
+                           { label: 'Service Instance Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Instance Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Instance Dashboard URL', tag:   nil, value: cc_service_instance[:dashboard_url] },
+                           { label: 'Service Plan Name',              tag:   'a', value: cc_service_plan[:name] },
+                           { label: 'Service Plan GUID',              tag:   nil, value: cc_service_plan[:guid] },
+                           { label: 'Service Plan Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Plan Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Plan Active',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(\"#{ cc_service_plan[:active] }\")") },
+                           { label: 'Service Plan Public',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(\"#{ cc_service_plan[:public] }\")") },
+                           { label: 'Service Plan Free',              tag:   nil, value: @driver.execute_script("return Format.formatBoolean(\"#{ cc_service_plan[:free] }\")") },
+                           { label: 'Service Provider',               tag:   nil, value: cc_service[:provider] },
+                           { label: 'Service Label',                  tag:   'a', value: cc_service[:label] },
+                           { label: 'Service GUID',                   tag:   nil, value: cc_service[:guid] },
+                           { label: 'Service Version',                tag:   nil, value: cc_service[:version] },
+                           { label: 'Service Created',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Updated',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Active',                 tag:   nil, value: @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:active] }\")") },
+                           { label: 'Service Bindable',               tag:   nil, value: @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:bindable] }\")") },
+                           { label: 'Service Broker Name',            tag:   'a', value: cc_service_broker[:name] },
+                           { label: 'Service Broker GUID',            tag:   nil, value: cc_service_broker[:guid] },
+                           { label: 'Service Broker Created',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Broker Updated',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Space',                          tag:   'a', value: cc_space[:name] },
+                           { label: 'Organization',                   tag:   'a', value: cc_organization[:name] }
                           ])
           end
 
           it 'has bound applications' do
-            expect(@driver.find_element(:id => 'ServiceInstancesApplicationsDetailsLabel').displayed?).to be_true
-            check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='ServiceInstancesApplicationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 3,
-                                :labels          => %w(Application GUID Bound),
-                                :colspans        => nil)
-            check_table_data(@driver.find_elements(:xpath => "//table[@id='ServiceInstancesApplicationsTable']/tbody/tr/td"),
+            expect(@driver.find_element(id: 'ServiceInstancesApplicationsDetailsLabel').displayed?).to be_true
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesApplicationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+                                expected_length: 3,
+                                labels:          %w(Application GUID Bound),
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceInstancesApplicationsTable']/tbody/tr/td"),
                              [
                                cc_app[:name],
                                cc_app[:guid],
@@ -1146,19 +1150,19 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'OrganizationRoles' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 4,
-                                :labels          => ['', 'Organization', 'User', ''],
-                                :colspans        => %w(1 2 2 1)
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 4,
+                                labels:          ['', 'Organization', 'User', ''],
+                                colspans:        %w(1 2 2 1)
                               },
-                              { :columns => @driver.find_elements(:xpath => "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 6,
-                                :labels          => [' ', 'Name', 'GUID', 'Name', 'GUID', 'Role'],
-                                :colspans        => nil
+                              { columns:         @driver.find_elements(xpath: "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 6,
+                                labels:          [' ', 'Name', 'GUID', 'Name', 'GUID', 'Role'],
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='OrganizationRolesTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='OrganizationRolesTable']/tbody/tr/td"),
                            [
                              '',
                              cc_organization[:name],
@@ -1175,35 +1179,35 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
         context 'manage organization roles' do
           def check_first_row
-            @driver.find_elements(:xpath => "//table[@id='OrganizationRolesTable']/tbody/tr/td[1]/input")[0].click
+            @driver.find_elements(xpath: "//table[@id='OrganizationRolesTable']/tbody/tr/td[1]/input")[0].click
           end
 
           it 'has a delete button' do
-            expect(@driver.find_element(:id => 'ToolTables_OrganizationRolesTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'ToolTables_OrganizationRolesTable_0').text).to eq('Delete')
           end
 
           it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(:id => 'ToolTables_OrganizationRolesTable_0').click
+            @driver.find_element(id: 'ToolTables_OrganizationRolesTable_0').click
 
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+            @driver.find_element(id: 'modalDialogButton0').click
           end
 
           it 'deletes the selected organization role' do
             check_first_row
-            @driver.find_element(:id => 'ToolTables_OrganizationRolesTable_0').click
+            @driver.find_element(id: 'ToolTables_OrganizationRolesTable_0').click
 
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected organization roles?')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected organization roles?')
+            @driver.find_element(id: 'modalDialogButton0').click
 
-            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(id: 'modalDialogButton0').click
           end
         end
 
@@ -1213,11 +1217,11 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Organization',      :tag => 'div', :value => cc_organization[:name] },
-                           { :label => 'Organization GUID', :tag =>   nil, :value => cc_organization[:guid] },
-                           { :label => 'User',              :tag =>   'a', :value => uaa_user[:username] },
-                           { :label => 'User GUID',         :tag =>   nil, :value => uaa_user[:id] },
-                           { :label => 'Role',              :tag =>   nil, :value => 'Auditor' }
+            check_details([{ label: 'Organization',      tag: 'div', value: cc_organization[:name] },
+                           { label: 'Organization GUID', tag:   nil, value: cc_organization[:guid] },
+                           { label: 'User',              tag:   'a', value: uaa_user[:username] },
+                           { label: 'User GUID',         tag:   nil, value: uaa_user[:id] },
+                           { label: 'Role',              tag:   nil, value: 'Auditor' }
                           ])
           end
 
@@ -1235,19 +1239,19 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'SpaceRoles' }
 
         it 'has a table' do
-          check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 4,
-                                :labels          => ['', 'Space', 'User', ''],
-                                :colspans        => %w(1 3 2 1)
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 4,
+                                labels:          ['', 'Space', 'User', ''],
+                                colspans:        %w(1 3 2 1)
                               },
-                              { :columns => @driver.find_elements(:xpath => "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 7,
-                                :labels          => [' ', 'Name', 'GUID', 'Target', 'Name', 'GUID', 'Role'],
-                                :colspans        => nil
+                              { columns:         @driver.find_elements(xpath: "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 7,
+                                labels:          [' ', 'Name', 'GUID', 'Target', 'Name', 'GUID', 'Role'],
+                                colspans:        nil
                                           }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='SpaceRolesTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='SpaceRolesTable']/tbody/tr/td"),
                            [
                              '',
                              cc_space[:name],
@@ -1265,35 +1269,35 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
         context 'manage space roles' do
           def check_first_row
-            @driver.find_elements(:xpath => "//table[@id='SpaceRolesTable']/tbody/tr/td[1]/input")[0].click
+            @driver.find_elements(xpath: "//table[@id='SpaceRolesTable']/tbody/tr/td[1]/input")[0].click
           end
 
           it 'has a delete button' do
-            expect(@driver.find_element(:id => 'ToolTables_SpaceRolesTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'ToolTables_SpaceRolesTable_0').text).to eq('Delete')
           end
 
           it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(:id => 'ToolTables_SpaceRolesTable_0').click
+            @driver.find_element(id: 'ToolTables_SpaceRolesTable_0').click
 
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+            @driver.find_element(id: 'modalDialogButton0').click
           end
 
           it 'deletes the selected space role' do
             check_first_row
-            @driver.find_element(:id => 'ToolTables_SpaceRolesTable_0').click
+            @driver.find_element(id: 'ToolTables_SpaceRolesTable_0').click
 
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected space roles?')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected space roles?')
+            @driver.find_element(id: 'modalDialogButton0').click
 
-            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(:id => 'modalDialogButton0').click
+            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(id: 'modalDialogButton0').click
           end
         end
 
@@ -1303,12 +1307,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Space',        :tag => 'div', :value => cc_space[:name] },
-                           { :label => 'Space GUID',   :tag =>   nil, :value => cc_space[:guid] },
-                           { :label => 'Organization', :tag =>   'a', :value => cc_organization[:name] },
-                           { :label => 'User',         :tag =>   'a', :value => uaa_user[:username] },
-                           { :label => 'User GUID',    :tag =>   nil, :value => uaa_user[:id] },
-                           { :label => 'Role',         :tag =>   nil, :value => 'Auditor' }
+            check_details([{ label: 'Space',        tag: 'div', value: cc_space[:name] },
+                           { label: 'Space GUID',   tag:   nil, value: cc_space[:guid] },
+                           { label: 'Organization', tag:   'a', value: cc_organization[:name] },
+                           { label: 'User',         tag:   'a', value: uaa_user[:username] },
+                           { label: 'User GUID',    tag:   nil, value: uaa_user[:id] },
+                           { label: 'Role',         tag:   nil, value: 'Auditor' }
                           ])
           end
 
@@ -1330,20 +1334,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Users' }
 
         it 'has a table' do
-          check_table_layout([{ :columns => @driver.find_elements(:xpath => "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 3,
-                                :labels          => ['', 'Organization Roles', 'Space Roles', ''],
-                                :colspans        => %w(10 5 4)
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 3,
+                                labels:          ['', 'Organization Roles', 'Space Roles', ''],
+                                colspans:        %w(10 5 4)
                               },
                               {
-                                :columns         => @driver.find_elements(:xpath => "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 19,
-                                :labels          => ['Username', 'GUID', 'Created', 'Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
-                                :colspans        => nil
+                                columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 19,
+                                labels:          ['Username', 'GUID', 'Created', 'Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='UsersTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='UsersTable']/tbody/tr/td"),
                            [
                              uaa_user[:username],
                              uaa_user[:id],
@@ -1377,25 +1381,25 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Username',                           :tag => 'div', :value => uaa_user[:username] },
-                           { :label => 'GUID',                               :tag =>   nil, :value => uaa_user[:id] },
-                           { :label => 'Created',                            :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_user[:created].to_datetime.rfc3339 }\")") },
-                           { :label => 'Updated',                            :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ uaa_user[:lastmodified].to_datetime.rfc3339 }\")") },
-                           { :label => 'Email',                              :tag =>    'a', :value => "mailto:#{ uaa_user[:email] }" },
-                           { :label => 'Family Name',                        :tag =>   nil, :value => uaa_user[:familyname] },
-                           { :label => 'Given Name',                         :tag =>   nil, :value => uaa_user[:givenname] },
-                           { :label => 'Active',                             :tag =>   nil, :value => uaa_user[:active].to_s },
-                           { :label => 'Version',                            :tag =>   nil, :value => uaa_user[:version].to_s },
-                           { :label => 'Group',                              :tag =>   nil, :value => uaa_group[:displayname] },
-                           { :label => 'Organization Total Roles',           :tag =>   'a', :value => '4' },
-                           { :label => 'Organization Auditor Roles',         :tag =>   nil, :value => '1' },
-                           { :label => 'Organization Billing Manager Roles', :tag =>   nil, :value => '1' },
-                           { :label => 'Organization Manager Roles',         :tag =>   nil, :value => '1' },
-                           { :label => 'Organization User Roles',            :tag =>   nil, :value => '1' },
-                           { :label => 'Space Total Roles',                  :tag =>   'a', :value => '3' },
-                           { :label => 'Space Auditor Roles',                :tag =>   nil, :value => '1' },
-                           { :label => 'Space Developer Roles',              :tag =>   nil, :value => '1' },
-                           { :label => 'Space Manager Roles',                :tag =>   nil, :value => '1' }
+            check_details([{ label: 'Username',                           tag: 'div', value: uaa_user[:username] },
+                           { label: 'GUID',                               tag:   nil, value: uaa_user[:id] },
+                           { label: 'Created',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ uaa_user[:created].to_datetime.rfc3339 }\")") },
+                           { label: 'Updated',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ uaa_user[:lastmodified].to_datetime.rfc3339 }\")") },
+                           { label: 'Email',                              tag:   'a', value: "mailto:#{ uaa_user[:email] }" },
+                           { label: 'Family Name',                        tag:   nil, value: uaa_user[:familyname] },
+                           { label: 'Given Name',                         tag:   nil, value: uaa_user[:givenname] },
+                           { label: 'Active',                             tag:   nil, value: uaa_user[:active].to_s },
+                           { label: 'Version',                            tag:   nil, value: uaa_user[:version].to_s },
+                           { label: 'Group',                              tag:   nil, value: uaa_group[:displayname] },
+                           { label: 'Organization Total Roles',           tag:   'a', value: '4' },
+                           { label: 'Organization Auditor Roles',         tag:   nil, value: '1' },
+                           { label: 'Organization Billing Manager Roles', tag:   nil, value: '1' },
+                           { label: 'Organization Manager Roles',         tag:   nil, value: '1' },
+                           { label: 'Organization User Roles',            tag:   nil, value: '1' },
+                           { label: 'Space Total Roles',                  tag:   'a', value: '3' },
+                           { label: 'Space Auditor Roles',                tag:   nil, value: '1' },
+                           { label: 'Space Developer Roles',              tag:   nil, value: '1' },
+                           { label: 'Space Manager Roles',                tag:   nil, value: '1' }
                           ])
           end
 
@@ -1413,14 +1417,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Domains' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DomainsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 6,
-                                :labels          => ['Name', 'GUID', 'Created', 'Updated', 'Owning Organization', 'Routes'],
-                                :colspans        => nil
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='DomainsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 6,
+                                labels:          ['Name', 'GUID', 'Created', 'Updated', 'Owning Organization', 'Routes'],
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='DomainsTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='DomainsTable']/tbody/tr/td"),
                            [
                              cc_domain[:name],
                              cc_domain[:guid],
@@ -1441,12 +1445,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Name',         :tag => 'div', :value => cc_domain[:name] },
-                           { :label => 'GUID',         :tag =>   nil, :value => cc_domain[:guid] },
-                           { :label => 'Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Updated',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Organization', :tag =>   'a', :value => cc_organization[:name] },
-                           { :label => 'Routes',       :tag =>   'a', :value => '1' }
+            check_details([{ label: 'Name',         tag: 'div', value: cc_domain[:name] },
+                           { label: 'GUID',         tag:   nil, value: cc_domain[:guid] },
+                           { label: 'Created',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Updated',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Organization', tag:   'a', value: cc_organization[:name] },
+                           { label: 'Routes',       tag:   'a', value: '1' }
                           ])
           end
 
@@ -1464,14 +1468,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Quotas' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='QuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 10,
-                                :labels          => ['Name', 'GUID', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Organizations'],
-                                :colspans        => nil
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='QuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 10,
+                                labels:          ['Name', 'GUID', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Organizations'],
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='QuotasTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='QuotasTable']/tbody/tr/td"),
                            [
                              cc_quota_definition[:name],
                              cc_quota_definition[:guid],
@@ -1496,16 +1500,16 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Name',                       :tag => 'div', :value => cc_quota_definition[:name] },
-                           { :label => 'GUID',                       :tag =>   nil, :value => cc_quota_definition[:guid] },
-                           { :label => 'Created',                    :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Updated',                    :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Total Services',             :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:total_services] }\")") },
-                           { :label => 'Total Routes',               :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:total_routes] }\")") },
-                           { :label => 'Memory Limit',               :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:memory_limit] }\")") },
-                           { :label => 'Instance Memory Limit',      :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:instance_memory_limit] }\")") },
-                           { :label => 'Non-Basic Services Allowed', :tag =>   nil, :value => cc_quota_definition[:non_basic_services_allowed].to_s },
-                           { :label => 'Organizations',              :tag =>   'a', :value => '1' }
+            check_details([{ label: 'Name',                       tag: 'div', value: cc_quota_definition[:name] },
+                           { label: 'GUID',                       tag:   nil, value: cc_quota_definition[:guid] },
+                           { label: 'Created',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Updated',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Total Services',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:total_services] }\")") },
+                           { label: 'Total Routes',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:total_routes] }\")") },
+                           { label: 'Memory Limit',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:memory_limit] }\")") },
+                           { label: 'Instance Memory Limit',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(\"#{ cc_quota_definition[:instance_memory_limit] }\")") },
+                           { label: 'Non-Basic Services Allowed', tag:   nil, value: cc_quota_definition[:non_basic_services_allowed].to_s },
+                           { label: 'Organizations',              tag:   'a', value: '1' }
                           ])
           end
 
@@ -1519,14 +1523,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'ServiceBrokers' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServiceBrokersTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 7,
-                                :labels          => ['Name', 'GUID', 'Created', 'Updated', 'Services', 'Service Plans', 'Service Instances'],
-                                :colspans        => nil
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceBrokersTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 7,
+                                labels:          ['Name', 'GUID', 'Created', 'Updated', 'Services', 'Service Plans', 'Service Instances'],
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='ServiceBrokersTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceBrokersTable']/tbody/tr/td"),
                            [
                              cc_service_broker[:name],
                              cc_service_broker[:guid],
@@ -1548,15 +1552,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Service Broker Name',          :tag => 'div', :value => cc_service_broker[:name] },
-                           { :label => 'Service Broker GUID',          :tag =>   nil, :value => cc_service_broker[:guid] },
-                           { :label => 'Service Broker Created',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Broker Updated',       :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Broker Auth Username', :tag =>   nil, :value => cc_service_broker[:auth_username] },
-                           { :label => 'Service Broker Broker URL',    :tag =>   nil, :value => cc_service_broker[:broker_url] },
-                           { :label => 'Services',                     :tag =>   'a', :value => '1' },
-                           { :label => 'Service Plans',                :tag =>   'a', :value => '1' },
-                           { :label => 'Service Instances',            :tag =>   'a', :value => '1' }
+            check_details([{ label: 'Service Broker Name',          tag: 'div', value: cc_service_broker[:name] },
+                           { label: 'Service Broker GUID',          tag:   nil, value: cc_service_broker[:guid] },
+                           { label: 'Service Broker Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Broker Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Broker Auth Username', tag:   nil, value: cc_service_broker[:auth_username] },
+                           { label: 'Service Broker Broker URL',    tag:   nil, value: cc_service_broker[:broker_url] },
+                           { label: 'Services',                     tag:   'a', value: '1' },
+                           { label: 'Service Plans',                tag:   'a', value: '1' },
+                           { label: 'Service Instances',            tag:   'a', value: '1' }
                           ])
           end
 
@@ -1578,20 +1582,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Services' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 2,
-                                :labels          => ['Service', 'Service Broker'],
-                                :colspans        => %w(10 4)
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 2,
+                                labels:          ['Service', 'Service Broker'],
+                                colspans:        %w(10 4)
                               },
                               {
-                                :columns         => @driver.find_elements(:xpath => "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 14,
-                                :labels          => ['Provider', 'Label', 'GUID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Service Plans', 'Service Instances', 'Name', 'GUID', 'Created', 'Updated'],
-                                :colspans        => nil
+                                columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 14,
+                                labels:          ['Provider', 'Label', 'GUID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Service Plans', 'Service Instances', 'Name', 'GUID', 'Created', 'Updated'],
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='ServicesTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='ServicesTable']/tbody/tr/td"),
                            [
                              cc_service[:provider],
                              cc_service[:label],
@@ -1622,32 +1626,32 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           it 'has details' do
             service_tags_json = JSON.parse(cc_service[:tags])
             service_extra_json = JSON.parse(cc_service[:extra])
-            check_details([{ :label => 'Service Provider',              :tag =>   nil, :value => cc_service[:provider] },
-                           { :label => 'Service Label',                 :tag => 'div', :value => cc_service[:label] },
-                           { :label => 'Service GUID',                  :tag =>   nil, :value => cc_service[:guid] },
-                           { :label => 'Service Version',               :tag =>   nil, :value => cc_service[:version] },
-                           { :label => 'Service Created',               :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Updated',               :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Active',                :tag =>   nil, :value => @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:active] }\")") },
-                           { :label => 'Service Bindable',              :tag =>   nil, :value => @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:bindable] }\")") },
-                           { :label => 'Service Description',           :tag =>   nil, :value => cc_service[:description] },
-                           { :label => 'Service Unique ID',             :tag =>   nil, :value => cc_service[:unique_id] },
-                           { :label => 'Service Tag',                   :tag =>   nil, :value => service_tags_json[0] },
-                           { :label => 'Service Tag',                   :tag =>   nil, :value => service_tags_json[1] },
-                           { :label => 'Service Documentation URL',     :tag =>   'a', :value => cc_service[:documentation_url] },
-                           { :label => 'Service Info URL',              :tag =>   'a', :value => cc_service[:info_url] },
-                           { :label => 'Service Display Name',          :tag =>   nil, :value => service_extra_json['displayName'] },
-                           { :label => 'Service Provider Display Name', :tag =>   nil, :value => service_extra_json['providerDisplayName'] },
-                           { :label => 'Service Icon',                  :tag => 'img', :value => @driver.execute_script("return Format.formatIconImage(\"#{ service_extra_json['imageUrl'] }\", \"service icon\", \"flot:left;\")").gsub(/'/, "\"").gsub(/[ ]+/, ' ').gsub(/ >/, '>') },
-                           { :label => 'Service Long Description',      :tag =>   nil, :value => service_extra_json['longDescription'] },
-                           { :label => 'Service Documentation URL',     :tag =>   'a', :value => service_extra_json['documentationUrl'] },
-                           { :label => 'Service Support URL',           :tag =>   'a', :value => service_extra_json['supportUrl'] },
-                           { :label => 'Service Plans',                 :tag =>   'a', :value => '1' },
-                           { :label => 'Service Instances',             :tag =>   'a', :value => '1' },
-                           { :label => 'Service Broker Name',           :tag =>   'a', :value => cc_service_broker[:name] },
-                           { :label => 'Service Broker GUID',           :tag =>   nil, :value => cc_service_broker[:guid] },
-                           { :label => 'Service Broker Created',        :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Broker Updated',        :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") }
+            check_details([{ label: 'Service Provider',              tag:   nil, value: cc_service[:provider] },
+                           { label: 'Service Label',                 tag: 'div', value: cc_service[:label] },
+                           { label: 'Service GUID',                  tag:   nil, value: cc_service[:guid] },
+                           { label: 'Service Version',               tag:   nil, value: cc_service[:version] },
+                           { label: 'Service Created',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Updated',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Active',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:active] }\")") },
+                           { label: 'Service Bindable',              tag:   nil, value: @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:bindable] }\")") },
+                           { label: 'Service Description',           tag:   nil, value: cc_service[:description] },
+                           { label: 'Service Unique ID',             tag:   nil, value: cc_service[:unique_id] },
+                           { label: 'Service Tag',                   tag:   nil, value: service_tags_json[0] },
+                           { label: 'Service Tag',                   tag:   nil, value: service_tags_json[1] },
+                           { label: 'Service Documentation URL',     tag:   'a', value: cc_service[:documentation_url] },
+                           { label: 'Service Info URL',              tag:   'a', value: cc_service[:info_url] },
+                           { label: 'Service Display Name',          tag:   nil, value: service_extra_json['displayName'] },
+                           { label: 'Service Provider Display Name', tag:   nil, value: service_extra_json['providerDisplayName'] },
+                           { label: 'Service Icon',                  tag: 'img', value: @driver.execute_script("return Format.formatIconImage(\"#{ service_extra_json['imageUrl'] }\", \"service icon\", \"flot:left;\")").gsub(/'/, "\"").gsub(/[ ]+/, ' ').gsub(/ >/, '>') },
+                           { label: 'Service Long Description',      tag:   nil, value: service_extra_json['longDescription'] },
+                           { label: 'Service Documentation URL',     tag:   'a', value: service_extra_json['documentationUrl'] },
+                           { label: 'Service Support URL',           tag:   'a', value: service_extra_json['supportUrl'] },
+                           { label: 'Service Plans',                 tag:   'a', value: '1' },
+                           { label: 'Service Instances',             tag:   'a', value: '1' },
+                           { label: 'Service Broker Name',           tag:   'a', value: cc_service_broker[:name] },
+                           { label: 'Service Broker GUID',           tag:   nil, value: cc_service_broker[:guid] },
+                           { label: 'Service Broker Created',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Broker Updated',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") }
                           ])
           end
 
@@ -1669,20 +1673,20 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'ServicePlans' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 4,
-                                :labels          => ['', 'Service Plan', 'Service', 'Service Broker'],
-                                :colspans        => %w(1 9 8 4)
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 4,
+                                labels:          ['', 'Service Plan', 'Service', 'Service Broker'],
+                                colspans:        %w(1 9 8 4)
                               },
                               {
-                                :columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 22,
-                                :labels          => [' ', 'Name', 'GUID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Visible Organizations', 'Service Instances', 'Provider', 'Label', 'GUID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated'],
-                                :colspans        => nil
+                                columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 22,
+                                labels:          [' ', 'Name', 'GUID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Visible Organizations', 'Service Instances', 'Provider', 'Label', 'GUID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated'],
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td"),
                            [
                              '',
                              cc_service_plan[:name],
@@ -1720,41 +1724,43 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
           it 'has details' do
             service_plan_extra_json = JSON.parse(cc_service_plan[:extra])
-            check_details([{ :label => 'Service Plan Name',         :tag => 'div', :value => cc_service_plan[:name] },
-                           { :label => 'Service Plan GUID',         :tag =>   nil, :value => cc_service_plan[:guid] },
-                           { :label => 'Service Plan Created',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Plan Updated',      :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Plan Active',       :tag =>   nil, :value => @driver.execute_script("return Format.formatBoolean(\"#{ cc_service_plan[:active] }\")") },
-                           { :label => 'Service Plan Public',       :tag =>   nil, :value => @driver.execute_script("return Format.formatBoolean(\"#{ cc_service_plan[:public] }\")") },
-                           { :label => 'Service Plan Free',         :tag =>   nil, :value => @driver.execute_script("return Format.formatBoolean(\"#{ cc_service_plan[:free] }\")") },
-                           { :label => 'Service Plan Description',  :tag =>   nil, :value => cc_service_plan[:description] },
-                           { :label => 'Service Plan Unique ID',    :tag =>   nil, :value => cc_service_plan[:unique_id] },
-                           { :label => 'Service Plan Display Name', :tag =>   nil, :value => service_plan_extra_json['displayName'] },
-                           { :label => 'Service Plan Bullet',       :tag =>   nil, :value => service_plan_extra_json['bullets'][0] },
-                           { :label => 'Service Plan Bullet',       :tag =>   nil, :value => service_plan_extra_json['bullets'][1] },
-                           { :label => 'Service Instances',         :tag =>   'a', :value => '1' },
-                           { :label => 'Service Provider',          :tag =>   nil, :value => cc_service[:provider] },
-                           { :label => 'Service Label',             :tag =>   'a', :value => cc_service[:label] },
-                           { :label => 'Service GUID',              :tag =>   nil, :value => cc_service[:guid] },
-                           { :label => 'Service Version',           :tag =>   nil, :value => cc_service[:version] },
-                           { :label => 'Service Created',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Updated',           :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Active',            :tag =>   nil, :value => @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:active] }\")") },
-                           { :label => 'Service Bindable',          :tag =>   nil, :value => @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:bindable] }\")") },
-                           { :label => 'Service Broker Name',       :tag =>   'a', :value => cc_service_broker[:name] },
-                           { :label => 'Service Broker GUID',       :tag =>   nil, :value => cc_service_broker[:guid] },
-                           { :label => 'Service Broker Created',    :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
-                           { :label => 'Service Broker Updated',    :tag =>   nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") }
+            check_details([{ label: 'Service Plan Name',         tag: 'div', value: cc_service_plan[:name] },
+                           { label: 'Service Plan GUID',         tag:   nil, value: cc_service_plan[:guid] },
+                           { label: 'Service Plan Created',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Plan Updated',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Plan Active',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(\"#{ cc_service_plan[:active] }\")") },
+                           { label: 'Service Plan Public',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(\"#{ cc_service_plan[:public] }\")") },
+                           { label: 'Service Plan Free',         tag:   nil, value: @driver.execute_script("return Format.formatBoolean(\"#{ cc_service_plan[:free] }\")") },
+                           { label: 'Service Plan Description',  tag:   nil, value: cc_service_plan[:description] },
+                           { label: 'Service Plan Unique ID',    tag:   nil, value: cc_service_plan[:unique_id] },
+                           { label: 'Service Plan Display Name', tag:   nil, value: service_plan_extra_json['displayName'] },
+                           { label: 'Service Plan Bullet',       tag:   nil, value: service_plan_extra_json['bullets'][0] },
+                           { label: 'Service Plan Bullet',       tag:   nil, value: service_plan_extra_json['bullets'][1] },
+                           { label: 'Service Instances',         tag:   'a', value: '1' },
+                           { label: 'Service Provider',          tag:   nil, value: cc_service[:provider] },
+                           { label: 'Service Label',             tag:   'a', value: cc_service[:label] },
+                           { label: 'Service GUID',              tag:   nil, value: cc_service[:guid] },
+                           { label: 'Service Version',           tag:   nil, value: cc_service[:version] },
+                           { label: 'Service Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Active',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:active] }\")") },
+                           { label: 'Service Bindable',          tag:   nil, value: @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:bindable] }\")") },
+                           { label: 'Service Broker Name',       tag:   'a', value: cc_service_broker[:name] },
+                           { label: 'Service Broker GUID',       tag:   nil, value: cc_service_broker[:guid] },
+                           { label: 'Service Broker Created',    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Broker Updated',    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") }
                           ])
           end
 
           it 'has visible organizations' do
-            expect(@driver.find_element(:id => 'ServicePlansOrganizationsDetailsLabel').displayed?).to be_true
-            check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='ServicePlansOrganizationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 3,
-                                :labels          => %w(Organization GUID Created),
-                                :colspans        => nil)
-            check_table_data(@driver.find_elements(:xpath => "//table[@id='ServicePlansOrganizationsTable']/tbody/tr/td"),
+            expect(@driver.find_element(id: 'ServicePlansOrganizationsDetailsLabel').displayed?).to be_true
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansOrganizationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+                                expected_length: 3,
+                                labels:          %w(Organization GUID Created),
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ServicePlansOrganizationsTable']/tbody/tr/td"),
                              [
                                cc_organization[:name],
                                cc_organization[:guid],
@@ -1767,7 +1773,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has a checkbox in the first column' do
-            inputs = @driver.find_elements(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[1]/input")
+            inputs = @driver.find_elements(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[1]/input")
             expect(inputs.length).to eq(1)
             expect(inputs[0].attribute('value')).to eq(cc_service_plan[:guid])
           end
@@ -1786,12 +1792,12 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
           context 'manage service plans' do
             def check_first_row
-              @driver.find_elements(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[1]/input")[0].click
+              @driver.find_elements(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[1]/input")[0].click
             end
 
             def manage_service_plan(buttonIndex)
               check_first_row
-              @driver.find_element(:id => "ToolTables_ServicePlansTable_#{ buttonIndex }").click
+              @driver.find_element(id: "ToolTables_ServicePlansTable_#{ buttonIndex }").click
               if buttonIndex == 0
                 check_operation_result('public')
               else
@@ -1803,35 +1809,35 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
               # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
               # error happens.
               begin
-                Selenium::WebDriver::Wait.new(:timeout => 60).until { refresh_button && @driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[7]").text == expect_state }
+                Selenium::WebDriver::Wait.new(timeout: 60).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[7]").text == expect_state }
               rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
               end
-              expect(@driver.find_element(:xpath => "//table[@id='ServicePlansTable']/tbody/tr/td[7]").text).to eq(expect_state)
+              expect(@driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[7]").text).to eq(expect_state)
             end
 
             def check_operation_result(_visibility)
-              Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
-              expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-              expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Success')
-              @driver.find_element(:id => 'modalDialogButton0').click
+              Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+              expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+              expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+              @driver.find_element(id: 'modalDialogButton0').click
             end
 
             it 'has a Public button' do
-              expect(@driver.find_element(:id => 'ToolTables_ServicePlansTable_0').text).to eq('Public')
+              expect(@driver.find_element(id: 'ToolTables_ServicePlansTable_0').text).to eq('Public')
             end
 
             it 'has a Private button' do
-              expect(@driver.find_element(:id => 'ToolTables_ServicePlansTable_1').text).to eq('Private')
+              expect(@driver.find_element(id: 'ToolTables_ServicePlansTable_1').text).to eq('Private')
             end
 
             shared_examples 'click public or private button without selecting a single row' do
               it 'alerts the user to select at least one row when clicking the button' do
-                @driver.find_element(:id => buttonId).click
+                @driver.find_element(id: buttonId).click
 
-                expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-                expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Error')
-                expect(@driver.find_element(:id => 'ModalDialogContents').text).to eq('Please select at least one row!')
-                @driver.find_element(:id => 'modalDialogButton0').click
+                expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+                expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+                expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+                @driver.find_element(id: 'modalDialogButton0').click
               end
             end
 
@@ -1856,19 +1862,19 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'DEAs' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                :expected_length => 3,
-                                :labels          => ['', 'Instances', '% Free'],
-                                :colspans        => %w(8 4 2)
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 3,
+                                labels:          ['', 'Instances', '% Free'],
+                                colspans:        %w(8 4 2)
                               },
-                              { :columns         => @driver.find_elements(:xpath => "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                :expected_length => 14,
-                                :labels          => ['Name', 'Index', 'Status', 'Started', 'Stack', 'CPU', 'Memory', 'Apps', 'Running', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk'],
-                                :colspans        => nil
+                              { columns:         @driver.find_elements(xpath: "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 14,
+                                labels:          ['Name', 'Index', 'Status', 'Started', 'Stack', 'CPU', 'Memory', 'Apps', 'Running', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk'],
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='DEAsTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='DEAsTable']/tbody/tr/td"),
                            [
                              varz_dea['host'],
                              varz_dea['index'].to_s,
@@ -1892,7 +1898,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has a create DEA button' do
-          expect(@driver.find_element(:id => 'ToolTables_DEAsTable_0').text).to eq('Create new DEA')
+          expect(@driver.find_element(id: 'ToolTables_DEAsTable_0').text).to eq('Create new DEA')
         end
 
         context 'selectable' do
@@ -1901,24 +1907,24 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Name',                  :tag => nil, :value => varz_dea['host'] },
-                           { :label => 'Index',                 :tag => nil, :value => varz_dea['index'].to_s },
-                           { :label => 'URI',                   :tag => 'a', :value => nats_dea_varz },
-                           { :label => 'Host',                  :tag => nil, :value => varz_dea['host'] },
-                           { :label => 'Started',               :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")") },
-                           { :label => 'Uptime',                :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_dea['uptime'] }\")") },
-                           { :label => 'Stack',                 :tag => nil, :value => varz_dea['stacks'][0] },
-                           { :label => 'Apps',                  :tag => 'a', :value => varz_dea['instance_registry'].length.to_s },
-                           { :label => 'Cores',                 :tag => nil, :value => varz_dea['num_cores'].to_s },
-                           { :label => 'CPU',                   :tag => nil, :value => varz_dea['cpu'].to_s },
-                           { :label => 'CPU Load Avg',          :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") }%" },
-                           { :label => 'Memory',                :tag => nil, :value => varz_dea['mem'].to_s },
-                           { :label => 'Instances',             :tag => nil, :value => varz_dea['instance_registry'][cc_app[:guid]].length.to_s },
-                           { :label => 'Instances Memory Used', :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
-                           { :label => 'Instances Disk Used',   :tag =>   nil, :value => @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
-                           { :label => 'Instances CPU Used',    :tag =>   nil, :value => @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s },
-                           { :label => 'Memory Free',           :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })") }%" },
-                           { :label => 'Disk Free',             :tag => nil, :value => "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") }%" }
+            check_details([{ label: 'Name',                  tag: nil, value: varz_dea['host'] },
+                           { label: 'Index',                 tag: nil, value: varz_dea['index'].to_s },
+                           { label: 'URI',                   tag: 'a', value: nats_dea_varz },
+                           { label: 'Host',                  tag: nil, value: varz_dea['host'] },
+                           { label: 'Started',               tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")") },
+                           { label: 'Uptime',                tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_dea['uptime'] }\")") },
+                           { label: 'Stack',                 tag: nil, value: varz_dea['stacks'][0] },
+                           { label: 'Apps',                  tag: 'a', value: varz_dea['instance_registry'].length.to_s },
+                           { label: 'Cores',                 tag: nil, value: varz_dea['num_cores'].to_s },
+                           { label: 'CPU',                   tag: nil, value: varz_dea['cpu'].to_s },
+                           { label: 'CPU Load Avg',          tag: nil, value: "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") }%" },
+                           { label: 'Memory',                tag: nil, value: varz_dea['mem'].to_s },
+                           { label: 'Instances',             tag: nil, value: varz_dea['instance_registry'][cc_app[:guid]].length.to_s },
+                           { label: 'Instances Memory Used', tag: nil, value: @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
+                           { label: 'Instances Disk Used',   tag: nil, value: @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
+                           { label: 'Instances CPU Used',    tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })").to_s },
+                           { label: 'Memory Free',           tag: nil, value: "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })") }%" },
+                           { label: 'Disk Free',             tag: nil, value: "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") }%" }
                           ])
           end
 
@@ -1932,14 +1938,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'CloudControllers' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='CloudControllersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 7,
-                                :labels          => %w(Name Index State Started Cores CPU Memory),
-                                :colspans        => nil
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='CloudControllersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          %w(Name Index State Started Cores CPU Memory),
+                                colspans:        nil
                               }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='CloudControllersTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='CloudControllersTable']/tbody/tr/td"),
                            [
                              nats_cloud_controller['host'],
                              varz_cloud_controller['index'].to_s,
@@ -1958,16 +1964,16 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         context 'selectable' do
           it 'has details' do
             select_first_row
-            check_details([{ :label => 'Name',             :tag => nil, :value => nats_cloud_controller['host'] },
-                           { :label => 'Index',            :tag => nil, :value => varz_cloud_controller['index'].to_s },
-                           { :label => 'URI',              :tag => 'a', :value => nats_cloud_controller_varz },
-                           { :label => 'Started',          :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
-                           { :label => 'Uptime',           :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_cloud_controller['uptime'] }\")") },
-                           { :label => 'Cores',            :tag => nil, :value => varz_cloud_controller['num_cores'].to_s },
-                           { :label => 'CPU',              :tag => nil, :value => varz_cloud_controller['cpu'].to_s },
-                           { :label => 'Memory',           :tag => nil, :value => varz_cloud_controller['mem'].to_s },
-                           { :label => 'Requests',         :tag => nil, :value => varz_cloud_controller['vcap_sinatra']['requests']['completed'].to_s },
-                           { :label => 'Pending Requests', :tag => nil, :value => varz_cloud_controller['vcap_sinatra']['requests']['outstanding'].to_s }
+            check_details([{ label: 'Name',             tag: nil, value: nats_cloud_controller['host'] },
+                           { label: 'Index',            tag: nil, value: varz_cloud_controller['index'].to_s },
+                           { label: 'URI',              tag: 'a', value: nats_cloud_controller_varz },
+                           { label: 'Started',          tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
+                           { label: 'Uptime',           tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_cloud_controller['uptime'] }\")") },
+                           { label: 'Cores',            tag: nil, value: varz_cloud_controller['num_cores'].to_s },
+                           { label: 'CPU',              tag: nil, value: varz_cloud_controller['cpu'].to_s },
+                           { label: 'Memory',           tag: nil, value: varz_cloud_controller['mem'].to_s },
+                           { label: 'Requests',         tag: nil, value: varz_cloud_controller['vcap_sinatra']['requests']['completed'].to_s },
+                           { label: 'Pending Requests', tag: nil, value: varz_cloud_controller['vcap_sinatra']['requests']['outstanding'].to_s }
                           ])
           end
         end
@@ -1977,14 +1983,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'HealthManagers' }
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='HealthManagersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 10,
-                                :labels          => %w(Name Index State Started Cores CPU Memory Users Applications Instances),
-                                :colspans        => nil
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='HealthManagersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+                                expected_length: 10,
+                                labels:          %w(Name Index State Started Cores CPU Memory Users Applications Instances),
+                                colspans:        nil
                                }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='HealthManagersTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='HealthManagersTable']/tbody/tr/td"),
                            [
                              nats_health_manager['host'],
                              varz_health_manager['index'].to_s,
@@ -2006,19 +2012,19 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         context 'selectable' do
           it 'has details' do
             select_first_row
-            check_details([{ :label => 'Name',              :tag => nil, :value => nats_health_manager['host'] },
-                           { :label => 'Index',             :tag => nil, :value => varz_health_manager['index'].to_s },
-                           { :label => 'URI',               :tag => 'a', :value => nats_health_manager_varz },
-                           { :label => 'Started',           :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_health_manager['start'] }\")") },
-                           { :label => 'Uptime',            :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_health_manager['uptime'] }\")") },
-                           { :label => 'Cores',             :tag => nil, :value => varz_health_manager['num_cores'].to_s },
-                           { :label => 'CPU',               :tag => nil, :value => varz_health_manager['cpu'].to_s },
-                           { :label => 'Memory',            :tag => nil, :value => varz_health_manager['mem'].to_s },
-                           { :label => 'Users',             :tag => nil, :value => varz_health_manager['total_users'].to_s },
-                           { :label => 'Applications',      :tag => nil, :value => varz_health_manager['total_apps'].to_s },
-                           { :label => 'Instances',         :tag => nil, :value => varz_health_manager['total_instances'].to_s },
-                           { :label => 'Running Instances', :tag => nil, :value => varz_health_manager['running_instances'].to_s },
-                           { :label => 'Crashed Instances', :tag => nil, :value => varz_health_manager['crashed_instances'].to_s }
+            check_details([{ label: 'Name',              tag: nil, value: nats_health_manager['host'] },
+                           { label: 'Index',             tag: nil, value: varz_health_manager['index'].to_s },
+                           { label: 'URI',               tag: 'a', value: nats_health_manager_varz },
+                           { label: 'Started',           tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_health_manager['start'] }\")") },
+                           { label: 'Uptime',            tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_health_manager['uptime'] }\")") },
+                           { label: 'Cores',             tag: nil, value: varz_health_manager['num_cores'].to_s },
+                           { label: 'CPU',               tag: nil, value: varz_health_manager['cpu'].to_s },
+                           { label: 'Memory',            tag: nil, value: varz_health_manager['mem'].to_s },
+                           { label: 'Users',             tag: nil, value: varz_health_manager['total_users'].to_s },
+                           { label: 'Applications',      tag: nil, value: varz_health_manager['total_apps'].to_s },
+                           { label: 'Instances',         tag: nil, value: varz_health_manager['total_instances'].to_s },
+                           { label: 'Running Instances', tag: nil, value: varz_health_manager['running_instances'].to_s },
+                           { label: 'Crashed Instances', tag: nil, value: varz_health_manager['crashed_instances'].to_s }
                           ])
           end
         end
@@ -2037,14 +2043,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has a table' do
-          check_table_layout([{ :columns         => @driver.find_elements(:xpath => "//div[@id='GatewaysTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 9,
-                                :labels          => ['Name', 'Index', 'State', 'Started', 'Description', 'CPU', 'Memory', 'Nodes', 'Available Capacity'],
-                                :colspans        => nil
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='GatewaysTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+                                expected_length: 9,
+                                labels:          ['Name', 'Index', 'State', 'Started', 'Description', 'CPU', 'Memory', 'Nodes', 'Available Capacity'],
+                                colspans:        nil
                                }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='GatewaysTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='GatewaysTable']/tbody/tr/td"),
                            [
                              nats_provisioner['type'][0..-13],
                              varz_provisioner['index'].to_s,
@@ -2068,27 +2074,29 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Name',               :tag => nil, :value => nats_provisioner['type'][0..-13] },
-                           { :label => 'Index',              :tag => nil, :value => varz_provisioner['index'].to_s },
-                           { :label => 'URI',                :tag => nil, :value => nats_provisioner_varz },
-                           { :label => 'Supported Versions', :tag => nil, :value => varz_provisioner['config']['service']['supported_versions'][0] },
-                           { :label => 'Description',        :tag => nil, :value => varz_provisioner['config']['service']['description'] },
-                           { :label => 'Started',            :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_provisioner['start'] }\")") },
-                           { :label => 'Uptime',             :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_provisioner['uptime'] }\")") },
-                           { :label => 'Cores',              :tag => nil, :value => varz_provisioner['num_cores'].to_s },
-                           { :label => 'CPU',                :tag => nil, :value => varz_provisioner['cpu'].to_s },
-                           { :label => 'Memory',             :tag => nil, :value => varz_provisioner['mem'].to_s },
-                           { :label => 'Available Capacity', :tag => nil, :value => @capacity.to_s }
+            check_details([{ label: 'Name',               tag: nil, value: nats_provisioner['type'][0..-13] },
+                           { label: 'Index',              tag: nil, value: varz_provisioner['index'].to_s },
+                           { label: 'URI',                tag: nil, value: nats_provisioner_varz },
+                           { label: 'Supported Versions', tag: nil, value: varz_provisioner['config']['service']['supported_versions'][0] },
+                           { label: 'Description',        tag: nil, value: varz_provisioner['config']['service']['description'] },
+                           { label: 'Started',            tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_provisioner['start'] }\")") },
+                           { label: 'Uptime',             tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_provisioner['uptime'] }\")") },
+                           { label: 'Cores',              tag: nil, value: varz_provisioner['num_cores'].to_s },
+                           { label: 'CPU',                tag: nil, value: varz_provisioner['cpu'].to_s },
+                           { label: 'Memory',             tag: nil, value: varz_provisioner['mem'].to_s },
+                           { label: 'Available Capacity', tag: nil, value: @capacity.to_s }
                           ])
           end
 
           it 'has nodes' do
-            expect(@driver.find_element(:id => 'GatewaysNodesDetailsLabel').displayed?).to be_true
-            check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='GatewaysNodesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 2,
-                                :labels          => ['Name', 'Available Capacity'],
-                                :colspans        => nil)
-            check_table_data(@driver.find_elements(:xpath => "//table[@id='GatewaysNodesTable']/tbody/tr/td"),
+            expect(@driver.find_element(id: 'GatewaysNodesDetailsLabel').displayed?).to be_true
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='GatewaysNodesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+                                expected_length: 2,
+                                labels:          ['Name', 'Available Capacity'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='GatewaysNodesTable']/tbody/tr/td"),
                              [
                                varz_provisioner['nodes'].keys[0],
                                varz_provisioner['nodes'][varz_provisioner['nodes'].keys[0]]['available_capacity'].to_s
@@ -2105,14 +2113,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Routers' }
 
         it 'has a table' do
-          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='RoutersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
-                                 :expected_length => 10,
-                                 :labels          => ['Name', 'Index', 'State', 'Started', 'Cores', 'CPU', 'Memory', 'Droplets', 'Requests', 'Bad Requests'],
-                                 :colspans        => nil
+          check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='RoutersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+                                 expected_length: 10,
+                                 labels:          ['Name', 'Index', 'State', 'Started', 'Cores', 'CPU', 'Memory', 'Droplets', 'Requests', 'Bad Requests'],
+                                 colspans:        nil
                                }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='RoutersTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='RoutersTable']/tbody/tr/td"),
                            [
                              nats_router['host'],
                              varz_router['index'].to_s,
@@ -2137,33 +2145,34 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
           end
 
           it 'has details' do
-            check_details([{ :label => 'Name',          :tag => nil, :value => nats_router['host'] },
-                           { :label => 'Index',         :tag => nil, :value => varz_router['index'].to_s },
-                           { :label => 'URI',           :tag => 'a', :value => nats_router_varz },
-                           { :label => 'Started',       :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_router['start'] }\")") },
-                           { :label => 'Uptime',        :tag => nil, :value => @driver.execute_script("return Format.formatUptime(\"#{ varz_router['uptime'] }\")") },
-                           { :label => 'Cores',         :tag => nil, :value => varz_router['num_cores'].to_s },
-                           { :label => 'CPU',           :tag => nil, :value => varz_router['cpu'].to_s },
-                           { :label => 'Memory',        :tag => nil, :value => varz_router['mem'].to_s },
-                           { :label => 'Droplets',      :tag => nil, :value => varz_router['droplets'].to_s },
-                           { :label => 'Requests',      :tag => nil, :value => varz_router['requests'].to_s },
-                           { :label => 'Bad Requests',  :tag => nil, :value => varz_router['bad_requests'].to_s },
-                           { :label => '2XX Responses', :tag => nil, :value => varz_router['responses_2xx'].to_s },
-                           { :label => '3XX Responses', :tag => nil, :value => varz_router['responses_3xx'].to_s },
-                           { :label => '4XX Responses', :tag => nil, :value => varz_router['responses_4xx'].to_s },
-                           { :label => '5XX Responses', :tag => nil, :value => varz_router['responses_5xx'].to_s },
-                           { :label => 'XXX Responses', :tag => nil, :value => varz_router['responses_xxx'].to_s }
+            check_details([{ label: 'Name',          tag: nil, value: nats_router['host'] },
+                           { label: 'Index',         tag: nil, value: varz_router['index'].to_s },
+                           { label: 'URI',           tag: 'a', value: nats_router_varz },
+                           { label: 'Started',       tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_router['start'] }\")") },
+                           { label: 'Uptime',        tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_router['uptime'] }\")") },
+                           { label: 'Cores',         tag: nil, value: varz_router['num_cores'].to_s },
+                           { label: 'CPU',           tag: nil, value: varz_router['cpu'].to_s },
+                           { label: 'Memory',        tag: nil, value: varz_router['mem'].to_s },
+                           { label: 'Droplets',      tag: nil, value: varz_router['droplets'].to_s },
+                           { label: 'Requests',      tag: nil, value: varz_router['requests'].to_s },
+                           { label: 'Bad Requests',  tag: nil, value: varz_router['bad_requests'].to_s },
+                           { label: '2XX Responses', tag: nil, value: varz_router['responses_2xx'].to_s },
+                           { label: '3XX Responses', tag: nil, value: varz_router['responses_3xx'].to_s },
+                           { label: '4XX Responses', tag: nil, value: varz_router['responses_4xx'].to_s },
+                           { label: '5XX Responses', tag: nil, value: varz_router['responses_5xx'].to_s },
+                           { label: 'XXX Responses', tag: nil, value: varz_router['responses_xxx'].to_s }
                           ])
           end
 
           it 'has top10 applications' do
-            expect(@driver.find_element(:id => 'RoutersTop10ApplicationsDetailsLabel').displayed?).to be_true
-            check_table_headers(:columns         => @driver.find_elements(:xpath => "//div[@id='RoutersTop10ApplicationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
-                                :expected_length => 5,
-                                :labels          => %w(Name GUID RPM RPS Target),
-                                :colspans        => nil)
+            expect(@driver.find_element(id: 'RoutersTop10ApplicationsDetailsLabel').displayed?).to be_true
 
-            check_table_data(@driver.find_elements(:xpath => "//table[@id='RoutersTop10ApplicationsTable']/tbody/tr/td"),
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='RoutersTop10ApplicationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+                                expected_length: 5,
+                                labels:          %w(Name GUID RPM RPS Target),
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='RoutersTop10ApplicationsTable']/tbody/tr/td"),
                              [
                                cc_app[:name],
                                cc_app[:guid],
@@ -2183,14 +2192,14 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Components' }
 
         it 'has a table' do
-          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='ComponentsTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
-                                 :expected_length => 5,
-                                 :labels          => %w(Name Type Index State Started),
-                                 :colspans        => nil
+          check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='ComponentsTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+                                 expected_length: 5,
+                                 labels:          %w(Name Type Index State Started),
+                                 colspans:        nil
                                }
                              ])
 
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='ComponentsTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='ComponentsTable']/tbody/tr/td"),
                            [
                              nats_cloud_controller['host'],
                              nats_cloud_controller['type'],
@@ -2205,18 +2214,18 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'has a remove OFFLINE components button' do
-          expect(@driver.find_element(:id => 'ToolTables_ComponentsTable_0').text).to eq('Remove OFFLINE')
+          expect(@driver.find_element(id: 'ToolTables_ComponentsTable_0').text).to eq('Remove OFFLINE')
         end
 
         context 'selectable' do
           it 'has details' do
             select_first_row
-            check_details([{  :label => 'Name',    :tag => nil, :value => nats_cloud_controller['host'] },
-                           {  :label => 'Type',    :tag => nil, :value => nats_cloud_controller['type'] },
-                           {  :label => 'Index',   :tag => nil, :value => varz_cloud_controller['index'].to_s },
-                           {  :label => 'Started', :tag => nil, :value => @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
-                           {  :label => 'URI',     :tag => 'a', :value => nats_cloud_controller_varz },
-                           {  :label => 'State',   :tag => nil, :value => @driver.execute_script('return Constants.STATUS__RUNNING') }
+            check_details([{  label: 'Name',    tag: nil, value: nats_cloud_controller['host'] },
+                           {  label: 'Type',    tag: nil, value: nats_cloud_controller['type'] },
+                           {  label: 'Index',   tag: nil, value: varz_cloud_controller['index'].to_s },
+                           {  label: 'Started', tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
+                           {  label: 'URI',     tag: 'a', value: nats_cloud_controller_varz },
+                           {  label: 'State',   tag: nil, value: @driver.execute_script('return Constants.STATUS__RUNNING') }
                           ])
           end
         end
@@ -2226,10 +2235,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:tab_id) { 'Logs' }
 
         it 'has a table' do
-          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='LogsTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
-                                 :expected_length => 3,
-                                 :labels          => ['Path', 'Size', 'Last Modified'],
-                                 :colspans        => nil
+          check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='LogsTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+                                 expected_length: 3,
+                                 labels:          ['Path', 'Size', 'Last Modified'],
+                                 colspans:        nil
                                }
                              ])
         end
@@ -2237,15 +2246,15 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         it 'has contents' do
           row = first_row
           row.click
-          columns = row.find_elements(:tag_name => 'td')
+          columns = row.find_elements(tag_name: 'td')
           expect(columns.length).to eq(3)
           expect(columns[0].text).to eq(log_file_displayed)
           expect(columns[1].text).to eq(log_file_displayed_contents_length.to_s)
           # TODO: Cannot check date due to web_helper stub for AdminUI::Utils.time_in_milliseconds
           # expect(columns[2].text).to eq(@driver.execute_script("return Format.formatString(\"#{ log_file_displayed_modified.utc.to_datetime.rfc3339 }\")"))
-          expect(@driver.find_element(:id => 'LogContainer').displayed?).to be_true
-          expect(@driver.find_element(:id => 'LogLink').text).to eq(columns[0].text)
-          expect(@driver.find_element(:id => 'LogContents').text).to eq(log_file_displayed_contents)
+          expect(@driver.find_element(id: 'LogContainer').displayed?).to be_true
+          expect(@driver.find_element(id: 'LogLink').text).to eq(columns[0].text)
+          expect(@driver.find_element(id: 'LogContents').text).to eq(log_file_displayed_contents)
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
@@ -2258,10 +2267,10 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         let(:table_has_data) { false }
 
         it 'has a table' do
-          check_table_layout([{  :columns         => @driver.find_elements(:xpath => "//div[@id='TasksTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
-                                 :expected_length => 3,
-                                 :labels          => %w(Command State Started),
-                                 :colspans        => nil
+          check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='TasksTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+                                 expected_length: 3,
+                                 labels:          %w(Command State Started),
+                                 colspans:        nil
                                }
                              ])
         end
@@ -2271,35 +2280,35 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         it 'can show task output' do
-          expect(@driver.find_element(:xpath => "//table[@id='TasksTable']/tbody/tr").text).to eq('No data available in table')
-          @driver.find_element(:id => 'DEAs').click
-          @driver.find_element(:id => 'ToolTables_DEAsTable_0').click
-          @driver.find_element(:id => 'modalDialogButton0').click
-          @driver.find_element(:id => 'modalDialogButton0').click
-          @driver.find_element(:id => 'Tasks').click
+          expect(@driver.find_element(xpath: "//table[@id='TasksTable']/tbody/tr").text).to eq('No data available in table')
+          @driver.find_element(id: 'DEAs').click
+          @driver.find_element(id: 'ToolTables_DEAsTable_0').click
+          @driver.find_element(id: 'modalDialogButton0').click
+          @driver.find_element(id: 'modalDialogButton0').click
+          @driver.find_element(id: 'Tasks').click
 
           # As the page refreshes, we need to catch the stale element error and re-find the element on the page
           begin
-            Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr").length == 1 }
+            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr").length == 1 }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
-          expect(@driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr").length).to eq(1)
+          expect(@driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr").length).to eq(1)
 
           begin
-            Selenium::WebDriver::Wait.new(:timeout => 60).until do
+            Selenium::WebDriver::Wait.new(timeout: 60).until do
               refresh_button
-              cells = @driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr/td")
+              cells = @driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr/td")
               cells[0].text == File.join(File.dirname(__FILE__)[0..-22], 'lib/admin/scripts', 'newDEA.sh') &&
                 cells[1].text == @driver.execute_script('return Constants.STATUS__RUNNING')
             end
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
-          cells = @driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr/td")
+          cells = @driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr/td")
           expect(cells[0].text).to eq(File.join(File.dirname(__FILE__)[0..-22], 'lib/admin/scripts', 'newDEA.sh'))
           expect(cells[1].text).to eq(@driver.execute_script('return Constants.STATUS__RUNNING'))
 
-          @driver.find_elements(:xpath => "//table[@id='TasksTable']/tbody/tr")[0].click
-          expect(@driver.find_element(:id => 'TaskContents').text.length > 0).to be_true
+          @driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr")[0].click
+          expect(@driver.find_element(id: 'TaskContents').text.length > 0).to be_true
         end
       end
 
@@ -2325,7 +2334,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
         end
 
         def check_default_stats_table
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td"),
+          check_table_data(@driver.find_elements(xpath: "//table[@id='StatsTable']/tbody/tr/td"),
                            [
                              nil,
                              '1',
@@ -2340,29 +2349,29 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
         it 'can show current stats' do
           check_default_stats_table
-          @driver.find_element(:id => 'ToolTables_StatsTable_0').click
-          Selenium::WebDriver::Wait.new(:timeout => 60).until { @driver.find_element(:id => 'ModalDialogContents').displayed? }
-          expect(@driver.find_element(:id => 'ModalDialogContents').displayed?).to be_true
-          expect(@driver.find_element(:id => 'ModalDialogTitle').text).to eq('Confirmation')
-          rows = @driver.find_elements(:xpath => "//div[@id='ModalDialogContentsSimple']/div/table/tbody/tr")
+          @driver.find_element(id: 'ToolTables_StatsTable_0').click
+          Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+          expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+          expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
+          rows = @driver.find_elements(xpath: "//div[@id='ModalDialogContentsSimple']/div/table/tbody/tr")
           rows.each do |row|
-            expect(row.find_element(:class_name => 'cellRightAlign').text).to eq('1')
+            expect(row.find_element(class_name: 'cellRightAlign').text).to eq('1')
           end
-          @driver.find_element(:id => 'modalDialogButton1').click
+          @driver.find_element(id: 'modalDialogButton1').click
           check_default_stats_table
         end
 
         it 'can create stats' do
           check_default_stats_table
-          @driver.find_element(:id => 'ToolTables_StatsTable_0').click
-          @driver.find_element(:id => 'modalDialogButton0').click
+          @driver.find_element(id: 'ToolTables_StatsTable_0').click
+          @driver.find_element(id: 'modalDialogButton0').click
 
           # As the page refreshes, we need to catch the stale element error and re-find the element on the page
           begin
-            check_table_data(Selenium::WebDriver::Wait.new(:timeout => 360).until { refresh_button && @driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td") }, [nil, '1', '1', '1', '1', '1', '1', '1'])
+            check_table_data(Selenium::WebDriver::Wait.new(timeout: 360).until { refresh_button && @driver.find_elements(xpath: "//table[@id='StatsTable']/tbody/tr/td") }, [nil, '1', '1', '1', '1', '1', '1', '1'])
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError, Timeout::Error
           end
-          check_table_data(@driver.find_elements(:xpath => "//table[@id='StatsTable']/tbody/tr/td"), [nil, '1', '1', '1', '1', '1', '1', '1'])
+          check_table_data(@driver.find_elements(xpath: "//table[@id='StatsTable']/tbody/tr/td"), [nil, '1', '1', '1', '1', '1', '1', '1'])
         end
       end
     end

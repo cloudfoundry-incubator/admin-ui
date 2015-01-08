@@ -45,15 +45,15 @@ module AdminUI
         end
 
         if @queue.length == 0
-          @queue.push(:key => key, :time  => time, :block => block)
+          @queue.push(key: key, time: time, block: block)
         else
           index = insert_index(time)
           if index == @queue.length
-            @queue.push(:key => key, :time  => time, :block => block)
+            @queue.push(key: key, time: time, block: block)
           elsif @queue.at(index)[:time] == time
-            @queue.insert(index + 1, :key => key, :time  => time, :block => block)
+            @queue.insert(index + 1, key: key, time: time, block: block)
           else
-            @queue.insert(index, :key => key, :time  => time, :block => block)
+            @queue.insert(index, key: key, time: time, block: block)
           end
         end
       end

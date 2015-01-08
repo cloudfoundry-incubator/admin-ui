@@ -89,7 +89,7 @@ module AdminUI
 
         thread.priority = -2
 
-        ::NATS.start(:uri => @config.mbus, :ping_interval => @config.nats_discovery_timeout) do
+        ::NATS.start(uri: @config.mbus, ping_interval: @config.nats_discovery_timeout) do
           # Set the connected to true to handle case where NATS is back up but no components are.
           # This gets rid of the disconnected error message on the UI without waiting for the nats_discovery_interval.
           @semaphore.synchronize do

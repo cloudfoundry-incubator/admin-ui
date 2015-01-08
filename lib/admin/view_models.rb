@@ -45,7 +45,7 @@ module AdminUI
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
       [:applications, :cloud_controllers, :components, :deas, :domains, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_brokers, :service_instances, :service_plans, :spaces, :space_roles, :stats, :tasks, :users].each do |key|
-        hash = { :semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil }
+        hash = { semaphore: Mutex.new, condition: ConditionVariable.new, result: nil }
         @caches[key] = hash
         schedule(key)
       end

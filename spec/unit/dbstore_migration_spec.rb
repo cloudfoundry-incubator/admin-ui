@@ -27,16 +27,16 @@ describe AdminUI::DBStoreMigration do
   let(:uaadb_uri)              { "sqlite://#{ uaadb_file }" }
   let(:config)                 do
     {
-      :ccdb_uri               => ccdb_uri,
-      :cloud_controller_uri   => cloud_controller_uri,
-      :data_file              => data_file,
-      :log_file               => log_file,
-      :mbus                   => 'nats://nats:c1oudc0w@localhost:14222',
-      :port                   => port,
-      :db_uri                 => db_uri,
-      :tasks_refresh_interval => tasks_fresh_interval,
-      :uaadb_uri              => uaadb_uri,
-      :uaa_client             => { :id => 'id', :secret => 'secret' }
+      ccdb_uri:               ccdb_uri,
+      cloud_controller_uri:   cloud_controller_uri,
+      data_file:              data_file,
+      log_file:               log_file,
+      mbus:                   'nats://nats:c1oudc0w@localhost:14222',
+      port:                   port,
+      db_uri:                 db_uri,
+      tasks_refresh_interval: tasks_fresh_interval,
+      uaadb_uri:              uaadb_uri,
+      uaa_client:             { id: 'id', secret: 'secret' }
     }
   end
 
@@ -46,9 +46,9 @@ describe AdminUI::DBStoreMigration do
       file.write(JSON.pretty_generate(config))
     end
     project_path = File.join(File.dirname(__FILE__), '../..')
-    spawn_opts = { :chdir => project_path,
-                   :out   => '/dev/null',
-                   :err   => '/dev/null' }
+    spawn_opts = { chdir: project_path,
+                   out:   '/dev/null',
+                   err:   '/dev/null' }
 
     @pid = Process.spawn({}, "ruby bin/admin -c #{ config_file }", spawn_opts)
 
@@ -60,9 +60,9 @@ describe AdminUI::DBStoreMigration do
     Process.wait(@pid)
     db_migration_1 = plans[1]
     project_path = File.join(File.dirname(__FILE__), '../..')
-    spawn_opts = { :chdir => project_path,
-                   :out   => '/dev/null',
-                   :err   => '/dev/null' }
+    spawn_opts = { chdir: project_path,
+                   out:   '/dev/null',
+                   err:   '/dev/null' }
     @pid = Process.spawn({}, "rm -rf #{ ccdb_file } #{ config_file } #{ data_file } #{ log_file } #{ db_file } #{ uaadb_file } #{ backup_stats_file } #{ db_migration_dir }/#{ db_migration_1 } ", spawn_opts)
     Process.wait(@pid)
     FileUtils.rm_f stats_file if File.exist?(stats_file)
@@ -73,7 +73,7 @@ describe AdminUI::DBStoreMigration do
   end
 
   def migrate_database
-    spawn_opts = { :out   => '/dev/null', :err   => '/dev/null' }
+    spawn_opts = { out: '/dev/null', err: '/dev/null' }
 
     pid = Process.spawn({}, "sequel -m #{ db_migration_dir } sqlite://#{ db_file }", spawn_opts)
     Process.wait(pid)
@@ -101,7 +101,7 @@ describe AdminUI::DBStoreMigration do
 
   context 'when stats file exists and database instance does not' do
     it 'migrates stats persistence from file stats to database' do
-      merged_config = config.merge(:stats_file => stats_file)
+      merged_config = config.merge(stats_file: stats_file)
       FileUtils.cp("#{ db_migration_spec_dir }/#{ stats_file_spec }", "#{ stats_file }")
       launch_admin_daemon(merged_config)
       expect(File.file?(db_file)).to be_true
@@ -120,7 +120,7 @@ describe AdminUI::DBStoreMigration do
       FileUtils.cp "#{ db_migration_spec_dir }/#{ db_migration_1 }", db_migration_dir
       launch_admin_daemon(config)
       db_conn = db_connection
-      db_conn.fetch('select tbl_name from sqlite_master where sql like :pattern', :pattern => 'CREATE TABLE%extra_column%') do | row |
+      db_conn.fetch('select tbl_name from sqlite_master where sql like :pattern', pattern: 'CREATE TABLE%extra_column%') do | row |
         expect(row[:tbl_name]).to eq('stats')
       end
       i = 0
@@ -140,7 +140,7 @@ describe AdminUI::DBStoreMigration do
       FileUtils.cp "#{ db_migration_spec_dir }/#{ db_migration_1 }", db_migration_dir
       migrate_database
       db_conn = db_connection
-      db_conn.fetch('select tbl_name from sqlite_master where sql like :pattern', :pattern => 'CREATE TABLE%extra_column%') do | row |
+      db_conn.fetch('select tbl_name from sqlite_master where sql like :pattern', pattern: 'CREATE TABLE%extra_column%') do | row |
         expect(row[:tbl_name]).to eq('stats')
       end
       stop_admin_daemon

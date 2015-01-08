@@ -24,154 +24,154 @@ module AdminUI
       # For instance applications conforms to applications
       @caches =
       {
-        :applications =>
+        applications:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :apps,
-          :columns => [:buildpack, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :guid, :health_check_timeout, :id, :instances, :memory, :metadata, :name, :package_state, :package_updated_at, :production, :space_id, :stack_id, :staging_task_id, :state, :updated_at, :version]
+          db_uri:  ccdb_uri,
+          table:   :apps,
+          columns: [:buildpack, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :guid, :health_check_timeout, :id, :instances, :memory, :metadata, :name, :package_state, :package_updated_at, :production, :space_id, :stack_id, :staging_task_id, :state, :updated_at, :version]
         },
-        :apps_routes =>
+        apps_routes:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :apps_routes,
-          :columns => [:app_id, :route_id]
+          db_uri:  ccdb_uri,
+          table:   :apps_routes,
+          columns: [:app_id, :route_id]
         },
-        :domains =>
+        domains:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :domains,
-          :columns => [:created_at, :guid, :id, :name, :owning_organization_id, :updated_at]
+          db_uri:  ccdb_uri,
+          table:   :domains,
+          columns: [:created_at, :guid, :id, :name, :owning_organization_id, :updated_at]
         },
-        :groups =>
+        groups:
         {
-          :db_uri  => uaadb_uri,
-          :table   => :groups,
-          :columns => [:created, :displayname, :id, :lastmodified, :version]
+          db_uri:  uaadb_uri,
+          table:   :groups,
+          columns: [:created, :displayname, :id, :lastmodified, :version]
         },
-        :group_membership =>
+        group_membership:
         {
-          :db_uri  => uaadb_uri,
-          :table   => :group_membership,
-          :columns => [:group_id, :member_id]
+          db_uri:  uaadb_uri,
+          table:   :group_membership,
+          columns: [:group_id, :member_id]
         },
-        :organizations =>
+        organizations:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :organizations,
-          :columns => [:billing_enabled, :created_at, :guid, :id, :name, :quota_definition_id, :status, :updated_at]
+          db_uri:  ccdb_uri,
+          table:   :organizations,
+          columns: [:billing_enabled, :created_at, :guid, :id, :name, :quota_definition_id, :status, :updated_at]
         },
-        :organizations_auditors =>
+        organizations_auditors:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :organizations_auditors,
-          :columns => [:organization_id, :user_id]
+          db_uri:  ccdb_uri,
+          table:   :organizations_auditors,
+          columns: [:organization_id, :user_id]
         },
-        :organizations_billing_managers =>
+        organizations_billing_managers:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :organizations_billing_managers,
-          :columns => [:organization_id, :user_id]
+          db_uri:  ccdb_uri,
+          table:   :organizations_billing_managers,
+          columns: [:organization_id, :user_id]
         },
-        :organizations_managers =>
+        organizations_managers:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :organizations_managers,
-          :columns => [:organization_id, :user_id]
+          db_uri:  ccdb_uri,
+          table:   :organizations_managers,
+          columns: [:organization_id, :user_id]
         },
-        :organizations_users =>
+        organizations_users:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :organizations_users,
-          :columns => [:organization_id, :user_id]
+          db_uri:  ccdb_uri,
+          table:   :organizations_users,
+          columns: [:organization_id, :user_id]
         },
-        :quota_definitions =>
+        quota_definitions:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :quota_definitions,
-          :columns => [:created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :total_routes, :total_services, :updated_at]
+          db_uri:  ccdb_uri,
+          table:   :quota_definitions,
+          columns: [:created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :total_routes, :total_services, :updated_at]
         },
-        :routes =>
+        routes:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :routes,
-          :columns => [:created_at, :domain_id, :guid, :host, :id, :space_id, :updated_at]
+          db_uri:  ccdb_uri,
+          table:   :routes,
+          columns: [:created_at, :domain_id, :guid, :host, :id, :space_id, :updated_at]
         },
-        :service_bindings =>
+        service_bindings:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :service_bindings,
-          :columns => [:app_id, :binding_options, :created_at, :gateway_data, :gateway_name, :guid, :id, :service_instance_id, :syslog_drain_url, :updated_at]
+          db_uri:  ccdb_uri,
+          table:   :service_bindings,
+          columns: [:app_id, :binding_options, :created_at, :gateway_data, :gateway_name, :guid, :id, :service_instance_id, :syslog_drain_url, :updated_at]
         },
-        :service_brokers =>
+        service_brokers:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :service_brokers,
-          :columns => [:auth_username, :broker_url, :created_at, :guid, :id, :name, :updated_at]
+          db_uri:  ccdb_uri,
+          table:   :service_brokers,
+          columns: [:auth_username, :broker_url, :created_at, :guid, :id, :name, :updated_at]
         },
-        :service_instances =>
+        service_instances:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :service_instances,
-          :columns => [:created_at, :dashboard_url, :gateway_name, :gateway_data, :guid, :id, :name, :service_plan_id, :space_id, :updated_at]
+          db_uri:  ccdb_uri,
+          table:   :service_instances,
+          columns: [:created_at, :dashboard_url, :gateway_name, :gateway_data, :guid, :id, :name, :service_plan_id, :space_id, :updated_at]
         },
-        :service_plans =>
+        service_plans:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :service_plans,
-          :columns => [:active, :created_at, :description, :extra, :free, :guid, :id, :name, :public, :service_id, :unique_id, :updated_at]
+          db_uri:  ccdb_uri,
+          table:   :service_plans,
+          columns: [:active, :created_at, :description, :extra, :free, :guid, :id, :name, :public, :service_id, :unique_id, :updated_at]
         },
-        :service_plan_visibilities =>
+        service_plan_visibilities:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :service_plan_visibilities,
-          :columns => [:created_at, :guid, :id, :organization_id, :service_plan_id, :updated_at]
+          db_uri:  ccdb_uri,
+          table:   :service_plan_visibilities,
+          columns: [:created_at, :guid, :id, :organization_id, :service_plan_id, :updated_at]
         },
-        :services =>
+        services:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :services,
-          :columns => [:active, :bindable, :created_at, :description, :documentation_url, :extra, :guid, :id, :info_url, :label, :long_description, :provider, :requires, :service_broker_id, :tags, :unique_id, :updated_at, :url, :version]
+          db_uri:  ccdb_uri,
+          table:   :services,
+          columns: [:active, :bindable, :created_at, :description, :documentation_url, :extra, :guid, :id, :info_url, :label, :long_description, :provider, :requires, :service_broker_id, :tags, :unique_id, :updated_at, :url, :version]
         },
-        :spaces =>
+        spaces:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :spaces,
-          :columns => [:created_at, :guid, :id, :name, :organization_id, :updated_at]
+          db_uri:  ccdb_uri,
+          table:   :spaces,
+          columns: [:created_at, :guid, :id, :name, :organization_id, :updated_at]
         },
-        :spaces_auditors =>
+        spaces_auditors:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :spaces_auditors,
-          :columns => [:space_id, :user_id]
+          db_uri:  ccdb_uri,
+          table:   :spaces_auditors,
+          columns: [:space_id, :user_id]
         },
-        :spaces_developers =>
+        spaces_developers:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :spaces_developers,
-          :columns => [:space_id, :user_id]
+          db_uri:  ccdb_uri,
+          table:   :spaces_developers,
+          columns: [:space_id, :user_id]
         },
-        :spaces_managers =>
+        spaces_managers:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :spaces_managers,
-          :columns => [:space_id, :user_id]
+          db_uri:  ccdb_uri,
+          table:   :spaces_managers,
+          columns: [:space_id, :user_id]
         },
-        :users_cc =>
+        users_cc:
         {
-          :db_uri  => ccdb_uri,
-          :table   => :users,
-          :columns => [:active, :admin, :created_at, :default_space_id, :guid, :id, :updated_at]
+          db_uri:  ccdb_uri,
+          table:   :users,
+          columns: [:active, :admin, :created_at, :default_space_id, :guid, :id, :updated_at]
         },
-        :users_uaa =>
+        users_uaa:
         {
-          :db_uri  => uaadb_uri,
-          :table   => :users,
-          :columns => [:active, :created, :email, :familyname, :givenname, :id, :lastmodified, :username, :version]
+          db_uri:  uaadb_uri,
+          table:   :users,
+          columns: [:active, :created, :email, :familyname, :givenname, :id, :lastmodified, :username, :version]
         }
       }
 
       @caches.each_pair do |key, cache|
-        cache.merge!(:semaphore => Mutex.new, :condition => ConditionVariable.new, :result => nil, :select => nil)
+        cache.merge!(semaphore: Mutex.new, condition: ConditionVariable.new, result: nil, select: nil)
         schedule(key)
       end
     end
@@ -427,7 +427,7 @@ module AdminUI
 
     def select(key, cache)
       items = []
-      Sequel.connect(cache[:db_uri], :single_threaded => false, :max_connections => @max_connections) do |connection|
+      Sequel.connect(cache[:db_uri], single_threaded: false, max_connections: @max_connections) do |connection|
         if cache[:select].nil?
           # Determine the columns the current level of database supports
           table          = cache[:table]

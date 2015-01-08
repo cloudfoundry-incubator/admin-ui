@@ -11,9 +11,9 @@ describe AdminUI::LogFiles do
 
   let(:log_file_sftp_key) { '/somedir/somefile' }
   let(:config) do
-    AdminUI::Config.load(:db_uri            => db_uri,
-                         :log_files         => [log_file_uri],
-                         :log_file_sftp_key => [log_file_sftp_key])
+    AdminUI::Config.load(db_uri:            db_uri,
+                         log_files:         [log_file_uri],
+                         log_file_sftp_key: [log_file_sftp_key])
   end
 
   let(:log_files) { AdminUI::LogFiles.new(config, logger) }
@@ -51,9 +51,9 @@ describe AdminUI::LogFiles do
       it 'returns the log file in the infos call' do
         infos = log_files.infos
 
-        expect(infos).to include(:path => log_file_qualified_name,
-                                 :size => log_file_content.length,
-                                 :time => AdminUI::Utils.time_in_milliseconds(log_file_mtime))
+        expect(infos).to include(path: log_file_qualified_name,
+                                 size: log_file_content.length,
+                                 time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
       end
 
       it 'makes available the file object' do
@@ -68,12 +68,12 @@ describe AdminUI::LogFiles do
         infos = log_files.infos
         info = infos[0]
         content = log_files.content(info[:path], nil)
-        expect(content).to eq(:data      => log_file_content,
-                              :file_size => log_file_content.length,
-                              :page_size => config.log_file_page_size,
-                              :path      => log_file_qualified_name,
-                              :read_size => log_file_content.length,
-                              :start     => 0)
+        expect(content).to eq(data:      log_file_content,
+                              file_size: log_file_content.length,
+                              page_size: config.log_file_page_size,
+                              path:      log_file_qualified_name,
+                              read_size: log_file_content.length,
+                              start:     0)
       end
 
       it 'downloads partial content' do
@@ -83,14 +83,14 @@ describe AdminUI::LogFiles do
         infos = log_files.infos
         info = infos[0]
         content = log_files.content(info[:path], start)
-        expect(content).to eq(:back      => 0,
-                              :data      => log_file_content.slice(start, log_file_content.length - start),
-                              :file_size => log_file_content.length,
-                              :first     => 0,
-                              :page_size => config.log_file_page_size,
-                              :path      => log_file_qualified_name,
-                              :read_size => length,
-                              :start     => start)
+        expect(content).to eq(back:      0,
+                              data:      log_file_content.slice(start, log_file_content.length - start),
+                              file_size: log_file_content.length,
+                              first:     0,
+                              page_size: config.log_file_page_size,
+                              path:      log_file_qualified_name,
+                              read_size: length,
+                              start:     start)
       end
     end
 
@@ -139,12 +139,12 @@ describe AdminUI::LogFiles do
         expect(sftp_open).to be_true
         expect(sftp_read).to be_true
         expect(sftp_close).to be_true
-        expect(content).to eq(:data      => log_file_content,
-                              :file_size => log_file_content.length,
-                              :page_size => config.log_file_page_size,
-                              :path      => info[:path],
-                              :read_size => log_file_content.length,
-                              :start     => 0)
+        expect(content).to eq(data:      log_file_content,
+                              file_size: log_file_content.length,
+                              page_size: config.log_file_page_size,
+                              path:      info[:path],
+                              read_size: log_file_content.length,
+                              start:     0)
       end
 
       it 'downloads partial content' do
@@ -158,14 +158,14 @@ describe AdminUI::LogFiles do
         expect(sftp_open).to be_true
         expect(sftp_read).to be_true
         expect(sftp_close).to be_true
-        expect(content).to eq(:back      => 0,
-                              :data      => log_file_content.slice(start, log_file_content.length - start),
-                              :file_size => log_file_content.length,
-                              :first     => 0,
-                              :page_size => config.log_file_page_size,
-                              :path      => info[:path],
-                              :read_size => length,
-                              :start     => start)
+        expect(content).to eq(back:      0,
+                              data:      log_file_content.slice(start, log_file_content.length - start),
+                              file_size: log_file_content.length,
+                              first:     0,
+                              page_size: config.log_file_page_size,
+                              path:      info[:path],
+                              read_size: length,
+                              start:     start)
       end
     end
 
@@ -187,9 +187,9 @@ describe AdminUI::LogFiles do
           expect(sftp_attributes_mtime).to be_true
           expect(sftp_close).to be_true
 
-          expect(infos).to include(:path => log_file_uri,
-                                   :size => log_file_content.length,
-                                   :time => AdminUI::Utils.time_in_milliseconds(log_file_mtime))
+          expect(infos).to include(path: log_file_uri,
+                                   size: log_file_content.length,
+                                   time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
 
         it_behaves_like('common SFTP actions') {}
@@ -210,9 +210,9 @@ describe AdminUI::LogFiles do
           expect(sftp_attributes_mtime).to be_true
           expect(sftp_close).to be_true
 
-          expect(infos).to include(:path => log_file_uri,
-                                   :size => log_file_content.length,
-                                   :time => AdminUI::Utils.time_in_milliseconds(log_file_mtime))
+          expect(infos).to include(path: log_file_uri,
+                                   size: log_file_content.length,
+                                   time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
 
         it_behaves_like('common SFTP actions') {}
@@ -238,9 +238,9 @@ describe AdminUI::LogFiles do
           expect(sftp_attributes_mtime).to be_true
           expect(sftp_close).to be_true
 
-          expect(infos).to include(:path => "#{ log_file_uri }/#{ log_file_name }#{ log_file_extension }",
-                                   :size => log_file_content.length,
-                                   :time => AdminUI::Utils.time_in_milliseconds(log_file_mtime))
+          expect(infos).to include(path: "#{ log_file_uri }/#{ log_file_name }#{ log_file_extension }",
+                                   size: log_file_content.length,
+                                   time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
 
         it_behaves_like('common SFTP actions') {}
@@ -262,9 +262,9 @@ describe AdminUI::LogFiles do
           expect(sftp_attributes_mtime).to be_true
           expect(sftp_close).to be_true
 
-          expect(infos).to include(:path => "#{ log_file_uri }/#{ log_file_name }#{ log_file_extension }",
-                                   :size => log_file_content.length,
-                                   :time => AdminUI::Utils.time_in_milliseconds(log_file_mtime))
+          expect(infos).to include(path: "#{ log_file_uri }/#{ log_file_name }#{ log_file_extension }",
+                                   size: log_file_content.length,
+                                   time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
 
         it_behaves_like('common SFTP actions') {}
@@ -287,9 +287,9 @@ describe AdminUI::LogFiles do
           expect(sftp_attributes_size).to be_true
           expect(sftp_attributes_mtime).to be_true
 
-          expect(infos).to include(:path => "#{ base_path }/#{ log_file_name }#{ log_file_extension }",
-                                   :size => log_file_content.length,
-                                   :time => AdminUI::Utils.time_in_milliseconds(log_file_mtime))
+          expect(infos).to include(path: "#{ base_path }/#{ log_file_name }#{ log_file_extension }",
+                                   size: log_file_content.length,
+                                   time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
 
         it_behaves_like('common SFTP actions') {}
@@ -308,9 +308,9 @@ describe AdminUI::LogFiles do
           expect(sftp_attributes_size).to be_true
           expect(sftp_attributes_mtime).to be_true
 
-          expect(infos).to include(:path => "#{ base_path }/#{ log_file_name }#{ log_file_extension }",
-                                   :size => log_file_content.length,
-                                   :time => AdminUI::Utils.time_in_milliseconds(log_file_mtime))
+          expect(infos).to include(path: "#{ base_path }/#{ log_file_name }#{ log_file_extension }",
+                                   size: log_file_content.length,
+                                   time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
 
         it_behaves_like('common SFTP actions') {}

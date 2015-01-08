@@ -2,7 +2,7 @@ require 'rubygems'
 require_relative '../../spec_helper'
 require_relative '../../support/web_helper'
 
-describe AdminUI::Admin, :type => :integration, :firefox_available => true do
+describe AdminUI::Admin, type: :integration, firefox_available: true do
   include_context :server_context
   include_context :web_context
 
@@ -10,7 +10,7 @@ describe AdminUI::Admin, :type => :integration, :firefox_available => true do
 
   before do
     @driver.get "http://#{ host }:#{ port }/stats"
-    Selenium::WebDriver::Wait.new(:timeout => 5).until { @driver.title == 'Statistics' }
+    Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.title == 'Statistics' }
   end
 
   it 'has a table' do

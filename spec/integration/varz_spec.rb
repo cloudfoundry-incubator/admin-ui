@@ -1,7 +1,7 @@
 require 'logger'
 require_relative '../spec_helper'
 
-describe AdminUI::VARZ, :type => :integration do
+describe AdminUI::VARZ, type: :integration do
   include NATSHelper
   include ThreadHelper
   include VARZHelper
@@ -18,9 +18,9 @@ describe AdminUI::VARZ, :type => :integration do
 
   let(:logger) { Logger.new(log_file) }
   let(:config) do
-    AdminUI::Config.load(:data_file            => data_file,
-                         :db_uri               => db_uri,
-                         :monitored_components => [])
+    AdminUI::Config.load(data_file:            data_file,
+                         db_uri:               db_uri,
+                         monitored_components: [])
   end
 
   let(:email) { AdminUI::EMail.new(config, logger) }

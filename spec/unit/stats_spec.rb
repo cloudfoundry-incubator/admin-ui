@@ -17,12 +17,12 @@ describe AdminUI::Stats do
   let(:cc) { AdminUI::CC.new(config, logger, client) }
   let(:stats) { AdminUI::Stats.new(config, logger, cc, varz) }
   let(:config) do
-    AdminUI::Config.new(:stats_refresh_schedules      => stats_refresh_schedules,
-                        :data_file                    => data_file,
-                        :mbus                         => 'nats://nats:c1oudc0w@localhost:14222',
-                        :monitored_components         => [],
-                        :db_uri                       => db_uri,
-                        :nats_discovery_timeout       => 1)
+    AdminUI::Config.new(stats_refresh_schedules: stats_refresh_schedules,
+                        data_file:               data_file,
+                        mbus:                    'nats://nats:c1oudc0w@localhost:14222',
+                        monitored_components:    [],
+                        db_uri:                  db_uri,
+                        nats_discovery_timeout:  1)
   end
 
   before do
@@ -153,11 +153,11 @@ describe AdminUI::Stats do
 
   context 'calculate_time_until_generate_stats' do
     let(:config) do
-      AdminUI::Config.load(:data_file                    => data_file,
-                           :mbus                         => 'nats://nats:c1oudc0w@localhost:14222',
-                           :monitored_components         => [],
-                           :db_uri                       => db_uri,
-                           :nats_discovery_timeout       => 1)
+      AdminUI::Config.load(data_file:              data_file,
+                           mbus:                   'nats://nats:c1oudc0w@localhost:14222',
+                           monitored_components:   [],
+                           db_uri:                 db_uri,
+                           nats_discovery_timeout: 1)
     end
 
     it 'disables stats collection if stats_refresh_time and stats_refresh_schedule are both missing' do
@@ -167,12 +167,12 @@ describe AdminUI::Stats do
 
   context 'calculate_time_until_generate_stats' do
     let(:config) do
-      AdminUI::Config.new(:stats_refresh_time           => 300,
-                          :data_file                    => data_file,
-                          :mbus                         => 'nats://nats:c1oudc0w@localhost:14222',
-                          :monitored_components         => [],
-                          :db_uri                       => db_uri,
-                          :nats_discovery_timeout       => 1)
+      AdminUI::Config.new(stats_refresh_time:     300,
+                          data_file:              data_file,
+                          mbus:                   'nats://nats:c1oudc0w@localhost:14222',
+                          monitored_components:   [],
+                          db_uri:                 db_uri,
+                          nats_discovery_timeout: 1)
     end
 
     it 'runs according to stats_refresh_time setting when stats_refresh_time is set and stats_refresh_scheduled is not set' do

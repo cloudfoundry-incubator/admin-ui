@@ -33,14 +33,14 @@ module AdminUI
         @logger.debug('AdminUI::DBStoreMigration.store: finish delete_sql')
         records.each do | record |
           items = db_conn[:stats]
-          items.insert(:apps              => record['apps'],
-                       :deas              => record['deas'],
-                       :organizations     => record['organizations'],
-                       :running_instances => record['running_instances'],
-                       :spaces            => record['spaces'],
-                       :timestamp         => record['timestamp'],
-                       :total_instances   => record['total_instances'],
-                       :users             => record['users'])
+          items.insert(apps:              record['apps'],
+                       deas:              record['deas'],
+                       organizations:     record['organizations'],
+                       running_instances: record['running_instances'],
+                       spaces:            record['spaces'],
+                       timestamp:         record['timestamp'],
+                       total_instances:   record['total_instances'],
+                       users:             record['users'])
         end
       end
     end

@@ -215,9 +215,9 @@ module ViewModelsHelper
         log_file_displayed,
         log_file_displayed_contents_length,
         Time.at(log_file_displayed_modified_milliseconds / 1000.0).to_datetime.rfc3339,
-        { :path => log_file_displayed,
-          :size => log_file_displayed_contents_length,
-          :time => log_file_displayed_modified_milliseconds
+        { path: log_file_displayed,
+          size: log_file_displayed_contents_length,
+          time: log_file_displayed_modified_milliseconds
         }
       ]
     ]
@@ -610,14 +610,14 @@ module ViewModelsHelper
         cc_app[:instances],
         cc_app[:state] == 'STARTED' ? 1 : 0,
         1,
-        { :apps              => 1,
-          :deas              => 1,
-          :organizations     => 1,
-          :running_instances => cc_app[:state] == 'STARTED' ? 1 : 0,
-          :spaces            => 1,
-          :timestamp         => timestamp,
-          :total_instances   => cc_app[:instances],
-          :users             => 1
+        { apps:              1,
+          deas:              1,
+          organizations:     1,
+          running_instances: cc_app[:state] == 'STARTED' ? 1 : 0,
+          spaces:            1,
+          timestamp:         timestamp,
+          total_instances:   cc_app[:instances],
+          users:             1
         }
       ]
     ]

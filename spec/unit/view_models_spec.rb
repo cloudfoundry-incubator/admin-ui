@@ -14,14 +14,14 @@ describe AdminUI::CC do
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)  { "sqlite://#{ uaadb_file }" }
   let(:config) do
-    AdminUI::Config.load(:ccdb_uri               => ccdb_uri,
-                         :cloud_controller_uri   => 'http://api.localhost',
-                         :data_file              => data_file,
-                         :db_uri                 => db_uri,
-                         :log_files              => [log_file],
-                         :mbus                   => 'nats://nats:c1oudc0w@localhost:14222',
-                         :uaadb_uri              => uaadb_uri,
-                         :uaa_client             => { :id => 'id', :secret => 'secret' })
+    AdminUI::Config.load(ccdb_uri:             ccdb_uri,
+                         cloud_controller_uri: 'http://api.localhost',
+                         data_file:            data_file,
+                         db_uri:               db_uri,
+                         log_files:            [log_file],
+                         mbus:                 'nats://nats:c1oudc0w@localhost:14222',
+                         uaadb_uri:            uaadb_uri,
+                         uaa_client:           { id: 'id', secret: 'secret' })
   end
 
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
@@ -46,7 +46,7 @@ describe AdminUI::CC do
 
   context 'No backend connected' do
     def verify_disconnected_items(result)
-      expect(result).to include(:connected => false, :items => [])
+      expect(result).to include(connected: false, items: [])
     end
 
     it 'returns nil application as expected' do
@@ -208,12 +208,12 @@ describe AdminUI::CC do
 
   context 'No backend required' do
     def verify_connected_one_item(result)
-      expect(result).to include(:connected => true)
+      expect(result).to include(connected: true)
       expect(result[:items].length).to be(1)
     end
 
     def verify_connected_zero_items(result)
-      expect(result).to include(:connected => true, :items => [])
+      expect(result).to include(connected: true, items: [])
     end
 
     it 'returns zero logs as expected' do

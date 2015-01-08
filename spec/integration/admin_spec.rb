@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe AdminUI::Admin, :type => :integration do
+describe AdminUI::Admin, type: :integration do
   include_context :server_context
 
   def create_http

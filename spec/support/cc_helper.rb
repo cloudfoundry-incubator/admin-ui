@@ -102,337 +102,337 @@ module CCHelper
 
   def cc_app
     {
-      :buildpack            => nil,
-      :created_at           => Time.new('2013-10-18 08:28:35 -0500'),
-      :detected_buildpack   => 'Ruby/Rack',
-      :diego                => false,
-      :disk_quota           => 12,
-      :docker_image         => 'docker_image_1',
-      :guid                 => 'application1',
-      :health_check_timeout => nil,
-      :id                   => 1,
-      :instances            => 1,
-      :metadata             => '{}',
-      :memory               => 11,
-      :name                 => 'test',
-      :package_state        => 'STAGED',
-      :package_updated_at   => Time.new('2013-10-18 08:28:35 -0500'),
-      :production           => nil,
-      :space_id             => cc_space[:id],
-      :stack_id             => cc_stack[:id],
-      :staging_task_id      => nil,
-      :state                => 'STARTED',
-      :updated_at           => Time.new('2013-10-20 08:28:35 -0500'),
-      :version              => nil
+      buildpack:            nil,
+      created_at:           Time.new('2013-10-18 08:28:35 -0500'),
+      detected_buildpack:   'Ruby/Rack',
+      diego:                false,
+      disk_quota:           12,
+      docker_image:         'docker_image_1',
+      guid:                 'application1',
+      health_check_timeout: nil,
+      id:                   1,
+      instances:            1,
+      metadata:             '{}',
+      memory:               11,
+      name:                 'test',
+      package_state:        'STAGED',
+      package_updated_at:   Time.new('2013-10-18 08:28:35 -0500'),
+      production:           nil,
+      space_id:             cc_space[:id],
+      stack_id:             cc_stack[:id],
+      staging_task_id:      nil,
+      state:                'STARTED',
+      updated_at:           Time.new('2013-10-20 08:28:35 -0500'),
+      version:              nil
     }
   end
 
   def cc_app_route
     {
-      :app_id   => cc_app[:id],
-      :route_id => cc_route[:id]
+      app_id:   cc_app[:id],
+      route_id: cc_route[:id]
     }
   end
 
   def cc_domain
     {
-      :created_at             => Time.new('2014-02-12T09:40:52-06:00'),
-      :guid                   => 'domain1',
-      :id                     => 2,
-      :name                   => 'test_domain',
-      :owning_organization_id => cc_organization[:id],
-      :updated_at             => Time.new('2014-02-12T09:40:52-06:00')
+      created_at:             Time.new('2014-02-12T09:40:52-06:00'),
+      guid:                   'domain1',
+      id:                     2,
+      name:                   'test_domain',
+      owning_organization_id: cc_organization[:id],
+      updated_at:             Time.new('2014-02-12T09:40:52-06:00')
     }
   end
 
   def cc_organization
     {
-      :billing_enabled     => false,
-      :created_at          => Time.new('2013-10-16T08:55:46-05:00'),
-      :guid                => 'organization1',
-      :id                  => 3,
-      :name                => 'test_org',
-      :quota_definition_id => cc_quota_definition[:id],
-      :status              => 'active',
-      :updated_at          => Time.new('2013-10-17T08:55:46-05:00')
+      billing_enabled:     false,
+      created_at:          Time.new('2013-10-16T08:55:46-05:00'),
+      guid:                'organization1',
+      id:                  3,
+      name:                'test_org',
+      quota_definition_id: cc_quota_definition[:id],
+      status:              'active',
+      updated_at:          Time.new('2013-10-17T08:55:46-05:00')
     }
   end
 
   def cc_organization2
     {
-      :billing_enabled     => false,
-      :created_at          => Time.new,
-      :guid                => 'organization2',
-      :id                  => 300,
-      :name                => 'new_org',
-      :quota_definition_id => cc_quota_definition[:id],
-      :status              => 'active',
-      :updated_at          => nil
+      billing_enabled:     false,
+      created_at:          Time.new,
+      guid:                'organization2',
+      id:                  300,
+      name:                'new_org',
+      quota_definition_id: cc_quota_definition[:id],
+      status:              'active',
+      updated_at:          nil
     }
   end
 
   def cc_organization_auditor
     {
-      :organization_id => cc_organization[:id],
-      :user_id  => cc_user[:id]
+      organization_id: cc_organization[:id],
+      user_id:         cc_user[:id]
     }
   end
 
   def cc_organization_billing_manager
     {
-      :organization_id => cc_organization[:id],
-      :user_id  => cc_user[:id]
+      organization_id: cc_organization[:id],
+      user_id:         cc_user[:id]
     }
   end
 
   def cc_organization_manager
     {
-      :organization_id => cc_organization[:id],
-      :user_id  => cc_user[:id]
+      organization_id: cc_organization[:id],
+      user_id:         cc_user[:id]
     }
   end
 
   def cc_organization_user
     {
-      :organization_id => cc_organization[:id],
-      :user_id  => cc_user[:id]
+      organization_id: cc_organization[:id],
+      user_id:         cc_user[:id]
     }
   end
 
   def cc_quota_definition
     {
-      :created_at                 => Time.new('2013-10-16T08:55:46-05:00'),
-      :guid                       => 'quota1',
-      :id                         => 4,
-      :instance_memory_limit      => 512,
-      :memory_limit               => 1024,
-      :name                       => 'test_quota_1',
-      :non_basic_services_allowed => true,
-      :total_routes               => 100,
-      :total_services             => 100,
-      :updated_at                 => Time.new('2013-11-16T08:55:46-05:00')
+      created_at:                 Time.new('2013-10-16T08:55:46-05:00'),
+      guid:                       'quota1',
+      id:                         4,
+      instance_memory_limit:      512,
+      memory_limit:               1024,
+      name:                       'test_quota_1',
+      non_basic_services_allowed: true,
+      total_routes:               100,
+      total_services:             100,
+      updated_at:                 Time.new('2013-11-16T08:55:46-05:00')
     }
   end
 
   def cc_quota_definition2
     {
-      :created_at                 => Time.new,
-      :guid                       => 'quota2',
-      :id                         => 400,
-      :instance_memory_limit      => 512,
-      :memory_limit               => 1024,
-      :name                       => 'test_quota_2',
-      :non_basic_services_allowed => true,
-      :total_routes               => 100,
-      :total_services             => 100,
-      :updated_at                 => nil
+      created_at:                 Time.new,
+      guid:                       'quota2',
+      id:                         400,
+      instance_memory_limit:      512,
+      memory_limit:               1024,
+      name:                       'test_quota_2',
+      non_basic_services_allowed: true,
+      total_routes:               100,
+      total_services:             100,
+      updated_at:                 nil
     }
   end
 
   def cc_route
     {
-      :created_at => Time.new('2014-02-12T09:40:52-06:00'),
-      :domain_id  => cc_domain[:id],
-      :guid       => 'route1',
-      :host       => 'test_host',
-      :id         => 5,
-      :space_id   => cc_space[:id],
-      :updated_at => Time.new('2014-02-13T09:40:52-06:00')
+      created_at: Time.new('2014-02-12T09:40:52-06:00'),
+      domain_id:  cc_domain[:id],
+      guid:       'route1',
+      host:       'test_host',
+      id:         5,
+      space_id:   cc_space[:id],
+      updated_at: Time.new('2014-02-13T09:40:52-06:00')
     }
   end
 
   def cc_service
     {
-      :active            => true,
-      :bindable          => true,
-      :created_at        => Time.new('2014-02-12T09:32:31-06:00'),
-      :description       => 'TestService description',
-      :documentation_url => 'http://documentation_url.com',
-      :extra             => '{"displayName":"display name","documentationUrl":"http://documentationUrl.com","imageUrl":"http://docs.cloudfoundry.com/images/favicon.ico","longDescription":"long description","providerDisplayName":"provider display name","supportUrl":"http://supportUrl.com"}',
-      :guid              => 'service1',
-      :id                => 6,
-      :info_url          => 'http://info_url.com',
-      :label             => 'TestService',
-      :long_description  => nil,
-      :provider          => 'test',
-      :requires          => nil,
-      :service_broker_id => cc_service_broker[:id],
-      :tags              => '["tag1", "tag2"]',
-      :unique_id         => 'service_unique_id',
-      :updated_at        => Time.new('2014-02-12T09:32:31-06:00'),
-      :url               => nil,
-      :version           => '1.0'
+      active:            true,
+      bindable:          true,
+      created_at:        Time.new('2014-02-12T09:32:31-06:00'),
+      description:       'TestService description',
+      documentation_url: 'http://documentation_url.com',
+      extra:             '{"displayName":"display name","documentationUrl":"http://documentationUrl.com","imageUrl":"http://docs.cloudfoundry.com/images/favicon.ico","longDescription":"long description","providerDisplayName":"provider display name","supportUrl":"http://supportUrl.com"}',
+      guid:              'service1',
+      id:                6,
+      info_url:          'http://info_url.com',
+      label:             'TestService',
+      long_description:  nil,
+      provider:          'test',
+      requires:          nil,
+      service_broker_id: cc_service_broker[:id],
+      tags:              '["tag1", "tag2"]',
+      unique_id:         'service_unique_id',
+      updated_at:        Time.new('2014-02-12T09:32:31-06:00'),
+      url:               nil,
+      version:           '1.0'
     }
   end
 
   def cc_service_binding
     {
-      :app_id              => cc_app[:id],
-      :binding_options     => nil,
-      :created_at          => Time.new('2014-02-12T09:41:42-06:00'),
-      :gateway_data        => nil,
-      :gateway_name        => '',
-      :guid                => 'service_binding1',
-      :id                  => 7,
-      :service_instance_id => cc_service_instance[:id],
-      :syslog_drain_url    => nil,
-      :updated_at          => nil
+      app_id:              cc_app[:id],
+      binding_options:     nil,
+      created_at:          Time.new('2014-02-12T09:41:42-06:00'),
+      gateway_data:        nil,
+      gateway_name:        '',
+      guid:                'service_binding1',
+      id:                  7,
+      service_instance_id: cc_service_instance[:id],
+      syslog_drain_url:    nil,
+      updated_at:          nil
     }
   end
 
   # We do not retrieve credentials, but it is required for insert
   def cc_service_binding_with_credentials
-    cc_service_binding.merge(:credentials => '{}')
+    cc_service_binding.merge(credentials: '{}')
   end
 
   def cc_service_broker
     {
-      :auth_username => 'username',
-      :broker_url    => 'http://bogus',
-      :created_at    => Time.new('2014-02-12T09:41:42-06:00'),
-      :guid          => 'service_broker1',
-      :id            => 8,
-      :name          => 'TestServiceBroker',
-      :updated_at    => Time.new('2014-03-12T09:41:42-06:00')
+      auth_username: 'username',
+      broker_url:    'http://bogus',
+      created_at:    Time.new('2014-02-12T09:41:42-06:00'),
+      guid:          'service_broker1',
+      id:            8,
+      name:          'TestServiceBroker',
+      updated_at:    Time.new('2014-03-12T09:41:42-06:00')
     }
   end
 
   # We do not retrieve auth_password, but it is required for insert
   def cc_service_broker_with_password
-    cc_service_broker.merge(:auth_password => 'password')
+    cc_service_broker.merge(auth_password: 'password')
   end
 
   def cc_service_instance
     {
-      :created_at      => Time.new('2014-02-12T09:40:52-06:00'),
-      :guid            => 'service_instance1',
-      :id              => 9,
-      :dashboard_url   => 'http://www.ibm.com',
-      :gateway_data    => nil,
-      :gateway_name    => nil,
-      :name            => 'TestService-random',
-      :service_plan_id => cc_service_plan[:id],
-      :space_id        => cc_space[:id],
-      :updated_at      => Time.new('2014-03-12T09:40:52-06:00')
+      created_at:      Time.new('2014-02-12T09:40:52-06:00'),
+      guid:            'service_instance1',
+      id:              9,
+      dashboard_url:   'http://www.ibm.com',
+      gateway_data:    nil,
+      gateway_name:    nil,
+      name:            'TestService-random',
+      service_plan_id: cc_service_plan[:id],
+      space_id:        cc_space[:id],
+      updated_at:      Time.new('2014-03-12T09:40:52-06:00')
     }
   end
 
   def cc_service_plan
     {
-      :active      => true,
-      :created_at  => Time.new('2014-02-12T09:34:10-06:00'),
-      :description => 'TestServicePlan description',
-      :extra       => '{"displayName":"display name","bullets":["bullet1","bullet2"]}',
-      :free        => true,
-      :guid        => 'service_plan1',
-      :id          => 10,
-      :name        => 'TestServicePlan',
-      :public      => true,
-      :service_id  => cc_service[:id],
-      :unique_id   => 'service_plan_unique_id1',
-      :updated_at  => Time.new('2014-03-12T09:34:10-06:00')
+      active:      true,
+      created_at:  Time.new('2014-02-12T09:34:10-06:00'),
+      description: 'TestServicePlan description',
+      extra:       '{"displayName":"display name","bullets":["bullet1","bullet2"]}',
+      free:        true,
+      guid:        'service_plan1',
+      id:          10,
+      name:        'TestServicePlan',
+      public:      true,
+      service_id:  cc_service[:id],
+      unique_id:   'service_plan_unique_id1',
+      updated_at:  Time.new('2014-03-12T09:34:10-06:00')
     }
   end
 
   def cc_service_plan_visibility
     {
-      :created_at       => Time.new('2014-02-12T09:34:10-06:00'),
-      :guid             => 'service_plan_visibility1',
-      :id               => 11,
-      :organization_id  => cc_organization[:id],
-      :service_plan_id  => cc_service_plan[:id],
-      :updated_at       => Time.new('2014-03-12T09:34:10-06:00')
+      created_at:      Time.new('2014-02-12T09:34:10-06:00'),
+      guid:            'service_plan_visibility1',
+      id:              11,
+      organization_id: cc_organization[:id],
+      service_plan_id: cc_service_plan[:id],
+      updated_at:      Time.new('2014-03-12T09:34:10-06:00')
     }
   end
 
   def cc_space
     {
-      :created_at      => Time.new('2013-10-16T08:55:54-05:00'),
-      :guid            => 'space1',
-      :id              => 12,
-      :name            => 'test_space',
-      :organization_id => cc_organization[:id],
-      :updated_at      => Time.new('2013-10-17T08:55:54-05:00')
+      created_at:      Time.new('2013-10-16T08:55:54-05:00'),
+      guid:            'space1',
+      id:              12,
+      name:            'test_space',
+      organization_id: cc_organization[:id],
+      updated_at:      Time.new('2013-10-17T08:55:54-05:00')
     }
   end
 
   def cc_space_auditor
     {
-      :space_id => cc_space[:id],
-      :user_id  => cc_user[:id]
+      space_id: cc_space[:id],
+      user_id:  cc_user[:id]
     }
   end
 
   def cc_space_developer
     {
-      :space_id => cc_space[:id],
-      :user_id  => cc_user[:id]
+      space_id: cc_space[:id],
+      user_id:  cc_user[:id]
     }
   end
 
   def cc_space_manager
     {
-      :space_id => cc_space[:id],
-      :user_id  => cc_user[:id]
+      space_id: cc_space[:id],
+      user_id:  cc_user[:id]
     }
   end
 
   def cc_stack
     {
-      :created_at  => Time.new('2013-10-16T08:55:54-05:00'),
-      :description => 'TestStack description',
-      :guid        => 'stack1',
-      :id          => 13,
-      :name        => 'lucid64'
+      created_at:  Time.new('2013-10-16T08:55:54-05:00'),
+      description: 'TestStack description',
+      guid:        'stack1',
+      id:          13,
+      name:        'lucid64'
     }
   end
 
   def cc_user
     {
-      :active           => true,
-      :admin            => false,
-      :created_at       => Time.new('2013-10-16T08:55:54-05:00'),
-      :default_space_id => nil,
-      :guid             => 'user1',
-      :id               => 14,
-      :updated_at       => nil
+      active:           true,
+      admin:            false,
+      created_at:       Time.new('2013-10-16T08:55:54-05:00'),
+      default_space_id: nil,
+      guid:             'user1',
+      id:               14,
+      updated_at:       nil
     }
   end
 
   def uaa_group
     {
-      :created      => Time.new('2014-10-16T08:55:27.339Z'),
-      :displayname  => 'group1',
-      :id           => 'group1',
-      :lastmodified => Time.new('2014-10-23T07:07:50.425Z'),
-      :version      => 5
+      created:     Time.new('2014-10-16T08:55:27.339Z'),
+      displayname: 'group1',
+      id:          'group1',
+      lastmodified: Time.new('2014-10-23T07:07:50.425Z'),
+      version:      5
     }
   end
 
   def uaa_group_membership
     {
-      :group_id  => uaa_group[:id],
-      :member_id => uaa_user[:id]
+      group_id:  uaa_group[:id],
+      member_id: uaa_user[:id]
     }
   end
 
   def uaa_user
     {
-      :active       => true,
-      :created      => Time.new('2014-10-16T08:55:27.339Z'),
-      :email        => 'admin',
-      :familyname   => 'Flintstone',
-      :givenname    => 'Fred',
-      :id           => 'user1',
-      :lastmodified => Time.new('2014-10-23T07:07:50.425Z'),
-      :username     => 'admin',
-      :version      => 5
+      active:       true,
+      created:      Time.new('2014-10-16T08:55:27.339Z'),
+      email:        'admin',
+      familyname:   'Flintstone',
+      givenname:    'Fred',
+      id:           'user1',
+      lastmodified: Time.new('2014-10-23T07:07:50.425Z'),
+      username:     'admin',
+      version:      5
     }
   end
 
   # We do not retrieve password, but it is required for insert
   def uaa_user_with_password
-    uaa_user.merge(:password => 'password')
+    uaa_user.merge(password: 'password')
   end
 
   private
@@ -557,7 +557,7 @@ module CCHelper
       if @cc_organization_created
         cc_organization_taken
       else
-        Sequel.connect(config.ccdb_uri, :single_threaded => false, :max_connections => 1, :timeout => 1) do |connection|
+        Sequel.connect(config.ccdb_uri, single_threaded: false, max_connections: 1, timeout: 1) do |connection|
           items = connection[:organizations]
           loop do
             begin
@@ -726,7 +726,7 @@ module CCHelper
   end
 
   def populate_db(db_uri, path, ordered_inserts)
-    Sequel.connect(db_uri, :single_threaded => false, :max_connections => 1, :timeout => 1) do |connection|
+    Sequel.connect(db_uri, single_threaded: false, max_connections: 1, timeout: 1) do |connection|
       Sequel::Migrator.apply(connection, path)
 
       ordered_inserts.each do |entry|
@@ -745,7 +745,7 @@ module CCHelper
   end
 
   def sql(uri, sql)
-    Sequel.connect(uri, :single_threaded => false, :max_connections => 1, :timeout => 1) do |connection|
+    Sequel.connect(uri, single_threaded: false, max_connections: 1, timeout: 1) do |connection|
       loop do
         begin
           connection.run(sql)

@@ -502,18 +502,18 @@ describe AdminUI::Config do
   context 'Errors' do
     let(:config) do
       {
-        :ccdb_uri              => 'sqlite://tmp/ccdb.db',
-        :cloud_controller_uri  => 'http://api.localhost',
-        :data_file             => '/tmp/admin_ui_data.json',
-        :db_uri                 => 'sqlite:///tmp/admin_ui_store.db',
-        :log_file              => '/tmp/admin_ui.log',
-        :mbus                  => 'nats://nats:c1oudc0w@10.10.10.10:4222',
-        :port                  => 8070,
-        :stats_file            => '/tmp/admin_ui_stats.json',
-        :uaadb_uri             => 'sqlite://tmp/uaadb.db',
-        :uaa_client            => { :id => 'id', :secret => 'secret' },
-        :uaa_groups_admin      => ['cloud_controller.admin'],
-        :uaa_groups_user       => ['cloud_controller.admin']
+        ccdb_uri:             'sqlite://tmp/ccdb.db',
+        cloud_controller_uri: 'http://api.localhost',
+        data_file:            '/tmp/admin_ui_data.json',
+        db_uri:               'sqlite:///tmp/admin_ui_store.db',
+        log_file:             '/tmp/admin_ui.log',
+        mbus:                 'nats://nats:c1oudc0w@10.10.10.10:4222',
+        port:                 8070,
+        stats_file:           '/tmp/admin_ui_stats.json',
+        uaadb_uri:            'sqlite://tmp/uaadb.db',
+        uaa_client:           { id: 'id', secret: 'secret' },
+        uaa_groups_admin:     ['cloud_controller.admin'],
+        uaa_groups_user:      ['cloud_controller.admin']
       }
     end
 
@@ -523,285 +523,285 @@ describe AdminUI::Config do
 
     context 'Invalid value types' do
       it 'bind_address' do
-        expect { AdminUI::Config.load(config.merge(:bind_address => 22)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(bind_address: 22)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'ccdb_uri' do
-        expect { AdminUI::Config.load(config.merge(:ccdb_uri => 5)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(ccdb_uri: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'cloud_controller_discovery_interval' do
-        expect { AdminUI::Config.load(config.merge(:cloud_controller_discovery_interval => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(cloud_controller_discovery_interval: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'cloud_controller_ssl_verify_none' do
-        expect { AdminUI::Config.load(config.merge(:cloud_controller_ssl_verify_none => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(cloud_controller_ssl_verify_none: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'cloud_controller_uri' do
-        expect { AdminUI::Config.load(config.merge(:cloud_controller_uri => 5)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(cloud_controller_uri: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'component_connection_retries' do
-        expect { AdminUI::Config.load(config.merge(:component_connection_retries => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(component_connection_retries: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'data_file' do
-        expect { AdminUI::Config.load(config.merge(:data_file => 5)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(data_file: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'db_uri' do
-        expect { AdminUI::Config.load(config.merge(:db_uri => 5)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(db_uri: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'log_file' do
-        expect { AdminUI::Config.load(config.merge(:log_file => 5)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(log_file: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'log_file_page_size' do
-        expect { AdminUI::Config.load(config.merge(:log_file_page_size => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(log_file_page_size: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'log_file_sftp_keys' do
-        expect { AdminUI::Config.load(config.merge(:log_file_sftp_keys => [1, 2, 3])) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(log_file_sftp_keys: [1, 2, 3])) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'log_files' do
-        expect { AdminUI::Config.load(config.merge(:log_files => [1, 2, 3])) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(log_files: [1, 2, 3])) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'mbus' do
-        expect { AdminUI::Config.load(config.merge(:mbus => 5)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(mbus: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'monitored_components' do
-        expect { AdminUI::Config.load(config.merge(:monitored_components => [1, 2, 3])) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(monitored_components: [1, 2, 3])) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'nats_discovery_interval' do
-        expect { AdminUI::Config.load(config.merge(:nats_discovery_interval => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(nats_discovery_interval: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'nats_discovery_timeout' do
-        expect { AdminUI::Config.load(config.merge(:nats_discovery_timeout => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(nats_discovery_timeout: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'port' do
-        expect { AdminUI::Config.load(config.merge(:port => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(port: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'receiver_emails' do
-        expect { AdminUI::Config.load(config.merge(:receiver_emails => [1, 2, 3])) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(receiver_emails: [1, 2, 3])) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'secured_client_connection' do
-        expect { AdminUI::Config.load(config.merge(:secured_client_connection => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(secured_client_connection: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       context 'sender_email' do
         it 'sender_email_account' do
-          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 5, :server => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(sender_email: { account: 5, server: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'sender_email_authtype' do
-          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :authtype => 3, :server => 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(sender_email: { account: 'hi', authtype: 3, server: 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
 
-          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :authtype => 'logon', :server => 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(sender_email: { account: 'hi', authtype: 'logon', server: 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'sender_email_domain' do
-          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :server => 'hi', :domain => 3 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(sender_email: { account: 'hi', server: 'hi', domain: 3 })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'sender_email_port' do
-          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :server => 'hi', :port => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(sender_email: { account: 'hi', server: 'hi', port: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'sender_email_secret' do
-          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :secret => 3, :server => 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(sender_email: { account: 'hi', secret: 3, server: 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'sender_email_server' do
-          expect { AdminUI::Config.load(config.merge(:sender_email => { :account => 'hi', :server => 5 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(sender_email: { account: 'hi', server: 5 })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 
       context 'ssl' do
         it 'ssl_certificate_file_path' do
-          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 1,  :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 1,  private_key_file_path: 'hi', private_key_pass_phrase: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'ssl_private_key_file_path' do
-          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 1, :private_key_pass_phrase => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi',  private_key_file_path: 1, private_key_pass_phrase: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'ssl_private_key_pass_phrase' do
-          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :private_key_pass_phrase => 1, :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi',  private_key_file_path: 'hi', private_key_pass_phrase: 1, max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'max_session_idle_length' do
-          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi', :max_session_idle_length => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi',  private_key_file_path: 'hi', private_key_pass_phrase: 'hi', max_session_idle_length: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 
       it 'stats_file' do
-        expect { AdminUI::Config.load(config.merge(:stats_file => 5)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(stats_file: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'stats_refresh_time' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_time => 'hi')) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_time => Expected instance of Integer, given an instance of String }')
+        expect { AdminUI::Config.load(config.merge(stats_refresh_time: 'hi')) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_time => Expected instance of Integer, given an instance of String }')
       end
 
       it 'stats_refresh_schedules' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['hi'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value hi doesn\'t match regexp /@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/ }')
+        expect { AdminUI::Config.load(config.merge(stats_refresh_schedules: ['hi'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value hi doesn\'t match regexp /@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/ }')
       end
 
       it 'stats_refresh_schedules with specs not compliant to crontab format - extra commma' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 1,,2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 1,,2 * * * doesn\'t match regexp /@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/ }')
+        expect { AdminUI::Config.load(config.merge(stats_refresh_schedules: ['0 1,,2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 1,,2 * * * doesn\'t match regexp /@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/ }')
       end
 
       it 'stats_refresh_schedules with specs not compliant to crontab format - extra range symbol' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 1--2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 1--2 * * * doesn\'t match regexp /@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/ }')
+        expect { AdminUI::Config.load(config.merge(stats_refresh_schedules: ['0 1--2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 1--2 * * * doesn\'t match regexp /@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/ }')
       end
 
       it 'stats_refresh_schedules with specs not compliant to crontab format - use of step' do
-        expect { AdminUI::Config.load(config.merge(:stats_refresh_schedules => ['0 /2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 /2 * * * doesn\'t match regexp /@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/ }')
+        expect { AdminUI::Config.load(config.merge(stats_refresh_schedules: ['0 /2 * * *', '0 12-17 * * 1-5'])) }.to raise_error(Membrane::SchemaValidationError, '{ stats_refresh_schedules => At index 0: Value 0 /2 * * * doesn\'t match regexp /@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/ }')
       end
 
       it 'has both stats_refresh_time and stats_refresh_schedules entry' do
-        expect { AdminUI::Config.load(:stats_refresh_schedules => ['@daily'], :stats_refresh_time => 300) }.to raise_error(Membrane::SchemaValidationError, 'Two mutally exclusive properties, stats_refresh_time and stats_refresh_schedules, are both present in the configuration file.  Please remove one of the two properties.')
+        expect { AdminUI::Config.load(stats_refresh_schedules: ['@daily'], stats_refresh_time: 300) }.to raise_error(Membrane::SchemaValidationError, 'Two mutally exclusive properties, stats_refresh_time and stats_refresh_schedules, are both present in the configuration file.  Please remove one of the two properties.')
       end
 
       it 'stats_retries' do
-        expect { AdminUI::Config.load(config.merge(:stats_retries => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(stats_retries: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'stats_retry_interval' do
-        expect { AdminUI::Config.load(config.merge(:stats_retry_interval => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(stats_retry_interval: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'table_height' do
-        expect { AdminUI::Config.load(config.merge(:table_height => 5)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(table_height: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'table_page_size' do
-        expect { AdminUI::Config.load(config.merge(:table_page_size => 6)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(table_page_size: 6)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'tasks_refresh_interval' do
-        expect { AdminUI::Config.load(config.merge(:tasks_refresh_interval => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(tasks_refresh_interval: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'uaadb_uri' do
-        expect { AdminUI::Config.load(config.merge(:uaadb_uri => 5)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(uaadb_uri: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       context 'uaa_client' do
         it 'uaa_client_id' do
-          expect { AdminUI::Config.load(config.merge(:uaa_client => { :id => 5, :secret => 'secret' })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(uaa_client: { id: 5, secret: 'secret' })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'uaa_client_secret' do
-          expect { AdminUI::Config.load(config.merge(:uaa_client => { :id => 'id', :secret => 5 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(uaa_client: { id: 'id', secret: 5 })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 
       it 'uaa_groups_admin' do
-        expect { AdminUI::Config.load(config.merge(:uaa_groups_admin => 5)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(uaa_groups_admin: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'uaa_groups_user' do
-        expect { AdminUI::Config.load(config.merge(:uaa_groups_user => 5)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(uaa_groups_user: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'varz_discovery_interval' do
-        expect { AdminUI::Config.load(config.merge(:varz_discovery_interval => 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(varz_discovery_interval: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
     end
 
     context 'Missing values' do
       it 'ccdb_uri' do
-        expect { AdminUI::Config.load(config.merge(:ccdb_uri => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(ccdb_uri: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'cloud_controller_discovery_interval' do
-        expect { AdminUI::Config.load(config.merge(:cloud_controller_discovery_interval => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(cloud_controller_discovery_interval: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'cloud_controller_ssl_verify_none' do
-        expect { AdminUI::Config.load(config.merge(:cloud_controller_ssl_verify_none => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(cloud_controller_ssl_verify_none: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'cloud_controller_uri' do
-        expect { AdminUI::Config.load(config.merge(:cloud_controller_uri => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(cloud_controller_uri: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'data_file' do
-        expect { AdminUI::Config.load(config.merge(:data_file => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(data_file: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'db_uri' do
-        expect { AdminUI::Config.load(config.merge(:db_uri => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(db_uri: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'log_file' do
-        expect { AdminUI::Config.load(config.merge(:log_file => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(log_file: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'mbus' do
-        expect { AdminUI::Config.load(config.merge(:mbus => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(mbus: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'port' do
-        expect { AdminUI::Config.load(config.merge(:port => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(port: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'secured_client_connection' do
-        expect { AdminUI::Config.load(config.merge(:secured_client_connection => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(secured_client_connection: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'stats_file' do
-        expect { AdminUI::Config.load(config.merge(:stats_file => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(stats_file: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       context 'ssl' do
         it 'ssl_certificate_file_path' do
-          expect { AdminUI::Config.load(config.merge(:ssl => { :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { private_key_file_path: 'hi', private_key_pass_phrase: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'ssl_private_key_file_path' do
-          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_pass_phrase => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi',  private_key_pass_phrase: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'ssl_private_key_pass_phrase' do
-          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :max_session_idle_length => 1 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi',  private_key_file_path: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'max_session_idle_length' do
-          expect { AdminUI::Config.load(config.merge(:ssl => { :certificate_file_path => 'hi',  :private_key_file_path => 'hi', :private_key_pass_phrase => 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi',  private_key_file_path: 'hi', private_key_pass_phrase: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 
       it 'uaadb_uri' do
-        expect { AdminUI::Config.load(config.merge(:uaadb_uri => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(uaadb_uri: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       context 'uaa_client' do
         it 'uaa_client_id' do
-          expect { AdminUI::Config.load(config.merge(:uaa_client => { :secret => 'secret' })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(uaa_client: { secret: 'secret' })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'uaa_client_secret' do
-          expect { AdminUI::Config.load(config.merge(:uaa_client => { :id => 'id' })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(uaa_client: { id: 'id' })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 
       it 'uaa_groups_admin' do
-        expect { AdminUI::Config.load(config.merge(:uaa_groups_admin => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(uaa_groups_admin: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'uaa_groups_user' do
-        expect { AdminUI::Config.load(config.merge(:uaa_groups_user => nil)) }.to raise_error(Membrane::SchemaValidationError)
+        expect { AdminUI::Config.load(config.merge(uaa_groups_user: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
     end
   end

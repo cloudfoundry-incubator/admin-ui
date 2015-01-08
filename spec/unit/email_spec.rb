@@ -45,16 +45,16 @@ describe AdminUI::EMail do
 
   context 'Configured' do
     let(:config) do
-      AdminUI::Config.load(:cloud_controller_uri => 'http://api.bogus',
-                           :db_uri               => db_uri,
-                           :receiver_emails      => ['receiver1@bogus.com', 'receiver2@foo.com'],
-                           :sender_email         => { :account  => 'bogus@bogus.com',
-                                                      :secret   => 'my pwd',
-                                                      :authtype => 'login',
-                                                      :server   => 'bogus.com',
-                                                      :port     => 25,
-                                                      :domain   => 'bogus.com'
-                                                    }
+      AdminUI::Config.load(cloud_controller_uri: 'http://api.bogus',
+                           db_uri:               db_uri,
+                           receiver_emails:      ['receiver1@bogus.com', 'receiver2@foo.com'],
+                           sender_email:         { account:  'bogus@bogus.com',
+                                                   secret:   'my pwd',
+                                                   authtype: 'login',
+                                                   server:   'bogus.com',
+                                                   port:     25,
+                                                   domain:   'bogus.com'
+                                                 }
                           )
     end
     let(:email) { AdminUI::EMail.new(config, logger) }

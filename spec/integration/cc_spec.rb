@@ -1,7 +1,7 @@
 require 'logger'
 require_relative '../spec_helper'
 
-describe AdminUI::CC, :type => :integration do
+describe AdminUI::CC, type: :integration do
   include CCHelper
   include ThreadHelper
 
@@ -14,11 +14,11 @@ describe AdminUI::CC, :type => :integration do
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)  { "sqlite://#{ uaadb_file }" }
   let(:config) do
-    AdminUI::Config.load(:ccdb_uri                            => ccdb_uri,
-                         :cloud_controller_uri                => 'http://api.cloudfoundry',
-                         :db_uri                              => db_uri,
-                         :uaadb_uri                           => uaadb_uri,
-                         :uaa_client                          => { :id => 'id', :secret => 'secret' })
+    AdminUI::Config.load(ccdb_uri:             ccdb_uri,
+                         cloud_controller_uri: 'http://api.cloudfoundry',
+                         db_uri:               db_uri,
+                         uaadb_uri:            uaadb_uri,
+                         uaa_client:           { id: 'id', secret: 'secret' })
   end
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
 
