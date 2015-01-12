@@ -16,7 +16,6 @@ module AdminUI
       # service_instances have to exist.  Other record types are optional
       return result unless service_instances['connected']
 
-      applications     = @cc.applications
       organizations    = @cc.organizations
       service_brokers  = @cc.service_brokers
       service_bindings = @cc.service_bindings
@@ -24,34 +23,21 @@ module AdminUI
       services         = @cc.services
       spaces           = @cc.spaces
 
-      applications_connected     = applications['connected']
       service_bindings_connected = service_bindings['connected']
 
-      application_hash     = Hash[applications['items'].map { |item| [item[:id], item] }]
-      organization_hash    = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      service_broker_hash  = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
-      service_plan_hash    = Hash[service_plans['items'].map { |item| [item[:id], item] }]
-      service_hash         = Hash[services['items'].map { |item| [item[:id], item] }]
-      space_hash           = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      organization_hash   = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      service_broker_hash = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
+      service_plan_hash   = Hash[service_plans['items'].map { |item| [item[:id], item] }]
+      service_hash        = Hash[services['items'].map { |item| [item[:id], item] }]
+      space_hash          = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
-      service_binding_apps_hash = {}
-      if service_bindings_connected && applications_connected
-        service_bindings['items'].each do |service_binding|
-          Thread.pass
-          service_instance_id = service_binding[:service_instance_id]
-          app_and_binding_array = service_binding_apps_hash[service_instance_id]
-          if app_and_binding_array.nil?
-            app_and_binding_array = []
-            service_binding_apps_hash[service_instance_id] = app_and_binding_array
-          end
-
-          application = application_hash[service_binding[:app_id]]
-
-          if application
-            app_and_binding_array.push('application'    => application,
-                                       'serviceBinding' => service_binding)
-          end
-        end
+      service_binding_counters = {}
+      service_bindings['items'].each do |service_binding|
+        Thread.pass
+        service_instance_id = service_binding[:service_instance_id]
+        next if service_instance_id.nil?
+        service_binding_counters[service_instance_id] = 0 if service_binding_counters[service_instance_id].nil?
+        service_binding_counters[service_instance_id] += 1
       end
 
       items = []
@@ -78,11 +64,9 @@ module AdminUI
           row.push(nil)
         end
 
-        service_binding_apps = service_binding_apps_hash[service_instance[:id]]
-
-        if service_binding_apps
-          row.push(service_binding_apps.length)
-        elsif service_bindings_connected && applications_connected
+        if service_binding_counters[service_instance[:id]]
+          row.push(service_binding_counters[service_instance[:id]])
+        elsif service_bindings_connected
           row.push(0)
         else
           row.push(nil)
@@ -149,13 +133,12 @@ module AdminUI
 
         hash[service_instance[:guid]] =
         {
-          'bindingsAndApplications' => service_binding_apps,
-          'organization'            => organization,
-          'service'                 => service,
-          'serviceBroker'           => service_broker,
-          'serviceInstance'         => service_instance,
-          'servicePlan'             => service_plan,
-          'space'                   => space
+          'organization'    => organization,
+          'service'         => service,
+          'serviceBroker'   => service_broker,
+          'serviceInstance' => service_instance,
+          'servicePlan'     => service_plan,
+          'space'           => space
         }
       end
 

@@ -16,15 +16,18 @@ module AdminUI
       # services have to exist.  Other record types are optional
       return result unless services['connected']
 
+      service_bindings  = @cc.service_bindings
       service_brokers   = @cc.service_brokers
       service_instances = @cc.service_instances
       service_plans     = @cc.service_plans
 
+      service_bindings_connected  = service_bindings['connected']
       service_instances_connected = service_instances['connected']
       service_plans_connected     = service_plans['connected']
 
-      service_broker_hash = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
-      service_plan_hash   = Hash[service_plans['items'].map { |item| [item[:id], item] }]
+      service_broker_hash   = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
+      service_instance_hash = Hash[service_instances['items'].map { |item| [item[:id], item] }]
+      service_plan_hash     = Hash[service_plans['items'].map { |item| [item[:id], item] }]
 
       service_plan_counters = {}
       service_plans['items'].each do |service_plan|
@@ -44,6 +47,22 @@ module AdminUI
         service_id = service_plan[:service_id]
         service_instance_counters[service_id] = 0 if service_instance_counters[service_id].nil?
         service_instance_counters[service_id] += 1
+      end
+
+      service_binding_counters = {}
+      service_bindings['items'].each do |service_binding|
+        Thread.pass
+        service_instance_id = service_binding[:service_instance_id]
+        next if service_instance_id.nil?
+        service_instance = service_instance_hash[service_instance_id]
+        next if service_instance.nil?
+        service_plan_id = service_instance[:service_plan_id]
+        next if service_plan_id.nil?
+        service_plan = service_plan_hash[service_plan_id]
+        next if service_plan.nil?
+        service_id = service_plan[:service_id]
+        service_binding_counters[service_id] = 0 if service_binding_counters[service_id].nil?
+        service_binding_counters[service_id] += 1
       end
 
       items = []
@@ -86,6 +105,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if service_binding_counters[service[:id]]
+          row.push(service_binding_counters[service[:id]])
+        elsif service_bindings_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if service_broker
           row.push(service_broker[:name])
           row.push(service_broker[:guid])
@@ -109,7 +136,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..13).to_a, (0..13).to_a - [8, 9])
+      result(true, items, hash, (0..14).to_a, (0..14).to_a - [8, 9, 10])
     end
   end
 end

@@ -562,6 +562,14 @@ describe AdminUI::Admin do
                            'tasks_refresh_interval' => tasks_refresh_interval)
       end
 
+      it '/service_bindings_view_model succeeds' do
+        verify_disconnected_view_model_items('/service_bindings_view_model')
+      end
+
+      it '/service_bindings_view_model/:guid returns not found' do
+        verify_not_found('/service_bindings_view_model/service_binding1')
+      end
+
       it '/service_brokers_view_model succeeds' do
         verify_disconnected_view_model_items('/service_brokers_view_model')
       end
@@ -789,12 +797,20 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/settings')
       end
 
+      it '/service_bindings_view_model redirects as expected' do
+        get_redirects_as_expected('/service_bindings_view_model')
+      end
+
+      it '/service_bindings_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/service_bindings_view_model/service_binding1')
+      end
+
       it '/service_brokers_view_model redirects as expected' do
         get_redirects_as_expected('/service_brokers_view_model')
       end
 
       it '/service_brokers_view_model/:guid redirects as expected' do
-        get_redirects_as_expected('/service_brokers_view_model/service_instance1')
+        get_redirects_as_expected('/service_brokers_view_model/service_broker1')
       end
 
       it '/service_instances_view_model redirects as expected' do
@@ -927,6 +943,10 @@ describe AdminUI::Admin do
 
       it 'posts /routes_view_model redirects as expected' do
         post_redirects_as_expected('/routes_view_model')
+      end
+
+      it 'posts /service_bindings_view_model redirects as expected' do
+        post_redirects_as_expected('/service_bindings_view_model')
       end
 
       it 'posts /service_brokers_view_model redirects as expected' do

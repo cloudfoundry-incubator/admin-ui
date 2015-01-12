@@ -575,6 +575,18 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
+    context 'service_bindings_view_model' do
+      let(:path)              { '/service_bindings_view_model' }
+      let(:view_model_source) { view_models_service_bindings }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'service_bindings_view_model detail' do
+      let(:path)              { "/service_bindings_view_model/#{ cc_service_binding[:guid] }" }
+      let(:view_model_source) { view_models_service_bindings_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'service_brokers_view_model' do
       let(:path)              { '/service_brokers_view_model' }
       let(:view_model_source) { view_models_service_brokers }

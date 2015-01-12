@@ -276,7 +276,7 @@ module CCHelper
       id:                  7,
       service_instance_id: cc_service_instance[:id],
       syslog_drain_url:    nil,
-      updated_at:          nil
+      updated_at:          Time.new('2014-02-12T09:41:42-06:00')
     }
   end
 

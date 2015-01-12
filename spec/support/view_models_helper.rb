@@ -387,6 +387,53 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_service_bindings
+    [
+      [
+        cc_service_binding[:guid],
+        cc_service_binding[:created_at].to_datetime.rfc3339,
+        cc_service_binding[:updated_at].to_datetime.rfc3339,
+        cc_app[:name],
+        cc_app[:guid],
+        cc_service_instance[:name],
+        cc_service_instance[:guid],
+        cc_service_instance[:created_at].to_datetime.rfc3339,
+        cc_service_instance[:updated_at].to_datetime.rfc3339,
+        cc_service_plan[:name],
+        cc_service_plan[:guid],
+        cc_service_plan[:created_at].to_datetime.rfc3339,
+        cc_service_plan[:updated_at].to_datetime.rfc3339,
+        cc_service_plan[:active],
+        cc_service_plan[:public],
+        cc_service_plan[:free],
+        cc_service[:provider],
+        cc_service[:label],
+        cc_service[:guid],
+        cc_service[:version],
+        cc_service[:created_at].to_datetime.rfc3339,
+        cc_service[:updated_at].to_datetime.rfc3339,
+        cc_service[:active],
+        cc_service_broker[:name],
+        cc_service_broker[:guid],
+        cc_service_broker[:created_at].to_datetime.rfc3339,
+        cc_service_broker[:updated_at].to_datetime.rfc3339,
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+      ]
+    ]
+  end
+
+  def view_models_service_bindings_detail
+    { 'application'     => cc_app,
+      'organization'    => cc_organization,
+      'service'         => cc_service,
+      'serviceBinding'  => cc_service_binding,
+      'serviceBroker'   => cc_service_broker,
+      'serviceInstance' => cc_service_instance,
+      'servicePlan'     => cc_service_plan,
+      'space'           => cc_space
+    }
+  end
+
   def view_models_service_brokers
     [
       [
@@ -394,6 +441,7 @@ module ViewModelsHelper
         cc_service_broker[:guid],
         cc_service_broker[:created_at].to_datetime.rfc3339,
         cc_service_broker[:updated_at].to_datetime.rfc3339,
+        1,
         1,
         1,
         1
@@ -438,13 +486,7 @@ module ViewModelsHelper
   end
 
   def view_models_service_instances_detail
-    { 'bindingsAndApplications' =>
-      [
-        { 'application'    => cc_app,
-          'serviceBinding' => cc_service_binding
-        }
-      ],
-      'organization'    => cc_organization,
+    { 'organization'    => cc_organization,
       'service'         => cc_service,
       'serviceBroker'   => cc_service_broker,
       'serviceInstance' => cc_service_instance,
@@ -464,6 +506,7 @@ module ViewModelsHelper
         cc_service_plan[:active],
         cc_service_plan[:public],
         cc_service_plan[:free],
+        1,
         1,
         1,
         cc_service[:provider],
@@ -506,6 +549,7 @@ module ViewModelsHelper
         cc_service[:updated_at].to_datetime.rfc3339,
         cc_service[:active],
         cc_service[:bindable],
+        1,
         1,
         1,
         cc_service_broker[:name],

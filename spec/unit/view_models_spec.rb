@@ -149,6 +149,14 @@ describe AdminUI::CC do
       verify_disconnected_items(view_models.routes)
     end
 
+    it 'returns nil service_binding as expected' do
+      expect(view_models.service_binding('bogus')).to be_nil
+    end
+
+    it 'returns zero service_bindings as expected' do
+      verify_disconnected_items(view_models.service_bindings)
+    end
+
     it 'returns nil service_broker as expected' do
       expect(view_models.service_broker('bogus')).to be_nil
     end
