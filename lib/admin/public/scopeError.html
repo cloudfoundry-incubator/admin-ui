@@ -6,6 +6,7 @@
         <link rel="stylesheet" href="css/scopeError.css"/>
 
         <script src="js/app/constants.js"></script>
+        <script src="js/app/format.js"></script>
         <script src="js/external/jquery/jquery-1.9.1.js"></script>
 
         <script>
@@ -15,7 +16,7 @@
 
                 if (user)
                 {
-                    document.getElementById("user").innerHTML = "'" + user + "'";
+                    $("#user").text(Format.removeScriptInjection(user));
                 }
             });
         
