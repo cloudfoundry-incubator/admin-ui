@@ -88,6 +88,7 @@ module AdminUI
 
         row.push(service[:active])
         row.push(service[:bindable])
+        row.push(service[:plan_updateable])
 
         if service_plan_counters[service[:id]]
           row.push(service_plan_counters[service[:id]])
@@ -136,7 +137,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..14).to_a, (0..14).to_a - [8, 9, 10])
+      result(true, items, hash, (0..15).to_a, (0..15).to_a - [9, 10, 11])
     end
   end
 end

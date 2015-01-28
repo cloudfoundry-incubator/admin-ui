@@ -72,6 +72,7 @@ Sequel.migration do
       Integer :access_token_validity
       Integer :refresh_token_validity, :default=>0
       String :additional_information, :size=>4096
+      String :autoapprove, :size=>1024
       
       primary_key [:client_id]
     end
@@ -126,7 +127,7 @@ Sequel.migration do
       TrueClass :active, :default=>true
       String :phonenumber, :size=>255
       String :authorities, :default=>"uaa.user", :size=>1024
-      TrueClass :verified, :default=>false, :null=>false
+      TrueClass :verified, :default=>false
       String :origin, :default=>"uaa", :size=>36, :null=>false
       String :external_id, :size=>255
       

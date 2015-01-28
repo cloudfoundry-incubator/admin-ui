@@ -14,9 +14,32 @@ Sequel.migration do
       String :org_guid, :text=>true, :null=>false
       String :buildpack_guid, :text=>true
       String :buildpack_name, :text=>true
+      String :package_state, :text=>true
       
       index [:guid], :unique=>true
       index [:created_at], :name=>:usage_events_created_at_index
+    end
+    
+    create_table(:apps_v3, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :space_guid, :text=>true
+      String :name
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:name]
+      index [:space_guid]
+      index [:space_guid, :name], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:ar_schema_migrations, :ignore_index_errors=>true) do
+      String :version, :size=>255, :null=>false
+      
+      index [:version], :name=>:ar_unique_schema_migrations, :unique=>true
     end
     
     create_table(:billing_events, :ignore_index_errors=>true) do
@@ -85,7 +108,7 @@ Sequel.migration do
       String :queue, :text=>true
       String :cf_api_error, :text=>true
       
-      index [:priority, :run_at], :name=>:dj
+      index [:queue, :locked_at, :locked_by, :failed_at, :run_at], :name=>:delayed_jobs_reserve
       index [:created_at], :name=>:dj_created_at_index
       index [:guid], :name=>:dj_guid_index, :unique=>true
       index [:updated_at], :name=>:dj_updated_at_index
@@ -99,6 +122,7 @@ Sequel.migration do
       Integer :app_id, :null=>false
       String :droplet_hash, :text=>true, :null=>false
       String :detected_start_command, :text=>true
+      String :execution_metadata, :text=>true
       
       index [:app_id]
       index [:created_at]
@@ -133,6 +157,13 @@ Sequel.migration do
       index [:created_at], :name=>:feature_flag_created_at_index
       index [:guid], :name=>:feature_flag_guid_index, :unique=>true
       index [:updated_at], :name=>:feature_flag_updated_at_index
+      index [:name], :unique=>true
+    end
+    
+    create_table(:lockings, :ignore_index_errors=>true) do
+      primary_key :id
+      String :name, :text=>true, :null=>false
+      
       index [:name], :unique=>true
     end
     
@@ -299,6 +330,7 @@ Sequel.migration do
       String :long_description, :text=>true
       String :requires, :text=>true
       TrueClass :purging, :default=>false, :null=>false
+      TrueClass :plan_updateable, :default=>false
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -427,10 +459,15 @@ Sequel.migration do
       TrueClass :diego, :default=>false
       String :docker_image, :text=>true
       DateTime :package_updated_at
+      String :app_guid, :text=>true
+      DateTime :package_pending_since
+      String :type, :default=>"web", :text=>true
+      String :health_check_type, :default=>"port", :text=>true
       
       index [:created_at]
       index [:guid], :unique=>true
       index [:name]
+      index [:package_pending_since], :name=>:apps_pkg_pending_since_index
       index [:space_id, :name, :not_deleted], :name=>:apps_space_id_name_nd_idx, :unique=>true
       index [:updated_at]
     end

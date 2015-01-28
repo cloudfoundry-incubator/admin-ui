@@ -102,28 +102,31 @@ module CCHelper
 
   def cc_app
     {
-      buildpack:            nil,
-      created_at:           Time.new('2013-10-18 08:28:35 -0500'),
-      detected_buildpack:   'Ruby/Rack',
-      diego:                false,
-      disk_quota:           12,
-      docker_image:         'docker_image_1',
-      guid:                 'application1',
-      health_check_timeout: nil,
-      id:                   1,
-      instances:            1,
-      metadata:             '{}',
-      memory:               11,
-      name:                 'test',
+      buildpack:             nil,
+      created_at:            Time.new('2013-10-18 08:28:35 -0500'),
+      detected_buildpack:    'Ruby/Rack',
+      diego:                 false,
+      disk_quota:            12,
+      docker_image:          'docker_image_1',
+      guid:                  'application1',
+      health_check_timeout:  nil,
+      health_check_type:     'port',
+      id:                    1,
+      instances:             1,
+      metadata:              '{}',
+      memory:                11,
+      name:                  'test',
+      package_pending_since: Time.new('2013-10-18 08:28:35 -0500'),
       package_state:        'STAGED',
-      package_updated_at:   Time.new('2013-10-18 08:28:35 -0500'),
-      production:           nil,
-      space_id:             cc_space[:id],
-      stack_id:             cc_stack[:id],
-      staging_task_id:      nil,
-      state:                'STARTED',
-      updated_at:           Time.new('2013-10-20 08:28:35 -0500'),
-      version:              nil
+      package_updated_at:    Time.new('2013-10-18 08:28:35 -0500'),
+      production:            nil,
+      space_id:              cc_space[:id],
+      stack_id:              cc_stack[:id],
+      staging_task_id:       nil,
+      state:                 'STARTED',
+      type:                  'web',
+      updated_at:            Time.new('2013-10-20 08:28:35 -0500'),
+      version:               nil
     }
   end
 
@@ -254,6 +257,7 @@ module CCHelper
       info_url:          'http://info_url.com',
       label:             'TestService',
       long_description:  nil,
+      plan_updateable:   true,
       provider:          'test',
       requires:          nil,
       service_broker_id: cc_service_broker[:id],
@@ -426,6 +430,7 @@ module CCHelper
       id:           'user1',
       lastmodified: Time.new('2014-10-23T07:07:50.425Z'),
       username:     'admin',
+      verified:     true,
       version:      5
     }
   end
