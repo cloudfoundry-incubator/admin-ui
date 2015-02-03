@@ -26,7 +26,8 @@
         <script src="js/app/table.js"></script>
         <script src="js/app/stats.js"></script>
         <script src="js/app/tab.js"></script>
-        <script src="js/app/tabs/applicationsTab.js"></script>        
+        <script src="js/app/tabs/applicationsTab.js"></script>
+        <script src="js/app/tabs/clientsTab.js"></script>              
         <script src="js/app/tabs/cloudControllersTab.js"></script>        
         <script src="js/app/tabs/componentsTab.js"></script>
         <script src="js/app/tabs/deasTab.js"></script>
@@ -92,6 +93,7 @@
 	            <span id="ServiceBindings" class="menuItem">Service Bindings</span>
 	            <span id="OrganizationRoles" class="menuItem">Organization Roles</span>
 	            <span id="SpaceRoles" class="menuItem">Space Roles</span>
+	            <span id="Clients" class="menuItem">Clients</span>
 	            <span id="Users" class="menuItem">Users</span>
 	            <span id="Domains" class="menuItem">Domains</span>
 	            <span id="Quotas" class="menuItem">Quotas</span>
@@ -471,6 +473,17 @@
                 <div class="verticalPageSection">
                     <div id="SpaceRolesDetailsLabel" class="propertyLabel">Details</div>
                     <div id="SpaceRolesPropertiesContainer"></div>
+                </div>
+            </div>
+            
+            <div id="ClientsPage" class="page hiddenPage">
+                <div id="ClientsTableContainer" class="pageSection">
+                    <table id="ClientsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="ClientsDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="ClientsPropertiesContainer"></div>
                 </div>
             </div>
             

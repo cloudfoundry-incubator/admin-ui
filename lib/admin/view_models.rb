@@ -1,6 +1,7 @@
 require 'date'
 require_relative 'scheduled_thread_pool'
 require_relative 'view_models/applications_view_model'
+require_relative 'view_models/clients_view_model'
 require_relative 'view_models/cloud_controllers_view_model'
 require_relative 'view_models/components_view_model'
 require_relative 'view_models/deas_view_model'
@@ -45,7 +46,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :cloud_controllers, :components, :deas, :domains, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_plans, :spaces, :space_roles, :stats, :tasks, :users].each do |key|
+      [:applications, :clients, :cloud_controllers, :components, :deas, :domains, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_plans, :spaces, :space_roles, :stats, :tasks, :users].each do |key|
         hash = { semaphore: Mutex.new, condition: ConditionVariable.new, result: nil }
         @caches[key] = hash
         schedule(key)
@@ -124,6 +125,14 @@ module AdminUI
 
     def applications
       result_cache(:applications)
+    end
+
+    def client(id)
+      details(:clients, id)
+    end
+
+    def clients
+      result_cache(:clients)
     end
 
     def cloud_controller(name)
@@ -357,6 +366,14 @@ module AdminUI
       AdminUI::ApplicationsViewModel.new(@logger, @cc, @varz).items
     rescue => error
       @logger.debug("Error during discover_applications: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_clients
+      AdminUI::ClientsViewModel.new(@logger, @cc).items
+    rescue => error
+      @logger.debug("Error during discover_clients: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end

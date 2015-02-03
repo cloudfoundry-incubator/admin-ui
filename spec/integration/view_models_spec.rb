@@ -98,6 +98,20 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected clients_view_model' do
+      let(:results)  { view_models.clients }
+      let(:expected) { view_models_clients }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected clients_view_model detail' do
+      let(:results)  { view_models.client(uaa_client[:client_id]) }
+      let(:expected) { view_models_clients_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected cloud_controllers_view_model' do
       let(:results)  { view_models.cloud_controllers }
       let(:expected) { view_models_cloud_controllers }

@@ -404,6 +404,18 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
+    context 'clients_view_model' do
+      let(:path)              { '/clients_view_model' }
+      let(:view_model_source) { view_models_clients }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'clients_view_model detail' do
+      let(:path)              { "/clients_view_model/#{ uaa_client[:client_id] }" }
+      let(:view_model_source) { view_models_clients_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'cloud_controllers_view_model' do
       let(:path)              { '/cloud_controllers_view_model' }
       let(:view_model_source) { view_models_cloud_controllers }

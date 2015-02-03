@@ -460,6 +460,14 @@ describe AdminUI::Admin do
         verify_not_found('/applications_view_model/application1/instance')
       end
 
+      it '/clients_view_model succeeds' do
+        verify_disconnected_view_model_items('/clients_view_model')
+      end
+
+      it '/clients_view_model/:id returns not found' do
+        verify_not_found('/clients_view_model/id')
+      end
+
       it '/cloud_controllers_view_model succeeds' do
         verify_disconnected_view_model_items('/cloud_controllers_view_model')
       end
@@ -693,6 +701,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/applications_view_model/application1')
       end
 
+      it '/clients_view_model redirects as expected' do
+        get_redirects_as_expected('/clients_view_model')
+      end
+
+      it '/clients_view_model/:id redirects as expected' do
+        get_redirects_as_expected('/clients_view_model/id')
+      end
+
       it '/cloud_controllers_view_model redirects as expected' do
         get_redirects_as_expected('/cloud_controllers_view_model')
       end
@@ -891,6 +907,10 @@ describe AdminUI::Admin do
 
       it 'posts /applications_view_model redirects as expected' do
         post_redirects_as_expected('/applications_view_model')
+      end
+
+      it 'posts /clients_view_model redirects as expected' do
+        post_redirects_as_expected('/clients_view_model')
       end
 
       it 'posts /cloud_controllers_view_model redirects as expected' do

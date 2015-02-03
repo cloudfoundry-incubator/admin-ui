@@ -57,6 +57,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.apps_routes)
     end
 
+    it 'returns zero clients as expected' do
+      verify_disconnected_items(cc.clients)
+    end
+
     it 'returns zero domains as expected' do
       verify_disconnected_items(cc.domains)
     end

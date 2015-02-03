@@ -61,6 +61,18 @@ module AdminUI
       404
     end
 
+    get '/clients_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'get', '/clients_view_model'
+      AllActions.new(@logger, @view_models.clients, params).items.to_json
+    end
+
+    get '/clients_view_model/:id', auth: [:user] do
+      @logger.info_user session[:username], 'get', "/clients_view_model/#{ params[:id] }"
+      result = @view_models.client(params[:id])
+      return result.to_json if result
+      404
+    end
+
     get '/cloud_controllers_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/cloud_controllers_view_model'
       AllActions.new(@logger, @view_models.cloud_controllers, params).items.to_json
@@ -408,6 +420,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'applications.csv')
+    end
+
+    post '/clients_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'post', '/clients_view_model'
+      file = Download.download(request.body.read, 'clients', @view_models.clients)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'clients.csv')
     end
 
     post '/cloud_controllers_view_model', auth: [:user] do

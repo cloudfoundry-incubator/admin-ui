@@ -403,6 +403,21 @@ module CCHelper
     }
   end
 
+  def uaa_client_autoapprove
+    true
+  end
+
+  def uaa_client
+    {
+      additional_information:  "{\"autoapprove\":#{ uaa_client_autoapprove }}",
+      authorities:             'auth1',
+      authorized_grant_types:  'grant1',
+      client_id:               'client1',
+      scope:                   'scope1',
+      web_server_redirect_uri: 'http://redirect1'
+    }
+  end
+
   def uaa_group
     {
       created:     Time.new('2014-10-16T08:55:27.339Z'),
@@ -494,9 +509,10 @@ module CCHelper
   end
 
   def uaadb_inserts
-    [[:groups,           uaa_group],
-     [:users,            uaa_user_with_password],
-     [:group_membership, uaa_group_membership]
+    [[:groups,               uaa_group],
+     [:users,                uaa_user_with_password],
+     [:group_membership,     uaa_group_membership],
+     [:oauth_client_details, uaa_client]
     ]
   end
 

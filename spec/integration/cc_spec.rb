@@ -153,6 +153,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected clients' do
+      let(:results)  { cc.clients }
+      let(:expected) { uaa_client }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected domains' do
       let(:results)  { cc.domains }
       let(:expected) { cc_domain }

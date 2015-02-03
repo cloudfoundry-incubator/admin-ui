@@ -50,6 +50,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('ServiceBindings').displayed?).to be_true
       expect(scroll_tab_into_view('OrganizationRoles').displayed?).to be_true
       expect(scroll_tab_into_view('SpaceRoles').displayed?).to be_true
+      expect(scroll_tab_into_view('Clients').displayed?).to be_true
       expect(scroll_tab_into_view('Users').displayed?).to be_true
       expect(scroll_tab_into_view('Domains').displayed?).to be_true
       expect(scroll_tab_into_view('Quotas').displayed?).to be_true
@@ -1434,6 +1435,50 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has users link' do
             check_filter_link('SpaceRoles', 3, 'Users', uaa_user[:id])
+          end
+        end
+      end
+
+      context 'Clients' do
+        let(:tab_id) { 'Clients' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 6,
+                                labels:          ['Identifier', 'Scopes', 'Authorized Grant Types', "Redirect URI's", 'Authorities', 'Auto Approve'],
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='ClientsTable']/tbody/tr/td"),
+                           [
+                             uaa_client[:client_id],
+                             uaa_client[:scope],
+                             uaa_client[:authorized_grant_types],
+                             uaa_client[:web_server_redirect_uri],
+                             uaa_client[:authorities],
+                             uaa_client_autoapprove.to_s
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_ClientsTable_0')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ label: 'Identifier',             tag: 'div', value: uaa_client[:client_id] },
+                           { label: 'Scope',                  tag:   nil, value: uaa_client[:scope] },
+                           { label: 'Authorized Grant Type',  tag:   nil, value: uaa_client[:authorized_grant_types] },
+                           { label: 'Redirect URI',           tag:   nil, value: uaa_client[:web_server_redirect_uri] },
+                           { label: 'Authority',              tag:   nil, value: uaa_client[:authorities] },
+                           { label: 'Auto Approve',           tag:   nil, value: uaa_client_autoapprove.to_s },
+                           { label: 'Additional Information', tag:   nil, value: uaa_client[:additional_information] }
+                          ])
           end
         end
       end

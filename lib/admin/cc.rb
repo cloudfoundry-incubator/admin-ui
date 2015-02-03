@@ -36,6 +36,12 @@ module AdminUI
           table:   :apps_routes,
           columns: [:app_id, :route_id]
         },
+        clients:
+        {
+          db_uri:  uaadb_uri,
+          table:   :oauth_client_details,
+          columns: [:additional_information, :authorities, :authorized_grant_types, :client_id, :scope, :web_server_redirect_uri]
+        },
         domains:
         {
           db_uri:  ccdb_uri,
@@ -210,6 +216,10 @@ module AdminUI
 
     def apps_routes
       result_cache(:apps_routes)
+    end
+
+    def clients
+      result_cache(:clients)
     end
 
     def domains

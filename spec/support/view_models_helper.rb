@@ -44,6 +44,23 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_clients
+    [
+      [
+        uaa_client[:client_id],
+        uaa_client[:scope].split(',').sort,
+        uaa_client[:authorized_grant_types].split(',').sort,
+        uaa_client[:web_server_redirect_uri].split(',').sort,
+        uaa_client[:authorities].split(',').sort,
+        uaa_client_autoapprove
+      ]
+    ]
+  end
+
+  def view_models_clients_detail
+    uaa_client
+  end
+
   def view_models_cloud_controllers
     [
       [

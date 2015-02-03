@@ -61,6 +61,14 @@ describe AdminUI::CC do
       verify_disconnected_items(view_models.applications)
     end
 
+    it 'returns nil client as expected' do
+      expect(view_models.client('bogus')).to be_nil
+    end
+
+    it 'returns zero clients as expected' do
+      verify_disconnected_items(view_models.clients)
+    end
+
     it 'returns nil cloud_controller as expected' do
       expect(view_models.cloud_controller('bogus')).to be_nil
     end
