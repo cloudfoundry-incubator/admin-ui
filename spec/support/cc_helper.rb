@@ -103,8 +103,9 @@ module CCHelper
   def cc_app
     {
       buildpack:             nil,
+      command:               'node test.js',
       created_at:            Time.new('2013-10-18 08:28:35 -0500'),
-      detected_buildpack:    'Ruby/Rack',
+      detected_buildpack:    'Node.js',
       diego:                 false,
       disk_quota:            12,
       docker_image:          'docker_image_1',

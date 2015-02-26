@@ -36,16 +36,10 @@ Sequel.migration do
       index [:updated_at]
     end
     
-    create_table(:ar_schema_migrations, :ignore_index_errors=>true) do
-      String :version, :size=>255, :null=>false
-      
-      index [:version], :name=>:ar_unique_schema_migrations, :unique=>true
-    end
-    
     create_table(:billing_events, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       DateTime :timestamp, :null=>false
       String :kind, :text=>true, :null=>false
@@ -77,7 +71,7 @@ Sequel.migration do
     create_table(:buildpacks, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :text=>true, :null=>false
       String :key, :text=>true
@@ -95,7 +89,7 @@ Sequel.migration do
     create_table(:delayed_jobs, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       Integer :priority, :default=>0
       Integer :attempts, :default=>0
@@ -117,7 +111,7 @@ Sequel.migration do
     create_table(:droplets, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       Integer :app_id, :null=>false
       String :droplet_hash, :text=>true, :null=>false
@@ -133,7 +127,7 @@ Sequel.migration do
     create_table(:env_groups, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :text=>true, :null=>false
       String :environment_json, :text=>true
@@ -148,7 +142,7 @@ Sequel.migration do
     create_table(:feature_flags, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :text=>true, :null=>false
       TrueClass :enabled, :null=>false
@@ -167,10 +161,30 @@ Sequel.migration do
       index [:name], :unique=>true
     end
     
+    create_table(:packages, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :space_guid, :text=>true
+      String :type, :text=>true
+      String :package_hash, :text=>true
+      String :state, :text=>true, :null=>false
+      String :error, :text=>true
+      String :url, :text=>true
+      String :app_guid, :text=>true
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:space_guid]
+      index [:type]
+      index [:updated_at]
+    end
+    
     create_table(:quota_definitions, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :null=>false
       TrueClass :non_basic_services_allowed, :null=>false
@@ -195,7 +209,7 @@ Sequel.migration do
     create_table(:security_groups, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :text=>true, :null=>false
       String :rules, :size=>2048
@@ -213,7 +227,7 @@ Sequel.migration do
     create_table(:service_auth_tokens, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :label, :null=>false
       String :provider, :null=>false
@@ -229,7 +243,7 @@ Sequel.migration do
     create_table(:service_brokers, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :text=>true, :null=>false
       String :broker_url, :text=>true, :null=>false
@@ -246,7 +260,7 @@ Sequel.migration do
     
     create_table(:service_dashboard_clients, :ignore_index_errors=>true) do
       primary_key :id
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :uaa_id, :text=>true, :null=>false
       Integer :service_broker_id
@@ -280,7 +294,7 @@ Sequel.migration do
     create_table(:stacks, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :text=>true, :null=>false
       String :description, :text=>true, :null=>false
@@ -291,10 +305,30 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:v3_droplets, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :state, :text=>true, :null=>false
+      String :buildpack_guid, :text=>true
+      String :package_guid, :text=>true
+      String :droplet_hash, :text=>true
+      String :buildpack_git_url, :text=>true
+      String :failure_reason, :size=>4096
+      String :detected_start_command, :size=>4096
+      
+      index [:buildpack_guid], :name=>:bp_guid
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:package_guid]
+      index [:updated_at]
+    end
+    
     create_table(:organizations, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :null=>false
       TrueClass :billing_enabled, :default=>false, :null=>false
@@ -310,7 +344,7 @@ Sequel.migration do
     create_table(:services, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :label, :null=>false
       String :provider, :default=>"", :null=>false
@@ -343,7 +377,7 @@ Sequel.migration do
     create_table(:domains, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :null=>false
       TrueClass :wildcard, :default=>true, :null=>false
@@ -358,7 +392,7 @@ Sequel.migration do
     create_table(:service_plans, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :null=>false
       String :description, :text=>true, :null=>false
@@ -379,7 +413,7 @@ Sequel.migration do
     create_table(:space_quota_definitions, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :text=>true, :null=>false
       TrueClass :non_basic_services_allowed, :null=>false
@@ -398,7 +432,7 @@ Sequel.migration do
     create_table(:service_plan_visibilities, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :service_plan_id, :service_plans, :null=>false, :key=>[:id]
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
@@ -412,7 +446,7 @@ Sequel.migration do
     create_table(:spaces, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :null=>false
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
@@ -427,7 +461,7 @@ Sequel.migration do
     create_table(:apps, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :null=>false
       TrueClass :production, :default=>false
@@ -440,7 +474,7 @@ Sequel.migration do
       String :package_hash, :text=>true
       String :droplet_hash, :text=>true
       String :version, :text=>true
-      String :metadata, :default=>"{}", :text=>true, :null=>false
+      String :metadata, :default=>"{}", :size=>4096, :null=>false
       String :buildpack, :text=>true
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       foreign_key :stack_id, :stacks, :null=>false, :key=>[:id]
@@ -463,8 +497,10 @@ Sequel.migration do
       DateTime :package_pending_since
       String :type, :default=>"web", :text=>true
       String :health_check_type, :default=>"port", :text=>true
+      String :command, :size=>4096
       
       index [:created_at]
+      index [:diego]
       index [:guid], :unique=>true
       index [:name]
       index [:package_pending_since], :name=>:apps_pkg_pending_since_index
@@ -475,7 +511,7 @@ Sequel.migration do
     create_table(:events, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       DateTime :timestamp, :null=>false
       String :type, :text=>true, :null=>false
@@ -493,6 +529,8 @@ Sequel.migration do
       index [:actee]
       index [:created_at]
       index [:guid], :unique=>true
+      index [:organization_guid]
+      index [:space_guid]
       index [:timestamp]
       index [:type]
       index [:updated_at]
@@ -501,7 +539,7 @@ Sequel.migration do
     create_table(:routes, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :host, :default=>"", :null=>false
       foreign_key :domain_id, :domains, :null=>false, :key=>[:id]
@@ -523,9 +561,9 @@ Sequel.migration do
     create_table(:service_instances, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
-      String :name, :size=>50, :null=>false
+      String :name, :text=>true, :null=>false
       String :credentials, :text=>true
       String :gateway_name, :text=>true
       String :gateway_data, :size=>2048
@@ -547,7 +585,7 @@ Sequel.migration do
     create_table(:users, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :default_space_id, :spaces, :key=>[:id]
       TrueClass :admin, :default=>false
@@ -561,7 +599,7 @@ Sequel.migration do
     create_table(:app_events, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :app_id, :apps, :null=>false, :key=>[:id]
       String :instance_guid, :text=>true, :null=>false
@@ -614,7 +652,7 @@ Sequel.migration do
     create_table(:service_bindings, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :credentials, :text=>true, :null=>false
       String :binding_options, :text=>true
@@ -630,6 +668,23 @@ Sequel.migration do
       index [:created_at], :name=>:sb_created_at_index
       index [:guid], :name=>:sb_guid_index, :unique=>true
       index [:updated_at], :name=>:sb_updated_at_index
+    end
+    
+    create_table(:service_instance_operations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :service_instance_id, :service_instances, :key=>[:id]
+      String :type, :text=>true
+      String :state, :text=>true
+      String :description, :text=>true
+      String :proposed_changes, :default=>"{}", :text=>true, :null=>false
+      
+      index [:created_at], :name=>:svc_inst_op_created_at_index
+      index [:guid], :name=>:svc_inst_op_guid_index, :unique=>true
+      index [:updated_at], :name=>:svc_inst_op_updated_at_index
+      index [:service_instance_id], :name=>:svc_instance_id_index
     end
     
     create_table(:spaces_auditors, :ignore_index_errors=>true) do

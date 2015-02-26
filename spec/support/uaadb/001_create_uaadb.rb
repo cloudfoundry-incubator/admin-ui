@@ -127,7 +127,7 @@ Sequel.migration do
       TrueClass :active, :default=>true
       String :phonenumber, :size=>255
       String :authorities, :default=>"uaa.user", :size=>1024
-      TrueClass :verified, :default=>false
+      TrueClass :verified, :default=>false, :null=>false
       String :origin, :default=>"uaa", :size=>36, :null=>false
       String :external_id, :size=>255
       

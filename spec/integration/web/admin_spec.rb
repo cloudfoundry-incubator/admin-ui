@@ -860,6 +860,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Started',         tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp'] * 1000) })") },
                            { label: 'URI',             tag:   'a', value: "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }" },
                            { label: 'Buildpack',       tag:   nil, value: cc_app[:detected_buildpack] },
+                           { label: 'Command',         tag:   nil, value: cc_app[:command] },
                            { label: 'Instance Index',  tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'].to_s },
                            { label: 'Droplet Hash',    tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['droplet_sha1'].to_s },
                            { label: 'Services Used',   tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s },
@@ -897,15 +898,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has spaces link' do
-            check_filter_link('Applications', 18, 'Spaces', cc_space[:guid])
+            check_filter_link('Applications', 19, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Applications', 19, 'Organizations', cc_organization[:guid])
+            check_filter_link('Applications', 20, 'Organizations', cc_organization[:guid])
           end
 
           it 'has DEAs link' do
-            check_filter_link('Applications', 20, 'DEAs', nats_dea['host'])
+            check_filter_link('Applications', 21, 'DEAs', nats_dea['host'])
           end
         end
       end
