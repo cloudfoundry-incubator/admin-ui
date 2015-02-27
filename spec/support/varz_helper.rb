@@ -45,7 +45,7 @@ module VARZHelper
   def varz_cloud_controller
     {
       'cpu'          => 0.1,
-      'index'        => 0,
+      'index'        => nats_cloud_controller['index'],
       'mem'          => 2,
       'num_cores'    => 3,
       'start'        => '2013-10-21T07:00:00-05:00',
@@ -67,7 +67,7 @@ module VARZHelper
       'cpu'                    => 0.3,
       'cpu_load_avg'           => 0.4,
       'host'                   => nats_dea['host'],
-      'index'                  => 0,
+      'index'                  => nats_dea['index'],
       'mem'                    => 5,
       'num_cores'              => 6,
       'stacks'                 => ['lucid64'],
@@ -116,7 +116,7 @@ module VARZHelper
     {
       'cpu'               => 0.1,
       'crashed_instances' => 2,
-      'index'             => 0,
+      'index'             => nats_health_manager['index'],
       'mem'               => 3,
       'num_cores'         => 4,
       'running_instances' => 5,
@@ -133,7 +133,7 @@ module VARZHelper
     {
       'cpu'       => 0.1,
       'host'      => nats_provisioner['host'],
-      'index'     => 0,
+      'index'     => nats_provisioner['index'],
       'mem'       => 2,
       'num_cores' => 3,
       'start'     => '2013-10-21T07:00:00-05:00',
@@ -171,7 +171,7 @@ module VARZHelper
       'bad_requests'       => 1,
       'cpu'                => 0.2,
       'droplets'           => 3,
-      'index'              => 0,
+      'index'              => nats_router['index'],
       'mem'                => 4,
       'num_cores'          => 5,
       'requests'           => 6,

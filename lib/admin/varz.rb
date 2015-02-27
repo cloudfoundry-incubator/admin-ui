@@ -100,12 +100,10 @@ module AdminUI
       result = { 'connected' => cache['connected'], 'items' => result_item_array }
 
       cache['items'].each do |_, item|
-        data = item['data']
-        next unless data.is_a?(Hash) && data['type'].is_a?(String)
-        type_pattern_index = data['type'] =~ typePattern
+        type_pattern_index = item['type'] =~ typePattern
         next if type_pattern_index.nil?
         result_item = item.clone
-        item_name = type_pattern_index == 0 ? data['host'] : data['type'].sub(typePattern, '')
+        item_name = type_pattern_index == 0 ? item['host'] : item['type'].sub(typePattern, '')
         result_item['name'] = item_name unless item_name.nil?
         result_item_array.push(result_item)
       end
@@ -143,7 +141,7 @@ module AdminUI
     end
 
     def item_result(uri, item)
-      result = { 'uri' => uri, 'name' => item['host'] }
+      result = { 'uri' => uri, 'name' => item['host'], 'type' => item['type'], 'index' => item['index'] }
 
       begin
         response = Utils.http_request(@config, uri, 'GET', (item.nil? ? nil : item['credentials']))

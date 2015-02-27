@@ -2377,7 +2377,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            [
                              nats_cloud_controller['host'],
                              nats_cloud_controller['type'],
-                             varz_cloud_controller['index'].to_s,
+                             nats_cloud_controller['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
                              @driver.execute_script("return Format.formatString(\"#{ varz_cloud_controller['start'] }\")")
                            ])
@@ -2396,7 +2396,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             select_first_row
             check_details([{  label: 'Name',    tag: nil, value: nats_cloud_controller['host'] },
                            {  label: 'Type',    tag: nil, value: nats_cloud_controller['type'] },
-                           {  label: 'Index',   tag: nil, value: varz_cloud_controller['index'].to_s },
+                           {  label: 'Index',   tag: nil, value: nats_cloud_controller['index'].to_s },
                            {  label: 'Started', tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
                            {  label: 'URI',     tag: 'a', value: nats_cloud_controller_varz },
                            {  label: 'State',   tag: nil, value: @driver.execute_script('return Constants.STATUS__RUNNING') }

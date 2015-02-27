@@ -45,31 +45,41 @@ describe AdminUI::VARZ, type: :integration do
       expect(items).to include('connected' => false,
                                'data'      => nats_cloud_controller,
                                # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'index'     => nats_cloud_controller['index'],
                                'name'      => nats_cloud_controller['host'],
+                               'type'      => nats_cloud_controller['type'],
                                'uri'       => nats_cloud_controller_varz)
 
       expect(items).to include('connected' => false,
                                'data'      => nats_dea,
                                # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'index'     => nats_dea['index'],
                                'name'      => nats_dea['host'],
+                               'type'      => nats_dea['type'],
                                'uri'       => nats_dea_varz)
 
       expect(items).to include('connected' => false,
                                'data'      => nats_health_manager,
                                # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'index'     => nats_health_manager['index'],
                                'name'      => nats_health_manager['host'],
+                               'type'      => nats_health_manager['type'],
                                'uri'       => nats_health_manager_varz)
 
       expect(items).to include('connected' => false,
                                'data'      => nats_router,
                                # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'index'     => nats_router['index'],
                                'name'      => nats_router['host'],
+                               'type'      => nats_router['type'],
                                'uri'       => nats_router_varz)
 
       expect(items).to include('connected' => false,
                                'data'      => nats_provisioner,
                                # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'index'     => nats_provisioner['index'],
                                'name'      => nats_provisioner['host'],
+                               'type'      => nats_provisioner['type'],
                                'uri'       => nats_provisioner_varz)
     end
 
@@ -84,7 +94,9 @@ describe AdminUI::VARZ, type: :integration do
       expect(items).to include('connected' => false,
                                'data'      => nats_cloud_controller,
                                # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'index'     => nats_cloud_controller['index'],
                                'name'      => nats_cloud_controller['host'],
+                               'type'      => nats_cloud_controller['type'],
                                'uri'       => nats_cloud_controller_varz)
     end
 
@@ -99,7 +111,9 @@ describe AdminUI::VARZ, type: :integration do
       expect(items).to include('connected' => false,
                                'data'      => nats_dea,
                                # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'index'     => nats_dea['index'],
                                'name'      => nats_dea['host'],
+                               'type'      => nats_dea['type'],
                                'uri'       => nats_dea_varz)
     end
 
@@ -118,7 +132,9 @@ describe AdminUI::VARZ, type: :integration do
       expect(items).to include('connected' => false,
                                'data'      => nats_health_manager,
                                # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'index'     => nats_health_manager['index'],
                                'name'      => nats_health_manager['host'],
+                               'type'      => nats_health_manager['type'],
                                'uri'       => nats_health_manager_varz)
     end
 
@@ -133,7 +149,9 @@ describe AdminUI::VARZ, type: :integration do
       expect(items).to include('connected' => false,
                                'data'      => nats_provisioner,
                                # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'index'     => nats_provisioner['index'],
                                'name'      => nats_provisioner['type'].sub('-Provisioner', ''),
+                               'type'      => nats_provisioner['type'],
                                'uri'       => nats_provisioner_varz)
     end
 
@@ -148,7 +166,9 @@ describe AdminUI::VARZ, type: :integration do
       expect(items).to include('connected' => false,
                                'data'      => nats_router,
                                # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
+                               'index'     => nats_router['index'],
                                'name'      => nats_router['host'],
+                               'type'      => nats_router['type'],
                                'uri'       => nats_router_varz)
     end
   end
@@ -168,27 +188,37 @@ describe AdminUI::VARZ, type: :integration do
 
       expect(items).to include('connected' => true,
                                'data'      => varz_cloud_controller,
+                               'index'     => nats_cloud_controller['index'],
                                'name'      => nats_cloud_controller['host'],
+                               'type'      => nats_cloud_controller['type'],
                                'uri'       => nats_cloud_controller_varz)
 
       expect(items).to include('connected' => true,
                                'data'      => varz_dea,
+                               'index'     => nats_dea['index'],
                                'name'      => nats_dea['host'],
+                               'type'      => nats_dea['type'],
                                'uri'       => nats_dea_varz)
 
       expect(items).to include('connected' => true,
                                'data'      => varz_health_manager,
+                               'index'     => nats_health_manager['index'],
                                'name'      => nats_health_manager['host'],
+                               'type'      => nats_health_manager['type'],
                                'uri'       => nats_health_manager_varz)
 
       expect(items).to include('connected' => true,
                                'data'      => varz_router,
+                               'index'     => nats_router['index'],
                                'name'      => nats_router['host'],
+                               'type'      => nats_router['type'],
                                'uri'       => nats_router_varz)
 
       expect(items).to include('connected' => true,
                                'data'      => varz_provisioner,
+                               'index'     => nats_provisioner['index'],
                                'name'      => nats_provisioner['host'],
+                               'type'      => nats_provisioner['type'],
                                'uri'       => nats_provisioner_varz)
     end
 
@@ -202,7 +232,9 @@ describe AdminUI::VARZ, type: :integration do
 
       expect(items).to include('connected' => true,
                                'data'      => varz_cloud_controller,
+                               'index'     => nats_cloud_controller['index'],
                                'name'      => nats_cloud_controller['host'],
+                               'type'      => nats_cloud_controller['type'],
                                'uri'       => nats_cloud_controller_varz)
     end
 
@@ -216,7 +248,9 @@ describe AdminUI::VARZ, type: :integration do
 
       expect(items).to include('connected' => true,
                                'data'      => varz_dea,
+                               'index'     => nats_dea['index'],
                                'name'      => nats_dea['host'],
+                               'type'      => nats_dea['type'],
                                'uri'       => nats_dea_varz)
     end
 
@@ -234,7 +268,9 @@ describe AdminUI::VARZ, type: :integration do
 
       expect(items).to include('connected' => true,
                                'data'      => varz_health_manager,
+                               'index'     => nats_health_manager['index'],
                                'name'      => nats_health_manager['host'],
+                               'type'      => nats_health_manager['type'],
                                'uri'       => nats_health_manager_varz)
     end
 
@@ -248,7 +284,9 @@ describe AdminUI::VARZ, type: :integration do
 
       expect(items).to include('connected' => true,
                                'data'      => varz_provisioner,
+                               'index'     => nats_provisioner['index'],
                                'name'      => nats_provisioner['type'].sub('-Provisioner', ''),
+                               'type'      => nats_provisioner['type'],
                                'uri'       => nats_provisioner_varz)
     end
 
@@ -262,7 +300,9 @@ describe AdminUI::VARZ, type: :integration do
 
       expect(items).to include('connected' => true,
                                'data'      => varz_router,
+                               'index'     => nats_router['index'],
                                'name'      => nats_router['host'],
+                               'type'      => nats_router['type'],
                                'uri'       => nats_router_varz)
     end
   end

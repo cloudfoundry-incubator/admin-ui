@@ -25,11 +25,11 @@ module AdminUI
 
         row.push(component['name'])
 
-        data = component['data']
-
-        row.push(data['type'])
-        row.push(data['index'])
+        row.push(component['type'])
+        row.push(component['index'])
         row.push(component['connected'] ? 'RUNNING' : 'OFFLINE')
+
+        data = component['data']
 
         if data['start']
           row.push(DateTime.parse(data['start']).rfc3339)

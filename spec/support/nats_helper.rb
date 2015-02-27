@@ -22,46 +22,51 @@ module NATSHelper
 
   def nats_cloud_controller
     {
+      'credentials' => %w(cc_user cc_password),
       'host'        => 'CloudControllerHost',
+      'index'       => 0,
       'name'        => 'CloudControllerName',
-      'type'        => 'CloudController',
-      'credentials' => %w(cc_user cc_password)
+      'type'        => 'CloudController'
     }
   end
 
   def nats_dea
     {
+      'credentials' => %w(dea_user dea_password),
       'host'        => 'DEAHost',
+      'index'       => 0,
       'name'        => 'DEAName',
-      'type'        => 'DEA',
-      'credentials' => %w(dea_user dea_password)
+      'type'        => 'DEA'
     }
   end
 
   def nats_health_manager
     {
+      'credentials' => %w(hm_user hm_password),
       'host'        => 'HealthManagerHost',
+      'index'       => 0,
       'name'        => 'HealthManagerName',
-      'type'        => 'HealthManager',
-      'credentials' => %w(hm_user hm_password)
+      'type'        => 'HealthManager'
     }
   end
 
   def nats_provisioner
     {
+      'credentials' => %w(provisioner_user provisioner_password),
       'host'        => 'Test-ProvisionerHost',
+      'index'       => 0,
       'name'        => 'Test-ProvisionerName',
-      'type'        => 'Test-Provisioner',
-      'credentials' => %w(provisioner_user provisioner_password)
+      'type'        => 'Test-Provisioner'
     }
   end
 
   def nats_router
     {
+      'credentials' => %w(router_user router_password),
       'host'        => 'RouterHost',
+      'index'       => 0,
       'name'        => 'RouterName',
-      'type'        => 'Router',
-      'credentials' => %w(router_user router_password)
+      'type'        => 'Router'
     }
   end
 
