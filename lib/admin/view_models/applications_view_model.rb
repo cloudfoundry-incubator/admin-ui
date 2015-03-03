@@ -102,7 +102,7 @@ module AdminUI
       deas['items'].each do |dea|
         next unless dea['connected']
         data = dea['data']
-        host = data['host']
+        host = dea['name']
         data['instance_registry'].each_value do |application|
           application.each_value do |instance|
             Thread.pass

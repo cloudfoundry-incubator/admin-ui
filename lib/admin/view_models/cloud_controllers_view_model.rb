@@ -24,11 +24,11 @@ module AdminUI
         row = []
 
         row.push(cloud_controller['name'])
+        row.push(cloud_controller['index'])
 
         data = cloud_controller['data']
 
         if cloud_controller['connected']
-          row.push(data['index'])
           row.push('RUNNING')
           row.push(DateTime.parse(data['start']).rfc3339)
           row.push(data['num_cores'])
@@ -45,7 +45,6 @@ module AdminUI
 
           hash[cloud_controller['name']] = cloud_controller
         else
-          row.push(nil)
           row.push('OFFLINE')
 
           if data['start']

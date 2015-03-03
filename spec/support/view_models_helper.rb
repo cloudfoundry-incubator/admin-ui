@@ -65,7 +65,7 @@ module ViewModelsHelper
     [
       [
         nats_cloud_controller['host'],
-        varz_cloud_controller['index'],
+        nats_cloud_controller['index'],
         'RUNNING',
         DateTime.parse(varz_cloud_controller['start']).rfc3339,
         varz_cloud_controller['num_cores'],
@@ -134,7 +134,7 @@ module ViewModelsHelper
     [
       [
         nats_dea['host'],
-        varz_dea['index'],
+        nats_dea['index'],
         'RUNNING',
         DateTime.parse(varz_dea['start']).rfc3339,
         varz_dea['stacks'],
@@ -185,7 +185,7 @@ module ViewModelsHelper
     [
       [
         nats_provisioner['type'].sub('-Provisioner', ''),
-        varz_provisioner['index'],
+        nats_provisioner['index'],
         'RUNNING',
         DateTime.parse(varz_provisioner['start']).rfc3339,
         varz_provisioner['config']['service']['description'],
@@ -211,7 +211,7 @@ module ViewModelsHelper
     [
       [
         nats_health_manager['host'],
-        varz_health_manager['index'],
+        nats_health_manager['index'],
         'RUNNING',
         DateTime.parse(varz_health_manager['start']).rfc3339,
         varz_health_manager['num_cores'],
@@ -357,7 +357,7 @@ module ViewModelsHelper
     [
       [
         nats_router['host'],
-        varz_router['index'],
+        nats_router['index'],
         'RUNNING',
         DateTime.parse(varz_router['start']).rfc3339,
         varz_router['num_cores'],

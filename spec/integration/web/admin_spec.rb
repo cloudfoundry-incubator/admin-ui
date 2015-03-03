@@ -2050,8 +2050,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='DEAsTable']/tbody/tr/td"),
                            [
-                             varz_dea['host'],
-                             varz_dea['index'].to_s,
+                             nats_dea['host'],
+                             nats_dea['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
                              @driver.execute_script("return Format.formatString(\"#{ varz_dea['start'] }\")"),
                              varz_dea['stacks'][0],
@@ -2081,10 +2081,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            check_details([{ label: 'Name',                  tag: nil, value: varz_dea['host'] },
-                           { label: 'Index',                 tag: nil, value: varz_dea['index'].to_s },
+            check_details([{ label: 'Name',                  tag: nil, value: nats_dea['host'] },
+                           { label: 'Index',                 tag: nil, value: nats_dea['index'].to_s },
                            { label: 'URI',                   tag: 'a', value: nats_dea_varz },
-                           { label: 'Host',                  tag: nil, value: varz_dea['host'] },
                            { label: 'Started',               tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")") },
                            { label: 'Uptime',                tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_dea['uptime'] }\")") },
                            { label: 'Stack',                 tag: nil, value: varz_dea['stacks'][0] },
@@ -2103,7 +2102,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has applications link' do
-            check_filter_link('DEAs', 7, 'Applications', varz_dea['host'])
+            check_filter_link('DEAs', 6, 'Applications', nats_dea['host'])
           end
         end
       end
@@ -2122,7 +2121,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='CloudControllersTable']/tbody/tr/td"),
                            [
                              nats_cloud_controller['host'],
-                             varz_cloud_controller['index'].to_s,
+                             nats_cloud_controller['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
                              @driver.execute_script("return Format.formatString(\"#{ varz_cloud_controller['start'] }\")"),
                              varz_cloud_controller['num_cores'].to_s,
@@ -2139,7 +2138,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             select_first_row
             check_details([{ label: 'Name',             tag: nil, value: nats_cloud_controller['host'] },
-                           { label: 'Index',            tag: nil, value: varz_cloud_controller['index'].to_s },
+                           { label: 'Index',            tag: nil, value: nats_cloud_controller['index'].to_s },
                            { label: 'URI',              tag: 'a', value: nats_cloud_controller_varz },
                            { label: 'Started',          tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
                            { label: 'Uptime',           tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_cloud_controller['uptime'] }\")") },
@@ -2167,7 +2166,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='HealthManagersTable']/tbody/tr/td"),
                            [
                              nats_health_manager['host'],
-                             varz_health_manager['index'].to_s,
+                             nats_health_manager['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
                              @driver.execute_script("return Format.formatString(\"#{ varz_health_manager['start'] }\")"),
                              varz_health_manager['num_cores'].to_s,
@@ -2187,7 +2186,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             select_first_row
             check_details([{ label: 'Name',              tag: nil, value: nats_health_manager['host'] },
-                           { label: 'Index',             tag: nil, value: varz_health_manager['index'].to_s },
+                           { label: 'Index',             tag: nil, value: nats_health_manager['index'].to_s },
                            { label: 'URI',               tag: 'a', value: nats_health_manager_varz },
                            { label: 'Started',           tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_health_manager['start'] }\")") },
                            { label: 'Uptime',            tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_health_manager['uptime'] }\")") },
@@ -2227,7 +2226,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='GatewaysTable']/tbody/tr/td"),
                            [
                              nats_provisioner['type'][0..-13],
-                             varz_provisioner['index'].to_s,
+                             nats_provisioner['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
                              @driver.execute_script("return Format.formatString(\"#{ varz_provisioner['start'] }\")"),
                              varz_provisioner['config']['service'][:description],
@@ -2249,7 +2248,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([{ label: 'Name',               tag: nil, value: nats_provisioner['type'][0..-13] },
-                           { label: 'Index',              tag: nil, value: varz_provisioner['index'].to_s },
+                           { label: 'Index',              tag: nil, value: nats_provisioner['index'].to_s },
                            { label: 'URI',                tag: nil, value: nats_provisioner_varz },
                            { label: 'Supported Versions', tag: nil, value: varz_provisioner['config']['service']['supported_versions'][0] },
                            { label: 'Description',        tag: nil, value: varz_provisioner['config']['service']['description'] },
@@ -2297,7 +2296,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='RoutersTable']/tbody/tr/td"),
                            [
                              nats_router['host'],
-                             varz_router['index'].to_s,
+                             nats_router['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
                              @driver.execute_script("return Format.formatString(\"#{ varz_router['start'] }\")"),
                              varz_router['num_cores'].to_s,
@@ -2320,7 +2319,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([{ label: 'Name',          tag: nil, value: nats_router['host'] },
-                           { label: 'Index',         tag: nil, value: varz_router['index'].to_s },
+                           { label: 'Index',         tag: nil, value: nats_router['index'].to_s },
                            { label: 'URI',           tag: 'a', value: nats_router_varz },
                            { label: 'Started',       tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_router['start'] }\")") },
                            { label: 'Uptime',        tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_router['uptime'] }\")") },

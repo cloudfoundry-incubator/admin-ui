@@ -33,11 +33,11 @@ module AdminUI
         row = []
 
         row.push(router['name'])
+        row.push(router['index'])
 
         data = router['data']
 
         if router['connected']
-          row.push(data['index'])
           row.push('RUNNING')
           row.push(DateTime.parse(data['start']).rfc3339)
           row.push(data['num_cores'])
@@ -79,7 +79,6 @@ module AdminUI
             'top10Apps' => top10_app_rows
           }
         else
-          row.push(nil)
           row.push('OFFLINE')
 
           if data['start']

@@ -24,11 +24,11 @@ module AdminUI
         row = []
 
         row.push(health_manager['name'])
+        row.push(health_manager['index'])
 
         data = health_manager['data']
 
         if health_manager['connected']
-          row.push(data['index'])
           row.push('RUNNING')
           row.push(DateTime.parse(data['start']).rfc3339)
           row.push(data['num_cores'])
@@ -48,7 +48,6 @@ module AdminUI
           row.push(data['total_instances'])
           hash[health_manager['name']] = health_manager
         else
-          row.push(nil)
           row.push('OFFLINE')
 
           if data['start']

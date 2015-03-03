@@ -24,11 +24,11 @@ module AdminUI
         row = []
 
         row.push(gateway['name'])
+        row.push(gateway['index'])
 
         data = gateway['data']
 
         if gateway['connected']
-          row.push(data['index'])
           row.push('RUNNING')
           row.push(DateTime.parse(data['start']).rfc3339)
           row.push(data['config']['service']['description'])
@@ -57,7 +57,6 @@ module AdminUI
 
           hash[gateway['name']] = gateway
         else
-          row.push(nil)
           row.push('OFFLINE')
 
           if data['start']

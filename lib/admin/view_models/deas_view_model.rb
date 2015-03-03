@@ -24,11 +24,11 @@ module AdminUI
         row = []
 
         row.push(dea['name'])
+        row.push(dea['index'])
 
         data = dea['data']
 
         if dea['connected']
-          row.push(data['index'])
           row.push('RUNNING')
           row.push(DateTime.parse(data['start']).rfc3339)
           row.push(data['stacks'])
@@ -75,7 +75,6 @@ module AdminUI
 
           hash[dea['name']] = dea
         else
-          row.push(nil)
           row.push('OFFLINE')
 
           if data['start']
