@@ -53,7 +53,7 @@ describe AdminUI::Admin, type: :integration do
     File.readlines(log_file).each do |line|
       line.chomp!
       next unless line =~ /\[ admin \] : \[ /
-      operations_msgs.each do | op_msg |
+      operations_msgs.each do |op_msg|
         op  = op_msg[0]
         msg = op_msg[1]
         esmsg = msg

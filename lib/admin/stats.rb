@@ -15,7 +15,7 @@ module AdminUI
       @persistence     = AdminUI::StatsDBStore.new(config, logger)
 
       @data_collection_schedulers = []
-      @config.stats_refresh_schedules.each do | spec |
+      @config.stats_refresh_schedules.each do |spec|
         begin
           cron_parser = CronParser.new(spec)
           @data_collection_schedulers.push(cron_parser)
@@ -48,7 +48,7 @@ module AdminUI
 
       begin
         items = @persistence.retrieve
-        items.each do| item |
+        items.each do |item|
           item[:timestamp] = item[:timestamp].to_i
         end
         @logger.debug("AdminUI::Stats.stats: Retrieved #{ items.length } records.")
@@ -83,7 +83,7 @@ module AdminUI
       return -1 if @config.stats_refresh_schedules.length == 0
       target_time = Time.now
       init_time = target_time
-      @data_collection_schedulers.each do | scheduler |
+      @data_collection_schedulers.each do |scheduler|
         begin
           refresh_time = scheduler.next(init_time)
           if target_time == init_time || target_time > refresh_time

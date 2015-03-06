@@ -27,7 +27,9 @@ Sequel.migration do
       DateTime :updated_at
       String :space_guid, :text=>true
       String :name
+      String :desired_droplet_guid, :text=>true
       
+      index [:desired_droplet_guid], :name=>:apps_desired_droplet_guid
       index [:created_at]
       index [:guid], :unique=>true
       index [:name]
@@ -166,7 +168,6 @@ Sequel.migration do
       String :guid, :text=>true, :null=>false
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
-      String :space_guid, :text=>true
       String :type, :text=>true
       String :package_hash, :text=>true
       String :state, :text=>true, :null=>false
@@ -176,7 +177,6 @@ Sequel.migration do
       
       index [:created_at]
       index [:guid], :unique=>true
-      index [:space_guid]
       index [:type]
       index [:updated_at]
     end
@@ -315,10 +315,12 @@ Sequel.migration do
       String :package_guid, :text=>true
       String :droplet_hash, :text=>true
       String :buildpack_git_url, :text=>true
+      String :app_guid, :text=>true
       String :failure_reason, :size=>4096
       String :detected_start_command, :size=>4096
       
       index [:buildpack_guid], :name=>:bp_guid
+      index [:app_guid]
       index [:created_at]
       index [:guid], :unique=>true
       index [:package_guid]
@@ -429,6 +431,13 @@ Sequel.migration do
       index [:updated_at], :name=>:sqd_updated_at_index
     end
     
+    create_table(:organizations_private_domains, :ignore_index_errors=>true) do
+      foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
+      foreign_key :private_domain_id, :domains, :null=>false, :key=>[:id]
+      
+      index [:organization_id, :private_domain_id], :name=>:orgs_pd_ids, :unique=>true
+    end
+    
     create_table(:service_plan_visibilities, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -480,7 +489,6 @@ Sequel.migration do
       foreign_key :stack_id, :stacks, :null=>false, :key=>[:id]
       String :detected_buildpack, :text=>true
       String :staging_task_id, :text=>true
-      TrueClass :kill_after_multiple_restarts, :default=>false
       DateTime :deleted_at
       TrueClass :not_deleted, :default=>true
       String :salt, :text=>true

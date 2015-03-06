@@ -87,7 +87,7 @@ module AdminUI
           optional(:varz_discovery_interval) => Integer
         }
         unless schema[:stats_refresh_schedules].nil?
-          schema[:stats_refresh_schedules].each do | spec |
+          schema[:stats_refresh_schedules].each do |spec|
             begin
               CronParser.new(spec)
             rescue => error

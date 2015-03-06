@@ -107,7 +107,7 @@ describe AdminUI::DBStoreMigration do
       expect(File.file?(db_file)).to be_true
       expect(File.file?(backup_stats_file)).to be_true
       db_conn = db_connection
-      db_conn.fetch('select count(*) as rows from stats') do | row |
+      db_conn.fetch('select count(*) as rows from stats') do |row|
         expect(row[:rows].to_i).to eq(2)
       end
       stop_admin_daemon
@@ -120,11 +120,11 @@ describe AdminUI::DBStoreMigration do
       FileUtils.cp "#{ db_migration_spec_dir }/#{ db_migration_1 }", db_migration_dir
       launch_admin_daemon(config)
       db_conn = db_connection
-      db_conn.fetch('select tbl_name from sqlite_master where sql like :pattern', pattern: 'CREATE TABLE%extra_column%') do | row |
+      db_conn.fetch('select tbl_name from sqlite_master where sql like :pattern', pattern: 'CREATE TABLE%extra_column%') do |row|
         expect(row[:tbl_name]).to eq('stats')
       end
       i = 0
-      db_conn.fetch('select filename from schema_migrations') do | row |
+      db_conn.fetch('select filename from schema_migrations') do |row|
         expect(row[:filename]).to eq(plans[i])
         i += 1
       end
@@ -140,7 +140,7 @@ describe AdminUI::DBStoreMigration do
       FileUtils.cp "#{ db_migration_spec_dir }/#{ db_migration_1 }", db_migration_dir
       migrate_database
       db_conn = db_connection
-      db_conn.fetch('select tbl_name from sqlite_master where sql like :pattern', pattern: 'CREATE TABLE%extra_column%') do | row |
+      db_conn.fetch('select tbl_name from sqlite_master where sql like :pattern', pattern: 'CREATE TABLE%extra_column%') do |row|
         expect(row[:tbl_name]).to eq('stats')
       end
       stop_admin_daemon

@@ -120,7 +120,7 @@ describe AdminUI::Admin do
 
       response = http.request(request)
       if secured_client_connection
-        cookie = { 'cookie' => response.to_hash['set-cookie'].map { |ea|ea[/^.*?;/] }.join }
+        cookie = { 'cookie' => response.to_hash['set-cookie'].map { |ea| ea[/^.*?;/] }.join }
       else
         cookie = response['Set-Cookie'] unless response['Set-Cookie'].nil?
       end

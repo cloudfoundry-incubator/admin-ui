@@ -31,7 +31,7 @@ module AdminUI
       db_conn.transaction do
         db_conn.run('DELETE from stats')
         @logger.debug('AdminUI::DBStoreMigration.store: finish delete_sql')
-        records.each do | record |
+        records.each do |record|
           items = db_conn[:stats]
           items.insert(apps:              record['apps'],
                        deas:              record['deas'],
