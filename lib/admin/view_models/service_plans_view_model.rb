@@ -88,6 +88,7 @@ module AdminUI
         row.push(service_plan[:guid])
         row.push(service_plan[:name])
         row.push(service_plan[:guid])
+        row.push(service_plan[:unique_id])
         row.push(service_plan[:created_at].to_datetime.rfc3339)
 
         if service_plan[:updated_at]
@@ -130,6 +131,7 @@ module AdminUI
           row.push(service[:provider])
           row.push(service[:label])
           row.push(service[:guid])
+          row.push(service[:unique_id])
           row.push(service[:version])
           row.push(service[:created_at].to_datetime.rfc3339)
 
@@ -142,7 +144,7 @@ module AdminUI
           row.push(service[:active])
           row.push(service[:bindable])
         else
-          row.push(nil, nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil)
         end
 
         if service_broker
@@ -170,7 +172,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..22).to_a, (1..22).to_a - [8, 9, 10])
+      result(true, items, hash, (1..24).to_a, (1..24).to_a - [9, 10, 11])
     end
   end
 end

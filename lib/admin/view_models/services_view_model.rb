@@ -77,6 +77,7 @@ module AdminUI
         row.push(service[:provider])
         row.push(service[:label])
         row.push(service[:guid])
+        row.push(service[:unique_id])
         row.push(service[:version])
         row.push(service[:created_at].to_datetime.rfc3339)
 
@@ -137,7 +138,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..15).to_a, (0..15).to_a - [9, 10, 11])
+      result(true, items, hash, (0..16).to_a, (0..16).to_a - [10, 11, 12])
     end
   end
 end
