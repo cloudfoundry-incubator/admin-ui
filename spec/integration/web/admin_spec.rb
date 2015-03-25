@@ -1572,8 +1572,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='DomainsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                expected_length: 6,
-                                labels:          ['Name', 'GUID', 'Created', 'Updated', 'Owning Organization', 'Routes'],
+                                expected_length: 7,
+                                labels:          ['Name', 'GUID', 'Created', 'Updated', 'Owning Organization', 'Private Shared Organizations', 'Routes'],
                                 colspans:        nil
                               }
                              ])
@@ -1585,6 +1585,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatString(\"#{ cc_domain[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_domain[:updated_at].to_datetime.rfc3339 }\")"),
                              cc_organization[:name],
+                             '1',
                              '1'
                            ])
         end
@@ -1599,13 +1600,32 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            check_details([{ label: 'Name',         tag: 'div', value: cc_domain[:name] },
-                           { label: 'GUID',         tag:   nil, value: cc_domain[:guid] },
-                           { label: 'Created',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Updated',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Organization', tag:   'a', value: cc_organization[:name] },
-                           { label: 'Routes',       tag:   'a', value: '1' }
+            check_details([{ label: 'Name',                tag: 'div', value: cc_domain[:name] },
+                           { label: 'GUID',                tag:   nil, value: cc_domain[:guid] },
+                           { label: 'Created',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Updated',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Owning Organization', tag:   'a', value: cc_organization[:name] },
+                           { label: 'Routes',              tag:   'a', value: '1' }
                           ])
+          end
+
+          it 'has private shared organizations' do
+            expect(@driver.find_element(id: 'DomainsOrganizationsDetailsLabel').displayed?).to be_true
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='DomainsOrganizationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+                                expected_length: 2,
+                                labels:          %w(Organization GUID),
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='DomainsOrganizationsTable']/tbody/tr/td"),
+                             [
+                               cc_organization[:name],
+                               cc_organization[:guid]
+                             ])
+          end
+
+          it 'private shared organizations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('ToolTables_DomainsOrganizationsTable_0')
           end
 
           it 'has organizations link' do

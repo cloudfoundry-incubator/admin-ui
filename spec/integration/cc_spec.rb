@@ -213,6 +213,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected organizations_private_domains' do
+      let(:results)  { cc.organizations_private_domains }
+      let(:expected) { cc_organization_private_domain }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected organizations_users' do
       let(:results)  { cc.organizations_users }
       let(:expected) { cc_organization_user }

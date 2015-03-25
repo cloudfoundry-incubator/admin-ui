@@ -84,6 +84,12 @@ module AdminUI
           table:   :organizations_managers,
           columns: [:organization_id, :user_id]
         },
+        organizations_private_domains:
+        {
+          db_uri:  ccdb_uri,
+          table:   :organizations_private_domains,
+          columns: [:organization_id, :private_domain_id]
+        },
         organizations_users:
         {
           db_uri:  ccdb_uri,
@@ -177,7 +183,7 @@ module AdminUI
       }
 
       @caches.each_pair do |key, cache|
-        cache.merge!(semaphore: Mutex.new, condition: ConditionVariable.new, result: nil, select: nil)
+        cache.merge!(semaphore: Mutex.new, condition: ConditionVariable.new, exists: nil, result: nil, select: nil)
         schedule(key)
       end
     end
@@ -298,6 +304,10 @@ module AdminUI
 
     def organizations_managers
       result_cache(:organizations_managers)
+    end
+
+    def organizations_private_domains
+      result_cache(:organizations_private_domains)
     end
 
     def organizations_users
@@ -436,27 +446,45 @@ module AdminUI
     end
 
     def select(key, cache)
-      items = []
-      Sequel.connect(cache[:db_uri], single_threaded: false, max_connections: @max_connections) do |connection|
-        if cache[:select].nil?
-          # Determine the columns the current level of database supports
-          table          = cache[:table]
-          columns        = cache[:columns]
-          db_columns     = connection[table].columns
-          db_columns     = db_columns.map(&:downcase)
-          cache[:select] = connection[table].select(columns & db_columns).sql
-          # TODO: If the sql has parenthesis around the select clause, you get an array of values instead of a hash
-          cache[:select] = cache[:select].sub('(', '').sub(')', '')
+      # If the table exists or we have not yet determined if the table exists
+      exists = cache[:exists]
+      if exists || exists.nil?
+        Sequel.connect(cache[:db_uri], single_threaded: false, max_connections: @max_connections) do |connection|
+          # If we have not yet determined if the table exists
+          if exists.nil?
+            table = cache[:table]
+            # Determine if the table exists
+            exists = connection.table_exists?(table)
+            cache[:exists] = exists
+            if exists
+              # Determine the columns the current level of database supports
+              columns        = cache[:columns]
+              db_columns     = connection[table].columns
+              # Downcase needed on column names to get around case sensitivity in MySQL
+              db_columns     = db_columns.map(&:downcase)
+              cache[:select] = connection[table].select(columns & db_columns).sql
+              # TODO: If the sql has parenthesis around the select clause, you get an array of values instead of a hash
+              cache[:select] = cache[:select].sub('(', '').sub(')', '')
 
-          @logger.debug("Columns removed for key #{ key }, table #{ table }: #{ columns - db_columns }")
-        end
+              @logger.debug("Columns removed for key #{ key }, table #{ table }: #{ columns - db_columns }")
+            else
+              @logger.debug("Table #{ table } does not exist")
+            end
+          end
 
-        connection.fetch(cache[:select]) do |row|
-          Thread.pass
-          items.push(row)
+          # If the table exists
+          if exists
+            items = []
+            connection.fetch(cache[:select]) do |row|
+              Thread.pass
+              items.push(row)
+            end
+            return result(items)
+          end
         end
       end
-      result(items)
+
+      result
     rescue => error
       @logger.debug("Error during discovery of #{ key }: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))

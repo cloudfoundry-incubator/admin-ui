@@ -169,6 +169,7 @@ module ViewModelsHelper
         cc_domain[:created_at].to_datetime.rfc3339,
         cc_domain[:updated_at].to_datetime.rfc3339,
         cc_organization[:name],
+        1,
         1
       ]
     ]
@@ -176,8 +177,9 @@ module ViewModelsHelper
 
   def view_models_domains_detail
     {
-      'domain'       => cc_domain,
-      'organization' => cc_organization
+      'domain'                       => cc_domain,
+      'owning_organization'          => cc_organization,
+      'private_shared_organizations' => [cc_organization]
     }
   end
 

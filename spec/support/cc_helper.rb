@@ -73,6 +73,7 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM spaces_developers')
     sql(config.ccdb_uri, 'DELETE FROM spaces_managers')
     sql(config.ccdb_uri, 'DELETE FROM spaces')
+    sql(config.ccdb_uri, 'DELETE FROM organizations_private_domains')
     sql(config.ccdb_uri, 'DELETE FROM domains')
     sql(config.ccdb_uri, 'DELETE FROM organizations_auditors')
     sql(config.ccdb_uri, 'DELETE FROM organizations_billing_managers')
@@ -193,6 +194,13 @@ module CCHelper
     {
       organization_id: cc_organization[:id],
       user_id:         cc_user[:id]
+    }
+  end
+
+  def cc_organization_private_domain
+    {
+      organization_id:   cc_organization[:id],
+      private_domain_id: cc_domain[:id]
     }
   end
 
@@ -499,6 +507,7 @@ module CCHelper
               [:organizations_auditors,         cc_organization_auditor],
               [:organizations_billing_managers, cc_organization_billing_manager],
               [:organizations_managers,         cc_organization_manager],
+              [:organizations_private_domains,  cc_organization_private_domain],
               [:organizations_users,            cc_organization_user],
               [:spaces_auditors,                cc_space_auditor],
               [:spaces_developers,              cc_space_developer],

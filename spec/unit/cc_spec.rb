@@ -93,6 +93,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.organizations_managers)
     end
 
+    it 'returns zero organizations_private_domains as expected' do
+      verify_disconnected_items(cc.organizations_private_domains)
+    end
+
     it 'returns zero organizations_users as expected' do
       verify_disconnected_items(cc.organizations_users)
     end
