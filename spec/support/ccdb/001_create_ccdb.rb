@@ -28,6 +28,7 @@ Sequel.migration do
       String :space_guid, :text=>true
       String :name
       String :desired_droplet_guid, :text=>true
+      String :desired_state, :default=>"STOPPED", :text=>true
       
       index [:desired_droplet_guid], :name=>:apps_desired_droplet_guid
       index [:created_at]
@@ -36,6 +37,16 @@ Sequel.migration do
       index [:space_guid]
       index [:space_guid, :name], :unique=>true
       index [:updated_at]
+    end
+    
+    create_table(:apps_v3_routes, :ignore_index_errors=>true) do
+      Integer :apps_v3_id
+      Integer :route_id
+      String :type, :text=>true
+      
+      index [:apps_v3_id], :name=>:apps_routes_apps_id_v3
+      index [:route_id]
+      index [:type]
     end
     
     create_table(:billing_events, :ignore_index_errors=>true) do
