@@ -133,8 +133,8 @@ module AdminUI
 
         hash[service[:guid]] =
         {
-          'service'       => service,
-          'serviceBroker' => service_broker
+          'service'        => service,
+          'service_broker' => service_broker
         }
       end
 

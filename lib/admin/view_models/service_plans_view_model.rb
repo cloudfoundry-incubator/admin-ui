@@ -47,8 +47,8 @@ module AdminUI
           organization = organization_hash[service_plan_visibility[:organization_id]]
 
           if organization
-            service_plan_visibility_and_organization_array.push('organization'          => organization,
-                                                                'servicePlanVisibility' => service_plan_visibility)
+            service_plan_visibility_and_organization_array.push('organization'            => organization,
+                                                                'service_plan_visibility' => service_plan_visibility)
           end
         end
       end
@@ -165,10 +165,10 @@ module AdminUI
 
         hash[service_plan[:guid]] =
         {
-          'service'                                 => service,
-          'serviceBroker'                           => service_broker,
-          'servicePlan'                             => service_plan,
-          'servicePlanVisibilitiesAndOrganizations' => service_plan_visibilities_organizations
+          'service'                                     => service,
+          'service_broker'                              => service_broker,
+          'service_plan'                                => service_plan,
+          'service_plan_visibilities_and_organizations' => service_plan_visibilities_organizations
         }
       end
 

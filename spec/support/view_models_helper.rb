@@ -454,14 +454,14 @@ module ViewModelsHelper
   end
 
   def view_models_service_bindings_detail
-    { 'application'     => cc_app,
-      'organization'    => cc_organization,
-      'service'         => cc_service,
-      'serviceBinding'  => cc_service_binding,
-      'serviceBroker'   => cc_service_broker,
-      'serviceInstance' => cc_service_instance,
-      'servicePlan'     => cc_service_plan,
-      'space'           => cc_space
+    { 'application'      => cc_app,
+      'organization'     => cc_organization,
+      'service'          => cc_service,
+      'service_binding'  => cc_service_binding,
+      'service_broker'   => cc_service_broker,
+      'service_instance' => cc_service_instance,
+      'service_plan'     => cc_service_plan,
+      'space'            => cc_space
     }
   end
 
@@ -519,12 +519,12 @@ module ViewModelsHelper
   end
 
   def view_models_service_instances_detail
-    { 'organization'    => cc_organization,
-      'service'         => cc_service,
-      'serviceBroker'   => cc_service_broker,
-      'serviceInstance' => cc_service_instance,
-      'servicePlan'     => cc_service_plan,
-      'space'           => cc_space
+    { 'organization'     => cc_organization,
+      'service'          => cc_service,
+      'service_broker'   => cc_service_broker,
+      'service_instance' => cc_service_instance,
+      'service_plan'     => cc_service_plan,
+      'space'            => cc_space
     }
   end
 
@@ -561,13 +561,13 @@ module ViewModelsHelper
   end
 
   def view_models_service_plans_detail
-    { 'service'       => cc_service,
-      'serviceBroker' => cc_service_broker,
-      'servicePlan'   => cc_service_plan,
-      'servicePlanVisibilitiesAndOrganizations' =>
+    { 'service'                                     => cc_service,
+      'service_broker'                              => cc_service_broker,
+      'service_plan'                                => cc_service_plan,
+      'service_plan_visibilities_and_organizations' =>
       [
-        { 'organization'          => cc_organization,
-          'servicePlanVisibility' => cc_service_plan_visibility
+        { 'organization'            => cc_organization,
+          'service_plan_visibility' => cc_service_plan_visibility
         }
       ]
     }
@@ -598,8 +598,8 @@ module ViewModelsHelper
   end
 
   def view_models_services_detail
-    { 'service'       => cc_service,
-      'serviceBroker' => cc_service_broker
+    { 'service'        => cc_service,
+      'service_broker' => cc_service_broker
     }
   end
 

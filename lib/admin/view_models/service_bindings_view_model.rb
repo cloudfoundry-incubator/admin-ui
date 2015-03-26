@@ -140,14 +140,14 @@ module AdminUI
 
         hash[service_binding[:guid]] =
         {
-          'application'     => application,
-          'organization'    => organization,
-          'service'         => service,
-          'serviceBinding'  => service_binding,
-          'serviceBroker'   => service_broker,
-          'serviceInstance' => service_instance,
-          'servicePlan'     => service_plan,
-          'space'           => space
+          'application'      => application,
+          'organization'     => organization,
+          'service'          => service,
+          'service_binding'  => service_binding,
+          'service_broker'   => service_broker,
+          'service_instance' => service_instance,
+          'service_plan'     => service_plan,
+          'space'            => space
         }
       end
 
