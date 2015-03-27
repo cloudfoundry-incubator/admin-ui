@@ -29,6 +29,8 @@ Sequel.migration do
       String :name
       String :desired_droplet_guid, :text=>true
       String :desired_state, :default=>"STOPPED", :text=>true
+      String :encrypted_environment_variables, :text=>true
+      String :salt, :text=>true
       
       index [:desired_droplet_guid], :name=>:apps_desired_droplet_guid
       index [:created_at]
