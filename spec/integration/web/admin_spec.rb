@@ -1713,8 +1713,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceBrokersTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                expected_length: 8,
-                                labels:          ['Name', 'GUID', 'Created', 'Updated', 'Services', 'Service Plans', 'Service Instances', 'Service Bindings'],
+                                expected_length: 9,
+                                labels:          ['Name', 'GUID', 'Created', 'Updated', 'Services', 'Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings'],
                                 colspans:        nil
                               }
                              ])
@@ -1725,6 +1725,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_broker[:guid],
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")"),
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -1750,6 +1751,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service Broker Broker URL',    tag:   nil, value: cc_service_broker[:broker_url] },
                            { label: 'Services',                     tag:   'a', value: '1' },
                            { label: 'Service Plans',                tag:   'a', value: '1' },
+                           { label: 'Service Plan Visibilities',    tag:   'a', value: '1' },
                            { label: 'Service Instances',            tag:   'a', value: '1' },
                            { label: 'Service Bindings',             tag:   'a', value: '1' }
                           ])
@@ -1763,12 +1765,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('ServiceBrokers', 7, 'ServicePlans', cc_service_broker[:guid])
           end
 
+          it 'has service plan visibilities link' do
+            check_filter_link('ServiceBrokers', 8, 'ServicePlanVisibilities', cc_service_broker[:guid])
+          end
+
           it 'has service instances link' do
-            check_filter_link('ServiceBrokers', 8, 'ServiceInstances', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 9, 'ServiceInstances', cc_service_broker[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('ServiceBrokers', 9, 'ServiceBindings', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 10, 'ServiceBindings', cc_service_broker[:guid])
           end
         end
       end
@@ -1780,12 +1786,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 2,
                                 labels:          ['Service', 'Service Broker'],
-                                colspans:        %w(13 4)
+                                colspans:        %w(14 4)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 17,
-                                labels:          ['Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Plan Updateable', 'Service Plans', 'Service Instances', 'Service Bindings', 'Name', 'GUID', 'Created', 'Updated'],
+                                expected_length: 18,
+                                labels:          ['Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Plan Updateable', 'Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Name', 'GUID', 'Created', 'Updated'],
                                 colspans:        nil
                               }
                              ])
@@ -1802,6 +1808,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:active] }\")"),
                              @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:bindable] }\")"),
                              @driver.execute_script("return Format.formatBoolean(\"#{ cc_service[:plan_updateable] }\")"),
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -1846,6 +1853,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service Documentation URL',     tag:   'a', value: service_extra_json['documentationUrl'] },
                            { label: 'Service Support URL',           tag:   'a', value: service_extra_json['supportUrl'] },
                            { label: 'Service Plans',                 tag:   'a', value: '1' },
+                           { label: 'Service Plan Visibilities',     tag:   'a', value: '1' },
                            { label: 'Service Instances',             tag:   'a', value: '1' },
                            { label: 'Service Bindings',              tag:   'a', value: '1' },
                            { label: 'Service Broker Name',           tag:   'a', value: cc_service_broker[:name] },
@@ -1859,16 +1867,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Services', 21, 'ServicePlans', cc_service[:guid])
           end
 
+          it 'has service plan visibilities link' do
+            check_filter_link('Services', 22, 'ServicePlanVisibilities', cc_service[:guid])
+          end
+
           it 'has service instances link' do
-            check_filter_link('Services', 22, 'ServiceInstances', cc_service[:guid])
+            check_filter_link('Services', 23, 'ServiceInstances', cc_service[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('Services', 23, 'ServiceBindings', cc_service[:guid])
+            check_filter_link('Services', 24, 'ServiceBindings', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Services', 24, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Services', 25, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end

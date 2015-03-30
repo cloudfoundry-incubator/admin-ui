@@ -16,15 +16,17 @@ module AdminUI
       # service_brokers have to exist.  Other record types are optional
       return result unless service_brokers['connected']
 
-      service_bindings  = @cc.service_bindings
-      service_instances = @cc.service_instances
-      service_plans     = @cc.service_plans
-      services          = @cc.services
+      service_bindings          = @cc.service_bindings
+      service_instances         = @cc.service_instances
+      service_plans             = @cc.service_plans
+      service_plan_visibilities = @cc.service_plan_visibilities
+      services                  = @cc.services
 
-      service_bindings_connected  = service_bindings['connected']
-      service_instances_connected = service_instances['connected']
-      service_plans_connected     = service_plans['connected']
-      services_connected          = service_plans['connected']
+      service_bindings_connected          = service_bindings['connected']
+      service_instances_connected         = service_instances['connected']
+      service_plans_connected             = service_plans['connected']
+      service_plan_visibilities_connected = service_plan_visibilities['connected']
+      services_connected                  = service_plans['connected']
 
       service_hash          = Hash[services['items'].map { |item| [item[:id], item] }]
       service_instance_hash = Hash[service_instances['items'].map { |item| [item[:id], item] }]
@@ -48,6 +50,21 @@ module AdminUI
         next if service_broker_id.nil?
         service_plan_counters[service_broker_id] = 0 if service_plan_counters[service_broker_id].nil?
         service_plan_counters[service_broker_id] += 1
+      end
+
+      service_plan_visibility_counters = {}
+      service_plan_visibilities['items'].each do |service_plan_visibility|
+        Thread.pass
+        service_plan_id = service_plan_visibility[:service_plan_id]
+        next if service_plan_id.nil?
+        service_plan = service_plan_hash[service_plan_id]
+        next if service_plan.nil?
+        service = service_hash[service_plan[:service_id]]
+        next if service.nil?
+        service_broker_id = service[:service_broker_id]
+        next if service_broker_id.nil?
+        service_plan_visibility_counters[service_broker_id] = 0 if service_plan_visibility_counters[service_broker_id].nil?
+        service_plan_visibility_counters[service_broker_id] += 1
       end
 
       service_instance_counters = {}
@@ -112,7 +129,15 @@ module AdminUI
 
         if service_plan_counters[service_broker[:id]]
           row.push(service_plan_counters[service_broker[:id]])
-        elsif service_plans_connected
+        elsif service_plans_connected && services_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if service_plan_visibility_counters[service_broker[:id]]
+          row.push(service_plan_visibility_counters[service_broker[:id]])
+        elsif service_plan_visibilities_connected && service_plans_connected && services_connected
           row.push(0)
         else
           row.push(nil)
@@ -120,7 +145,7 @@ module AdminUI
 
         if service_instance_counters[service_broker[:id]]
           row.push(service_instance_counters[service_broker[:id]])
-        elsif service_instances_connected
+        elsif service_instances_connected && service_plans_connected && services_connected
           row.push(0)
         else
           row.push(nil)
@@ -128,7 +153,7 @@ module AdminUI
 
         if service_binding_counters[service_broker[:id]]
           row.push(service_binding_counters[service_broker[:id]])
-        elsif service_bindings_connected
+        elsif service_bindings_connected && service_instances_connected && service_plans_connected && services_connected
           row.push(0)
         else
           row.push(nil)
@@ -139,7 +164,7 @@ module AdminUI
         hash[service_broker[:guid]] = service_broker
       end
 
-      result(true, items, hash, (0..7).to_a, (0..3).to_a)
+      result(true, items, hash, (0..8).to_a, (0..3).to_a)
     end
   end
 end

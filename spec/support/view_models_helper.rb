@@ -476,6 +476,7 @@ module ViewModelsHelper
         1,
         1,
         1,
+        1,
         1
       ]
     ]
@@ -625,6 +626,7 @@ module ViewModelsHelper
         cc_service[:active],
         cc_service[:bindable],
         cc_service[:plan_updateable],
+        1,
         1,
         1,
         1,

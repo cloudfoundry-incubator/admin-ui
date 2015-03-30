@@ -105,7 +105,7 @@ module AdminUI
 
         if service_binding_counters[service_plan[:id]]
           row.push(service_binding_counters[service_plan[:id]])
-        elsif service_bindings_connected
+        elsif service_bindings_connected && service_instances_connected
           row.push(0)
         else
           row.push(nil)
