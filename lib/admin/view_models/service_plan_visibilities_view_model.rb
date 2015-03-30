@@ -1,0 +1,133 @@
+require_relative 'base'
+require 'date'
+require 'thread'
+
+module AdminUI
+  class ServicePlanVisibilitiesViewModel < AdminUI::Base
+    def initialize(logger, cc)
+      super(logger)
+
+      @cc = cc
+    end
+
+    def do_items
+      service_plan_visibilities = @cc.service_plan_visibilities
+
+      # service_plan_visibilities have to exist.  Other record types are optional
+      return result unless service_plan_visibilities['connected']
+
+      organizations    = @cc.organizations
+      service_brokers  = @cc.service_brokers
+      service_plans    = @cc.service_plans
+      services         = @cc.services
+
+      organization_hash   = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      service_broker_hash = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
+      service_plan_hash   = Hash[service_plans['items'].map { |item| [item[:id], item] }]
+      service_hash        = Hash[services['items'].map { |item| [item[:id], item] }]
+
+      items = []
+      hash  = {}
+
+      service_plan_visibilities['items'].each do |service_plan_visibility|
+        Thread.pass
+        organization    = organization_hash[service_plan_visibility[:organization_id]]
+        service_plan    = service_plan_hash[service_plan_visibility[:service_plan_id]]
+        service         = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
+        service_broker  = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
+
+        row = []
+
+        row.push(service_plan_visibility[:guid])
+        row.push(service_plan_visibility[:created_at].to_datetime.rfc3339)
+
+        if service_plan_visibility[:updated_at]
+          row.push(service_plan_visibility[:updated_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
+        if service_plan
+          row.push(service_plan[:name])
+          row.push(service_plan[:guid])
+          row.push(service_plan[:unique_id])
+          row.push(service_plan[:created_at].to_datetime.rfc3339)
+
+          if service_plan[:updated_at]
+            row.push(service_plan[:updated_at].to_datetime.rfc3339)
+          else
+            row.push(nil)
+          end
+
+          row.push(service_plan[:active])
+          row.push(service_plan[:public])
+          row.push(service_plan[:free])
+        else
+          row.push(nil, nil, nil, nil, nil, nil, nil, nil)
+        end
+
+        if service
+          row.push(service[:provider])
+          row.push(service[:label])
+          row.push(service[:guid])
+          row.push(service[:unique_id])
+          row.push(service[:version])
+          row.push(service[:created_at].to_datetime.rfc3339)
+
+          if service[:updated_at]
+            row.push(service[:updated_at].to_datetime.rfc3339)
+          else
+            row.push(nil)
+          end
+
+          row.push(service[:active])
+          row.push(service[:bindable])
+        else
+          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil)
+        end
+
+        if service_broker
+          row.push(service_broker[:name])
+          row.push(service_broker[:guid])
+          row.push(service_broker[:created_at].to_datetime.rfc3339)
+
+          if service_broker[:updated_at]
+            row.push(service_broker[:updated_at].to_datetime.rfc3339)
+          else
+            row.push(nil)
+          end
+        else
+          row.push(nil, nil, nil, nil)
+        end
+
+        if organization
+          row.push(organization[:name])
+          row.push(organization[:guid])
+
+          row.push(organization[:created_at].to_datetime.rfc3339)
+
+          if organization[:updated_at]
+            row.push(organization[:updated_at].to_datetime.rfc3339)
+          else
+            row.push(nil)
+          end
+        else
+          row.push(nil, nil, nil, nil)
+        end
+
+        items.push(row)
+
+        hash[service_plan_visibility[:guid]] =
+        {
+          'organization'            => organization,
+          'service'                 => service,
+          'service_broker'          => service_broker,
+          'service_plan'            => service_plan,
+          'service_plan_visibility' => service_plan_visibility
+        }
+      end
+
+      result(true, items, hash, (0..27).to_a, (0..27).to_a)
+    end
+  end
+end

@@ -602,6 +602,14 @@ describe AdminUI::Admin do
         verify_not_found('/service_plans_view_model/service_plan1')
       end
 
+      it '/service_plan_visibilities_view_model succeeds' do
+        verify_disconnected_view_model_items('/service_plan_visibilities_view_model')
+      end
+
+      it '/service_plan_visibilities_view_model/:guid returns not found' do
+        verify_not_found('/service_plan_visibilities_view_model/service_plan_visibility1')
+      end
+
       it '/services_view_model succeeds' do
         verify_disconnected_view_model_items('/services_view_model')
       end
@@ -845,6 +853,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/service_plans_view_model/service_plan1')
       end
 
+      it '/service_plan_visibilities_view_model redirects as expected' do
+        get_redirects_as_expected('/service_plan_visibilities_view_model')
+      end
+
+      it '/service_plan_visibilities_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/service_plans_view_model/service_plan_visibilities1')
+      end
+
       it '/services_view_model redirects as expected' do
         get_redirects_as_expected('/services_view_model')
       end
@@ -979,6 +995,10 @@ describe AdminUI::Admin do
 
       it 'posts /service_plans_view_model redirects as expected' do
         post_redirects_as_expected('/service_plans_view_model')
+      end
+
+      it 'posts /service_plan_visibilities_view_model redirects as expected' do
+        post_redirects_as_expected('/service_plan_visibilities_view_model')
       end
 
       it 'posts /services_view_model redirects as expected' do

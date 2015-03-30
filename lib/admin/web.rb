@@ -330,6 +330,18 @@ module AdminUI
       404
     end
 
+    get '/service_plan_visibilities_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'get', '/service_plan_visibilities_view_model'
+      AllActions.new(@logger, @view_models.service_plan_visibilities, params).items.to_json
+    end
+
+    get '/service_plan_visibilities_view_model/:guid', auth: [:user] do
+      @logger.info_user session[:username], 'get', "/service_plan_visibilities_view_model/#{ params[:guid] }"
+      result = @view_models.service_plan_visibility(params[:guid])
+      return result.to_json if result
+      404
+    end
+
     get '/services_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/services_view_model'
       AllActions.new(@logger, @view_models.services, params).items.to_json
@@ -582,6 +594,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'service_plans.csv')
+    end
+
+    post '/service_plan_visibilities_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'post', '/service_plan_visibilities_view_model'
+      file = Download.download(request.body.read, 'service_plan_visibilities', @view_models.service_plan_visibilities)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'service_plan_visibilities.csv')
     end
 
     post '/services_view_model', auth: [:user] do

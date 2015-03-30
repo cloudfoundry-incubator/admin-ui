@@ -23,31 +23,34 @@ module AdminUI
       quotas                         = @cc.quota_definitions
       routes                         = @cc.routes
       service_instances              = @cc.service_instances
+      service_plan_visibilities      = @cc.service_plan_visibilities
       spaces                         = @cc.spaces
       spaces_auditors                = @cc.spaces_auditors
       spaces_developers              = @cc.spaces_developers
       spaces_managers                = @cc.spaces_managers
 
-      applications_connected        = applications['connected']
-      apps_routes_connected         = apps_routes['connected']
-      domains_connected             = domains['connected']
-      organizations_roles_connected = organizations_auditors['connected'] && organizations_billing_managers['connected'] && organizations_managers['connected'] && organizations_users['connected']
-      routes_connected              = routes['connected']
-      service_instances_connected   = service_instances['connected']
-      spaces_connected              = spaces['connected']
-      spaces_roles_connected        = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
+      applications_connected              = applications['connected']
+      apps_routes_connected               = apps_routes['connected']
+      domains_connected                   = domains['connected']
+      organizations_roles_connected       = organizations_auditors['connected'] && organizations_billing_managers['connected'] && organizations_managers['connected'] && organizations_users['connected']
+      routes_connected                    = routes['connected']
+      service_instances_connected         = service_instances['connected']
+      service_plan_visibilities_connected = service_plan_visibilities['connected']
+      spaces_connected                    = spaces['connected']
+      spaces_roles_connected              = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
 
       quota_hash      = Hash[quotas['items'].map { |item| [item[:id], item] }]
       routes_used_set = apps_routes['items'].to_set { |app_route| app_route[:route_id] }
       space_hash      = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
-      organization_space_counters            = {}
-      organization_role_counters             = {}
-      organization_domain_counters           = {}
-      organization_service_instance_counters = {}
-      organization_route_counters_hash       = {}
-      organization_app_counters_hash         = {}
-      space_role_counters                    = {}
+      organization_space_counters                   = {}
+      organization_role_counters                    = {}
+      organization_domain_counters                  = {}
+      organization_service_instance_counters        = {}
+      organization_service_plan_visibility_counters = {}
+      organization_route_counters_hash              = {}
+      organization_app_counters_hash                = {}
+      space_role_counters                           = {}
 
       space_hash.each_value do |space|
         Thread.pass
@@ -101,6 +104,14 @@ module AdminUI
         organization_route_counters['total_routes'] += 1
       end
 
+      service_plan_visibilities['items'].each do |service_plan_visibility|
+        Thread.pass
+        organization_id = service_plan_visibility[:organization_id]
+        next if organization_id.nil?
+        organization_service_plan_visibility_counters[organization_id] = 0 if organization_service_plan_visibility_counters[organization_id].nil?
+        organization_service_plan_visibility_counters[organization_id] += 1
+      end
+
       instance_hash = create_instance_hash(deas)
 
       applications['items'].each do |application|
@@ -138,13 +149,14 @@ module AdminUI
         Thread.pass
         organization_id = organization[:id]
 
-        organization_role_counter             = organization_role_counters[organization_id]
-        organization_space_counter            = organization_space_counters[organization_id]
-        organization_service_instance_counter = organization_service_instance_counters[organization_id]
-        organization_app_counters             = organization_app_counters_hash[organization_id]
-        organization_domain_counter           = organization_domain_counters[organization_id]
-        organization_route_counters           = organization_route_counters_hash[organization_id]
-        space_role_counter                    = space_role_counters[organization_id]
+        organization_role_counter                    = organization_role_counters[organization_id]
+        organization_space_counter                   = organization_space_counters[organization_id]
+        organization_service_instance_counter        = organization_service_instance_counters[organization_id]
+        organization_service_plan_visibility_counter = organization_service_plan_visibility_counters[organization_id]
+        organization_app_counters                    = organization_app_counters_hash[organization_id]
+        organization_domain_counter                  = organization_domain_counters[organization_id]
+        organization_route_counters                  = organization_route_counters_hash[organization_id]
+        space_role_counter                           = space_role_counters[organization_id]
 
         row = []
 
@@ -200,6 +212,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if organization_service_plan_visibility_counter
+          row.push(organization_service_plan_visibility_counter)
+        elsif service_plan_visibilities_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if organization_route_counters
           row.push(organization_route_counters['total_routes'])
           row.push(organization_route_counters['total_routes'] - organization_route_counters['unused_routes'])
@@ -249,7 +269,7 @@ module AdminUI
         hash[organization[:guid]] = organization
       end
 
-      result(true, items, hash, (1..26).to_a, (1..5).to_a << 9)
+      result(true, items, hash, (1..27).to_a, (1..5).to_a << 9)
     end
 
     private

@@ -331,6 +331,20 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected service_plan_visibilities_view_model' do
+      let(:results)  { view_models.service_plan_visibilities }
+      let(:expected) { view_models_service_plan_visibilities }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected service_plan_visibilities_view_model detail' do
+      let(:results)  { view_models.service_plan_visibility(cc_service_plan_visibility[:guid]) }
+      let(:expected) { view_models_service_plan_visibilities_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected services_view_model' do
       let(:results)  { view_models.services }
       let(:expected) { view_models_services }

@@ -18,6 +18,7 @@ require_relative 'view_models/service_bindings_view_model'
 require_relative 'view_models/service_brokers_view_model'
 require_relative 'view_models/service_instances_view_model'
 require_relative 'view_models/service_plans_view_model'
+require_relative 'view_models/service_plan_visibilities_view_model'
 require_relative 'view_models/services_view_model'
 require_relative 'view_models/space_roles_view_model'
 require_relative 'view_models/spaces_view_model'
@@ -46,7 +47,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :clients, :cloud_controllers, :components, :deas, :domains, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_plans, :spaces, :space_roles, :stats, :tasks, :users].each do |key|
+      [:applications, :clients, :cloud_controllers, :components, :deas, :domains, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_plans, :service_plan_visibilities, :spaces, :space_roles, :stats, :tasks, :users].each do |key|
         hash = { semaphore: Mutex.new, condition: ConditionVariable.new, result: nil }
         @caches[key] = hash
         schedule(key)
@@ -261,6 +262,14 @@ module AdminUI
 
     def service_plans
       result_cache(:service_plans)
+    end
+
+    def service_plan_visibility(guid)
+      details(:service_plan_visibilities, guid)
+    end
+
+    def service_plan_visibilities
+      result_cache(:service_plan_visibilities)
     end
 
     def services
@@ -502,6 +511,14 @@ module AdminUI
       AdminUI::ServicePlansViewModel.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_service_plans: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_service_plan_visibilities
+      AdminUI::ServicePlanVisibilitiesViewModel.new(@logger, @cc).items
+    rescue => error
+      @logger.debug("Error during discover_service_plan_visibilities: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end

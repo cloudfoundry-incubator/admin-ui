@@ -635,6 +635,18 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
+    context 'service_plan_visibilities_view_model' do
+      let(:path)              { '/service_plan_visibilities_view_model' }
+      let(:view_model_source) { view_models_service_plan_visibilities }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'service_plan_visibilities_view_model detail' do
+      let(:path)              { "/service_plan_visibilities_view_model/#{ cc_service_plan_visibility[:guid] }" }
+      let(:view_model_source) { view_models_service_plan_visibilities_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'services_view_model' do
       let(:path)              { '/services_view_model' }
       let(:view_model_source) { view_models_services }
