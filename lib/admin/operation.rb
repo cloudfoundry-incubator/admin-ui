@@ -53,6 +53,16 @@ module AdminUI
       @view_models.invalidate_routes
     end
 
+    def delete_service_instance(service_instance_guid)
+      url = "v2/service_instances/#{ service_instance_guid }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_service_instances
+      @cc.invalidate_service_bindings
+      @view_models.invalidate_service_instances
+      @view_models.invalidate_service_bindings
+    end
+
     def delete_space(space_guid)
       url = "v2/spaces/#{ space_guid }?recursive=true"
       @logger.debug("DELETE #{ url }")

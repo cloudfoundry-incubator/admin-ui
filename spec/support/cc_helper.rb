@@ -36,11 +36,13 @@ module CCHelper
   end
 
   def cc_stub(config, insert_second_quota_definition = false)
-    @cc_apps_deleted          = false
-    @cc_organizations_deleted = false
-    @cc_routes_deleted        = false
-    @cc_service_plans_deleted = false
-    @cc_spaces_deleted        = false
+    @cc_apps_deleted              = false
+    @cc_organizations_deleted     = false
+    @cc_routes_deleted            = false
+    @cc_service_bindings_deleted  = false
+    @cc_service_instances_deleted = false
+    @cc_service_plans_deleted     = false
+    @cc_spaces_deleted            = false
 
     @cc_organization_created = false
 
@@ -51,12 +53,14 @@ module CCHelper
     cc_app_stubs(config)
     cc_organization_stubs(config)
     cc_route_stubs(config)
+    cc_service_instance_stubs(config)
     cc_service_plan_stubs(config)
     cc_space_stubs(config)
   end
 
   def cc_clear_apps_cache_stub(config)
-    sql(config.ccdb_uri, 'DELETE FROM service_bindings')
+    cc_clear_service_bindings_cache_stub(config)
+
     sql(config.ccdb_uri, 'DELETE FROM apps_routes')
     sql(config.ccdb_uri, 'DELETE FROM apps')
 
@@ -86,9 +90,23 @@ module CCHelper
     @cc_routes_deleted = true
   end
 
-  def cc_clear_service_plans_cache_stub(config)
+  def cc_clear_service_bindings_cache_stub(config)
     sql(config.ccdb_uri, 'DELETE FROM service_bindings')
+
+    @cc_service_bindings_deleted = true
+  end
+
+  def cc_clear_service_instances_cache_stub(config)
+    cc_clear_service_bindings_cache_stub(config)
+
     sql(config.ccdb_uri, 'DELETE FROM service_instances')
+
+    @cc_service_instances_deleted = true
+  end
+
+  def cc_clear_service_plans_cache_stub(config)
+    cc_clear_service_instances_cache_stub(config)
+
     sql(config.ccdb_uri, 'DELETE FROM service_plan_visibilities')
     sql(config.ccdb_uri, 'DELETE FROM service_plans')
 
@@ -97,9 +115,8 @@ module CCHelper
 
   def cc_clear_spaces_cache_stub(config)
     cc_clear_routes_cache_stub(config)
+    cc_clear_service_instances_cache_stub(config)
 
-    sql(config.ccdb_uri, 'DELETE FROM service_bindings')
-    sql(config.ccdb_uri, 'DELETE FROM service_instances')
     sql(config.ccdb_uri, 'DELETE FROM apps')
     sql(config.ccdb_uri, 'DELETE FROM spaces_auditors')
     sql(config.ccdb_uri, 'DELETE FROM spaces_developers')
@@ -698,6 +715,23 @@ module CCHelper
         cc_route_not_found
       else
         cc_clear_routes_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_service_instance_not_found
+    NotFound.new('code'        => 60_004,
+                 'description' => "The service instance could not be found: #{ cc_service_instance[:guid] }",
+                 'error_code'  => 'CF-ServiceInstanceNotFound')
+  end
+
+  def cc_service_instance_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_instances/#{ cc_service_instance[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_service_instances_deleted
+        cc_service_instance_not_found
+      else
+        cc_clear_service_instances_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end

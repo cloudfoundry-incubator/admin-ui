@@ -319,6 +319,38 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage service instance' do
+      before do
+        # Make sure there is a service instance
+        expect(cc.service_instances['items'].length).to eq(1)
+      end
+
+      def delete_service_instance
+        operation.delete_service_instance(cc_service_instance[:guid])
+      end
+
+      it 'deletes specific service instance' do
+        expect { delete_service_instance }.to change { cc.service_instances['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_service_instance
+        end
+
+        def verify_service_instance_not_found(exception)
+          expect(exception.cf_code).to eq(60_004)
+          expect(exception.cf_error_code).to eq('CF-ServiceInstanceNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The service instance could not be found: #{ cc_service_instance[:guid] }")
+        end
+
+        it 'fails deleting deleted service instance' do
+          expect { delete_service_instance }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_instance_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage service plan' do
       before do
         # Make sure the original service plan's public field is true

@@ -321,6 +321,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete route')
     end
 
+    shared_examples 'common delete service instance' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_instances/service_instance1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete service instance via http' do
+      it_behaves_like('common delete service instance')
+    end
+
+    context 'delete service instance via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service instance')
+    end
+
     shared_examples 'common delete space' do
       it 'returns failure code due to disconnection' do
         response = delete('/spaces/space1')
@@ -932,6 +949,10 @@ describe AdminUI::Admin do
 
       it 'deletes /routes/:guid redirects as expected' do
         delete_redirects_as_expected('/routes/route1')
+      end
+
+      it 'deletes /service_instances/:guid redirects as expected' do
+        delete_redirects_as_expected('/service_instances/service_instance1')
       end
 
       it 'deletes /spaces/:guid redirects as expected' do

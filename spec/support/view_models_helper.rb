@@ -489,6 +489,7 @@ module ViewModelsHelper
   def view_models_service_instances
     [
       [
+        cc_service_instance[:guid],
         cc_service_instance[:name],
         cc_service_instance[:guid],
         cc_service_instance[:created_at].to_datetime.rfc3339,

@@ -316,6 +316,30 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage service instance' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there is a service instance
+      expect(get_json('/service_instances_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_service_instance
+      response = delete_request("/service_instances/#{ cc_service_instance[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/service_instances/#{ cc_service_instance[:guid] }"]], true)
+    end
+
+    it 'has user name and service instances request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_instances_view_model']], true)
+    end
+
+    it 'deletes the specific service instance' do
+      expect { delete_service_instance }.to change { get_json('/service_instances_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage service plan' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }

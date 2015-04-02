@@ -819,6 +819,23 @@ module AdminUI
       end
     end
 
+    delete '/service_instances/:service_instance_guid', auth: [:admin] do
+      @logger.info_user session[:username], 'delete', "/service_instances/#{ params[:service_instance_guid] }"
+      begin
+        @operation.delete_service_instance(params[:service_instance_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete service instance: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during delete service instance: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/spaces/:space_guid', auth: [:admin] do
       @logger.info_user session[:username], 'delete', "/spaces/#{ params[:space_guid] }"
       begin

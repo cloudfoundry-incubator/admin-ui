@@ -90,6 +90,20 @@ describe AdminUI::CC, type: :integration do
       expect(cc.routes['items'].length).to eq(0)
     end
 
+    it 'clears the service binding cache' do
+      expect(cc.service_bindings['items'].length).to eq(1)
+      cc_clear_service_bindings_cache_stub(config)
+      cc.invalidate_service_bindings
+      expect(cc.service_bindings['items'].length).to eq(0)
+    end
+
+    it 'clears the service instance cache' do
+      expect(cc.service_instances['items'].length).to eq(1)
+      cc_clear_service_instances_cache_stub(config)
+      cc.invalidate_service_instances
+      expect(cc.service_instances['items'].length).to eq(0)
+    end
+
     it 'clears the service plan cache' do
       expect(cc.service_plans['items'].length).to eq(1)
       cc_clear_service_plans_cache_stub(config)

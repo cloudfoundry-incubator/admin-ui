@@ -94,8 +94,16 @@ module AdminUI
       invalidate_cache(:routes)
     end
 
+    def invalidate_service_bindings
+      invalidate_cache(:service_bindings)
+    end
+
     def invalidate_service_brokers
       invalidate_cache(:service_brokers)
+    end
+
+    def invalidate_service_instances
+      invalidate_cache(:service_instances)
     end
 
     def invalidate_service_plans

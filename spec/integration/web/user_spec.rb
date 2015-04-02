@@ -38,6 +38,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_0').text).to eq('Copy')
     end
 
+    it 'Spaces tab does not have delete button' do
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          scroll_tab_into_view('Spaces').click
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Spaces'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Spaces')
+
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'SpacesPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_SpacesTable_0').text == 'Copy'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(id: 'SpacesPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_SpacesTable_0').text).to eq('Copy')
+    end
+
     it 'Applications tab does not have start, stop, restart or delete buttons' do
       # Need to wait until the page has been rendered.
       # Move the click operation into the wait block to ensure the action has been taken, this is used to fit Travis CI system.
@@ -80,6 +101,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
       expect(@driver.find_element(id: 'RoutesPage').displayed?).to eq(true)
       expect(@driver.find_element(id: 'ToolTables_RoutesTable_0').text).to eq('Copy')
+    end
+
+    it 'Service Instances tab does not have delete button' do
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          scroll_tab_into_view('ServiceInstances').click
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'ServiceInstances'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('ServiceInstances')
+
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'ServiceInstancesPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_ServiceInstancesTable_0').text == 'Copy'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(id: 'ServiceInstancesPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_ServiceInstancesTable_0').text).to eq('Copy')
     end
 
     it 'Organization Roles tab does not have delete button' do
