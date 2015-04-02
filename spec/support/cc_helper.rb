@@ -53,6 +53,7 @@ module CCHelper
     cc_app_stubs(config)
     cc_organization_stubs(config)
     cc_route_stubs(config)
+    cc_service_binding_stubs(config)
     cc_service_instance_stubs(config)
     cc_service_plan_stubs(config)
     cc_space_stubs(config)
@@ -715,6 +716,23 @@ module CCHelper
         cc_route_not_found
       else
         cc_clear_routes_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_service_binding_not_found
+    NotFound.new('code'        => 90_004,
+                 'description' => "The service binding could not be found: #{ cc_service_binding[:guid] }",
+                 'error_code'  => 'CF-ServiceBindingNotFound')
+  end
+
+  def cc_service_binding_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_bindings/#{ cc_service_binding[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_service_bindings_deleted
+        cc_service_binding_not_found
+      else
+        cc_clear_service_bindings_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end

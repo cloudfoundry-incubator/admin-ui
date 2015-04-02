@@ -421,6 +421,7 @@ module ViewModelsHelper
     [
       [
         cc_service_binding[:guid],
+        cc_service_binding[:guid],
         cc_service_binding[:created_at].to_datetime.rfc3339,
         cc_service_binding[:updated_at].to_datetime.rfc3339,
         cc_app[:name],

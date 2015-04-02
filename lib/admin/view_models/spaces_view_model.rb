@@ -187,7 +187,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..22).to_a, (1..5).to_a)
+      result(true, items, hash, (1..22).to_a, (1..5).to_a)
     end
 
     private

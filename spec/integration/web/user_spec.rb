@@ -124,6 +124,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(@driver.find_element(id: 'ToolTables_ServiceInstancesTable_0').text).to eq('Copy')
     end
 
+    it 'Service Bindings tab does not have delete button' do
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          scroll_tab_into_view('ServiceBindings').click
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'ServiceBindings'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('ServiceBindings')
+
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'ServiceBindingsPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_ServiceBindingsTable_0').text == 'Copy'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(id: 'ServiceBindingsPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_ServiceBindingsTable_0').text).to eq('Copy')
+    end
+
     it 'Organization Roles tab does not have delete button' do
       begin
         Selenium::WebDriver::Wait.new(timeout: 5).until do

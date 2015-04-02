@@ -145,7 +145,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..27).to_a, (0..27).to_a - [5])
+      result(true, items, hash, (1..27).to_a, (1..27).to_a - [5])
     end
   end
 end

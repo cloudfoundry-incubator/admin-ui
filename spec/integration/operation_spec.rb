@@ -319,6 +319,38 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage service binding' do
+      before do
+        # Make sure there is a service binding
+        expect(cc.service_bindings['items'].length).to eq(1)
+      end
+
+      def delete_service_binding
+        operation.delete_service_binding(cc_service_binding[:guid])
+      end
+
+      it 'deletes specific service binding' do
+        expect { delete_service_binding }.to change { cc.service_bindings['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_service_binding
+        end
+
+        def verify_service_binding_not_found(exception)
+          expect(exception.cf_code).to eq(90_004)
+          expect(exception.cf_error_code).to eq('CF-ServiceBindingNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The service binding could not be found: #{ cc_service_binding[:guid] }")
+        end
+
+        it 'fails deleting deleted service binding' do
+          expect { delete_service_binding }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_binding_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage service instance' do
       before do
         # Make sure there is a service instance
