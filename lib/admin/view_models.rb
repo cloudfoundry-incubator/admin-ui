@@ -106,6 +106,10 @@ module AdminUI
       invalidate_cache(:services)
     end
 
+    def invalidate_spaces
+      invalidate_cache(:spaces)
+    end
+
     def invalidate_space_roles
       invalidate_cache(:space_roles)
     end

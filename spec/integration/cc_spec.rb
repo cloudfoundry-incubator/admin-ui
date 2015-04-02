@@ -97,23 +97,30 @@ describe AdminUI::CC, type: :integration do
       expect(cc.service_plans['items'].length).to eq(0)
     end
 
+    it 'clears the spaces cache' do
+      expect(cc.spaces['items'].length).to eq(1)
+      cc_clear_spaces_cache_stub(config)
+      cc.invalidate_spaces
+      expect(cc.spaces['items'].length).to eq(0)
+    end
+
     it 'clears the spaces auditors cache' do
       expect(cc.spaces_auditors['items'].length).to eq(1)
-      cc_clear_organizations_cache_stub(config)
+      cc_clear_spaces_cache_stub(config)
       cc.invalidate_spaces_auditors
       expect(cc.spaces_auditors['items'].length).to eq(0)
     end
 
     it 'clears the spaces developers cache' do
       expect(cc.spaces_developers['items'].length).to eq(1)
-      cc_clear_organizations_cache_stub(config)
+      cc_clear_spaces_cache_stub(config)
       cc.invalidate_spaces_developers
       expect(cc.spaces_developers['items'].length).to eq(0)
     end
 
     it 'clears the spaces managers cache' do
       expect(cc.spaces_managers['items'].length).to eq(1)
-      cc_clear_organizations_cache_stub(config)
+      cc_clear_spaces_cache_stub(config)
       cc.invalidate_spaces_managers
       expect(cc.spaces_managers['items'].length).to eq(0)
     end

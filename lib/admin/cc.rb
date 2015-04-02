@@ -272,6 +272,10 @@ module AdminUI
       invalidate_cache(:service_plans)
     end
 
+    def invalidate_spaces
+      invalidate_cache(:spaces)
+    end
+
     def invalidate_spaces_auditors
       invalidate_cache(:spaces_auditors)
     end

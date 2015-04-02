@@ -647,6 +647,7 @@ module ViewModelsHelper
   def view_models_spaces
     [
       [
+        cc_space[:guid],
         cc_space[:name],
         cc_space[:guid],
         "#{ cc_organization[:name] }/#{ cc_space[:name] }",

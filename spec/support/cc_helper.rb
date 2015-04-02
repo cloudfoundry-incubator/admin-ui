@@ -40,6 +40,7 @@ module CCHelper
     @cc_organizations_deleted = false
     @cc_routes_deleted        = false
     @cc_service_plans_deleted = false
+    @cc_spaces_deleted        = false
 
     @cc_organization_created = false
 
@@ -63,16 +64,9 @@ module CCHelper
   end
 
   def cc_clear_organizations_cache_stub(config)
-    sql(config.ccdb_uri, 'DELETE FROM service_bindings')
-    sql(config.ccdb_uri, 'DELETE FROM service_instances')
+    cc_clear_spaces_cache_stub(config)
+
     sql(config.ccdb_uri, 'DELETE FROM service_plan_visibilities')
-    sql(config.ccdb_uri, 'DELETE FROM apps_routes')
-    sql(config.ccdb_uri, 'DELETE FROM apps')
-    sql(config.ccdb_uri, 'DELETE FROM routes')
-    sql(config.ccdb_uri, 'DELETE FROM spaces_auditors')
-    sql(config.ccdb_uri, 'DELETE FROM spaces_developers')
-    sql(config.ccdb_uri, 'DELETE FROM spaces_managers')
-    sql(config.ccdb_uri, 'DELETE FROM spaces')
     sql(config.ccdb_uri, 'DELETE FROM organizations_private_domains')
     sql(config.ccdb_uri, 'DELETE FROM domains')
     sql(config.ccdb_uri, 'DELETE FROM organizations_auditors')
@@ -99,6 +93,20 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM service_plans')
 
     @cc_service_plans_deleted = true
+  end
+
+  def cc_clear_spaces_cache_stub(config)
+    cc_clear_routes_cache_stub(config)
+
+    sql(config.ccdb_uri, 'DELETE FROM service_bindings')
+    sql(config.ccdb_uri, 'DELETE FROM service_instances')
+    sql(config.ccdb_uri, 'DELETE FROM apps')
+    sql(config.ccdb_uri, 'DELETE FROM spaces_auditors')
+    sql(config.ccdb_uri, 'DELETE FROM spaces_developers')
+    sql(config.ccdb_uri, 'DELETE FROM spaces_managers')
+    sql(config.ccdb_uri, 'DELETE FROM spaces')
+
+    @cc_spaces_deleted = true
   end
 
   def cc_app
@@ -728,8 +736,17 @@ module CCHelper
   end
 
   def cc_space_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces/#{ cc_space[:guid] }?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        cc_clear_spaces_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      if @cc_organizations_deleted
+      if @cc_spaces_deleted
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_auditors WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")
@@ -738,7 +755,7 @@ module CCHelper
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces/#{ cc_space[:guid] }/developers/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      if @cc_organizations_deleted
+      if @cc_spaces_deleted
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_developers WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")
@@ -747,7 +764,7 @@ module CCHelper
     end
 
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces/#{ cc_space[:guid] }/managers/#{ cc_user[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      if @cc_organizations_deleted
+      if @cc_spaces_deleted
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_managers WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")

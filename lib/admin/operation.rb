@@ -53,6 +53,14 @@ module AdminUI
       @view_models.invalidate_routes
     end
 
+    def delete_space(space_guid)
+      url = "v2/spaces/#{ space_guid }?recursive=true"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_spaces
+      @view_models.invalidate_spaces
+    end
+
     def delete_space_role(space_guid, role, user_guid)
       url = "v2/spaces/#{ space_guid }/#{ role }/#{ user_guid }"
       @logger.debug("DELETE #{ url }")

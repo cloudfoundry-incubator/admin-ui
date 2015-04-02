@@ -108,6 +108,7 @@ module AdminUI
 
         row = []
 
+        row.push(space_guid)
         row.push(space[:name])
         row.push(space_guid)
 
@@ -186,7 +187,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..21).to_a, (0..4).to_a)
+      result(true, items, hash, (0..22).to_a, (1..5).to_a)
     end
 
     private

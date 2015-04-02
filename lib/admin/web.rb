@@ -819,6 +819,23 @@ module AdminUI
       end
     end
 
+    delete '/spaces/:space_guid', auth: [:admin] do
+      @logger.info_user session[:username], 'delete', "/spaces/#{ params[:space_guid] }"
+      begin
+        @operation.delete_space(params[:space_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete space: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during delete space: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/spaces/:space_guid/:role/:user_guid', auth: [:admin] do
       @logger.info_user session[:username], 'delete', "/spaces/#{ params[:space_guid] }/#{ params[:role] }/#{ params[:user_guid] }"
       begin

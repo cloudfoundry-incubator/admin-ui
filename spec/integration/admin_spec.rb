@@ -320,6 +320,11 @@ describe AdminUI::Admin, type: :integration do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
 
+    before do
+      # Make sure there is a service plan
+      expect(get_json('/service_plans_view_model')['items']['items'].length).to eq(1)
+    end
+
     def make_service_plan_private
       response = put_request("/service_plans/#{ cc_service_plan[:guid] }", '{"public": false }')
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
@@ -332,10 +337,38 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['put', "/service_plans/#{ cc_service_plan[:guid] }; body = {\"public\": true }"]], true)
     end
 
+    it 'has user name and service plan request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_plans_view_model']], true)
+    end
+
     it 'make service plans private and back to public' do
       expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][7].to_s }.from('true').to('false')
       make_service_plan_public
       expect { get_json('/service_plans_view_model')['items']['items'][0][7] }.to be_true
+    end
+  end
+
+  context 'manage space' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there is a space
+      expect(get_json('/spaces_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_space
+      response = delete_request("/spaces/#{ cc_space[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/spaces/#{ cc_space[:guid] }"]], true)
+    end
+
+    it 'has user name and space request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/spaces_view_model']], true)
+    end
+
+    it 'deletes the specific space' do
+      expect { delete_space }.to change { get_json('/spaces_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 

@@ -366,6 +366,38 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage space' do
+      before do
+        # Make sure there is a space
+        expect(cc.spaces['items'].length).to eq(1)
+      end
+
+      def delete_space
+        operation.delete_space(cc_space[:guid])
+      end
+
+      it 'deletes specific space' do
+        expect { delete_space }.to change { cc.spaces['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_space
+        end
+
+        def verify_space_not_found(exception)
+          expect(exception.cf_code).to eq(40_004)
+          expect(exception.cf_error_code).to eq('CF-SpaceNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The app space could not be found: #{ cc_space[:guid] }")
+        end
+
+        it 'fails deleting deleted space' do
+          expect { delete_space }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage space roles' do
       def delete_space_auditor
         operation.delete_space_role(cc_space[:guid], 'auditors', cc_user[:guid])
@@ -393,7 +425,7 @@ describe AdminUI::Operation, type: :integration do
 
       context 'errors' do
         before do
-          cc_clear_organizations_cache_stub(config)
+          cc_clear_spaces_cache_stub(config)
         end
 
         def verify_space_not_found(exception)

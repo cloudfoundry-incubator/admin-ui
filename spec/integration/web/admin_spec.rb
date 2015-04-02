@@ -547,20 +547,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                expected_length: 6,
-                                labels:          ['', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                colspans:        %w(6 3 5 2 3 3)
+                                expected_length: 7,
+                                labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
+                                colspans:        %w(1 6 3 5 2 3 3)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 22,
-                                labels:          ['Name', 'GUID', 'Target', 'Created', 'Updated', 'Roles', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                expected_length: 23,
+                                labels:          [' ', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Roles', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 colspans:        nil
                               }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='SpacesTable']/tbody/tr/td"),
                            [
+                             '',
                              cc_space[:name],
                              cc_space[:guid],
                              "#{ cc_organization[:name] }/#{ cc_space[:name] }",
@@ -587,7 +588,54 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_SpacesTable_0')
+          check_allowscriptaccess_attribute('ToolTables_SpacesTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          inputs = @driver.find_elements(xpath: "//table[@id='SpacesTable']/tbody/tr/td[1]/input")
+          expect(inputs.length).to eq(1)
+          expect(inputs[0].attribute('value')).to eq(cc_space[:guid])
+        end
+
+        context 'manage spaces' do
+          def check_first_row
+            @driver.find_elements(xpath: "//table[@id='SpacesTable']/tbody/tr/td[1]/input")[0].click
+          end
+
+          it 'has a delete button' do
+            expect(@driver.find_element(id: 'ToolTables_SpacesTable_0').text).to eq('Delete')
+          end
+
+          it 'alerts the user to select at least one row when clicking the delete button' do
+            @driver.find_element(id: 'ToolTables_SpacesTable_0').click
+
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+            @driver.find_element(id: 'modalDialogButton0').click
+          end
+
+          it 'deletes the selected space' do
+            # delete the route
+            check_first_row
+            @driver.find_element(id: 'ToolTables_SpacesTable_0').click
+
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected spaces?')
+            @driver.find_element(id: 'modalDialogButton0').click
+
+            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(id: 'modalDialogButton0').click
+
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr").text == 'No data available in table' }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr").text).to eq('No data available in table')
+          end
         end
 
         context 'selectable' do
