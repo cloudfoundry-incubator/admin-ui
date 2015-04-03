@@ -199,6 +199,30 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage domain' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there is a domain
+      expect(get_json('/domains_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_domain
+      response = delete_request("/domains/#{ cc_domain[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/domains/#{ cc_domain[:guid] }"]], true)
+    end
+
+    it 'has user name and domains request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/domains_view_model']], true)
+    end
+
+    it 'deletes the specific domain' do
+      expect { delete_domain }.to change { get_json('/domains_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage organization' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }

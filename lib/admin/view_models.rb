@@ -70,6 +70,10 @@ module AdminUI
       invalidate_cache(:deas)
     end
 
+    def invalidate_domains
+      invalidate_cache(:domains)
+    end
+
     def invalidate_gateways
       invalidate_cache(:gateways)
     end

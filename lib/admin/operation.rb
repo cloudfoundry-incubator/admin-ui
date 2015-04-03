@@ -26,6 +26,14 @@ module AdminUI
       @view_models.invalidate_applications
     end
 
+    def delete_domain(domain_guid)
+      url = "v2/domains/#{ domain_guid }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_domains
+      @view_models.invalidate_domains
+    end
+
     def delete_organization(org_guid)
       url = "v2/organizations/#{ org_guid }?recursive=true"
       @logger.debug("DELETE #{ url }")

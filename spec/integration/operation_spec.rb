@@ -119,6 +119,38 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage domain' do
+      before do
+        # Make sure there is a domain
+        expect(cc.domains['items'].length).to eq(1)
+      end
+
+      def delete_domain
+        operation.delete_domain(cc_domain[:guid])
+      end
+
+      it 'deletes specific domain' do
+        expect { delete_domain }.to change { cc.domains['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_domain
+        end
+
+        def verify_domain_not_found(exception)
+          expect(exception.cf_code).to eq(130_002)
+          expect(exception.cf_error_code).to eq('CF-DomainNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The domain could not be found: #{ cc_domain[:guid] }")
+        end
+
+        it 'fails deleting deleted domain' do
+          expect { delete_domain }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_domain_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage organization' do
       before do
         # Make sure there is an organization

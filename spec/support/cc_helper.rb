@@ -37,6 +37,7 @@ module CCHelper
 
   def cc_stub(config, insert_second_quota_definition = false)
     @cc_apps_deleted              = false
+    @cc_domains_deleted           = false
     @cc_organizations_deleted     = false
     @cc_routes_deleted            = false
     @cc_service_bindings_deleted  = false
@@ -51,6 +52,7 @@ module CCHelper
 
     cc_login_stubs(config)
     cc_app_stubs(config)
+    cc_domain_stubs(config)
     cc_organization_stubs(config)
     cc_route_stubs(config)
     cc_service_binding_stubs(config)
@@ -68,12 +70,20 @@ module CCHelper
     @cc_apps_deleted = true
   end
 
+  def cc_clear_domains_cache_stub(config)
+    cc_clear_routes_cache_stub(config)
+
+    sql(config.ccdb_uri, 'DELETE FROM organizations_private_domains')
+    sql(config.ccdb_uri, 'DELETE FROM domains')
+
+    @cc_domains_deleted = true
+  end
+
   def cc_clear_organizations_cache_stub(config)
+    cc_clear_domains_cache_stub(config)
     cc_clear_spaces_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM service_plan_visibilities')
-    sql(config.ccdb_uri, 'DELETE FROM organizations_private_domains')
-    sql(config.ccdb_uri, 'DELETE FROM domains')
     sql(config.ccdb_uri, 'DELETE FROM organizations_auditors')
     sql(config.ccdb_uri, 'DELETE FROM organizations_billing_managers')
     sql(config.ccdb_uri, 'DELETE FROM organizations_managers')
@@ -582,6 +592,23 @@ module CCHelper
         cc_app_not_found
       else
         cc_clear_apps_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_domain_not_found
+    NotFound.new('code'        => 130_002,
+                 'description' => "The domain could not be found: #{ cc_domain[:guid] }",
+                 'error_code'  => 'CF-DomainNotFound')
+  end
+
+  def cc_domain_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/domains/#{ cc_domain[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_domains_deleted
+        cc_domain_not_found
+      else
+        cc_clear_domains_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end

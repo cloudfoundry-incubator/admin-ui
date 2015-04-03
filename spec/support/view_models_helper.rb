@@ -164,6 +164,7 @@ module ViewModelsHelper
   def view_models_domains
     [
       [
+        cc_domain[:guid],
         cc_domain[:name],
         cc_domain[:guid],
         cc_domain[:created_at].to_datetime.rfc3339,

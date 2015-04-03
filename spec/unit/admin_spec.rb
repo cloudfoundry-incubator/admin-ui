@@ -270,6 +270,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete application')
     end
 
+    shared_examples 'common delete domain' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/domains/domain1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete domain via http' do
+      it_behaves_like('common delete domain')
+    end
+
+    context 'delete domain via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete domain')
+    end
+
     shared_examples 'common delete organization' do
       it 'returns failure code due to disconnection' do
         response = delete('/organizations/organization1')
@@ -954,6 +971,10 @@ describe AdminUI::Admin do
 
       it 'deletes /applications/:guid redirects as expected' do
         delete_redirects_as_expected('/applications/application1')
+      end
+
+      it 'deletes /domains/:guid redirects as expected' do
+        delete_redirects_as_expected('/domains/domain1')
       end
 
       it 'deletes /organizations/:guid redirects as expected' do

@@ -768,6 +768,23 @@ module AdminUI
       end
     end
 
+    delete '/domains/:domain_guid', auth: [:admin] do
+      @logger.info_user session[:username], 'delete', "/domains/#{ params[:domain_guid] }"
+      begin
+        @operation.delete_domain(params[:domain_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete domain: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during delete domain: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/organizations/:org_guid', auth: [:admin] do
       @logger.info_user session[:username], 'delete', "/organizations/#{ params[:org_guid] }"
       begin

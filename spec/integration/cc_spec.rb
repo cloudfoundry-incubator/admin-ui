@@ -48,6 +48,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.applications['items'].length).to eq(0)
     end
 
+    it 'clears the domain cache' do
+      expect(cc.domains['items'].length).to eq(1)
+      cc_clear_domains_cache_stub(config)
+      cc.invalidate_domains
+      expect(cc.domains['items'].length).to eq(0)
+    end
+
     it 'clears the organizations cache' do
       expect(cc.organizations['items'].length).to eq(1)
       cc_clear_organizations_cache_stub(config)

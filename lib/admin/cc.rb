@@ -244,6 +244,10 @@ module AdminUI
       invalidate_cache(:applications)
     end
 
+    def invalidate_domains
+      invalidate_cache(:domains)
+    end
+
     def invalidate_organizations
       invalidate_cache(:organizations)
     end
