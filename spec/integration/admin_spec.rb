@@ -316,6 +316,30 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage quota' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there is a quota
+      expect(get_json('/quotas_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_quota
+      response = delete_request("/quota_definitions/#{ cc_quota_definition[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/quota_definitions/#{ cc_quota_definition[:guid] }"]], true)
+    end
+
+    it 'has user name and quotas request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/quotas_view_model']], true)
+    end
+
+    it 'deletes the specific quota' do
+      expect { delete_quota }.to change { get_json('/quotas_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage route' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }

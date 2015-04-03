@@ -272,6 +272,10 @@ module AdminUI
       invalidate_cache(:routes)
     end
 
+    def invalidate_quota_definitions
+      invalidate_cache(:quota_definitions)
+    end
+
     def invalidate_service_bindings
       invalidate_cache(:service_bindings)
     end

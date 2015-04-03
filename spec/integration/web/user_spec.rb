@@ -208,6 +208,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(@driver.find_element(id: 'ToolTables_DomainsTable_0').text).to eq('Copy')
     end
 
+    it 'Quotas tab does not have delete button' do
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          scroll_tab_into_view('Quotas').click
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Quotas'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Quotas')
+
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'QuotasPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_QuotasTable_0').text == 'Copy'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(id: 'QuotasPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_QuotasTable_0').text).to eq('Copy')
+    end
+
     it 'Service Plans tab does not have public and private buttons' do
       begin
         Selenium::WebDriver::Wait.new(timeout: 5).until do

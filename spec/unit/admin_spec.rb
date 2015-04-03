@@ -321,6 +321,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete organization role')
     end
 
+    shared_examples 'common delete quota definition' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/quota_definitions/quota1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete quota definition via http' do
+      it_behaves_like('common delete quota definition')
+    end
+
+    context 'delete quota definition via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete quota definition')
+    end
+
     shared_examples 'common delete route' do
       it 'returns failure code due to disconnection' do
         response = delete('/routes/route1')
@@ -983,6 +1000,10 @@ describe AdminUI::Admin do
 
       it 'deletes /organizations/:guid/:role/:guid redirects as expected' do
         delete_redirects_as_expected('/organizations/organization1/auditors/user1')
+      end
+
+      it 'deletes /quota_definitions/:guid redirects as expected' do
+        delete_redirects_as_expected('/quota_definitions/quota1')
       end
 
       it 'deletes /routes/:guid redirects as expected' do

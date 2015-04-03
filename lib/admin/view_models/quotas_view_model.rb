@@ -36,6 +36,7 @@ module AdminUI
         Thread.pass
         row = []
 
+        row.push(quota_definition[:guid])
         row.push(quota_definition[:name])
         row.push(quota_definition[:guid])
         row.push(quota_definition[:created_at].to_datetime.rfc3339)
@@ -72,7 +73,7 @@ module AdminUI
         hash[quota_definition[:guid]] = quota_definition
       end
 
-      result(true, items, hash, (0..9).to_a, [0, 1, 2, 3, 8])
+      result(true, items, hash, (1..10).to_a, [1, 2, 3, 4, 9])
     end
   end
 end

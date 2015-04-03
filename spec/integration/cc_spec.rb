@@ -90,6 +90,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.organizations_users['items'].length).to eq(0)
     end
 
+    it 'clears the quota definition cache' do
+      expect(cc.quota_definitions['items'].length).to eq(1)
+      cc_clear_quota_definitions_cache_stub(config)
+      cc.invalidate_quota_definitions
+      expect(cc.quota_definitions['items'].length).to eq(0)
+    end
+
     it 'clears the route cache' do
       expect(cc.routes['items'].length).to eq(1)
       cc_clear_routes_cache_stub(config)

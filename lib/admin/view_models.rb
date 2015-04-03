@@ -90,6 +90,10 @@ module AdminUI
       invalidate_cache(:organization_roles)
     end
 
+    def invalidate_quotas
+      invalidate_cache(:quotas)
+    end
+
     def invalidate_routers
       invalidate_cache(:routers)
     end

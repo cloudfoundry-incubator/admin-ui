@@ -616,7 +616,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'deletes the selected space' do
-            # delete the route
+            # delete the space
             check_first_row
             @driver.find_element(id: 'ToolTables_SpacesTable_0').click
 
@@ -1155,7 +1155,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'deletes the selected service instance' do
-            # delete the route
+            # delete the service instance
             check_first_row
             @driver.find_element(id: 'ToolTables_ServiceInstancesTable_0').click
 
@@ -1323,7 +1323,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'deletes the selected service binding' do
-            # delete the route
+            # delete the service binding
             check_first_row
             @driver.find_element(id: 'ToolTables_ServiceBindingsTable_0').click
 
@@ -1779,7 +1779,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'deletes the selected domain' do
-            # delete the route
+            # delete the domain
             check_first_row
             @driver.find_element(id: 'ToolTables_DomainsTable_0').click
 
@@ -1850,14 +1850,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='QuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                expected_length: 10,
-                                labels:          ['Name', 'GUID', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Organizations'],
+                                expected_length: 11,
+                                labels:          [' ', 'Name', 'GUID', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Organizations'],
                                 colspans:        nil
                               }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='QuotasTable']/tbody/tr/td"),
                            [
+                             '',
                              cc_quota_definition[:name],
                              cc_quota_definition[:guid],
                              @driver.execute_script("return Format.formatString(\"#{ cc_quota_definition[:created_at].to_datetime.rfc3339 }\")"),
@@ -1872,7 +1873,54 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_QuotasTable_0')
+          check_allowscriptaccess_attribute('ToolTables_QuotasTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          inputs = @driver.find_elements(xpath: "//table[@id='QuotasTable']/tbody/tr/td[1]/input")
+          expect(inputs.length).to eq(1)
+          expect(inputs[0].attribute('value')).to eq(cc_quota_definition[:guid])
+        end
+
+        context 'manage quotas' do
+          def check_first_row
+            @driver.find_elements(xpath: "//table[@id='QuotasTable']/tbody/tr/td[1]/input")[0].click
+          end
+
+          it 'has a delete button' do
+            expect(@driver.find_element(id: 'ToolTables_QuotasTable_0').text).to eq('Delete')
+          end
+
+          it 'alerts the user to select at least one row when clicking the delete button' do
+            @driver.find_element(id: 'ToolTables_QuotasTable_0').click
+
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+            @driver.find_element(id: 'modalDialogButton0').click
+          end
+
+          it 'deletes the selected quota' do
+            # delete the quota
+            check_first_row
+            @driver.find_element(id: 'ToolTables_QuotasTable_0').click
+
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected quota definitions?')
+            @driver.find_element(id: 'modalDialogButton0').click
+
+            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(id: 'modalDialogButton0').click
+
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='QuotasTable']/tbody/tr").text == 'No data available in table' }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='QuotasTable']/tbody/tr").text).to eq('No data available in table')
+          end
         end
 
         context 'selectable' do

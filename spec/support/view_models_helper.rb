@@ -339,6 +339,7 @@ module ViewModelsHelper
   def view_models_quotas
     [
       [
+        cc_quota_definition[:guid],
         cc_quota_definition[:name],
         cc_quota_definition[:guid],
         cc_quota_definition[:created_at].to_datetime.rfc3339,

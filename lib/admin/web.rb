@@ -819,6 +819,23 @@ module AdminUI
       end
     end
 
+    delete '/quota_definitions/:quota_definition_guid', auth: [:admin] do
+      @logger.info_user session[:username], 'delete', "/quota_definitions/#{ params[:quota_definition_guid] }"
+      begin
+        @operation.delete_quota_definition(params[:quota_definition_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete quota definition: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during delete quota definition: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/routes/:route_guid', auth: [:admin] do
       @logger.info_user session[:username], 'delete', "/routes/#{ params[:route_guid] }"
       begin

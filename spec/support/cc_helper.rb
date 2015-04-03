@@ -39,6 +39,7 @@ module CCHelper
     @cc_apps_deleted              = false
     @cc_domains_deleted           = false
     @cc_organizations_deleted     = false
+    @cc_quota_definitions_deleted = false
     @cc_routes_deleted            = false
     @cc_service_bindings_deleted  = false
     @cc_service_instances_deleted = false
@@ -54,6 +55,7 @@ module CCHelper
     cc_app_stubs(config)
     cc_domain_stubs(config)
     cc_organization_stubs(config)
+    cc_quota_definition_stubs(config)
     cc_route_stubs(config)
     cc_service_binding_stubs(config)
     cc_service_instance_stubs(config)
@@ -92,6 +94,14 @@ module CCHelper
 
     @cc_organizations_deleted = true
     @cc_organization_created  = false
+  end
+
+  def cc_clear_quota_definitions_cache_stub(config)
+    cc_clear_organizations_cache_stub(config)
+
+    sql(config.ccdb_uri, 'DELETE FROM quota_definitions')
+
+    @cc_quota_definitions_deleted = true
   end
 
   def cc_clear_routes_cache_stub(config)
@@ -727,6 +737,23 @@ module CCHelper
       else
         sql(config.ccdb_uri, "UPDATE organizations SET status = 'active' WHERE guid = '#{ cc_organization[:guid] }'")
         OK.new('{}')
+      end
+    end
+  end
+
+  def cc_quota_definition_not_found
+    NotFound.new('code'        => 240_001,
+                 'description' => "Quota Definition could not be found: #{ cc_quota_definition[:guid] }",
+                 'error_code'  => 'CF-QuotaDefinitionNotFound')
+  end
+
+  def cc_quota_definition_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/quota_definitions/#{ cc_quota_definition[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_quota_definitions_deleted
+        cc_quota_definition_not_found
+      else
+        cc_clear_quota_definitions_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
   end

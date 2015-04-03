@@ -319,6 +319,38 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage quota definition' do
+      before do
+        # Make sure there is a quota definition
+        expect(cc.quota_definitions['items'].length).to eq(1)
+      end
+
+      def delete_quota_definition
+        operation.delete_quota_definition(cc_quota_definition[:guid])
+      end
+
+      it 'deletes specific quota definition' do
+        expect { delete_quota_definition }.to change { cc.quota_definitions['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_quota_definition
+        end
+
+        def verify_quota_definition_not_found(exception)
+          expect(exception.cf_code).to eq(240_001)
+          expect(exception.cf_error_code).to eq('CF-QuotaDefinitionNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("Quota Definition could not be found: #{ cc_quota_definition[:guid] }")
+        end
+
+        it 'fails deleting deleted quota definition' do
+          expect { delete_quota_definition }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_quota_definition_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage route' do
       before do
         # Make sure there is a route

@@ -53,6 +53,14 @@ module AdminUI
       @view_models.invalidate_organization_roles
     end
 
+    def delete_quota_definition(quota_definition_guid)
+      url = "v2/quota_definitions/#{ quota_definition_guid }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_quota_definitions
+      @view_models.invalidate_quotas
+    end
+
     def delete_route(route_guid)
       url = "v2/routes/#{ route_guid }"
       @logger.debug("DELETE #{ url }")
