@@ -109,6 +109,7 @@ module AdminUI
 
         row = []
 
+        row.push(service_broker[:guid])
         row.push(service_broker[:name])
         row.push(service_broker[:guid])
         row.push(service_broker[:created_at].to_datetime.rfc3339)
@@ -164,7 +165,7 @@ module AdminUI
         hash[service_broker[:guid]] = service_broker
       end
 
-      result(true, items, hash, (0..8).to_a, (0..3).to_a)
+      result(true, items, hash, (1..9).to_a, (1..4).to_a)
     end
   end
 end

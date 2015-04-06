@@ -388,6 +388,30 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage service broker' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there is a service broker
+      expect(get_json('/service_brokers_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_service_broker
+      response = delete_request("/service_brokers/#{ cc_service_broker[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/service_brokers/#{ cc_service_broker[:guid] }"]], true)
+    end
+
+    it 'has user name and service brokers request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_brokers_view_model']], true)
+    end
+
+    it 'deletes the specific service broker' do
+      expect { delete_service_broker }.to change { get_json('/service_brokers_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage service instance' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }

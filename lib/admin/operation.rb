@@ -77,6 +77,20 @@ module AdminUI
       @view_models.invalidate_service_bindings
     end
 
+    def delete_service_broker(service_broker_guid)
+      url = "v2/service_brokers/#{ service_broker_guid }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_service_brokers
+      @cc.invalidate_services
+      @cc.invalidate_service_plans
+      @cc.invalidate_service_plan_visibilities
+      @view_models.invalidate_service_brokers
+      @view_models.invalidate_services
+      @view_models.invalidate_service_plans
+      @view_models.invalidate_service_plan_visibilities
+    end
+
     def delete_service_instance(service_instance_guid)
       url = "v2/service_instances/#{ service_instance_guid }"
       @logger.debug("DELETE #{ url }")

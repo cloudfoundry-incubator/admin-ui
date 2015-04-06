@@ -42,6 +42,7 @@ module CCHelper
     @cc_quota_definitions_deleted         = false
     @cc_routes_deleted                    = false
     @cc_service_bindings_deleted          = false
+    @cc_service_brokers_deleted           = false
     @cc_service_instances_deleted         = false
     @cc_service_plans_deleted             = false
     @cc_service_plan_visibilities_deleted = false
@@ -59,6 +60,7 @@ module CCHelper
     cc_quota_definition_stubs(config)
     cc_route_stubs(config)
     cc_service_binding_stubs(config)
+    cc_service_broker_stubs(config)
     cc_service_instance_stubs(config)
     cc_service_plan_stubs(config)
     cc_service_plan_visibility_stubs(config)
@@ -117,6 +119,15 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM service_bindings')
 
     @cc_service_bindings_deleted = true
+  end
+
+  def cc_clear_service_brokers_cache_stub(config)
+    cc_clear_service_plans_cache_stub(config)
+
+    sql(config.ccdb_uri, 'DELETE FROM services')
+    sql(config.ccdb_uri, 'DELETE FROM service_brokers')
+
+    @cc_service_brokers_deleted = true
   end
 
   def cc_clear_service_instances_cache_stub(config)
@@ -795,6 +806,23 @@ module CCHelper
         cc_service_binding_not_found
       else
         cc_clear_service_bindings_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_service_broker_not_found
+    NotFound.new('code'        => 10_000,
+                 'description' => 'Unknown request',
+                 'error_code'  => 'CF-NotFound')
+  end
+
+  def cc_service_broker_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_brokers/#{ cc_service_broker[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_service_brokers_deleted
+        cc_service_broker_not_found
+      else
+        cc_clear_service_brokers_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end

@@ -372,6 +372,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete service binding')
     end
 
+    shared_examples 'common delete service broker' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_brokers/service_broker1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete service broker via http' do
+      it_behaves_like('common delete service broker')
+    end
+
+    context 'delete service broker via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service broker')
+    end
+
     shared_examples 'common delete service instance' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_instances/service_instance1')
@@ -1046,6 +1063,10 @@ describe AdminUI::Admin do
 
       it 'deletes /service_bindings/:guid redirects as expected' do
         delete_redirects_as_expected('/service_bindings/service_binding1')
+      end
+
+      it 'deletes /service_brokers/:guid redirects as expected' do
+        delete_redirects_as_expected('/service_brokers/service_broker1')
       end
 
       it 'deletes /service_instances/:guid redirects as expected' do

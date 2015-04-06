@@ -415,6 +415,38 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage service broker' do
+      before do
+        # Make sure there is a service broker
+        expect(cc.service_brokers['items'].length).to eq(1)
+      end
+
+      def delete_service_broker
+        operation.delete_service_broker(cc_service_broker[:guid])
+      end
+
+      it 'deletes specific service broker' do
+        expect { delete_service_broker }.to change { cc.service_brokers['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_service_broker
+        end
+
+        def verify_service_broker_not_found(exception)
+          expect(exception.cf_code).to eq(10_000)
+          expect(exception.cf_error_code).to eq('CF-NotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq('Unknown request')
+        end
+
+        it 'fails deleting deleted service broker' do
+          expect { delete_service_broker }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_broker_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage service instance' do
       before do
         # Make sure there is a service instance

@@ -280,12 +280,20 @@ module AdminUI
       invalidate_cache(:service_bindings)
     end
 
+    def invalidate_service_brokers
+      invalidate_cache(:service_brokers)
+    end
+
     def invalidate_service_instances
       invalidate_cache(:service_instances)
     end
 
     def invalidate_service_plans
       invalidate_cache(:service_plans)
+    end
+
+    def invalidate_services
+      invalidate_cache(:services)
     end
 
     def invalidate_service_plan_visibilities

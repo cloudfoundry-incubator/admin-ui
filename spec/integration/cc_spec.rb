@@ -111,6 +111,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.service_bindings['items'].length).to eq(0)
     end
 
+    it 'clears the service broker cache' do
+      expect(cc.service_brokers['items'].length).to eq(1)
+      cc_clear_service_brokers_cache_stub(config)
+      cc.invalidate_service_brokers
+      expect(cc.service_brokers['items'].length).to eq(0)
+    end
+
     it 'clears the service instance cache' do
       expect(cc.service_instances['items'].length).to eq(1)
       cc_clear_service_instances_cache_stub(config)
