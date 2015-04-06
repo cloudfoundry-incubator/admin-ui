@@ -87,6 +87,24 @@ module AdminUI
       @view_models.invalidate_service_bindings
     end
 
+    def delete_service_plan(service_plan_guid)
+      url = "v2/service_plans/#{ service_plan_guid }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_service_plans
+      @cc.invalidate_service_plan_visibilities
+      @view_models.invalidate_service_plans
+      @view_models.invalidate_service_plan_visibilities
+    end
+
+    def delete_service_plan_visibility(service_plan_visibility_guid)
+      url = "v2/service_plan_visibilities/#{ service_plan_visibility_guid }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_service_plan_visibilities
+      @view_models.invalidate_service_plan_visibilities
+    end
+
     def delete_space(space_guid)
       url = "v2/spaces/#{ space_guid }?recursive=true"
       @logger.debug("DELETE #{ url }")

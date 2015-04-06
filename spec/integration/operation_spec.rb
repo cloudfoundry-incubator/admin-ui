@@ -449,6 +449,9 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage service plan' do
       before do
+        # Make sure there is a service plan
+        expect(cc.service_plans['items'].length).to eq(1)
+
         # Make sure the original service plan's public field is true
         expect(cc.service_plans['items'][0][:public].to_s).to eq('true')
       end
@@ -459,6 +462,10 @@ describe AdminUI::Operation, type: :integration do
 
       def make_service_plan_private
         operation.manage_service_plan(cc_service_plan[:guid], '{"public": false }')
+      end
+
+      def delete_service_plan
+        operation.delete_service_plan(cc_service_plan[:guid])
       end
 
       it 'makes service plan public' do
@@ -472,9 +479,13 @@ describe AdminUI::Operation, type: :integration do
         expect { make_service_plan_private }.to change { cc.service_plans['items'][0][:public].to_s }.from('true').to('false')
       end
 
+      it 'deletes specific service plan' do
+        expect { delete_service_plan }.to change { cc.service_plans['items'].length }.from(1).to(0)
+      end
+
       context 'errors' do
         before do
-          cc_clear_service_plans_cache_stub(config)
+          delete_service_plan
         end
 
         def verify_service_plan_not_found(exception)
@@ -490,6 +501,42 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails making service plan private when service plan is deleted' do
           expect { make_service_plan_private }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_plan_not_found(exception) }
+        end
+
+        it 'fails deleting deleted service plan' do
+          expect { delete_service_plan }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_plan_not_found(exception) }
+        end
+      end
+    end
+
+    context 'manage service plan visibility' do
+      before do
+        # Make sure there is a service plan visibility
+        expect(cc.service_plan_visibilities['items'].length).to eq(1)
+      end
+
+      def delete_service_plan_visibility
+        operation.delete_service_plan_visibility(cc_service_plan_visibility[:guid])
+      end
+
+      it 'deletes specific service plan visibility' do
+        expect { delete_service_plan_visibility }.to change { cc.service_plan_visibilities['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_service_plan_visibility
+        end
+
+        def verify_service_plan_visibility_not_found(exception)
+          expect(exception.cf_code).to eq(260_003)
+          expect(exception.cf_error_code).to eq('CF-ServicePlanVisibilityNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The service plan visibility could not be found: #{ cc_service_plan[:guid] }")
+        end
+
+        it 'fails deleting deleted service plan visibility' do
+          expect { delete_service_plan_visibility }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_plan_visibility_not_found(exception) }
         end
       end
     end

@@ -389,6 +389,40 @@ describe AdminUI::Admin do
       it_behaves_like('common delete service instance')
     end
 
+    shared_examples 'common delete service plan' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_plans/service_plan1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete service plan via http' do
+      it_behaves_like('common delete service plan')
+    end
+
+    context 'delete service plan via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service plan')
+    end
+
+    shared_examples 'common delete service plan visibility' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_plan_visibilities/service_plan_visibility1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete service plan visibility via http' do
+      it_behaves_like('common delete service plan visibility')
+    end
+
+    context 'delete service plan visibility via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service plan visibility')
+    end
+
     shared_examples 'common delete space' do
       it 'returns failure code due to disconnection' do
         response = delete('/spaces/space1')
@@ -1016,6 +1050,14 @@ describe AdminUI::Admin do
 
       it 'deletes /service_instances/:guid redirects as expected' do
         delete_redirects_as_expected('/service_instances/service_instance1')
+      end
+
+      it 'deletes /service_plans/:guid redirects as expected' do
+        delete_redirects_as_expected('/service_plans/service_plan1')
+      end
+
+      it 'deletes /service_plan_visibilities/:guid redirects as expected' do
+        delete_redirects_as_expected('/service_plan_visibilities/service_plan_visibility1')
       end
 
       it 'deletes /spaces/:guid redirects as expected' do

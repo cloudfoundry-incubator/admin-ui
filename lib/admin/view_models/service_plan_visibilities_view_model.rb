@@ -39,6 +39,7 @@ module AdminUI
         row = []
 
         row.push(service_plan_visibility[:guid])
+        row.push(service_plan_visibility[:guid])
         row.push(service_plan_visibility[:created_at].to_datetime.rfc3339)
 
         if service_plan_visibility[:updated_at]
@@ -127,7 +128,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..27).to_a, (0..27).to_a)
+      result(true, items, hash, (1..28).to_a, (1..28).to_a)
     end
   end
 end

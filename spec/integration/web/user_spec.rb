@@ -229,7 +229,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(@driver.find_element(id: 'ToolTables_QuotasTable_0').text).to eq('Copy')
     end
 
-    it 'Service Plans tab does not have public and private buttons' do
+    it 'Service Plans tab does not have public, private and delete buttons' do
       begin
         Selenium::WebDriver::Wait.new(timeout: 5).until do
           scroll_tab_into_view('ServicePlans').click
@@ -248,6 +248,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
       expect(@driver.find_element(id: 'ServicePlansPage').displayed?).to eq(true)
       expect(@driver.find_element(id: 'ToolTables_ServicePlansTable_0').text).to eq('Copy')
+    end
+
+    it 'Service Plan Visibilities tab does not have delete button' do
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          scroll_tab_into_view('ServicePlanVisibilities').click
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'ServicePlanVisibilities'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('ServicePlanVisibilities')
+
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 10).until do
+          @driver.find_element(id: 'ServicePlanVisibilitiesPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_ServicePlanVisibilitiesTable_0').text == 'Copy'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(id: 'ServicePlanVisibilitiesPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_ServicePlanVisibilitiesTable_0').text).to eq('Copy')
     end
 
     it 'DEAs tab does not have a create DEA button' do

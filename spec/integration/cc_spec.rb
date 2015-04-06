@@ -125,6 +125,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.service_plans['items'].length).to eq(0)
     end
 
+    it 'clears the service plan visibility cache' do
+      expect(cc.service_plan_visibilities['items'].length).to eq(1)
+      cc_clear_service_plan_visibilities_cache_stub(config)
+      cc.invalidate_service_plan_visibilities
+      expect(cc.service_plan_visibilities['items'].length).to eq(0)
+    end
+
     it 'clears the spaces cache' do
       expect(cc.spaces['items'].length).to eq(1)
       cc_clear_spaces_cache_stub(config)

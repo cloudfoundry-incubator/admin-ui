@@ -36,15 +36,16 @@ module CCHelper
   end
 
   def cc_stub(config, insert_second_quota_definition = false)
-    @cc_apps_deleted              = false
-    @cc_domains_deleted           = false
-    @cc_organizations_deleted     = false
-    @cc_quota_definitions_deleted = false
-    @cc_routes_deleted            = false
-    @cc_service_bindings_deleted  = false
-    @cc_service_instances_deleted = false
-    @cc_service_plans_deleted     = false
-    @cc_spaces_deleted            = false
+    @cc_apps_deleted                      = false
+    @cc_domains_deleted                   = false
+    @cc_organizations_deleted             = false
+    @cc_quota_definitions_deleted         = false
+    @cc_routes_deleted                    = false
+    @cc_service_bindings_deleted          = false
+    @cc_service_instances_deleted         = false
+    @cc_service_plans_deleted             = false
+    @cc_service_plan_visibilities_deleted = false
+    @cc_spaces_deleted                    = false
 
     @cc_organization_created = false
 
@@ -60,6 +61,7 @@ module CCHelper
     cc_service_binding_stubs(config)
     cc_service_instance_stubs(config)
     cc_service_plan_stubs(config)
+    cc_service_plan_visibility_stubs(config)
     cc_space_stubs(config)
   end
 
@@ -83,9 +85,9 @@ module CCHelper
 
   def cc_clear_organizations_cache_stub(config)
     cc_clear_domains_cache_stub(config)
+    cc_clear_service_plan_visibilities_cache_stub(config)
     cc_clear_spaces_cache_stub(config)
 
-    sql(config.ccdb_uri, 'DELETE FROM service_plan_visibilities')
     sql(config.ccdb_uri, 'DELETE FROM organizations_auditors')
     sql(config.ccdb_uri, 'DELETE FROM organizations_billing_managers')
     sql(config.ccdb_uri, 'DELETE FROM organizations_managers')
@@ -127,11 +129,17 @@ module CCHelper
 
   def cc_clear_service_plans_cache_stub(config)
     cc_clear_service_instances_cache_stub(config)
+    cc_clear_service_plan_visibilities_cache_stub(config)
 
-    sql(config.ccdb_uri, 'DELETE FROM service_plan_visibilities')
     sql(config.ccdb_uri, 'DELETE FROM service_plans')
 
     @cc_service_plans_deleted = true
+  end
+
+  def cc_clear_service_plan_visibilities_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM service_plan_visibilities')
+
+    @cc_service_plan_visibilities_deleted = true
   end
 
   def cc_clear_spaces_cache_stub(config)
@@ -816,6 +824,15 @@ module CCHelper
   end
 
   def cc_service_plan_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans/#{ cc_service_plan[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_service_plans_deleted
+        cc_service_plan_not_found
+      else
+        cc_clear_service_plans_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plans/#{ cc_service_plan[:guid] }", AdminUI::Utils::HTTP_PUT, anything, '{"public": true }', anything) do
       if @cc_service_plans_deleted
         cc_service_plan_not_found
@@ -831,6 +848,23 @@ module CCHelper
       else
         sql(config.ccdb_uri, "UPDATE service_plans SET public = 'false' WHERE guid = '#{ cc_service_plan[:guid] }'")
         OK.new('{}')
+      end
+    end
+  end
+
+  def cc_service_plan_visibility_not_found
+    NotFound.new('code'        => 260_003,
+                 'description' => "The service plan visibility could not be found: #{ cc_service_plan[:guid] }",
+                 'error_code'  => 'CF-ServicePlanVisibilityNotFound')
+  end
+
+  def cc_service_plan_visibility_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_plan_visibilities/#{ cc_service_plan_visibility[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_service_plan_visibilities_deleted
+        cc_service_plan_visibility_not_found
+      else
+        cc_clear_service_plan_visibilities_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
   end

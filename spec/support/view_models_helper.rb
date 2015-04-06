@@ -577,6 +577,7 @@ module ViewModelsHelper
     [
       [
         cc_service_plan_visibility[:guid],
+        cc_service_plan_visibility[:guid],
         cc_service_plan_visibility[:created_at].to_datetime.rfc3339,
         cc_service_plan_visibility[:updated_at].to_datetime.rfc3339,
         cc_service_plan[:name],

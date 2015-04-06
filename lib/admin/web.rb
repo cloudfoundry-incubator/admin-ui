@@ -887,6 +887,40 @@ module AdminUI
       end
     end
 
+    delete '/service_plans/:service_plan_guid', auth: [:admin] do
+      @logger.info_user session[:username], 'delete', "/service_plans/#{ params[:service_plan_guid] }"
+      begin
+        @operation.delete_service_plan(params[:service_plan_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete service plan: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during delete service plan: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/service_plan_visibilities/:service_plan_visibility_guid', auth: [:admin] do
+      @logger.info_user session[:username], 'delete', "/service_plan_visibilities/#{ params[:service_plan_visibility_guid] }"
+      begin
+        @operation.delete_service_plan_visibility(params[:service_plan_visibility_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete service plan visibility: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during delete service plan visibility: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/spaces/:space_guid', auth: [:admin] do
       @logger.info_user session[:username], 'delete', "/spaces/#{ params[:space_guid] }"
       begin

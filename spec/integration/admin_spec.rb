@@ -433,6 +433,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['put', "/service_plans/#{ cc_service_plan[:guid] }; body = {\"public\": true }"]], true)
     end
 
+    def delete_service_plan
+      response = delete_request("/service_plans/#{ cc_service_plan[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/service_plans/#{ cc_service_plan[:guid] }"]], true)
+    end
+
     it 'has user name and service plan request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_plans_view_model']], true)
     end
@@ -441,6 +447,34 @@ describe AdminUI::Admin, type: :integration do
       expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][7].to_s }.from('true').to('false')
       make_service_plan_public
       expect { get_json('/service_plans_view_model')['items']['items'][0][7] }.to be_true
+    end
+
+    it 'deletes the specific service plan' do
+      expect { delete_service_plan }.to change { get_json('/service_plans_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
+  context 'manage service plan visibility' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there is a service plan visibility
+      expect(get_json('/service_plan_visibilities_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_service_plan_visibility
+      response = delete_request("/service_plan_visibilities/#{ cc_service_plan_visibility[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/service_plan_visibilities/#{ cc_service_plan_visibility[:guid] }"]], true)
+    end
+
+    it 'has user name and service plan visibility request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_plan_visibilities_view_model']], true)
+    end
+
+    it 'deletes the specific service plan visibility' do
+      expect { delete_service_plan_visibility }.to change { get_json('/service_plan_visibilities_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 

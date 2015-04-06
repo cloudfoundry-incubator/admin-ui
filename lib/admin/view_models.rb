@@ -114,6 +114,10 @@ module AdminUI
       invalidate_cache(:service_instances)
     end
 
+    def invalidate_service_plan_visibilities
+      invalidate_cache(:service_plan_visibilities)
+    end
+
     def invalidate_service_plans
       invalidate_cache(:service_plans)
     end
