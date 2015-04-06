@@ -382,7 +382,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           shared_examples 'click button without selecting a single row' do
             it 'alerts the user to select at least one row when clicking the button' do
-              @driver.find_element(id: buttonId).click
+              @driver.find_element(id: button_id).click
               expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
               expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
               expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
@@ -392,17 +392,17 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           # Delete button
           it_behaves_like('click button without selecting a single row') do
-            let(:buttonId) { 'ToolTables_OrganizationsTable_2' }
+            let(:button_id) { 'ToolTables_OrganizationsTable_2' }
           end
 
           # Activate button
           it_behaves_like('click button without selecting a single row') do
-            let(:buttonId) { 'ToolTables_OrganizationsTable_3' }
+            let(:button_id) { 'ToolTables_OrganizationsTable_3' }
           end
 
           # Suspend button
           it_behaves_like('click button without selecting a single row') do
-            let(:buttonId) { 'ToolTables_OrganizationsTable_4' }
+            let(:button_id) { 'ToolTables_OrganizationsTable_4' }
           end
 
           def manage_org(button_id, message, result_message)
@@ -791,7 +791,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           shared_examples 'click start button without selecting a single row' do
             it 'alerts the user to select at least one row when clicking the button' do
-              @driver.find_element(id: buttonId).click
+              @driver.find_element(id: button_id).click
 
               expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
               expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
@@ -802,22 +802,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           # Start button
           it_behaves_like('click start button without selecting a single row') do
-            let(:buttonId) { 'ToolTables_ApplicationsTable_0' }
+            let(:button_id) { 'ToolTables_ApplicationsTable_0' }
           end
 
           # Stop button
           it_behaves_like('click start button without selecting a single row') do
-            let(:buttonId) { 'ToolTables_ApplicationsTable_1' }
+            let(:button_id) { 'ToolTables_ApplicationsTable_1' }
           end
 
           # Restart button
           it_behaves_like('click start button without selecting a single row') do
-            let(:buttonId) { 'ToolTables_ApplicationsTable_2' }
+            let(:button_id) { 'ToolTables_ApplicationsTable_2' }
           end
 
           # Delete button
           it_behaves_like('click start button without selecting a single row') do
-            let(:buttonId) { 'ToolTables_ApplicationsTable_3' }
+            let(:button_id) { 'ToolTables_ApplicationsTable_3' }
           end
 
           it 'stops the selected application' do
@@ -2072,20 +2072,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                expected_length: 2,
-                                labels:          ['Service', 'Service Broker'],
-                                colspans:        %w(14 4)
+                                expected_length: 3,
+                                labels:          ['', 'Service', 'Service Broker'],
+                                colspans:        %w(1 14 4)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 18,
-                                labels:          ['Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Plan Updateable', 'Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Name', 'GUID', 'Created', 'Updated'],
+                                expected_length: 19,
+                                labels:          [' ', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Plan Updateable', 'Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Name', 'GUID', 'Created', 'Updated'],
                                 colspans:        nil
                               }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='ServicesTable']/tbody/tr/td"),
                            [
+                             '',
                              cc_service[:provider],
                              cc_service[:label],
                              cc_service[:guid],
@@ -2108,7 +2109,76 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ServicesTable_0')
+          check_allowscriptaccess_attribute('ToolTables_ServicesTable_2')
+        end
+
+        it 'has a checkbox in the first column' do
+          inputs = @driver.find_elements(xpath: "//table[@id='ServicesTable']/tbody/tr/td[1]/input")
+          expect(inputs.length).to eq(1)
+          expect(inputs[0].attribute('value')).to eq(cc_service[:guid])
+        end
+
+        context 'manage services' do
+          def check_first_row
+            @driver.find_elements(xpath: "//table[@id='ServicesTable']/tbody/tr/td[1]/input")[0].click
+          end
+
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'ToolTables_ServicesTable_0').text).to eq('Delete')
+          end
+
+          it 'has a Purge button' do
+            expect(@driver.find_element(id: 'ToolTables_ServicesTable_1').text).to eq('Purge')
+          end
+
+          shared_examples 'click button without selecting a single row' do
+            it 'alerts the user to select at least one row when clicking the button' do
+              @driver.find_element(id: button_id).click
+              expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+              expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+              expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+              @driver.find_element(id: 'modalDialogButton0').click
+            end
+          end
+
+          # Delete button
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_ServicesTable_0' }
+          end
+
+          # Purge button
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_ServicesTable_1' }
+          end
+
+          def manage_service(button_id, message)
+            check_first_row
+
+            @driver.find_element(id: button_id).click
+
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq(message)
+            @driver.find_element(id: 'modalDialogButton0').click
+
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(id: 'modalDialogButton0').click
+
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServicesTable']/tbody/tr").text == 'No data available in table' }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='ServicesTable']/tbody/tr").text).to eq('No data available in table')
+          end
+
+          it 'deletes the selected service' do
+            manage_service('ToolTables_ServicesTable_0', 'Are you sure you want to delete the selected services?')
+          end
+
+          it 'purges the selected service' do
+            manage_service('ToolTables_ServicesTable_1', 'Are you sure you want to purge the selected services?')
+          end
         end
 
         context 'selectable' do
@@ -2272,7 +2342,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           shared_examples 'click button without selecting a single row' do
             it 'alerts the user to select at least one row when clicking the button' do
-              @driver.find_element(id: buttonId).click
+              @driver.find_element(id: button_id).click
 
               expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
               expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
@@ -2282,15 +2352,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it_behaves_like('click button without selecting a single row') do
-            let(:buttonId) { 'ToolTables_ServicePlansTable_0' }
+            let(:button_id) { 'ToolTables_ServicePlansTable_0' }
           end
 
           it_behaves_like('click button without selecting a single row') do
-            let(:buttonId) { 'ToolTables_ServicePlansTable_1' }
+            let(:button_id) { 'ToolTables_ServicePlansTable_1' }
           end
 
           it_behaves_like('click button without selecting a single row') do
-            let(:buttonId) { 'ToolTables_ServicePlansTable_2' }
+            let(:button_id) { 'ToolTables_ServicePlansTable_2' }
           end
 
           it 'make selected public service plans private and back to public' do

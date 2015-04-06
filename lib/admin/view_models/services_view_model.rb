@@ -88,6 +88,7 @@ module AdminUI
 
         row = []
 
+        row.push(service[:guid])
         row.push(service[:provider])
         row.push(service[:label])
         row.push(service[:guid])
@@ -160,7 +161,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..17).to_a, (0..17).to_a - [10, 11, 12, 13])
+      result(true, items, hash, (1..18).to_a, (1..18).to_a - [11, 12, 13, 14])
     end
   end
 end

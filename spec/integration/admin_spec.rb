@@ -364,6 +364,40 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage service' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there is a service
+      expect(get_json('/services_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_service
+      response = delete_request("/services/#{ cc_service[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/services/#{ cc_service[:guid] }"]], true)
+    end
+
+    def purge_service
+      response = delete_request("/services/#{ cc_service[:guid] }?purge=true")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/services/#{ cc_service[:guid] }?purge=true"]], true)
+    end
+
+    it 'has user name and services request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/services_view_model']], true)
+    end
+
+    it 'deletes the specific service' do
+      expect { delete_service }.to change { get_json('/services_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'purges the specific service' do
+      expect { purge_service }.to change { get_json('/services_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage service binding' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }

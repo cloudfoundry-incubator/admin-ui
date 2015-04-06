@@ -383,6 +383,50 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage service' do
+      before do
+        # Make sure there is a service
+        expect(cc.services['items'].length).to eq(1)
+      end
+
+      def delete_service
+        operation.delete_service(cc_service[:guid], false)
+      end
+
+      def purge_service
+        operation.delete_service(cc_service[:guid], true)
+      end
+
+      it 'deletes specific service' do
+        expect { delete_service }.to change { cc.services['items'].length }.from(1).to(0)
+      end
+
+      it 'purges specific service' do
+        expect { purge_service }.to change { cc.services['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_service
+        end
+
+        def verify_service_not_found(exception)
+          expect(exception.cf_code).to eq(120_003)
+          expect(exception.cf_error_code).to eq('CF-ServiceNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The service could not be found: #{ cc_service[:guid] }")
+        end
+
+        it 'fails deleting deleted service' do
+          expect { delete_service }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_not_found(exception) }
+        end
+
+        it 'fails purging deleted service' do
+          expect { purge_service }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage service binding' do
       before do
         # Make sure there is a service binding

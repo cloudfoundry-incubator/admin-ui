@@ -622,6 +622,7 @@ module ViewModelsHelper
   def view_models_services
     [
       [
+        cc_service[:guid],
         cc_service[:provider],
         cc_service[:label],
         cc_service[:guid],

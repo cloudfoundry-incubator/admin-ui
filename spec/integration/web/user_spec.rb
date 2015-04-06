@@ -250,6 +250,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(@driver.find_element(id: 'ToolTables_ServiceBrokersTable_0').text).to eq('Copy')
     end
 
+    it 'Services tab does not have delete and purge buttons' do
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          scroll_tab_into_view('Services').click
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Services'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Services')
+
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'ServicesPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_ServicesTable_0').text == 'Copy'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(id: 'ServicesPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_ServicesTable_0').text).to eq('Copy')
+    end
+
     it 'Service Plans tab does not have public, private and delete buttons' do
       begin
         Selenium::WebDriver::Wait.new(timeout: 5).until do

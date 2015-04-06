@@ -938,6 +938,26 @@ module AdminUI
       end
     end
 
+    delete '/services/:service_guid', auth: [:admin] do
+      purge = params[:purge] == 'true'
+      url = "/services/#{ params[:service_guid] }"
+      url += '?purge=true' if purge
+      @logger.info_user session[:username], 'delete', url
+      begin
+        @operation.delete_service(params[:service_guid], purge)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete service: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during delete service: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/spaces/:space_guid', auth: [:admin] do
       @logger.info_user session[:username], 'delete', "/spaces/#{ params[:space_guid] }"
       begin

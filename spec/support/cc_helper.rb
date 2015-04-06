@@ -41,6 +41,7 @@ module CCHelper
     @cc_organizations_deleted             = false
     @cc_quota_definitions_deleted         = false
     @cc_routes_deleted                    = false
+    @cc_services_deleted                  = false
     @cc_service_bindings_deleted          = false
     @cc_service_brokers_deleted           = false
     @cc_service_instances_deleted         = false
@@ -59,6 +60,7 @@ module CCHelper
     cc_organization_stubs(config)
     cc_quota_definition_stubs(config)
     cc_route_stubs(config)
+    cc_service_stubs(config)
     cc_service_binding_stubs(config)
     cc_service_broker_stubs(config)
     cc_service_instance_stubs(config)
@@ -122,9 +124,8 @@ module CCHelper
   end
 
   def cc_clear_service_brokers_cache_stub(config)
-    cc_clear_service_plans_cache_stub(config)
+    cc_clear_services_cache_stub(config)
 
-    sql(config.ccdb_uri, 'DELETE FROM services')
     sql(config.ccdb_uri, 'DELETE FROM service_brokers')
 
     @cc_service_brokers_deleted = true
@@ -151,6 +152,14 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM service_plan_visibilities')
 
     @cc_service_plan_visibilities_deleted = true
+  end
+
+  def cc_clear_services_cache_stub(config)
+    cc_clear_service_plans_cache_stub(config)
+
+    sql(config.ccdb_uri, 'DELETE FROM services')
+
+    @cc_services_deleted = true
   end
 
   def cc_clear_spaces_cache_stub(config)
@@ -789,6 +798,32 @@ module CCHelper
         cc_route_not_found
       else
         cc_clear_routes_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_service_not_found
+    NotFound.new('code'        => 120_003,
+                 'description' => "The service could not be found: #{ cc_service[:guid] }",
+                 'error_code'  => 'CF-ServiceNotFound')
+  end
+
+  def cc_service_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/services/#{ cc_service[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_services_deleted
+        cc_service_not_found
+      else
+        cc_clear_services_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/services/#{ cc_service[:guid] }?purge=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_services_deleted
+        cc_service_not_found
+      else
+        cc_clear_services_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end

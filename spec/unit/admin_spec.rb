@@ -355,6 +355,40 @@ describe AdminUI::Admin do
       it_behaves_like('common delete route')
     end
 
+    shared_examples 'common delete service' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/services/service1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete service via http' do
+      it_behaves_like('common delete service')
+    end
+
+    context 'delete service via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service')
+    end
+
+    shared_examples 'common purge service' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/services/service1?purge=true')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'purge service via http' do
+      it_behaves_like('common purge service')
+    end
+
+    context 'purge service via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common purge service')
+    end
+
     shared_examples 'common delete service binding' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_bindings/service_binding1')
@@ -1079,6 +1113,10 @@ describe AdminUI::Admin do
 
       it 'deletes /service_plan_visibilities/:guid redirects as expected' do
         delete_redirects_as_expected('/service_plan_visibilities/service_plan_visibility1')
+      end
+
+      it 'deletes /services/:guid redirects as expected' do
+        delete_redirects_as_expected('/services/service1')
       end
 
       it 'deletes /spaces/:guid redirects as expected' do

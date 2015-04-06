@@ -39,7 +39,29 @@ module AdminUI
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_organizations
+      @cc.invalidate_organizations_auditors
+      @cc.invalidate_organizations_billing_managers
+      @cc.invalidate_organizations_managers
+      @cc.invalidate_organizations_users
+      @cc.invalidate_service_plan_visibilities
+      @cc.invalidate_spaces
+      @cc.invalidate_spaces_auditors
+      @cc.invalidate_spaces_developers
+      @cc.invalidate_spaces_managers
+      @cc.invalidate_service_instances
+      @cc.invalidate_service_bindings
+      @cc.invalidate_applications
+      @cc.invalidate_routes
+      @varz.invalidate
       @view_models.invalidate_organizations
+      @view_models.invalidate_organization_roles
+      @view_models.invalidate_service_plan_visibilities
+      @view_models.invalidate_spaces
+      @view_models.invalidate_space_roles
+      @view_models.invalidate_service_instances
+      @view_models.invalidate_service_bindings
+      @view_models.invalidate_applications
+      @view_models.invalidate_routes
     end
 
     def delete_organization_role(org_guid, role, user_guid)
@@ -67,6 +89,24 @@ module AdminUI
       @client.delete_cc(url)
       @cc.invalidate_routes
       @view_models.invalidate_routes
+    end
+
+    def delete_service(service_guid, purge)
+      url = "v2/services/#{ service_guid }"
+      url += '?purge=true' if purge
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_services
+      @cc.invalidate_service_plans
+      @cc.invalidate_service_plan_visibilities
+      @view_models.invalidate_services
+      @view_models.invalidate_service_plans
+      @view_models.invalidate_service_plan_visibilities
+      return unless purge
+      @cc.invalidate_service_instances
+      @cc.invalidate_service_bindings
+      @view_models.invalidate_service_instances
+      @view_models.invalidate_service_bindings
     end
 
     def delete_service_binding(service_binding_guid)
@@ -124,7 +164,20 @@ module AdminUI
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_spaces
+      @cc.invalidate_spaces_auditors
+      @cc.invalidate_spaces_developers
+      @cc.invalidate_spaces_managers
+      @cc.invalidate_service_instances
+      @cc.invalidate_service_bindings
+      @cc.invalidate_applications
+      @cc.invalidate_routes
+      @varz.invalidate
       @view_models.invalidate_spaces
+      @view_models.invalidate_space_roles
+      @view_models.invalidate_service_instances
+      @view_models.invalidate_service_bindings
+      @view_models.invalidate_applications
+      @view_models.invalidate_routes
     end
 
     def delete_space_role(space_guid, role, user_guid)
