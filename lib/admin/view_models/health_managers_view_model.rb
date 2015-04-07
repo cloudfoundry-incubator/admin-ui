@@ -30,33 +30,21 @@ module AdminUI
 
         if health_manager['connected']
           row.push('RUNNING')
-          row.push(DateTime.parse(data['start']).rfc3339)
-          row.push(data['num_cores'])
-          row.push(data['cpu'])
+          row.push(data['numCPUS'])
 
-          # Conditional logic since mem becomes mem_bytes in 157
-          if data['mem']
-            row.push(data['mem'])
-          elsif data['mem_bytes']
-            row.push(data['mem_bytes'])
+          memory_stats = data['memoryStats']
+
+          if memory_stats
+            row.push(memory_stats['numBytesAllocated'])
           else
             row.push(nil)
           end
 
-          row.push(data['total_users'])
-          row.push(data['total_apps'])
-          row.push(data['total_instances'])
           hash[health_manager['name']] = health_manager
         else
           row.push('OFFLINE')
 
-          if data['start']
-            row.push(DateTime.parse(data['start']).rfc3339)
-          else
-            row.push(nil)
-          end
-
-          row.push(nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil)
 
           row.push(health_manager['uri'])
         end
@@ -64,7 +52,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(true, items, hash, (0..9).to_a, [0, 2, 3])
+      result(true, items, hash, (0..4).to_a, [0, 2])
     end
   end
 end

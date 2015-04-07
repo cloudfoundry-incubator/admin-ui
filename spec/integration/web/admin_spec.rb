@@ -2731,8 +2731,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='HealthManagersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
-                                expected_length: 10,
-                                labels:          %w(Name Index State Started Cores CPU Memory Users Applications Instances),
+                                expected_length: 5,
+                                labels:          %w(Name Index State Cores Memory),
                                 colspans:        nil
                                }
                              ])
@@ -2742,13 +2742,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              nats_health_manager['host'],
                              nats_health_manager['index'].to_s,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
-                             @driver.execute_script("return Format.formatString(\"#{ varz_health_manager['start'] }\")"),
-                             varz_health_manager['num_cores'].to_s,
-                             varz_health_manager['cpu'].to_s,
-                             varz_health_manager['mem'].to_s,
-                             varz_health_manager['total_users'].to_s,
-                             varz_health_manager['total_apps'].to_s,
-                             varz_health_manager['total_instances'].to_s
+                             varz_health_manager['numCPUS'].to_s,
+                             @driver.execute_script("return Format.formatNumber(\"#{ varz_health_manager['memoryStats']['numBytesAllocated'] }\")")
                            ])
         end
 
@@ -2759,19 +2754,29 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         context 'selectable' do
           it 'has details' do
             select_first_row
-            check_details([{ label: 'Name',              tag: nil, value: nats_health_manager['host'] },
-                           { label: 'Index',             tag: nil, value: nats_health_manager['index'].to_s },
-                           { label: 'URI',               tag: 'a', value: nats_health_manager_varz },
-                           { label: 'Started',           tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_health_manager['start'] }\")") },
-                           { label: 'Uptime',            tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_health_manager['uptime'] }\")") },
-                           { label: 'Cores',             tag: nil, value: varz_health_manager['num_cores'].to_s },
-                           { label: 'CPU',               tag: nil, value: varz_health_manager['cpu'].to_s },
-                           { label: 'Memory',            tag: nil, value: varz_health_manager['mem'].to_s },
-                           { label: 'Users',             tag: nil, value: varz_health_manager['total_users'].to_s },
-                           { label: 'Applications',      tag: nil, value: varz_health_manager['total_apps'].to_s },
-                           { label: 'Instances',         tag: nil, value: varz_health_manager['total_instances'].to_s },
-                           { label: 'Running Instances', tag: nil, value: varz_health_manager['running_instances'].to_s },
-                           { label: 'Crashed Instances', tag: nil, value: varz_health_manager['crashed_instances'].to_s }
+            check_details([{ label: 'Name',                                         tag: nil, value: nats_health_manager['host'] },
+                           { label: 'Index',                                        tag: nil, value: nats_health_manager['index'].to_s },
+                           { label: 'URI',                                          tag: 'a', value: nats_health_manager_varz },
+                           { label: 'Cores',                                        tag: nil, value: varz_health_manager['numCPUS'].to_s },
+                           { label: 'Memory',                                       tag: nil, value: @driver.execute_script("return Format.formatNumber(\"#{ varz_health_manager['memoryStats']['numBytesAllocated'] }\")") },
+                           { label: 'Actual State Listener Store Usage Percentage', tag: nil, value: varz_health_manager_metric('ActualStateListenerStoreUsagePercentage').to_s },
+                           { label: 'Desired Apps',                                 tag: nil, value: varz_health_manager_metric('NumberOfDesiredApps').to_s },
+                           { label: 'Desired Apps Pending Staging',                 tag: nil, value: varz_health_manager_metric('NumberOfDesiredAppsPendingStaging').to_s },
+                           { label: 'Undesired Running Apps',                       tag: nil, value: varz_health_manager_metric('NumberOfUndesiredRunningApps').to_s },
+                           { label: 'Apps With All Instances Reporting',            tag: nil, value: varz_health_manager_metric('NumberOfAppsWithAllInstancesReporting').to_s },
+                           { label: 'Apps With Missing Instances',                  tag: nil, value: varz_health_manager_metric('NumberOfAppsWithMissingInstances').to_s },
+                           { label: 'Desired Instances',                            tag: nil, value: varz_health_manager_metric('NumberOfDesiredInstances').to_s },
+                           { label: 'Running Instances',                            tag: nil, value: varz_health_manager_metric('NumberOfRunningInstances').to_s },
+                           { label: 'Crashed Instances',                            tag: nil, value: varz_health_manager_metric('NumberOfCrashedInstances').to_s },
+                           { label: 'Desired State Sync Time in Milliseconds',      tag: nil, value: varz_health_manager_metric('DesiredStateSyncTimeInMilliseconds').to_s },
+                           { label: 'Received Heartbeats',                          tag: nil, value: varz_health_manager_metric('ReceivedHeartbeats').to_s },
+                           { label: 'Saved Heartbeats',                             tag: nil, value: varz_health_manager_metric('SavedHeartbeats').to_s },
+                           { label: 'Start Crashed',                                tag: nil, value: varz_health_manager_metric('StartCrashed').to_s },
+                           { label: 'Start Evacuating',                             tag: nil, value: varz_health_manager_metric('StartEvacuating').to_s },
+                           { label: 'Start Missing',                                tag: nil, value: varz_health_manager_metric('StartMissing').to_s },
+                           { label: 'Stop Duplicate',                               tag: nil, value: varz_health_manager_metric('StopDuplicate').to_s },
+                           { label: 'Stop Extra',                                   tag: nil, value: varz_health_manager_metric('StopExtra').to_s },
+                           { label: 'Stop Evacuation Complete',                     tag: nil, value: varz_health_manager_metric('StopEvacuationComplete').to_s }
                           ])
           end
         end

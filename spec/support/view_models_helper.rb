@@ -108,7 +108,7 @@ module ViewModelsHelper
         nats_health_manager['type'],
         nats_health_manager['index'],
         'RUNNING',
-        DateTime.parse(varz_health_manager['start']).rfc3339,
+        nil,
         nats_health_manager_varz
       ],
       [
@@ -216,13 +216,8 @@ module ViewModelsHelper
         nats_health_manager['host'],
         nats_health_manager['index'],
         'RUNNING',
-        DateTime.parse(varz_health_manager['start']).rfc3339,
-        varz_health_manager['num_cores'],
-        varz_health_manager['cpu'],
-        varz_health_manager['mem'],
-        varz_health_manager['total_users'],
-        varz_health_manager['total_apps'],
-        varz_health_manager['total_instances']
+        varz_health_manager['numCPUS'],
+        varz_health_manager['memoryStats']['numBytesAllocated']
       ]
     ]
   end

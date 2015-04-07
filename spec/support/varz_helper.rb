@@ -111,18 +111,107 @@ module VARZHelper
 
   def varz_health_manager
     {
-      'cpu'               => 0.1,
-      'crashed_instances' => 2,
-      'mem'               => 3,
-      'num_cores'         => 4,
-      'running_instances' => 5,
-      'start'             => '2013-10-21T07:00:00-05:00',
-      'total_apps'        => 6,
-      'total_instances'   => 7,
-      'total_users'       => 8,
-      'type'              => nats_health_manager['type'],
-      'uptime'            => '9d:10h:11m:12s'
+      'numCPUS' => 4,
+      'memoryStats' =>
+      {
+        'numBytesAllocated' => 1_186_744
+      },
+      'contexts' =>
+      [
+        {
+          'name' => 'HM9000',
+          'metrics' =>
+          [
+            {
+              'name'  => 'ActualStateListenerStoreUsagePercentage',
+              'value' => 0.1
+            },
+            {
+              'name'  => 'DesiredStateSyncTimeInMilliseconds',
+              'value' => 2.3
+            },
+            {
+              'name'  => 'NumberOfAppsWithAllInstancesReporting',
+              'value' => 4
+            },
+            {
+              'name'  => 'NumberOfAppsWithMissingInstances',
+              'value' => 5
+            },
+            {
+              'name'  => 'NumberOfCrashedIndices',
+              'value' => 6
+            },
+            {
+              'name'  => 'NumberOfCrashedInstances',
+              'value' => 7
+            },
+            {
+              'name'  => 'NumberOfDesiredApps',
+              'value' => 8
+            },
+            {
+              'name'  => 'NumberOfDesiredAppsPendingStaging',
+              'value' => 9
+            },
+            {
+              'name'  => 'NumberOfDesiredInstances',
+              'value' => 10
+            },
+            {
+              'name'  => 'NumberOfMissingIndices',
+              'value' => 11
+            },
+            {
+              'name'  => 'NumberOfRunningInstances',
+              'value' => 12
+            },
+            {
+              'name'  => 'NumberOfUndesiredRunningApps',
+              'value' => 13
+            },
+            {
+              'name'  => 'ReceivedHeartbeats',
+              'value' => 14
+            },
+            {
+              'name'  => 'SavedHeartbeats',
+              'value' => 15
+            },
+            {
+              'name'  => 'StartCrashed',
+              'value' => 16
+            },
+            {
+              'name'  => 'StartEvacuating',
+              'value' => 17
+            },
+            {
+              'name'  => 'StartMissing',
+              'value' => 18
+            },
+            {
+              'name'  => 'StopDuplicate',
+              'value' => 19
+            },
+            {
+              'name'  => 'StopExtra',
+              'value' => 20
+            },
+            {
+              'name'  => 'StopEvacuationComplete',
+              'value' => 21
+            }
+          ]
+        }
+      ]
     }
+  end
+
+  def varz_health_manager_metric(name)
+    varz_health_manager['contexts'][0]['metrics'].each do |metric|
+      return metric['value'] if metric['name'] == name
+    end
   end
 
   def varz_provisioner

@@ -43,7 +43,7 @@ module NATSHelper
       'credentials' => %w(hm_user hm_password),
       'host'        => 'HealthManagerHost',
       'index'       => 0,
-      'type'        => 'HealthManager'
+      'type'        => 'HM9000'
     }
   end
 

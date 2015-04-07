@@ -43,7 +43,7 @@ module AdminUI
     end
 
     def health_managers
-      filter(/HealthManager/)
+      filter(/HM9000/)
     end
 
     def gateways
