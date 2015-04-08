@@ -670,6 +670,14 @@ describe AdminUI::Admin do
         verify_not_found('/domains_view_model/domain1')
       end
 
+      it '/events_view_model succeeds' do
+        verify_disconnected_view_model_items('/events_view_model')
+      end
+
+      it '/events_view_model/:guid returns not found' do
+        verify_not_found('/events_view_model/event1')
+      end
+
       it '/gateways_view_model succeeds' do
         verify_disconnected_view_model_items('/gateways_view_model')
       end
@@ -923,6 +931,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/download')
       end
 
+      it '/events_view_model redirects as expected' do
+        get_redirects_as_expected('/events_view_model')
+      end
+
+      it '/events_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/events_view_model/domain1')
+      end
+
       it '/gateways_view_model redirects as expected' do
         get_redirects_as_expected('/gateways_view_model')
       end
@@ -1153,6 +1169,10 @@ describe AdminUI::Admin do
 
       it 'posts /domains_view_model redirects as expected' do
         post_redirects_as_expected('/domains_view_model')
+      end
+
+      it 'posts /events_view_model redirects as expected' do
+        post_redirects_as_expected('/events_view_model')
       end
 
       it 'posts /gateways_view_model redirects as expected' do

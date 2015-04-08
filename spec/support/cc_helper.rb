@@ -170,6 +170,7 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM spaces_auditors')
     sql(config.ccdb_uri, 'DELETE FROM spaces_developers')
     sql(config.ccdb_uri, 'DELETE FROM spaces_managers')
+    sql(config.ccdb_uri, 'DELETE FROM events')
     sql(config.ccdb_uri, 'DELETE FROM spaces')
 
     @cc_spaces_deleted = true
@@ -220,6 +221,25 @@ module CCHelper
       id:                     2,
       name:                   'test_domain',
       owning_organization_id: cc_organization[:id],
+      updated_at:             Time.new('2014-02-12T09:40:52-06:00')
+    }
+  end
+
+  def cc_event
+    {
+      actee:                  cc_space[:guid],
+      actee_name:             cc_space[:name],
+      actee_type:             'space',
+      actor:                  cc_user[:guid],
+      actor_name:             uaa_user[:username],
+      actor_type:             'user',
+      created_at:             Time.new('2014-02-12T09:40:52-06:00'),
+      guid:                   'event1',
+      id:                     2,
+      metadata:               '{}',
+      space_id:               cc_space[:id],
+      timestamp:              Time.new('2014-02-12T09:40:52-06:00'),
+      type:                   'audit.space.update',
       updated_at:             Time.new('2014-02-12T09:40:52-06:00')
     }
   end
@@ -480,7 +500,7 @@ module CCHelper
       admin:            false,
       created_at:       Time.new('2013-10-16T08:55:54-05:00'),
       default_space_id: nil,
-      guid:             'user1',
+      guid:             uaa_user[:id],
       id:               14,
       updated_at:       nil
     }
@@ -572,6 +592,7 @@ module CCHelper
               [:service_plans,                  cc_service_plan],
               [:service_plan_visibilities,      cc_service_plan_visibility],
               [:spaces,                         cc_space],
+              [:events,                         cc_event],
               [:apps,                           cc_app],
               [:routes,                         cc_route],
               [:service_instances,              cc_service_instance],

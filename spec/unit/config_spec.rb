@@ -55,6 +55,12 @@ describe AdminUI::Config do
         expect(config.db_uri).to eq(db_uri)
       end
 
+      it 'event_days' do
+        event_days = 35
+        config = AdminUI::Config.load('event_days' => event_days)
+        expect(config.event_days).to eq(event_days)
+      end
+
       it 'log_file' do
         log_file = 'admin_ui.log'
         config = AdminUI::Config.load('log_file' => log_file)
@@ -355,6 +361,10 @@ describe AdminUI::Config do
         expect(config.db_uri).to be_nil
       end
 
+      it 'event_days' do
+        expect(config.event_days).to eq(7)
+      end
+
       it 'log_file' do
         expect(config.log_file).to be_nil
       end
@@ -554,6 +564,10 @@ describe AdminUI::Config do
         expect { AdminUI::Config.load(config.merge(db_uri: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
+      it 'event_days' do
+        expect { AdminUI::Config.load(config.merge(event_days: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
       it 'log_file' do
         expect { AdminUI::Config.load(config.merge(log_file: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
@@ -742,6 +756,10 @@ describe AdminUI::Config do
 
       it 'db_uri' do
         expect { AdminUI::Config.load(config.merge(db_uri: nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'event_days' do
+        expect { AdminUI::Config.load(config.merge(event_days: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'log_file' do

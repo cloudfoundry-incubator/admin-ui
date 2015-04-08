@@ -10,6 +10,7 @@ module AdminUI
       cloud_controller_discovery_interval:                300,
       cloud_controller_ssl_verify_none:                 false,
       component_connection_retries:                         2,
+      event_days:                                           7,
       log_file_page_size:                              51_200,
       log_file_sftp_keys:                                  [],
       log_files:                                           [],
@@ -41,6 +42,7 @@ module AdminUI
           optional(:component_connection_retries)        => Integer,
           data_file:                                        /[^\r\n\t]+/,
           db_uri:                                           /[^\r\n\t]+/,
+          optional(:event_days)                          => Integer,
           log_file:                                         /[^\r\n\t]+/,
           optional(:log_file_sftp_keys)                  => [String],
           optional(:log_file_page_size)                  => Integer,
@@ -156,6 +158,10 @@ module AdminUI
 
     def db_uri
       @config[:db_uri]
+    end
+
+    def event_days
+      @config[:event_days]
     end
 
     def log_file

@@ -54,6 +54,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('Users').displayed?).to be_true
       expect(scroll_tab_into_view('Domains').displayed?).to be_true
       expect(scroll_tab_into_view('Quotas').displayed?).to be_true
+      expect(scroll_tab_into_view('Events').displayed?).to be_true
       expect(scroll_tab_into_view('ServiceBrokers').displayed?).to be_true
       expect(scroll_tab_into_view('Services').displayed?).to be_true
       expect(scroll_tab_into_view('ServicePlans').displayed?).to be_true
@@ -1944,6 +1945,80 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has organizations link' do
             check_filter_link('Quotas', 9, 'Organizations', cc_quota_definition[:name])
+          end
+        end
+      end
+
+      context 'Events' do
+        let(:tab_id) { 'Events' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='EventsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 4,
+                                labels:          ['', 'Actee', 'Actor', ''],
+                                colspans:        %w(3 3 3 1)
+                              },
+                              {
+                                columns:         @driver.find_elements(xpath: "//div[@id='EventsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 10,
+                                labels:          %w(Timestamp GUID Type Type Name GUID Type Name GUID Target),
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='EventsTable']/tbody/tr/td"),
+                           [
+                             @driver.execute_script("return Format.formatString(\"#{ cc_event[:timestamp].to_datetime.rfc3339 }\")"),
+                             cc_event[:guid],
+                             cc_event[:type],
+                             cc_event[:actee_type],
+                             cc_event[:actee_name],
+                             cc_event[:actee],
+                             cc_event[:actor_type],
+                             cc_event[:actor_name],
+                             cc_event[:actor],
+                             "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_EventsTable_0')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ label: 'Event Timestamp', tag: 'div', value: @driver.execute_script("return Format.formatDateString(\"#{ cc_event[:timestamp].to_datetime.rfc3339 }\")") },
+                           { label: 'Event GUID',      tag:   nil, value: cc_event[:guid] },
+                           { label: 'Event Type',      tag:   nil, value: cc_event[:type] },
+                           { label: 'Actee Type',      tag:   nil, value: cc_event[:actee_type] },
+                           { label: 'Actee',           tag:   nil, value: cc_event[:actee_name] },
+                           { label: 'Actee GUID',      tag:   'a', value: cc_event[:actee] },
+                           { label: 'Actor Type',      tag:   nil, value: cc_event[:actor_type] },
+                           { label: 'Actor',           tag:   nil, value: cc_event[:actor_name] },
+                           { label: 'Actor GUID',      tag:   'a', value: cc_event[:actor] },
+                           { label: 'Space',           tag:   'a', value: cc_space[:name] },
+                           { label: 'Organization',    tag:   'a', value: cc_organization[:name] }
+                          ])
+          end
+
+          it 'has spaces actee link' do
+            check_filter_link('Events', 5, 'Spaces', cc_event[:actee])
+          end
+
+          it 'has users actor link' do
+            check_filter_link('Events', 8, 'Users', cc_event[:actor])
+          end
+
+          it 'has spaces link' do
+            check_filter_link('Events', 9, 'Spaces', cc_space[:guid])
+          end
+
+          it 'has organizations link' do
+            check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
           end
         end
       end

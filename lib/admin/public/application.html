@@ -32,6 +32,7 @@
         <script src="js/app/tabs/componentsTab.js"></script>
         <script src="js/app/tabs/deasTab.js"></script>
         <script src="js/app/tabs/domainsTab.js"></script>
+        <script src="js/app/tabs/eventsTab.js"></script>
         <script src="js/app/tabs/gatewaysTab.js"></script>    
         <script src="js/app/tabs/healthManagersTab.js"></script> 
         <script src="js/app/tabs/logsTab.js"></script>
@@ -98,6 +99,7 @@
 	            <span id="Users" class="menuItem">Users</span>
 	            <span id="Domains" class="menuItem">Domains</span>
 	            <span id="Quotas" class="menuItem">Quotas</span>
+	            <span id="Events" class="menuItem">Events</span>
 	            <span id="ServiceBrokers" class="menuItem">Service Brokers</span>
 	            <span id="Services" class="menuItem">Services</span>
 	            <span id="ServicePlans" class="menuItem">Service Plans</span>
@@ -574,6 +576,42 @@
                 </div>
             </div>
 
+            <div id="EventsPage" class="page hiddenPage">
+                <div id="EventsTableContainer" class="pageSection">
+                    <table id="EventsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                    	<thead>
+	                    	<tr class="customTableHeaderGroup">
+	                    	    <th colspan="3"> </th>
+	                            <th colspan="3">Actee</th>
+	                            <th colspan="3">Actor</th>
+	                            <th colspan="1"> </th>
+	                        </tr>
+	                        <tr>
+	                            <th>Timestamp</th>
+	                            <th>GUID</th>
+	                            <th>Type</th>
+	                            
+	                            <th>Type</th>
+	                            <th>Name</th>
+	                            <th>GUID</th>
+
+	                            <th>Type</th>
+	                            <th>Name</th>
+	                            <th>GUID</th>
+	                            
+	                            <th>Target</th>
+	                        </tr>
+                    	</thead>
+                   		<tbody/>
+                    </table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="EventsDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="EventsPropertiesContainer"></div>
+                </div>
+            </div>
+            
             <div id="ServiceBrokersPage" class="page hiddenPage">
                 <div id="ServiceBrokersTableContainer" class="pageSection">
                     <table id="ServiceBrokersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>

@@ -8,6 +8,9 @@ AllCops:
 
 AbcSize:
   Enabled: false
+
+BlockNesting:
+  Enabled: false
   
 ClassLength:
   Enabled: false

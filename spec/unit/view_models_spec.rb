@@ -101,6 +101,14 @@ describe AdminUI::CC do
       verify_disconnected_items(view_models.domains)
     end
 
+    it 'returns nil event as expected' do
+      expect(view_models.event('bogus')).to be_nil
+    end
+
+    it 'returns zero events as expected' do
+      verify_disconnected_items(view_models.events)
+    end
+
     it 'returns nil gateway as expected' do
       expect(view_models.gateway('bogus')).to be_nil
     end

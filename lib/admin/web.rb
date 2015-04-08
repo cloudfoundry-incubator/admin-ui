@@ -138,6 +138,18 @@ module AdminUI
       end
     end
 
+    get '/events_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'get', '/events_view_model'
+      AllActions.new(@logger, @view_models.events, params).items.to_json
+    end
+
+    get '/events_view_model/:guid', auth: [:user] do
+      @logger.info_user session[:username], 'get', "/events_view_model/#{ params[:guid] }"
+      result = @view_models.event(params[:guid])
+      return result.to_json if result
+      404
+    end
+
     get '/favicon.ico' do
     end
 
@@ -479,6 +491,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'domains.csv')
+    end
+
+    post '/events_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'post', '/events_view_model'
+      file = Download.download(request.body.read, 'events', @view_models.events)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'events.csv')
     end
 
     post '/gateways_view_model', auth: [:user] do

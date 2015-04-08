@@ -706,6 +706,18 @@ describe AdminUI::Admin, type: :integration do
       end
     end
 
+    context 'events_view_model' do
+      let(:path)              { '/events_view_model' }
+      let(:view_model_source) { view_models_events }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'events_view_model detail' do
+      let(:path)              { "/events_view_model/#{ cc_event[:guid] }" }
+      let(:view_model_source) { view_models_events_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'gateways_view_model' do
       let(:path)              { '/gateways_view_model' }
       let(:view_model_source) { view_models_gateways }

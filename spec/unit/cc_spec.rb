@@ -65,6 +65,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.domains)
     end
 
+    it 'returns zero events as expected' do
+      verify_disconnected_items(cc.events)
+    end
+
     it 'returns zero group_membership expected' do
       verify_disconnected_items(cc.group_membership)
     end

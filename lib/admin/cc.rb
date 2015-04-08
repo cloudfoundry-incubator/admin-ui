@@ -48,6 +48,13 @@ module AdminUI
           table:   :domains,
           columns: [:created_at, :guid, :id, :name, :owning_organization_id, :updated_at]
         },
+        events:
+        {
+          db_uri:  ccdb_uri,
+          table:   :events,
+          columns: [:actee, :actee_name, :actee_type, :actor, :actor_name, :actor_type, :created_at, :guid, :id, :metadata, :space_id, :timestamp, :type, :updated_at],
+          where:   "\"timestamp\" >= CURRENT_TIMESTAMP - INTERVAL '#{ @config.event_days } DAYS'"
+        },
         groups:
         {
           db_uri:  uaadb_uri,
@@ -230,6 +237,10 @@ module AdminUI
 
     def domains
       result_cache(:domains)
+    end
+
+    def events
+      result_cache(:events)
     end
 
     def group_membership
@@ -494,10 +505,14 @@ module AdminUI
               db_columns     = connection[table].columns
               # Downcase needed on column names to get around case sensitivity in MySQL
               db_columns     = db_columns.map(&:downcase)
-              cache[:select] = connection[table].select(columns & db_columns).sql
+              statement      = connection[table].select(columns & db_columns)
+              statement      = statement.where(cache[:where]) if cache[:where] && !@testing
+              cache[:select] = statement.sql
+
               # TODO: If the sql has parenthesis around the select clause, you get an array of values instead of a hash
               cache[:select] = cache[:select].sub('(', '').sub(')', '')
 
+              @logger.debug("Select for key #{ key }, table #{ table }: #{ cache[:select] }")
               @logger.debug("Columns removed for key #{ key }, table #{ table }: #{ columns - db_columns }")
             else
               @logger.debug("Table #{ table } does not exist")

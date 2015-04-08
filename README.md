@@ -195,6 +195,14 @@ In this case, the store.db file is located in the 'data' directory.  Absolute pa
 <code>sqlite:///tmp/store.db</code> indicates the database file 'store.db' is located in the '/tmp' directory.
 </dd>
 <dt>
+<code>event_days</code>
+</dt>
+<dd>
+Maximum number of days of events in the past to include within the Events tab.
+<br>
+Example: <code>7</code>
+</dd>
+<dt>
 <code>log_file</code>
 </dt>
 <dd>

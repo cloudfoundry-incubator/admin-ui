@@ -168,6 +168,20 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected events_view_model' do
+      let(:results)  { view_models.events }
+      let(:expected) { view_models_events }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected events_view_model detail' do
+      let(:results)  { view_models.event(cc_event[:guid]) }
+      let(:expected) { view_models_events_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected gateways_view_model' do
       let(:results)  { view_models.gateways }
       let(:expected) { view_models_gateways }

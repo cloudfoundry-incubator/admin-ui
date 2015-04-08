@@ -184,6 +184,31 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_events
+    [
+      [
+        cc_event[:timestamp].to_datetime.rfc3339,
+        cc_event[:guid],
+        cc_event[:type],
+        cc_event[:actee_type],
+        cc_event[:actee_name],
+        cc_event[:actee],
+        cc_event[:actor_type],
+        cc_event[:actor_name],
+        cc_event[:actor],
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+      ]
+    ]
+  end
+
+  def view_models_events_detail
+    {
+      'event'        => cc_event,
+      'organization' => cc_organization,
+      'space'        => cc_space
+    }
+  end
+
   def view_models_gateways
     [
       [
