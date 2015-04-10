@@ -698,17 +698,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
       context 'Applications' do
         let(:tab_id) { 'Applications' }
+        let(:event_type) { 'app' }
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 5,
                                 labels:          ['', '', 'Used', 'Reserved', ''],
-                                colspans:        %w(1 11 4 2 2)
+                                colspans:        %w(1 12 4 2 2)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 20,
-                                labels:          [' ', 'Name', 'GUID', 'State', 'Package State', 'Instance State', 'Created', 'Updated', 'Started', 'URI', 'Buildpack', 'Instance', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                expected_length: 21,
+                                labels:          [' ', 'Name', 'GUID', 'State', 'Package State', 'Instance State', 'Created', 'Updated', 'Started', 'URI', 'Buildpack', 'Instance', 'Events', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
                                 colspans:        nil
                               }
                              ])
@@ -727,6 +728,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
                              cc_app[:detected_buildpack],
                              varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'].to_s,
+                             '1',
                              varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s,
                              @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s,
                              @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s,
@@ -862,6 +864,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
                                '',
                                '0',
+                               '1',
                                varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s,
                                @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s,
                                @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s,
@@ -919,6 +922,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Command',         tag:   nil, value: cc_app[:command] },
                            { label: 'Instance Index',  tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'].to_s },
                            { label: 'Droplet Hash',    tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['droplet_sha1'].to_s },
+                           { label: 'Events',          tag:   'a', value: '1' },
                            { label: 'Services Used',   tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length.to_s },
                            { label: 'Memory Used',     tag:   nil, value: @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] })").to_s },
                            { label: 'Disk Used',       tag:   nil, value: @driver.execute_script("return Utilities.convertBytesToMega(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] })").to_s },
@@ -953,16 +957,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_allowscriptaccess_attribute('ToolTables_ApplicationsServicesTable_0')
           end
 
+          it 'has events link' do
+            check_filter_link('Applications', 13, 'Events', cc_app[:guid])
+          end
+
           it 'has spaces link' do
-            check_filter_link('Applications', 19, 'Spaces', cc_space[:guid])
+            check_filter_link('Applications', 20, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Applications', 20, 'Organizations', cc_organization[:guid])
+            check_filter_link('Applications', 21, 'Organizations', cc_organization[:guid])
           end
 
           it 'has DEAs link' do
-            check_filter_link('Applications', 21, 'DEAs', nats_dea['host'])
+            check_filter_link('Applications', 22, 'DEAs', nats_dea['host'])
           end
         end
       end
@@ -1968,15 +1976,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='EventsTable']/tbody/tr/td"),
                            [
-                             @driver.execute_script("return Format.formatString(\"#{ cc_event[:timestamp].to_datetime.rfc3339 }\")"),
-                             cc_event[:guid],
-                             cc_event[:type],
-                             cc_event[:actee_type],
-                             cc_event[:actee_name],
-                             cc_event[:actee],
-                             cc_event[:actor_type],
-                             cc_event[:actor_name],
-                             cc_event[:actor],
+                             @driver.execute_script("return Format.formatString(\"#{ cc_event_space[:timestamp].to_datetime.rfc3339 }\")"),
+                             cc_event_space[:guid],
+                             cc_event_space[:type],
+                             cc_event_space[:actee_type],
+                             cc_event_space[:actee_name],
+                             cc_event_space[:actee],
+                             cc_event_space[:actor_type],
+                             cc_event_space[:actor_name],
+                             cc_event_space[:actor],
                              "#{ cc_organization[:name] }/#{ cc_space[:name] }"
                            ])
         end
@@ -1991,26 +1999,26 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            check_details([{ label: 'Event Timestamp', tag: 'div', value: @driver.execute_script("return Format.formatDateString(\"#{ cc_event[:timestamp].to_datetime.rfc3339 }\")") },
-                           { label: 'Event GUID',      tag:   nil, value: cc_event[:guid] },
-                           { label: 'Event Type',      tag:   nil, value: cc_event[:type] },
-                           { label: 'Actee Type',      tag:   nil, value: cc_event[:actee_type] },
-                           { label: 'Actee',           tag:   nil, value: cc_event[:actee_name] },
-                           { label: 'Actee GUID',      tag:   'a', value: cc_event[:actee] },
-                           { label: 'Actor Type',      tag:   nil, value: cc_event[:actor_type] },
-                           { label: 'Actor',           tag:   nil, value: cc_event[:actor_name] },
-                           { label: 'Actor GUID',      tag:   'a', value: cc_event[:actor] },
+            check_details([{ label: 'Event Timestamp', tag: 'div', value: @driver.execute_script("return Format.formatDateString(\"#{ cc_event_space[:timestamp].to_datetime.rfc3339 }\")") },
+                           { label: 'Event GUID',      tag:   nil, value: cc_event_space[:guid] },
+                           { label: 'Event Type',      tag:   nil, value: cc_event_space[:type] },
+                           { label: 'Actee Type',      tag:   nil, value: cc_event_space[:actee_type] },
+                           { label: 'Actee',           tag:   nil, value: cc_event_space[:actee_name] },
+                           { label: 'Actee GUID',      tag:   'a', value: cc_event_space[:actee] },
+                           { label: 'Actor Type',      tag:   nil, value: cc_event_space[:actor_type] },
+                           { label: 'Actor',           tag:   nil, value: cc_event_space[:actor_name] },
+                           { label: 'Actor GUID',      tag:   'a', value: cc_event_space[:actor] },
                            { label: 'Space',           tag:   'a', value: cc_space[:name] },
                            { label: 'Organization',    tag:   'a', value: cc_organization[:name] }
                           ])
           end
 
           it 'has spaces actee link' do
-            check_filter_link('Events', 5, 'Spaces', cc_event[:actee])
+            check_filter_link('Events', 5, 'Spaces', cc_event_space[:actee])
           end
 
           it 'has users actor link' do
-            check_filter_link('Events', 8, 'Users', cc_event[:actor])
+            check_filter_link('Events', 8, 'Users', cc_event_space[:actor])
           end
 
           it 'has spaces link' do
@@ -2019,6 +2027,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has organizations link' do
             check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
+          end
+
+          context 'app event' do
+            let(:event_type) { 'app' }
+            it 'has application actee link' do
+              check_filter_link('Events', 5, 'Applications', cc_event_app[:actee])
+            end
           end
         end
       end

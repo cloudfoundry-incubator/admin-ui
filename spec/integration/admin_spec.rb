@@ -614,6 +614,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'applications_view_model' do
+      let(:event_type)        { 'app' }
       let(:path)              { '/applications_view_model' }
       let(:view_model_source) { view_models_applications }
       it_behaves_like('retrieves view_model')
@@ -713,7 +714,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'events_view_model detail' do
-      let(:path)              { "/events_view_model/#{ cc_event[:guid] }" }
+      let(:path)              { "/events_view_model/#{ cc_event_space[:guid] }" }
       let(:view_model_source) { view_models_events_detail }
       it_behaves_like('retrieves view_model detail')
     end

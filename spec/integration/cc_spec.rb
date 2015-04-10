@@ -225,7 +225,7 @@ describe AdminUI::CC, type: :integration do
 
     context 'returns connected events' do
       let(:results)  { cc.events }
-      let(:expected) { cc_event }
+      let(:expected) { cc_event_space }
 
       it_behaves_like('common cc retrieval')
     end

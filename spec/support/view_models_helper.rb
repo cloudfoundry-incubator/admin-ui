@@ -24,6 +24,7 @@ module ViewModelsHelper
         varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'],
         cc_app[:detected_buildpack],
         varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'],
+        1,
         varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length,
         AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
         AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
@@ -187,15 +188,15 @@ module ViewModelsHelper
   def view_models_events
     [
       [
-        cc_event[:timestamp].to_datetime.rfc3339,
-        cc_event[:guid],
-        cc_event[:type],
-        cc_event[:actee_type],
-        cc_event[:actee_name],
-        cc_event[:actee],
-        cc_event[:actor_type],
-        cc_event[:actor_name],
-        cc_event[:actor],
+        cc_event_space[:timestamp].to_datetime.rfc3339,
+        cc_event_space[:guid],
+        cc_event_space[:type],
+        cc_event_space[:actee_type],
+        cc_event_space[:actee_name],
+        cc_event_space[:actee],
+        cc_event_space[:actor_type],
+        cc_event_space[:actor_name],
+        cc_event_space[:actor],
         "#{ cc_organization[:name] }/#{ cc_space[:name] }"
       ]
     ]
@@ -203,7 +204,7 @@ module ViewModelsHelper
 
   def view_models_events_detail
     {
-      'event'        => cc_event,
+      'event'        => cc_event_space,
       'organization' => cc_organization,
       'space'        => cc_space
     }

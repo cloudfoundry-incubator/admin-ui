@@ -21,6 +21,7 @@ shared_context :server_context do
   let(:data_file) { '/tmp/admin_ui_data.json' }
   let(:db_file) { '/tmp/admin_ui_store.db' }
   let(:db_uri) { "sqlite://#{ db_file }" }
+  let(:event_type) { 'space' }
   let(:host) { 'localhost' }
   let(:insert_second_quota_definition) { false }
   let(:log_file) { '/tmp/admin_ui.log' }
@@ -64,7 +65,7 @@ shared_context :server_context do
     end
     File.utime(log_file_displayed_modified, log_file_displayed_modified, log_file_displayed)
 
-    cc_stub(AdminUI::Config.load(config), insert_second_quota_definition)
+    cc_stub(AdminUI::Config.load(config), insert_second_quota_definition, event_type)
     login_stub_admin
     nats_stub
     varz_stub

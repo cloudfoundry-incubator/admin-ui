@@ -10,6 +10,7 @@ describe AdminUI::CC, type: :integration do
   let(:data_file) { '/tmp/admin_ui.data' }
   let(:db_file) { '/tmp/admin_ui_store.db' }
   let(:db_uri) { "sqlite://#{ db_file }" }
+  let(:event_type) { 'space' }
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:log_file_displayed) { '/tmp/admin_ui_displayed.log' }
   let(:log_file_displayed_contents) { 'These are test log file contents' }
@@ -44,7 +45,7 @@ describe AdminUI::CC, type: :integration do
     File.utime(log_file_displayed_modified, log_file_displayed_modified, log_file_displayed)
 
     AdminUI::Config.any_instance.stub(:validate)
-    cc_stub(config)
+    cc_stub(config, false, event_type)
     nats_stub
     varz_stub
   end
@@ -85,8 +86,9 @@ describe AdminUI::CC, type: :integration do
     end
 
     context 'returns connected applications_view_model' do
-      let(:results)  { view_models.applications }
-      let(:expected) { view_models_applications }
+      let(:event_type) { 'app' }
+      let(:results)    { view_models.applications }
+      let(:expected)   { view_models_applications }
 
       it_behaves_like('common view model retrieval')
     end
@@ -176,7 +178,7 @@ describe AdminUI::CC, type: :integration do
     end
 
     context 'returns connected events_view_model detail' do
-      let(:results)  { view_models.event(cc_event[:guid]) }
+      let(:results)  { view_models.event(cc_event_space[:guid]) }
       let(:expected) { view_models_events_detail }
 
       it_behaves_like('common view model retrieval detail')

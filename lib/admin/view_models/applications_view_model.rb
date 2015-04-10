@@ -18,11 +18,21 @@ module AdminUI
       # applications and DEA's have to exist.  Other record types are optional
       return result unless applications['connected'] && deas['connected']
 
+      events        = @cc.events
       organizations = @cc.organizations
       spaces        = @cc.spaces
 
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
       space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
+
+      event_counters = {}
+      events['items'].each do |event|
+        Thread.pass
+        next unless event[:actee_type] == 'app'
+        actee = event[:actee]
+        event_counters[actee] = 0 if event_counters[actee].nil?
+        event_counters[actee] += 1
+      end
 
       application_hash = {}
 
@@ -33,6 +43,8 @@ module AdminUI
         Thread.pass
         space        = space_hash[application[:space_id]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]
+
+        event_counter = event_counters[application[:guid]]
 
         row = []
 
@@ -64,8 +76,17 @@ module AdminUI
           row.push(nil)
         end
 
-        # Instance index, used services, memory, disk and CPU
-        row.push(nil, nil, nil, nil, nil)
+        # Instance index
+        row.push(nil)
+
+        if event_counter
+          row.push(event_counter)
+        else
+          row.push(nil)
+        end
+
+        # Used services, memory, disk and CPU
+        row.push(nil, nil, nil, nil)
 
         row.push(application[:memory])
         row.push(application[:disk_quota])
@@ -112,6 +133,8 @@ module AdminUI
 
             # In some cases, we will not find an existing row.  Create the row as much as possible from the DEA data.
             if prior.nil?
+              event_counter = event_counters[instance['application_id']]
+
               row = []
 
               row.push(instance['application_id'])
@@ -138,6 +161,12 @@ module AdminUI
               row.push(nil)
 
               row.push(instance_index)
+
+              if event_counter
+                row.push(event_counter)
+              else
+                row.push(nil)
+              end
 
               row.push(instance['services'].length)
 
@@ -202,11 +231,11 @@ module AdminUI
 
               row[9]  = instance['application_uris']
               row[11] = instance_index
-              row[12] = instance['services'].length
-              row[13] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil
-              row[14] = instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : nil
-              row[15] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil
-              row[19] = host
+              row[13] = instance['services'].length
+              row[14] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil
+              row[15] = instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : nil
+              row[16] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil
+              row[20] = host
 
               key = "#{ instance['application_id'] }/#{ instance_index }"
               # Need the specific instance for this row
@@ -224,7 +253,7 @@ module AdminUI
         dea_index += 1
       end
 
-      result(true, items, hash, (1..19).to_a, (1..10).to_a << 18)
+      result(true, items, hash, (1..20).to_a, (1..10).to_a << 19)
     end
   end
 end

@@ -35,7 +35,7 @@ module CCHelper
     end
   end
 
-  def cc_stub(config, insert_second_quota_definition = false)
+  def cc_stub(config, insert_second_quota_definition = false, event_type = 'space')
     @cc_apps_deleted                      = false
     @cc_domains_deleted                   = false
     @cc_organizations_deleted             = false
@@ -51,7 +51,7 @@ module CCHelper
 
     @cc_organization_created = false
 
-    populate_db(config.ccdb_uri,  File.join(File.dirname(__FILE__), './ccdb'), ccdb_inserts(insert_second_quota_definition))
+    populate_db(config.ccdb_uri,  File.join(File.dirname(__FILE__), './ccdb'), ccdb_inserts(insert_second_quota_definition, event_type))
     populate_db(config.uaadb_uri, File.join(File.dirname(__FILE__), './uaadb'), uaadb_inserts)
 
     cc_login_stubs(config)
@@ -188,7 +188,7 @@ module CCHelper
       guid:                  'application1',
       health_check_timeout:  nil,
       health_check_type:     'port',
-      id:                    1,
+      id:                    0,
       instances:             1,
       metadata:              '{}',
       memory:                11,
@@ -218,14 +218,33 @@ module CCHelper
     {
       created_at:             Time.new('2014-02-12T09:40:52-06:00'),
       guid:                   'domain1',
-      id:                     2,
+      id:                     1,
       name:                   'test_domain',
       owning_organization_id: cc_organization[:id],
       updated_at:             Time.new('2014-02-12T09:40:52-06:00')
     }
   end
 
-  def cc_event
+  def cc_event_app
+    {
+      actee:                  cc_app[:guid],
+      actee_name:             cc_app[:name],
+      actee_type:             'app',
+      actor:                  cc_user[:guid],
+      actor_name:             uaa_user[:username],
+      actor_type:             'user',
+      created_at:             Time.new('2014-02-12T09:40:52-06:00'),
+      guid:                   'event1',
+      id:                     2,
+      metadata:               '{}',
+      space_id:               cc_space[:id],
+      timestamp:              Time.new('2014-02-12T09:40:52-06:00'),
+      type:                   'audit.app.update',
+      updated_at:             Time.new('2014-02-12T09:40:52-06:00')
+    }
+  end
+
+  def cc_event_space
     {
       actee:                  cc_space[:guid],
       actee_name:             cc_space[:name],
@@ -582,7 +601,7 @@ module CCHelper
     }
   end
 
-  def ccdb_inserts(insert_second_quota_definition)
+  def ccdb_inserts(insert_second_quota_definition, event_type)
     result = [[:quota_definitions,              cc_quota_definition],
               [:service_brokers,                cc_service_broker_with_password],
               [:stacks,                         cc_stack],
@@ -592,7 +611,6 @@ module CCHelper
               [:service_plans,                  cc_service_plan],
               [:service_plan_visibilities,      cc_service_plan_visibility],
               [:spaces,                         cc_space],
-              [:events,                         cc_event],
               [:apps,                           cc_app],
               [:routes,                         cc_route],
               [:service_instances,              cc_service_instance],
@@ -610,6 +628,10 @@ module CCHelper
              ]
 
     result << [:quota_definitions, cc_quota_definition2] if insert_second_quota_definition
+
+    result << [:events, cc_event_app] if event_type == 'app'
+    result << [:events, cc_event_space] if event_type == 'space'
+
     result
   end
 
