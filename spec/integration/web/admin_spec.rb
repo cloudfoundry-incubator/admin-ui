@@ -1623,12 +1623,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       context 'Clients' do
-        let(:tab_id) { 'Clients' }
+        let(:tab_id)     { 'Clients' }
+        let(:event_type) { 'service_dashboard_client' }
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                expected_length: 6,
-                                labels:          ['Identifier', 'Scopes', 'Authorized Grant Types', "Redirect URI's", 'Authorities', 'Auto Approve'],
+                                expected_length: 7,
+                                labels:          ['Identifier', 'Scopes', 'Authorized Grant Types', "Redirect URI's", 'Authorities', 'Auto Approve', 'Events'],
                                 colspans:        nil
                               }
                              ])
@@ -1640,7 +1641,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_client[:authorized_grant_types],
                              uaa_client[:web_server_redirect_uri],
                              uaa_client[:authorities],
-                             uaa_client_autoapprove.to_s
+                             uaa_client_autoapprove.to_s,
+                             '1'
                            ])
         end
 
@@ -1660,8 +1662,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Redirect URI',           tag:   nil, value: uaa_client[:web_server_redirect_uri] },
                            { label: 'Authority',              tag:   nil, value: uaa_client[:authorities] },
                            { label: 'Auto Approve',           tag:   nil, value: uaa_client_autoapprove.to_s },
+                           { label: 'Events',                 tag:   'a', value: '1' },
                            { label: 'Additional Information', tag:   nil, value: uaa_client[:additional_information] }
                           ])
+          end
+
+          it 'has events link' do
+            check_filter_link('Clients', 6, 'Events', uaa_client[:client_id])
           end
         end
       end
@@ -1673,12 +1680,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 3,
                                 labels:          ['', 'Organization Roles', 'Space Roles', ''],
-                                colspans:        %w(10 5 4)
+                                colspans:        %w(11 5 4)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 19,
-                                labels:          ['Username', 'GUID', 'Created', 'Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
+                                expected_length: 20,
+                                labels:          ['Username', 'GUID', 'Created', 'Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
                                 colspans:        nil
                               }
                              ])
@@ -1695,6 +1702,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_user[:active].to_s,
                              @driver.execute_script("return Format.formatNumber(\"#{ uaa_user[:version] }\")"),
                              uaa_group[:displayname],
+                             '1',
                              '4',
                              '1',
                              '1',
@@ -1727,6 +1735,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Active',                             tag:   nil, value: uaa_user[:active].to_s },
                            { label: 'Version',                            tag:   nil, value: @driver.execute_script("return Format.formatNumber(\"#{ uaa_user[:version] }\")") },
                            { label: 'Group',                              tag:   nil, value: uaa_group[:displayname] },
+                           { label: 'Events',                             tag:   'a', value: '1' },
                            { label: 'Organization Total Roles',           tag:   'a', value: '4' },
                            { label: 'Organization Auditor Roles',         tag:   nil, value: '1' },
                            { label: 'Organization Billing Manager Roles', tag:   nil, value: '1' },
@@ -1739,12 +1748,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
+          it 'has events link' do
+            check_filter_link('Users', 10, 'Events', uaa_user[:id])
+          end
+
           it 'has organization roles link' do
-            check_filter_link('Users', 10, 'OrganizationRoles', uaa_user[:id])
+            check_filter_link('Users', 11, 'OrganizationRoles', uaa_user[:id])
           end
 
           it 'has space roles link' do
-            check_filter_link('Users', 15, 'SpaceRoles', uaa_user[:id])
+            check_filter_link('Users', 16, 'SpaceRoles', uaa_user[:id])
           end
         end
       end
@@ -2047,6 +2060,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             let(:event_type) { 'app' }
             it 'has application actee link' do
               check_filter_link('Events', 5, 'Applications', cc_event_app[:actee])
+            end
+          end
+
+          context 'client event' do
+            let(:event_type) { 'service_dashboard_client' }
+            it 'has client actee link' do
+              check_filter_link('Events', 4, 'Clients', cc_event_service_dashboard_client[:actee])
             end
           end
 

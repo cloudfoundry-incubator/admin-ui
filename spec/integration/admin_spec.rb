@@ -627,6 +627,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'clients_view_model' do
+      let(:event_type)        { 'service_dashboard_client' }
       let(:path)              { '/clients_view_model' }
       let(:view_model_source) { view_models_clients }
       it_behaves_like('retrieves view_model')

@@ -53,7 +53,8 @@ module ViewModelsHelper
         uaa_client[:authorized_grant_types].split(',').sort,
         uaa_client[:web_server_redirect_uri].split(',').sort,
         uaa_client[:authorities].split(',').sort,
-        uaa_client_autoapprove
+        uaa_client_autoapprove,
+        1
       ]
     ]
   end
@@ -793,6 +794,7 @@ module ViewModelsHelper
         uaa_user[:active],
         uaa_user[:version],
         [uaa_group[:displayname]],
+        1,
         4,
         1,
         1,

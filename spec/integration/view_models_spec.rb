@@ -101,8 +101,9 @@ describe AdminUI::CC, type: :integration do
     end
 
     context 'returns connected clients_view_model' do
-      let(:results)  { view_models.clients }
-      let(:expected) { view_models_clients }
+      let(:event_type) { 'service_dashboard_client' }
+      let(:results)    { view_models.clients }
+      let(:expected)   { view_models_clients }
 
       it_behaves_like('common view model retrieval')
     end

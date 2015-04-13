@@ -39,11 +39,14 @@ module AdminUI
                            users_cc['connected'] &&
                            users_uaa['connected']
 
+      events = @cc.events
+
+      events_connected = events['connected']
+
       group_hash   = Hash[groups['items'].map { |item| [item[:id], item] }]
       user_cc_hash = Hash[users_cc['items'].map { |item| [item[:guid], item] }]
 
       member_groups = {}
-
       group_membership['items'].each do |group_membership_entry|
         Thread.pass
         group_id = group_membership_entry[:group_id]
@@ -54,6 +57,17 @@ module AdminUI
         else
           member_groups[member_id] = [group_id]
         end
+      end
+
+      event_counters = {}
+      events['items'].each do |event|
+        Thread.pass
+        next unless event[:actor_type] == 'user'
+        # A user actor_type is used for a client.  But, the actor_name is nil in this case
+        next if event[:actor_name].nil?
+        actor = event[:actor]
+        event_counters[actor] = 0 if event_counters[actor].nil?
+        event_counters[actor] += 1
       end
 
       users_organizations_auditors         = {}
@@ -79,6 +93,8 @@ module AdminUI
         Thread.pass
 
         guid = user_uaa[:id]
+
+        event_counter = event_counters[guid]
 
         row = []
 
@@ -110,6 +126,14 @@ module AdminUI
         authorities = authorities.sort
 
         row.push(authorities)
+
+        if event_counter
+          row.push(event_counter)
+        elsif events_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
 
         user_cc = user_cc_hash[guid]
 
@@ -148,7 +172,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..18).to_a, (0..9).to_a)
+      result(true, items, hash, (0..19).to_a, (0..9).to_a)
     end
 
     private

@@ -301,6 +301,25 @@ module CCHelper
     }
   end
 
+  def cc_event_service_dashboard_client
+    {
+      actee:                  uaa_client[:client_id],
+      actee_name:             nil,
+      actee_type:             'service_dashboard_client',
+      actor:                  cc_service_broker[:guid],
+      actor_name:             cc_service_broker[:name],
+      actor_type:             'service_broker',
+      created_at:             Time.new('2014-02-12T09:40:52-06:00'),
+      guid:                   'event1',
+      id:                     2,
+      metadata:               '{}',
+      space_id:               nil,
+      timestamp:              Time.new('2014-02-12T09:40:52-06:00'),
+      type:                   'audit.service_dashboard_client.create',
+      updated_at:             Time.new('2014-02-12T09:40:52-06:00')
+    }
+  end
+
   def cc_event_service_instance
     {
       actee:                  cc_service_instance[:guid],
@@ -747,6 +766,7 @@ module CCHelper
     result << [:events, cc_event_service] if event_type == 'service'
     result << [:events, cc_event_service_binding] if event_type == 'service_binding'
     result << [:events, cc_event_service_broker] if event_type == 'service_broker'
+    result << [:events, cc_event_service_dashboard_client] if event_type == 'service_dashboard_client'
     result << [:events, cc_event_service_instance] if event_type == 'service_instance'
     result << [:events, cc_event_service_plan] if event_type == 'service_plan'
     result << [:events, cc_event_service_plan_visibility] if event_type == 'service_plan_visibility'
