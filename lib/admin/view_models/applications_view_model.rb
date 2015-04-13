@@ -22,16 +22,23 @@ module AdminUI
       organizations = @cc.organizations
       spaces        = @cc.spaces
 
+      events_connected = events['connected']
+
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
       space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
       event_counters = {}
       events['items'].each do |event|
         Thread.pass
-        next unless event[:actee_type] == 'app'
-        actee = event[:actee]
-        event_counters[actee] = 0 if event_counters[actee].nil?
-        event_counters[actee] += 1
+        if event[:actee_type] == 'app'
+          actee = event[:actee]
+          event_counters[actee] = 0 if event_counters[actee].nil?
+          event_counters[actee] += 1
+        elsif event[:actor_type] == 'app'
+          actor = event[:actor]
+          event_counters[actor] = 0 if event_counters[actor].nil?
+          event_counters[actor] += 1
+        end
       end
 
       application_hash = {}
@@ -41,16 +48,18 @@ module AdminUI
 
       applications['items'].each do |application|
         Thread.pass
+
+        guid         = application[:guid]
         space        = space_hash[application[:space_id]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]
 
-        event_counter = event_counters[application[:guid]]
+        event_counter = event_counters[guid]
 
         row = []
 
-        row.push(application[:guid])
+        row.push(guid)
         row.push(application[:name])
-        row.push(application[:guid])
+        row.push(guid)
         row.push(application[:state])
         row.push(application[:package_state])
 
@@ -81,6 +90,8 @@ module AdminUI
 
         if event_counter
           row.push(event_counter)
+        elsif events_connected
+          row.push(0)
         else
           row.push(nil)
         end
@@ -107,7 +118,7 @@ module AdminUI
           'space'        => space
         }
 
-        application_hash[application[:guid]] =
+        application_hash[guid] =
         {
           'row'        => row,
           'hash_entry' => hash_entry
@@ -127,19 +138,21 @@ module AdminUI
         data['instance_registry'].each_value do |application|
           application.each_value do |instance|
             Thread.pass
+
+            id             = instance['application_id']
             instance_index = instance['instance_index']
 
-            prior = application_hash[instance['application_id']]
+            prior = application_hash[id]
 
             # In some cases, we will not find an existing row.  Create the row as much as possible from the DEA data.
             if prior.nil?
-              event_counter = event_counters[instance['application_id']]
+              event_counter = event_counters[id]
 
               row = []
 
-              row.push(instance['application_id'])
+              row.push(id)
               row.push(instance['application_name'])
-              row.push(instance['application_id'])
+              row.push(id)
 
               # State and Package State not available.
               row.push(nil, nil)
@@ -164,6 +177,8 @@ module AdminUI
 
               if event_counter
                 row.push(event_counter)
+              elsif events_connected
+                row.push(0)
               else
                 row.push(nil)
               end
@@ -198,7 +213,7 @@ module AdminUI
 
               items.push(row)
 
-              key = "#{ instance['application_id'] }/#{ instance_index }"
+              key = "#{ id }/#{ instance_index }"
               # No application to push.  Push the instance instead so we can provide details.
               hash[key] =
               {
@@ -237,7 +252,7 @@ module AdminUI
               row[16] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil
               row[20] = host
 
-              key = "#{ instance['application_id'] }/#{ instance_index }"
+              key = "#{ id }/#{ instance_index }"
               # Need the specific instance for this row
               hash[key] =
               {

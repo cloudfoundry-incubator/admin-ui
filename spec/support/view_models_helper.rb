@@ -447,6 +447,7 @@ module ViewModelsHelper
         cc_service_binding[:guid],
         cc_service_binding[:created_at].to_datetime.rfc3339,
         cc_service_binding[:updated_at].to_datetime.rfc3339,
+        1,
         cc_app[:name],
         cc_app[:guid],
         cc_service_instance[:name],
@@ -502,6 +503,7 @@ module ViewModelsHelper
         1,
         1,
         1,
+        1,
         1
       ]
     ]
@@ -519,6 +521,7 @@ module ViewModelsHelper
         cc_service_instance[:guid],
         cc_service_instance[:created_at].to_datetime.rfc3339,
         cc_service_instance[:updated_at].to_datetime.rfc3339,
+        1,
         1,
         cc_service_plan[:name],
         cc_service_plan[:guid],
@@ -571,6 +574,7 @@ module ViewModelsHelper
         1,
         1,
         1,
+        1,
         cc_service[:provider],
         cc_service[:label],
         cc_service[:guid],
@@ -602,6 +606,7 @@ module ViewModelsHelper
         cc_service_plan_visibility[:guid],
         cc_service_plan_visibility[:created_at].to_datetime.rfc3339,
         cc_service_plan_visibility[:updated_at].to_datetime.rfc3339,
+        1,
         cc_service_plan[:name],
         cc_service_plan[:guid],
         cc_service_plan[:unique_id],
@@ -654,6 +659,7 @@ module ViewModelsHelper
         cc_service[:active],
         cc_service[:bindable],
         cc_service[:plan_updateable],
+        1,
         1,
         1,
         1,

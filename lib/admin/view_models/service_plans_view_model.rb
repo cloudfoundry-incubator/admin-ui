@@ -16,12 +16,14 @@ module AdminUI
       # service_plans have to exist.  Other record types are optional
       return result unless service_plans['connected']
 
+      events                    = @cc.events
       services                  = @cc.services
       service_bindings          = @cc.service_bindings
       service_brokers           = @cc.service_brokers
       service_instances         = @cc.service_instances
       service_plan_visibilities = @cc.service_plan_visibilities
 
+      events_connected                    = events['connected']
       service_bindings_connected          = service_bindings['connected']
       service_instances_connected         = service_instances['connected']
       service_plan_visibilities_connected = service_plan_visibilities['connected']
@@ -29,6 +31,15 @@ module AdminUI
       service_broker_hash   = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
       service_hash          = Hash[services['items'].map { |item| [item[:id], item] }]
       service_instance_hash = Hash[service_instances['items'].map { |item| [item[:id], item] }]
+
+      event_counters = {}
+      events['items'].each do |event|
+        Thread.pass
+        next unless event[:actee_type] == 'service_plan'
+        actee = event[:actee]
+        event_counters[actee] = 0 if event_counters[actee].nil?
+        event_counters[actee] += 1
+      end
 
       service_plan_visibility_counters = {}
       service_plan_visibilities['items'].each do |service_plan_visibility|
@@ -66,14 +77,22 @@ module AdminUI
 
       service_plans['items'].each do |service_plan|
         Thread.pass
+
+        id             = service_plan[:id]
+        guid           = service_plan[:guid]
         service        = service_hash[service_plan[:service_id]]
         service_broker = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
 
+        event_counter                   = event_counters[guid]
+        service_binding_counter         = service_binding_counters[id]
+        service_instance_counter        = service_instance_counters[id]
+        service_plan_visibility_counter = service_plan_visibility_counters[id]
+
         row = []
 
-        row.push(service_plan[:guid])
+        row.push(guid)
         row.push(service_plan[:name])
-        row.push(service_plan[:guid])
+        row.push(guid)
         row.push(service_plan[:unique_id])
         row.push(service_plan[:created_at].to_datetime.rfc3339)
 
@@ -87,24 +106,32 @@ module AdminUI
         row.push(service_plan[:public])
         row.push(service_plan[:free])
 
-        if service_plan_visibility_counters[service_plan[:id]]
-          row.push(service_plan_visibility_counters[service_plan[:id]])
+        if event_counter
+          row.push(event_counter)
+        elsif events_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if service_plan_visibility_counter
+          row.push(service_plan_visibility_counter)
         elsif service_plan_visibilities_connected
           row.push(0)
         else
           row.push(nil)
         end
 
-        if service_instance_counters[service_plan[:id]]
-          row.push(service_instance_counters[service_plan[:id]])
+        if service_instance_counter
+          row.push(service_instance_counter)
         elsif service_instances_connected
           row.push(0)
         else
           row.push(nil)
         end
 
-        if service_binding_counters[service_plan[:id]]
-          row.push(service_binding_counters[service_plan[:id]])
+        if service_binding_counter
+          row.push(service_binding_counter)
         elsif service_bindings_connected && service_instances_connected
           row.push(0)
         else
@@ -147,7 +174,7 @@ module AdminUI
 
         items.push(row)
 
-        hash[service_plan[:guid]] =
+        hash[guid] =
         {
           'service'        => service,
           'service_broker' => service_broker,
@@ -155,7 +182,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..24).to_a, (1..24).to_a - [9, 10, 11])
+      result(true, items, hash, (1..25).to_a, (1..25).to_a - [9, 10, 11, 12])
     end
   end
 end

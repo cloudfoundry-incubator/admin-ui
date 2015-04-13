@@ -17,12 +17,15 @@ module AdminUI
       return result unless service_bindings['connected']
 
       applications      = @cc.applications
+      events            = @cc.events
       organizations     = @cc.organizations
       service_brokers   = @cc.service_brokers
       service_instances = @cc.service_instances
       service_plans     = @cc.service_plans
       services          = @cc.services
       spaces            = @cc.spaces
+
+      events_connected = events['connected']
 
       application_hash      = Hash[applications['items'].map { |item| [item[:id], item] }]
       organization_hash     = Hash[organizations['items'].map { |item| [item[:id], item] }]
@@ -32,11 +35,22 @@ module AdminUI
       service_hash          = Hash[services['items'].map { |item| [item[:id], item] }]
       space_hash            = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
+      event_counters = {}
+      events['items'].each do |event|
+        Thread.pass
+        next unless event[:actee_type] == 'service_binding'
+        actee = event[:actee]
+        event_counters[actee] = 0 if event_counters[actee].nil?
+        event_counters[actee] += 1
+      end
+
       items = []
       hash  = {}
 
       service_bindings['items'].each do |service_binding|
         Thread.pass
+
+        guid             = service_binding[:guid]
         application      = application_hash[service_binding[:app_id]]
         service_instance = service_instance_hash[service_binding[:service_instance_id]]
         service_plan_id  = service_instance.nil? ? nil : service_instance[:service_plan_id]
@@ -46,14 +60,24 @@ module AdminUI
         space            = service_instance.nil? ? nil : space_hash[service_instance[:space_id]]
         organization     = space.nil? ? nil : organization_hash[space[:organization_id]]
 
+        event_counter = event_counters[guid]
+
         row = []
 
-        row.push(service_binding[:guid])
-        row.push(service_binding[:guid])
+        row.push(guid)
+        row.push(guid)
         row.push(service_binding[:created_at].to_datetime.rfc3339)
 
         if service_binding[:updated_at]
           row.push(service_binding[:updated_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
+        if event_counter
+          row.push(event_counter)
+        elsif events_connected
+          row.push(0)
         else
           row.push(nil)
         end
@@ -139,7 +163,7 @@ module AdminUI
 
         items.push(row)
 
-        hash[service_binding[:guid]] =
+        hash[guid] =
         {
           'application'      => application,
           'organization'     => organization,
@@ -152,7 +176,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..30).to_a, (1..30).to_a)
+      result(true, items, hash, (1..31).to_a, (1..31).to_a - [4])
     end
   end
 end

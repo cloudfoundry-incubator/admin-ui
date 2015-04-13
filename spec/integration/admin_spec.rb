@@ -822,6 +822,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_bindings_view_model' do
+      let(:event_type)        { 'service_binding' }
       let(:path)              { '/service_bindings_view_model' }
       let(:view_model_source) { view_models_service_bindings }
       it_behaves_like('retrieves view_model')
@@ -834,6 +835,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_brokers_view_model' do
+      let(:event_type)        { 'service_broker' }
       let(:path)              { '/service_brokers_view_model' }
       let(:view_model_source) { view_models_service_brokers }
       it_behaves_like('retrieves view_model')
@@ -846,6 +848,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_instances_view_model' do
+      let(:event_type)        { 'service_instance' }
       let(:path)              { '/service_instances_view_model' }
       let(:view_model_source) { view_models_service_instances }
       it_behaves_like('retrieves view_model')
@@ -858,6 +861,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_plans_view_model' do
+      let(:event_type)        { 'service_plan' }
       let(:path)              { '/service_plans_view_model' }
       let(:view_model_source) { view_models_service_plans }
       it_behaves_like('retrieves view_model')
@@ -870,6 +874,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_plan_visibilities_view_model' do
+      let(:event_type)        { 'service_plan_visibility' }
       let(:path)              { '/service_plan_visibilities_view_model' }
       let(:view_model_source) { view_models_service_plan_visibilities }
       it_behaves_like('retrieves view_model')
@@ -882,6 +887,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'services_view_model' do
+      let(:event_type)        { 'service' }
       let(:path)              { '/services_view_model' }
       let(:view_model_source) { view_models_services }
       it_behaves_like('retrieves view_model')

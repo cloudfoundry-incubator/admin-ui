@@ -292,8 +292,9 @@ describe AdminUI::CC, type: :integration do
     end
 
     context 'returns connected service_bindings_view_model' do
-      let(:results)  { view_models.service_bindings }
-      let(:expected) { view_models_service_bindings }
+      let(:event_type) { 'service_binding' }
+      let(:results)    { view_models.service_bindings }
+      let(:expected)   { view_models_service_bindings }
 
       it_behaves_like('common view model retrieval')
     end
@@ -306,8 +307,9 @@ describe AdminUI::CC, type: :integration do
     end
 
     context 'returns connected service_brokers_view_model' do
-      let(:results)  { view_models.service_brokers }
-      let(:expected) { view_models_service_brokers }
+      let(:event_type) { 'service_broker' }
+      let(:results)    { view_models.service_brokers }
+      let(:expected)   { view_models_service_brokers }
 
       it_behaves_like('common view model retrieval')
     end
@@ -320,8 +322,9 @@ describe AdminUI::CC, type: :integration do
     end
 
     context 'returns connected service_instances_view_model' do
-      let(:results)  { view_models.service_instances }
-      let(:expected) { view_models_service_instances }
+      let(:event_type) { 'service_instance' }
+      let(:results)    { view_models.service_instances }
+      let(:expected)   { view_models_service_instances }
 
       it_behaves_like('common view model retrieval')
     end
@@ -334,8 +337,9 @@ describe AdminUI::CC, type: :integration do
     end
 
     context 'returns connected service_plans_view_model' do
-      let(:results)  { view_models.service_plans }
-      let(:expected) { view_models_service_plans }
+      let(:event_type) { 'service_plan' }
+      let(:results)    { view_models.service_plans }
+      let(:expected)   { view_models_service_plans }
 
       it_behaves_like('common view model retrieval')
     end
@@ -348,8 +352,9 @@ describe AdminUI::CC, type: :integration do
     end
 
     context 'returns connected service_plan_visibilities_view_model' do
-      let(:results)  { view_models.service_plan_visibilities }
-      let(:expected) { view_models_service_plan_visibilities }
+      let(:event_type) { 'service_plan_visibility' }
+      let(:results)    { view_models.service_plan_visibilities }
+      let(:expected)   { view_models_service_plan_visibilities }
 
       it_behaves_like('common view model retrieval')
     end
@@ -362,8 +367,9 @@ describe AdminUI::CC, type: :integration do
     end
 
     context 'returns connected services_view_model' do
-      let(:results)  { view_models.services }
-      let(:expected) { view_models_services }
+      let(:event_type) { 'service' }
+      let(:results)    { view_models.services }
+      let(:expected)   { view_models_services }
 
       it_behaves_like('common view model retrieval')
     end

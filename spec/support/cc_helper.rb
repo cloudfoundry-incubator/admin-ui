@@ -239,7 +239,121 @@ module CCHelper
       metadata:               '{}',
       space_id:               cc_space[:id],
       timestamp:              Time.new('2014-02-12T09:40:52-06:00'),
-      type:                   'audit.app.update',
+      type:                   'audit.app.create',
+      updated_at:             Time.new('2014-02-12T09:40:52-06:00')
+    }
+  end
+
+  def cc_event_service
+    {
+      actee:                  cc_service[:guid],
+      actee_name:             cc_service[:label],
+      actee_type:             'service',
+      actor:                  cc_user[:guid],
+      actor_name:             uaa_user[:username],
+      actor_type:             'user',
+      created_at:             Time.new('2014-02-12T09:40:52-06:00'),
+      guid:                   'event1',
+      id:                     2,
+      metadata:               '{}',
+      space_id:               nil,
+      timestamp:              Time.new('2014-02-12T09:40:52-06:00'),
+      type:                   'audit.service_instance.create',
+      updated_at:             Time.new('2014-02-12T09:40:52-06:00')
+    }
+  end
+
+  def cc_event_service_binding
+    {
+      actee:                  cc_service_binding[:guid],
+      actee_name:             nil,
+      actee_type:             'service_binding',
+      actor:                  cc_user[:guid],
+      actor_name:             uaa_user[:username],
+      actor_type:             'user',
+      created_at:             Time.new('2014-02-12T09:40:52-06:00'),
+      guid:                   'event1',
+      id:                     2,
+      metadata:               '{}',
+      space_id:               cc_space[:id],
+      timestamp:              Time.new('2014-02-12T09:40:52-06:00'),
+      type:                   'audit.service_binding.create',
+      updated_at:             Time.new('2014-02-12T09:40:52-06:00')
+    }
+  end
+
+  def cc_event_service_broker
+    {
+      actee:                  cc_service_broker[:guid],
+      actee_name:             cc_service_broker[:name],
+      actee_type:             'service_broker',
+      actor:                  cc_user[:guid],
+      actor_name:             uaa_user[:username],
+      actor_type:             'user',
+      created_at:             Time.new('2014-02-12T09:40:52-06:00'),
+      guid:                   'event1',
+      id:                     2,
+      metadata:               '{}',
+      space_id:               nil,
+      timestamp:              Time.new('2014-02-12T09:40:52-06:00'),
+      type:                   'audit.service_broker.create',
+      updated_at:             Time.new('2014-02-12T09:40:52-06:00')
+    }
+  end
+
+  def cc_event_service_instance
+    {
+      actee:                  cc_service_instance[:guid],
+      actee_name:             cc_service_instance[:name],
+      actee_type:             'service_instance',
+      actor:                  cc_user[:guid],
+      actor_name:             uaa_user[:username],
+      actor_type:             'user',
+      created_at:             Time.new('2014-02-12T09:40:52-06:00'),
+      guid:                   'event1',
+      id:                     2,
+      metadata:               '{}',
+      space_id:               cc_space[:id],
+      timestamp:              Time.new('2014-02-12T09:40:52-06:00'),
+      type:                   'audit.service_instance.create',
+      updated_at:             Time.new('2014-02-12T09:40:52-06:00')
+    }
+  end
+
+  def cc_event_service_plan
+    {
+      actee:                  cc_service_plan[:guid],
+      actee_name:             cc_service_plan[:name],
+      actee_type:             'service_plan',
+      actor:                  cc_user[:guid],
+      actor_name:             uaa_user[:username],
+      actor_type:             'user',
+      created_at:             Time.new('2014-02-12T09:40:52-06:00'),
+      guid:                   'event1',
+      id:                     2,
+      metadata:               '{}',
+      space_id:               nil,
+      timestamp:              Time.new('2014-02-12T09:40:52-06:00'),
+      type:                   'audit.service_plan.create',
+      updated_at:             Time.new('2014-02-12T09:40:52-06:00')
+    }
+  end
+
+  def cc_event_service_plan_visibility
+    {
+      actee:                  cc_service_plan_visibility[:guid],
+      actee_name:             nil,
+      actee_type:             'service_plan_visibility',
+      actor:                  cc_user[:guid],
+      actor_name:             uaa_user[:username],
+      actor_type:             'user',
+      created_at:             Time.new('2014-02-12T09:40:52-06:00'),
+      guid:                   'event1',
+      id:                     2,
+      metadata:               '{}',
+      space_id:               nil,
+      timestamp:              Time.new('2014-02-12T09:40:52-06:00'),
+      type:                   'audit.service_plan_visibility.create',
       updated_at:             Time.new('2014-02-12T09:40:52-06:00')
     }
   end
@@ -258,7 +372,7 @@ module CCHelper
       metadata:               '{}',
       space_id:               cc_space[:id],
       timestamp:              Time.new('2014-02-12T09:40:52-06:00'),
-      type:                   'audit.space.update',
+      type:                   'audit.space.create',
       updated_at:             Time.new('2014-02-12T09:40:52-06:00')
     }
   end
@@ -630,6 +744,12 @@ module CCHelper
     result << [:quota_definitions, cc_quota_definition2] if insert_second_quota_definition
 
     result << [:events, cc_event_app] if event_type == 'app'
+    result << [:events, cc_event_service] if event_type == 'service'
+    result << [:events, cc_event_service_binding] if event_type == 'service_binding'
+    result << [:events, cc_event_service_broker] if event_type == 'service_broker'
+    result << [:events, cc_event_service_instance] if event_type == 'service_instance'
+    result << [:events, cc_event_service_plan] if event_type == 'service_plan'
+    result << [:events, cc_event_service_plan_visibility] if event_type == 'service_plan_visibility'
     result << [:events, cc_event_space] if event_type == 'space'
 
     result

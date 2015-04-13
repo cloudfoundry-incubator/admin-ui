@@ -16,12 +16,14 @@ module AdminUI
       # services have to exist.  Other record types are optional
       return result unless services['connected']
 
+      events                    = @cc.events
       service_bindings          = @cc.service_bindings
       service_brokers           = @cc.service_brokers
       service_instances         = @cc.service_instances
       service_plans             = @cc.service_plans
       service_plan_visibilities = @cc.service_plan_visibilities
 
+      events_connected                    = events['connected']
       service_bindings_connected          = service_bindings['connected']
       service_instances_connected         = service_instances['connected']
       service_plans_connected             = service_plans['connected']
@@ -30,6 +32,15 @@ module AdminUI
       service_broker_hash   = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
       service_instance_hash = Hash[service_instances['items'].map { |item| [item[:id], item] }]
       service_plan_hash     = Hash[service_plans['items'].map { |item| [item[:id], item] }]
+
+      event_counters = {}
+      events['items'].each do |event|
+        Thread.pass
+        next unless event[:actee_type] == 'service'
+        actee = event[:actee]
+        event_counters[actee] = 0 if event_counters[actee].nil?
+        event_counters[actee] += 1
+      end
 
       service_plan_counters = {}
       service_plans['items'].each do |service_plan|
@@ -84,14 +95,18 @@ module AdminUI
 
       services['items'].each do |service|
         Thread.pass
+
+        guid           = service[:guid]
         service_broker = service_broker_hash[service[:service_broker_id]]
+
+        event_counter = event_counters[guid]
 
         row = []
 
-        row.push(service[:guid])
+        row.push(guid)
         row.push(service[:provider])
         row.push(service[:label])
-        row.push(service[:guid])
+        row.push(guid)
         row.push(service[:unique_id])
         row.push(service[:version])
         row.push(service[:created_at].to_datetime.rfc3339)
@@ -105,6 +120,14 @@ module AdminUI
         row.push(service[:active])
         row.push(service[:bindable])
         row.push(service[:plan_updateable])
+
+        if event_counter
+          row.push(event_counter)
+        elsif events_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
 
         if service_plan_counters[service[:id]]
           row.push(service_plan_counters[service[:id]])
@@ -154,14 +177,14 @@ module AdminUI
 
         items.push(row)
 
-        hash[service[:guid]] =
+        hash[guid] =
         {
           'service'        => service,
           'service_broker' => service_broker
         }
       end
 
-      result(true, items, hash, (1..18).to_a, (1..18).to_a - [11, 12, 13, 14])
+      result(true, items, hash, (1..19).to_a, (1..19).to_a - [11, 12, 13, 14, 15])
     end
   end
 end

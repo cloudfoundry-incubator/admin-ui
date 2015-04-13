@@ -16,6 +16,7 @@ module AdminUI
       # service_instances have to exist.  Other record types are optional
       return result unless service_instances['connected']
 
+      events           = @cc.events
       organizations    = @cc.organizations
       service_brokers  = @cc.service_brokers
       service_bindings = @cc.service_bindings
@@ -23,6 +24,7 @@ module AdminUI
       services         = @cc.services
       spaces           = @cc.spaces
 
+      events_connected           = events['connected']
       service_bindings_connected = service_bindings['connected']
 
       organization_hash   = Hash[organizations['items'].map { |item| [item[:id], item] }]
@@ -30,6 +32,16 @@ module AdminUI
       service_plan_hash   = Hash[service_plans['items'].map { |item| [item[:id], item] }]
       service_hash        = Hash[services['items'].map { |item| [item[:id], item] }]
       space_hash          = Hash[spaces['items'].map { |item| [item[:id], item] }]
+
+      event_counters = {}
+      events['items'].each do |event|
+        Thread.pass
+        actee_type = event[:actee_type]
+        next unless actee_type == 'service_instance' || actee_type == 'user_provided_service_instance'
+        actee = event[:actee]
+        event_counters[actee] = 0 if event_counters[actee].nil?
+        event_counters[actee] += 1
+      end
 
       service_binding_counters = {}
       service_bindings['items'].each do |service_binding|
@@ -45,6 +57,8 @@ module AdminUI
 
       service_instances['items'].each do |service_instance|
         Thread.pass
+
+        guid            = service_instance[:guid]
         service_plan_id = service_instance[:service_plan_id]
         service_plan    = service_plan_id.nil? ? nil : service_plan_hash[service_plan_id]
         service         = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
@@ -52,11 +66,14 @@ module AdminUI
         space           = space_hash[service_instance[:space_id]]
         organization    = space.nil? ? nil : organization_hash[space[:organization_id]]
 
+        event_counter           = event_counters[guid]
+        service_binding_counter = service_binding_counters[service_instance[:id]]
+
         row = []
 
-        row.push(service_instance[:guid])
+        row.push(guid)
         row.push(service_instance[:name])
-        row.push(service_instance[:guid])
+        row.push(guid)
         row.push(service_instance[:created_at].to_datetime.rfc3339)
 
         if service_instance[:updated_at]
@@ -65,8 +82,16 @@ module AdminUI
           row.push(nil)
         end
 
-        if service_binding_counters[service_instance[:id]]
-          row.push(service_binding_counters[service_instance[:id]])
+        if event_counter
+          row.push(event_counter)
+        elsif events_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if service_binding_counter
+          row.push(service_binding_counter)
         elsif service_bindings_connected
           row.push(0)
         else
@@ -134,7 +159,7 @@ module AdminUI
 
         items.push(row)
 
-        hash[service_instance[:guid]] =
+        hash[guid] =
         {
           'organization'     => organization,
           'service'          => service,
@@ -145,7 +170,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..27).to_a, (1..27).to_a - [5])
+      result(true, items, hash, (1..28).to_a, (1..28).to_a - [5, 6])
     end
   end
 end
