@@ -1414,7 +1414,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('ServiceBindings', 3, 'Events', cc_service_binding[:guid])
           end
 
-          it 'has application link' do
+          it 'has applications link' do
             check_filter_link('ServiceBindings', 4, 'Applications', cc_app[:guid])
           end
 
@@ -2064,57 +2064,125 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'app event' do
             let(:event_type) { 'app' }
-            it 'has application actee link' do
+
+            it 'has applications actee link' do
               check_filter_link('Events', 5, 'Applications', cc_event_app[:actee])
+            end
+
+            it 'has users actor link' do
+              check_filter_link('Events', 8, 'Users', cc_event_app[:actor])
+            end
+
+            it 'has spaces link' do
+              check_filter_link('Events', 9, 'Spaces', cc_space[:guid])
+            end
+
+            it 'has organizations link' do
+              check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
             end
           end
 
           context 'client event' do
             let(:event_type) { 'service_dashboard_client' }
-            it 'has client actee link' do
-              check_filter_link('Events', 4, 'Clients', cc_event_service_dashboard_client[:actee])
+
+            it 'has clients actee link' do
+              check_filter_link('Events', 5, 'Clients', cc_event_service_dashboard_client[:actee])
+            end
+
+            it 'has service brokers actor link' do
+              check_filter_link('Events', 8, 'ServiceBrokers', cc_event_service_dashboard_client[:actor])
             end
           end
 
           context 'service instance event' do
             let(:event_type) { 'service_instance' }
-            it 'has service instance actee link' do
+
+            it 'has service instances actee link' do
               check_filter_link('Events', 5, 'ServiceInstances', cc_event_service_instance[:actee])
+            end
+
+            it 'has users actor link' do
+              check_filter_link('Events', 8, 'Users', cc_event_service_instance[:actor])
+            end
+
+            it 'has spaces link' do
+              check_filter_link('Events', 9, 'Spaces', cc_space[:guid])
+            end
+
+            it 'has organizations link' do
+              check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
             end
           end
 
           context 'service binding event' do
             let(:event_type) { 'service_binding' }
-            it 'has service binding actee link' do
+
+            it 'has service bindings actee link' do
               check_filter_link('Events', 4, 'ServiceBindings', cc_event_service_binding[:actee])
+            end
+
+            it 'has users actor link' do
+              check_filter_link('Events', 7, 'Users', cc_event_service_binding[:actor])
+            end
+
+            it 'has spaces link' do
+              check_filter_link('Events', 8, 'Spaces', cc_space[:guid])
+            end
+
+            it 'has organizations link' do
+              check_filter_link('Events', 9, 'Organizations', cc_organization[:guid])
             end
           end
 
           context 'service broker event' do
             let(:event_type) { 'service_broker' }
-            it 'has service broker actee link' do
+
+            it 'has service brokers actee link' do
               check_filter_link('Events', 5, 'ServiceBrokers', cc_event_service_broker[:actee])
+            end
+
+            it 'has users actor link' do
+              check_filter_link('Events', 8, 'Users', cc_event_service_broker[:actor])
             end
           end
 
           context 'service event' do
             let(:event_type) { 'service' }
-            it 'has service actee link' do
+
+            it 'has services actee link' do
               check_filter_link('Events', 5, 'Services', cc_event_service[:actee])
+            end
+
+            it 'has service brokers actor link' do
+              check_filter_link('Events', 8, 'ServiceBrokers', cc_event_service[:actor])
             end
           end
 
           context 'service plan event' do
             let(:event_type) { 'service_plan' }
-            it 'has service plan actee link' do
+
+            it 'has service plans actee link' do
               check_filter_link('Events', 5, 'ServicePlans', cc_event_service_plan[:actee])
+            end
+
+            it 'has service brokers actor link' do
+              check_filter_link('Events', 8, 'ServiceBrokers', cc_event_service_plan[:actor])
             end
           end
 
           context 'service plan visibility event' do
             let(:event_type) { 'service_plan_visibility' }
-            it 'has service plan visibility actee link' do
+
+            it 'has service plan visibilities actee link' do
               check_filter_link('Events', 4, 'ServicePlanVisibilities', cc_event_service_plan_visibility[:actee])
+            end
+
+            it 'has users actor link' do
+              check_filter_link('Events', 7, 'Users', cc_event_service_plan_visibility[:actor])
+            end
+
+            it 'has organizations link' do
+              check_filter_link('Events', 8, 'Organizations', cc_organization[:guid])
             end
           end
         end

@@ -18,16 +18,21 @@ module AdminUI
       spaces        = @cc.spaces
       organizations = @cc.organizations
 
-      organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      organization_guid_hash = Hash[organizations['items'].map { |item| [item[:guid], item] }]
+      organization_id_hash   = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      space_guid_hash        = Hash[spaces['items'].map { |item| [item[:guid], item] }]
+      space_id_hash          = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
       items = []
       hash  = {}
 
       events['items'].each do |event|
         Thread.pass
-        space        = space_hash[event[:space_id]]
-        organization = space.nil? ? nil : organization_hash[space[:organization_id]]
+
+        space        = space_id_hash[event[:space_id]]
+        space        = space_guid_hash[event[:space_guid]] if space.nil? && event[:space_guid] && event[:space_guid] != ''
+        organization = space.nil? ? nil : organization_id_hash[space[:organization_id]]
+        organization = organization_guid_hash[event[:organization_guid]] if organization.nil? && event[:organization_guid] && event[:organization_guid] != ''
 
         row = []
 
@@ -41,8 +46,12 @@ module AdminUI
         row.push(event[:actor_name])
         row.push(event[:actor])
 
-        if organization && space
-          row.push("#{ organization[:name] }/#{ space[:name] }")
+        if organization
+          if space
+            row.push("#{ organization[:name] }/#{ space[:name] }")
+          else
+            row.push(organization[:name])
+          end
         else
           row.push(nil)
         end
