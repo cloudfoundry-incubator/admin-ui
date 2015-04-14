@@ -550,12 +550,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 7,
                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                colspans:        %w(1 6 3 5 2 3 3)
+                                colspans:        %w(1 7 3 5 2 3 3)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 23,
-                                labels:          [' ', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Roles', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                expected_length: 24,
+                                labels:          [' ', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Events', 'Roles', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 colspans:        nil
                               }
                              ])
@@ -568,6 +568,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              "#{ cc_organization[:name] }/#{ cc_space[:name] }",
                              @driver.execute_script("return Format.formatString(\"#{ cc_space[:created_at].to_datetime.rfc3339 }\")"),
                              @driver.execute_script("return Format.formatString(\"#{ cc_space[:updated_at].to_datetime.rfc3339 }\")"),
+                             '1',
                              '3',
                              '1',
                              '1',
@@ -650,8 +651,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Organization',    tag:   'a', value: cc_organization[:name] },
                            { label: 'Created',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_space[:created_at].to_datetime.rfc3339 }\")") },
                            { label: 'Updated',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_space[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Events',          tag:   'a', value: '1' },
                            { label: 'Roles',           tag:   'a', value: '3' },
-                           { label: 'Total Routes',    tag:   nil, value: '1' },
+                           { label: 'Total Routes',    tag:   'a', value: '1' },
                            { label: 'Used Routes',     tag:   nil, value: '1' },
                            { label: 'Unused Routes',   tag:   nil, value: '0' },
                            { label: 'Instances Used',  tag:   'a', value: cc_app[:instances].to_s },
@@ -674,24 +676,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Spaces', 2, 'Organizations', cc_organization[:guid])
           end
 
+          it 'has events link' do
+            check_filter_link('Spaces', 5, 'Events', cc_space[:guid])
+          end
+
           it 'has space roles link' do
-            check_filter_link('Spaces', 5, 'SpaceRoles', cc_space[:guid])
+            check_filter_link('Spaces', 6, 'SpaceRoles', cc_space[:guid])
           end
 
           it 'has routes link' do
-            check_filter_link('Spaces', 6, 'Routes', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 7, 'Routes', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
 
           it 'has instances link' do
-            check_filter_link('Spaces', 9, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 10, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
 
           it 'has services link' do
-            check_filter_link('Spaces', 10, 'ServiceInstances', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 11, 'ServiceInstances', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
 
           it 'has applications link' do
-            check_filter_link('Spaces', 16, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 17, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
         end
       end

@@ -688,6 +688,7 @@ module ViewModelsHelper
         "#{ cc_organization[:name] }/#{ cc_space[:name] }",
         cc_space[:created_at].to_datetime.rfc3339,
         cc_space[:updated_at].to_datetime.rfc3339,
+        1,
         3,
         1,
         1,

@@ -15,6 +15,7 @@ module AdminUI
       applications      = @cc.applications
       apps_routes       = @cc.apps_routes
       deas              = @varz.deas
+      events            = @cc.events
       organizations     = @cc.organizations
       routes            = @cc.routes
       service_instances = @cc.service_instances
@@ -24,12 +25,22 @@ module AdminUI
 
       applications_connected      = applications['connected']
       apps_routes_connected       = apps_routes['connected']
+      events_connected            = events['connected']
       routes_connected            = routes['connected']
       service_instances_connected = service_instances['connected']
       spaces_roles_connected      = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
 
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
       routes_used_set   = apps_routes['items'].to_set { |app_route| app_route[:route_id] }
+
+      event_counters = {}
+      events['items'].each do |event|
+        Thread.pass
+        next unless event[:actee_type] == 'space'
+        actee = event[:actee]
+        event_counters[actee] = 0 if event_counters[actee].nil?
+        event_counters[actee] += 1
+      end
 
       space_role_counters             = {}
       space_service_instance_counters = {}
@@ -101,6 +112,7 @@ module AdminUI
         space_guid = space[:guid]
 
         organization                   = organization_hash[space[:organization_id]]
+        event_counter                  = event_counters[space_guid]
         space_role_counter             = space_role_counters[space_id]
         space_service_instance_counter = space_service_instance_counters[space_id]
         space_app_counters             = space_app_counters_hash[space_id]
@@ -122,6 +134,14 @@ module AdminUI
 
         if space[:updated_at]
           row.push(space[:updated_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
+        if event_counter
+          row.push(event_counter)
+        elsif events_connected
+          row.push(0)
         else
           row.push(nil)
         end
@@ -187,7 +207,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..22).to_a, (1..5).to_a)
+      result(true, items, hash, (1..23).to_a, (1..5).to_a)
     end
 
     private
