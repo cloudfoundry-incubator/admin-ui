@@ -278,8 +278,8 @@ module AdminUI
           row.push(organization_app_counters['STARTED'] || 0)
           row.push(organization_app_counters['STOPPED'] || 0)
           row.push(organization_app_counters['PENDING'] || 0)
-          row.push(organization_app_counters['STAGED']  || 0)
-          row.push(organization_app_counters['FAILED']  || 0)
+          row.push(organization_app_counters['STAGED'] || 0)
+          row.push(organization_app_counters['FAILED'] || 0)
         elsif spaces_connected && applications_connected
           row.push(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         else

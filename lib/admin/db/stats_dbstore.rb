@@ -2,7 +2,7 @@ require 'sequel'
 require_relative '../dbstore'
 
 module AdminUI
-  class StatsDBStore  < AdminUI::DBStore
+  class StatsDBStore < AdminUI::DBStore
     def append(record)
       @logger.debug("AdminUI::StatsDBStore.append: appending record #{ record } to database")
       db_conn = connect

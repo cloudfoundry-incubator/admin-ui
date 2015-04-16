@@ -303,8 +303,8 @@ module ViewModelsHelper
         cc_app[:state] == 'STARTED' ? 1 : 0,
         cc_app[:state] == 'STOPPED' ? 1 : 0,
         cc_app[:package_state] == 'PENDING' ? 1 : 0,
-        cc_app[:package_state] == 'STAGED'  ? 1 : 0,
-        cc_app[:package_state] == 'FAILED'  ? 1 : 0
+        cc_app[:package_state] == 'STAGED' ? 1 : 0,
+        cc_app[:package_state] == 'FAILED' ? 1 : 0
       ]
     ]
   end
@@ -706,8 +706,8 @@ module ViewModelsHelper
         cc_app[:state] == 'STARTED' ? 1 : 0,
         cc_app[:state] == 'STOPPED' ? 1 : 0,
         cc_app[:package_state] == 'PENDING' ? 1 : 0,
-        cc_app[:package_state] == 'STAGED'  ? 1 : 0,
-        cc_app[:package_state] == 'FAILED'  ? 1 : 0
+        cc_app[:package_state] == 'STAGED' ? 1 : 0,
+        cc_app[:package_state] == 'FAILED' ? 1 : 0
       ]
     ]
   end

@@ -56,8 +56,8 @@ module AdminUI
                 next unless instance['state'] == 'RUNNING'
 
                 memory += instance['used_memory_in_bytes'] if instance['used_memory_in_bytes']
-                disk   += instance['used_disk_in_bytes']   if instance['used_disk_in_bytes']
-                pcpu   += instance['computed_pcpu']        if instance['computed_pcpu']
+                disk += instance['used_disk_in_bytes'] if instance['used_disk_in_bytes']
+                pcpu += instance['computed_pcpu'] if instance['computed_pcpu']
               end
             end
 

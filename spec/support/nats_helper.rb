@@ -4,14 +4,12 @@ require_relative '../spec_helper'
 module NATSHelper
   def nats_stub
     ::NATS.stub(:start) do |_, &blk|
-      return if blk.nil?
       blk.call
     end
 
     ::NATS.stub(:stop)
 
     ::NATS.stub(:request).with('vcap.component.discover') do |_, &blk|
-      return if blk.nil?
       blk.call(nats_cloud_controller.to_json)
       blk.call(nats_dea.to_json)
       blk.call(nats_health_manager.to_json)

@@ -266,8 +266,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_app[:state] == 'STARTED' ? '1' : '0',
                              cc_app[:state] == 'STOPPED' ? '1' : '0',
                              cc_app[:package_state] == 'PENDING' ? '1' : '0',
-                             cc_app[:package_state] == 'STAGED'  ? '1' : '0',
-                             cc_app[:package_state] == 'FAILED'  ? '1' : '0'
+                             cc_app[:package_state] == 'STAGED' ? '1' : '0',
+                             cc_app[:package_state] == 'FAILED' ? '1' : '0'
                            ])
         end
 
@@ -498,8 +498,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Started Apps',              tag:   nil, value: cc_app[:state] == 'STARTED' ? '1' : '0' },
                            { label: 'Stopped Apps',              tag:   nil, value: cc_app[:state] == 'STOPPED' ? '1' : '0' },
                            { label: 'Pending Apps',              tag:   nil, value: cc_app[:package_state] == 'PENDING' ? '1' : '0' },
-                           { label: 'Staged Apps',               tag:   nil, value: cc_app[:package_state] == 'STAGED'  ? '1' : '0' },
-                           { label: 'Failed Apps',               tag:   nil, value: cc_app[:package_state] == 'FAILED'  ? '1' : '0' }
+                           { label: 'Staged Apps',               tag:   nil, value: cc_app[:package_state] == 'STAGED' ? '1' : '0' },
+                           { label: 'Failed Apps',               tag:   nil, value: cc_app[:package_state] == 'FAILED' ? '1' : '0' }
                           ])
           end
 
@@ -591,8 +591,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_app[:state] == 'STARTED' ? '1' : '0',
                              cc_app[:state] == 'STOPPED' ? '1' : '0',
                              cc_app[:package_state] == 'PENDING' ? '1' : '0',
-                             cc_app[:package_state] == 'STAGED'  ? '1' : '0',
-                             cc_app[:package_state] == 'FAILED'  ? '1' : '0'
+                             cc_app[:package_state] == 'STAGED' ? '1' : '0',
+                             cc_app[:package_state] == 'FAILED' ? '1' : '0'
                            ])
         end
 
@@ -675,8 +675,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Started Apps',    tag:   nil, value: cc_app[:state] == 'STARTED' ? '1' : '0' },
                            { label: 'Stopped Apps',    tag:   nil, value: cc_app[:state] == 'STOPPED' ? '1' : '0' },
                            { label: 'Pending Apps',    tag:   nil, value: cc_app[:package_state] == 'PENDING' ? '1' : '0' },
-                           { label: 'Staged Apps',     tag:   nil, value: cc_app[:package_state] == 'STAGED'  ? '1' : '0' },
-                           { label: 'Failed Apps',     tag:   nil, value: cc_app[:package_state] == 'FAILED'  ? '1' : '0' }
+                           { label: 'Staged Apps',     tag:   nil, value: cc_app[:package_state] == 'STAGED' ? '1' : '0' },
+                           { label: 'Failed Apps',     tag:   nil, value: cc_app[:package_state] == 'FAILED' ? '1' : '0' }
                           ])
           end
 
