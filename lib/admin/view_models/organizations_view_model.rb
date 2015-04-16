@@ -16,6 +16,7 @@ module AdminUI
       apps_routes                    = @cc.apps_routes
       deas                           = @varz.deas
       domains                        = @cc.domains
+      events                         = @cc.events
       organizations_auditors         = @cc.organizations_auditors
       organizations_billing_managers = @cc.organizations_billing_managers
       organizations_managers         = @cc.organizations_managers
@@ -32,6 +33,7 @@ module AdminUI
       applications_connected              = applications['connected']
       apps_routes_connected               = apps_routes['connected']
       domains_connected                   = domains['connected']
+      events_connected                    = events['connected']
       organizations_roles_connected       = organizations_auditors['connected'] && organizations_billing_managers['connected'] && organizations_managers['connected'] && organizations_users['connected']
       routes_connected                    = routes['connected']
       service_instances_connected         = service_instances['connected']
@@ -43,6 +45,7 @@ module AdminUI
       routes_used_set = apps_routes['items'].to_set { |app_route| app_route[:route_id] }
       space_hash      = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
+      event_target_counters = {}
       organization_space_counters                   = {}
       organization_role_counters                    = {}
       organization_domain_counters                  = {}
@@ -51,6 +54,14 @@ module AdminUI
       organization_route_counters_hash              = {}
       organization_app_counters_hash                = {}
       space_role_counters                           = {}
+
+      events['items'].each do |event|
+        Thread.pass
+        organization_guid = event[:organization_guid]
+        next if organization_guid.nil?
+        event_target_counters[organization_guid] = 0 if event_target_counters[organization_guid].nil?
+        event_target_counters[organization_guid] += 1
+      end
 
       space_hash.each_value do |space|
         Thread.pass
@@ -147,8 +158,11 @@ module AdminUI
 
       organizations['items'].each do |organization|
         Thread.pass
-        organization_id = organization[:id]
 
+        organization_id   = organization[:id]
+        organization_guid = organization[:guid]
+
+        event_target_counter                         = event_target_counters[organization_guid]
         organization_role_counter                    = organization_role_counters[organization_id]
         organization_space_counter                   = organization_space_counters[organization_id]
         organization_service_instance_counter        = organization_service_instance_counters[organization_id]
@@ -160,14 +174,22 @@ module AdminUI
 
         row = []
 
-        row.push(organization[:guid])
+        row.push(organization_guid)
         row.push(organization[:name])
-        row.push(organization[:guid])
+        row.push(organization_guid)
         row.push(organization[:status])
         row.push(organization[:created_at].to_datetime.rfc3339)
 
         if organization[:updated_at]
           row.push(organization[:updated_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
+        if event_target_counter
+          row.push(event_target_counter)
+        elsif events_connected
+          row.push(0)
         else
           row.push(nil)
         end
@@ -266,10 +288,10 @@ module AdminUI
 
         items.push(row)
 
-        hash[organization[:guid]] = organization
+        hash[organization_guid] = organization
       end
 
-      result(true, items, hash, (1..27).to_a, (1..5).to_a << 9)
+      result(true, items, hash, (1..28).to_a, (1..5).to_a << 10)
     end
 
     private

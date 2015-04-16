@@ -33,13 +33,21 @@ module AdminUI
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
       routes_used_set   = apps_routes['items'].to_set { |app_route| app_route[:route_id] }
 
-      event_counters = {}
+      event_counters        = {}
+      event_target_counters = {}
       events['items'].each do |event|
         Thread.pass
-        next unless event[:actee_type] == 'space'
-        actee = event[:actee]
-        event_counters[actee] = 0 if event_counters[actee].nil?
-        event_counters[actee] += 1
+
+        if event[:actee_type] == 'space'
+          actee = event[:actee]
+          event_counters[actee] = 0 if event_counters[actee].nil?
+          event_counters[actee] += 1
+        end
+
+        space_guid = event[:space_guid]
+        next if space_guid.nil?
+        event_target_counters[space_guid] = 0 if event_target_counters[space_guid].nil?
+        event_target_counters[space_guid] += 1
       end
 
       space_role_counters             = {}
@@ -113,6 +121,7 @@ module AdminUI
 
         organization                   = organization_hash[space[:organization_id]]
         event_counter                  = event_counters[space_guid]
+        event_target_counter           = event_target_counters[space_guid]
         space_role_counter             = space_role_counters[space_id]
         space_service_instance_counter = space_service_instance_counters[space_id]
         space_app_counters             = space_app_counters_hash[space_id]
@@ -140,6 +149,14 @@ module AdminUI
 
         if event_counter
           row.push(event_counter)
+        elsif events_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if event_target_counter
+          row.push(event_target_counter)
         elsif events_connected
           row.push(0)
         else
@@ -207,7 +224,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..23).to_a, (1..5).to_a)
+      result(true, items, hash, (1..24).to_a, (1..5).to_a)
     end
 
     private

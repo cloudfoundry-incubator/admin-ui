@@ -278,7 +278,7 @@ describe AdminUI::Admin, type: :integration do
     context 'sets the specific quota for organization' do
       let(:insert_second_quota_definition) { true }
       it 'sets the specific quota for organization' do
-        expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][9] }.from(cc_quota_definition[:name]).to(cc_quota_definition2[:name])
+        expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][10] }.from(cc_quota_definition[:name]).to(cc_quota_definition2[:name])
       end
     end
 
