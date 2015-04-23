@@ -506,6 +506,7 @@ module ViewModelsHelper
         1,
         1,
         1,
+        1,
         1
       ]
     ]
@@ -523,6 +524,7 @@ module ViewModelsHelper
         cc_service_instance[:guid],
         cc_service_instance[:created_at].to_datetime.rfc3339,
         cc_service_instance[:updated_at].to_datetime.rfc3339,
+        1,
         1,
         1,
         cc_service_plan[:name],
@@ -561,6 +563,55 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_service_keys
+    [
+      [
+        cc_service_key[:guid],
+        cc_service_key[:name],
+        cc_service_key[:guid],
+        cc_service_key[:created_at].to_datetime.rfc3339,
+        cc_service_key[:updated_at].to_datetime.rfc3339,
+        1,
+        cc_service_instance[:name],
+        cc_service_instance[:guid],
+        cc_service_instance[:created_at].to_datetime.rfc3339,
+        cc_service_instance[:updated_at].to_datetime.rfc3339,
+        cc_service_plan[:name],
+        cc_service_plan[:guid],
+        cc_service_plan[:unique_id],
+        cc_service_plan[:created_at].to_datetime.rfc3339,
+        cc_service_plan[:updated_at].to_datetime.rfc3339,
+        cc_service_plan[:active],
+        cc_service_plan[:public],
+        cc_service_plan[:free],
+        cc_service[:provider],
+        cc_service[:label],
+        cc_service[:guid],
+        cc_service[:unique_id],
+        cc_service[:version],
+        cc_service[:created_at].to_datetime.rfc3339,
+        cc_service[:updated_at].to_datetime.rfc3339,
+        cc_service[:active],
+        cc_service_broker[:name],
+        cc_service_broker[:guid],
+        cc_service_broker[:created_at].to_datetime.rfc3339,
+        cc_service_broker[:updated_at].to_datetime.rfc3339,
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+      ]
+    ]
+  end
+
+  def view_models_service_keys_detail
+    { 'organization'     => cc_organization,
+      'service'          => cc_service,
+      'service_broker'   => cc_service_broker,
+      'service_instance' => cc_service_instance,
+      'service_key'      => cc_service_key,
+      'service_plan'     => cc_service_plan,
+      'space'            => cc_space
+    }
+  end
+
   def view_models_service_plans
     [
       [
@@ -573,6 +624,7 @@ module ViewModelsHelper
         cc_service_plan[:active],
         cc_service_plan[:public],
         cc_service_plan[:free],
+        1,
         1,
         1,
         1,
@@ -661,6 +713,7 @@ module ViewModelsHelper
         cc_service[:active],
         cc_service[:bindable],
         cc_service[:plan_updateable],
+        1,
         1,
         1,
         1,

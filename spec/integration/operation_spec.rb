@@ -523,6 +523,38 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage service key' do
+      before do
+        # Make sure there is a service key
+        expect(cc.service_keys['items'].length).to eq(1)
+      end
+
+      def delete_service_key
+        operation.delete_service_key(cc_service_key[:guid])
+      end
+
+      it 'deletes specific service key' do
+        expect { delete_service_key }.to change { cc.service_keys['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_service_key
+        end
+
+        def verify_service_key_not_found(exception)
+          expect(exception.cf_code).to eq(360_003)
+          expect(exception.cf_error_code).to eq('CF-ServiceKeyNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The service key could not be found: #{ cc_service_key[:guid] }")
+        end
+
+        it 'fails deleting deleted service key' do
+          expect { delete_service_key }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_key_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage service plan' do
       before do
         # Make sure there is a service plan

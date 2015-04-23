@@ -470,6 +470,30 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage service key' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there is a service key
+      expect(get_json('/service_keys_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_service_key
+      response = delete_request("/service_keys/#{ cc_service_key[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/service_keys/#{ cc_service_key[:guid] }"]], true)
+    end
+
+    it 'has user name and service keys request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_keys_view_model']], true)
+    end
+
+    it 'deletes the specific service key' do
+      expect { delete_service_key }.to change { get_json('/service_keys_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage service plan' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -858,6 +882,19 @@ describe AdminUI::Admin, type: :integration do
     context 'service_instances_view_model detail' do
       let(:path)              { "/service_instances_view_model/#{ cc_service_instance[:guid] }" }
       let(:view_model_source) { view_models_service_instances_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'service_keys_view_model' do
+      let(:event_type)        { 'service_key' }
+      let(:path)              { '/service_keys_view_model' }
+      let(:view_model_source) { view_models_service_keys }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'service_keys_view_model detail' do
+      let(:path)              { "/service_keys_view_model/#{ cc_service_key[:guid] }" }
+      let(:view_model_source) { view_models_service_keys_detail }
       it_behaves_like('retrieves view_model detail')
     end
 

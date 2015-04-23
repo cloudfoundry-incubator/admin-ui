@@ -337,6 +337,21 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected service_keys_view_model' do
+      let(:event_type) { 'service_key' }
+      let(:results)    { view_models.service_keys }
+      let(:expected)   { view_models_service_keys }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected service_keys_view_model detail' do
+      let(:results)  { view_models.service_key(cc_service_key[:guid]) }
+      let(:expected) { view_models_service_keys_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected service_plans_view_model' do
       let(:event_type) { 'service_plan' }
       let(:results)    { view_models.service_plans }

@@ -189,6 +189,14 @@ describe AdminUI::CC do
       verify_disconnected_items(view_models.service_instances)
     end
 
+    it 'returns nil service_key as expected' do
+      expect(view_models.service_key('bogus')).to be_nil
+    end
+
+    it 'returns zero service_keys as expected' do
+      verify_disconnected_items(view_models.service_keys)
+    end
+
     it 'returns nil service_plan as expected' do
       expect(view_models.service_plan('bogus')).to be_nil
     end

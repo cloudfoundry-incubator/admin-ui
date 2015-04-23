@@ -19,6 +19,7 @@ module AdminUI
       events                    = @cc.events
       service_bindings          = @cc.service_bindings
       service_instances         = @cc.service_instances
+      service_keys              = @cc.service_keys
       service_plans             = @cc.service_plans
       service_plan_visibilities = @cc.service_plan_visibilities
       services                  = @cc.services
@@ -26,6 +27,7 @@ module AdminUI
       events_connected                    = events['connected']
       service_bindings_connected          = service_bindings['connected']
       service_instances_connected         = service_instances['connected']
+      service_keys_connected              = service_keys['connected']
       service_plans_connected             = service_plans['connected']
       service_plan_visibilities_connected = service_plan_visibilities['connected']
       services_connected                  = service_plans['connected']
@@ -117,6 +119,25 @@ module AdminUI
         service_binding_counters[service_broker_id] += 1
       end
 
+      service_key_counters = {}
+      service_keys['items'].each do |service_key|
+        Thread.pass
+        service_instance_id = service_key[:service_instance_id]
+        next if service_instance_id.nil?
+        service_instance = service_instance_hash[service_instance_id]
+        next if service_instance.nil?
+        service_plan_id = service_instance[:service_plan_id]
+        next if service_plan_id.nil?
+        service_plan = service_plan_hash[service_plan_id]
+        next if service_plan.nil?
+        service = service_hash[service_plan[:service_id]]
+        next if service.nil?
+        service_broker_id = service[:service_broker_id]
+        next if service_broker_id.nil?
+        service_key_counters[service_broker_id] = 0 if service_key_counters[service_broker_id].nil?
+        service_key_counters[service_broker_id] += 1
+      end
+
       items = []
       hash  = {}
 
@@ -129,6 +150,7 @@ module AdminUI
         service_binding_counter         = service_binding_counters[id]
         service_counter                 = service_counters[id]
         service_instance_counter        = service_instance_counters[id]
+        service_key_counter             = service_key_counters[id]
         service_plan_counter            = service_plan_counters[id]
         service_plan_visibility_counter = service_plan_visibility_counters[id]
 
@@ -193,12 +215,20 @@ module AdminUI
           row.push(nil)
         end
 
+        if service_key_counter
+          row.push(service_key_counter)
+        elsif service_keys_connected && service_instances_connected && service_plans_connected && services_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         items.push(row)
 
         hash[guid] = service_broker
       end
 
-      result(true, items, hash, (1..10).to_a, (1..4).to_a)
+      result(true, items, hash, (1..11).to_a, (1..4).to_a)
     end
   end
 end

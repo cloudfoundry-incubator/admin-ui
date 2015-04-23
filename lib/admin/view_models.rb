@@ -18,6 +18,7 @@ require_relative 'view_models/routes_view_model'
 require_relative 'view_models/service_bindings_view_model'
 require_relative 'view_models/service_brokers_view_model'
 require_relative 'view_models/service_instances_view_model'
+require_relative 'view_models/service_keys_view_model'
 require_relative 'view_models/service_plans_view_model'
 require_relative 'view_models/service_plan_visibilities_view_model'
 require_relative 'view_models/services_view_model'
@@ -48,7 +49,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :clients, :cloud_controllers, :components, :deas, :domains, :events, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_plans, :service_plan_visibilities, :spaces, :space_roles, :stats, :tasks, :users].each do |key|
+      [:applications, :clients, :cloud_controllers, :components, :deas, :domains, :events, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_keys, :service_plans, :service_plan_visibilities, :spaces, :space_roles, :stats, :tasks, :users].each do |key|
         hash = { semaphore: Mutex.new, condition: ConditionVariable.new, result: nil }
         @caches[key] = hash
         schedule(key)
@@ -113,6 +114,10 @@ module AdminUI
 
     def invalidate_service_instances
       invalidate_cache(:service_instances)
+    end
+
+    def invalidate_service_keys
+      invalidate_cache(:service_keys)
     end
 
     def invalidate_service_plan_visibilities
@@ -287,6 +292,14 @@ module AdminUI
 
     def service_instances
       result_cache(:service_instances)
+    end
+
+    def service_key(guid)
+      details(:service_keys, guid)
+    end
+
+    def service_keys
+      result_cache(:service_keys)
     end
 
     def service_plan(guid)
@@ -544,6 +557,14 @@ module AdminUI
       AdminUI::ServiceInstancesViewModel.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_service_instances: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_service_keys
+      AdminUI::ServiceKeysViewModel.new(@logger, @cc).items
+    rescue => error
+      @logger.debug("Error during discover_service_keys: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end

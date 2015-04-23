@@ -47,7 +47,7 @@ module VARZHelper
       'cpu'          => 0.1,
       'mem'          => 2,
       'num_cores'    => 3,
-      'start'        => '2013-10-21T07:00:00-05:00',
+      'start'        => '2015-04-23T08:00:00-05:00',
       'type'         => nats_cloud_controller['type'],
       'uptime'       => '4d:5h:6m:7s',
       'vcap_sinatra' => { 'requests' => { 'completed'   => 8,
@@ -68,7 +68,7 @@ module VARZHelper
       'mem'                    => 5,
       'num_cores'              => 6,
       'stacks'                 => ['lucid64'],
-      'start'                  => '2013-10-21T07:00:00-05:00',
+      'start'                  => '2015-04-23T08:00:01-05:00',
       'type'                   => nats_dea['type'],
       'uptime'                 => '7d:8h:9m:10s',
       'instance_registry'      =>
@@ -219,7 +219,7 @@ module VARZHelper
       'cpu'       => 0.1,
       'mem'       => 2,
       'num_cores' => 3,
-      'start'     => '2013-10-21T07:00:00-05:00',
+      'start'     => '2015-04-23T08:00:02-05:00',
       'type'      => nats_provisioner['type'],
       'uptime'    => '4d:5h:6m:7s',
       'config'    =>
@@ -271,7 +271,7 @@ module VARZHelper
         }
       ],
       'type'               => nats_router['type'],
-      'start'              => '2013-10-21T07:00:00-05:00',
+      'start'              => '2015-04-23T08:00:03-05:00',
       'uptime'             => '12d:13h:14m:15s'
     }
   end

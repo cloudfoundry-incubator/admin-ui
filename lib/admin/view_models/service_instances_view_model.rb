@@ -20,12 +20,14 @@ module AdminUI
       organizations    = @cc.organizations
       service_brokers  = @cc.service_brokers
       service_bindings = @cc.service_bindings
+      service_keys     = @cc.service_keys
       service_plans    = @cc.service_plans
       services         = @cc.services
       spaces           = @cc.spaces
 
       events_connected           = events['connected']
       service_bindings_connected = service_bindings['connected']
+      service_keys_connected     = service_keys['connected']
 
       organization_hash   = Hash[organizations['items'].map { |item| [item[:id], item] }]
       service_broker_hash = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
@@ -52,6 +54,15 @@ module AdminUI
         service_binding_counters[service_instance_id] += 1
       end
 
+      service_key_counters = {}
+      service_keys['items'].each do |service_key|
+        Thread.pass
+        service_instance_id = service_key[:service_instance_id]
+        next if service_instance_id.nil?
+        service_key_counters[service_instance_id] = 0 if service_key_counters[service_instance_id].nil?
+        service_key_counters[service_instance_id] += 1
+      end
+
       items = []
       hash  = {}
 
@@ -59,6 +70,7 @@ module AdminUI
         Thread.pass
 
         guid            = service_instance[:guid]
+        id              = service_instance[:id]
         service_plan_id = service_instance[:service_plan_id]
         service_plan    = service_plan_id.nil? ? nil : service_plan_hash[service_plan_id]
         service         = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
@@ -67,7 +79,8 @@ module AdminUI
         organization    = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         event_counter           = event_counters[guid]
-        service_binding_counter = service_binding_counters[service_instance[:id]]
+        service_binding_counter = service_binding_counters[id]
+        service_key_counter     = service_key_counters[id]
 
         row = []
 
@@ -93,6 +106,14 @@ module AdminUI
         if service_binding_counter
           row.push(service_binding_counter)
         elsif service_bindings_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if service_key_counter
+          row.push(service_key_counter)
+        elsif service_keys_connected
           row.push(0)
         else
           row.push(nil)
@@ -170,7 +191,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..28).to_a, (1..28).to_a - [5, 6])
+      result(true, items, hash, (1..29).to_a, (1..29).to_a - [5, 6, 7])
     end
   end
 end

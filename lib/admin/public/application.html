@@ -44,6 +44,7 @@
         <script src="js/app/tabs/serviceBindingsTab.js"></script>
         <script src="js/app/tabs/serviceBrokersTab.js"></script>
         <script src="js/app/tabs/serviceInstancesTab.js"></script>
+        <script src="js/app/tabs/serviceKeysTab.js"></script>
         <script src="js/app/tabs/servicePlansTab.js"></script>
         <script src="js/app/tabs/servicePlanVisibilitiesTab.js"></script>
         <script src="js/app/tabs/servicesTab.js"></script>
@@ -93,6 +94,7 @@
 	            <span id="Routes" class="menuItem">Routes</span>
 	            <span id="ServiceInstances" class="menuItem">Service Instances</span>
 	            <span id="ServiceBindings" class="menuItem">Service Bindings</span>
+	            <span id="ServiceKeys" class="menuItem">Service Keys</span>
 	            <span id="OrganizationRoles" class="menuItem">Organization Roles</span>
 	            <span id="SpaceRoles" class="menuItem">Space Roles</span>
 	            <span id="Clients" class="menuItem">Clients</span>
@@ -316,7 +318,7 @@
                         <thead>
                             <tr class="customTableHeaderGroup">
                             	<th colspan="1"> </th>
-                                <th colspan="6">Service Instance</th>
+                                <th colspan="7">Service Instance</th>
                                 <th colspan="8">Service Plan</th>
                                 <th colspan="9">Service</th>
                                 <th colspan="4">Service Broker</th>
@@ -330,7 +332,8 @@
                                 <th>Created</th>
                                 <th>Updated</th>
                                 <th>Events</th>
-                                <th>Bindings</th>
+                                <th>Service Bindings</th>
+                                <th>Service Keys</th>
                                 
                                 <th>Name</th>
                                 <th>GUID</th>
@@ -432,6 +435,69 @@
                 <div class="verticalPageSection">
                     <div id="ServiceBindingsDetailsLabel" class="propertyLabel">Details</div>
                     <div id="ServiceBindingsPropertiesContainer"></div>
+                </div>
+            </div>
+
+           <div id="ServiceKeysPage" class="page hiddenPage">
+                <div id="ServiceKeysTableContainer" class="pageSection">
+                    <table id="ServiceKeysTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr class="customTableHeaderGroup">
+                            	<th colspan="1"> </th>
+                                <th colspan="5">Service Key</th>
+                                <th colspan="4">Service Instance</th>
+                                <th colspan="8">Service Plan</th>
+                                <th colspan="8">Service</th>
+                                <th colspan="4">Service Broker</th>
+                                <th colspan="1"> </th>
+                            </tr>
+                            <tr>
+                            	<th>Check</th>
+                            	
+                            	<th>Name</th>
+                                <th>GUID</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Events</th>
+
+                                <th>Name</th>
+                                <th>GUID</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                
+                                <th>Name</th>
+                                <th>GUID</th>
+                                <th>Unique ID</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Active</th>
+                                <th>Public</th>
+                                <th>Free</th>
+                                
+                                <th>Provider</th>
+                                <th>Label</th>
+                                <th>GUID</th>
+                                <th>Unique ID</th>
+                                <th>Version</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Active</th>
+                            
+                                <th>Name</th>
+                                <th>GUID</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                
+                                <th>Target</th>
+                            </tr>
+                        </thead>
+                        <tbody/>
+                    </table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="ServiceKeysDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="ServiceKeysPropertiesContainer"></div>
                 </div>
             </div>
 
@@ -636,7 +702,7 @@
                         <thead>
                             <tr class="customTableHeaderGroup">
                             	<th colspan="1"> </th>
-                                <th colspan="15">Service</th>
+                                <th colspan="16">Service</th>
                                 <th colspan="4">Service Broker</th>
                             </tr>
                             <tr>
@@ -657,6 +723,7 @@
                                 <th>Service Plan Visibilities</th>
                                 <th>Service Instances</th>
                                 <th>Service Bindings</th>
+                                <th>Service Keys</th>
 
                                 <th>Name</th>
                                 <th>GUID</th>
@@ -680,7 +747,7 @@
                         <thead>
                             <tr class="customTableHeaderGroup">
                                 <th colspan="1"> </th>
-                                <th colspan="12">Service Plan</th>
+                                <th colspan="13">Service Plan</th>
                                 <th colspan="9">Service</th>
                                 <th colspan="4">Service Broker</th>
                             </tr>
@@ -699,6 +766,7 @@
                                 <th>Visible Organizations</th>
                                 <th>Service Instances</th>
                                 <th>Service Bindings</th>
+                                <th>Service Keys</th>
 
                                 <th>Provider</th>
                                 <th>Label</th>

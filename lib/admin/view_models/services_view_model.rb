@@ -20,12 +20,14 @@ module AdminUI
       service_bindings          = @cc.service_bindings
       service_brokers           = @cc.service_brokers
       service_instances         = @cc.service_instances
+      service_keys              = @cc.service_keys
       service_plans             = @cc.service_plans
       service_plan_visibilities = @cc.service_plan_visibilities
 
       events_connected                    = events['connected']
       service_bindings_connected          = service_bindings['connected']
       service_instances_connected         = service_instances['connected']
+      service_keys_connected              = service_keys['connected']
       service_plans_connected             = service_plans['connected']
       service_plan_visibilities_connected = service_plan_visibilities['connected']
 
@@ -90,6 +92,22 @@ module AdminUI
         service_binding_counters[service_id] += 1
       end
 
+      service_key_counters = {}
+      service_keys['items'].each do |service_key|
+        Thread.pass
+        service_instance_id = service_key[:service_instance_id]
+        next if service_instance_id.nil?
+        service_instance = service_instance_hash[service_instance_id]
+        next if service_instance.nil?
+        service_plan_id = service_instance[:service_plan_id]
+        next if service_plan_id.nil?
+        service_plan = service_plan_hash[service_plan_id]
+        next if service_plan.nil?
+        service_id = service_plan[:service_id]
+        service_key_counters[service_id] = 0 if service_key_counters[service_id].nil?
+        service_key_counters[service_id] += 1
+      end
+
       items = []
       hash  = {}
 
@@ -97,9 +115,15 @@ module AdminUI
         Thread.pass
 
         guid           = service[:guid]
+        id             = service[:id]
         service_broker = service_broker_hash[service[:service_broker_id]]
 
-        event_counter = event_counters[guid]
+        event_counter                   = event_counters[guid]
+        service_binding_counter         = service_binding_counters[id]
+        service_instance_counter        = service_instance_counters[id]
+        service_key_counter             = service_key_counters[id]
+        service_plan_counter            = service_plan_counters[id]
+        service_plan_visibility_counter = service_plan_visibility_counters[id]
 
         row = []
 
@@ -129,33 +153,41 @@ module AdminUI
           row.push(nil)
         end
 
-        if service_plan_counters[service[:id]]
-          row.push(service_plan_counters[service[:id]])
+        if service_plan_counter
+          row.push(service_plan_counter)
         elsif service_plans_connected
           row.push(0)
         else
           row.push(nil)
         end
 
-        if service_plan_visibility_counters[service[:id]]
-          row.push(service_plan_visibility_counters[service[:id]])
+        if service_plan_visibility_counter
+          row.push(service_plan_visibility_counter)
         elsif service_plan_visibilities_connected && service_plans_connected
           row.push(0)
         else
           row.push(nil)
         end
 
-        if service_instance_counters[service[:id]]
-          row.push(service_instance_counters[service[:id]])
+        if service_instance_counter
+          row.push(service_instance_counter)
         elsif service_instances_connected && service_plans_connected
           row.push(0)
         else
           row.push(nil)
         end
 
-        if service_binding_counters[service[:id]]
-          row.push(service_binding_counters[service[:id]])
+        if service_binding_counter
+          row.push(service_binding_counter)
         elsif service_bindings_connected && service_instances_connected && service_plans_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if service_key_counter
+          row.push(service_key_counter)
+        elsif service_keys_connected && service_instances_connected && service_plans_connected
           row.push(0)
         else
           row.push(nil)
@@ -184,7 +216,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..19).to_a, (1..19).to_a - [11, 12, 13, 14, 15])
+      result(true, items, hash, (1..20).to_a, (1..20).to_a - [11, 12, 13, 14, 15, 16])
     end
   end
 end

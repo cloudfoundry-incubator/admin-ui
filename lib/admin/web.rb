@@ -330,6 +330,18 @@ module AdminUI
       404
     end
 
+    get '/service_keys_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'get', '/service_keys_view_model'
+      AllActions.new(@logger, @view_models.service_keys, params).items.to_json
+    end
+
+    get '/service_keys_view_model/:guid', auth: [:user] do
+      @logger.info_user session[:username], 'get', "/service_keys_view_model/#{ params[:guid] }"
+      result = @view_models.service_key(params[:guid])
+      return result.to_json if result
+      404
+    end
+
     get '/service_plans_view_model', auth: [:user] do
       @logger.info_user session[:username], 'get', '/service_plans_view_model'
       AllActions.new(@logger, @view_models.service_plans, params).items.to_json
@@ -606,6 +618,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'service_instances.csv')
+    end
+
+    post '/service_keys_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'post', '/service_keys_view_model'
+      file = Download.download(request.body.read, 'service_keys', @view_models.service_keys)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'service_keys.csv')
     end
 
     post '/service_plans_view_model', auth: [:user] do
@@ -919,6 +939,23 @@ module AdminUI
         body(error.to_h.to_json)
       rescue => error
         @logger.debug("Error during delete service instance: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/service_keys/:service_key_guid', auth: [:admin] do
+      @logger.info_user session[:username], 'delete', "/service_keys/#{ params[:service_key_guid] }"
+      begin
+        @operation.delete_service_key(params[:service_key_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete service key: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during delete service key: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
         500
       end

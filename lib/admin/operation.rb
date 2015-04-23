@@ -50,6 +50,7 @@ module AdminUI
       @cc.invalidate_spaces_managers
       @cc.invalidate_service_instances
       @cc.invalidate_service_bindings
+      @cc.invalidate_service_keys
       @cc.invalidate_applications
       @cc.invalidate_routes
       @varz.invalidate
@@ -60,6 +61,7 @@ module AdminUI
       @view_models.invalidate_space_roles
       @view_models.invalidate_service_instances
       @view_models.invalidate_service_bindings
+      @view_models.invalidate_service_keys
       @view_models.invalidate_applications
       @view_models.invalidate_routes
     end
@@ -105,8 +107,10 @@ module AdminUI
       return unless purge
       @cc.invalidate_service_instances
       @cc.invalidate_service_bindings
+      @cc.invalidate_service_keys
       @view_models.invalidate_service_instances
       @view_models.invalidate_service_bindings
+      @view_models.invalidate_service_keys
     end
 
     def delete_service_binding(service_binding_guid)
@@ -137,8 +141,18 @@ module AdminUI
       @client.delete_cc(url)
       @cc.invalidate_service_instances
       @cc.invalidate_service_bindings
+      @cc.invalidate_service_keys
       @view_models.invalidate_service_instances
       @view_models.invalidate_service_bindings
+      @view_models.invalidate_service_keys
+    end
+
+    def delete_service_key(service_key_guid)
+      url = "v2/service_keys/#{ service_key_guid }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_service_keys
+      @view_models.invalidate_service_keys
     end
 
     def delete_service_plan(service_plan_guid)
@@ -169,6 +183,7 @@ module AdminUI
       @cc.invalidate_spaces_managers
       @cc.invalidate_service_instances
       @cc.invalidate_service_bindings
+      @cc.invalidate_service_keys
       @cc.invalidate_applications
       @cc.invalidate_routes
       @varz.invalidate
@@ -176,6 +191,7 @@ module AdminUI
       @view_models.invalidate_space_roles
       @view_models.invalidate_service_instances
       @view_models.invalidate_service_bindings
+      @view_models.invalidate_service_keys
       @view_models.invalidate_applications
       @view_models.invalidate_routes
     end
