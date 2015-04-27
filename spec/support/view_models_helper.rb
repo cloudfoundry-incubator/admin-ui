@@ -310,7 +310,10 @@ module ViewModelsHelper
   end
 
   def view_models_organizations_detail
-    cc_organization
+    {
+      'organization'     => cc_organization,
+      'quota_definition' => cc_quota_definition
+    }
   end
 
   def view_models_organization_roles

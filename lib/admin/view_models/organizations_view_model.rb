@@ -161,6 +161,7 @@ module AdminUI
 
         organization_id   = organization[:id]
         organization_guid = organization[:guid]
+        quota             = quota_hash[organization[:quota_definition_id]]
 
         event_target_counter                         = event_target_counters[organization_guid]
         organization_role_counter                    = organization_role_counters[organization_id]
@@ -217,8 +218,6 @@ module AdminUI
         else
           row.push(nil)
         end
-
-        quota = quota_hash[organization[:quota_definition_id]]
 
         if quota
           row.push(quota[:name])
@@ -288,7 +287,11 @@ module AdminUI
 
         items.push(row)
 
-        hash[organization_guid] = organization
+        hash[organization_guid] =
+        {
+          'organization'     => organization,
+          'quota_definition' => quota
+        }
       end
 
       result(true, items, hash, (1..28).to_a, (1..5).to_a << 10)
