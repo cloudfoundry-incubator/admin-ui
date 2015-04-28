@@ -18,6 +18,7 @@ module AdminUI
 
       events                    = @cc.events
       service_bindings          = @cc.service_bindings
+      service_dashboard_clients = @cc.service_dashboard_clients
       service_instances         = @cc.service_instances
       service_keys              = @cc.service_keys
       service_plans             = @cc.service_plans
@@ -32,9 +33,10 @@ module AdminUI
       service_plan_visibilities_connected = service_plan_visibilities['connected']
       services_connected                  = service_plans['connected']
 
-      service_hash          = Hash[services['items'].map { |item| [item[:id], item] }]
-      service_instance_hash = Hash[service_instances['items'].map { |item| [item[:id], item] }]
-      service_plan_hash     = Hash[service_plans['items'].map { |item| [item[:id], item] }]
+      service_dashboard_client_hash = Hash[service_dashboard_clients['items'].map { |item| [item[:service_broker_id], item] }]
+      service_hash                  = Hash[services['items'].map { |item| [item[:id], item] }]
+      service_instance_hash         = Hash[service_instances['items'].map { |item| [item[:id], item] }]
+      service_plan_hash             = Hash[service_plans['items'].map { |item| [item[:id], item] }]
 
       event_counters = {}
       events['items'].each do |event|
@@ -144,8 +146,10 @@ module AdminUI
       service_brokers['items'].each do |service_broker|
         Thread.pass
 
-        guid                            = service_broker[:guid]
-        id                              = service_broker[:id]
+        guid                     = service_broker[:guid]
+        id                       = service_broker[:id]
+        service_dashboard_client = service_dashboard_client_hash[id]
+
         event_counter                   = event_counters[guid]
         service_binding_counter         = service_binding_counters[id]
         service_counter                 = service_counters[id]
@@ -171,6 +175,12 @@ module AdminUI
           row.push(event_counter)
         elsif events_connected
           row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if service_dashboard_client
+          row.push(service_dashboard_client[:uaa_id])
         else
           row.push(nil)
         end
@@ -228,7 +238,7 @@ module AdminUI
         hash[guid] = service_broker
       end
 
-      result(true, items, hash, (1..11).to_a, (1..4).to_a)
+      result(true, items, hash, (1..12).to_a, (1..4).to_a << 6)
     end
   end
 end

@@ -54,13 +54,17 @@ module ViewModelsHelper
         uaa_client[:web_server_redirect_uri].split(',').sort,
         uaa_client[:authorities].split(',').sort,
         uaa_client_autoapprove,
-        1
+        1,
+        cc_service_broker[:name]
       ]
     ]
   end
 
   def view_models_clients_detail
-    uaa_client
+    {
+      'client'         => uaa_client,
+      'service_broker' => cc_service_broker
+    }
   end
 
   def view_models_cloud_controllers
@@ -505,6 +509,7 @@ module ViewModelsHelper
         cc_service_broker[:created_at].to_datetime.rfc3339,
         cc_service_broker[:updated_at].to_datetime.rfc3339,
         1,
+        uaa_client[:client_id],
         1,
         1,
         1,

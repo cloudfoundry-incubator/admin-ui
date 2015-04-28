@@ -125,6 +125,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.service_brokers['items'].length).to eq(0)
     end
 
+    it 'clears the service dashboard client cache' do
+      expect(cc.service_dashboard_clients['items'].length).to eq(1)
+      cc_clear_service_brokers_cache_stub(config)
+      cc.invalidate_service_dashboard_clients
+      expect(cc.service_dashboard_clients['items'].length).to eq(0)
+    end
+
     it 'clears the service instance cache' do
       expect(cc.service_instances['items'].length).to eq(1)
       cc_clear_service_instances_cache_stub(config)
@@ -321,6 +328,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected service_brokers' do
       let(:results)  { cc.service_brokers }
       let(:expected) { cc_service_broker }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected service_dashboard_clients' do
+      let(:results)  { cc.service_dashboard_clients }
+      let(:expected) { cc_service_dashboard_client }
 
       it_behaves_like('common cc retrieval')
     end

@@ -127,6 +127,12 @@ module AdminUI
           table:   :service_brokers,
           columns: [:auth_username, :broker_url, :created_at, :guid, :id, :name, :updated_at]
         },
+        service_dashboard_clients:
+        {
+          db_uri:  ccdb_uri,
+          table:   :service_dashboard_clients,
+          columns: [:service_broker_id, :uaa_id]
+        },
         service_instances:
         {
           db_uri:  ccdb_uri,
@@ -301,6 +307,10 @@ module AdminUI
       invalidate_cache(:service_brokers)
     end
 
+    def invalidate_service_dashboard_clients
+      invalidate_cache(:service_dashboard_clients)
+    end
+
     def invalidate_service_instances
       invalidate_cache(:service_instances)
     end
@@ -381,6 +391,10 @@ module AdminUI
 
     def service_brokers
       result_cache(:service_brokers)
+    end
+
+    def service_dashboard_clients
+      result_cache(:service_dashboard_clients)
     end
 
     def service_instances

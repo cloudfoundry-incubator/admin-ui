@@ -128,6 +128,7 @@ module CCHelper
   def cc_clear_service_brokers_cache_stub(config)
     cc_clear_services_cache_stub(config)
 
+    sql(config.ccdb_uri, 'DELETE FROM service_dashboard_clients')
     sql(config.ccdb_uri, 'DELETE FROM service_brokers')
 
     @cc_service_brokers_deleted = true
@@ -609,6 +610,13 @@ module CCHelper
     cc_service_broker.merge(auth_password: 'password')
   end
 
+  def cc_service_dashboard_client
+    {
+      service_broker_id: cc_service_broker[:id],
+      uaa_id:            uaa_client[:client_id]
+    }
+  end
+
   def cc_service_instance
     {
       created_at:      Time.new('2015-04-23 08:00:48 -0500'),
@@ -801,6 +809,7 @@ module CCHelper
   def ccdb_inserts(insert_second_quota_definition, event_type)
     result = [[:quota_definitions,              cc_quota_definition],
               [:service_brokers,                cc_service_broker_with_password],
+              [:service_dashboard_clients,      cc_service_dashboard_client],
               [:stacks,                         cc_stack],
               [:organizations,                  cc_organization],
               [:services,                       cc_service],

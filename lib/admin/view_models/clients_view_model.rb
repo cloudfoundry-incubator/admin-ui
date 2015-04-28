@@ -15,9 +15,14 @@ module AdminUI
       # clients have to exist
       return result unless clients['connected']
 
-      events = @cc.events
+      events                    = @cc.events
+      service_brokers           = @cc.service_brokers
+      service_dashboard_clients = @cc.service_dashboard_clients
 
       events_connected = events['connected']
+
+      service_broker_hash           = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
+      service_dashboard_client_hash = Hash[service_dashboard_clients['items'].map { |item| [item[:uaa_id], item] }]
 
       event_counters = {}
       events['items'].each do |event|
@@ -43,6 +48,9 @@ module AdminUI
         Thread.pass
 
         client_id = client[:client_id]
+
+        service_dashboard_client = service_dashboard_client_hash[client_id]
+        service_broker           = service_dashboard_client.nil? ? nil : service_broker_hash[service_dashboard_client[:service_broker_id]]
 
         event_counter = event_counters[client_id]
 
@@ -93,12 +101,22 @@ module AdminUI
           row.push(nil)
         end
 
+        if service_broker
+          row.push(service_broker[:name])
+        else
+          row.push(nil)
+        end
+
         items.push(row)
 
-        hash[client_id] = client
+        hash[client_id] =
+        {
+          'client'         => client,
+          'service_broker' => service_broker
+        }
       end
 
-      result(true, items, hash, (0..6).to_a, (0..5).to_a)
+      result(true, items, hash, (0..7).to_a, (0..5).to_a << 7)
     end
   end
 end

@@ -126,6 +126,7 @@ module AdminUI
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_service_brokers
+      @cc.invalidate_service_dashboard_clients
       @cc.invalidate_services
       @cc.invalidate_service_plans
       @cc.invalidate_service_plan_visibilities
