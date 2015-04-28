@@ -138,6 +138,7 @@ module CCHelper
     cc_clear_service_bindings_cache_stub(config)
     cc_clear_service_keys_cache_stub(config)
 
+    sql(config.ccdb_uri, 'DELETE FROM service_instance_operations')
     sql(config.ccdb_uri, 'DELETE FROM service_instances')
 
     @cc_service_instances_deleted = true
@@ -184,6 +185,10 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM spaces')
 
     @cc_spaces_deleted = true
+  end
+
+  def uaa_clear_clients_cache_stub(config)
+    sql(config.uaadb_uri, 'DELETE FROM oauth_client_details')
   end
 
   def cc_app
@@ -632,6 +637,20 @@ module CCHelper
     }
   end
 
+  def cc_service_instance_operation
+    {
+      created_at:          Time.new('2015-04-23 08:00:48 -0500'),
+      description:         'TestServiceInstanceOperation description',
+      guid:                'service_instance_operation1',
+      id:                  20,
+      proposed_changes:    '{}',
+      service_instance_id: cc_service_instance[:id],
+      state:               'succeeded',
+      type:                'create',
+      updated_at:          Time.new('2015-04-23 08:00:49 -0500')
+    }
+  end
+
   def cc_service_key
     {
       created_at:          Time.new('2015-04-23 08:00:50 -0500'),
@@ -820,6 +839,7 @@ module CCHelper
               [:apps,                           cc_app],
               [:routes,                         cc_route],
               [:service_instances,              cc_service_instance],
+              [:service_instance_operations,    cc_service_instance_operation],
               [:users,                          cc_user],
               [:apps_routes,                    cc_app_route],
               [:service_bindings,               cc_service_binding_with_credentials],

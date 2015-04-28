@@ -125,8 +125,8 @@ module AdminUI
       url = "v2/service_brokers/#{ service_broker_guid }"
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
+      @cc.invalidate_clients
       @cc.invalidate_service_brokers
-      @cc.invalidate_service_dashboard_clients
       @cc.invalidate_services
       @cc.invalidate_service_plans
       @cc.invalidate_service_plan_visibilities

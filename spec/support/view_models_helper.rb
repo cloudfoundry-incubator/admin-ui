@@ -535,6 +535,10 @@ module ViewModelsHelper
         1,
         1,
         1,
+        cc_service_instance_operation[:type],
+        cc_service_instance_operation[:state],
+        cc_service_instance_operation[:created_at].to_datetime.rfc3339,
+        cc_service_instance_operation[:updated_at].to_datetime.rfc3339,
         cc_service_plan[:name],
         cc_service_plan[:guid],
         cc_service_plan[:unique_id],
@@ -562,12 +566,13 @@ module ViewModelsHelper
   end
 
   def view_models_service_instances_detail
-    { 'organization'     => cc_organization,
-      'service'          => cc_service,
-      'service_broker'   => cc_service_broker,
-      'service_instance' => cc_service_instance,
-      'service_plan'     => cc_service_plan,
-      'space'            => cc_space
+    { 'organization'               => cc_organization,
+      'service'                    => cc_service,
+      'service_broker'             => cc_service_broker,
+      'service_instance'           => cc_service_instance,
+      'service_instance_operation' => cc_service_instance_operation,
+      'service_plan'               => cc_service_plan,
+      'space'                      => cc_space
     }
   end
 

@@ -139,6 +139,12 @@ module AdminUI
           table:   :service_instances,
           columns: [:created_at, :dashboard_url, :gateway_name, :gateway_data, :guid, :id, :name, :service_plan_id, :space_id, :updated_at]
         },
+        service_instance_operations:
+        {
+          db_uri:  ccdb_uri,
+          table:   :service_instance_operations,
+          columns: [:created_at, :description, :guid, :id, :proposed_changes, :service_instance_id, :state, :type, :updated_at]
+        },
         service_keys:
         {
           db_uri:  ccdb_uri,
@@ -267,6 +273,10 @@ module AdminUI
       invalidate_cache(:applications)
     end
 
+    def invalidate_clients
+      invalidate_cache(:clients)
+    end
+
     def invalidate_domains
       invalidate_cache(:domains)
     end
@@ -305,10 +315,6 @@ module AdminUI
 
     def invalidate_service_brokers
       invalidate_cache(:service_brokers)
-    end
-
-    def invalidate_service_dashboard_clients
-      invalidate_cache(:service_dashboard_clients)
     end
 
     def invalidate_service_instances
@@ -395,6 +401,10 @@ module AdminUI
 
     def service_dashboard_clients
       result_cache(:service_dashboard_clients)
+    end
+
+    def service_instance_operations
+      result_cache(:service_instance_operations)
     end
 
     def service_instances

@@ -48,6 +48,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.applications['items'].length).to eq(0)
     end
 
+    it 'clears the client cache' do
+      expect(cc.clients['items'].length).to eq(1)
+      uaa_clear_clients_cache_stub(config)
+      cc.invalidate_clients
+      expect(cc.clients['items'].length).to eq(0)
+    end
+
     it 'clears the domain cache' do
       expect(cc.domains['items'].length).to eq(1)
       cc_clear_domains_cache_stub(config)
@@ -123,13 +130,6 @@ describe AdminUI::CC, type: :integration do
       cc_clear_service_brokers_cache_stub(config)
       cc.invalidate_service_brokers
       expect(cc.service_brokers['items'].length).to eq(0)
-    end
-
-    it 'clears the service dashboard client cache' do
-      expect(cc.service_dashboard_clients['items'].length).to eq(1)
-      cc_clear_service_brokers_cache_stub(config)
-      cc.invalidate_service_dashboard_clients
-      expect(cc.service_dashboard_clients['items'].length).to eq(0)
     end
 
     it 'clears the service instance cache' do
@@ -335,6 +335,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected service_dashboard_clients' do
       let(:results)  { cc.service_dashboard_clients }
       let(:expected) { cc_service_dashboard_client }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected service_instance_operations' do
+      let(:results)  { cc.service_instance_operations }
+      let(:expected) { cc_service_instance_operation }
 
       it_behaves_like('common cc retrieval')
     end
