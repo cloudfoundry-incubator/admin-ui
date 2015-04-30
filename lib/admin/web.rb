@@ -402,6 +402,18 @@ module AdminUI
       404
     end
 
+    get '/stacks_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'get', '/stacks_view_model'
+      AllActions.new(@logger, @view_models.stacks, params).items.to_json
+    end
+
+    get '/stacks_view_model/:guid', auth: [:user] do
+      @logger.info_user session[:username], 'get', "/stacks_view_model/#{ params[:guid] }"
+      result = @view_models.stack(params[:guid])
+      return result.to_json if result
+      404
+    end
+
     get '/statistics' do
       @logger.info_user session[:username], 'get', '/statistics'
       @stats.stats.to_json
@@ -666,6 +678,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'space_roles.csv')
+    end
+
+    post '/stacks_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'post', '/stacks_view_model'
+      file = Download.download(request.body.read, 'stacks', @view_models.stacks)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'stacks.csv')
     end
 
     post '/statistics', auth: [:admin] do

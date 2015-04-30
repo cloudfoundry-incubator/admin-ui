@@ -22,6 +22,7 @@ module ViewModelsHelper
         cc_app[:updated_at].to_datetime.rfc3339,
         Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
         varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'],
+        cc_stack[:name],
         cc_app[:detected_buildpack],
         varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'],
         1,
@@ -41,7 +42,8 @@ module ViewModelsHelper
     { 'application'  => cc_app,
       'instance'     => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance],
       'organization' => cc_organization,
-      'space'        => cc_space
+      'space'        => cc_space,
+      'stack'        => cc_stack
     }
   end
 
@@ -824,6 +826,23 @@ module ViewModelsHelper
       'user_cc'      => cc_user,
       'user_uaa'     => uaa_user
     }
+  end
+
+  def view_models_stacks
+    [
+      [
+        cc_stack[:name],
+        cc_stack[:guid],
+        cc_stack[:created_at].to_datetime.rfc3339,
+        cc_stack[:updated_at].to_datetime.rfc3339,
+        1,
+        cc_stack[:description]
+      ]
+    ]
+  end
+
+  def view_models_stacks_detail
+    cc_stack
   end
 
   def view_models_stats(timestamp)

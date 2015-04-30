@@ -193,6 +193,12 @@ module AdminUI
           table:   :spaces_managers,
           columns: [:space_id, :user_id]
         },
+        stacks:
+        {
+          db_uri:  ccdb_uri,
+          table:   :stacks,
+          columns: [:created_at, :description, :guid, :id, :name, :updated_at]
+        },
         users_cc:
         {
           db_uri:  ccdb_uri,
@@ -447,6 +453,10 @@ module AdminUI
 
     def spaces_managers
       result_cache(:spaces_managers)
+    end
+
+    def stacks
+      result_cache(:stacks)
     end
 
     def users_cc

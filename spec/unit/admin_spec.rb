@@ -837,6 +837,14 @@ describe AdminUI::Admin do
         verify_not_found('/space_roles_view_model/space1/auditors/user1')
       end
 
+      it '/stacks_view_model succeeds' do
+        verify_disconnected_view_model_items('/stacks_view_model')
+      end
+
+      it '/stacks_view_model/:guid returns not found' do
+        verify_not_found('/stacks_view_model/stack1')
+      end
+
       it '/tasks_view_model succeeds' do
         verify_connected_view_model_empty_items('/tasks_view_model')
       end
@@ -1104,6 +1112,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/spaces_view_model/space1')
       end
 
+      it '/stacks_view_model redirects as expected' do
+        get_redirects_as_expected('/stacks_view_model')
+      end
+
+      it '/stacks_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/stacks_view_model/stack1')
+      end
+
       it '/tasks_view_model redirects as expected' do
         get_redirects_as_expected('/tasks_view_model')
       end
@@ -1278,6 +1294,10 @@ describe AdminUI::Admin do
 
       it 'posts /space_roles_view_model redirects as expected' do
         post_redirects_as_expected('/space_roles_view_model')
+      end
+
+      it 'posts /stacks_view_model redirects as expected' do
+        post_redirects_as_expected('/stacks_view_model')
       end
 
       it 'posts /stats_view_model redirects as expected' do

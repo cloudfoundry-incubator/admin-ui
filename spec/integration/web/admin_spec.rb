@@ -723,12 +723,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 5,
                                 labels:          ['', '', 'Used', 'Reserved', ''],
-                                colspans:        %w(1 12 4 2 2)
+                                colspans:        %w(1 13 4 2 2)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 21,
-                                labels:          [' ', 'Name', 'GUID', 'State', 'Package State', 'Instance State', 'Created', 'Updated', 'Started', 'URI', 'Buildpack', 'Instance', 'Events', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                expected_length: 22,
+                                labels:          [' ', 'Name', 'GUID', 'State', 'Package State', 'Instance State', 'Created', 'Updated', 'Started', 'URI', 'Stack', 'Buildpack', 'Instance', 'Events', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
                                 colspans:        nil
                               }
                              ])
@@ -745,6 +745,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_app[:updated_at].to_datetime.rfc3339,
                              Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
                              "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
+                             cc_stack[:name],
                              cc_app[:detected_buildpack],
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] })"),
                              '1',
@@ -881,6 +882,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                '',
                                Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
                                "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
+                               cc_stack[:name],
                                '',
                                '0',
                                '1',
@@ -937,6 +939,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Updated',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:updated_at].to_datetime.rfc3339 }\")") },
                            { label: 'Started',         tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp'] * 1000) })") },
                            { label: 'URI',             tag:   'a', value: "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }" },
+                           { label: 'Stack',           tag:   'a', value: cc_stack[:name] },
                            { label: 'Buildpack',       tag:   nil, value: cc_app[:detected_buildpack] },
                            { label: 'Command',         tag:   nil, value: cc_app[:command] },
                            { label: 'Instance Index',  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] })") },
@@ -976,20 +979,24 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_allowscriptaccess_attribute('ToolTables_ApplicationsServicesTable_0')
           end
 
+          it 'has stacks link' do
+            check_filter_link('Applications', 9, 'Stacks', cc_stack[:guid])
+          end
+
           it 'has events link' do
-            check_filter_link('Applications', 13, 'Events', cc_app[:guid])
+            check_filter_link('Applications', 14, 'Events', cc_app[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('Applications', 20, 'Spaces', cc_space[:guid])
+            check_filter_link('Applications', 21, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Applications', 21, 'Organizations', cc_organization[:guid])
+            check_filter_link('Applications', 22, 'Organizations', cc_organization[:guid])
           end
 
           it 'has DEAs link' do
-            check_filter_link('Applications', 22, 'DEAs', nats_dea['host'])
+            check_filter_link('Applications', 23, 'DEAs', nats_dea['host'])
           end
         end
       end
@@ -2195,6 +2202,53 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has organizations link' do
             check_filter_link('Quotas', 9, 'Organizations', cc_quota_definition[:name])
+          end
+        end
+      end
+
+      context 'Stacks' do
+        let(:tab_id) { 'Stacks' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='StacksTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 6,
+                                labels:          %w(Name GUID Created Updated Applications Description),
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='StacksTable']/tbody/tr/td"),
+                           [
+                             cc_stack[:name],
+                             cc_stack[:guid],
+                             cc_stack[:created_at].to_datetime.rfc3339,
+                             cc_stack[:updated_at].to_datetime.rfc3339,
+                             '1',
+                             cc_stack[:description]
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_StacksTable_0')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ label: 'Name',         tag: 'div', value: cc_stack[:name] },
+                           { label: 'GUID',         tag:   nil, value: cc_stack[:guid] },
+                           { label: 'Created',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Updated',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Description',  tag:   nil, value: cc_stack[:description] },
+                           { label: 'Applications', tag:   'a', value: '1' }
+                          ])
+          end
+
+          it 'has applications link' do
+            check_filter_link('Stacks', 5, 'Applications', cc_stack[:name])
           end
         end
       end

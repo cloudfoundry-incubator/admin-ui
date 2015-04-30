@@ -99,6 +99,7 @@ module VARZHelper
                 'plan'     => cc_service_plan[:name]
               }
             ],
+            'stack'                   => cc_stack[:name],
             'state'                   => 'RUNNING',
             'state_running_timestamp' => 1_382_448_059.0734425,
             'used_disk_in_bytes'      => 56_057_856,

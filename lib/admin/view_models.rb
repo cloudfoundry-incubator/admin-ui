@@ -24,6 +24,7 @@ require_relative 'view_models/service_plan_visibilities_view_model'
 require_relative 'view_models/services_view_model'
 require_relative 'view_models/space_roles_view_model'
 require_relative 'view_models/spaces_view_model'
+require_relative 'view_models/stacks_view_model'
 require_relative 'view_models/stats_view_model'
 require_relative 'view_models/tasks_view_model'
 require_relative 'view_models/users_view_model'
@@ -49,7 +50,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :clients, :cloud_controllers, :components, :deas, :domains, :events, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_keys, :service_plans, :service_plan_visibilities, :spaces, :space_roles, :stats, :tasks, :users].each do |key|
+      [:applications, :clients, :cloud_controllers, :components, :deas, :domains, :events, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_keys, :service_plans, :service_plan_visibilities, :spaces, :space_roles, :stacks, :stats, :tasks, :users].each do |key|
         hash = { semaphore: Mutex.new, condition: ConditionVariable.new, result: nil }
         @caches[key] = hash
         schedule(key)
@@ -338,6 +339,14 @@ module AdminUI
       result_cache(:space_roles)
     end
 
+    def stack(guid)
+      details(:stacks, guid)
+    end
+
+    def stacks
+      result_cache(:stacks)
+    end
+
     def stats
       result_cache(:stats)
     end
@@ -605,6 +614,14 @@ module AdminUI
       AdminUI::SpaceRolesViewModel.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_space_roles: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_stacks
+      AdminUI::StacksViewModel.new(@logger, @cc).items
+    rescue => error
+      @logger.debug("Error during discover_stacks: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end

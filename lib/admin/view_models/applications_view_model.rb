@@ -21,11 +21,14 @@ module AdminUI
       events        = @cc.events
       organizations = @cc.organizations
       spaces        = @cc.spaces
+      stacks        = @cc.stacks
 
       events_connected = events['connected']
 
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
       space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      stack_id_hash     = Hash[stacks['items'].map { |item| [item[:id], item] }]
+      stack_name_hash   = Hash[stacks['items'].map { |item| [item[:name], item] }]
 
       event_counters = {}
       events['items'].each do |event|
@@ -52,6 +55,7 @@ module AdminUI
         guid         = application[:guid]
         space        = space_hash[application[:space_id]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]
+        stack        = stack_id_hash[application[:stack_id]]
 
         event_counter = event_counters[guid]
 
@@ -76,6 +80,12 @@ module AdminUI
 
         # Started and URI
         row.push(nil, nil)
+
+        if stack
+          row.push(stack[:name])
+        else
+          row.push(nil)
+        end
 
         if application[:buildpack]
           row.push(application[:buildpack])
@@ -115,7 +125,8 @@ module AdminUI
         {
           'application'  => application,
           'organization' => organization,
-          'space'        => space
+          'space'        => space,
+          'stack'        => stack
         }
 
         application_hash[guid] =
@@ -146,6 +157,8 @@ module AdminUI
 
             # In some cases, we will not find an existing row.  Create the row as much as possible from the DEA data.
             if prior.nil?
+              stack_name    = instance['stack']
+              stack         = stack_name.nil? ? nil : stack_name_hash[stack_name]
               event_counter = event_counters[id]
 
               row = []
@@ -169,6 +182,8 @@ module AdminUI
               end
 
               row.push(instance['application_uris'])
+
+              row.push(stack_name)
 
               # Buildpack not available.
               row.push(nil)
@@ -220,7 +235,8 @@ module AdminUI
                 'application'  => nil,
                 'instance'     => instance,
                 'organization' => organization,
-                'space'        => space
+                'space'        => space,
+                'stack'        => stack
               }
             else
               row        = prior['row']
@@ -245,12 +261,12 @@ module AdminUI
               end
 
               row[9]  = instance['application_uris']
-              row[11] = instance_index
-              row[13] = instance['services'].length
-              row[14] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil
-              row[15] = instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : nil
-              row[16] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil
-              row[20] = host
+              row[12] = instance_index
+              row[14] = instance['services'].length
+              row[15] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil
+              row[16] = instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : nil
+              row[17] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil
+              row[21] = host
 
               key = "#{ id }/#{ instance_index }"
               # Need the specific instance for this row
@@ -259,7 +275,8 @@ module AdminUI
                 'application'  => hash_entry['application'],
                 'instance'     => instance,
                 'organization' => hash_entry['organization'],
-                'space'        => hash_entry['space']
+                'space'        => hash_entry['space'],
+                'stack'        => hash_entry['stack']
               }
             end
           end
@@ -268,7 +285,7 @@ module AdminUI
         dea_index += 1
       end
 
-      result(true, items, hash, (1..20).to_a, (1..10).to_a << 19)
+      result(true, items, hash, (1..21).to_a, (1..11).to_a << 20)
     end
   end
 end

@@ -413,6 +413,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected stacks' do
+      let(:results)  { cc.stacks }
+      let(:expected) { cc_stack }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected users_cc' do
       let(:results)  { cc.users_cc }
       let(:expected) { cc_user }

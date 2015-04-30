@@ -733,7 +733,8 @@ module CCHelper
       description: 'TestStack description',
       guid:        'stack1',
       id:          25,
-      name:        'lucid64'
+      name:        'lucid64',
+      updated_at:  Time.new('2015-04-23 08:00:58 -0500')
     }
   end
 

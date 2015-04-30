@@ -961,6 +961,18 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
+    context 'stacks_view_model' do
+      let(:path)              { '/stacks_view_model' }
+      let(:view_model_source) { view_models_stacks }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'stacks_view_model detail' do
+      let(:path)              { "/stacks_view_model/#{ cc_stack[:guid] }" }
+      let(:view_model_source) { view_models_stacks_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'stats_view_model' do
       let(:path)              { '/stats_view_model' }
       let(:timestamp)         { retrieved['items']['items'][0][8]['timestamp'] } # We have to copy the timestamp from the result since it is variable

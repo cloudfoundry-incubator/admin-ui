@@ -237,6 +237,14 @@ describe AdminUI::CC do
       verify_disconnected_items(view_models.space_roles)
     end
 
+    it 'returns nil stack as expected' do
+      expect(view_models.stack('bogus')).to be_nil
+    end
+
+    it 'returns zero stacks as expected' do
+      verify_disconnected_items(view_models.stacks)
+    end
+
     it 'returns nil user as expected' do
       expect(view_models.user('bogus')).to be_nil
     end
