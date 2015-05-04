@@ -17,6 +17,14 @@ module AdminUI
       @view_models.invalidate_organizations
     end
 
+    def create_space_quota_definition_space(space_quota_definition_guid, space_guid)
+      url = "v2/space_quota_definitions/#{ space_quota_definition_guid }/spaces/#{ space_guid }"
+      @logger.debug("PUT #{ url }")
+      @client.put_cc(url, nil)
+      @cc.invalidate_spaces
+      @view_models.invalidate_spaces
+    end
+
     def delete_application(app_guid)
       url = "v2/apps/#{ app_guid }?recursive=true"
       @logger.debug("DELETE #{ url }")
@@ -44,6 +52,7 @@ module AdminUI
       @cc.invalidate_organizations_managers
       @cc.invalidate_organizations_users
       @cc.invalidate_service_plan_visibilities
+      @cc.invalidate_space_quota_definitions
       @cc.invalidate_spaces
       @cc.invalidate_spaces_auditors
       @cc.invalidate_spaces_developers
@@ -57,6 +66,7 @@ module AdminUI
       @view_models.invalidate_organizations
       @view_models.invalidate_organization_roles
       @view_models.invalidate_service_plan_visibilities
+      @view_models.invalidate_space_quotas
       @view_models.invalidate_spaces
       @view_models.invalidate_space_roles
       @view_models.invalidate_service_instances
@@ -137,7 +147,7 @@ module AdminUI
     end
 
     def delete_service_instance(service_instance_guid)
-      url = "v2/service_instances/#{ service_instance_guid }"
+      url = "v2/service_instances/#{ service_instance_guid }?recursive=true"
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_service_instances
@@ -195,6 +205,22 @@ module AdminUI
       @view_models.invalidate_service_keys
       @view_models.invalidate_applications
       @view_models.invalidate_routes
+    end
+
+    def delete_space_quota_definition(space_quota_definition_guid)
+      url = "v2/space_quota_definitions/#{ space_quota_definition_guid }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_space_quota_definitions
+      @view_models.invalidate_space_quotas
+    end
+
+    def delete_space_quota_definition_space(space_quota_definition_guid, space_guid)
+      url = "v2/space_quota_definitions/#{ space_quota_definition_guid }/spaces/#{ space_guid }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @cc.invalidate_spaces
+      @view_models.invalidate_spaces
     end
 
     def delete_space_role(space_guid, role, user_guid)

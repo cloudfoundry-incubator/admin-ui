@@ -225,8 +225,12 @@ describe AdminUI::CC do
       expect(view_models.space('bogus')).to be_nil
     end
 
-    it 'returns zero spaces as expected' do
-      verify_disconnected_items(view_models.spaces)
+    it 'returns nil space_quota as expected' do
+      expect(view_models.space_quota('bogus')).to be_nil
+    end
+
+    it 'returns zero space_quotas as expected' do
+      verify_disconnected_items(view_models.space_quotas)
     end
 
     it 'returns nil space_role as expected' do
@@ -235,6 +239,10 @@ describe AdminUI::CC do
 
     it 'returns zero space_roles as expected' do
       verify_disconnected_items(view_models.space_roles)
+    end
+
+    it 'returns zero spaces as expected' do
+      verify_disconnected_items(view_models.spaces)
     end
 
     it 'returns nil stack as expected' do

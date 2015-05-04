@@ -397,16 +397,16 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
-    context 'returns connected spaces_view_model' do
-      let(:results)  { view_models.spaces }
-      let(:expected) { view_models_spaces }
+    context 'returns connected space_quotas_view_model' do
+      let(:results)  { view_models.space_quotas }
+      let(:expected) { view_models_space_quotas }
 
       it_behaves_like('common view model retrieval')
     end
 
-    context 'returns connected spaces_view_model detail' do
-      let(:results)  { view_models.space(cc_space[:guid]) }
-      let(:expected) { view_models_spaces_detail }
+    context 'returns connected space_quotas_view_model detail' do
+      let(:results)  { view_models.space_quota(cc_space_quota_definition[:guid]) }
+      let(:expected) { view_models_space_quotas_detail }
 
       it_behaves_like('common view model retrieval detail')
     end
@@ -421,6 +421,20 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected space_roles_view_model detail' do
       let(:results)  { view_models.space_role(cc_space[:guid], 'auditors', cc_user[:guid]) }
       let(:expected) { view_models_space_roles_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
+    context 'returns connected spaces_view_model' do
+      let(:results)  { view_models.spaces }
+      let(:expected) { view_models_spaces }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected spaces_view_model detail' do
+      let(:results)  { view_models.space(cc_space[:guid]) }
+      let(:expected) { view_models_spaces_detail }
 
       it_behaves_like('common view model retrieval detail')
     end

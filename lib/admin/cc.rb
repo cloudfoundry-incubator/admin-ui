@@ -169,11 +169,17 @@ module AdminUI
           table:   :services,
           columns: [:active, :bindable, :created_at, :description, :documentation_url, :extra, :guid, :id, :info_url, :label, :long_description, :plan_updateable, :provider, :requires, :service_broker_id, :tags, :unique_id, :updated_at, :url, :version]
         },
+        space_quota_definitions:
+        {
+          db_uri:  ccdb_uri,
+          table:   :space_quota_definitions,
+          columns: [:created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :organization_id, :total_routes, :total_services, :updated_at]
+        },
         spaces:
         {
           db_uri:  ccdb_uri,
           table:   :spaces,
-          columns: [:created_at, :guid, :id, :name, :organization_id, :updated_at]
+          columns: [:created_at, :guid, :id, :name, :organization_id, :space_quota_definition_id, :updated_at]
         },
         spaces_auditors:
         {
@@ -343,6 +349,10 @@ module AdminUI
       invalidate_cache(:service_plan_visibilities)
     end
 
+    def invalidate_space_quota_definitions
+      invalidate_cache(:space_quota_definitions)
+    end
+
     def invalidate_spaces
       invalidate_cache(:spaces)
     end
@@ -431,6 +441,10 @@ module AdminUI
 
     def services
       result_cache(:services)
+    end
+
+    def space_quota_definitions
+      result_cache(:space_quota_definitions)
     end
 
     def spaces

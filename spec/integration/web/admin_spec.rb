@@ -55,6 +55,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('Users').displayed?).to be_true
       expect(scroll_tab_into_view('Domains').displayed?).to be_true
       expect(scroll_tab_into_view('Quotas').displayed?).to be_true
+      expect(scroll_tab_into_view('SpaceQuotas').displayed?).to be_true
       expect(scroll_tab_into_view('Events').displayed?).to be_true
       expect(scroll_tab_into_view('ServiceBrokers').displayed?).to be_true
       expect(scroll_tab_into_view('Services').displayed?).to be_true
@@ -229,11 +230,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 7,
                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                colspans:        %w(1 12 3 5 2 3 3)
+                                colspans:        %w(1 13 3 5 2 3 3)
                               },
                               { columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 29,
-                                labels:          [' ', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Quota', 'Domains', 'Service Plan Visibilities', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                expected_length: 30,
+                                labels:          [' ', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Quota', 'Space Quotas', 'Domains', 'Service Plan Visibilities', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 colspans:        nil
                               }
                              ])
@@ -251,6 +252,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '4',
                              '3',
                              cc_quota_definition[:name],
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -483,6 +485,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Organization Roles',        tag:   'a', value: '4' },
                            { label: 'Space Roles',               tag:   'a', value: '3' },
                            { label: 'Quota',                     tag:   'a', value: cc_quota_definition[:name] },
+                           { label: 'Space Quotas',              tag:   'a', value: '1' },
                            { label: 'Domains',                   tag:   'a', value: '1' },
                            { label: 'Service Plan Visibilities', tag:   'a', value: '1' },
                            { label: 'Total Routes',              tag:   'a', value: '1' },
@@ -521,31 +524,35 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has quotas link' do
-            check_filter_link('Organizations', 10, 'Quotas', cc_quota_definition[:name])
+            check_filter_link('Organizations', 10, 'Quotas', cc_quota_definition[:guid])
+          end
+
+          it 'has space quotas link' do
+            check_filter_link('Organizations', 11, 'SpaceQuotas', cc_organization[:guid])
           end
 
           it 'has domains link' do
-            check_filter_link('Organizations', 11, 'Domains', cc_organization[:name])
+            check_filter_link('Organizations', 12, 'Domains', cc_organization[:name])
           end
 
           it 'has service plan visibilities link' do
-            check_filter_link('Organizations', 12, 'ServicePlanVisibilities', cc_organization[:guid])
+            check_filter_link('Organizations', 13, 'ServicePlanVisibilities', cc_organization[:guid])
           end
 
           it 'has routes link' do
-            check_filter_link('Organizations', 13, 'Routes', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 14, 'Routes', "#{ cc_organization[:name] }/")
           end
 
           it 'has instances link' do
-            check_filter_link('Organizations', 16, 'Applications', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 17, 'Applications', "#{ cc_organization[:name] }/")
           end
 
           it 'has services instances link' do
-            check_filter_link('Organizations', 17, 'ServiceInstances', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 18, 'ServiceInstances', "#{ cc_organization[:name] }/")
           end
 
           it 'has applications link' do
-            check_filter_link('Organizations', 23, 'Applications', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 24, 'Applications', "#{ cc_organization[:name] }/")
           end
         end
       end
@@ -557,12 +564,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 7,
                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                colspans:        %w(1 8 3 5 2 3 3)
+                                colspans:        %w(1 9 3 5 2 3 3)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 25,
-                                labels:          [' ', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Events', 'Events Target', 'Roles', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                expected_length: 26,
+                                labels:          [' ', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Events', 'Events Target', 'Roles', 'Space Quota', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 colspans:        nil
                               }
                              ])
@@ -578,6 +585,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              '1',
                              '3',
+                             cc_space_quota_definition[:name],
                              '1',
                              '1',
                              '0',
@@ -662,6 +670,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Events',          tag:   'a', value: '1' },
                            { label: 'Events Target',   tag:   'a', value: '1' },
                            { label: 'Roles',           tag:   'a', value: '3' },
+                           { label: 'Space Quota',     tag:   'a', value: cc_space_quota_definition[:name] },
                            { label: 'Total Routes',    tag:   'a', value: '1' },
                            { label: 'Used Routes',     tag:   nil, value: '1' },
                            { label: 'Unused Routes',   tag:   nil, value: '0' },
@@ -697,20 +706,24 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Spaces', 7, 'SpaceRoles', cc_space[:guid])
           end
 
+          it 'has space quotas link' do
+            check_filter_link('Spaces', 8, 'SpaceQuotas', cc_space_quota_definition[:guid])
+          end
+
           it 'has routes link' do
-            check_filter_link('Spaces', 8, 'Routes', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 9, 'Routes', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
 
           it 'has instances link' do
-            check_filter_link('Spaces', 11, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 12, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
 
           it 'has services link' do
-            check_filter_link('Spaces', 12, 'ServiceInstances', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 13, 'ServiceInstances', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
 
           it 'has applications link' do
-            check_filter_link('Spaces', 18, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 19, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
         end
       end
@@ -2202,6 +2215,121 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has organizations link' do
             check_filter_link('Quotas', 9, 'Organizations', cc_quota_definition[:name])
+          end
+        end
+      end
+
+      context 'Space Quotas' do
+        let(:tab_id) { 'SpaceQuotas' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpaceQuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 3,
+                                labels:          ['', '', 'Organization'],
+                                colspans:        %w(1 10 2)
+                              },
+                              { columns:         @driver.find_elements(xpath: "//div[@id='SpaceQuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 13,
+                                labels:          [' ', 'Name', 'GUID', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Spaces', 'Name', 'GUID'],
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='SpaceQuotasTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_space_quota_definition[:name],
+                             cc_space_quota_definition[:guid],
+                             cc_space_quota_definition[:created_at].to_datetime.rfc3339,
+                             cc_space_quota_definition[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:total_services] })"),
+                             @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:total_routes] })"),
+                             @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:memory_limit] })"),
+                             @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:instance_memory_limit] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{ cc_space_quota_definition[:non_basic_services_allowed] })"),
+                             '1',
+                             cc_organization[:name],
+                             cc_organization[:guid]
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_SpaceQuotasTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          inputs = @driver.find_elements(xpath: "//table[@id='SpaceQuotasTable']/tbody/tr/td[1]/input")
+          expect(inputs.length).to eq(1)
+          expect(inputs[0].attribute('value')).to eq(cc_space_quota_definition[:guid])
+        end
+
+        context 'manage space quotas' do
+          def check_first_row
+            @driver.find_elements(xpath: "//table[@id='SpaceQuotasTable']/tbody/tr/td[1]/input")[0].click
+          end
+
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'ToolTables_SpaceQuotasTable_0').text).to eq('Delete')
+          end
+
+          it 'alerts the user to select at least one row when clicking the delete button' do
+            @driver.find_element(id: 'ToolTables_SpaceQuotasTable_0').click
+
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+            @driver.find_element(id: 'modalDialogButton0').click
+          end
+
+          it 'deletes the selected space quota' do
+            # delete the space quota
+            check_first_row
+            @driver.find_element(id: 'ToolTables_SpaceQuotasTable_0').click
+
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
+            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected space quota definitions?')
+            @driver.find_element(id: 'modalDialogButton0').click
+
+            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+            @driver.find_element(id: 'modalDialogButton0').click
+
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpaceQuotasTable']/tbody/tr").text == 'No data available in table' }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='SpaceQuotasTable']/tbody/tr").text).to eq('No data available in table')
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ label: 'Name',                       tag: 'div', value: cc_space_quota_definition[:name] },
+                           { label: 'GUID',                       tag:   nil, value: cc_space_quota_definition[:guid] },
+                           { label: 'Created',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_space_quota_definition[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Updated',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_space_quota_definition[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Total Services',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:total_services] })") },
+                           { label: 'Total Routes',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:total_routes] })") },
+                           { label: 'Memory Limit',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:memory_limit] })") },
+                           { label: 'Instance Memory Limit',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:instance_memory_limit] })") },
+                           { label: 'Non-Basic Services Allowed', tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_space_quota_definition[:non_basic_services_allowed] })") },
+                           { label: 'Spaces',                     tag:   'a', value: '1' },
+                           { label: 'Organization',               tag:   'a', value: cc_organization[:name] }
+                          ])
+          end
+
+          it 'has spaces link' do
+            check_filter_link('SpaceQuotas', 9, 'Spaces', cc_space_quota_definition[:name])
+          end
+
+          it 'has organizations link' do
+            check_filter_link('SpaceQuotas', 10, 'Organizations', cc_organization[:guid])
           end
         end
       end

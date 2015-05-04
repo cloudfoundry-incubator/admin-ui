@@ -22,6 +22,7 @@ require_relative 'view_models/service_keys_view_model'
 require_relative 'view_models/service_plans_view_model'
 require_relative 'view_models/service_plan_visibilities_view_model'
 require_relative 'view_models/services_view_model'
+require_relative 'view_models/space_quotas_view_model'
 require_relative 'view_models/space_roles_view_model'
 require_relative 'view_models/spaces_view_model'
 require_relative 'view_models/stacks_view_model'
@@ -50,7 +51,7 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :clients, :cloud_controllers, :components, :deas, :domains, :events, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_keys, :service_plans, :service_plan_visibilities, :spaces, :space_roles, :stacks, :stats, :tasks, :users].each do |key|
+      [:applications, :clients, :cloud_controllers, :components, :deas, :domains, :events, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_keys, :service_plans, :service_plan_visibilities, :space_quotas, :space_roles, :spaces, :stacks, :stats, :tasks, :users].each do |key|
         hash = { semaphore: Mutex.new, condition: ConditionVariable.new, result: nil }
         @caches[key] = hash
         schedule(key)
@@ -133,12 +134,16 @@ module AdminUI
       invalidate_cache(:services)
     end
 
-    def invalidate_spaces
-      invalidate_cache(:spaces)
+    def invalidate_space_quotas
+      invalidate_cache(:space_quotas)
     end
 
     def invalidate_space_roles
       invalidate_cache(:space_roles)
+    end
+
+    def invalidate_spaces
+      invalidate_cache(:spaces)
     end
 
     def invalidate_stats
@@ -327,8 +332,12 @@ module AdminUI
       details(:spaces, guid)
     end
 
-    def spaces
-      result_cache(:spaces)
+    def space_quota(guid)
+      details(:space_quotas, guid)
+    end
+
+    def space_quotas
+      result_cache(:space_quotas)
     end
 
     def space_role(space_guid, role, user_guid)
@@ -337,6 +346,10 @@ module AdminUI
 
     def space_roles
       result_cache(:space_roles)
+    end
+
+    def spaces
+      result_cache(:spaces)
     end
 
     def stack(guid)
@@ -602,10 +615,10 @@ module AdminUI
       result
     end
 
-    def discover_spaces
-      AdminUI::SpacesViewModel.new(@logger, @cc, @varz).items
+    def discover_space_quotas
+      AdminUI::SpaceQuotasViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_spaces: #{ error.inspect }")
+      @logger.debug("Error during discover_space_quotas: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -614,6 +627,14 @@ module AdminUI
       AdminUI::SpaceRolesViewModel.new(@logger, @cc).items
     rescue => error
       @logger.debug("Error during discover_space_roles: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
+    end
+
+    def discover_spaces
+      AdminUI::SpacesViewModel.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_spaces: #{ error.inspect }")
       @logger.debug(error.backtrace.join("\n"))
       result
     end

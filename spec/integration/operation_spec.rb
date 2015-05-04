@@ -681,6 +681,87 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage space quota definition' do
+      before do
+        # Make sure there is a space quota definition
+        expect(cc.space_quota_definitions['items'].length).to eq(1)
+      end
+
+      def delete_space_quota_definition
+        operation.delete_space_quota_definition(cc_space_quota_definition[:guid])
+      end
+
+      it 'deletes specific space_quota definition' do
+        expect { delete_space_quota_definition }.to change { cc.space_quota_definitions['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_space_quota_definition
+        end
+
+        def verify_space_quota_definition_not_found(exception)
+          expect(exception.cf_code).to eq(310_007)
+          expect(exception.cf_error_code).to eq('CF-SpaceQuotaDefinitionNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("Space Quota Definition could not be found: #{ cc_space_quota_definition[:guid] }")
+        end
+
+        it 'fails deleting deleted space quota definition' do
+          expect { delete_space_quota_definition }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_quota_definition_not_found(exception) }
+        end
+      end
+    end
+
+    context 'manage space quota definition space' do
+      def delete_space_quota_definition
+        operation.delete_space_quota_definition(cc_space_quota_definition[:guid])
+      end
+
+      def create_space_quota_definition_space
+        operation.create_space_quota_definition_space(cc_space_quota_definition2[:guid], cc_space[:guid])
+      end
+
+      def delete_space_quota_definition_space
+        operation.delete_space_quota_definition_space(cc_space_quota_definition[:guid], cc_space[:guid])
+      end
+
+      context 'sets the space quota definition for a space' do
+        let(:insert_second_quota_definition) { true }
+        it 'creates specific space quota definition space' do
+          expect { create_space_quota_definition_space }.to change { cc.spaces['items'][0][:space_quota_definition_id] }.from(cc_space_quota_definition[:id]).to(cc_space_quota_definition2[:id])
+        end
+      end
+
+      it 'deletes specific space quota definition space' do
+        expect { delete_space_quota_definition_space }.to change { cc.spaces['items'][0][:space_quota_definition_id] }.from(cc_space_quota_definition[:id]).to(nil)
+      end
+
+      context 'errors' do
+        before do
+          delete_space_quota_definition
+        end
+
+        def verify_space_quota_definition_not_found(exception)
+          expect(exception.cf_code).to eq(310_007)
+          expect(exception.cf_error_code).to eq('CF-SpaceQuotaDefinitionNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("Space Quota Definition could not be found: #{ cc_space_quota_definition[:guid] }")
+        end
+
+        context 'fails setting space quota for a deleted space quota definition' do
+          let(:insert_second_quota_definition) { true }
+          it 'fails creating space quota for a deleted space quota definition' do
+            expect { create_space_quota_definition_space }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_quota_definition_not_found(exception) }
+          end
+        end
+
+        it 'fails deleting space quota definition space for a deleted space quota definition' do
+          expect { delete_space_quota_definition }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_quota_definition_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage space roles' do
       def delete_space_auditor
         operation.delete_space_role(cc_space[:guid], 'auditors', cc_user[:guid])

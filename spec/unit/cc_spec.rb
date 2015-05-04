@@ -149,6 +149,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.services)
     end
 
+    it 'returns zero space quota_definitions as expected' do
+      verify_disconnected_items(cc.space_quota_definitions)
+    end
+
     it 'returns zero spaces as expected' do
       verify_disconnected_items(cc.spaces)
     end

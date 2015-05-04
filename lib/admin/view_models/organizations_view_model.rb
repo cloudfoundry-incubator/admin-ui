@@ -25,6 +25,7 @@ module AdminUI
       routes                         = @cc.routes
       service_instances              = @cc.service_instances
       service_plan_visibilities      = @cc.service_plan_visibilities
+      space_quotas                   = @cc.space_quota_definitions
       spaces                         = @cc.spaces
       spaces_auditors                = @cc.spaces_auditors
       spaces_developers              = @cc.spaces_developers
@@ -38,6 +39,7 @@ module AdminUI
       routes_connected                    = routes['connected']
       service_instances_connected         = service_instances['connected']
       service_plan_visibilities_connected = service_plan_visibilities['connected']
+      space_quotas_connected              = space_quotas['connected']
       spaces_connected                    = spaces['connected']
       spaces_roles_connected              = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
 
@@ -53,6 +55,7 @@ module AdminUI
       organization_service_plan_visibility_counters = {}
       organization_route_counters_hash              = {}
       organization_app_counters_hash                = {}
+      space_quota_counters                          = {}
       space_role_counters                           = {}
 
       events['items'].each do |event|
@@ -94,6 +97,14 @@ module AdminUI
         next if owning_organization_id.nil?
         organization_domain_counters[owning_organization_id] = 0 if organization_domain_counters[owning_organization_id].nil?
         organization_domain_counters[owning_organization_id] += 1
+      end
+
+      space_quotas['items'].each do |space_quota|
+        Thread.pass
+        organization_id = space_quota[:organization_id]
+        next if organization_id.nil?
+        space_quota_counters[organization_id] = 0 if space_quota_counters[organization_id].nil?
+        space_quota_counters[organization_id] += 1
       end
 
       routes['items'].each do |route|
@@ -171,6 +182,7 @@ module AdminUI
         organization_app_counters                    = organization_app_counters_hash[organization_id]
         organization_domain_counter                  = organization_domain_counters[organization_id]
         organization_route_counters                  = organization_route_counters_hash[organization_id]
+        space_quota_counter                          = space_quota_counters[organization_id]
         space_role_counter                           = space_role_counters[organization_id]
 
         row = []
@@ -221,6 +233,14 @@ module AdminUI
 
         if quota
           row.push(quota[:name])
+        else
+          row.push(nil)
+        end
+
+        if space_quota_counter
+          row.push(space_quota_counter)
+        elsif space_quotas_connected
+          row.push(0)
         else
           row.push(nil)
         end
@@ -294,7 +314,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..28).to_a, (1..5).to_a << 10)
+      result(true, items, hash, (1..29).to_a, (1..5).to_a << 10)
     end
 
     private

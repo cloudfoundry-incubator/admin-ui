@@ -98,7 +98,7 @@ describe AdminUI::Admin, type: :integration do
     response
   end
 
-  def put_request(path, body)
+  def put_request(path, body = nil)
     request = Net::HTTP::Put.new(path)
     request['Cookie'] = cookie
     request['Content-Length'] = 0
@@ -584,6 +584,70 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage space quota' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there is a space quota
+      expect(get_json('/space_quotas_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_space_quota
+      response = delete_request("/space_quota_definitions/#{ cc_space_quota_definition[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/space_quota_definitions/#{ cc_space_quota_definition[:guid] }"]], true)
+    end
+
+    it 'has user name and quotas request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/space_quotas_view_model']], true)
+    end
+
+    it 'deletes the specific space quota' do
+      expect { delete_space_quota }.to change { get_json('/space_quotas_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
+  context 'manage space quota space' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    def create_space_quota_space
+      response = put_request("/space_quota_definitions/#{ cc_space_quota_definition2[:guid] }/spaces/#{ cc_space[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['put', "/space_quota_definitions/#{ cc_space_quota_definition2[:guid] }/spaces/#{ cc_space[:guid] }"]], true)
+    end
+
+    def delete_space_quota_space
+      response = delete_request("/space_quota_definitions/#{ cc_space_quota_definition[:guid] }/spaces/#{ cc_space[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/space_quota_definitions/#{ cc_space_quota_definition[:guid] }/spaces/#{ cc_space[:guid] }"]], true)
+    end
+
+    context 'deletes the specific space quota space' do
+      before do
+        # Make sure there is a space quota
+        expect(get_json('/space_quotas_view_model')['items']['items'].length).to eq(1)
+      end
+
+      it 'deletes the specific space quota space' do
+        expect { delete_space_quota_space }.to change { get_json('/spaces_view_model')['items']['items'][0][9] }.from(cc_space_quota_definition[:name]).to(nil)
+      end
+    end
+
+    context 'sets the specific space quota for space' do
+      let(:insert_second_quota_definition) { true }
+      before do
+        # Make sure there are two space quotas
+        expect(get_json('/space_quotas_view_model')['items']['items'].length).to eq(2)
+      end
+
+      it 'sets the specific space quota for space' do
+        expect { create_space_quota_space }.to change { get_json('/spaces_view_model')['items']['items'][0][9] }.from(cc_space_quota_definition[:name]).to(cc_space_quota_definition2[:name])
+      end
+    end
+  end
+
   context 'manage space role' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -937,15 +1001,15 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
-    context 'spaces_view_model' do
-      let(:path)              { '/spaces_view_model' }
-      let(:view_model_source) { view_models_spaces }
+    context 'space_quotas_view_model' do
+      let(:path)              { '/space_quotas_view_model' }
+      let(:view_model_source) { view_models_space_quotas }
       it_behaves_like('retrieves view_model')
     end
 
-    context 'spaces_view_model detail' do
-      let(:path)              { "/spaces_view_model/#{ cc_space[:guid] }" }
-      let(:view_model_source) { view_models_spaces_detail }
+    context 'space_quotas_view_model detail' do
+      let(:path)              { "/space_quotas_view_model/#{ cc_space_quota_definition[:guid] }" }
+      let(:view_model_source) { view_models_space_quotas_detail }
       it_behaves_like('retrieves view_model detail')
     end
 
@@ -958,6 +1022,18 @@ describe AdminUI::Admin, type: :integration do
     context 'space_roles_view_model detail' do
       let(:path)              { "/space_roles_view_model/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }" }
       let(:view_model_source) { view_models_space_roles_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'spaces_view_model' do
+      let(:path)              { '/spaces_view_model' }
+      let(:view_model_source) { view_models_spaces }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'spaces_view_model detail' do
+      let(:path)              { "/spaces_view_model/#{ cc_space[:guid] }" }
+      let(:view_model_source) { view_models_spaces_detail }
       it_behaves_like('retrieves view_model detail')
     end
 

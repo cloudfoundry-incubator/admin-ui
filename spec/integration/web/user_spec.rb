@@ -250,6 +250,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(@driver.find_element(id: 'ToolTables_QuotasTable_0').text).to eq('Copy')
     end
 
+    it 'Space Quotas tab does not have delete button' do
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          scroll_tab_into_view('SpaceQuotas').click
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'SpaceQuotas'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('SpaceQuotas')
+
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(id: 'SpaceQuotasPage').displayed? &&
+            @driver.find_element(id: 'ToolTables_SpaceQuotasTable_0').text == 'Copy'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(id: 'SpaceQuotasPage').displayed?).to eq(true)
+      expect(@driver.find_element(id: 'ToolTables_SpaceQuotasTable_0').text).to eq('Copy')
+    end
+
     it 'Service Brokers tab does not have delete button' do
       begin
         Selenium::WebDriver::Wait.new(timeout: 5).until do

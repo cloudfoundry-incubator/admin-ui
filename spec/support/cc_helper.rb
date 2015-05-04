@@ -48,6 +48,7 @@ module CCHelper
     @cc_service_keys_deleted              = false
     @cc_service_plans_deleted             = false
     @cc_service_plan_visibilities_deleted = false
+    @cc_space_quota_definitions_deleted   = false
     @cc_spaces_deleted                    = false
 
     @cc_organization_created = false
@@ -69,6 +70,7 @@ module CCHelper
     cc_service_plan_stubs(config)
     cc_service_plan_visibility_stubs(config)
     cc_space_stubs(config)
+    cc_space_quota_definition_stubs(config)
   end
 
   def cc_clear_apps_cache_stub(config)
@@ -92,6 +94,7 @@ module CCHelper
   def cc_clear_organizations_cache_stub(config)
     cc_clear_domains_cache_stub(config)
     cc_clear_service_plan_visibilities_cache_stub(config)
+    cc_clear_space_quota_definitions_cache_stub(config)
     cc_clear_spaces_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM organizations_auditors')
@@ -171,6 +174,14 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM services')
 
     @cc_services_deleted = true
+  end
+
+  def cc_clear_space_quota_definitions_cache_stub(config)
+    cc_clear_spaces_cache_stub(config)
+
+    sql(config.ccdb_uri, 'DELETE FROM space_quota_definitions')
+
+    @cc_space_quota_definitions_deleted = true
   end
 
   def cc_clear_spaces_cache_stub(config)
@@ -697,12 +708,13 @@ module CCHelper
 
   def cc_space
     {
-      created_at:      Time.new('2015-04-23 08:00:56 -0500'),
-      guid:            'space1',
-      id:              24,
-      name:            'test_space',
-      organization_id: cc_organization[:id],
-      updated_at:      Time.new('2015-04-23 08:00:57 -0500')
+      created_at:                Time.new('2015-04-23 08:00:56 -0500'),
+      guid:                      'space1',
+      id:                        24,
+      name:                      'test_space',
+      organization_id:           cc_organization[:id],
+      space_quota_definition_id: cc_space_quota_definition[:id],
+      updated_at:                Time.new('2015-04-23 08:00:57 -0500')
     }
   end
 
@@ -724,6 +736,38 @@ module CCHelper
     {
       space_id: cc_space[:id],
       user_id:  cc_user[:id]
+    }
+  end
+
+  def cc_space_quota_definition
+    {
+      created_at:                 Time.new('2015-04-23 08:00:38 -0500'),
+      guid:                       'space_quota1',
+      id:                         14,
+      instance_memory_limit:      512,
+      memory_limit:               1024,
+      name:                       'test_space_quota_1',
+      organization_id:            cc_organization[:id],
+      non_basic_services_allowed: true,
+      total_routes:               100,
+      total_services:             100,
+      updated_at:                 Time.new('2015-04-23 08:00:39 -0500')
+    }
+  end
+
+  def cc_space_quota_definition2
+    {
+      created_at:                 Time.new,
+      guid:                       'space_quota2',
+      id:                         15,
+      instance_memory_limit:      512,
+      memory_limit:               1024,
+      name:                       'test_space_quota_2',
+      non_basic_services_allowed: true,
+      organization_id:            cc_organization[:id],
+      total_routes:               100,
+      total_services:             100,
+      updated_at:                 nil
     }
   end
 
@@ -836,6 +880,7 @@ module CCHelper
               [:domains,                        cc_domain],
               [:service_plans,                  cc_service_plan],
               [:service_plan_visibilities,      cc_service_plan_visibility],
+              [:space_quota_definitions,        cc_space_quota_definition],
               [:spaces,                         cc_space],
               [:apps,                           cc_app],
               [:routes,                         cc_route],
@@ -856,6 +901,7 @@ module CCHelper
              ]
 
     result << [:quota_definitions, cc_quota_definition2] if insert_second_quota_definition
+    result << [:space_quota_definitions, cc_space_quota_definition2] if insert_second_quota_definition
 
     result << [:events, cc_event_app] if event_type == 'app'
     result << [:events, cc_event_service] if event_type == 'service'
@@ -1149,7 +1195,7 @@ module CCHelper
   end
 
   def cc_service_instance_stubs(config)
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_instances/#{ cc_service_instance[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_instances/#{ cc_service_instance[:guid] }?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_service_instances_deleted
         cc_service_instance_not_found
       else
@@ -1268,6 +1314,41 @@ module CCHelper
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_managers WHERE space_id = '#{ cc_space[:id] }' AND user_id = '#{ cc_user[:id] }'")
         Net::HTTPCreated.new(1.0, 201, 'Created')
+      end
+    end
+  end
+
+  def cc_space_quota_definition_not_found
+    NotFound.new('code'        => 310_007,
+                 'description' => "Space Quota Definition could not be found: #{ cc_space_quota_definition[:guid] }",
+                 'error_code'  => 'CF-SpaceQuotaDefinitionNotFound')
+  end
+
+  def cc_space_quota_definition_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/space_quota_definitions/#{ cc_space_quota_definition[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_space_quota_definitions_deleted
+        cc_space_quota_definition_not_found
+      else
+        cc_clear_space_quota_definitions_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/space_quota_definitions/#{ cc_space_quota_definition[:guid] }/spaces/#{ cc_space[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_space_quota_definitions_deleted
+        cc_space_quota_definition_not_found
+      else
+        sql(config.ccdb_uri, 'UPDATE spaces SET space_quota_definition_id = null')
+        OK.new('{}')
+      end
+    end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/space_quota_definitions/#{ cc_space_quota_definition2[:guid] }/spaces/#{ cc_space[:guid] }", AdminUI::Utils::HTTP_PUT, anything, anything, anything) do
+      if @cc_space_quota_definitions_deleted
+        cc_space_quota_definition_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE spaces SET space_quota_definition_id = (SELECT id FROM space_quota_definitions WHERE guid = '#{ cc_space_quota_definition2[:guid] }')")
+        OK.new('{}')
       end
     end
   end

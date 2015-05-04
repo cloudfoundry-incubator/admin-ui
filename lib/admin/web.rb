@@ -378,14 +378,14 @@ module AdminUI
       404
     end
 
-    get '/spaces_view_model', auth: [:user] do
-      @logger.info_user session[:username], 'get', '/spaces_view_model'
-      AllActions.new(@logger, @view_models.spaces, params).items.to_json
+    get '/space_quotas_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'get', '/space_quotas_view_model'
+      AllActions.new(@logger, @view_models.space_quotas, params).items.to_json
     end
 
-    get '/spaces_view_model/:guid', auth: [:user] do
-      @logger.info_user session[:username], 'get', "/spaces_view_model/#{ params[:guid] }"
-      result = @view_models.space(params[:guid])
+    get '/space_quotas_view_model/:guid', auth: [:user] do
+      @logger.info_user session[:username], 'get', "/space_quotas_view_model/#{ params[:guid] }"
+      result = @view_models.space_quota(params[:guid])
       return result.to_json if result
       404
     end
@@ -398,6 +398,18 @@ module AdminUI
     get '/space_roles_view_model/:space_guid/:role/:user_guid', auth: [:user] do
       @logger.info_user session[:username], 'get', "/space_roles_view_model/#{ params[:space_guid] }/#{ params[:role] }/#{ params[:user_guid] }"
       result = @view_models.space_role(params[:space_guid], params[:role], params[:user_guid])
+      return result.to_json if result
+      404
+    end
+
+    get '/spaces_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'get', '/spaces_view_model'
+      AllActions.new(@logger, @view_models.spaces, params).items.to_json
+    end
+
+    get '/spaces_view_model/:guid', auth: [:user] do
+      @logger.info_user session[:username], 'get', "/spaces_view_model/#{ params[:guid] }"
+      result = @view_models.space(params[:guid])
       return result.to_json if result
       404
     end
@@ -554,7 +566,6 @@ module AdminUI
         control_message = request.body.read.to_s
         @logger.info_user session[:username], 'post', "/organizations; body = #{ control_message }"
         @operation.create_organization(control_message)
-
         204
       rescue CCRestClientResponseError => error
         @logger.debug("Error during create organization: #{ error.to_h }")
@@ -664,12 +675,12 @@ module AdminUI
                 filename:    'servicess.csv')
     end
 
-    post '/spaces_view_model', auth: [:user] do
-      @logger.info_user session[:username], 'post', '/spaces_view_model'
-      file = Download.download(request.body.read, 'spaces', @view_models.spaces)
+    post '/space_quotas_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'post', '/space_quotas_view_model'
+      file = Download.download(request.body.read, 'space_quotas', @view_models.space_quotas)
       send_file(file.path,
                 disposition: 'attachment',
-                filename:    'spaces.csv')
+                filename:    'space_quotas.csv')
     end
 
     post '/space_roles_view_model', auth: [:user] do
@@ -678,6 +689,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'space_roles.csv')
+    end
+
+    post '/spaces_view_model', auth: [:user] do
+      @logger.info_user session[:username], 'post', '/spaces_view_model'
+      file = Download.download(request.body.read, 'spaces', @view_models.spaces)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'spaces.csv')
     end
 
     post '/stacks_view_model', auth: [:user] do
@@ -747,7 +766,6 @@ module AdminUI
         control_message = request.body.read.to_s
         @logger.info_user session[:username], 'put', "/applications/#{ params[:app_guid] }; body = #{ control_message}"
         @operation.manage_application(params[:app_guid], control_message)
-
         204
       rescue CCRestClientResponseError => error
         @logger.debug("Error during update application: #{ error.to_h }")
@@ -766,7 +784,6 @@ module AdminUI
         control_message = request.body.read.to_s
         @logger.info_user session[:username], 'put', "/organizations/#{ params[:org_guid] }; body = #{ control_message }"
         @operation.manage_organization(params[:org_guid], control_message)
-
         204
       rescue CCRestClientResponseError => error
         @logger.debug("Error during update organization: #{ error.to_h }")
@@ -785,7 +802,6 @@ module AdminUI
         control_message = request.body.read.to_s
         @logger.info_user session[:username], 'put', "/service_plans/#{ params[:service_plan_guid] }; body = #{ control_message }"
         @operation.manage_service_plan(params[:service_plan_guid], control_message)
-
         204
       rescue CCRestClientResponseError => error
         @logger.debug("Error during update service plan: #{ error.to_h }")
@@ -794,6 +810,23 @@ module AdminUI
         body(error.to_h.to_json)
       rescue => error
         @logger.debug("Error during update service plan #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    put '/space_quota_definitions/:space_quota_definition_guid/spaces/:space_guid', auth: [:admin] do
+      @logger.info_user session[:username], 'put', "/space_quota_definitions/#{ params[:space_quota_definition_guid] }/spaces/#{ params[:space_guid] }"
+      begin
+        @operation.create_space_quota_definition_space(params[:space_quota_definition_guid], params[:space_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during put space quota definition space: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during put space quota definition space: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -1030,6 +1063,40 @@ module AdminUI
         body(error.to_h.to_json)
       rescue => error
         @logger.debug("Error during delete service: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/space_quota_definitions/:space_quota_definition_guid', auth: [:admin] do
+      @logger.info_user session[:username], 'delete', "/space_quota_definitions/#{ params[:space_quota_definition_guid] }"
+      begin
+        @operation.delete_space_quota_definition(params[:space_quota_definition_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete space quota definition: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during delete space quota definition: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/space_quota_definitions/:space_quota_definition_guid/spaces/:space_guid', auth: [:admin] do
+      @logger.info_user session[:username], 'delete', "/space_quota_definitions/#{ params[:space_quota_definition_guid] }/spaces/#{ params[:space_guid] }"
+      begin
+        @operation.delete_space_quota_definition_space(params[:space_quota_definition_guid], params[:space_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete space quota definition space: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during delete space quota definition space: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
         500
       end

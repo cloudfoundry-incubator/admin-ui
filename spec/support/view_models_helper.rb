@@ -39,7 +39,8 @@ module ViewModelsHelper
   end
 
   def view_models_applications_detail
-    { 'application'  => cc_app,
+    {
+      'application'  => cc_app,
       'instance'     => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance],
       'organization' => cc_organization,
       'space'        => cc_space,
@@ -84,7 +85,8 @@ module ViewModelsHelper
   end
 
   def view_models_cloud_controllers_detail
-    { 'connected' => true,
+    {
+      'connected' => true,
       'data'      => varz_cloud_controller,
       'index'     => nats_cloud_controller['index'],
       'name'      => nats_cloud_controller['host'],
@@ -160,7 +162,8 @@ module ViewModelsHelper
   end
 
   def view_models_deas_detail
-    { 'connected' => true,
+    {
+      'connected' => true,
       'data'      => varz_dea,
       'index'     => nats_dea['index'],
       'name'      => nats_dea['host'],
@@ -234,7 +237,8 @@ module ViewModelsHelper
   end
 
   def view_models_gateways_detail
-    { 'connected' => true,
+    {
+      'connected' => true,
       'data'      => varz_provisioner,
       'index'     => nats_provisioner['index'],
       'name'      => nats_provisioner['type'].sub('-Provisioner', ''),
@@ -256,7 +260,8 @@ module ViewModelsHelper
   end
 
   def view_models_health_managers_detail
-    { 'connected' => true,
+    {
+      'connected' => true,
       'data'      => varz_health_manager,
       'index'     => nats_health_manager['index'],
       'name'      => nats_health_manager['host'],
@@ -293,6 +298,7 @@ module ViewModelsHelper
         4,
         3,
         cc_quota_definition[:name],
+        1,
         1,
         1,
         1,
@@ -408,7 +414,8 @@ module ViewModelsHelper
   end
 
   def view_models_routers_detail
-    { 'router' =>
+    {
+      'router' =>
       { 'connected' => true,
         'data'      => varz_router,
         'index'     => nats_router['index'],
@@ -444,7 +451,8 @@ module ViewModelsHelper
   end
 
   def view_models_routes_detail
-    { 'domain'       => cc_domain,
+    {
+      'domain'       => cc_domain,
       'organization' => cc_organization,
       'route'        => cc_route,
       'space'        => cc_space
@@ -491,7 +499,8 @@ module ViewModelsHelper
   end
 
   def view_models_service_bindings_detail
-    { 'application'      => cc_app,
+    {
+      'application'      => cc_app,
       'organization'     => cc_organization,
       'service'          => cc_service,
       'service_binding'  => cc_service_binding,
@@ -568,7 +577,8 @@ module ViewModelsHelper
   end
 
   def view_models_service_instances_detail
-    { 'organization'               => cc_organization,
+    {
+      'organization'               => cc_organization,
       'service'                    => cc_service,
       'service_broker'             => cc_service_broker,
       'service_instance'           => cc_service_instance,
@@ -617,7 +627,8 @@ module ViewModelsHelper
   end
 
   def view_models_service_keys_detail
-    { 'organization'     => cc_organization,
+    {
+      'organization'     => cc_organization,
       'service'          => cc_service,
       'service_broker'   => cc_service_broker,
       'service_instance' => cc_service_instance,
@@ -662,7 +673,8 @@ module ViewModelsHelper
   end
 
   def view_models_service_plans_detail
-    { 'service'        => cc_service,
+    {
+      'service'        => cc_service,
       'service_broker' => cc_service_broker,
       'service_plan'   => cc_service_plan
     }
@@ -706,7 +718,8 @@ module ViewModelsHelper
   end
 
   def view_models_service_plan_visibilities_detail
-    { 'organization'            => cc_organization,
+    {
+      'organization'            => cc_organization,
       'service'                 => cc_service,
       'service_broker'          => cc_service_broker,
       'service_plan'            => cc_service_plan,
@@ -743,46 +756,36 @@ module ViewModelsHelper
   end
 
   def view_models_services_detail
-    { 'service'        => cc_service,
+    {
+      'service'        => cc_service,
       'service_broker' => cc_service_broker
     }
   end
 
-  def view_models_spaces
+  def view_models_space_quotas
     [
       [
-        cc_space[:guid],
-        cc_space[:name],
-        cc_space[:guid],
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
-        cc_space[:created_at].to_datetime.rfc3339,
-        cc_space[:updated_at].to_datetime.rfc3339,
+        cc_space_quota_definition[:guid],
+        cc_space_quota_definition[:name],
+        cc_space_quota_definition[:guid],
+        cc_space_quota_definition[:created_at].to_datetime.rfc3339,
+        cc_space_quota_definition[:updated_at].to_datetime.rfc3339,
+        cc_space_quota_definition[:total_services],
+        cc_space_quota_definition[:total_routes],
+        cc_space_quota_definition[:memory_limit],
+        cc_space_quota_definition[:instance_memory_limit],
+        cc_space_quota_definition[:non_basic_services_allowed],
         1,
-        1,
-        3,
-        1,
-        1,
-        0,
-        cc_app[:instances],
-        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length,
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
-        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
-        cc_app[:memory],
-        cc_app[:disk_quota],
-        1,
-        cc_app[:state] == 'STARTED' ? 1 : 0,
-        cc_app[:state] == 'STOPPED' ? 1 : 0,
-        cc_app[:package_state] == 'PENDING' ? 1 : 0,
-        cc_app[:package_state] == 'STAGED' ? 1 : 0,
-        cc_app[:package_state] == 'FAILED' ? 1 : 0
+        cc_organization[:name],
+        cc_organization[:guid]
       ]
     ]
   end
 
-  def view_models_spaces_detail
-    { 'organization' => cc_organization,
-      'space'        => cc_space
+  def view_models_space_quotas_detail
+    {
+      'organization'           => cc_organization,
+      'space_quota_definition' => cc_space_quota_definition
     }
   end
 
@@ -825,6 +828,47 @@ module ViewModelsHelper
       'space'        => cc_space,
       'user_cc'      => cc_user,
       'user_uaa'     => uaa_user
+    }
+  end
+
+  def view_models_spaces
+    [
+      [
+        cc_space[:guid],
+        cc_space[:name],
+        cc_space[:guid],
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+        cc_space[:created_at].to_datetime.rfc3339,
+        cc_space[:updated_at].to_datetime.rfc3339,
+        1,
+        1,
+        3,
+        cc_space_quota_definition[:name],
+        1,
+        1,
+        0,
+        cc_app[:instances],
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length,
+        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
+        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
+        cc_app[:memory],
+        cc_app[:disk_quota],
+        1,
+        cc_app[:state] == 'STARTED' ? 1 : 0,
+        cc_app[:state] == 'STOPPED' ? 1 : 0,
+        cc_app[:package_state] == 'PENDING' ? 1 : 0,
+        cc_app[:package_state] == 'STAGED' ? 1 : 0,
+        cc_app[:package_state] == 'FAILED' ? 1 : 0
+      ]
+    ]
+  end
+
+  def view_models_spaces_detail
+    {
+      'organization'           => cc_organization,
+      'space'                  => cc_space,
+      'space_quota_definition' => cc_space_quota_definition
     }
   end
 

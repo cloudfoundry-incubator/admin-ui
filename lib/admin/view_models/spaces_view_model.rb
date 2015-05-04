@@ -19,6 +19,7 @@ module AdminUI
       organizations     = @cc.organizations
       routes            = @cc.routes
       service_instances = @cc.service_instances
+      space_quotas      = @cc.space_quota_definitions
       spaces_auditors   = @cc.spaces_auditors
       spaces_developers = @cc.spaces_developers
       spaces_managers   = @cc.spaces_managers
@@ -32,6 +33,7 @@ module AdminUI
 
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
       routes_used_set   = apps_routes['items'].to_set { |app_route| app_route[:route_id] }
+      space_quota_hash  = Hash[space_quotas['items'].map { |item| [item[:id], item] }]
 
       event_counters        = {}
       event_target_counters = {}
@@ -122,6 +124,7 @@ module AdminUI
         organization                   = organization_hash[space[:organization_id]]
         event_counter                  = event_counters[space_guid]
         event_target_counter           = event_target_counters[space_guid]
+        space_quota                    = space_quota_hash[space[:space_quota_definition_id]]
         space_role_counter             = space_role_counters[space_id]
         space_service_instance_counter = space_service_instance_counters[space_id]
         space_app_counters             = space_app_counters_hash[space_id]
@@ -167,6 +170,12 @@ module AdminUI
           row.push(space_role_counter)
         elsif spaces_roles_connected
           row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if space_quota
+          row.push(space_quota[:name])
         else
           row.push(nil)
         end
@@ -219,12 +228,13 @@ module AdminUI
 
         hash[space_guid] =
         {
-          'organization' => organization,
-          'space'        => space
+          'organization'           => organization,
+          'space'                  => space,
+          'space_quota_definition' => space_quota
         }
       end
 
-      result(true, items, hash, (1..24).to_a, (1..5).to_a)
+      result(true, items, hash, (1..25).to_a, (1..5).to_a << 9)
     end
 
     private

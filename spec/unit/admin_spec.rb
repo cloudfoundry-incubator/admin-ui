@@ -211,7 +211,7 @@ describe AdminUI::Admin do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
 
-    def put(path, body)
+    def put(path, body = nil)
       request = Net::HTTP::Put.new(path)
       request['Cookie'] = cookie
       request['Content-Length'] = 0
@@ -251,6 +251,23 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common create organization')
+    end
+
+    shared_examples 'common create space quota definition space' do
+      it 'returns failure code due to disconnection' do
+        response = put('/space_quota_definitions/space_quota1/spaces/space1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'create space quota definition space via http' do
+      it_behaves_like('common create space quota definition space')
+    end
+
+    context 'create space quota defintion space via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common create space quota definition space')
     end
 
     shared_examples 'common delete application' do
@@ -506,6 +523,40 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete space')
+    end
+
+    shared_examples 'common delete space quota definition' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/space_quota_definitions/space_quota1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete space quota definition via http' do
+      it_behaves_like('common delete space quota definition')
+    end
+
+    context 'delete space quota definition via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete space quota definition')
+    end
+
+    shared_examples 'common delete space quota definition space' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/space_quota_definitions/space_quota1/spaces/space1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete space quota definition space role via http' do
+      it_behaves_like('common delete space quota definition space')
+    end
+
+    context 'delete space quota definition space via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete space quota definition space')
     end
 
     shared_examples 'common delete space role' do
@@ -821,12 +872,12 @@ describe AdminUI::Admin do
         verify_not_found('/services_view_model/service1')
       end
 
-      it '/spaces_view_model succeeds' do
-        verify_disconnected_view_model_items('/spaces_view_model')
+      it '/space_quotas_view_model succeeds' do
+        verify_disconnected_view_model_items('/space_quotas_view_model')
       end
 
-      it '/spaces_view_model/:guid returns not found' do
-        verify_not_found('/spaces_view_model/space1')
+      it '/space_quotas_view_model/:guid returns not found' do
+        verify_not_found('/space_quotas_view_model/space_quota1')
       end
 
       it '/space_roles_view_model succeeds' do
@@ -835,6 +886,14 @@ describe AdminUI::Admin do
 
       it '/space_roles_view_model/:guid/:role/:guid returns not found' do
         verify_not_found('/space_roles_view_model/space1/auditors/user1')
+      end
+
+      it '/spaces_view_model succeeds' do
+        verify_disconnected_view_model_items('/spaces_view_model')
+      end
+
+      it '/spaces_view_model/:guid returns not found' do
+        verify_not_found('/spaces_view_model/space1')
       end
 
       it '/stacks_view_model succeeds' do
@@ -886,7 +945,7 @@ describe AdminUI::Admin do
       do_redirect_request(request)
     end
 
-    def put_redirects_as_expected(path, body)
+    def put_redirects_as_expected(path, body = nil)
       request = Net::HTTP::Put.new(path)
       request.body = body if body
       do_redirect_request(request)
@@ -1096,6 +1155,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/services_view_model/service1')
       end
 
+      it '/space_quotas_view_model redirects as expected' do
+        get_redirects_as_expected('/space_quotas_view_model')
+      end
+
+      it '/space_quotas_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/space_quotas_view_model/space_quota1')
+      end
+
       it '/space_roles_view_model redirects as expected' do
         get_redirects_as_expected('/space_roles_view_model')
       end
@@ -1186,6 +1253,14 @@ describe AdminUI::Admin do
 
       it 'deletes /services/:guid redirects as expected' do
         delete_redirects_as_expected('/services/service1')
+      end
+
+      it 'deletes /space_quota_definitions/:guid redirects as expected' do
+        delete_redirects_as_expected('/space_quota_definitions/space_quota1')
+      end
+
+      it 'deletes /space_quota_definitions/:guid/spaces/:guid redirects as expected' do
+        delete_redirects_as_expected('/space_quota_definitions/space_quota1/spaces/space1')
       end
 
       it 'deletes /spaces/:guid redirects as expected' do
@@ -1288,12 +1363,16 @@ describe AdminUI::Admin do
         post_redirects_as_expected('/services_view_model')
       end
 
-      it 'posts /spaces_view_model redirects as expected' do
-        post_redirects_as_expected('/spaces_view_model')
+      it 'posts /space_quotas_view_model redirects as expected' do
+        post_redirects_as_expected('/space_quotas_view_model')
       end
 
       it 'posts /space_roles_view_model redirects as expected' do
         post_redirects_as_expected('/space_roles_view_model')
+      end
+
+      it 'posts /spaces_view_model redirects as expected' do
+        post_redirects_as_expected('/spaces_view_model')
       end
 
       it 'posts /stacks_view_model redirects as expected' do
@@ -1322,6 +1401,10 @@ describe AdminUI::Admin do
 
       it 'puts /service_plans/:guid redirects as expected' do
         put_redirects_as_expected('/service_plans/application1', '{"public":true}')
+      end
+
+      it 'puts /space_quota_definitions/:guid/spaces/:guid redirects as expected' do
+        put_redirects_as_expected('/space_quota_definitions/space_quota1/spaces/space1')
       end
     end
 
