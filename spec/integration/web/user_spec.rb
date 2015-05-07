@@ -17,7 +17,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(@driver.find_element(class: 'user').text).to eq('user')
     end
 
-    it 'Organizations tab does not have create, set quota, delete, activate and suspend buttons' do
+    it 'Organizations tab does not have create, set quota, activate, suspend and delete buttons' do
       begin
         Selenium::WebDriver::Wait.new(timeout: 5).until do
           scroll_tab_into_view('Organizations').click

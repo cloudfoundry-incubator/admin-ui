@@ -223,6 +223,60 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
       end
 
+      def check_checkbox_guid(table_id, guid)
+        inputs = @driver.find_elements(xpath: "//table[@id='#{ table_id }']/tbody/tr/td[1]/input")
+        expect(inputs.length).to eq(1)
+        expect(inputs[0].attribute('value')).to eq(guid)
+      end
+
+      def check_first_row(table_id)
+        @driver.find_elements(xpath: "//table[@id='#{ table_id }']/tbody/tr/td[1]/input")[0].click
+      end
+
+      def confirm(message)
+        expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+        expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
+        expect(@driver.find_element(id: 'ModalDialogContents').text).to eq(message)
+        @driver.find_element(id: 'modalDialogButton0').click
+      end
+
+      def check_operation_result
+        Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+        expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+        expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+        @driver.find_element(id: 'modalDialogButton0').click
+      end
+
+      shared_examples 'click button without selecting a single row' do
+        it 'alerts the user to select at least one row when clicking the button' do
+          @driver.find_element(id: button_id).click
+          expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+          expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+          expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+          @driver.find_element(id: 'modalDialogButton0').click
+        end
+      end
+
+      shared_examples 'delete first row' do
+        let(:check_no_data_available) { true }
+        it 'deletes the first row of the table and confirms table empty' do
+          check_first_row(table_id)
+          @driver.find_element(id: button_id).click
+
+          confirm(confirm_message)
+
+          check_operation_result
+
+          if check_no_data_available
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='#{ table_id }']/tbody/tr").text == 'No data available in table' }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='#{ table_id }']/tbody/tr").text).to eq('No data available in table')
+          end
+        end
+      end
+
       context 'Organizations' do
         let(:tab_id) { 'Organizations' }
 
@@ -279,72 +333,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_organization[:guid])
+          check_checkbox_guid('OrganizationsTable', cc_organization[:guid])
         end
 
-        context 'set quota' do
-          let(:insert_second_quota_definition) { true }
-
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")[0].click
-          end
-
-          def check_operation_result
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
+        context 'manage organization' do
+          it 'has a Create button' do
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_0').text).to eq('Create')
           end
 
           it 'has a Set Quota button' do
             expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_1').text).to eq('Set Quota')
           end
 
-          it 'alerts the user to select at least one row when clicking the button without selecting a row' do
-            @driver.find_element(id: 'ToolTables_OrganizationsTable_1').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it 'has an Activate button' do
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_2').text).to eq('Activate')
           end
 
-          it 'sets the specific quota for the organization' do
-            check_first_row
-            @driver.find_element(id: 'ToolTables_OrganizationsTable_1').click
-
-            # Check whether the dialog is displayed
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'quotaSelector').displayed?).to be_true
-            expect(@driver.find_element(xpath: '//select[@id="quotaSelector"]/option[1]').text).to eq(cc_quota_definition[:name])
-            expect(@driver.find_element(xpath: '//select[@id="quotaSelector"]/option[2]').text).to eq(cc_quota_definition2[:name])
-
-            # Select another quota and click the set button
-            @driver.find_element(xpath: '//select[@id="quotaSelector"]/option[2]').click
-            @driver.find_element(id: 'modalDialogButton0').click
-            check_operation_result
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 460).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[11]").text == cc_quota_definition2[:name] }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[11]").text).to eq(cc_quota_definition2[:name])
-          end
-        end
-
-        context 'manage organization' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[1]/input")[0].click
-          end
-
-          it 'has a Create button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_0').text).to eq('Create')
+          it 'has a Suspend button' do
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_3').text).to eq('Suspend')
           end
 
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_2').text).to eq('Delete')
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_4').text).to eq('Delete')
           end
 
           it 'creates an organization' do
@@ -365,10 +375,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             @driver.find_element(id: 'organizationName').send_keys cc_organization2[:name]
             @driver.find_element(id: 'modalDialogButton0').click
 
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
+            check_operation_result
 
             begin
               Selenium::WebDriver::Wait.new(timeout: 60).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text == cc_organization2[:name] }
@@ -377,65 +384,66 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text).to eq(cc_organization2[:name])
           end
 
-          it 'has an Activate button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_3').text).to eq('Activate')
-          end
-
-          it 'has a Suspend button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_4').text).to eq('Suspend')
-          end
-
-          shared_examples 'click button without selecting a single row' do
-            it 'alerts the user to select at least one row when clicking the button' do
-              @driver.find_element(id: button_id).click
-              expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-              expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-              expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-              @driver.find_element(id: 'modalDialogButton0').click
-            end
-          end
-
-          # Delete button
+          # Set Quota button
           it_behaves_like('click button without selecting a single row') do
-            let(:button_id) { 'ToolTables_OrganizationsTable_2' }
+            let(:button_id) { 'ToolTables_OrganizationsTable_1' }
           end
 
           # Activate button
           it_behaves_like('click button without selecting a single row') do
-            let(:button_id) { 'ToolTables_OrganizationsTable_3' }
+            let(:button_id) { 'ToolTables_OrganizationsTable_2' }
           end
 
           # Suspend button
           it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_OrganizationsTable_3' }
+          end
+
+          # Delete button
+          it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_OrganizationsTable_4' }
           end
 
-          def manage_org(button_id, message, result_message)
-            check_first_row
+          context 'set quota' do
+            let(:insert_second_quota_definition) { true }
 
-            @driver.find_element(id: button_id).click
+            it 'sets the specific quota for the organization' do
+              check_first_row('OrganizationsTable')
+              @driver.find_element(id: 'ToolTables_OrganizationsTable_1').click
 
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq(message)
-            @driver.find_element(id: 'modalDialogButton0').click
+              # Check whether the dialog is displayed
+              expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+              expect(@driver.find_element(id: 'quotaSelector').displayed?).to be_true
+              expect(@driver.find_element(xpath: '//select[@id="quotaSelector"]/option[1]').text).to eq(cc_quota_definition[:name])
+              expect(@driver.find_element(xpath: '//select[@id="quotaSelector"]/option[2]').text).to eq(cc_quota_definition2[:name])
 
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq(result_message)
-            @driver.find_element(id: 'modalDialogButton0').click
+              # Select another quota and click the set button
+              @driver.find_element(xpath: '//select[@id="quotaSelector"]/option[2]').click
+              @driver.find_element(id: 'modalDialogButton0').click
+
+              check_operation_result
+
+              begin
+                Selenium::WebDriver::Wait.new(timeout: 460).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[11]").text == cc_quota_definition2[:name] }
+              rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+              end
+              expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[11]").text).to eq(cc_quota_definition2[:name])
+            end
           end
 
-          def suspend_org
-            manage_org('ToolTables_OrganizationsTable_4', 'Are you sure you want to suspend the selected organizations?', 'The operation finished without error. Please refresh the page later for the updated result.')
+          def manage_org(button_id, message)
+            check_first_row('OrganizationsTable')
+            @driver.find_element(id: button_id).click
+            confirm(message)
+            check_operation_result
           end
 
           def activate_org
-            manage_org('ToolTables_OrganizationsTable_3', 'Are you sure you want to activate the selected organizations?', 'The operation finished without error. Please refresh the page later for the updated result.')
+            manage_org('ToolTables_OrganizationsTable_2', 'Are you sure you want to activate the selected organizations?')
           end
 
-          def delete_org
-            manage_org('ToolTables_OrganizationsTable_2', 'Are you sure you want to delete the selected organizations?', 'The operation finished without error. Please refresh the page later for the updated result.')
+          def suspend_org
+            manage_org('ToolTables_OrganizationsTable_3', 'Are you sure you want to suspend the selected organizations?')
           end
 
           def check_organization_status(status)
@@ -457,14 +465,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_organization_status('SUSPENDED')
           end
 
-          it 'deletes the selected organization' do
-            delete_org
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 60).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_OrganizationsTable_4' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected organizations?' }
+            let(:table_id)        { 'OrganizationsTable' }
           end
         end
 
@@ -610,49 +614,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='SpacesTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_space[:guid])
+          check_checkbox_guid('SpacesTable', cc_space[:guid])
         end
 
         context 'manage spaces' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='SpacesTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_SpacesTable_0').text).to eq('Delete')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(id: 'ToolTables_SpacesTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_SpacesTable_0' }
           end
 
-          it 'deletes the selected space' do
-            # delete the space
-            check_first_row
-            @driver.find_element(id: 'ToolTables_SpacesTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected spaces?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_SpacesTable_0' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected spaces?' }
+            let(:table_id)        { 'SpacesTable' }
           end
         end
 
@@ -778,20 +755,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_app[:guid])
+          check_checkbox_guid('ApplicationsTable', cc_app[:guid])
         end
 
         context 'manage application' do
           def manage_application(buttonIndex)
-            check_first_row
+            check_first_row('ApplicationsTable')
             @driver.find_element(id: 'ToolTables_ApplicationsTable_' + buttonIndex.to_s).click
             check_operation_result
-          end
-
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[1]/input")[0].click
           end
 
           def check_app_state(expect_state)
@@ -800,13 +771,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             Selenium::WebDriver::Wait.new(timeout: 560).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text == expect_state }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text).to eq(expect_state)
-          end
-
-          def check_operation_result
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
           end
 
           it 'has a Start button' do
@@ -825,34 +789,23 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_3').text).to eq('Delete')
           end
 
-          shared_examples 'click start button without selecting a single row' do
-            it 'alerts the user to select at least one row when clicking the button' do
-              @driver.find_element(id: button_id).click
-
-              expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-              expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-              expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-              @driver.find_element(id: 'modalDialogButton0').click
-            end
-          end
-
           # Start button
-          it_behaves_like('click start button without selecting a single row') do
+          it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ApplicationsTable_0' }
           end
 
           # Stop button
-          it_behaves_like('click start button without selecting a single row') do
+          it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ApplicationsTable_1' }
           end
 
           # Restart button
-          it_behaves_like('click start button without selecting a single row') do
+          it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ApplicationsTable_2' }
           end
 
           # Delete button
-          it_behaves_like('click start button without selecting a single row') do
+          it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ApplicationsTable_3' }
           end
 
@@ -912,13 +865,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'deletes the selected application' do
             # delete the application
-            check_first_row
+            check_first_row('ApplicationsTable')
             @driver.find_element(id: 'ToolTables_ApplicationsTable_3').click
 
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected applications?')
-            @driver.find_element(id: 'modalDialogButton0').click
+            confirm('Are you sure you want to delete the selected applications?')
 
             check_operation_result
 
@@ -1043,49 +993,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='RoutesTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_route[:guid])
+          check_checkbox_guid('RoutesTable', cc_route[:guid])
         end
 
         context 'manage routes' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='RoutesTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_RoutesTable_0').text).to eq('Delete')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(id: 'ToolTables_RoutesTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_RoutesTable_0' }
           end
 
-          it 'deletes the selected route' do
-            # delete the route
-            check_first_row
-            @driver.find_element(id: 'ToolTables_RoutesTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected routes?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='RoutesTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='RoutesTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_RoutesTable_0' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected routes?' }
+            let(:table_id)        { 'RoutesTable' }
           end
         end
 
@@ -1186,49 +1109,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='ServiceInstancesTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_service_instance[:guid])
+          check_checkbox_guid('ServiceInstancesTable', cc_service_instance[:guid])
         end
 
         context 'manage service instances' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='ServiceInstancesTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_ServiceInstancesTable_0').text).to eq('Delete')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(id: 'ToolTables_ServiceInstancesTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_ServiceInstancesTable_0' }
           end
 
-          it 'deletes the selected service instance' do
-            # delete the service instance
-            check_first_row
-            @driver.find_element(id: 'ToolTables_ServiceInstancesTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected service instances?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServiceInstancesTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='ServiceInstancesTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_ServiceInstancesTable_0' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected service instances?' }
+            let(:table_id)        { 'ServiceInstancesTable' }
           end
         end
 
@@ -1371,49 +1267,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='ServiceBindingsTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_service_binding[:guid])
+          check_checkbox_guid('ServiceBindingsTable', cc_service_binding[:guid])
         end
 
         context 'manage service bindings' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='ServiceBindingsTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_ServiceBindingsTable_0').text).to eq('Delete')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(id: 'ToolTables_ServiceBindingsTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_ServiceBindingsTable_0' }
           end
 
-          it 'deletes the selected service binding' do
-            # delete the service binding
-            check_first_row
-            @driver.find_element(id: 'ToolTables_ServiceBindingsTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected service bindings?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServiceBindingsTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='ServiceBindingsTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_ServiceBindingsTable_0' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected service bindings?' }
+            let(:table_id)        { 'ServiceBindingsTable' }
           end
         end
 
@@ -1551,49 +1420,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='ServiceKeysTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_service_key[:guid])
+          check_checkbox_guid('ServiceKeysTable', cc_service_key[:guid])
         end
 
         context 'manage service keys' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='ServiceKeysTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_ServiceKeysTable_0').text).to eq('Delete')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(id: 'ToolTables_ServiceKeysTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_ServiceKeysTable_0' }
           end
 
-          it 'deletes the selected service key' do
-            # delete the service key
-            check_first_row
-            @driver.find_element(id: 'ToolTables_ServiceKeysTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected service keys?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServiceKeysTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='ServiceKeysTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_ServiceKeysTable_0' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected service keys?' }
+            let(:table_id)        { 'ServiceKeysTable' }
           end
         end
 
@@ -1699,36 +1541,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage organization roles' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='OrganizationRolesTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_OrganizationRolesTable_0').text).to eq('Delete')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(id: 'ToolTables_OrganizationRolesTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_OrganizationRolesTable_0' }
           end
 
-          it 'deletes the selected organization role' do
-            check_first_row
-            @driver.find_element(id: 'ToolTables_OrganizationRolesTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected organization roles?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('delete first row') do
+            let(:button_id)               { 'ToolTables_OrganizationRolesTable_0' }
+            let(:check_no_data_available) { false }
+            let(:confirm_message)         { 'Are you sure you want to delete the selected organization roles?' }
+            let(:table_id)                { 'OrganizationRolesTable' }
           end
         end
 
@@ -1789,36 +1614,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage space roles' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='SpaceRolesTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_SpaceRolesTable_0').text).to eq('Delete')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(id: 'ToolTables_SpaceRolesTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_SpaceRolesTable_0' }
           end
 
-          it 'deletes the selected space role' do
-            check_first_row
-            @driver.find_element(id: 'ToolTables_SpaceRolesTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected space roles?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('delete first row') do
+            let(:button_id)               { 'ToolTables_SpaceRolesTable_0' }
+            let(:check_no_data_available) { false }
+            let(:confirm_message)         { 'Are you sure you want to delete the selected space roles?' }
+            let(:table_id)                { 'SpaceRolesTable' }
           end
         end
 
@@ -2026,49 +1834,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='DomainsTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_domain[:guid])
+          check_checkbox_guid('DomainsTable', cc_domain[:guid])
         end
 
         context 'manage domains' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='DomainsTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_DomainsTable_0').text).to eq('Delete')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(id: 'ToolTables_DomainsTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_DomainsTable_0' }
           end
 
-          it 'deletes the selected domain' do
-            # delete the domain
-            check_first_row
-            @driver.find_element(id: 'ToolTables_DomainsTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected domains?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='DomainsTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='DomainsTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_DomainsTable_0' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected domains?' }
+            let(:table_id)        { 'DomainsTable' }
           end
         end
 
@@ -2148,49 +1929,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='QuotasTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_quota_definition[:guid])
+          check_checkbox_guid('QuotasTable', cc_quota_definition[:guid])
         end
 
         context 'manage quotas' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='QuotasTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_QuotasTable_0').text).to eq('Delete')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(id: 'ToolTables_QuotasTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_QuotasTable_0' }
           end
 
-          it 'deletes the selected quota' do
-            # delete the quota
-            check_first_row
-            @driver.find_element(id: 'ToolTables_QuotasTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected quota definitions?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='QuotasTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='QuotasTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_QuotasTable_0' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected quota definitions?' }
+            let(:table_id)        { 'QuotasTable' }
           end
         end
 
@@ -2258,49 +2012,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='SpaceQuotasTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_space_quota_definition[:guid])
+          check_checkbox_guid('SpaceQuotasTable', cc_space_quota_definition[:guid])
         end
 
         context 'manage space quotas' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='SpaceQuotasTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_SpaceQuotasTable_0').text).to eq('Delete')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(id: 'ToolTables_SpaceQuotasTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_SpaceQuotasTable_0' }
           end
 
-          it 'deletes the selected space quota' do
-            # delete the space quota
-            check_first_row
-            @driver.find_element(id: 'ToolTables_SpaceQuotasTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected space quota definitions?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpaceQuotasTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='SpaceQuotasTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_SpaceQuotasTable_0' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected space quota definitions?' }
+            let(:table_id)        { 'SpaceQuotasTable' }
           end
         end
 
@@ -2634,49 +2361,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='ServiceBrokersTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_service_broker[:guid])
+          check_checkbox_guid('ServiceBrokersTable', cc_service_broker[:guid])
         end
 
         context 'manage service brokers' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='ServiceBrokersTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_ServiceBrokersTable_0').text).to eq('Delete')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(id: 'ToolTables_ServiceBrokersTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_ServiceBrokersTable_0' }
           end
 
-          it 'deletes the selected service broker' do
-            # delete the service broker
-            check_first_row
-            @driver.find_element(id: 'ToolTables_ServiceBrokersTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected service brokers?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServiceBrokersTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='ServiceBrokersTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_ServiceBrokersTable_0' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected service brokers?' }
+            let(:table_id)        { 'ServiceBrokersTable' }
           end
         end
 
@@ -2786,32 +2486,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='ServicesTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_service[:guid])
+          check_checkbox_guid('ServicesTable', cc_service[:guid])
         end
 
         context 'manage services' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='ServicesTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_ServicesTable_0').text).to eq('Delete')
           end
 
           it 'has a Purge button' do
             expect(@driver.find_element(id: 'ToolTables_ServicesTable_1').text).to eq('Purge')
-          end
-
-          shared_examples 'click button without selecting a single row' do
-            it 'alerts the user to select at least one row when clicking the button' do
-              @driver.find_element(id: button_id).click
-              expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-              expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-              expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-              @driver.find_element(id: 'modalDialogButton0').click
-            end
           end
 
           # Delete button
@@ -2824,33 +2508,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             let(:button_id) { 'ToolTables_ServicesTable_1' }
           end
 
-          def manage_service(button_id, message)
-            check_first_row
-
-            @driver.find_element(id: button_id).click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq(message)
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServicesTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='ServicesTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_ServicesTable_0' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected services?' }
+            let(:table_id)        { 'ServicesTable' }
           end
 
-          it 'deletes the selected service' do
-            manage_service('ToolTables_ServicesTable_0', 'Are you sure you want to delete the selected services?')
-          end
-
-          it 'purges the selected service' do
-            manage_service('ToolTables_ServicesTable_1', 'Are you sure you want to purge the selected services?')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_ServicesTable_1' }
+            let(:confirm_message) { 'Are you sure you want to purge the selected services?' }
+            let(:table_id)        { 'ServicesTable' }
           end
         end
 
@@ -2981,18 +2648,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_service_plan[:guid])
+          check_checkbox_guid('ServicePlansTable', cc_service_plan[:guid])
         end
 
         context 'manage service plans' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           def manage_service_plan(buttonIndex)
-            check_first_row
+            check_first_row('ServicePlansTable')
             @driver.find_element(id: "ToolTables_ServicePlansTable_#{ buttonIndex }").click
             check_operation_result
           end
@@ -3007,13 +2668,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[8]").text).to eq(expect_state)
           end
 
-          def check_operation_result
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
-          end
-
           it 'has a Public button' do
             expect(@driver.find_element(id: 'ToolTables_ServicePlansTable_0').text).to eq('Public')
           end
@@ -3024,17 +2678,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_ServicePlansTable_2').text).to eq('Delete')
-          end
-
-          shared_examples 'click button without selecting a single row' do
-            it 'alerts the user to select at least one row when clicking the button' do
-              @driver.find_element(id: button_id).click
-
-              expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-              expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-              expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-              @driver.find_element(id: 'modalDialogButton0').click
-            end
           end
 
           it_behaves_like('click button without selecting a single row') do
@@ -3055,23 +2698,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_service_plan_state('false')
           end
 
-          it 'deletes the selected service plan' do
-            # delete the service plan
-            check_first_row
-            @driver.find_element(id: 'ToolTables_ServicePlansTable_2').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected service plans?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            check_operation_result
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_ServicePlansTable_2' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected service plans?' }
+            let(:table_id)        { 'ServicePlansTable' }
           end
         end
 
@@ -3203,49 +2833,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          inputs = @driver.find_elements(xpath: "//table[@id='ServicePlanVisibilitiesTable']/tbody/tr/td[1]/input")
-          expect(inputs.length).to eq(1)
-          expect(inputs[0].attribute('value')).to eq(cc_service_plan_visibility[:guid])
+          check_checkbox_guid('ServicePlanVisibilitiesTable', cc_service_plan_visibility[:guid])
         end
 
         context 'manage service plan visibilities' do
-          def check_first_row
-            @driver.find_elements(xpath: "//table[@id='ServicePlanVisibilitiesTable']/tbody/tr/td[1]/input")[0].click
-          end
-
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_ServicePlanVisibilitiesTable_0').text).to eq('Delete')
           end
 
-          it 'alerts the user to select at least one row when clicking the delete button' do
-            @driver.find_element(id: 'ToolTables_ServicePlanVisibilitiesTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
-            @driver.find_element(id: 'modalDialogButton0').click
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_ServicePlanVisibilitiesTable_0' }
           end
 
-          it 'deletes the selected service plan visibility' do
-            # delete the service plan visibility
-            check_first_row
-            @driver.find_element(id: 'ToolTables_ServicePlanVisibilitiesTable_0').click
-
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
-            expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Are you sure you want to delete the selected service plan visibilities?')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
-            @driver.find_element(id: 'modalDialogButton0').click
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServicePlanVisibilitiesTable']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            expect(@driver.find_element(xpath: "//table[@id='ServicePlanVisibilitiesTable']/tbody/tr").text).to eq('No data available in table')
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_ServicePlanVisibilitiesTable_0' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected service plan visibilities?' }
+            let(:table_id)        { 'ServicePlanVisibilitiesTable' }
           end
         end
 
