@@ -287,6 +287,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete application')
     end
 
+    shared_examples 'common delete application recursive' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/applications/application1?recursive=true')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete application recursive via http' do
+      it_behaves_like('common delete application recursive')
+    end
+
+    context 'delete application recursive via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete application recursive')
+    end
+
     shared_examples 'common delete domain' do
       it 'returns failure code due to disconnection' do
         response = delete('/domains/domain1')
@@ -304,6 +321,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete domain')
     end
 
+    shared_examples 'common delete domain recursive' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/domains/domain1?recursive=true')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete domain recursive via http' do
+      it_behaves_like('common delete domain recursive')
+    end
+
+    context 'delete domain recursive via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete domain recursive')
+    end
+
     shared_examples 'common delete organization' do
       it 'returns failure code due to disconnection' do
         response = delete('/organizations/organization1')
@@ -319,6 +353,23 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete organization')
+    end
+
+    shared_examples 'common delete organization recursive' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/organizations/organization1?recursive=true')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete organization recursive via http' do
+      it_behaves_like('common delete organization recursive')
+    end
+
+    context 'delete organization recursive via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete organization recursive')
     end
 
     shared_examples 'common delete organization role' do
@@ -457,6 +508,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete service instance')
     end
 
+    shared_examples 'common delete service instance recursive' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_instances/service_instance1?recursive=true')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete service instance recursive via http' do
+      it_behaves_like('common delete service instance recursive')
+    end
+
+    context 'delete service instance recursive via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service instance recursive')
+    end
+
     shared_examples 'common delete service key' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_keys/service_key1')
@@ -523,6 +591,23 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete space')
+    end
+
+    shared_examples 'common delete space recursive' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/spaces/space1?recursive=true')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete space recursive via http' do
+      it_behaves_like('common delete space recursive')
+    end
+
+    context 'delete space recursive via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete space recursive')
     end
 
     shared_examples 'common delete space quota definition' do
@@ -1207,12 +1292,24 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/applications/application1')
       end
 
+      it 'deletes /applications/:guid?recursive=true redirects as expected' do
+        delete_redirects_as_expected('/applications/application1?recursive=true')
+      end
+
       it 'deletes /domains/:guid redirects as expected' do
         delete_redirects_as_expected('/domains/domain1')
       end
 
+      it 'deletes /domains/:guid?recursive=true redirects as expected' do
+        delete_redirects_as_expected('/domains/domain1?recursive=true')
+      end
+
       it 'deletes /organizations/:guid redirects as expected' do
         delete_redirects_as_expected('/organizations/organization1')
+      end
+
+      it 'deletes /organizations/:guid?recursive=true redirects as expected' do
+        delete_redirects_as_expected('/organizations/organization1?recursive=true')
       end
 
       it 'deletes /organizations/:guid/:role/:guid redirects as expected' do
@@ -1239,6 +1336,10 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/service_instances/service_instance1')
       end
 
+      it 'deletes /service_instances/:guid?recursive=true redirects as expected' do
+        delete_redirects_as_expected('/service_instances/service_instance1?recursive=true')
+      end
+
       it 'deletes /service_keys/:guid redirects as expected' do
         delete_redirects_as_expected('/service_keys/service_key1')
       end
@@ -1255,6 +1356,10 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/services/service1')
       end
 
+      it 'deletes /services/:guid?purge=true redirects as expected' do
+        delete_redirects_as_expected('/services/service1?purge=true')
+      end
+
       it 'deletes /space_quota_definitions/:guid redirects as expected' do
         delete_redirects_as_expected('/space_quota_definitions/space_quota1')
       end
@@ -1265,6 +1370,10 @@ describe AdminUI::Admin do
 
       it 'deletes /spaces/:guid redirects as expected' do
         delete_redirects_as_expected('/spaces/space1')
+      end
+
+      it 'deletes /spaces/:guid?recursive=true redirects as expected' do
+        delete_redirects_as_expected('/spaces/space1?recursive=true')
       end
 
       it 'deletes /spaces/:guid/:role/:guid redirects as expected' do

@@ -329,7 +329,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_OrganizationsTable_5')
+          check_allowscriptaccess_attribute('ToolTables_OrganizationsTable_6')
         end
 
         it 'has a checkbox in the first column' do
@@ -355,6 +355,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_4').text).to eq('Delete')
+          end
+
+          it 'has a Delete Recursive button' do
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_5').text).to eq('Delete Recursive')
           end
 
           it 'creates an organization' do
@@ -402,6 +406,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_OrganizationsTable_4' }
+          end
+
+          # Delete Recursive button
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_OrganizationsTable_5' }
           end
 
           context 'set quota' do
@@ -465,9 +474,17 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_organization_status('SUSPENDED')
           end
 
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_OrganizationsTable_4' }
             let(:confirm_message) { 'Are you sure you want to delete the selected organizations?' }
+            let(:table_id)        { 'OrganizationsTable' }
+          end
+
+          # Delete Recursive button
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_OrganizationsTable_5' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected organizations and their contained spaces, space quotas, applications, routes, service instances, service bindings and service keys?' }
             let(:table_id)        { 'OrganizationsTable' }
           end
         end
@@ -610,7 +627,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_SpacesTable_1')
+          check_allowscriptaccess_attribute('ToolTables_SpacesTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -622,13 +639,31 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_SpacesTable_0').text).to eq('Delete')
           end
 
+          it 'has a Delete Recursive button' do
+            expect(@driver.find_element(id: 'ToolTables_SpacesTable_1').text).to eq('Delete Recursive')
+          end
+
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_SpacesTable_0' }
           end
 
+          # Delete Recursive button
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_SpacesTable_1' }
+          end
+
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_SpacesTable_0' }
             let(:confirm_message) { 'Are you sure you want to delete the selected spaces?' }
+            let(:table_id)        { 'SpacesTable' }
+          end
+
+          # Delete Recursive button
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_SpacesTable_1' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected spaces and their contained applications, routes, service instances, service bindings and service keys?' }
             let(:table_id)        { 'SpacesTable' }
           end
         end
@@ -751,7 +786,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ApplicationsTable_4')
+          check_allowscriptaccess_attribute('ToolTables_ApplicationsTable_5')
         end
 
         it 'has a checkbox in the first column' do
@@ -789,6 +824,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_3').text).to eq('Delete')
           end
 
+          it 'has a Delete Recursive button' do
+            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_4').text).to eq('Delete Recursive')
+          end
+
           # Start button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ApplicationsTable_0' }
@@ -807,6 +846,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ApplicationsTable_3' }
+          end
+
+          # Delete Recursive button
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_ApplicationsTable_4' }
           end
 
           it 'stops the selected application' do
@@ -835,55 +879,69 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_app_state('STARTED')
           end
 
-          def check_deleted_app_table_data
-            check_table_data(Selenium::WebDriver::Wait.new(timeout: 360).until { refresh_button && @driver.find_elements(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td") },
-                             [
-                               '',
-                               cc_app[:name],
-                               cc_app[:guid],
-                               '',
-                               '',
-                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
-                               '',
-                               '',
-                               Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
-                               "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
-                               cc_stack[:name],
-                               '',
-                               '0',
-                               '1',
-                               @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })"),
-                               @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
-                               @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
-                               @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
-                               @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })"),
-                               @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })"),
-                               '',
-                               nats_dea['host']
-                             ])
+          shared_examples 'deletes the selected application' do
+            def check_deleted_app_table_data
+              check_table_data(Selenium::WebDriver::Wait.new(timeout: 360).until { refresh_button && @driver.find_elements(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td") },
+                               [
+                                 '',
+                                 cc_app[:name],
+                                 cc_app[:guid],
+                                 '',
+                                 '',
+                                 varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
+                                 '',
+                                 '',
+                                 Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
+                                 "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
+                                 cc_stack[:name],
+                                 '',
+                                 '0',
+                                 '1',
+                                 @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })"),
+                                 @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
+                                 @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
+                                 @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
+                                 @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })"),
+                                 @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })"),
+                                 '',
+                                 nats_dea['host']
+                               ])
+            end
+
+            it 'deletes the selected application' do
+              # delete the application
+              check_first_row('ApplicationsTable')
+              @driver.find_element(id: button_id).click
+
+              confirm(confirm_message)
+
+              check_operation_result
+
+              begin
+                Selenium::WebDriver::Wait.new(timeout: 560).until do
+                  begin
+                    check_deleted_app_table_data
+                    # If this works, no reason to continue in this loop
+                    break
+                  rescue RSpec::Expectations::ExpectationNotMetError
+                  end
+                end
+              rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+              end
+              check_deleted_app_table_data
+            end
           end
 
-          it 'deletes the selected application' do
-            # delete the application
-            check_first_row('ApplicationsTable')
-            @driver.find_element(id: 'ToolTables_ApplicationsTable_3').click
+          # Delete button
+          it_behaves_like('deletes the selected application') do
+            let(:button_id) { 'ToolTables_ApplicationsTable_3' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected applications?' }
+          end
 
-            confirm('Are you sure you want to delete the selected applications?')
-
-            check_operation_result
-
-            begin
-              Selenium::WebDriver::Wait.new(timeout: 560).until do
-                begin
-                  check_deleted_app_table_data
-                  # If this works, no reason to continue in this loop
-                  break
-                rescue RSpec::Expectations::ExpectationNotMetError
-                end
-              end
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            end
-            check_deleted_app_table_data
+          # Delete Recursive button
+          it_behaves_like('deletes the selected application') do
+            let(:button_id) { 'ToolTables_ApplicationsTable_4' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected applications and their associated service bindings?' }
           end
         end
 
@@ -1001,10 +1059,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_RoutesTable_0').text).to eq('Delete')
           end
 
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_RoutesTable_0' }
           end
 
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_RoutesTable_0' }
             let(:confirm_message) { 'Are you sure you want to delete the selected routes?' }
@@ -1105,7 +1165,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ServiceInstancesTable_1')
+          check_allowscriptaccess_attribute('ToolTables_ServiceInstancesTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -1117,13 +1177,31 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_ServiceInstancesTable_0').text).to eq('Delete')
           end
 
+          it 'has a Delete Recursive button' do
+            expect(@driver.find_element(id: 'ToolTables_ServiceInstancesTable_1').text).to eq('Delete Recursive')
+          end
+
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ServiceInstancesTable_0' }
           end
 
+          # Delete Recursive button
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_ServiceInstancesTable_1' }
+          end
+
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_ServiceInstancesTable_0' }
             let(:confirm_message) { 'Are you sure you want to delete the selected service instances?' }
+            let(:table_id)        { 'ServiceInstancesTable' }
+          end
+
+          # Delete Recursive button
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_ServiceInstancesTable_1' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected service instances and their associated service bindings and service keys?' }
             let(:table_id)        { 'ServiceInstancesTable' }
           end
         end
@@ -1275,10 +1353,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_ServiceBindingsTable_0').text).to eq('Delete')
           end
 
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ServiceBindingsTable_0' }
           end
 
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_ServiceBindingsTable_0' }
             let(:confirm_message) { 'Are you sure you want to delete the selected service bindings?' }
@@ -1428,10 +1508,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_ServiceKeysTable_0').text).to eq('Delete')
           end
 
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ServiceKeysTable_0' }
           end
 
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_ServiceKeysTable_0' }
             let(:confirm_message) { 'Are you sure you want to delete the selected service keys?' }
@@ -1545,10 +1627,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_OrganizationRolesTable_0').text).to eq('Delete')
           end
 
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_OrganizationRolesTable_0' }
           end
 
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)               { 'ToolTables_OrganizationRolesTable_0' }
             let(:check_no_data_available) { false }
@@ -1618,10 +1702,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_SpaceRolesTable_0').text).to eq('Delete')
           end
 
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_SpaceRolesTable_0' }
           end
 
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)               { 'ToolTables_SpaceRolesTable_0' }
             let(:check_no_data_available) { false }
@@ -1830,7 +1916,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_DomainsTable_1')
+          check_allowscriptaccess_attribute('ToolTables_DomainsTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -1842,13 +1928,31 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_DomainsTable_0').text).to eq('Delete')
           end
 
+          it 'has a Delete Recursive button' do
+            expect(@driver.find_element(id: 'ToolTables_DomainsTable_1').text).to eq('Delete Recursive')
+          end
+
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_DomainsTable_0' }
           end
 
+          # Delete Recursive button
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_DomainsTable_1' }
+          end
+
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_DomainsTable_0' }
             let(:confirm_message) { 'Are you sure you want to delete the selected domains?' }
+            let(:table_id)        { 'DomainsTable' }
+          end
+
+          # Delete Recursive button
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_DomainsTable_1' }
+            let(:confirm_message) { 'Are you sure you want to delete the selected domains and their associated routes?' }
             let(:table_id)        { 'DomainsTable' }
           end
         end
@@ -1937,10 +2041,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_QuotasTable_0').text).to eq('Delete')
           end
 
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_QuotasTable_0' }
           end
 
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_QuotasTable_0' }
             let(:confirm_message) { 'Are you sure you want to delete the selected quota definitions?' }
@@ -2020,10 +2126,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_SpaceQuotasTable_0').text).to eq('Delete')
           end
 
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_SpaceQuotasTable_0' }
           end
 
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_SpaceQuotasTable_0' }
             let(:confirm_message) { 'Are you sure you want to delete the selected space quota definitions?' }
@@ -2369,10 +2477,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_ServiceBrokersTable_0').text).to eq('Delete')
           end
 
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ServiceBrokersTable_0' }
           end
 
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_ServiceBrokersTable_0' }
             let(:confirm_message) { 'Are you sure you want to delete the selected service brokers?' }
@@ -2508,12 +2618,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             let(:button_id) { 'ToolTables_ServicesTable_1' }
           end
 
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_ServicesTable_0' }
             let(:confirm_message) { 'Are you sure you want to delete the selected services?' }
             let(:table_id)        { 'ServicesTable' }
           end
 
+          # Purge button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_ServicesTable_1' }
             let(:confirm_message) { 'Are you sure you want to purge the selected services?' }
@@ -2680,14 +2792,17 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_ServicePlansTable_2').text).to eq('Delete')
           end
 
+          # Public button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ServicePlansTable_0' }
           end
 
+          # Private button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ServicePlansTable_1' }
           end
 
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ServicePlansTable_2' }
           end
@@ -2698,6 +2813,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_service_plan_state('false')
           end
 
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_ServicePlansTable_2' }
             let(:confirm_message) { 'Are you sure you want to delete the selected service plans?' }
@@ -2841,10 +2957,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_ServicePlanVisibilitiesTable_0').text).to eq('Delete')
           end
 
+          # Delete button
           it_behaves_like('click button without selecting a single row') do
             let(:button_id) { 'ToolTables_ServicePlanVisibilitiesTable_0' }
           end
 
+          # Delete button
           it_behaves_like('delete first row') do
             let(:button_id)       { 'ToolTables_ServicePlanVisibilitiesTable_0' }
             let(:confirm_message) { 'Are you sure you want to delete the selected service plan visibilities?' }

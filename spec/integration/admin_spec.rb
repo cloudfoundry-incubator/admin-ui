@@ -181,6 +181,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/applications/#{ cc_app[:guid] }"]])
     end
 
+    def delete_app_recursive
+      response = delete_request("/applications/#{ cc_app[:guid] }?recursive=true")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/applications/#{ cc_app[:guid] }?recursive=true"]], true)
+    end
+
     it 'has user name and applications in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/applications_view_model']], true)
     end
@@ -197,6 +203,10 @@ describe AdminUI::Admin, type: :integration do
     it 'deletes an application' do
       expect { delete_app }.to change { get_json('/applications_view_model')['items']['items'][0][3] }.from('STARTED').to(nil)
     end
+
+    it 'deletes an application recursive' do
+      expect { delete_app_recursive }.to change { get_json('/applications_view_model')['items']['items'][0][3] }.from('STARTED').to(nil)
+    end
   end
 
   context 'manage domain' do
@@ -211,7 +221,13 @@ describe AdminUI::Admin, type: :integration do
     def delete_domain
       response = delete_request("/domains/#{ cc_domain[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/domains/#{ cc_domain[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/domains/#{ cc_domain[:guid] }"]])
+    end
+
+    def delete_domain_recursive
+      response = delete_request("/domains/#{ cc_domain[:guid] }?recursive=true")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/domains/#{ cc_domain[:guid] }?recursive=true"]], true)
     end
 
     it 'has user name and domains request in the log file' do
@@ -220,6 +236,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes the specific domain' do
       expect { delete_domain }.to change { get_json('/domains_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes the specific domain recursive' do
+      expect { delete_domain_recursive }.to change { get_json('/domains_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -238,16 +258,34 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['post', "/organizations; body = {\"name\":\"#{ cc_organization2[:name] }\"}"]], true)
     end
 
-    def delete_org
-      response = delete_request("/organizations/#{ cc_organization[:guid] }")
-      expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/organizations/#{ cc_organization[:guid] }"]], true)
-    end
-
     def set_quota
       response = put_request("/organizations/#{ cc_organization[:guid] }", "{\"quota_definition_guid\":\"#{ cc_quota_definition2[:guid] }\"}")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
       verify_sys_log_entries([['put', "/organizations/#{ cc_organization[:guid] }; body = {\"quota_definition_guid\":\"#{ cc_quota_definition2[:guid] }\"}"]], true)
+    end
+
+    def activate_org
+      response = put_request("/organizations/#{ cc_organization[:guid] }", '{"status":"active"}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['put', "/organizations/#{ cc_organization[:guid] }; body = {\"status\":\"active\"}"]], true)
+    end
+
+    def suspend_org
+      response = put_request("/organizations/#{ cc_organization[:guid] }", '{"status":"suspended"}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['put', "/organizations/#{ cc_organization[:guid] }; body = {\"status\":\"suspended\"}"]], true)
+    end
+
+    def delete_org
+      response = delete_request("/organizations/#{ cc_organization[:guid] }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/organizations/#{ cc_organization[:guid] }"]])
+    end
+
+    def delete_org_recursive
+      response = delete_request("/organizations/#{ cc_organization[:guid] }?recursive=true")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/organizations/#{ cc_organization[:guid] }?recursive=true"]], true)
     end
 
     it 'has user name and organizations request in the log file' do
@@ -257,22 +295,6 @@ describe AdminUI::Admin, type: :integration do
     it 'creates an organization' do
       expect { create_org }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(2)
       expect(get_json('/organizations_view_model', false)['items']['items'][1][1]).to eq(cc_organization2[:name])
-    end
-
-    def suspend_org
-      response = put_request("/organizations/#{ cc_organization[:guid] }", '{"status":"suspended"}')
-      expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['put', "/organizations/#{ cc_organization[:guid] }; body = {\"status\":\"suspended\"}"]], true)
-    end
-
-    def activate_org
-      response = put_request("/organizations/#{ cc_organization[:guid] }", '{"status":"active"}')
-      expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['put', "/organizations/#{ cc_organization[:guid] }; body = {\"status\":\"active\"}"]], true)
-    end
-
-    it 'deletes an organization' do
-      expect { delete_org }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(0)
     end
 
     context 'sets the specific quota for organization' do
@@ -290,6 +312,14 @@ describe AdminUI::Admin, type: :integration do
     it 'suspends the organization' do
       expect { suspend_org }.to change { get_json('/organizations_view_model')['items']['items'][0][3] }.from('active').to('suspended')
     end
+
+    it 'deletes an organization' do
+      expect { delete_org }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes an organization recursive' do
+      expect { delete_org_recursive }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(0)
+    end
   end
 
   context 'manage organization role' do
@@ -304,7 +334,7 @@ describe AdminUI::Admin, type: :integration do
     def delete_organization_role
       response = delete_request("/organizations/#{ cc_organization[:guid] }/auditors/#{ cc_user[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/organizations/#{ cc_organization[:guid] }/auditors/#{ cc_user[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/organizations/#{ cc_organization[:guid] }/auditors/#{ cc_user[:guid] }"]])
     end
 
     it 'has user name and organization roles request in the log file' do
@@ -328,7 +358,7 @@ describe AdminUI::Admin, type: :integration do
     def delete_quota
       response = delete_request("/quota_definitions/#{ cc_quota_definition[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/quota_definitions/#{ cc_quota_definition[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/quota_definitions/#{ cc_quota_definition[:guid] }"]])
     end
 
     it 'has user name and quotas request in the log file' do
@@ -352,7 +382,7 @@ describe AdminUI::Admin, type: :integration do
     def delete_route
       response = delete_request("/routes/#{ cc_route[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/routes/#{ cc_route[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/routes/#{ cc_route[:guid] }"]])
     end
 
     it 'has user name and routes request in the log file' do
@@ -376,7 +406,7 @@ describe AdminUI::Admin, type: :integration do
     def delete_service
       response = delete_request("/services/#{ cc_service[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/services/#{ cc_service[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/services/#{ cc_service[:guid] }"]])
     end
 
     def purge_service
@@ -410,7 +440,7 @@ describe AdminUI::Admin, type: :integration do
     def delete_service_binding
       response = delete_request("/service_bindings/#{ cc_service_binding[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/service_bindings/#{ cc_service_binding[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/service_bindings/#{ cc_service_binding[:guid] }"]])
     end
 
     it 'has user name and service bindings request in the log file' do
@@ -434,7 +464,7 @@ describe AdminUI::Admin, type: :integration do
     def delete_service_broker
       response = delete_request("/service_brokers/#{ cc_service_broker[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/service_brokers/#{ cc_service_broker[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/service_brokers/#{ cc_service_broker[:guid] }"]])
     end
 
     it 'has user name and service brokers request in the log file' do
@@ -458,7 +488,13 @@ describe AdminUI::Admin, type: :integration do
     def delete_service_instance
       response = delete_request("/service_instances/#{ cc_service_instance[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/service_instances/#{ cc_service_instance[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/service_instances/#{ cc_service_instance[:guid] }"]])
+    end
+
+    def delete_service_instance_recursive
+      response = delete_request("/service_instances/#{ cc_service_instance[:guid] }?recursive=true")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/service_instances/#{ cc_service_instance[:guid] }?recursive=true"]], true)
     end
 
     it 'has user name and service instances request in the log file' do
@@ -467,6 +503,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes the specific service instance' do
       expect { delete_service_instance }.to change { get_json('/service_instances_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes the specific service instance recursive' do
+      expect { delete_service_instance_recursive }.to change { get_json('/service_instances_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -482,7 +522,7 @@ describe AdminUI::Admin, type: :integration do
     def delete_service_key
       response = delete_request("/service_keys/#{ cc_service_key[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/service_keys/#{ cc_service_key[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/service_keys/#{ cc_service_key[:guid] }"]])
     end
 
     it 'has user name and service keys request in the log file' do
@@ -518,7 +558,7 @@ describe AdminUI::Admin, type: :integration do
     def delete_service_plan
       response = delete_request("/service_plans/#{ cc_service_plan[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/service_plans/#{ cc_service_plan[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/service_plans/#{ cc_service_plan[:guid] }"]])
     end
 
     it 'has user name and service plan request in the log file' do
@@ -548,7 +588,7 @@ describe AdminUI::Admin, type: :integration do
     def delete_service_plan_visibility
       response = delete_request("/service_plan_visibilities/#{ cc_service_plan_visibility[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/service_plan_visibilities/#{ cc_service_plan_visibility[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/service_plan_visibilities/#{ cc_service_plan_visibility[:guid] }"]])
     end
 
     it 'has user name and service plan visibility request in the log file' do
@@ -572,7 +612,13 @@ describe AdminUI::Admin, type: :integration do
     def delete_space
       response = delete_request("/spaces/#{ cc_space[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/spaces/#{ cc_space[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/spaces/#{ cc_space[:guid] }"]])
+    end
+
+    def delete_space_recursive
+      response = delete_request("/spaces/#{ cc_space[:guid] }?recursive=true")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/spaces/#{ cc_space[:guid] }?recursive=true"]], true)
     end
 
     it 'has user name and space request in the log file' do
@@ -581,6 +627,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes the specific space' do
       expect { delete_space }.to change { get_json('/spaces_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes the specific space recursive' do
+      expect { delete_space_recursive }.to change { get_json('/spaces_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -596,7 +646,7 @@ describe AdminUI::Admin, type: :integration do
     def delete_space_quota
       response = delete_request("/space_quota_definitions/#{ cc_space_quota_definition[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/space_quota_definitions/#{ cc_space_quota_definition[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/space_quota_definitions/#{ cc_space_quota_definition[:guid] }"]])
     end
 
     it 'has user name and quotas request in the log file' do
@@ -621,7 +671,7 @@ describe AdminUI::Admin, type: :integration do
     def delete_space_quota_space
       response = delete_request("/space_quota_definitions/#{ cc_space_quota_definition[:guid] }/spaces/#{ cc_space[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/space_quota_definitions/#{ cc_space_quota_definition[:guid] }/spaces/#{ cc_space[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/space_quota_definitions/#{ cc_space_quota_definition[:guid] }/spaces/#{ cc_space[:guid] }"]])
     end
 
     context 'deletes the specific space quota space' do
@@ -660,7 +710,7 @@ describe AdminUI::Admin, type: :integration do
     def delete_space_role
       response = delete_request("/spaces/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
-      verify_sys_log_entries([['delete', "/spaces/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }"]], true)
+      verify_sys_log_entries([['delete', "/spaces/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }"]])
     end
 
     it 'has user name and space roles request in the log file' do

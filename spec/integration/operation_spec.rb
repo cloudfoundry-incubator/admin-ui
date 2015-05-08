@@ -67,7 +67,11 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_application
-        operation.delete_application(cc_app[:guid])
+        operation.delete_application(cc_app[:guid], false)
+      end
+
+      def delete_application_recursive
+        operation.delete_application(cc_app[:guid], true)
       end
 
       def start_application
@@ -93,6 +97,10 @@ describe AdminUI::Operation, type: :integration do
         expect { delete_application }.to change { cc.applications['items'].length }.from(1).to(0)
       end
 
+      it 'deletes the application recursive' do
+        expect { delete_application_recursive }.to change { cc.applications['items'].length }.from(1).to(0)
+      end
+
       context 'errors' do
         before do
           delete_application
@@ -105,16 +113,20 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.message).to eq("The app name could not be found: #{ cc_app[:guid] }")
         end
 
-        it 'fails deleting deleted app' do
-          expect { delete_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
-        end
-
         it 'fails starting deleted app' do
           expect { start_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
         end
 
         it 'fails stopping deleted app' do
           expect { stop_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
+        end
+
+        it 'fails deleting deleted app' do
+          expect { delete_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
+        end
+
+        it 'fails deleting recursive deleted app' do
+          expect { delete_application_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
         end
       end
     end
@@ -126,11 +138,19 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_domain
-        operation.delete_domain(cc_domain[:guid])
+        operation.delete_domain(cc_domain[:guid], false)
       end
 
-      it 'deletes specific domain' do
+      def delete_domain_recursive
+        operation.delete_domain(cc_domain[:guid], true)
+      end
+
+      it 'deletes domain' do
         expect { delete_domain }.to change { cc.domains['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes domain recursive' do
+        expect { delete_domain_recursive }.to change { cc.domains['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -148,6 +168,10 @@ describe AdminUI::Operation, type: :integration do
         it 'fails deleting deleted domain' do
           expect { delete_domain }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_domain_not_found(exception) }
         end
+
+        it 'fails deleting recursive deleted domain' do
+          expect { delete_domain_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_domain_not_found(exception) }
+        end
       end
     end
 
@@ -157,33 +181,33 @@ describe AdminUI::Operation, type: :integration do
         expect(cc.organizations['items'].length).to eq(1)
       end
 
-      def activate_organization
-        operation.manage_organization(cc_organization[:guid], '{"status":"active"}')
-      end
-
       def create_organization
         operation.create_organization("{\"name\":\"#{ cc_organization2[:name] }\"}")
-      end
-
-      def delete_organization
-        operation.delete_organization(cc_organization[:guid])
-      end
-
-      def suspend_organization
-        operation.manage_organization(cc_organization[:guid], '{"status":"suspended"}')
       end
 
       def set_organization_quota
         operation.manage_organization(cc_organization[:guid], "{\"quota_definition_guid\":\"#{ cc_quota_definition2[:guid] }\"}")
       end
 
+      def activate_organization
+        operation.manage_organization(cc_organization[:guid], '{"status":"active"}')
+      end
+
+      def suspend_organization
+        operation.manage_organization(cc_organization[:guid], '{"status":"suspended"}')
+      end
+
+      def delete_organization
+        operation.delete_organization(cc_organization[:guid], false)
+      end
+
+      def delete_organization_recursive
+        operation.delete_organization(cc_organization[:guid], true)
+      end
+
       it 'creates a new organization' do
         expect { create_organization }.to change { cc.organizations['items'].length }.from(1).to(2)
         expect(cc.organizations['items'][1][:name]).to eq(cc_organization2[:name])
-      end
-
-      it 'deletes specific organization' do
-        expect { delete_organization }.to change { cc.organizations['items'].length }.from(1).to(0)
       end
 
       context 'sets the quota for an organization' do
@@ -204,6 +228,14 @@ describe AdminUI::Operation, type: :integration do
         expect { suspend_organization }.to change { cc.organizations['items'][0][:status] }.from('active').to('suspended')
       end
 
+      it 'deletes organization' do
+        expect { delete_organization }.to change { cc.organizations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes organization recursive' do
+        expect { delete_organization_recursive }.to change { cc.organizations['items'].length }.from(1).to(0)
+      end
+
       context 'errors' do
         context 'not found error' do
           before do
@@ -215,10 +247,6 @@ describe AdminUI::Operation, type: :integration do
             expect(exception.cf_error_code).to eq('CF-OrganizationNotFound')
             expect(exception.http_code).to eq(404)
             expect(exception.message).to eq("The organization could not be found: #{ cc_organization[:guid] }")
-          end
-
-          it 'fails deleting deleted organization' do
-            expect { delete_organization }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_not_found(exception) }
           end
 
           context 'fails setting quota for a deleted organization' do
@@ -234,6 +262,14 @@ describe AdminUI::Operation, type: :integration do
 
           it 'fails suspending deleted organization' do
             expect { suspend_organization }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_not_found(exception) }
+          end
+
+          it 'fails deleting deleted organization' do
+            expect { delete_organization }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_not_found(exception) }
+          end
+
+          it 'fails deleting recursive deleted organization' do
+            expect { delete_organization_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_not_found(exception) }
           end
         end
 
@@ -273,19 +309,19 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_organization_role(cc_organization[:guid], 'users', cc_user[:guid])
       end
 
-      it 'deletes specific organization auditor role' do
+      it 'deletes organization auditor role' do
         expect { delete_organization_auditor }.to change { cc.organizations_auditors['items'].length }.from(1).to(0)
       end
 
-      it 'deletes specific organization billing_manager role' do
+      it 'deletes organization billing_manager role' do
         expect { delete_organization_billing_manager }.to change { cc.organizations_billing_managers['items'].length }.from(1).to(0)
       end
 
-      it 'deletes specific organization manager role' do
+      it 'deletes organization manager role' do
         expect { delete_organization_manager }.to change { cc.organizations_managers['items'].length }.from(1).to(0)
       end
 
-      it 'deletes specific organization user role' do
+      it 'deletes organization user role' do
         expect { delete_organization_user }.to change { cc.organizations_users['items'].length }.from(1).to(0)
       end
 
@@ -329,7 +365,7 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_quota_definition(cc_quota_definition[:guid])
       end
 
-      it 'deletes specific quota definition' do
+      it 'deletes quota definition' do
         expect { delete_quota_definition }.to change { cc.quota_definitions['items'].length }.from(1).to(0)
       end
 
@@ -361,7 +397,7 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_route(cc_route[:guid])
       end
 
-      it 'deletes specific route' do
+      it 'deletes route' do
         expect { delete_route }.to change { cc.routes['items'].length }.from(1).to(0)
       end
 
@@ -397,11 +433,11 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_service(cc_service[:guid], true)
       end
 
-      it 'deletes specific service' do
+      it 'deletes service' do
         expect { delete_service }.to change { cc.services['items'].length }.from(1).to(0)
       end
 
-      it 'purges specific service' do
+      it 'purges service' do
         expect { purge_service }.to change { cc.services['items'].length }.from(1).to(0)
       end
 
@@ -437,7 +473,7 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_service_binding(cc_service_binding[:guid])
       end
 
-      it 'deletes specific service binding' do
+      it 'deletes service binding' do
         expect { delete_service_binding }.to change { cc.service_bindings['items'].length }.from(1).to(0)
       end
 
@@ -469,7 +505,7 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_service_broker(cc_service_broker[:guid])
       end
 
-      it 'deletes specific service broker' do
+      it 'deletes service broker' do
         expect { delete_service_broker }.to change { cc.service_brokers['items'].length }.from(1).to(0)
       end
 
@@ -498,11 +534,19 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_service_instance
-        operation.delete_service_instance(cc_service_instance[:guid])
+        operation.delete_service_instance(cc_service_instance[:guid], false)
       end
 
-      it 'deletes specific service instance' do
+      def delete_service_instance_recursive
+        operation.delete_service_instance(cc_service_instance[:guid], true)
+      end
+
+      it 'deletes service instance' do
         expect { delete_service_instance }.to change { cc.service_instances['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes service instance recursive' do
+        expect { delete_service_instance_recursive }.to change { cc.service_instances['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -520,6 +564,10 @@ describe AdminUI::Operation, type: :integration do
         it 'fails deleting deleted service instance' do
           expect { delete_service_instance }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_instance_not_found(exception) }
         end
+
+        it 'fails deleting recursive deleted service instance' do
+          expect { delete_service_instance_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_instance_not_found(exception) }
+        end
       end
     end
 
@@ -533,7 +581,7 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_service_key(cc_service_key[:guid])
       end
 
-      it 'deletes specific service key' do
+      it 'deletes service key' do
         expect { delete_service_key }.to change { cc.service_keys['items'].length }.from(1).to(0)
       end
 
@@ -587,7 +635,7 @@ describe AdminUI::Operation, type: :integration do
         expect { make_service_plan_private }.to change { cc.service_plans['items'][0][:public].to_s }.from('true').to('false')
       end
 
-      it 'deletes specific service plan' do
+      it 'deletes service plan' do
         expect { delete_service_plan }.to change { cc.service_plans['items'].length }.from(1).to(0)
       end
 
@@ -627,7 +675,7 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_service_plan_visibility(cc_service_plan_visibility[:guid])
       end
 
-      it 'deletes specific service plan visibility' do
+      it 'deletes service plan visibility' do
         expect { delete_service_plan_visibility }.to change { cc.service_plan_visibilities['items'].length }.from(1).to(0)
       end
 
@@ -656,11 +704,19 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_space
-        operation.delete_space(cc_space[:guid])
+        operation.delete_space(cc_space[:guid], false)
       end
 
-      it 'deletes specific space' do
+      def delete_space_recursive
+        operation.delete_space(cc_space[:guid], true)
+      end
+
+      it 'deletes space' do
         expect { delete_space }.to change { cc.spaces['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes space recursive' do
+        expect { delete_space_recursive }.to change { cc.spaces['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -678,6 +734,10 @@ describe AdminUI::Operation, type: :integration do
         it 'fails deleting deleted space' do
           expect { delete_space }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
         end
+
+        it 'fails deleting recursive deleted space' do
+          expect { delete_space_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
+        end
       end
     end
 
@@ -691,7 +751,7 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_space_quota_definition(cc_space_quota_definition[:guid])
       end
 
-      it 'deletes specific space_quota definition' do
+      it 'deletes space_quota definition' do
         expect { delete_space_quota_definition }.to change { cc.space_quota_definitions['items'].length }.from(1).to(0)
       end
 
@@ -728,12 +788,12 @@ describe AdminUI::Operation, type: :integration do
 
       context 'sets the space quota definition for a space' do
         let(:insert_second_quota_definition) { true }
-        it 'creates specific space quota definition space' do
+        it 'creates space quota definition space' do
           expect { create_space_quota_definition_space }.to change { cc.spaces['items'][0][:space_quota_definition_id] }.from(cc_space_quota_definition[:id]).to(cc_space_quota_definition2[:id])
         end
       end
 
-      it 'deletes specific space quota definition space' do
+      it 'deletes space quota definition space' do
         expect { delete_space_quota_definition_space }.to change { cc.spaces['items'][0][:space_quota_definition_id] }.from(cc_space_quota_definition[:id]).to(nil)
       end
 
@@ -775,15 +835,15 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_space_role(cc_space[:guid], 'managers', cc_user[:guid])
       end
 
-      it 'deletes specific space auditor role' do
+      it 'deletes space auditor role' do
         expect { delete_space_auditor }.to change { cc.spaces_auditors['items'].length }.from(1).to(0)
       end
 
-      it 'deletes specific space developer role' do
+      it 'deletes space developer role' do
         expect { delete_space_developer }.to change { cc.spaces_developers['items'].length }.from(1).to(0)
       end
 
-      it 'deletes specific space manager role' do
+      it 'deletes space manager role' do
         expect { delete_space_manager }.to change { cc.spaces_managers['items'].length }.from(1).to(0)
       end
 

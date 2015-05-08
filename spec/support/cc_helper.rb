@@ -950,6 +950,15 @@ module CCHelper
       end
     end
 
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps/#{ cc_app[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        cc_clear_apps_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps/#{ cc_app[:guid] }?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_apps_deleted
         cc_app_not_found
@@ -968,6 +977,15 @@ module CCHelper
 
   def cc_domain_stubs(config)
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/domains/#{ cc_domain[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_domains_deleted
+        cc_domain_not_found
+      else
+        cc_clear_domains_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/domains/#{ cc_domain[:guid] }?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_domains_deleted
         cc_domain_not_found
       else
@@ -1018,6 +1036,15 @@ module CCHelper
         end
         @cc_organization_created = true
         OK.new('{}')
+      end
+    end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/organizations/#{ cc_organization[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        cc_clear_organizations_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
 
@@ -1195,6 +1222,15 @@ module CCHelper
   end
 
   def cc_service_instance_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_instances/#{ cc_service_instance[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_service_instances_deleted
+        cc_service_instance_not_found
+      else
+        cc_clear_service_instances_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/service_instances/#{ cc_service_instance[:guid] }?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_service_instances_deleted
         cc_service_instance_not_found
@@ -1281,6 +1317,15 @@ module CCHelper
   end
 
   def cc_space_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces/#{ cc_space[:guid] }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        cc_clear_spaces_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/spaces/#{ cc_space[:guid] }?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_spaces_deleted
         cc_space_not_found

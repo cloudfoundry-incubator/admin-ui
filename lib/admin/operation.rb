@@ -25,25 +25,36 @@ module AdminUI
       @view_models.invalidate_spaces
     end
 
-    def delete_application(app_guid)
-      url = "v2/apps/#{ app_guid }?recursive=true"
+    def delete_application(app_guid, recursive)
+      url = "v2/apps/#{ app_guid }"
+      url += '?recursive=true' if recursive
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_applications
       @varz.invalidate
       @view_models.invalidate_applications
+      return unless recursive
+      @cc.invalidate_service_bindings
+      @cc.invalidate_service_keys
+      @view_models.invalidate_service_bindings
+      @view_models.invalidate_service_keys
     end
 
-    def delete_domain(domain_guid)
+    def delete_domain(domain_guid, recursive)
       url = "v2/domains/#{ domain_guid }"
+      url += '?recursive=true' if recursive
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_domains
       @view_models.invalidate_domains
+      return unless recursive
+      @cc.invalidate_routes
+      @view_models.invalidate_routes
     end
 
-    def delete_organization(org_guid)
-      url = "v2/organizations/#{ org_guid }?recursive=true"
+    def delete_organization(org_guid, recursive)
+      url = "v2/organizations/#{ org_guid }"
+      url += '?recursive=true' if recursive
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_organizations
@@ -52,6 +63,10 @@ module AdminUI
       @cc.invalidate_organizations_managers
       @cc.invalidate_organizations_users
       @cc.invalidate_service_plan_visibilities
+      @view_models.invalidate_organizations
+      @view_models.invalidate_organization_roles
+      @view_models.invalidate_service_plan_visibilities
+      return unless recursive
       @cc.invalidate_space_quota_definitions
       @cc.invalidate_spaces
       @cc.invalidate_spaces_auditors
@@ -63,9 +78,6 @@ module AdminUI
       @cc.invalidate_applications
       @cc.invalidate_routes
       @varz.invalidate
-      @view_models.invalidate_organizations
-      @view_models.invalidate_organization_roles
-      @view_models.invalidate_service_plan_visibilities
       @view_models.invalidate_space_quotas
       @view_models.invalidate_spaces
       @view_models.invalidate_space_roles
@@ -146,14 +158,16 @@ module AdminUI
       @view_models.invalidate_service_plan_visibilities
     end
 
-    def delete_service_instance(service_instance_guid)
-      url = "v2/service_instances/#{ service_instance_guid }?recursive=true"
+    def delete_service_instance(service_instance_guid, recursive)
+      url = "v2/service_instances/#{ service_instance_guid }"
+      url += '?recursive=true' if recursive
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_service_instances
+      @view_models.invalidate_service_instances
+      return unless recursive
       @cc.invalidate_service_bindings
       @cc.invalidate_service_keys
-      @view_models.invalidate_service_instances
       @view_models.invalidate_service_bindings
       @view_models.invalidate_service_keys
     end
@@ -184,22 +198,24 @@ module AdminUI
       @view_models.invalidate_service_plan_visibilities
     end
 
-    def delete_space(space_guid)
-      url = "v2/spaces/#{ space_guid }?recursive=true"
+    def delete_space(space_guid, recursive)
+      url = "v2/spaces/#{ space_guid }"
+      url += '?recursive=true' if recursive
       @logger.debug("DELETE #{ url }")
       @client.delete_cc(url)
       @cc.invalidate_spaces
       @cc.invalidate_spaces_auditors
       @cc.invalidate_spaces_developers
       @cc.invalidate_spaces_managers
+      @view_models.invalidate_spaces
+      @view_models.invalidate_space_roles
+      return unless recursive
       @cc.invalidate_service_instances
       @cc.invalidate_service_bindings
       @cc.invalidate_service_keys
       @cc.invalidate_applications
       @cc.invalidate_routes
       @varz.invalidate
-      @view_models.invalidate_spaces
-      @view_models.invalidate_space_roles
       @view_models.invalidate_service_instances
       @view_models.invalidate_service_bindings
       @view_models.invalidate_service_keys
