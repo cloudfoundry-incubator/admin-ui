@@ -26,6 +26,7 @@ module AdminUI
 
       applications_connected      = applications['connected']
       apps_routes_connected       = apps_routes['connected']
+      deas_connected              = deas['connected']
       events_connected            = events['connected']
       routes_connected            = routes['connected']
       service_instances_connected = service_instances['connected']
@@ -190,9 +191,9 @@ module AdminUI
           row.push(nil, nil, nil)
         end
 
-        if space_app_counters
+        if deas_connected && space_app_counters
           row.push(space_app_counters['instances'])
-        elsif applications_connected
+        elsif deas_connected && applications_connected
           row.push(0)
         else
           row.push(nil)
@@ -207,9 +208,13 @@ module AdminUI
         end
 
         if space_app_counters
-          row.push(Utils.convert_bytes_to_megabytes(space_app_counters['used_memory']))
-          row.push(Utils.convert_bytes_to_megabytes(space_app_counters['used_disk']))
-          row.push(space_app_counters['used_cpu'] * 100)
+          if deas_connected
+            row.push(Utils.convert_bytes_to_megabytes(space_app_counters['used_memory']))
+            row.push(Utils.convert_bytes_to_megabytes(space_app_counters['used_disk']))
+            row.push(space_app_counters['used_cpu'] * 100)
+          else
+            row.push(nil, nil, nil)
+          end
           row.push(space_app_counters['reserved_memory'])
           row.push(space_app_counters['reserved_disk'])
           row.push(space_app_counters['total'])
@@ -219,7 +224,12 @@ module AdminUI
           row.push(space_app_counters['STAGED'] || 0)
           row.push(space_app_counters['FAILED'] || 0)
         elsif applications_connected
-          row.push(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+          if deas_connected
+            row.push(0, 0, 0)
+          else
+            row.push(nil, nil, nil)
+          end
+          row.push(0, 0, 0, 0, 0, 0, 0, 0)
         else
           row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
         end

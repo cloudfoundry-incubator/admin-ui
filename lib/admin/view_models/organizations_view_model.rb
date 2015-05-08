@@ -33,6 +33,7 @@ module AdminUI
 
       applications_connected              = applications['connected']
       apps_routes_connected               = apps_routes['connected']
+      deas_connected                      = deas['connected']
       domains_connected                   = domains['connected']
       events_connected                    = events['connected']
       organizations_roles_connected       = organizations_auditors['connected'] && organizations_billing_managers['connected'] && organizations_managers['connected'] && organizations_users['connected']
@@ -271,9 +272,9 @@ module AdminUI
           row.push(nil, nil, nil)
         end
 
-        if organization_app_counters
+        if deas_connected && organization_app_counters
           row.push(organization_app_counters['instances'])
-        elsif spaces_connected && applications_connected
+        elsif deas_connected && spaces_connected && applications_connected
           row.push(0)
         else
           row.push(nil)
@@ -288,9 +289,13 @@ module AdminUI
         end
 
         if organization_app_counters
-          row.push(Utils.convert_bytes_to_megabytes(organization_app_counters['used_memory']))
-          row.push(Utils.convert_bytes_to_megabytes(organization_app_counters['used_disk']))
-          row.push(organization_app_counters['used_cpu'] * 100)
+          if deas_connected
+            row.push(Utils.convert_bytes_to_megabytes(organization_app_counters['used_memory']))
+            row.push(Utils.convert_bytes_to_megabytes(organization_app_counters['used_disk']))
+            row.push(organization_app_counters['used_cpu'] * 100)
+          else
+            row.push(nil, nil, nil)
+          end
           row.push(organization_app_counters['reserved_memory'])
           row.push(organization_app_counters['reserved_disk'])
           row.push(organization_app_counters['total'])
@@ -300,7 +305,12 @@ module AdminUI
           row.push(organization_app_counters['STAGED'] || 0)
           row.push(organization_app_counters['FAILED'] || 0)
         elsif spaces_connected && applications_connected
-          row.push(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+          if deas_connected
+            row.push(0, 0, 0)
+          else
+            row.push(nil, nil, nil)
+          end
+          row.push(0, 0, 0, 0, 0, 0, 0, 0)
         else
           row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
         end
