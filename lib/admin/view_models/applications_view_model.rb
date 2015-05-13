@@ -13,22 +13,48 @@ module AdminUI
 
     def do_items
       applications = @cc.applications
-      deas         = @varz.deas
 
-      # applications and DEA's have to exist.  Other record types are optional
-      return result unless applications['connected'] && deas['connected']
+      # applications have to exist.  Other record types are optional
+      return result unless applications['connected']
 
-      events        = @cc.events
-      organizations = @cc.organizations
-      spaces        = @cc.spaces
-      stacks        = @cc.stacks
+      apps_routes      = @cc.apps_routes
+      deas             = @varz.deas
+      domains          = @cc.domains
+      events           = @cc.events
+      organizations    = @cc.organizations
+      routes           = @cc.routes
+      service_bindings = @cc.service_bindings
+      spaces           = @cc.spaces
+      stacks           = @cc.stacks
 
-      events_connected = events['connected']
+      deas_connected             = deas['connected']
+      events_connected           = events['connected']
+      service_bindings_connected = service_bindings['connected']
 
+      domain_hash       = Hash[domains['items'].map { |item| [item[:id], item] }]
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      route_hash        = Hash[routes['items'].map { |item| [item[:id], item] }]
       space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
-      stack_id_hash     = Hash[stacks['items'].map { |item| [item[:id], item] }]
-      stack_name_hash   = Hash[stacks['items'].map { |item| [item[:name], item] }]
+      stack_hash        = Hash[stacks['items'].map { |item| [item[:id], item] }]
+
+      fqdns_hash = {}
+      apps_routes['items'].each do |app_route|
+        Thread.pass
+        route = route_hash[app_route[:route_id]]
+        next if route.nil?
+        domain = domain_hash[route[:domain_id]]
+        next if domain.nil?
+        fqdn = domain[:name]
+        host = route[:host]
+        fqdn = "#{ host }.#{ fqdn }" if host.length > 0
+        app_id = app_route[:app_id]
+        app_fqdns = fqdns_hash[app_id]
+        if app_fqdns.nil?
+          app_fqdns = []
+          fqdns_hash[app_id] = app_fqdns
+        end
+        app_fqdns.push(fqdn)
+      end
 
       event_counters = {}
       events['items'].each do |event|
@@ -44,7 +70,36 @@ module AdminUI
         end
       end
 
-      application_hash = {}
+      service_binding_counters = {}
+      service_bindings['items'].each do |service_binding|
+        Thread.pass
+        app_id = service_binding[:app_id]
+        service_binding_counters[app_id] = 0 if service_binding_counters[app_id].nil?
+        service_binding_counters[app_id] += 1
+      end
+
+      application_usage_counters_hash = {}
+      deas['items'].each do |dea|
+        next unless dea['connected']
+        dea['data']['instance_registry'].each_value do |application|
+          application.each_value do |instance|
+            Thread.pass
+            application_id = instance['application_id']
+            application_usage_counters = application_usage_counters_hash[application_id]
+            if application_usage_counters.nil?
+              application_usage_counters = { 'used_memory' => 0,
+                                             'used_disk'   => 0,
+                                             'used_cpu'    => 0
+                                           }
+              application_usage_counters_hash[application_id] = application_usage_counters
+            end
+
+            application_usage_counters['used_memory'] += instance['used_memory_in_bytes'] unless instance['used_memory_in_bytes'].nil?
+            application_usage_counters['used_disk'] += instance['used_disk_in_bytes'] unless instance['used_disk_in_bytes'].nil?
+            application_usage_counters['used_cpu'] += instance['computed_pcpu'] unless instance['computed_pcpu'].nil?
+          end
+        end
+      end
 
       items = []
       hash  = {}
@@ -53,11 +108,15 @@ module AdminUI
         Thread.pass
 
         guid         = application[:guid]
+        id           = application[:id]
         space        = space_hash[application[:space_id]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]
-        stack        = stack_id_hash[application[:stack_id]]
+        stack        = stack_hash[application[:stack_id]]
 
-        event_counter = event_counters[guid]
+        application_usage_counters = application_usage_counters_hash[guid]
+        event_counter              = event_counters[guid]
+        fqdns                      = fqdns_hash[id]
+        service_binding_counter    = service_binding_counters[id]
 
         row = []
 
@@ -67,9 +126,6 @@ module AdminUI
         row.push(application[:state])
         row.push(application[:package_state])
 
-        # Instance State
-        row.push(nil)
-
         row.push(application[:created_at].to_datetime.rfc3339)
 
         if application[:updated_at]
@@ -78,8 +134,7 @@ module AdminUI
           row.push(nil)
         end
 
-        # Started and URI
-        row.push(nil, nil)
+        row.push(fqdns)
 
         if stack
           row.push(stack[:name])
@@ -95,9 +150,6 @@ module AdminUI
           row.push(nil)
         end
 
-        # Instance index
-        row.push(nil)
-
         if event_counter
           row.push(event_counter)
         elsif events_connected
@@ -106,8 +158,25 @@ module AdminUI
           row.push(nil)
         end
 
-        # Used services, memory, disk and CPU
-        row.push(nil, nil, nil, nil)
+        row.push(application[:instances])
+
+        if service_binding_counter
+          row.push(service_binding_counter)
+        elsif service_bindings_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if application_usage_counters
+          row.push(Utils.convert_bytes_to_megabytes(application_usage_counters['used_memory']))
+          row.push(Utils.convert_bytes_to_megabytes(application_usage_counters['used_disk']))
+          row.push(application_usage_counters['used_cpu'] * 100)
+        elsif deas_connected
+          row.push(0, 0, 0)
+        else
+          row.push(nil, nil, nil)
+        end
 
         row.push(application[:memory])
         row.push(application[:disk_quota])
@@ -118,174 +187,18 @@ module AdminUI
           row.push(nil)
         end
 
-        # DEA
-        row.push(nil)
+        items.push(row)
 
-        hash_entry =
+        hash[guid] =
         {
           'application'  => application,
           'organization' => organization,
           'space'        => space,
           'stack'        => stack
         }
-
-        application_hash[guid] =
-        {
-          'row'        => row,
-          'hash_entry' => hash_entry
-        }
-
-        items.push(row)
-
-        hash[application[:guid]] = hash_entry
       end
 
-      dea_index = 0
-
-      deas['items'].each do |dea|
-        next unless dea['connected']
-        data = dea['data']
-        host = dea['name']
-        data['instance_registry'].each_value do |application|
-          application.each_value do |instance|
-            Thread.pass
-
-            id             = instance['application_id']
-            instance_index = instance['instance_index']
-
-            prior = application_hash[id]
-
-            # In some cases, we will not find an existing row.  Create the row as much as possible from the DEA data.
-            if prior.nil?
-              stack_name    = instance['stack']
-              stack         = stack_name.nil? ? nil : stack_name_hash[stack_name]
-              event_counter = event_counters[id]
-
-              row = []
-
-              row.push(id)
-              row.push(instance['application_name'])
-              row.push(id)
-
-              # State and Package State not available.
-              row.push(nil, nil)
-
-              row.push(instance['state'])
-
-              # Created and updated not available
-              row.push(nil, nil)
-
-              if instance['state_running_timestamp']
-                row.push(Time.at(instance['state_running_timestamp']).to_datetime.rfc3339)
-              else
-                row.push(nil)
-              end
-
-              row.push(instance['application_uris'])
-
-              row.push(stack_name)
-
-              # Buildpack not available.
-              row.push(nil)
-
-              row.push(instance_index)
-
-              if event_counter
-                row.push(event_counter)
-              elsif events_connected
-                row.push(0)
-              else
-                row.push(nil)
-              end
-
-              row.push(instance['services'].length)
-
-              row.push(instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil)
-              row.push(instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : nil)
-              row.push(instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil)
-
-              row.push(instance['limits']['mem'])
-              row.push(instance['limits']['disk'])
-
-              # Clear space and organization in case not found below
-              space        = nil
-              organization = nil
-
-              if instance['tags'] && instance['tags']['space']
-                space = space_hash[instance['tags']['space']]
-                if space
-                  organization = organization_hash[space[:organization_id]]
-                end
-              end
-
-              if organization && space
-                row.push("#{ organization['name'] }/#{ space['name'] }")
-              else
-                row.push(nil)
-              end
-
-              row.push(host)
-
-              items.push(row)
-
-              key = "#{ id }/#{ instance_index }"
-              # No application to push.  Push the instance instead so we can provide details.
-              hash[key] =
-              {
-                'application'  => nil,
-                'instance'     => instance,
-                'organization' => organization,
-                'space'        => space,
-                'stack'        => stack
-              }
-            else
-              row        = prior['row']
-              hash_entry = prior['hash_entry']
-
-              # We will add instance info to the 0th row, but other instances have to be cloned so we can have instance specific information
-              if instance_index > 0
-                new_row = []
-                row.each do |column|
-                  new_row.push(column)
-                end
-
-                items.push(new_row)
-
-                row = new_row
-              end
-
-              row[5] = instance['state']
-
-              if instance['state_running_timestamp']
-                row[8] = Time.at(instance['state_running_timestamp']).to_datetime.rfc3339
-              end
-
-              row[9]  = instance['application_uris']
-              row[12] = instance_index
-              row[14] = instance['services'].length
-              row[15] = instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_memory_in_bytes']) : nil
-              row[16] = instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(instance['used_disk_in_bytes']) : nil
-              row[17] = instance['computed_pcpu'] ? instance['computed_pcpu'] * 100 : nil
-              row[21] = host
-
-              key = "#{ id }/#{ instance_index }"
-              # Need the specific instance for this row
-              hash[key] =
-              {
-                'application'  => hash_entry['application'],
-                'instance'     => instance,
-                'organization' => hash_entry['organization'],
-                'space'        => hash_entry['space'],
-                'stack'        => hash_entry['stack']
-              }
-            end
-          end
-        end
-
-        dea_index += 1
-      end
-
-      result(true, items, hash, (1..21).to_a, (1..11).to_a << 20)
+      result(true, items, hash, (1..18).to_a, (1..9).to_a << 18)
     end
   end
 end

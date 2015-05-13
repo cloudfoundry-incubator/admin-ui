@@ -201,11 +201,11 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'deletes an application' do
-      expect { delete_app }.to change { get_json('/applications_view_model')['items']['items'][0][3] }.from('STARTED').to(nil)
+      expect { delete_app }.to change { get_json('/applications_view_model')['items']['items'].length }.from(1).to(0)
     end
 
     it 'deletes an application recursive' do
-      expect { delete_app_recursive }.to change { get_json('/applications_view_model')['items']['items'][0][3] }.from('STARTED').to(nil)
+      expect { delete_app_recursive }.to change { get_json('/applications_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -751,6 +751,19 @@ describe AdminUI::Admin, type: :integration do
       end
     end
 
+    context 'application_instances_view_model' do
+      let(:event_type)        { 'app' }
+      let(:path)              { '/application_instances_view_model' }
+      let(:view_model_source) { view_models_application_instances }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'application_instances_view_model detail' do
+      let(:path)              { "/application_instances_view_model/#{ cc_app[:guid] }/#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] }" }
+      let(:view_model_source) { view_models_application_instances_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'applications_view_model' do
       let(:event_type)        { 'app' }
       let(:path)              { '/applications_view_model' }
@@ -759,7 +772,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'applications_view_model detail' do
-      let(:path)              { "/applications_view_model/#{ cc_app[:guid] }/#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] }" }
+      let(:path)              { "/applications_view_model/#{ cc_app[:guid] }" }
       let(:view_model_source) { view_models_applications_detail }
       it_behaves_like('retrieves view_model detail')
     end

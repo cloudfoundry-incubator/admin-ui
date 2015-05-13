@@ -112,6 +112,7 @@ module AdminUI
         space_app_counters['total'] += 1
         space_app_counters[application[:state]] += 1
         space_app_counters[application[:package_state]] += 1
+        space_app_counters['instances'] += application[:instances] unless application[:instances].nil?
       end
 
       items = []

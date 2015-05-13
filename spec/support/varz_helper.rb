@@ -103,7 +103,11 @@ module VARZHelper
             'state'                   => 'RUNNING',
             'state_running_timestamp' => 1_382_448_059.0734425,
             'used_disk_in_bytes'      => 56_057_856,
-            'used_memory_in_bytes'    => 19_292_160
+            'used_memory_in_bytes'    => 19_292_160,
+            'vcap_application'        =>
+            {
+              'space_id' => cc_space[:guid]
+            }
           }
         }
       }

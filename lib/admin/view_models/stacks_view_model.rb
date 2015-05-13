@@ -25,8 +25,15 @@ module AdminUI
         Thread.pass
         stack_id = application[:stack_id]
         next if stack_id.nil?
-        application_counters[stack_id] = 0 if application_counters[stack_id].nil?
-        application_counters[stack_id] += 1
+        application_counter = application_counters[stack_id]
+        if application_counter.nil?
+          application_counter = { 'applications' => 0,
+                                  'instances'    => 0
+                                }
+          application_counters[stack_id] = application_counter
+        end
+        application_counter['applications'] += 1
+        application_counter['instances'] += application[:instances] unless application[:instances].nil?
       end
 
       items = []
@@ -53,11 +60,12 @@ module AdminUI
         end
 
         if application_counter
-          row.push(application_counter)
+          row.push(application_counter['applications'])
+          row.push(application_counter['instances'])
         elsif applications_connected
-          row.push(0)
+          row.push(0, 0)
         else
-          row.push(nil)
+          row.push(nil, nil)
         end
 
         row.push(stack[:description])
@@ -67,7 +75,7 @@ module AdminUI
         hash[guid] = stack
       end
 
-      result(true, items, hash, (0..5).to_a, (0..5).to_a - [4])
+      result(true, items, hash, (0..6).to_a, [0, 1, 2, 3, 6])
     end
   end
 end

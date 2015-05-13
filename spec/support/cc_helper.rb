@@ -211,6 +211,7 @@ module CCHelper
       diego:                 false,
       disk_quota:            12,
       docker_image:          'docker_image_1',
+      droplet_hash:          'droplet1',
       guid:                  'application1',
       health_check_timeout:  nil,
       health_check_type:     'port',

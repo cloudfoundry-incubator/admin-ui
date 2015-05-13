@@ -1,5 +1,6 @@
 require 'date'
 require_relative 'scheduled_thread_pool'
+require_relative 'view_models/application_instances_view_model'
 require_relative 'view_models/applications_view_model'
 require_relative 'view_models/clients_view_model'
 require_relative 'view_models/cloud_controllers_view_model'
@@ -51,11 +52,15 @@ module AdminUI
       @caches = {}
       # These keys need to conform to their respective discover_x methods.
       # For instance applications conforms to discover_applications
-      [:applications, :clients, :cloud_controllers, :components, :deas, :domains, :events, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_keys, :service_plans, :service_plan_visibilities, :space_quotas, :space_roles, :spaces, :stacks, :stats, :tasks, :users].each do |key|
+      [:application_instances, :applications, :clients, :cloud_controllers, :components, :deas, :domains, :events, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_keys, :service_plans, :service_plan_visibilities, :space_quotas, :space_roles, :spaces, :stacks, :stats, :tasks, :users].each do |key|
         hash = { semaphore: Mutex.new, condition: ConditionVariable.new, result: nil }
         @caches[key] = hash
         schedule(key)
       end
+    end
+
+    def invalidate_application_instances
+      invalidate_cache(:application_instances)
     end
 
     def invalidate_applications
@@ -154,10 +159,16 @@ module AdminUI
       invalidate_cache(:tasks)
     end
 
-    def application(guid, instance = nil)
-      key = guid
-      key += "/#{ instance }" if instance
-      details(:applications, key)
+    def application_instance(guid, instance)
+      details(:application_instances, "#{ guid }/#{ instance }")
+    end
+
+    def application_instances
+      result_cache(:application_instances)
+    end
+
+    def application(guid)
+      details(:applications, guid)
     end
 
     def applications
@@ -437,6 +448,14 @@ module AdminUI
     def details(key, hash_key)
       detail_hash = result_cache(key)[:detail_hash]
       return detail_hash[hash_key] if detail_hash
+    end
+
+    def discover_application_instances
+      AdminUI::ApplicationInstancesViewModel.new(@logger, @cc, @varz).items
+    rescue => error
+      @logger.debug("Error during discover_application_instances: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+      result
     end
 
     def discover_applications

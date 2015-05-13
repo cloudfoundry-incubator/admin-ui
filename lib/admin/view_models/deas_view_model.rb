@@ -46,6 +46,7 @@ module AdminUI
           instance_registry = data['instance_registry']
           if instance_registry
             instances_count = 0
+            running_count   = 0
             memory          = 0
             disk            = 0
             pcpu            = 0.0
@@ -55,14 +56,15 @@ module AdminUI
               instances.each_value do |instance|
                 next unless instance['state'] == 'RUNNING'
 
+                running_count += 1
                 memory += instance['used_memory_in_bytes'] if instance['used_memory_in_bytes']
                 disk += instance['used_disk_in_bytes'] if instance['used_disk_in_bytes']
                 pcpu += instance['computed_pcpu'] if instance['computed_pcpu']
               end
             end
 
-            row.push(instance_registry.length,
-                     instances_count,
+            row.push(instances_count,
+                     running_count,
                      Utils.convert_bytes_to_megabytes(memory),
                      Utils.convert_bytes_to_megabytes(disk),
                      pcpu * 100)

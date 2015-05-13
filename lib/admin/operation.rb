@@ -33,6 +33,7 @@ module AdminUI
       @cc.invalidate_applications
       @varz.invalidate
       @view_models.invalidate_applications
+      @view_models.invalidate_application_instances
       return unless recursive
       @cc.invalidate_service_bindings
       @cc.invalidate_service_keys
@@ -85,6 +86,7 @@ module AdminUI
       @view_models.invalidate_service_bindings
       @view_models.invalidate_service_keys
       @view_models.invalidate_applications
+      @view_models.invalidate_application_instances
       @view_models.invalidate_routes
     end
 
@@ -220,6 +222,7 @@ module AdminUI
       @view_models.invalidate_service_bindings
       @view_models.invalidate_service_keys
       @view_models.invalidate_applications
+      @view_models.invalidate_application_instances
       @view_models.invalidate_routes
     end
 
@@ -256,6 +259,7 @@ module AdminUI
       @cc.invalidate_applications
       @varz.invalidate
       @view_models.invalidate_applications
+      @view_models.invalidate_application_instances
     end
 
     def manage_service_plan(service_plan_guid, control_message)

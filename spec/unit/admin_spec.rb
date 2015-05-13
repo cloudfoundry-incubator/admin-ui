@@ -771,16 +771,20 @@ describe AdminUI::Admin do
         login_stub_admin
       end
 
+      it '/application_instances_view_model succeeds' do
+        verify_disconnected_view_model_items('/application_instances_view_model')
+      end
+
+      it '/application_instances_view_model/:guid/:instance returns not found' do
+        verify_not_found('/application_instances_view_model/application1/instance')
+      end
+
       it '/applications_view_model succeeds' do
         verify_disconnected_view_model_items('/applications_view_model')
       end
 
       it '/applications_view_model/:guid returns not found' do
         verify_not_found('/applications_view_model/application1')
-      end
-
-      it '/applications_view_model/:guid/:instance returns not found' do
-        verify_not_found('/applications_view_model/application1/instance')
       end
 
       it '/clients_view_model succeeds' do
@@ -1055,6 +1059,14 @@ describe AdminUI::Admin do
         login_stub_fail
       end
       let(:http) { create_http }
+
+      it '/application_instances_view_model redirects as expected' do
+        get_redirects_as_expected('/application_instances_view_model')
+      end
+
+      it '/application_instances_view_model/:guid/:instance redirects as expected' do
+        get_redirects_as_expected('/application_instances_view_model/application1/instance1')
+      end
 
       it '/applications_view_model redirects as expected' do
         get_redirects_as_expected('/applications_view_model')
@@ -1378,6 +1390,10 @@ describe AdminUI::Admin do
 
       it 'deletes /spaces/:guid/:role/:guid redirects as expected' do
         delete_redirects_as_expected('/spaces/space1/auditors/user1')
+      end
+
+      it 'posts /application_instances_view_model redirects as expected' do
+        post_redirects_as_expected('/application_instances_view_model')
       end
 
       it 'posts /applications_view_model redirects as expected' do

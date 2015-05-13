@@ -9,23 +9,17 @@ module ViewModelsHelper
   include NATSHelper
   include VARZHelper
 
-  def view_models_applications
+  def view_models_application_instances
     [
       [
-        cc_app[:guid],
+        "#{ cc_app[:guid] }/#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] }",
         cc_app[:name],
         cc_app[:guid],
-        cc_app[:state],
-        cc_app[:package_state],
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'],
         varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
-        cc_app[:created_at].to_datetime.rfc3339,
-        cc_app[:updated_at].to_datetime.rfc3339,
         Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
         varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'],
         cc_stack[:name],
-        cc_app[:detected_buildpack],
-        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'],
-        1,
         varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length,
         AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
         AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
@@ -38,10 +32,44 @@ module ViewModelsHelper
     ]
   end
 
+  def view_models_application_instances_detail
+    {
+      'application_instance' => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance],
+      'organization'         => cc_organization,
+      'space'                => cc_space,
+      'stack'                => cc_stack
+    }
+  end
+
+  def view_models_applications
+    [
+      [
+        cc_app[:guid],
+        cc_app[:name],
+        cc_app[:guid],
+        cc_app[:state],
+        cc_app[:package_state],
+        cc_app[:created_at].to_datetime.rfc3339,
+        cc_app[:updated_at].to_datetime.rfc3339,
+        ["#{ cc_route[:host] }.#{ cc_domain[:name] }"],
+        cc_stack[:name],
+        cc_app[:detected_buildpack],
+        1,
+        cc_app[:instances],
+        1,
+        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
+        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
+        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
+        cc_app[:memory],
+        cc_app[:disk_quota],
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+      ]
+    ]
+  end
+
   def view_models_applications_detail
     {
       'application'  => cc_app,
-      'instance'     => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance],
       'organization' => cc_organization,
       'space'        => cc_space,
       'stack'        => cc_stack
@@ -880,6 +908,7 @@ module ViewModelsHelper
         cc_stack[:created_at].to_datetime.rfc3339,
         cc_stack[:updated_at].to_datetime.rfc3339,
         1,
+        cc_app[:instances],
         cc_stack[:description]
       ]
     ]

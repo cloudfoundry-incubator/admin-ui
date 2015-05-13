@@ -42,6 +42,18 @@ module AdminUI
       redirect_to_login
     end
 
+    get '/application_instances_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/application_instances_view_model')
+      AllActions.new(@logger, @view_models.application_instances, params).items.to_json
+    end
+
+    get '/application_instances_view_model/:guid/:instance', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/application_instances_view_model/#{ params[:guid] }/#{ params[:instance] }")
+      result = @view_models.application_instance(params[:guid], params[:instance])
+      return result.to_json if result
+      404
+    end
+
     get '/applications_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/applications_view_model')
       AllActions.new(@logger, @view_models.applications, params).items.to_json
@@ -50,13 +62,6 @@ module AdminUI
     get '/applications_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/applications_view_model/#{ params[:guid] }")
       result = @view_models.application(params[:guid])
-      return result.to_json if result
-      404
-    end
-
-    get '/applications_view_model/:guid/:instance', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/applications_view_model/#{ params[:guid] }/#{ params[:instance] }")
-      result = @view_models.application(params[:guid], params[:instance])
       return result.to_json if result
       404
     end
@@ -472,6 +477,14 @@ module AdminUI
       result = @view_models.user(params[:guid])
       return result.to_json if result
       404
+    end
+
+    post '/application_instances_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/application_instances_view_model')
+      file = Download.download(request.body.read, 'application_instances', @view_models.application_instances)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'application_instances.csv')
     end
 
     post '/applications_view_model', auth: [:user] do

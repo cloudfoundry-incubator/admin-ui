@@ -53,8 +53,12 @@ describe AdminUI::CC do
       expect(view_models.application('bogus')).to be_nil
     end
 
-    it 'returns nil application instance as expected' do
-      expect(view_models.application('bogus', 'bogus')).to be_nil
+    it 'returns nil application_instance as expected' do
+      expect(view_models.application_instance('bogus', 'bogus')).to be_nil
+    end
+
+    it 'returns zero application_instances as expected' do
+      verify_disconnected_items(view_models.application_instances)
     end
 
     it 'returns zero applications as expected' do

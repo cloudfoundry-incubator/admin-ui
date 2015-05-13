@@ -85,6 +85,21 @@ describe AdminUI::CC, type: :integration do
       end
     end
 
+    context 'returns connected application_instances_view_model' do
+      let(:event_type) { 'app' }
+      let(:results)    { view_models.application_instances }
+      let(:expected)   { view_models_application_instances }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected application_instances_view_model detail' do
+      let(:results)  { view_models.application_instance(cc_app[:guid], varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index']) }
+      let(:expected) { view_models_application_instances_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected applications_view_model' do
       let(:event_type) { 'app' }
       let(:results)    { view_models.applications }
@@ -94,7 +109,7 @@ describe AdminUI::CC, type: :integration do
     end
 
     context 'returns connected applications_view_model detail' do
-      let(:results)  { view_models.application(cc_app[:guid], varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index']) }
+      let(:results)  { view_models.application(cc_app[:guid]) }
       let(:expected) { view_models_applications_detail }
 
       it_behaves_like('common view model retrieval detail')

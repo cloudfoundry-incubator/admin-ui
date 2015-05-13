@@ -46,6 +46,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('Organizations').displayed?).to be_true
       expect(scroll_tab_into_view('Spaces').displayed?).to be_true
       expect(scroll_tab_into_view('Applications').displayed?).to be_true
+      expect(scroll_tab_into_view('ApplicationInstances').displayed?).to be_true
       expect(scroll_tab_into_view('ServiceInstances').displayed?).to be_true
       expect(scroll_tab_into_view('ServiceBindings').displayed?).to be_true
       expect(scroll_tab_into_view('ServiceKeys').displayed?).to be_true
@@ -565,7 +566,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has instances link' do
-            check_filter_link('Organizations', 17, 'Applications', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 17, 'ApplicationInstances', "#{ cc_organization[:name] }/")
           end
 
           it 'has services instances link' do
@@ -727,7 +728,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has instances link' do
-            check_filter_link('Spaces', 12, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 12, 'ApplicationInstances', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
 
           it 'has services link' do
@@ -748,12 +749,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 5,
                                 labels:          ['', '', 'Used', 'Reserved', ''],
-                                colspans:        %w(1 13 4 2 2)
+                                colspans:        %w(1 12 3 2 1)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 22,
-                                labels:          [' ', 'Name', 'GUID', 'State', 'Package State', 'Instance State', 'Created', 'Updated', 'Started', 'URI', 'Stack', 'Buildpack', 'Instance', 'Events', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                expected_length: 19,
+                                labels:          [' ', 'Name', 'GUID', 'State', 'Package State', 'Created', 'Updated', 'URI', 'Stack', 'Buildpack', 'Events', 'Instances', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
                                 colspans:        nil
                               }
                              ])
@@ -765,14 +766,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_app[:guid],
                              cc_app[:state],
                              @driver.execute_script('return Constants.STATUS__STAGED'),
-                             varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
                              cc_app[:created_at].to_datetime.rfc3339,
                              cc_app[:updated_at].to_datetime.rfc3339,
-                             Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
-                             "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
+                             "http://#{ cc_route[:host] }.#{ cc_domain[:name] }",
                              cc_stack[:name],
                              cc_app[:detected_buildpack],
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] })"),
+                             '1',
                              '1',
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })"),
                              @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
@@ -780,8 +779,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
                              @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })"),
                              @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })"),
-                             "#{ cc_organization[:name] }/#{ cc_space[:name] }",
-                             nats_dea['host']
+                             "#{ cc_organization[:name] }/#{ cc_space[:name] }"
                            ])
         end
 
@@ -869,7 +867,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_app_state('STARTED')
           end
 
-          it 'restart the selected application' do
+          it 'restarts the selected application' do
             # let app in stopped state first
             manage_application(1)
             check_app_state('STOPPED')
@@ -879,69 +877,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_app_state('STARTED')
           end
 
-          shared_examples 'deletes the selected application' do
-            def check_deleted_app_table_data
-              check_table_data(Selenium::WebDriver::Wait.new(timeout: 360).until { refresh_button && @driver.find_elements(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td") },
-                               [
-                                 '',
-                                 cc_app[:name],
-                                 cc_app[:guid],
-                                 '',
-                                 '',
-                                 varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
-                                 '',
-                                 '',
-                                 Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
-                                 "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
-                                 cc_stack[:name],
-                                 '',
-                                 '0',
-                                 '1',
-                                 @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })"),
-                                 @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
-                                 @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
-                                 @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
-                                 @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })"),
-                                 @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })"),
-                                 '',
-                                 nats_dea['host']
-                               ])
-            end
-
-            it 'deletes the selected application' do
-              # delete the application
-              check_first_row('ApplicationsTable')
-              @driver.find_element(id: button_id).click
-
-              confirm(confirm_message)
-
-              check_operation_result
-
-              begin
-                Selenium::WebDriver::Wait.new(timeout: 560).until do
-                  begin
-                    check_deleted_app_table_data
-                    # If this works, no reason to continue in this loop
-                    break
-                  rescue RSpec::Expectations::ExpectationNotMetError
-                  end
-                end
-              rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-              end
-              check_deleted_app_table_data
-            end
-          end
-
           # Delete button
-          it_behaves_like('deletes the selected application') do
-            let(:button_id) { 'ToolTables_ApplicationsTable_3' }
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_ApplicationsTable_3' }
             let(:confirm_message) { 'Are you sure you want to delete the selected applications?' }
+            let(:table_id)        { 'ApplicationsTable' }
           end
 
           # Delete Recursive button
-          it_behaves_like('deletes the selected application') do
-            let(:button_id) { 'ToolTables_ApplicationsTable_4' }
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_ApplicationsTable_4' }
             let(:confirm_message) { 'Are you sure you want to delete the selected applications and their associated service bindings?' }
+            let(:table_id)        { 'ApplicationsTable' }
           end
         end
 
@@ -951,21 +898,116 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            check_details([{ label: 'Name',            tag: 'div', value: cc_app[:name] },
-                           { label: 'GUID',            tag:   nil, value: cc_app[:guid] },
-                           { label: 'State',           tag:   nil, value: cc_app[:state] },
-                           { label: 'Package State',   tag:   nil, value: cc_app[:package_state] },
-                           { label: 'Instance State',  tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] },
-                           { label: 'Created',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Updated',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:updated_at].to_datetime.rfc3339 }\")") },
+            check_details([{ label: 'Name',             tag: 'div', value: cc_app[:name] },
+                           { label: 'GUID',             tag:   nil, value: cc_app[:guid] },
+                           { label: 'State',            tag:   nil, value: cc_app[:state] },
+                           { label: 'Package State',    tag:   nil, value: cc_app[:package_state] },
+                           { label: 'Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'URI',              tag:   nil, value: "http://#{ cc_route[:host] }.#{ cc_domain[:name] }" },
+                           { label: 'Stack',            tag:   'a', value: cc_stack[:name] },
+                           { label: 'Buildpack',        tag:   nil, value: cc_app[:detected_buildpack] },
+                           { label: 'Command',          tag:   nil, value: cc_app[:command] },
+                           { label: 'Droplet Hash',     tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['droplet_sha1'] },
+                           { label: 'Events',           tag:   'a', value: '1' },
+                           { label: 'Instances',        tag:   'a', value: '1' },
+                           { label: 'Service Bindings', tag:   'a', value: '1' },
+                           { label: 'Memory Used',     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })") },
+                           { label: 'Disk Used',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })") },
+                           { label: 'CPU Used',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })") },
+                           { label: 'Memory Reserved',  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })") },
+                           { label: 'Disk Reserved',    tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })") },
+                           { label: 'Space',            tag:   'a', value: cc_space[:name] },
+                           { label: 'Organization',     tag:   'a', value: cc_organization[:name] }
+                          ])
+          end
+
+          it 'has stacks link' do
+            check_filter_link('Applications', 7, 'Stacks', cc_stack[:guid])
+          end
+
+          it 'has events link' do
+            check_filter_link('Applications', 11, 'Events', cc_app[:guid])
+          end
+
+          it 'has application instances link' do
+            check_filter_link('Applications', 12, 'ApplicationInstances', cc_app[:guid])
+          end
+
+          it 'has service bindings link' do
+            check_filter_link('Applications', 13, 'ServiceBindings', cc_app[:guid])
+          end
+
+          it 'has spaces link' do
+            check_filter_link('Applications', 19, 'Spaces', cc_space[:guid])
+          end
+
+          it 'has organizations link' do
+            check_filter_link('Applications', 20, 'Organizations', cc_organization[:guid])
+          end
+        end
+      end
+
+      context 'Application Instances' do
+        let(:tab_id) { 'ApplicationInstances' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 5,
+                                labels:          ['', '', 'Used', 'Reserved', ''],
+                                colspans:        %w(1 7 4 2 2)
+                              },
+                              {
+                                columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 16,
+                                labels:          [' ', 'Name', 'Application GUID', 'Index', 'State', 'Started', 'URI', 'Stack', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='ApplicationInstancesTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_app[:name],
+                             cc_app[:guid],
+                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] })"),
+                             varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
+                             Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
+                             "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
+                             cc_stack[:name],
+                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })"),
+                             @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
+                             @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
+                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
+                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })"),
+                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })"),
+                             "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+                             nats_dea['host']
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_ApplicationInstancesTable_0')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('ApplicationInstancesTable', "#{ cc_app[:guid] }/#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] }")
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ label: 'Name',             tag: 'div', value: cc_app[:name] },
+                           { label: 'Application GUID', tag:   'a', value: cc_app[:guid] },
+                           { label: 'Index',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] })") },
+                           { label: 'State',            tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] },
                            { label: 'Started',         tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp'] * 1000) })") },
                            { label: 'URI',             tag:   'a', value: "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }" },
                            { label: 'Stack',           tag:   'a', value: cc_stack[:name] },
-                           { label: 'Buildpack',       tag:   nil, value: cc_app[:detected_buildpack] },
-                           { label: 'Command',         tag:   nil, value: cc_app[:command] },
-                           { label: 'Instance Index',  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] })") },
                            { label: 'Droplet Hash',    tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['droplet_sha1'] },
-                           { label: 'Events',          tag:   'a', value: '1' },
                            { label: 'Services Used',   tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })") },
                            { label: 'Memory Used',     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })") },
                            { label: 'Disk Used',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })") },
@@ -979,14 +1021,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has services' do
-            expect(@driver.find_element(id: 'ApplicationsServicesDetailsLabel').displayed?).to be_true
+            expect(@driver.find_element(id: 'ApplicationInstancesServicesDetailsLabel').displayed?).to be_true
 
-            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsServicesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesServicesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
                                 expected_length: 5,
                                 labels:          ['Instance Name', 'Provider', 'Service Name', 'Version', 'Plan Name'],
                                 colspans:        nil)
 
-            check_table_data(@driver.find_elements(xpath: "//table[@id='ApplicationsServicesTable']/tbody/tr/td"),
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ApplicationInstancesServicesTable']/tbody/tr/td"),
                              [
                                varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['name'],
                                varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['provider'],
@@ -997,27 +1039,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'services subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('ToolTables_ApplicationsServicesTable_0')
+            check_allowscriptaccess_attribute('ToolTables_ApplicationInstancesServicesTable_0')
+          end
+
+          it 'has applications link' do
+            check_filter_link('ApplicationInstances', 1, 'Applications', cc_app[:guid])
           end
 
           it 'has stacks link' do
-            check_filter_link('Applications', 9, 'Stacks', cc_stack[:guid])
-          end
-
-          it 'has events link' do
-            check_filter_link('Applications', 14, 'Events', cc_app[:guid])
+            check_filter_link('ApplicationInstances', 6, 'Stacks', cc_stack[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('Applications', 21, 'Spaces', cc_space[:guid])
+            check_filter_link('ApplicationInstances', 14, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Applications', 22, 'Organizations', cc_organization[:guid])
+            check_filter_link('ApplicationInstances', 15, 'Organizations', cc_organization[:guid])
           end
 
           it 'has DEAs link' do
-            check_filter_link('Applications', 23, 'DEAs', nats_dea['host'])
+            check_filter_link('ApplicationInstances', 16, 'DEAs', nats_dea['host'])
           end
         end
       end
@@ -2174,8 +2216,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='StacksTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                expected_length: 6,
-                                labels:          %w(Name GUID Created Updated Applications Description),
+                                expected_length: 7,
+                                labels:          ['Name', 'GUID', 'Created', 'Updated', 'Applications', 'Application Instances', 'Description'],
                                 colspans:        nil
                               }
                              ])
@@ -2187,6 +2229,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_stack[:created_at].to_datetime.rfc3339,
                              cc_stack[:updated_at].to_datetime.rfc3339,
                              '1',
+                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:instances] })"),
                              cc_stack[:description]
                            ])
         end
@@ -2201,17 +2244,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            check_details([{ label: 'Name',         tag: 'div', value: cc_stack[:name] },
-                           { label: 'GUID',         tag:   nil, value: cc_stack[:guid] },
-                           { label: 'Created',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Updated',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Description',  tag:   nil, value: cc_stack[:description] },
-                           { label: 'Applications', tag:   'a', value: '1' }
+            check_details([{ label: 'Name',                  tag: 'div', value: cc_stack[:name] },
+                           { label: 'GUID',                  tag:   nil, value: cc_stack[:guid] },
+                           { label: 'Created',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:created_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Updated',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Description',           tag:   nil, value: cc_stack[:description] },
+                           { label: 'Applications',          tag:   'a', value: '1' },
+                           { label: 'Application Instances', tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:instances] })") }
                           ])
           end
 
           it 'has applications link' do
             check_filter_link('Stacks', 5, 'Applications', cc_stack[:name])
+          end
+
+          it 'has application instances link' do
+            check_filter_link('Stacks', 6, 'ApplicationInstances', cc_stack[:name])
           end
         end
       end
@@ -3037,11 +3085,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 3,
                                 labels:          ['', 'Instances', '% Free'],
-                                colspans:        %w(8 4 2)
+                                colspans:        %w(7 5 2)
                               },
                               { columns:         @driver.find_elements(xpath: "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 expected_length: 14,
-                                labels:          ['Name', 'Index', 'Status', 'Started', 'Stack', 'CPU', 'Memory', 'Apps', 'Running', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk'],
+                                labels:          ['Name', 'Index', 'Status', 'Started', 'Stack', 'CPU', 'Memory', 'Total', 'Running', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk'],
                                 colspans:        nil
                               }
                              ])
@@ -3055,7 +3103,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              varz_dea['stacks'][0],
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu'] })"),
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['mem'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'].length })"),
+                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]].length })"),
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]].length })"),
                              @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
                              @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
@@ -3085,12 +3133,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Started',               tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")") },
                            { label: 'Uptime',                tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_dea['uptime'] }\")") },
                            { label: 'Stack',                 tag: nil, value: varz_dea['stacks'][0] },
-                           { label: 'Apps',                  tag: 'a', value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'].length })") },
                            { label: 'Cores',                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['num_cores'] })") },
                            { label: 'CPU',                   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu'] })") },
                            { label: 'CPU Load Avg',          tag: nil, value: "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") }%" },
                            { label: 'Memory',                tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['mem'] })") },
-                           { label: 'Instances',             tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]].length })") },
+                           { label: 'Total Instances',       tag: 'a', value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'].length })") },
+                           { label: 'Running Instances',     tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'].length })") },
                            { label: 'Instances Memory Used', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })") },
                            { label: 'Instances Disk Used',   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })") },
                            { label: 'Instances CPU Used',    tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })") },
@@ -3100,7 +3148,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has applications link' do
-            check_filter_link('DEAs', 6, 'Applications', nats_dea['host'])
+            check_filter_link('DEAs', 10, 'ApplicationInstances', nats_dea['host'])
           end
         end
       end

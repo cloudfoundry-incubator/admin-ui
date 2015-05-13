@@ -163,6 +163,7 @@ module AdminUI
         organization_app_counters['total'] += 1
         organization_app_counters[application[:state]] += 1
         organization_app_counters[application[:package_state]] += 1
+        organization_app_counters['instances'] += application[:instances] unless application[:instances].nil?
       end
 
       items = []
