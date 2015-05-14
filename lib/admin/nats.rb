@@ -14,8 +14,6 @@ module AdminUI
       @semaphore = Mutex.new
       @condition = ConditionVariable.new
 
-      @use_cache = true
-
       @cache = {}
 
       thread = Thread.new do
@@ -36,18 +34,15 @@ module AdminUI
 
     def remove(uris)
       @semaphore.synchronize do
-        if File.exist?(@config.data_file)
-          @cache = JSON.parse(IO.read(@config.data_file))
+        @cache = read_or_initialize_cache
 
-          uris.each do |uri|
-            @cache['items'].delete(uri)
-            @cache['notified'].delete(uri)
-          end
-
-          File.open(@config.data_file, 'w') do |file|
-            file.write(JSON.pretty_generate(@cache))
-          end
+        removed = false
+        uris.each do |uri|
+          removed = true unless @cache['items'].delete(uri).nil?
+          removed = true unless @cache['notified'].delete(uri).nil?
         end
+
+        write_cache if removed
       end
     end
 
@@ -63,7 +58,6 @@ module AdminUI
 
         send_email(disconnected)
 
-        @use_cache = true
         @condition.broadcast
         @condition.wait(@semaphore, @config.nats_discovery_interval)
       end
@@ -114,16 +108,50 @@ module AdminUI
       result
     end
 
+    # The call to this method must be in a synchronized block
+    def read_or_initialize_cache
+      if File.exist?(@config.data_file)
+        begin
+          read = IO.read(@config.data_file)
+          begin
+            parsed = JSON.parse(read)
+            if parsed.is_a?(Hash)
+              if parsed.key?('items')
+                return parsed if parsed.key?('notified')
+                @logger.debug("Error during NATS parse data: 'notified' key not present")
+              else
+                @logger.debug("Error during NATS parse data: 'items' key not present")
+              end
+            else
+              @logger.debug('Error during NATS parse data: parsed data not a hash')
+            end
+          rescue => error
+            @logger.debug("Error during NATS parse data: #{ error.inspect }")
+            @logger.debug(error.backtrace.join("\n"))
+          end
+        rescue => error
+          @logger.debug("Error during NATS read data: #{ error.inspect }")
+          @logger.debug(error.backtrace.join("\n"))
+        end
+      end
+      { 'items' => {}, 'notified' => {} }
+    end
+
+    # The call to this method must be in a synchronized block
+    def write_cache
+      File.open(@config.data_file, 'w') do |file|
+        file.write(JSON.pretty_generate(@cache))
+      end
+    rescue => error
+      @logger.debug("Error during NATS write data: #{ error.inspect }")
+      @logger.debug(error.backtrace.join("\n"))
+    end
+
     def save_data(nats_discovery_results, disconnected)
       @logger.debug('Saving NATS data...')
 
-      @cache = {}
-
-      @cache['items']    = {}
-      @cache['notified'] = {}
-
       begin
-        @cache = JSON.parse(IO.read(@config.data_file)) if @use_cache && File.exist?(@config.data_file)
+        @cache = read_or_initialize_cache
 
         # Special-casing code to handle same component restarting with different ephemeral port.
         # Remove all old references which also have new references prior to merge.
@@ -154,9 +182,7 @@ module AdminUI
                                    disconnected)
         end
 
-        File.open(@config.data_file, 'w') do |file|
-          file.write(JSON.pretty_generate(@cache))
-        end
+        write_cache
       rescue => error
         @logger.debug("Error during NATS save data: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
