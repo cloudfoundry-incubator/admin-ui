@@ -136,6 +136,8 @@ describe AdminUI::Admin do
 
   def logout(http)
     request = Net::HTTP::Get.new('/logout')
+    request['Cookie'] = cookie
+    request['Content-Length'] = 0
 
     response = http.request(request)
     expect(response.is_a?(Net::HTTPOK)).to be_true
@@ -150,25 +152,23 @@ describe AdminUI::Admin do
   end
 
   shared_examples 'common_destroys the session after logout' do
-    it 'destroys the session after logout' do
-      original_cookie = login_and_return_cookie(create_http)
-      new_cookie      = logout(create_http)
+    before do
+      login_stub_admin
+    end
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
 
-      expect(new_cookie.inspect).not_to eq(original_cookie.inspect)
+    it 'destroys the session after logout' do
+      new_cookie = logout(http)
+      expect(new_cookie.inspect).not_to eq(cookie.inspect)
     end
   end
 
   context 'Destroys the plain http session after logout' do
-    before do
-      login_stub_admin
-    end
     it_behaves_like('common_destroys the session after logout')
   end
 
   context 'Destroys the https session after logout' do
-    before do
-      login_stub_admin
-    end
     let(:secured_client_connection) { true }
 
     it_behaves_like('common_destroys the session after logout')

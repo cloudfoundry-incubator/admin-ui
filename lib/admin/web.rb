@@ -211,7 +211,7 @@ module AdminUI
       end
     end
 
-    get '/logout' do
+    get '/logout', auth: [:user] do
       begin
         @logger.info_user(session[:username], 'get', '/logout')
         session.destroy
