@@ -417,7 +417,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           context 'set quota' do
             let(:insert_second_quota_definition) { true }
 
-            it 'sets the specific quota for the organization' do
+            it 'sets the quota for the organization' do
               check_first_row('OrganizationsTable')
               @driver.find_element(id: 'ToolTables_OrganizationsTable_1').click
 
@@ -970,7 +970,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '',
                              cc_app[:name],
                              cc_app[:guid],
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] })"),
+                             @driver.execute_script("return Format.formatNumber(#{ cc_app_instance_index })"),
                              varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
                              Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
                              "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
@@ -987,11 +987,29 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ApplicationInstancesTable_0')
+          check_allowscriptaccess_attribute('ToolTables_ApplicationInstancesTable_1')
         end
 
         it 'has a checkbox in the first column' do
-          check_checkbox_guid('ApplicationInstancesTable', "#{ cc_app[:guid] }/#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] }")
+          check_checkbox_guid('ApplicationInstancesTable', "#{ cc_app[:guid] }/#{ cc_app_instance_index }")
+        end
+
+        context 'manage application instances' do
+          it 'has a restart button' do
+            expect(@driver.find_element(id: 'ToolTables_ApplicationInstancesTable_0').text).to eq('Restart')
+          end
+
+          # Restart button
+          it_behaves_like('click button without selecting a single row') do
+            let(:button_id) { 'ToolTables_ApplicationInstancesTable_0' }
+          end
+
+          # Restart button
+          it_behaves_like('delete first row') do
+            let(:button_id)       { 'ToolTables_ApplicationInstancesTable_0' }
+            let(:confirm_message) { 'Are you sure you want to restart the selected application instances?' }
+            let(:table_id)        { 'ApplicationInstancesTable' }
+          end
         end
 
         context 'selectable' do
@@ -1002,7 +1020,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([{ label: 'Name',             tag: 'div', value: cc_app[:name] },
                            { label: 'Application GUID', tag:   'a', value: cc_app[:guid] },
-                           { label: 'Index',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] })") },
+                           { label: 'Index',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_app_instance_index })") },
                            { label: 'State',            tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] },
                            { label: 'Started',         tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp'] * 1000) })") },
                            { label: 'URI',             tag:   'a', value: "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }" },

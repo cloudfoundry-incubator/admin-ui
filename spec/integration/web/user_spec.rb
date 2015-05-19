@@ -17,409 +17,191 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(@driver.find_element(class: 'user').text).to eq('user')
     end
 
-    it 'Organizations tab does not have create, set quota, activate, suspend and delete buttons' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('Organizations').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Organizations'
+    shared_examples 'verifies first button is copy button' do
+      it 'verifies first button is copy button' do
+        begin
+          Selenium::WebDriver::Wait.new(timeout: 5).until do
+            scroll_tab_into_view(tab_id).click
+            @driver.find_element(class_name: 'menuItemSelected').attribute('id') == tab_id
+          end
+        rescue Selenium::WebDriver::Error::TimeOutError
         end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Organizations')
+        expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq(tab_id)
 
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'OrganizationsPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_OrganizationsTable_0').text == 'Copy'
+        begin
+          Selenium::WebDriver::Wait.new(timeout: 5).until do
+            @driver.find_element(id: page_id).displayed? &&
+              @driver.find_element(id: button_id).text == 'Copy'
+          end
+        rescue Selenium::WebDriver::Error::TimeOutError
         end
-      rescue Selenium::WebDriver::Error::TimeOutError
+        expect(@driver.find_element(id: page_id).displayed?).to eq(true)
+        expect(@driver.find_element(id: button_id).text).to eq('Copy')
       end
-      expect(@driver.find_element(id: 'OrganizationsPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_0').text).to eq('Copy')
     end
 
-    it 'Spaces tab does not have delete button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('Spaces').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Spaces'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Organizations tab does not have create, set quota, activate, suspend and delete buttons' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Organizations' }
+        let(:page_id)   { 'OrganizationsPage' }
+        let(:button_id) { 'ToolTables_OrganizationsTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Spaces')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'SpacesPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_SpacesTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'SpacesPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_SpacesTable_0').text).to eq('Copy')
     end
 
-    it 'Applications tab does not have start, stop, restart or delete buttons' do
-      # Need to wait until the page has been rendered.
-      # Move the click operation into the wait block to ensure the action has been taken, this is used to fit Travis CI system.
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('Applications').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Applications'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Spaces tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Spaces' }
+        let(:page_id)   { 'SpacesPage' }
+        let(:button_id) { 'ToolTables_SpacesTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Applications')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'ApplicationsPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_ApplicationsTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'ApplicationsPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_0').text).to eq('Copy')
     end
 
-    it 'Routes tab does not have delete button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('Routes').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Routes'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Applications tab does not have start, stop, restart or delete buttons' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Applications' }
+        let(:page_id)   { 'ApplicationsPage' }
+        let(:button_id) { 'ToolTables_ApplicationsTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Routes')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'RoutesPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_RoutesTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'RoutesPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_RoutesTable_0').text).to eq('Copy')
     end
 
-    it 'Service Instances tab does not have delete button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('ServiceInstances').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'ServiceInstances'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Application Instances tab does not have restart button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ApplicationInstances' }
+        let(:page_id)   { 'ApplicationInstancesPage' }
+        let(:button_id) { 'ToolTables_ApplicationInstancesTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('ServiceInstances')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'ServiceInstancesPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_ServiceInstancesTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'ServiceInstancesPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_ServiceInstancesTable_0').text).to eq('Copy')
     end
 
-    it 'Service Bindings tab does not have delete button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('ServiceBindings').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'ServiceBindings'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Routes tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Routes' }
+        let(:page_id)   { 'RoutesPage' }
+        let(:button_id) { 'ToolTables_RoutesTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('ServiceBindings')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'ServiceBindingsPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_ServiceBindingsTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'ServiceBindingsPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_ServiceBindingsTable_0').text).to eq('Copy')
     end
 
-    it 'Service Keys tab does not have delete button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('ServiceKeys').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'ServiceKeys'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Service Instances tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceInstances' }
+        let(:page_id)   { 'ServiceInstancesPage' }
+        let(:button_id) { 'ToolTables_ServiceInstancesTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('ServiceKeys')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'ServiceKeysPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_ServiceKeysTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'ServiceKeysPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_ServiceKeysTable_0').text).to eq('Copy')
     end
 
-    it 'Organization Roles tab does not have delete button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('OrganizationRoles').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'OrganizationRoles'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Service Bindings tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceBindings' }
+        let(:page_id)   { 'ServiceBindingsPage' }
+        let(:button_id) { 'ToolTables_ServiceBindingsTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('OrganizationRoles')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'OrganizationRolesPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_OrganizationRolesTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'OrganizationRolesPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_OrganizationRolesTable_0').text).to eq('Copy')
     end
 
-    it 'Space Roles tab does not have delete button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('SpaceRoles').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'SpaceRoles'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Service Keys tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceKeys' }
+        let(:page_id)   { 'ServiceKeysPage' }
+        let(:button_id) { 'ToolTables_ServiceKeysTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('SpaceRoles')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'SpaceRolesPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_SpaceRolesTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'SpaceRolesPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_SpaceRolesTable_0').text).to eq('Copy')
     end
 
-    it 'Domains tab does not have delete button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('Domains').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Domains'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Organization Roles tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'OrganizationRoles' }
+        let(:page_id)   { 'OrganizationRolesPage' }
+        let(:button_id) { 'ToolTables_OrganizationRolesTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Domains')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'DomainsPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_DomainsTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'DomainsPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_DomainsTable_0').text).to eq('Copy')
     end
 
-    it 'Quotas tab does not have delete button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('Quotas').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Quotas'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Space Roles tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'SpaceRoles' }
+        let(:page_id)   { 'SpaceRolesPage' }
+        let(:button_id) { 'ToolTables_SpaceRolesTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Quotas')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'QuotasPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_QuotasTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'QuotasPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_QuotasTable_0').text).to eq('Copy')
     end
 
-    it 'Space Quotas tab does not have delete button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('SpaceQuotas').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'SpaceQuotas'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Domains tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Domains' }
+        let(:page_id)   { 'DomainsPage' }
+        let(:button_id) { 'ToolTables_DomainsTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('SpaceQuotas')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'SpaceQuotasPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_SpaceQuotasTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'SpaceQuotasPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_SpaceQuotasTable_0').text).to eq('Copy')
     end
 
-    it 'Service Brokers tab does not have delete button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('ServiceBrokers').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'ServiceBrokers'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Quotas tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Quotas' }
+        let(:page_id)   { 'QuotasPage' }
+        let(:button_id) { 'ToolTables_QuotasTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('ServiceBrokers')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'ServiceBrokersPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_ServiceBrokersTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'ServiceBrokersPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_ServiceBrokersTable_0').text).to eq('Copy')
     end
 
-    it 'Services tab does not have delete and purge buttons' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('Services').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Services'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Space Quotas tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'SpaceQuotas' }
+        let(:page_id)   { 'SpaceQuotasPage' }
+        let(:button_id) { 'ToolTables_SpaceQuotasTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Services')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'ServicesPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_ServicesTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'ServicesPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_ServicesTable_0').text).to eq('Copy')
     end
 
-    it 'Service Plans tab does not have public, private and delete buttons' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('ServicePlans').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'ServicePlans'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Service Brokers tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceBrokers' }
+        let(:page_id)   { 'ServiceBrokersPage' }
+        let(:button_id) { 'ToolTables_ServiceBrokersTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('ServicePlans')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 10).until do
-          @driver.find_element(id: 'ServicePlansPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_ServicePlansTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'ServicePlansPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_ServicePlansTable_0').text).to eq('Copy')
     end
 
-    it 'Service Plan Visibilities tab does not have delete button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('ServicePlanVisibilities').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'ServicePlanVisibilities'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Services tab does not have delete and purge buttons' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Services' }
+        let(:page_id)   { 'ServicesPage' }
+        let(:button_id) { 'ToolTables_ServicesTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('ServicePlanVisibilities')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 10).until do
-          @driver.find_element(id: 'ServicePlanVisibilitiesPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_ServicePlanVisibilitiesTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'ServicePlanVisibilitiesPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_ServicePlanVisibilitiesTable_0').text).to eq('Copy')
     end
 
-    it 'DEAs tab does not have a create DEA button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('DEAs').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'DEAs'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Service Plans tab does not have public, private and delete buttons' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServicePlans' }
+        let(:page_id)   { 'ServicePlansPage' }
+        let(:button_id) { 'ToolTables_ServicePlansTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('DEAs')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'DEAsPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_DEAsTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'DEAsPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_DEAsTable_0').text).to eq('Copy')
     end
 
-    it 'Components tab does not have a remove all components button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('Components').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Components'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Service Plan Visibilities tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServicePlanVisibilities' }
+        let(:page_id)   { 'ServicePlanVisibilitiesPage' }
+        let(:button_id) { 'ToolTables_ServicePlanVisibilitiesTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Components')
+    end
 
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'ComponentsPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_ComponentsTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'DEAs tab does not have a create DEA button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'DEAs' }
+        let(:page_id)   { 'DEAsPage' }
+        let(:button_id) { 'ToolTables_DEAsTable_0' }
       end
-      expect(@driver.find_element(id: 'ComponentsPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_ComponentsTable_0').text).to eq('Copy')
+    end
+
+    context 'Components tab does not have a remove all components button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Components' }
+        let(:page_id)   { 'ComponentsPage' }
+        let(:button_id) { 'ToolTables_ComponentsTable_0' }
+      end
     end
 
     it 'Tasks tab does not exist' do
       expect(scroll_tab_into_view('Tasks').displayed?).to be_false
     end
 
-    it 'Stats tab does not have a create stats button' do
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          scroll_tab_into_view('Stats').click
-          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'Stats'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
+    context 'Stats tab does not have a create stats button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Stats' }
+        let(:page_id)   { 'StatsPage' }
+        let(:button_id) { 'ToolTables_StatsTable_0' }
       end
-      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('Stats')
-
-      begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until do
-          @driver.find_element(id: 'StatsPage').displayed? &&
-            @driver.find_element(id: 'ToolTables_StatsTable_0').text == 'Copy'
-        end
-      rescue Selenium::WebDriver::Error::TimeOutError
-      end
-      expect(@driver.find_element(id: 'StatsPage').displayed?).to eq(true)
-      expect(@driver.find_element(id: 'ToolTables_StatsTable_0').text).to eq('Copy')
     end
   end
 end

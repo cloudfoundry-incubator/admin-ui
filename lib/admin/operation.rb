@@ -41,6 +41,14 @@ module AdminUI
       @view_models.invalidate_service_keys
     end
 
+    def delete_application_instance(app_guid, instance_index)
+      url = "v2/apps/#{ app_guid }/instances/#{ instance_index }"
+      @logger.debug("DELETE #{ url }")
+      @client.delete_cc(url)
+      @varz.invalidate
+      @view_models.invalidate_application_instances
+    end
+
     def delete_domain(domain_guid, recursive)
       url = "v2/domains/#{ domain_guid }"
       url += '?recursive=true' if recursive

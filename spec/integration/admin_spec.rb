@@ -209,6 +209,30 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage application instance' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      # Make sure there is an application instance
+      expect(get_json('/application_instances_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_app_instance
+      response = delete_request("/applications/#{ cc_app[:guid] }/#{ cc_app_instance_index }")
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['delete', "/applications/#{ cc_app[:guid] }/#{ cc_app_instance_index }"]])
+    end
+
+    it 'has user name and application instances request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/application_instances_view_model']], true)
+    end
+
+    it 'deletes an application instance' do
+      expect { delete_app_instance }.to change { get_json('/application_instances_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage domain' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -234,11 +258,11 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/domains_view_model']], true)
     end
 
-    it 'deletes the specific domain' do
+    it 'deletes a domain' do
       expect { delete_domain }.to change { get_json('/domains_view_model')['items']['items'].length }.from(1).to(0)
     end
 
-    it 'deletes the specific domain recursive' do
+    it 'deletes a domain recursive' do
       expect { delete_domain_recursive }.to change { get_json('/domains_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
@@ -297,9 +321,9 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/organizations_view_model', false)['items']['items'][1][1]).to eq(cc_organization2[:name])
     end
 
-    context 'sets the specific quota for organization' do
+    context 'sets the quota for organization' do
       let(:insert_second_quota_definition) { true }
-      it 'sets the specific quota for organization' do
+      it 'sets the quota for organization' do
         expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][10] }.from(cc_quota_definition[:name]).to(cc_quota_definition2[:name])
       end
     end
@@ -341,7 +365,7 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/organization_roles_view_model']], true)
     end
 
-    it 'deletes the specific organization role' do
+    it 'deletes an organization role' do
       expect { delete_organization_role }.to change { get_json('/organization_roles_view_model')['items']['items'].length }.from(4).to(3)
     end
   end
@@ -365,7 +389,7 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/quotas_view_model']], true)
     end
 
-    it 'deletes the specific quota' do
+    it 'deletes a quota' do
       expect { delete_quota }.to change { get_json('/quotas_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
@@ -389,7 +413,7 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/routes_view_model']], true)
     end
 
-    it 'deletes the specific route' do
+    it 'deletes a route' do
       expect { delete_route }.to change { get_json('/routes_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
@@ -419,11 +443,11 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/services_view_model']], true)
     end
 
-    it 'deletes the specific service' do
+    it 'deletes a service' do
       expect { delete_service }.to change { get_json('/services_view_model')['items']['items'].length }.from(1).to(0)
     end
 
-    it 'purges the specific service' do
+    it 'purges a service' do
       expect { purge_service }.to change { get_json('/services_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
@@ -447,7 +471,7 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_bindings_view_model']], true)
     end
 
-    it 'deletes the specific service binding' do
+    it 'deletes a service binding' do
       expect { delete_service_binding }.to change { get_json('/service_bindings_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
@@ -471,7 +495,7 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_brokers_view_model']], true)
     end
 
-    it 'deletes the specific service broker' do
+    it 'deletes a service broker' do
       expect { delete_service_broker }.to change { get_json('/service_brokers_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
@@ -501,11 +525,11 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_instances_view_model']], true)
     end
 
-    it 'deletes the specific service instance' do
+    it 'deletes a service instance' do
       expect { delete_service_instance }.to change { get_json('/service_instances_view_model')['items']['items'].length }.from(1).to(0)
     end
 
-    it 'deletes the specific service instance recursive' do
+    it 'deletes a service instance recursive' do
       expect { delete_service_instance_recursive }.to change { get_json('/service_instances_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
@@ -529,7 +553,7 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_keys_view_model']], true)
     end
 
-    it 'deletes the specific service key' do
+    it 'deletes a service key' do
       expect { delete_service_key }.to change { get_json('/service_keys_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
@@ -571,7 +595,7 @@ describe AdminUI::Admin, type: :integration do
       expect { get_json('/service_plans_view_model')['items']['items'][0][7] }.to be_true
     end
 
-    it 'deletes the specific service plan' do
+    it 'deletes a service plan' do
       expect { delete_service_plan }.to change { get_json('/service_plans_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
@@ -595,7 +619,7 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_plan_visibilities_view_model']], true)
     end
 
-    it 'deletes the specific service plan visibility' do
+    it 'deletes a service plan visibility' do
       expect { delete_service_plan_visibility }.to change { get_json('/service_plan_visibilities_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
@@ -625,11 +649,11 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/spaces_view_model']], true)
     end
 
-    it 'deletes the specific space' do
+    it 'deletes a space' do
       expect { delete_space }.to change { get_json('/spaces_view_model')['items']['items'].length }.from(1).to(0)
     end
 
-    it 'deletes the specific space recursive' do
+    it 'deletes a space recursive' do
       expect { delete_space_recursive }.to change { get_json('/spaces_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
@@ -653,7 +677,7 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/space_quotas_view_model']], true)
     end
 
-    it 'deletes the specific space quota' do
+    it 'deletes a space quota' do
       expect { delete_space_quota }.to change { get_json('/space_quotas_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
@@ -674,25 +698,25 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/space_quota_definitions/#{ cc_space_quota_definition[:guid] }/spaces/#{ cc_space[:guid] }"]])
     end
 
-    context 'deletes the specific space quota space' do
+    context 'deletes a space quota space' do
       before do
         # Make sure there is a space quota
         expect(get_json('/space_quotas_view_model')['items']['items'].length).to eq(1)
       end
 
-      it 'deletes the specific space quota space' do
+      it 'deletes a space quota space' do
         expect { delete_space_quota_space }.to change { get_json('/spaces_view_model')['items']['items'][0][9] }.from(cc_space_quota_definition[:name]).to(nil)
       end
     end
 
-    context 'sets the specific space quota for space' do
+    context 'sets a space quota for space' do
       let(:insert_second_quota_definition) { true }
       before do
         # Make sure there are two space quotas
         expect(get_json('/space_quotas_view_model')['items']['items'].length).to eq(2)
       end
 
-      it 'sets the specific space quota for space' do
+      it 'sets a space quota for space' do
         expect { create_space_quota_space }.to change { get_json('/spaces_view_model')['items']['items'][0][9] }.from(cc_space_quota_definition[:name]).to(cc_space_quota_definition2[:name])
       end
     end
@@ -717,7 +741,7 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/space_roles_view_model']], true)
     end
 
-    it 'deletes the specific space role' do
+    it 'deletes a space role' do
       expect { delete_space_role }.to change { get_json('/space_roles_view_model')['items']['items'].length }.from(3).to(2)
     end
   end
@@ -759,7 +783,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'application_instances_view_model detail' do
-      let(:path)              { "/application_instances_view_model/#{ cc_app[:guid] }/#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['instance_index'] }" }
+      let(:path)              { "/application_instances_view_model/#{ cc_app[:guid] }/#{ cc_app_instance_index }" }
       let(:view_model_source) { view_models_application_instances_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1136,7 +1160,7 @@ describe AdminUI::Admin, type: :integration do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
 
-    it 'creates DEA, retrieves all tasks and retrieves specific status' do
+    it 'creates DEA, retrieves all tasks and retrieves status' do
       request = Net::HTTP::Post.new('/deas')
       request['Cookie']         = cookie
       request['Content-Length'] = 0

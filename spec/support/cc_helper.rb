@@ -926,6 +926,10 @@ module CCHelper
     ]
   end
 
+  def cc_app_instance_index
+    0
+  end
+
   def cc_app_not_found
     NotFound.new('code'        => 100_004,
                  'description' => "The app name could not be found: #{ cc_app[:guid] }",
@@ -968,7 +972,22 @@ module CCHelper
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
+
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps/#{ cc_app[:guid] }/instances/#{ cc_app_instance_index }", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        cc_clear_apps_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
   end
+
+  # rubocop:disable Style/TrivialAccessors
+  def cc_apps_deleted
+    @cc_apps_deleted
+  end
+  # rubocop:enable Style/TrivialAccessors
 
   def cc_domain_not_found
     NotFound.new('code'        => 130_002,

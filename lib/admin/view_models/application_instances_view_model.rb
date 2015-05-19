@@ -36,9 +36,9 @@ module AdminUI
           application.each_value do |application_instance|
             Thread.pass
 
-            id                         = application_instance['application_id']
-            application_instance_index = application_instance['instance_index']
-            key                        = "#{ id }/#{ application_instance_index }"
+            id             = application_instance['application_id']
+            instance_index = application_instance['instance_index']
+            key            = "#{ id }/#{ instance_index }"
 
             stack_name    = application_instance['stack']
             stack         = stack_name.nil? ? nil : stack_name_hash[stack_name]
@@ -48,7 +48,7 @@ module AdminUI
             row.push(key)
             row.push(application_instance['application_name'])
             row.push(id)
-            row.push(application_instance_index)
+            row.push(instance_index)
 
             row.push(application_instance['state'])
 
@@ -94,7 +94,6 @@ module AdminUI
 
             items.push(row)
 
-            key = "#{ id }/#{ application_instance_index }"
             hash[key] =
             {
               'application_instance' => application_instance,

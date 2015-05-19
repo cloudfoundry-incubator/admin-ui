@@ -56,7 +56,7 @@ module VARZHelper
   end
 
   def varz_dea_app_instance
-    "#{ cc_app[:guid] }_instance1"
+    "#{ cc_app[:guid] }_instance0"
   end
 
   def varz_dea
@@ -71,43 +71,46 @@ module VARZHelper
       'start'                  => '2015-04-23T08:00:01-05:00',
       'type'                   => nats_dea['type'],
       'uptime'                 => '7d:8h:9m:10s',
-      'instance_registry'      =>
+      'instance_registry'      => cc_apps_deleted ? {} : varz_dea_instance_registry
+    }
+  end
+
+  def varz_dea_instance_registry
+    {
+      cc_app[:guid] =>
       {
-        cc_app[:guid] =>
+        varz_dea_app_instance =>
         {
-          varz_dea_app_instance =>
+          'application_id'          => cc_app[:guid],
+          'application_name'        => cc_app[:name],
+          'application_uris'        => ["#{ cc_route[:host] }.#{ cc_domain[:name]}"],
+          'computed_pcpu'           => 0.12118232960961232,
+          'droplet_sha1'            => 'droplet1',
+          'limits'                  =>
           {
-            'application_id'          => cc_app[:guid],
-            'application_name'        => cc_app[:name],
-            'application_uris'        => ["#{ cc_route[:host] }.#{ cc_domain[:name]}"],
-            'computed_pcpu'           => 0.12118232960961232,
-            'droplet_sha1'            => 'droplet1',
-            'limits'                  =>
+            'mem'  => cc_app[:memory],
+            'disk' => cc_app[:disk_quota],
+            'fds'  => 13
+          },
+          'instance_index'          => cc_app_instance_index,
+          'services'                =>
+          [
             {
-              'mem'  => cc_app[:memory],
-              'disk' => cc_app[:disk_quota],
-              'fds'  => 13
-            },
-            'instance_index'          => 0,
-            'services'                =>
-            [
-              {
-                'name'     => cc_service_instance[:name],
-                'provider' => cc_service[:provider],
-                'vendor'   => cc_service[:label],
-                'version'  => cc_service[:version],
-                'plan'     => cc_service_plan[:name]
-              }
-            ],
-            'stack'                   => cc_stack[:name],
-            'state'                   => 'RUNNING',
-            'state_running_timestamp' => 1_382_448_059.0734425,
-            'used_disk_in_bytes'      => 56_057_856,
-            'used_memory_in_bytes'    => 19_292_160,
-            'vcap_application'        =>
-            {
-              'space_id' => cc_space[:guid]
+              'name'     => cc_service_instance[:name],
+              'provider' => cc_service[:provider],
+              'vendor'   => cc_service[:label],
+              'version'  => cc_service[:version],
+              'plan'     => cc_service_plan[:name]
             }
+          ],
+          'stack'                   => cc_stack[:name],
+          'state'                   => 'RUNNING',
+          'state_running_timestamp' => 1_382_448_059.0734425,
+          'used_disk_in_bytes'      => 56_057_856,
+          'used_memory_in_bytes'    => 19_292_160,
+          'vcap_application'        =>
+          {
+            'space_id' => cc_space[:guid]
           }
         }
       }

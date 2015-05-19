@@ -287,6 +287,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete application')
     end
 
+    shared_examples 'common delete application instance' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/applications/application1/instance1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'delete application instance via http' do
+      it_behaves_like('common delete application instance')
+    end
+
+    context 'delete application instance via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete application instance')
+    end
+
     shared_examples 'common delete application recursive' do
       it 'returns failure code due to disconnection' do
         response = delete('/applications/application1?recursive=true')
@@ -1306,6 +1323,10 @@ describe AdminUI::Admin do
 
       it 'deletes /applications/:guid?recursive=true redirects as expected' do
         delete_redirects_as_expected('/applications/application1?recursive=true')
+      end
+
+      it 'deletes /applications/:guid/:instance redirects as expected' do
+        delete_redirects_as_expected('/applications/application1/instance1')
       end
 
       it 'deletes /domains/:guid redirects as expected' do

@@ -131,6 +131,39 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage application instance' do
+      before do
+        # Make sure there is an application instance
+        expect(varz.deas['items'].length).to eq(1)
+        expect(varz.deas['items'][0]['data']['instance_registry'].length).to eq(1)
+      end
+
+      def delete_application_instance
+        operation.delete_application_instance(cc_app[:guid], cc_app_instance_index)
+      end
+
+      it 'deletes the application instance' do
+        expect { delete_application_instance }.to change { varz.deas['items'][0]['data']['instance_registry'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_application_instance
+        end
+
+        def verify_app_not_found(exception)
+          expect(exception.cf_code).to eq(100_004)
+          expect(exception.cf_error_code).to eq('CF-AppNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The app name could not be found: #{ cc_app[:guid] }")
+        end
+
+        it 'fails deleting deleted app' do
+          expect { delete_application_instance }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage domain' do
       before do
         # Make sure there is a domain

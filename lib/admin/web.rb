@@ -865,6 +865,23 @@ module AdminUI
       end
     end
 
+    delete '/applications/:app_guid/:instance_index', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/applications/#{ params[:app_guid] }/#{ params[:instance_index] }")
+      begin
+        @operation.delete_application_instance(params[:app_guid], params[:instance_index])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete application instance: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during delete application instance: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/components', auth: [:user] do
       @logger.info_user(session[:username], 'delete', "/components/#{ params[:uri] }")
       begin
