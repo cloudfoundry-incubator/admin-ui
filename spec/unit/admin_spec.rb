@@ -740,7 +740,7 @@ describe AdminUI::Admin do
       it_behaves_like('common restage application')
     end
 
-    context 'manage restage via https' do
+    context 'restage application via https' do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common restage application')

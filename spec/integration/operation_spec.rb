@@ -170,7 +170,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.message).to eq("The app name could not be found: #{ cc_app[:guid] }")
         end
 
-        it 'fails deleting deleted app' do
+        it 'fails deleting instance of deleted app' do
           expect { delete_application_instance }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
         end
       end

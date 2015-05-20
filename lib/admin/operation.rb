@@ -20,7 +20,7 @@ module AdminUI
     def create_space_quota_definition_space(space_quota_definition_guid, space_guid)
       url = "v2/space_quota_definitions/#{ space_quota_definition_guid }/spaces/#{ space_guid }"
       @logger.debug("PUT #{ url }")
-      @client.put_cc(url, nil)
+      @client.put_cc(url, '{}')
       @cc.invalidate_spaces
       @view_models.invalidate_spaces
     end
@@ -289,7 +289,7 @@ module AdminUI
     def restage_application(app_guid)
       url = "v2/apps/#{ app_guid }/restage"
       @logger.debug("POST #{ url }")
-      @client.post_cc(url, nil)
+      @client.post_cc(url, '{}')
       @cc.invalidate_applications
       @varz.invalidate
       @view_models.invalidate_applications
