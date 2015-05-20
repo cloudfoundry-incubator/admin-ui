@@ -37,18 +37,19 @@ module AdminUI
             Thread.pass
 
             id             = application_instance['application_id']
+            instance_id    = application_instance['instance_id']
             instance_index = application_instance['instance_index']
-            key            = "#{ id }/#{ instance_index }"
 
             stack_name    = application_instance['stack']
             stack         = stack_name.nil? ? nil : stack_name_hash[stack_name]
 
             row = []
 
-            row.push(key)
+            row.push("#{ id }/#{ instance_index }")
             row.push(application_instance['application_name'])
             row.push(id)
             row.push(instance_index)
+            row.push(instance_id)
 
             row.push(application_instance['state'])
 
@@ -94,7 +95,7 @@ module AdminUI
 
             items.push(row)
 
-            hash[key] =
+            hash["#{ id }/#{ instance_id }"] =
             {
               'application_instance' => application_instance,
               'organization'         => organization,
@@ -105,7 +106,7 @@ module AdminUI
         end
       end
 
-      result(true, items, hash, (1..15).to_a, [1, 2, 4, 5, 6, 7, 14])
+      result(true, items, hash, (1..16).to_a, [1, 2, 4, 5, 6, 7, 8, 15])
     end
   end
 end

@@ -159,8 +159,8 @@ module AdminUI
       invalidate_cache(:tasks)
     end
 
-    def application_instance(guid, instance)
-      details(:application_instances, "#{ guid }/#{ instance }")
+    def application_instance(app_guid, instance_id)
+      details(:application_instances, "#{ app_guid }/#{ instance_id }")
     end
 
     def application_instances

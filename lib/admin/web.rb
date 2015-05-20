@@ -47,9 +47,9 @@ module AdminUI
       AllActions.new(@logger, @view_models.application_instances, params).items.to_json
     end
 
-    get '/application_instances_view_model/:guid/:instance', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/application_instances_view_model/#{ params[:guid] }/#{ params[:instance] }")
-      result = @view_models.application_instance(params[:guid], params[:instance])
+    get '/application_instances_view_model/:app_guid/:instance_id', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/application_instances_view_model/#{ params[:app_guid] }/#{ params[:instance_id] }")
+      result = @view_models.application_instance(params[:app_guid], params[:instance_id])
       return result.to_json if result
       404
     end
@@ -485,6 +485,23 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'application_instances.csv')
+    end
+
+    post '/applications/:app_guid/restage', auth: [:admin] do
+      begin
+        @logger.info_user(session[:username], 'post', "/applications/#{ params[:app_guid] }/restage")
+        @operation.restage_application(params[:app_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during restage application: #{ error.to_h }")
+        content_type(:json)
+        status(error.http_code)
+        body(error.to_h.to_json)
+      rescue => error
+        @logger.debug("Error during restage application: #{ error.inspect }")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
     end
 
     post '/applications_view_model', auth: [:user] do

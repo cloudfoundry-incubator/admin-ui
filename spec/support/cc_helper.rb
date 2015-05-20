@@ -15,6 +15,16 @@ module CCHelper
     end
   end
 
+  # Workaround since I cannot instantiate Net::HTTPCreated and have body() function successfully
+  # Failing with NoMethodError: undefined method `closed?
+  class Created < Net::HTTPOK
+    attr_reader :body
+    def initialize(hash)
+      super(1.0, 201, 'Created')
+      @body = hash.to_json
+    end
+  end
+
   # Workaround since I cannot instantiate Net::HTTPNotFound and have body() function successfully
   # Failing with NoMethodError: undefined method `closed?
   class NotFound < Net::HTTPNotFound
@@ -937,6 +947,14 @@ module CCHelper
   end
 
   def cc_app_stubs(config)
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps/#{ cc_app[:guid] }/restage", AdminUI::Utils::HTTP_POST, anything, anything, anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        Created.new('{}')
+      end
+    end
+
     AdminUI::Utils.stub(:http_request).with(anything, "#{ config.cloud_controller_uri }/v2/apps/#{ cc_app[:guid] }", AdminUI::Utils::HTTP_PUT, anything, '{"state":"STOPPED"}', anything) do
       if @cc_apps_deleted
         cc_app_not_found

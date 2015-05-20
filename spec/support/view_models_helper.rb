@@ -16,6 +16,7 @@ module ViewModelsHelper
         cc_app[:name],
         cc_app[:guid],
         cc_app_instance_index,
+        varz_dea_app_instance,
         varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
         Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
         varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'],

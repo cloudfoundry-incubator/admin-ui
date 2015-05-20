@@ -56,7 +56,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Applications tab does not have start, stop, restart or delete buttons' do
+    context 'Applications tab does not have start, stop, restart, restage or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Applications' }
         let(:page_id)   { 'ApplicationsPage' }

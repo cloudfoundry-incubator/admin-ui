@@ -289,7 +289,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete application instance' do
       it 'returns failure code due to disconnection' do
-        response = delete('/applications/application1/instance1')
+        response = delete('/applications/application1/index0')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
       end
     end
@@ -728,6 +728,23 @@ describe AdminUI::Admin do
 
       it_behaves_like('common manage service plan')
     end
+
+    shared_examples 'common restage application' do
+      it 'returns failure code due to disconnection' do
+        response = post('/applications/application1/restage', '{}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+      end
+    end
+
+    context 'restage application via http' do
+      it_behaves_like('common restage application')
+    end
+
+    context 'manage restage via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common restage application')
+    end
   end
 
   context 'Login required; REST services performed and succeeded' do
@@ -792,8 +809,8 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/application_instances_view_model')
       end
 
-      it '/application_instances_view_model/:guid/:instance returns not found' do
-        verify_not_found('/application_instances_view_model/application1/instance')
+      it '/application_instances_view_model/:app_guid/:instance_id returns not found' do
+        verify_not_found('/application_instances_view_model/application1/instance1')
       end
 
       it '/applications_view_model succeeds' do
@@ -1081,7 +1098,7 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/application_instances_view_model')
       end
 
-      it '/application_instances_view_model/:guid/:instance redirects as expected' do
+      it '/application_instances_view_model/:app_guid/:instance_id redirects as expected' do
         get_redirects_as_expected('/application_instances_view_model/application1/instance1')
       end
 
@@ -1325,8 +1342,8 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/applications/application1?recursive=true')
       end
 
-      it 'deletes /applications/:guid/:instance redirects as expected' do
-        delete_redirects_as_expected('/applications/application1/instance1')
+      it 'deletes /applications/:app_guid/:index redirects as expected' do
+        delete_redirects_as_expected('/applications/application1/index0')
       end
 
       it 'deletes /domains/:guid redirects as expected' do
@@ -1415,6 +1432,10 @@ describe AdminUI::Admin do
 
       it 'posts /application_instances_view_model redirects as expected' do
         post_redirects_as_expected('/application_instances_view_model')
+      end
+
+      it 'posts /applications/:guid/restage redirects as expected' do
+        post_redirects_as_expected('/applications/application1/restage', '{}')
       end
 
       it 'posts /applications_view_model redirects as expected' do

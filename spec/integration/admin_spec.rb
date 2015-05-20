@@ -175,6 +175,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['put', "/applications/#{ cc_app[:guid] }; body = {\"state\":\"STARTED\"}"]], true)
     end
 
+    def restage_app
+      response = post_request("/applications/#{ cc_app[:guid] }/restage", '{}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be_true
+      verify_sys_log_entries([['post', "/applications/#{ cc_app[:guid] }/restage"]], true)
+    end
+
     def delete_app
       response = delete_request("/applications/#{ cc_app[:guid] }")
       expect(response.is_a?(Net::HTTPNoContent)).to be_true
@@ -198,6 +204,10 @@ describe AdminUI::Admin, type: :integration do
     it 'starts a stopped application' do
       stop_app
       expect { start_app }.to change { get_json('/applications_view_model')['items']['items'][0][3] }.from('STOPPED').to('STARTED')
+    end
+
+    it 'restages stopped application' do
+      restage_app
     end
 
     it 'deletes an application' do
@@ -783,7 +793,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'application_instances_view_model detail' do
-      let(:path)              { "/application_instances_view_model/#{ cc_app[:guid] }/#{ cc_app_instance_index }" }
+      let(:path)              { "/application_instances_view_model/#{ cc_app[:guid] }/#{ varz_dea_app_instance }" }
       let(:view_model_source) { view_models_application_instances_detail }
       it_behaves_like('retrieves view_model detail')
     end

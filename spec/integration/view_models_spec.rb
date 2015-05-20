@@ -94,7 +94,7 @@ describe AdminUI::CC, type: :integration do
     end
 
     context 'returns connected application_instances_view_model detail' do
-      let(:results)  { view_models.application_instance(cc_app[:guid], cc_app_instance_index) }
+      let(:results)  { view_models.application_instance(cc_app[:guid], varz_dea_app_instance) }
       let(:expected) { view_models_application_instances_detail }
 
       it_behaves_like('common view model retrieval detail')

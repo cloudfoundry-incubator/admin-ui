@@ -74,6 +74,10 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_application(cc_app[:guid], true)
       end
 
+      def restage_application
+        operation.restage_application(cc_app[:guid])
+      end
+
       def start_application
         operation.manage_application(cc_app[:guid], '{"state":"STARTED"}')
       end
@@ -91,6 +95,10 @@ describe AdminUI::Operation, type: :integration do
         stop_application
 
         expect { start_application }.to change { cc.applications['items'][0][:state] }.from('STOPPED').to('STARTED')
+      end
+
+      it 'restages the application' do
+        restage_application
       end
 
       it 'deletes the application' do
@@ -119,6 +127,10 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails stopping deleted app' do
           expect { stop_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
+        end
+
+        it 'fails restaging deleted app' do
+          expect { restage_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
         end
 
         it 'fails deleting deleted app' do

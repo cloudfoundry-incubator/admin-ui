@@ -92,6 +92,7 @@ module VARZHelper
             'disk' => cc_app[:disk_quota],
             'fds'  => 13
           },
+          'instance_id'             => varz_dea_app_instance,
           'instance_index'          => cc_app_instance_index,
           'services'                =>
           [

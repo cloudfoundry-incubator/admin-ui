@@ -286,6 +286,16 @@ module AdminUI
       @view_models.invalidate_organizations
     end
 
+    def restage_application(app_guid)
+      url = "v2/apps/#{ app_guid }/restage"
+      @logger.debug("POST #{ url }")
+      @client.post_cc(url, nil)
+      @cc.invalidate_applications
+      @varz.invalidate
+      @view_models.invalidate_applications
+      @view_models.invalidate_application_instances
+    end
+
     def remove_component(uri)
       @logger.debug("REMOVE component #{ uri }")
       @varz.remove(uri)
