@@ -83,7 +83,7 @@ module VARZHelper
         {
           'application_id'          => cc_app[:guid],
           'application_name'        => cc_app[:name],
-          'application_uris'        => ["#{ cc_route[:host] }.#{ cc_domain[:name]}"],
+          'application_uris'        => ["#{ cc_route[:host] }.#{ cc_domain[:name]}#{ cc_route[:path] }"],
           'computed_pcpu'           => 0.12118232960961232,
           'droplet_sha1'            => 'droplet1',
           'limits'                  =>

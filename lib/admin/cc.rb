@@ -28,7 +28,7 @@ module AdminUI
         {
           db_uri:  ccdb_uri,
           table:   :apps,
-          columns: [:buildpack, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :droplet_hash, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :name, :package_pending_since, :package_state, :package_updated_at, :production, :space_id, :stack_id, :staging_task_id, :state, :type, :updated_at, :version]
+          columns: [:buildpack, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :droplet_hash, :enable_ssh, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :name, :package_pending_since, :package_state, :package_updated_at, :production, :space_id, :stack_id, :staging_task_id, :state, :type, :updated_at, :version]
         },
         apps_routes:
         {
@@ -113,7 +113,7 @@ module AdminUI
         {
           db_uri:  ccdb_uri,
           table:   :routes,
-          columns: [:created_at, :domain_id, :guid, :host, :id, :space_id, :updated_at]
+          columns: [:created_at, :domain_id, :guid, :host, :id, :path, :space_id, :updated_at]
         },
         service_bindings:
         {
@@ -179,7 +179,7 @@ module AdminUI
         {
           db_uri:  ccdb_uri,
           table:   :spaces,
-          columns: [:created_at, :guid, :id, :name, :organization_id, :space_quota_definition_id, :updated_at]
+          columns: [:allow_ssh, :created_at, :guid, :id, :name, :organization_id, :space_quota_definition_id, :updated_at]
         },
         spaces_auditors:
         {

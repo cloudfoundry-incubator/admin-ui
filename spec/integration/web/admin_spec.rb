@@ -765,7 +765,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 expected_length: 19,
-                                labels:          [' ', 'Name', 'GUID', 'State', 'Package State', 'Created', 'Updated', 'URI', 'Stack', 'Buildpack', 'Events', 'Instances', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
+                                labels:          [' ', 'Name', 'GUID', 'State', 'Package State', 'Created', 'Updated', 'URIs', 'Stack', 'Buildpacks', 'Events', 'Instances', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
                                 colspans:        nil
                               }
                              ])
@@ -779,7 +779,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script('return Constants.STATUS__STAGED'),
                              cc_app[:created_at].to_datetime.rfc3339,
                              cc_app[:updated_at].to_datetime.rfc3339,
-                             "http://#{ cc_route[:host] }.#{ cc_domain[:name] }",
+                             "http://#{ cc_route[:host] }.#{ cc_domain[:name] }#{ cc_route[:path] }",
                              cc_stack[:name],
                              cc_app[:detected_buildpack],
                              '1',
@@ -936,7 +936,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Package State',    tag:   nil, value: cc_app[:package_state] },
                            { label: 'Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:created_at].to_datetime.rfc3339 }\")") },
                            { label: 'Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'URI',              tag:   nil, value: "http://#{ cc_route[:host] }.#{ cc_domain[:name] }" },
+                           { label: 'URI',              tag:   nil, value: "http://#{ cc_route[:host] }.#{ cc_domain[:name] }#{ cc_route[:path] }" },
                            { label: 'Stack',            tag:   'a', value: cc_stack[:name] },
                            { label: 'Buildpack',        tag:   nil, value: cc_app[:detected_buildpack] },
                            { label: 'Command',          tag:   nil, value: cc_app[:command] },
@@ -992,7 +992,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 expected_length: 17,
-                                labels:          [' ', 'Name', 'Application GUID', 'Index', 'Instance ID', 'State', 'Started', 'URI', 'Stack', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                labels:          [' ', 'Name', 'Application GUID', 'Index', 'Instance ID', 'State', 'Started', 'URIs', 'Stack', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
                                 colspans:        nil
                               }
                              ])
@@ -1123,8 +1123,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='RoutesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                expected_length: 8,
-                                labels:          [' ', 'Host', 'GUID', 'Domain', 'Created', 'Updated', 'Target', 'Application'],
+                                expected_length: 9,
+                                labels:          [' ', 'Host', 'Path', 'GUID', 'Domain', 'Created', 'Updated', 'Target', 'Applications'],
                                 colspans:        nil
                               }
                              ])
@@ -1133,6 +1133,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            [
                              '',
                              cc_route[:host],
+                             cc_route[:path],
                              cc_route[:guid],
                              cc_domain[:name],
                              cc_route[:created_at].to_datetime.rfc3339,
@@ -1176,31 +1177,32 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            check_details([{ label: 'Host',         tag: nil, value: cc_route[:host] },
-                           { label: 'GUID',         tag: nil, value: cc_route[:guid] },
-                           { label: 'Domain',       tag: 'a', value: cc_domain[:name] },
-                           { label: 'Created',      tag: nil, value: Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:created_at].to_datetime.rfc3339 }\")") } },
-                           { label: 'Updated',      tag: nil, value: Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:updated_at].to_datetime.rfc3339 }\")") } },
-                           { label: 'Applications', tag: 'a', value: '1' },
-                           { label: 'Space',        tag: 'a', value: cc_space[:name] },
-                           { label: 'Organization', tag: 'a', value: cc_organization[:name] }
+            check_details([{ label: 'Host',         tag:   nil, value: cc_route[:host] },
+                           { label: 'Path',         tag:   nil, value: cc_route[:path] },
+                           { label: 'GUID',         tag: 'div', value: cc_route[:guid] },
+                           { label: 'Domain',       tag:   'a', value: cc_domain[:name] },
+                           { label: 'Created',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:created_at].to_datetime.rfc3339 }\")") } },
+                           { label: 'Updated',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:updated_at].to_datetime.rfc3339 }\")") } },
+                           { label: 'Applications', tag:   'a', value: '1' },
+                           { label: 'Space',        tag:   'a', value: cc_space[:name] },
+                           { label: 'Organization', tag:   'a', value: cc_organization[:name] }
                           ])
           end
 
           it 'has domains link' do
-            check_filter_link('Routes', 2, 'Domains', cc_domain[:guid])
+            check_filter_link('Routes', 3, 'Domains', cc_domain[:guid])
           end
 
           it 'has applications link' do
-            check_filter_link('Routes', 5, 'Applications', "#{ cc_route[:host] }.#{ cc_domain[:name] }")
+            check_filter_link('Routes', 6, 'Applications', "#{ cc_route[:host] }.#{ cc_domain[:name] }")
           end
 
           it 'has spaces link' do
-            check_filter_link('Routes', 6, 'Spaces', cc_space[:guid])
+            check_filter_link('Routes', 7, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Routes', 7, 'Organizations', cc_organization[:guid])
+            check_filter_link('Routes', 8, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -1862,7 +1864,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 8,
-                                labels:          ['Identifier', 'Scopes', 'Authorized Grant Types', "Redirect URI's", 'Authorities', 'Auto Approve', 'Events', 'Service Broker'],
+                                labels:          ['Identifier', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Service Broker'],
                                 colspans:        nil
                               }
                              ])
@@ -3388,7 +3390,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([{ label: 'Name',               tag: nil, value: nats_provisioner['type'][0..-13] },
                            { label: 'Index',              tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ nats_provisioner['index'] })") },
-                           { label: 'URI',                tag: nil, value: nats_provisioner_varz },
+                           { label: 'URI',                tag: 'a', value: nats_provisioner_varz },
                            { label: 'Supported Versions', tag: nil, value: varz_provisioner['config']['service']['supported_versions'][0] },
                            { label: 'Description',        tag: nil, value: varz_provisioner['config']['service']['description'] },
                            { label: 'Started',            tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_provisioner['start'] }\")") },

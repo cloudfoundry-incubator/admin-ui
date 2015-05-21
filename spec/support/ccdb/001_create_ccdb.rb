@@ -471,6 +471,7 @@ Sequel.migration do
       String :name, :null=>false
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :space_quota_definition_id, :space_quota_definitions, :key=>[:id]
+      TrueClass :allow_ssh, :default=>true
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -517,6 +518,7 @@ Sequel.migration do
       String :type, :default=>"web", :text=>true
       String :health_check_type, :default=>"port", :text=>true
       String :command, :size=>4096
+      TrueClass :enable_ssh, :default=>false
       
       index [:app_guid]
       index [:created_at]
@@ -565,10 +567,11 @@ Sequel.migration do
       String :host, :default=>"", :null=>false
       foreign_key :domain_id, :domains, :null=>false, :key=>[:id]
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
+      String :path, :default=>"", :size=>255, :null=>false
       
       index [:created_at]
       index [:guid], :unique=>true
-      index [:host, :domain_id], :unique=>true
+      index [:host, :domain_id, :path], :unique=>true
       index [:updated_at]
     end
     

@@ -22,6 +22,13 @@ Sequel.migration do
       primary_key [:username, :clientid, :scope]
     end
     
+    create_table(:client_idp) do
+      String :client_id, :size=>255, :null=>false
+      String :identity_provider_id, :size=>36, :null=>false
+      
+      primary_key [:client_id, :identity_provider_id]
+    end
+    
     create_table(:expiring_code_store) do
       String :code, :size=>255, :null=>false
       Bignum :expiresat, :null=>false
@@ -61,6 +68,37 @@ Sequel.migration do
       index [:displayname], :name=>:unique_uk_2, :unique=>true
     end
     
+    create_table(:identity_provider, :ignore_index_errors=>true) do
+      String :id, :size=>36, :null=>false
+      DateTime :created, :default=>Sequel::CURRENT_TIMESTAMP
+      DateTime :lastmodified, :default=>Sequel::CURRENT_TIMESTAMP
+      Bignum :version, :default=>0
+      String :identity_zone_id, :size=>36, :null=>false
+      String :name, :size=>255, :null=>false
+      String :origin_key, :size=>36, :null=>false
+      String :type, :size=>255, :null=>false
+      String :config, :text=>true
+      TrueClass :active, :default=>true, :null=>false
+      
+      primary_key [:id]
+      
+      index [:identity_zone_id, :origin_key], :name=>:key_in_zone, :unique=>true
+    end
+    
+    create_table(:identity_zone, :ignore_index_errors=>true) do
+      String :id, :size=>36, :null=>false
+      DateTime :created, :default=>Sequel::CURRENT_TIMESTAMP
+      DateTime :lastmodified, :default=>Sequel::CURRENT_TIMESTAMP
+      Bignum :version, :default=>0
+      String :subdomain, :size=>255, :null=>false
+      String :name, :size=>255, :null=>false
+      String :description, :text=>true
+      
+      primary_key [:id]
+      
+      index [:subdomain], :name=>:subdomain, :unique=>true
+    end
+    
     create_table(:oauth_client_details) do
       String :client_id, :size=>256, :null=>false
       String :resource_ids, :size=>1024
@@ -73,8 +111,10 @@ Sequel.migration do
       Integer :refresh_token_validity, :default=>0
       String :additional_information, :size=>4096
       String :autoapprove, :size=>1024
+      String :identity_zone_id, :default=>"uaa", :size=>36, :null=>false
+      DateTime :lastmodified, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       
-      primary_key [:client_id]
+      primary_key [:client_id, :identity_zone_id]
     end
     
     create_table(:oauth_code) do
@@ -108,12 +148,13 @@ Sequel.migration do
       String :origin, :size=>255, :null=>false
       String :event_data, :size=>255
       DateTime :created, :default=>Sequel::CURRENT_TIMESTAMP
+      String :identity_zone_id, :default=>"uaa", :size=>36
       
       index [:created], :name=>:audit_created
       index [:principal_id], :name=>:audit_principal
     end
     
-    create_table(:users) do
+    create_table(:users, :ignore_index_errors=>true) do
       String :id, :size=>36, :fixed=>true, :null=>false
       DateTime :created, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :lastmodified, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
@@ -130,8 +171,11 @@ Sequel.migration do
       TrueClass :verified, :default=>false, :null=>false
       String :origin, :default=>"uaa", :size=>36, :null=>false
       String :external_id, :size=>255
+      String :identity_zone_id, :default=>"uaa", :size=>36, :null=>false
       
       primary_key [:id]
+      
+      index [:identity_zone_id], :name=>:user_identity_zone
     end
   end
 end

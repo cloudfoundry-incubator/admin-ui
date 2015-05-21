@@ -222,6 +222,7 @@ module CCHelper
       disk_quota:            12,
       docker_image:          'docker_image_1',
       droplet_hash:          'droplet1',
+      enable_ssh:            true,
       guid:                  'application1',
       health_check_timeout:  nil,
       health_check_type:     'port',
@@ -570,6 +571,7 @@ module CCHelper
       guid:       'route1',
       host:       'test_host',
       id:         16,
+      path:       '/path1',
       space_id:   cc_space[:id],
       updated_at: Time.new('2015-04-23 08:00:41 -0500')
     }
@@ -719,6 +721,7 @@ module CCHelper
 
   def cc_space
     {
+      allow_ssh:                 true,
       created_at:                Time.new('2015-04-23 08:00:56 -0500'),
       guid:                      'space1',
       id:                        24,

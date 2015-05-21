@@ -52,7 +52,7 @@ module ViewModelsHelper
         cc_app[:package_state],
         cc_app[:created_at].to_datetime.rfc3339,
         cc_app[:updated_at].to_datetime.rfc3339,
-        ["#{ cc_route[:host] }.#{ cc_domain[:name] }"],
+        ["#{ cc_route[:host] }.#{ cc_domain[:name] }#{ cc_route[:path] }"],
         cc_stack[:name],
         cc_app[:detected_buildpack],
         1,
@@ -469,6 +469,7 @@ module ViewModelsHelper
       [
         cc_route[:guid],
         cc_route[:host],
+        cc_route[:path],
         cc_route[:guid],
         cc_domain[:name],
         cc_route[:created_at].to_datetime.rfc3339,
