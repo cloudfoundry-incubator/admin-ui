@@ -1194,7 +1194,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has applications link' do
-            check_filter_link('Routes', 6, 'Applications', "#{ cc_route[:host] }.#{ cc_domain[:name] }")
+            check_filter_link('Routes', 6, 'Applications', "#{ cc_route[:host] }.#{ cc_domain[:name] }#{ cc_route[:path] }")
           end
 
           it 'has spaces link' do
