@@ -50,7 +50,6 @@ module AdminUI
             row.push(id)
             row.push(instance_index)
             row.push(instance_id)
-
             row.push(application_instance['state'])
 
             if application_instance['state_running_timestamp']
@@ -60,15 +59,10 @@ module AdminUI
             end
 
             row.push(application_instance['application_uris'])
-
             row.push(stack_name)
-
-            row.push(application_instance['services'].length)
-
             row.push(application_instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(application_instance['used_memory_in_bytes']) : nil)
             row.push(application_instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(application_instance['used_disk_in_bytes']) : nil)
             row.push(application_instance['computed_pcpu'] ? application_instance['computed_pcpu'] * 100 : nil)
-
             row.push(application_instance['limits']['mem'])
             row.push(application_instance['limits']['disk'])
 
@@ -106,7 +100,7 @@ module AdminUI
         end
       end
 
-      result(true, items, hash, (1..16).to_a, [1, 2, 4, 5, 6, 7, 8, 15])
+      result(true, items, hash, (1..15).to_a, [1, 2, 4, 5, 6, 7, 8, 14])
     end
   end
 end

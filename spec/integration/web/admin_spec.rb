@@ -314,7 +314,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              '0',
                              @driver.execute_script("return Format.formatNumber(#{ cc_app[:instances] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })"),
+                             '1',
                              @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
                              @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
@@ -521,7 +521,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Used Routes',               tag:   nil, value: '1' },
                            { label: 'Unused Routes',             tag:   nil, value: '0' },
                            { label: 'Instances Used',            tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:instances] })") },
-                           { label: 'Services Used',             tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })") },
+                           { label: 'Services Used',             tag:   'a', value: '1' },
                            { label: 'Memory Used',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })") },
                            { label: 'Disk Used',                 tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })") },
                            { label: 'CPU Used',                  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })") },
@@ -619,7 +619,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              '0',
                              @driver.execute_script("return Format.formatNumber(#{ cc_app[:instances] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })"),
+                             '1',
                              @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
                              @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
@@ -699,7 +699,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Used Routes',     tag:   nil, value: '1' },
                            { label: 'Unused Routes',   tag:   nil, value: '0' },
                            { label: 'Instances Used',  tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:instances] })") },
-                           { label: 'Services Used',   tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })") },
+                           { label: 'Services Used',   tag:   'a', value: '1' },
                            { label: 'Memory Used',     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })") },
                            { label: 'Disk Used',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })") },
                            { label: 'CPU Used',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })") },
@@ -784,7 +784,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_app[:detected_buildpack],
                              '1',
                              '1',
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })"),
+                             '1',
                              @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
                              @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
@@ -987,12 +987,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 5,
                                 labels:          ['', '', 'Used', 'Reserved', ''],
-                                colspans:        %w(1 8 4 2 2)
+                                colspans:        %w(1 8 3 2 2)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 17,
-                                labels:          [' ', 'Name', 'Application GUID', 'Index', 'Instance ID', 'State', 'Started', 'URIs', 'Stack', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                expected_length: 16,
+                                labels:          [' ', 'Name', 'Application GUID', 'Index', 'Instance ID', 'State', 'Started', 'URIs', 'Stack', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
                                 colspans:        nil
                               }
                              ])
@@ -1008,7 +1008,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
                              "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
                              cc_stack[:name],
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })"),
                              @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
                              @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
                              @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
@@ -1062,7 +1061,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'URI',              tag:   'a', value: "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }" },
                            { label: 'Stack',            tag:   'a', value: cc_stack[:name] },
                            { label: 'Droplet Hash',     tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['droplet_sha1'] },
-                           { label: 'Services Used',    tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'].length })") },
                            { label: 'Memory Used',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })") },
                            { label: 'Disk Used',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })") },
                            { label: 'CPU Used',         tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })") },
@@ -1074,28 +1072,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
-          it 'has services' do
-            expect(@driver.find_element(id: 'ApplicationInstancesServicesDetailsLabel').displayed?).to be_true
-
-            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesServicesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
-                                expected_length: 5,
-                                labels:          ['Instance Name', 'Provider', 'Service Name', 'Version', 'Plan Name'],
-                                colspans:        nil)
-
-            check_table_data(@driver.find_elements(xpath: "//table[@id='ApplicationInstancesServicesTable']/tbody/tr/td"),
-                             [
-                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['name'],
-                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['provider'],
-                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['vendor'],
-                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['version'],
-                               varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['services'][0]['plan']
-                             ])
-          end
-
-          it 'services subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('ToolTables_ApplicationInstancesServicesTable_0')
-          end
-
           it 'has applications link' do
             check_filter_link('ApplicationInstances', 1, 'Applications', cc_app[:guid])
           end
@@ -1105,15 +1081,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has spaces link' do
-            check_filter_link('ApplicationInstances', 15, 'Spaces', cc_space[:guid])
+            check_filter_link('ApplicationInstances', 14, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ApplicationInstances', 16, 'Organizations', cc_organization[:guid])
+            check_filter_link('ApplicationInstances', 15, 'Organizations', cc_organization[:guid])
           end
 
           it 'has DEAs link' do
-            check_filter_link('ApplicationInstances', 17, 'DEAs', nats_dea['host'])
+            check_filter_link('ApplicationInstances', 16, 'DEAs', nats_dea['host'])
           end
         end
       end

@@ -94,16 +94,6 @@ module VARZHelper
           },
           'instance_id'             => varz_dea_app_instance,
           'instance_index'          => cc_app_instance_index,
-          'services'                =>
-          [
-            {
-              'name'     => cc_service_instance[:name],
-              'provider' => cc_service[:provider],
-              'vendor'   => cc_service[:label],
-              'version'  => cc_service[:version],
-              'plan'     => cc_service_plan[:name]
-            }
-          ],
           'stack'                   => cc_stack[:name],
           'state'                   => 'RUNNING',
           'state_running_timestamp' => 1_382_448_059.0734425,
