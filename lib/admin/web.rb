@@ -899,7 +899,7 @@ module AdminUI
       end
     end
 
-    delete '/components', auth: [:user] do
+    delete '/components', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/components/#{ params[:uri] }")
       begin
         @operation.remove_component(params[:uri])
