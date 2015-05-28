@@ -473,8 +473,8 @@ module ViewModelsHelper
         cc_domain[:name],
         cc_route[:created_at].to_datetime.rfc3339,
         cc_route[:updated_at].to_datetime.rfc3339,
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
-        [cc_app[:name]]
+        1,
+        "#{ cc_organization[:name] }/#{ cc_space[:name] }"
       ]
     ]
   end

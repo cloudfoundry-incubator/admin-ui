@@ -1100,7 +1100,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='RoutesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 9,
-                                labels:          [' ', 'Host', 'Path', 'GUID', 'Domain', 'Created', 'Updated', 'Target', 'Applications'],
+                                labels:          [' ', 'Host', 'Path', 'GUID', 'Domain', 'Created', 'Updated', 'Applications', 'Target'],
                                 colspans:        nil
                               }
                              ])
@@ -1114,8 +1114,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_domain[:name],
                              cc_route[:created_at].to_datetime.rfc3339,
                              cc_route[:updated_at].to_datetime.rfc3339,
-                             "#{ cc_organization[:name] }/#{ cc_space[:name] }",
-                             cc_app[:name]
+                             '1',
+                             "#{ cc_organization[:name] }/#{ cc_space[:name] }"
                            ])
         end
 
