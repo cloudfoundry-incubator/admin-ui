@@ -244,6 +244,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected droplets' do
+      let(:results)  { cc.droplets }
+      let(:expected) { cc_droplet }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected events' do
       let(:results)  { cc.events }
       let(:expected) { cc_event_space }

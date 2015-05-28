@@ -20,6 +20,7 @@ module AdminUI
       apps_routes      = @cc.apps_routes
       deas             = @varz.deas
       domains          = @cc.domains
+      droplets         = @cc.droplets
       events           = @cc.events
       organizations    = @cc.organizations
       routes           = @cc.routes
@@ -32,6 +33,7 @@ module AdminUI
       service_bindings_connected = service_bindings['connected']
 
       domain_hash       = Hash[domains['items'].map { |item| [item[:id], item] }]
+      droplet_hash      = Hash[droplets['items'].map { |item| [item[:droplet_hash], item] }]
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
       route_hash        = Hash[routes['items'].map { |item| [item[:id], item] }]
       space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
@@ -109,11 +111,13 @@ module AdminUI
       applications['items'].each do |application|
         Thread.pass
 
-        guid         = application[:guid]
-        id           = application[:id]
-        space        = space_hash[application[:space_id]]
-        organization = space.nil? ? nil : organization_hash[space[:organization_id]]
-        stack        = stack_hash[application[:stack_id]]
+        guid             = application[:guid]
+        id               = application[:id]
+        app_droplet_hash = application[:droplet_hash]
+        droplet          = app_droplet_hash.nil? ? nil : droplet_hash[app_droplet_hash]
+        space            = space_hash[application[:space_id]]
+        organization     = space.nil? ? nil : organization_hash[space[:organization_id]]
+        stack            = stack_hash[application[:stack_id]]
 
         application_usage_counters = application_usage_counters_hash[guid]
         event_counter              = event_counters[guid]
@@ -194,6 +198,7 @@ module AdminUI
         hash[guid] =
         {
           'application'  => application,
+          'droplet'      => droplet,
           'organization' => organization,
           'space'        => space,
           'stack'        => stack

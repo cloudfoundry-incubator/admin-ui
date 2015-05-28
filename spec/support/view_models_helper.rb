@@ -70,6 +70,7 @@ module ViewModelsHelper
   def view_models_applications_detail
     {
       'application'  => cc_app,
+      'droplet'      => cc_droplet,
       'organization' => cc_organization,
       'space'        => cc_space,
       'stack'        => cc_stack

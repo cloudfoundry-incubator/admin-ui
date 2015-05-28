@@ -65,6 +65,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.domains)
     end
 
+    it 'returns zero droplets as expected' do
+      verify_disconnected_items(cc.droplets)
+    end
+
     it 'returns zero events as expected' do
       verify_disconnected_items(cc.events)
     end

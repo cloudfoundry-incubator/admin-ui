@@ -48,6 +48,12 @@ module AdminUI
           table:   :domains,
           columns: [:created_at, :guid, :id, :name, :owning_organization_id, :updated_at]
         },
+        droplets:
+        {
+          db_uri:  ccdb_uri,
+          table:   :droplets,
+          columns: [:app_id, :created_at, :detected_start_command, :droplet_hash, :guid, :id, :updated_at]
+        },
         events:
         {
           db_uri:  ccdb_uri,
@@ -267,6 +273,10 @@ module AdminUI
 
     def domains
       result_cache(:domains)
+    end
+
+    def droplets
+      result_cache(:droplets)
     end
 
     def events
