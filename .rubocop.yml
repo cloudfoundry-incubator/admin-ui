@@ -11,7 +11,7 @@ AbcSize:
 
 BlockNesting:
   Enabled: false
-  
+
 ClassLength:
   Enabled: false
 
@@ -30,9 +30,12 @@ LineLength:
 MethodLength:
   Enabled: false
 
+ModuleLength:
+  Enabled: false
+
 ParameterLists:
   Enabled: false
-  
+
 PerceivedComplexity:
   Enabled: false
 
