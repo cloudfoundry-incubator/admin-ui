@@ -1,5 +1,4 @@
 require 'cron_parser'
-require 'json'
 require_relative 'db/stats_dbstore'
 require_relative 'utils'
 

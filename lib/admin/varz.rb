@@ -1,6 +1,6 @@
-require 'json'
 require 'net/http'
 require 'thread'
+require 'yajl'
 
 module AdminUI
   class VARZ
@@ -148,7 +148,7 @@ module AdminUI
 
         if response.is_a?(Net::HTTPOK)
           result.merge!('connected' => true,
-                        'data'      => JSON.parse(response.body))
+                        'data'      => Yajl::Parser.parse(response.body))
         else
           result.merge!('connected' => false,
                         'data'      => (item.nil? ? {} : item),

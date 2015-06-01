@@ -1,7 +1,7 @@
-require 'json'
 require 'net/http'
 require 'time'
 require 'uri'
+require 'yajl'
 require_relative '../spec_helper'
 
 module CCHelper
@@ -11,7 +11,7 @@ module CCHelper
     attr_reader :body
     def initialize(hash)
       super(1.0, 200, 'OK')
-      @body = hash.to_json
+      @body = Yajl::Encoder.encode(hash)
     end
   end
 
@@ -21,7 +21,7 @@ module CCHelper
     attr_reader :body
     def initialize(hash)
       super(1.0, 201, 'Created')
-      @body = hash.to_json
+      @body = Yajl::Encoder.encode(hash)
     end
   end
 
@@ -31,7 +31,7 @@ module CCHelper
     attr_reader :body
     def initialize(hash)
       super(1.0, 404, 'NotFound')
-      @body = hash.to_json
+      @body = Yajl::Encoder.encode(hash)
     end
   end
 
@@ -41,7 +41,7 @@ module CCHelper
     attr_reader :body
     def initialize(hash)
       super(1.0, 400, 'BadRequest')
-      @body = hash.to_json
+      @body = Yajl::Encoder.encode(hash)
     end
   end
 

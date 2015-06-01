@@ -1,4 +1,5 @@
 require 'nats/client'
+require 'yajl'
 require_relative '../spec_helper'
 
 module NATSHelper
@@ -10,11 +11,11 @@ module NATSHelper
     ::NATS.stub(:stop)
 
     ::NATS.stub(:request).with('vcap.component.discover') do |_, &blk|
-      blk.call(nats_cloud_controller.to_json)
-      blk.call(nats_dea.to_json)
-      blk.call(nats_health_manager.to_json)
-      blk.call(nats_provisioner.to_json)
-      blk.call(nats_router.to_json)
+      blk.call(Yajl::Encoder.encode(nats_cloud_controller))
+      blk.call(Yajl::Encoder.encode(nats_dea))
+      blk.call(Yajl::Encoder.encode(nats_health_manager))
+      blk.call(Yajl::Encoder.encode(nats_provisioner))
+      blk.call(Yajl::Encoder.encode(nats_router))
     end
   end
 

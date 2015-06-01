@@ -1,4 +1,4 @@
-require 'json'
+require 'yajl'
 
 module AdminUI
   class CCRestClientResponseError < StandardError
@@ -8,7 +8,7 @@ module AdminUI
       @http_code = response.code
 
       begin
-        hash = JSON.parse(response.body)
+        hash = Yajl::Parser.parse(response.body)
       rescue
         hash = nil
       end

@@ -1,3 +1,4 @@
+require 'yajl'
 require_relative '../spec_helper'
 
 describe AdminUI::Admin, type: :integration do
@@ -81,7 +82,7 @@ describe AdminUI::Admin, type: :integration do
     body = response.body
     expect(body).to_not be_nil
     verify_sys_log_entries([['get', "#{ path }"]], escapes)
-    JSON.parse(body)
+    Yajl::Parser.parse(body)
   end
 
   def post_request(path, body)
@@ -773,7 +774,7 @@ describe AdminUI::Admin, type: :integration do
         expect(inner_items).to_not be(nil)
 
         view_model_source.each do |view_model|
-          expect(JSON.parse(inner_items.to_json)).to include(JSON.parse(view_model.to_json))
+          expect(Yajl::Parser.parse(Yajl::Encoder.encode(inner_items))).to include(Yajl::Parser.parse(Yajl::Encoder.encode(view_model)))
         end
       end
     end
@@ -781,7 +782,7 @@ describe AdminUI::Admin, type: :integration do
     shared_examples 'retrieves view_model detail' do
       let(:retrieved) { get_json(path) }
       it 'retrieves' do
-        expect(JSON.parse(view_model_source.to_json)).to eq(JSON.parse(retrieved.to_json))
+        expect(Yajl::Parser.parse(Yajl::Encoder.encode(view_model_source))).to eq(Yajl::Parser.parse(Yajl::Encoder.encode(retrieved)))
       end
     end
 
@@ -1181,7 +1182,7 @@ describe AdminUI::Admin, type: :integration do
       body = response.body
       expect(body).to_not be_nil
 
-      json = JSON.parse(body)
+      json = Yajl::Parser.parse(body)
 
       expect(json).to include('task_id' => 0)
 

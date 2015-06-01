@@ -1,6 +1,6 @@
-require 'json'
 require 'net/http'
 require 'uri'
+require 'yajl'
 require_relative '../spec_helper'
 # These shouldn't be required, but they are in some environments...
 require_relative 'cc_helper'
@@ -16,7 +16,7 @@ module VARZHelper
     attr_reader :body
     def initialize(hash)
       super(1.0, 200, 'OK')
-      @body = hash.to_json
+      @body = Yajl::Encoder.encode(hash)
     end
   end
 

@@ -1,5 +1,4 @@
 require 'fileutils'
-require 'json'
 require 'sequel'
 require 'sequel/extensions/migration'
 require_relative 'config'

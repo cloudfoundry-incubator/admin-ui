@@ -1,6 +1,6 @@
-require 'json'
 require 'nats/client'
 require 'uri'
+require 'yajl'
 
 module AdminUI
   class NATS
@@ -92,7 +92,7 @@ module AdminUI
 
           ::NATS.request('vcap.component.discover') do |item|
             @last_discovery_time = Time.now.to_f
-            item_json = JSON.parse(item)
+            item_json = Yajl::Parser.parse(item)
             result['items'][item_uri(item_json)] = item_json
           end
         end
@@ -114,7 +114,7 @@ module AdminUI
         begin
           read = IO.read(@config.data_file)
           begin
-            parsed = JSON.parse(read)
+            parsed = Yajl::Parser.parse(read)
             if parsed.is_a?(Hash)
               if parsed.key?('items')
                 return parsed if parsed.key?('notified')
@@ -140,7 +140,7 @@ module AdminUI
     # The call to this method must be in a synchronized block
     def write_cache
       File.open(@config.data_file, 'w') do |file|
-        file.write(JSON.pretty_generate(@cache))
+        file.write(Yajl::Encoder.encode(@cache, pretty: true))
       end
     rescue => error
       @logger.debug("Error during NATS write data: #{ error.inspect }")

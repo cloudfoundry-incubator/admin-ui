@@ -1,5 +1,6 @@
-require_relative 'base'
 require 'thread'
+require 'yajl'
+require_relative 'base'
 
 module AdminUI
   class ClientsViewModel < AdminUI::Base
@@ -84,7 +85,7 @@ module AdminUI
 
         if client[:additional_information]
           begin
-            json = JSON.parse(client[:additional_information])
+            json = Yajl::Parser.parse(client[:additional_information])
             row.push(json['autoapprove'])
           rescue
             row.push(nil)

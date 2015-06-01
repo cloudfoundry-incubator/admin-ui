@@ -3,6 +3,7 @@ require 'net/https'
 require 'openssl'
 require 'thread'
 require 'uri'
+require 'yajl'
 require_relative '../spec_helper'
 
 describe AdminUI::Admin do
@@ -761,7 +762,7 @@ describe AdminUI::Admin do
       body = response.body
       expect(body).to_not be_nil
 
-      JSON.parse(body)
+      Yajl::Parser.parse(body)
     end
 
     def verify_view_model_items(path, connected)
@@ -1649,7 +1650,7 @@ describe AdminUI::Admin do
         body = response.body
         expect(body).to_not be_nil
 
-        json = JSON.parse(body)
+        json = Yajl::Parser.parse(body)
 
         expect(json).to include('apps'              => nil,
                                 'deas'              => nil,
@@ -1690,7 +1691,7 @@ describe AdminUI::Admin do
           body = response.body
           expect(body).to_not be_nil
 
-          json = JSON.parse(body)
+          json = Yajl::Parser.parse(body)
           expect(json).to eq('apps'              => 1,
                              'deas'              => 2,
                              'organizations'     => 3,
@@ -1709,7 +1710,7 @@ describe AdminUI::Admin do
 
           body = response.body
           expect(body).to_not be_nil
-          json = JSON.parse(body)
+          json = Yajl::Parser.parse(body)
 
           expect(json).to eq('label' => cloud_controller_uri,
                              'items' => [{ 'apps'              => 1,

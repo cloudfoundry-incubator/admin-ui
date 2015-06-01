@@ -1,4 +1,5 @@
 require 'base64'
+require 'yajl'
 
 module AdminUI
   class Login
@@ -29,7 +30,7 @@ module AdminUI
       access_token_payload += '=' * (4 - pad) if pad > 0
       access_token_payload_decoded = Base64.respond_to?(:urlsafe_decode64) ? Base64.urlsafe_decode64(access_token_payload) : Base64.decode64(access_token_payload.tr('-_', '+/'))
 
-      access_token_payload_json = JSON.parse(access_token_payload_decoded)
+      access_token_payload_json = Yajl::Parser.parse(access_token_payload_decoded)
 
       user_name = access_token_payload_json['user_name']
       scope = access_token_payload_json['scope']

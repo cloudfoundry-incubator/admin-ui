@@ -1,6 +1,7 @@
 require 'csv'
 require 'tempfile'
 require 'uri'
+require 'yajl'
 
 module AdminUI
   class Download
@@ -14,7 +15,7 @@ module AdminUI
       CSV.open(file.path, 'wb') do |csv|
         if (decoded.length > 0) && (decoded[0].length == 2) && (decoded[0][0] == 'headings')
           headings = decoded[0][1]
-          parsed = JSON.parse(headings)
+          parsed = Yajl::Parser.parse(headings)
           heading_count = parsed.length
           csv << parsed
         end

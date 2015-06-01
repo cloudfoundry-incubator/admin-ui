@@ -1,5 +1,5 @@
-require 'json'
 require 'uri'
+require 'yajl'
 require_relative 'utils'
 
 module AdminUI
@@ -73,7 +73,7 @@ module AdminUI
                                     Utils::HTTP_POST,
                                     [@config.uaa_client_id, @config.uaa_client_secret],
                                     content)
-      return JSON.parse(response.body) if response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated)
+      return Yajl::Parser.parse(response.body) if response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated)
       @logger.debug("Unexpected response code from sso_login_token_json is #{ response.code }, message #{ response.message }, body #{ response.body }")
       nil
     end
@@ -91,13 +91,13 @@ module AdminUI
         response = Utils.http_request(@config, url, method, nil, body, @token)
 
         if method == Utils::HTTP_GET && response.is_a?(Net::HTTPOK)
-          return JSON.parse(response.body)
+          return Yajl::Parser.parse(response.body)
         elsif method == Utils::HTTP_PUT && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
-          return JSON.parse(response.body)
+          return Yajl::Parser.parse(response.body)
         elsif method == Utils::HTTP_DELETE && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated) || response.is_a?(Net::HTTPNoContent))
           return
         elsif method == Utils::HTTP_POST && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
-          return JSON.parse(response.body)
+          return Yajl::Parser.parse(response.body)
         end
 
         if !recent_login && response.is_a?(Net::HTTPUnauthorized)
@@ -129,7 +129,7 @@ module AdminUI
                                     'grant_type=client_credentials')
 
       if response.is_a?(Net::HTTPOK)
-        body_json = JSON.parse(response.body)
+        body_json = Yajl::Parser.parse(response.body)
         @token = "#{ body_json['token_type'] } #{ body_json['access_token'] }"
       else
         fail AdminUI::CCRestClientResponseError, response
@@ -149,7 +149,7 @@ module AdminUI
       end
 
       if response.is_a?(Net::HTTPOK)
-        body_json = JSON.parse(response.body)
+        body_json = Yajl::Parser.parse(response.body)
 
         @authorization_endpoint = body_json['authorization_endpoint']
         if @authorization_endpoint.nil?

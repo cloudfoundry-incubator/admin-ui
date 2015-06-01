@@ -1,5 +1,6 @@
 require 'date'
 require 'rubygems'
+require 'yajl'
 require_relative '../../spec_helper'
 require_relative '../../support/web_helper'
 
@@ -2749,8 +2750,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            service_tags_json = JSON.parse(cc_service[:tags])
-            service_extra_json = JSON.parse(cc_service[:extra])
+            service_tags_json = Yajl::Parser.parse(cc_service[:tags])
+            service_extra_json = Yajl::Parser.parse(cc_service[:extra])
             check_details([{ label: 'Service Provider',              tag:   nil, value: cc_service[:provider] },
                            { label: 'Service Label',                 tag: 'div', value: cc_service[:label] },
                            { label: 'Service GUID',                  tag:   nil, value: cc_service[:guid] },
@@ -2941,7 +2942,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            service_plan_extra_json = JSON.parse(cc_service_plan[:extra])
+            service_plan_extra_json = Yajl::Parser.parse(cc_service_plan[:extra])
             check_details([{ label: 'Service Plan Name',         tag: 'div', value: cc_service_plan[:name] },
                            { label: 'Service Plan GUID',         tag:   nil, value: cc_service_plan[:guid] },
                            { label: 'Service Plan Unique ID',    tag:   nil, value: cc_service_plan[:unique_id] },

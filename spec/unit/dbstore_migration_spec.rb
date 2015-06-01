@@ -2,6 +2,7 @@ require 'fileutils'
 require 'sequel'
 require 'sequel/extensions/migration'
 require 'uri'
+require 'yajl'
 require_relative '../spec_helper'
 
 describe AdminUI::DBStoreMigration do
@@ -43,7 +44,7 @@ describe AdminUI::DBStoreMigration do
   def launch_admin_daemon(config)
     File.delete(db_file) if File.exist?(db_file)
     File.open(config_file, 'w') do |file|
-      file.write(JSON.pretty_generate(config))
+      file.write(Yajl::Encoder.encode(config, pretty: true))
     end
     project_path = File.join(File.dirname(__FILE__), '../..')
     spawn_opts = { chdir: project_path,

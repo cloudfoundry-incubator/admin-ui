@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'yajl'
 require_relative 'cc_rest_client_response_error'
 require_relative 'logger'
 require_relative 'view_models/all_actions'
@@ -44,90 +45,90 @@ module AdminUI
 
     get '/application_instances_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/application_instances_view_model')
-      AllActions.new(@logger, @view_models.application_instances, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.application_instances, params).items)
     end
 
     get '/application_instances_view_model/:app_guid/:instance_id', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/application_instances_view_model/#{ params[:app_guid] }/#{ params[:instance_id] }")
       result = @view_models.application_instance(params[:app_guid], params[:instance_id])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/applications_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/applications_view_model')
-      AllActions.new(@logger, @view_models.applications, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.applications, params).items)
     end
 
     get '/applications_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/applications_view_model/#{ params[:guid] }")
       result = @view_models.application(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/clients_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/clients_view_model')
-      AllActions.new(@logger, @view_models.clients, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.clients, params).items)
     end
 
     get '/clients_view_model/:id', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/clients_view_model/#{ params[:id] }")
       result = @view_models.client(params[:id])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/cloud_controllers_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/cloud_controllers_view_model')
-      AllActions.new(@logger, @view_models.cloud_controllers, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.cloud_controllers, params).items)
     end
 
     get '/cloud_controllers_view_model/:name', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/cloud_controllers_view_model/#{ params[:name] }")
       result = @view_models.cloud_controller(params[:name])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/components_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/components_view_model')
-      AllActions.new(@logger, @view_models.components, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.components, params).items)
     end
 
     get '/components_view_model/:name', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/components_view_model/#{ params[:name] }")
       result = @view_models.component(params[:name])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/current_statistics' do
       @logger.info_user(session[:username], 'get', '/current_statistics')
-      @stats.current_stats.to_json
+      Yajl::Encoder.encode(@stats.current_stats)
     end
 
     get '/deas_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/deas_view_model')
-      AllActions.new(@logger, @view_models.deas, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.deas, params).items)
     end
 
     get '/deas_view_model/:name', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/deas_view_model/#{ params[:name] }")
       result = @view_models.dea(params[:name])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/domains_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/domains_view_model')
-      AllActions.new(@logger, @view_models.domains, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.domains, params).items)
     end
 
     get '/domains_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/domains_view_model/#{ params[:guid] }")
       result = @view_models.domain(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
@@ -145,13 +146,13 @@ module AdminUI
 
     get '/events_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/events_view_model')
-      AllActions.new(@logger, @view_models.events, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.events, params).items)
     end
 
     get '/events_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/events_view_model/#{ params[:guid] }")
       result = @view_models.event(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
@@ -160,25 +161,25 @@ module AdminUI
 
     get '/gateways_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/gateways_view_model')
-      AllActions.new(@logger, @view_models.gateways, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.gateways, params).items)
     end
 
     get '/gateways_view_model/:name', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/gateways_view_model/#{ params[:name] }")
       result = @view_models.gateway(params[:name])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/health_managers_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/health_managers_view_model')
-      AllActions.new(@logger, @view_models.health_managers, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.health_managers, params).items)
     end
 
     get '/health_managers_view_model/:name', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/health_managers_view_model/#{ params[:name] }")
       result = @view_models.health_manager(params[:name])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
@@ -188,7 +189,7 @@ module AdminUI
       if result.nil?
         redirect_to_login
       else
-        result.to_json
+        Yajl::Encoder.encode(result)
       end
     end
 
@@ -215,7 +216,7 @@ module AdminUI
       begin
         @logger.info_user(session[:username], 'get', '/logout')
         session.destroy
-        { 'redirect' => @login.logout(request.base_url) }.to_json
+        Yajl::Encoder.encode('redirect' => @login.logout(request.base_url))
       rescue => error
         @logger.debug("Error during /logout: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -225,222 +226,220 @@ module AdminUI
 
     get '/logs_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/logs_view_model')
-      AllActions.new(@logger, @view_models.logs, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.logs, params).items)
     end
 
     get '/organizations_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/organizations_view_model')
-      AllActions.new(@logger, @view_models.organizations, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.organizations, params).items)
     end
 
     get '/organizations_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/organizations_view_model/#{ params[:guid] }")
       result = @view_models.organization(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/organization_roles_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/organization_roles_view_model')
-      AllActions.new(@logger, @view_models.organization_roles, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.organization_roles, params).items)
     end
 
     get '/organization_roles_view_model/:organization_guid/:role/:user_guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/organization_roles_view_model/#{ params[:organization_guid] }/#{ params[:role] }/#{ params[:user_guid] }")
       result = @view_models.organization_role(params[:organization_guid], params[:role], params[:user_guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/quotas_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/quotas_view_model')
-      AllActions.new(@logger, @view_models.quotas, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.quotas, params).items)
     end
 
     get '/quotas_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/quotas_view_model/#{ params[:guid] }")
       result = @view_models.quota(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/routers_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/routers_view_model')
-      AllActions.new(@logger, @view_models.routers, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.routers, params).items)
     end
 
     get '/routers_view_model/:name', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/routers_view_model/#{ params[:name] }")
       result = @view_models.router(params[:name])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/routes_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/routes_view_model')
-      AllActions.new(@logger, @view_models.routes, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.routes, params).items)
     end
 
     get '/routes_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/routes_view_model/#{ params[:guid] }")
       result = @view_models.route(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/settings', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/settings')
-      {
-        admin:                  session[:admin],
-        cloud_controller_uri:   @config.cloud_controller_uri,
-        table_height:           @config.table_height,
-        table_page_size:        @config.table_page_size,
-        tasks_refresh_interval: @config.tasks_refresh_interval
-      }.to_json
+      Yajl::Encoder.encode(admin:                  session[:admin],
+                           cloud_controller_uri:   @config.cloud_controller_uri,
+                           table_height:           @config.table_height,
+                           table_page_size:        @config.table_page_size,
+                           tasks_refresh_interval: @config.tasks_refresh_interval)
     end
 
     get '/service_bindings_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/service_bindings_view_model')
-      AllActions.new(@logger, @view_models.service_bindings, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.service_bindings, params).items)
     end
 
     get '/service_bindings_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/service_bindings_view_model/#{ params[:guid] }")
       result = @view_models.service_binding(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/service_brokers_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/service_brokers_view_model')
-      AllActions.new(@logger, @view_models.service_brokers, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.service_brokers, params).items)
     end
 
     get '/service_brokers_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/service_brokers_view_model/#{ params[:guid] }")
       result = @view_models.service_broker(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/service_instances_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/service_instances_view_model')
-      AllActions.new(@logger, @view_models.service_instances, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.service_instances, params).items)
     end
 
     get '/service_instances_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/service_instances_view_model/#{ params[:guid] }")
       result = @view_models.service_instance(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/service_keys_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/service_keys_view_model')
-      AllActions.new(@logger, @view_models.service_keys, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.service_keys, params).items)
     end
 
     get '/service_keys_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/service_keys_view_model/#{ params[:guid] }")
       result = @view_models.service_key(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/service_plans_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/service_plans_view_model')
-      AllActions.new(@logger, @view_models.service_plans, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.service_plans, params).items)
     end
 
     get '/service_plans_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/service_plans_view_model/#{ params[:guid] }")
       result = @view_models.service_plan(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/service_plan_visibilities_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/service_plan_visibilities_view_model')
-      AllActions.new(@logger, @view_models.service_plan_visibilities, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.service_plan_visibilities, params).items)
     end
 
     get '/service_plan_visibilities_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/service_plan_visibilities_view_model/#{ params[:guid] }")
       result = @view_models.service_plan_visibility(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/services_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/services_view_model')
-      AllActions.new(@logger, @view_models.services, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.services, params).items)
     end
 
     get '/services_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/services_view_model/#{ params[:guid] }")
       result = @view_models.service(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/space_quotas_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/space_quotas_view_model')
-      AllActions.new(@logger, @view_models.space_quotas, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.space_quotas, params).items)
     end
 
     get '/space_quotas_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/space_quotas_view_model/#{ params[:guid] }")
       result = @view_models.space_quota(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/space_roles_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/space_roles_view_model')
-      AllActions.new(@logger, @view_models.space_roles, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.space_roles, params).items)
     end
 
     get '/space_roles_view_model/:space_guid/:role/:user_guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/space_roles_view_model/#{ params[:space_guid] }/#{ params[:role] }/#{ params[:user_guid] }")
       result = @view_models.space_role(params[:space_guid], params[:role], params[:user_guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/spaces_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/spaces_view_model')
-      AllActions.new(@logger, @view_models.spaces, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.spaces, params).items)
     end
 
     get '/spaces_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/spaces_view_model/#{ params[:guid] }")
       result = @view_models.space(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/stacks_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/stacks_view_model')
-      AllActions.new(@logger, @view_models.stacks, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.stacks, params).items)
     end
 
     get '/stacks_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/stacks_view_model/#{ params[:guid] }")
       result = @view_models.stack(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/statistics' do
       @logger.info_user(session[:username], 'get', '/statistics')
-      @stats.stats.to_json
+      Yajl::Encoder.encode(@stats.stats)
     end
 
     get '/stats_view_model' do
       @logger.info_user(session[:username], 'get', '/stats_view_model')
       extended_result = AllActions.new(@logger, @view_models.stats, params).items
       extended_result[:items][:label] = @config.cloud_controller_uri
-      extended_result.to_json
+      Yajl::Encoder.encode(extended_result)
     end
 
     get '/stats' do
@@ -450,7 +449,7 @@ module AdminUI
 
     get '/tasks_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/tasks_view_model')
-      AllActions.new(@logger, @view_models.tasks, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.tasks, params).items)
     end
 
     get '/task_status', auth: [:user] do
@@ -460,22 +459,22 @@ module AdminUI
                            session[:last_task_update] || 0)
 
       if result.nil?
-        {}.to_json
+        Yajl::Encoder.encode({})
       else
         session[:last_task_update] = result[:updated]
-        result.to_json
+        Yajl::Encoder.encode(result)
       end
     end
 
     get '/users_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/users_view_model')
-      AllActions.new(@logger, @view_models.users, params).items.to_json
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.users, params).items)
     end
 
     get '/users_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/users_view_model/#{ params[:guid] }")
       result = @view_models.user(params[:guid])
-      return result.to_json if result
+      return Yajl::Encoder.encode(result) if result
       404
     end
 
@@ -496,7 +495,7 @@ module AdminUI
         @logger.debug("Error during restage application: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during restage application: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -540,7 +539,7 @@ module AdminUI
       @logger.info_user(session[:username], 'post', '/deas')
       result = { task_id: @tasks.new_dea }
       @view_models.invalidate_tasks
-      result.to_json
+      Yajl::Encoder.encode(result)
     end
 
     post '/deas_view_model', auth: [:user] do
@@ -601,7 +600,7 @@ module AdminUI
         @logger.debug("Error during create organization: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during create organization: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -764,7 +763,7 @@ module AdminUI
 
       @view_models.invalidate_stats
 
-      [200, stats.to_json]
+      [200, Yajl::Encoder.encode(stats)]
     end
 
     post '/stats_view_model', auth: [:user] do
@@ -801,7 +800,7 @@ module AdminUI
         @logger.debug("Error during update application: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during update application: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -819,7 +818,7 @@ module AdminUI
         @logger.debug("Error during update organization: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during update organization: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -837,7 +836,7 @@ module AdminUI
         @logger.debug("Error during update service plan: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during update service plan #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -854,7 +853,7 @@ module AdminUI
         @logger.debug("Error during put space quota definition space: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during put space quota definition space: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -874,7 +873,7 @@ module AdminUI
         @logger.debug("Error during delete application: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete application: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -891,7 +890,7 @@ module AdminUI
         @logger.debug("Error during delete application instance: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete application instance: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -923,7 +922,7 @@ module AdminUI
         @logger.debug("Error during delete domain: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete domain: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -943,7 +942,7 @@ module AdminUI
         @logger.debug("Error during delete organization: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete organization: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -960,7 +959,7 @@ module AdminUI
         @logger.debug("Error during delete organization role: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete organization role: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -977,7 +976,7 @@ module AdminUI
         @logger.debug("Error during delete quota definition: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete quota definition: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -994,7 +993,7 @@ module AdminUI
         @logger.debug("Error during delete route: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete route: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -1011,7 +1010,7 @@ module AdminUI
         @logger.debug("Error during delete service binding: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete service binding: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -1028,7 +1027,7 @@ module AdminUI
         @logger.debug("Error during delete service broker: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete service broker: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -1048,7 +1047,7 @@ module AdminUI
         @logger.debug("Error during delete service instance: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete service instance: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -1065,7 +1064,7 @@ module AdminUI
         @logger.debug("Error during delete service key: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete service key: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -1082,7 +1081,7 @@ module AdminUI
         @logger.debug("Error during delete service plan: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete service plan: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -1099,7 +1098,7 @@ module AdminUI
         @logger.debug("Error during delete service plan visibility: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete service plan visibility: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -1119,7 +1118,7 @@ module AdminUI
         @logger.debug("Error during delete service: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete service: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -1136,7 +1135,7 @@ module AdminUI
         @logger.debug("Error during delete space quota definition: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete space quota definition: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -1153,7 +1152,7 @@ module AdminUI
         @logger.debug("Error during delete space quota definition space: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete space quota definition space: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -1173,7 +1172,7 @@ module AdminUI
         @logger.debug("Error during delete space: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete space: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
@@ -1190,7 +1189,7 @@ module AdminUI
         @logger.debug("Error during delete space role: #{ error.to_h }")
         content_type(:json)
         status(error.http_code)
-        body(error.to_h.to_json)
+        body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete space role: #{ error.inspect }")
         @logger.debug(error.backtrace.join("\n"))
