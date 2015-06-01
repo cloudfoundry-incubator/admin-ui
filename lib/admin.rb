@@ -98,6 +98,7 @@ module AdminUI
 
       web_hash = { AccessLog:          [],
                    BindAddress:        @config.bind_address,
+                   Host:               @config.bind_address, # Newer Rack::Handler::WEBrick requires Host
                    DoNotReverseLookup: true,
                    Logger:             error_logger,
                    Port:               @config.port

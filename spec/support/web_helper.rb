@@ -58,9 +58,9 @@ shared_context :web_context do
   end
 
   def check_details(expected_properties)
-    expect(Selenium::WebDriver::Wait.new(timeout: 360).until { @driver.find_element(id: "#{ tab_id }DetailsLabel").displayed? }).to be_true
-    properties = Selenium::WebDriver::Wait.new(timeout: 360).until { @driver.find_elements(xpath: "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[1]") }
-    values     = Selenium::WebDriver::Wait.new(timeout: 360).until { @driver.find_elements(xpath: "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]") }
+    expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{ tab_id }DetailsLabel").displayed? }).to be_true
+    properties = Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_elements(xpath: "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[1]") }
+    values     = Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_elements(xpath: "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]") }
     property_index = 0
     expected_properties.each do |expected_property|
       expect(properties[property_index].text).to eq("#{ expected_property[:label] }:")
@@ -77,16 +77,16 @@ shared_context :web_context do
   end
 
   def check_filter_link(tab_id, link_index, target_tab_id, expected_filter)
-    Selenium::WebDriver::Wait.new(timeout: 360).until { @driver.find_elements(xpath: "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(tag_name: 'a').click }
-    expect(Selenium::WebDriver::Wait.new(timeout: 360).until { @driver.find_element(class_name: 'menuItemSelected').attribute('id') }).to eq(target_tab_id)
-    expect(Selenium::WebDriver::Wait.new(timeout: 360).until { @driver.find_element(id: target_tab_id).displayed? }).to eq(true)
-    expect(Selenium::WebDriver::Wait.new(timeout: 360).until { @driver.find_element(id: "#{ target_tab_id }Table_filter").find_element(tag_name: 'input').attribute('value') }).to eq(expected_filter)
+    Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_elements(xpath: "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(tag_name: 'a').click }
+    expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(class_name: 'menuItemSelected').attribute('id') }).to eq(target_tab_id)
+    expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: target_tab_id).displayed? }).to eq(true)
+    expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{ target_tab_id }Table_filter").find_element(tag_name: 'input').attribute('value') }).to eq(expected_filter)
   end
 
   def check_stats_chart(id)
     # As the page refreshes, we need to catch the stale element error and re-find the element on the page
     begin
-      Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: "#{ id }Chart").displayed? }
+      Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{ id }Chart").displayed? }
     rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
     end
     chart = @driver.find_element(id: "#{ id }Chart")
@@ -163,24 +163,34 @@ shared_context :web_context do
 
   def login(title)
     @driver.get "http://#{ host }:#{ port }"
-    Selenium::WebDriver::Wait.new(timeout: 360).until { @driver.title == title }
+    Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.title == title }
   end
 
   def select_first_row
     first_row.click
   end
 
-  def scroll_tab_into_view(id)
+  def scroll_tab_into_view(id, verify_deas_tab_selected = false)
+    if verify_deas_tab_selected
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'DEAs'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('DEAs')
+    end
+
     element = @driver.find_element(id: id)
     expect(element).to_not be_nil
     return element if element.displayed?
     left = @driver.find_element(id: 'MenuButtonLeft')
-    5.times do
+    10.times do
       left.click
       return element if element.displayed?
     end
     right = @driver.find_element(id: 'MenuButtonRight')
-    5.times do
+    10.times do
       right.click
       return element if element.displayed?
     end

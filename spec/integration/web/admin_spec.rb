@@ -36,14 +36,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     it 'has a title' do
       # Need to wait until the page has been rendered
       begin
-        Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(class: 'cloudControllerText').text == cloud_controller_uri }
+        Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(class: 'cloudControllerText').text == cloud_controller_uri }
       rescue Selenium::WebDriver::Error::TimeOutError
       end
       expect(@driver.find_element(class: 'cloudControllerText').text).to eq(cloud_controller_uri)
     end
 
     it 'has tabs' do
-      expect(scroll_tab_into_view('Organizations').displayed?).to be_true
+      expect(scroll_tab_into_view('Organizations', true).displayed?).to be_true
       expect(scroll_tab_into_view('Spaces').displayed?).to be_true
       expect(scroll_tab_into_view('Applications').displayed?).to be_true
       expect(scroll_tab_into_view('ApplicationInstances').displayed?).to be_true
@@ -197,27 +197,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       let(:table_has_data) { true }
 
       before do
-        # Move click action into the wait blog to ensure relevant tab has been clicked and rendered
-        # This part is modified to fit Travis CI system.
+        # First, make sure the DEA tab shows
+        # Second select the desired tab via scrolling
         begin
-          Selenium::WebDriver::Wait.new(timeout: 60).until do
-            scroll_tab_into_view(tab_id).click
+          Selenium::WebDriver::Wait.new(timeout: 5).until do
+            scroll_tab_into_view(tab_id, true).click
             @driver.find_element(class_name: 'menuItemSelected').attribute('id') == tab_id
           end
         rescue Selenium::WebDriver::Error::TimeOutError
         end
         expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq(tab_id)
-        # Need to wait until the page has been rendered
+
+        # Third, wait until the desired page has been rendered
         begin
-          Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: "#{ tab_id }Page").displayed? }
+          Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{ tab_id }Page").displayed? }
         rescue Selenium::WebDriver::Error::TimeOutError
         end
         expect(@driver.find_element(id: "#{ tab_id }Page").displayed?).to eq(true)
 
         if table_has_data
-          # Need to wait until the table on the page has data
+          # Fourth, wait until the table on the desired page has data
           begin
-            Selenium::WebDriver::Wait.new(timeout: 360).until { @driver.find_element(xpath: "//table[@id='#{ tab_id }Table']/tbody/tr").text != 'No data available in table' }
+            Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(xpath: "//table[@id='#{ tab_id }Table']/tbody/tr").text != 'No data available in table' }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
           expect(@driver.find_element(xpath: "//table[@id='#{ tab_id }Table']/tbody/tr").text).not_to eq('No data available in table')
@@ -242,9 +243,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       def check_operation_result
-        Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+        Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
         expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-        expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Success')
+        Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: 'ModalDialogTitle').text == 'Success' }
         @driver.find_element(id: 'modalDialogButton0').click
       end
 
@@ -270,7 +271,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           if check_no_data_available
             begin
-              Selenium::WebDriver::Wait.new(timeout: 240).until { refresh_button && @driver.find_element(xpath: "//table[@id='#{ table_id }']/tbody/tr").text == 'No data available in table' }
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='#{ table_id }']/tbody/tr").text == 'No data available in table' }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='#{ table_id }']/tbody/tr").text).to eq('No data available in table')
@@ -383,7 +384,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_operation_result
 
             begin
-              Selenium::WebDriver::Wait.new(timeout: 60).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text == cc_organization2[:name] }
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text == cc_organization2[:name] }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text).to eq(cc_organization2[:name])
@@ -439,7 +440,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               check_operation_result
 
               begin
-                Selenium::WebDriver::Wait.new(timeout: 460).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[11]").text == cc_quota_definition2[:name] }
+                Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[11]").text == cc_quota_definition2[:name] }
               rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
               end
               expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[11]").text).to eq(cc_quota_definition2[:name])
@@ -462,9 +463,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           def check_organization_status(status)
-            Selenium::WebDriver::Wait.new(timeout: 560).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text == status }
+            Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text == status }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            expect(Selenium::WebDriver::Wait.new(timeout: 360).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text }).to eq(status)
+            expect(Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text }).to eq(status)
           end
 
           it 'activates the selected organization' do
@@ -572,7 +573,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Organizations', 14, 'Routes', "#{ cc_organization[:name] }/")
           end
 
-          it 'has instances link' do
+          it 'has application instances link' do
             check_filter_link('Organizations', 17, 'ApplicationInstances', "#{ cc_organization[:name] }/")
           end
 
@@ -738,7 +739,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Spaces', 9, 'Routes', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
 
-          it 'has instances link' do
+          it 'has application instances link' do
             check_filter_link('Spaces', 12, 'ApplicationInstances', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
           end
 
@@ -812,7 +813,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_app_state(expect_state)
             # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
             # error happens.
-            Selenium::WebDriver::Wait.new(timeout: 560).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text == expect_state }
+            Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text == expect_state }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text).to eq(expect_state)
           end
@@ -1158,8 +1159,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Path',         tag:   nil, value: cc_route[:path] },
                            { label: 'GUID',         tag: 'div', value: cc_route[:guid] },
                            { label: 'Domain',       tag:   'a', value: cc_domain[:name] },
-                           { label: 'Created',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:created_at].to_datetime.rfc3339 }\")") } },
-                           { label: 'Updated',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:updated_at].to_datetime.rfc3339 }\")") } },
+                           { label: 'Created',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:created_at].to_datetime.rfc3339 }\")") } },
+                           { label: 'Updated',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:updated_at].to_datetime.rfc3339 }\")") } },
                            { label: 'Applications', tag:   'a', value: '1' },
                            { label: 'Space',        tag:   'a', value: cc_space[:name] },
                            { label: 'Organization', tag:   'a', value: cc_organization[:name] }
@@ -2883,7 +2884,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
             # error happens.
             begin
-              Selenium::WebDriver::Wait.new(timeout: 60).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[8]").text == expect_state }
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[8]").text == expect_state }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[8]").text).to eq(expect_state)
@@ -3214,7 +3215,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
-          it 'has applications link' do
+          it 'has application instances link' do
             check_filter_link('DEAs', 10, 'ApplicationInstances', nats_dea['host'])
           end
         end
@@ -3580,13 +3581,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           # As the page refreshes, we need to catch the stale element error and re-find the element on the page
           begin
-            Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr").length == 1 }
+            Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr").length == 1 }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
           expect(@driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr").length).to eq(1)
 
           begin
-            Selenium::WebDriver::Wait.new(timeout: 60).until do
+            Selenium::WebDriver::Wait.new(timeout: 5).until do
               refresh_button
               cells = @driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr/td")
               cells[0].text == File.join(File.dirname(__FILE__)[0..-22], 'lib/admin/scripts', 'newDEA.sh') &&
@@ -3641,7 +3642,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         it 'can show current stats' do
           check_default_stats_table
           @driver.find_element(id: 'ToolTables_StatsTable_0').click
-          Selenium::WebDriver::Wait.new(timeout: 60).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+          Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
           expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
           expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
           rows = @driver.find_elements(xpath: "//div[@id='ModalDialogContentsSimple']/div/table/tbody/tr")
@@ -3659,7 +3660,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           # As the page refreshes, we need to catch the stale element error and re-find the element on the page
           begin
-            check_table_data(Selenium::WebDriver::Wait.new(timeout: 360).until { refresh_button && @driver.find_elements(xpath: "//table[@id='StatsTable']/tbody/tr/td") }, [nil, '1', '1', '1', '1', '1', '1', '1'])
+            check_table_data(Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_elements(xpath: "//table[@id='StatsTable']/tbody/tr/td") }, [nil, '1', '1', '1', '1', '1', '1', '1'])
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError, Timeout::Error
           end
           check_table_data(@driver.find_elements(xpath: "//table[@id='StatsTable']/tbody/tr/td"), [nil, '1', '1', '1', '1', '1', '1', '1'])

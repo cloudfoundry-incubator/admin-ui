@@ -21,7 +21,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it 'verifies first button is copy button' do
         begin
           Selenium::WebDriver::Wait.new(timeout: 5).until do
-            scroll_tab_into_view(tab_id).click
+            scroll_tab_into_view(tab_id, true).click
             @driver.find_element(class_name: 'menuItemSelected').attribute('id') == tab_id
           end
         rescue Selenium::WebDriver::Error::TimeOutError
@@ -193,7 +193,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     end
 
     it 'Tasks tab does not exist' do
-      expect(scroll_tab_into_view('Tasks').displayed?).to be_false
+      expect(scroll_tab_into_view('Tasks', true).displayed?).to be_false
     end
 
     context 'Stats tab does not have a create stats button' do
