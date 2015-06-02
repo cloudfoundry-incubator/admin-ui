@@ -5,7 +5,7 @@ require_relative 'scheduled_thread_pool'
 
 module AdminUI
   class CC
-    def initialize(config, logger, client, testing = false)
+    def initialize(config, logger, client, testing)
       @config  = config
       @client  = client
       @logger  = logger
@@ -564,7 +564,7 @@ module AdminUI
       # If the table exists or we have not yet determined if the table exists
       exists = cache[:exists]
       if exists || exists.nil?
-        Sequel.connect(cache[:db_uri], single_threaded: false, max_connections: @max_connections) do |connection|
+        Sequel.connect(cache[:db_uri], single_threaded: @testing, max_connections: @max_connections) do |connection|
           # If we have not yet determined if the table exists
           if exists.nil?
             table = cache[:table]

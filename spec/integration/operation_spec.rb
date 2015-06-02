@@ -49,7 +49,7 @@ describe AdminUI::Operation, type: :integration do
   let(:log_files) { AdminUI::LogFiles.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
   let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
-  let(:stats) { AdminUI::Stats.new(config, logger, cc, varz) }
+  let(:stats) { AdminUI::Stats.new(config, logger, cc, varz, true) }
   let(:tasks) { AdminUI::Tasks.new(config, logger) }
   let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, tasks, varz, true) }
   let(:operation) { AdminUI::Operation.new(config, logger, cc, client, varz, view_models) }

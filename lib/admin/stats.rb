@@ -6,12 +6,12 @@ module AdminUI
   class Stats
     attr_reader :time_last_run
 
-    def initialize(config, logger, cc, varz)
+    def initialize(config, logger, cc, varz, testing)
       @config          = config
       @logger          = logger
       @cc              = cc
       @varz            = varz
-      @persistence     = AdminUI::StatsDBStore.new(config, logger)
+      @persistence     = AdminUI::StatsDBStore.new(config, logger, testing)
 
       @data_collection_schedulers = []
       @config.stats_refresh_schedules.each do |spec|

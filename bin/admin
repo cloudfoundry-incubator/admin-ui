@@ -42,4 +42,4 @@ rescue => exception
   exit 1
 end
 
-AdminUI::Admin.new(@config).start
+AdminUI::Admin.new(@config, false).start

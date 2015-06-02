@@ -22,7 +22,7 @@ describe AdminUI::VARZ do
   end
   let(:email) { AdminUI::EMail.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
-  let(:varz) { AdminUI::VARZ.new(config, logger, nats) }
+  let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
 
   before do
     AdminUI::Config.any_instance.stub(:validate)

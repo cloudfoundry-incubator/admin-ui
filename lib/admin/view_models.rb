@@ -33,7 +33,7 @@ require_relative 'view_models/users_view_model'
 
 module AdminUI
   class ViewModels
-    def initialize(config, logger, cc, log_files, stats, tasks, varz, testing = false)
+    def initialize(config, logger, cc, log_files, stats, tasks, varz, testing)
       @cc        = cc
       @config    = config
       @log_files = log_files

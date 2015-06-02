@@ -20,7 +20,7 @@ describe AdminUI::CC do
                          uaa_client:           { id: 'id', secret: 'secret' })
   end
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
-  let(:cc) { AdminUI::CC.new(config, logger, client) }
+  let(:cc) { AdminUI::CC.new(config, logger, client, true) }
 
   before do
     AdminUI::Config.any_instance.stub(:validate)

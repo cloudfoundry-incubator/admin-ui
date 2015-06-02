@@ -4,7 +4,7 @@ require 'yajl'
 
 module AdminUI
   class VARZ
-    def initialize(config, logger, nats, testing = false)
+    def initialize(config, logger, nats, testing)
       @config  = config
       @logger  = logger
       @nats    = nats

@@ -21,7 +21,7 @@ require_relative 'admin/web'
 
 module AdminUI
   class Admin
-    def initialize(config_hash, testing = false, start_callback = nil)
+    def initialize(config_hash, testing, start_callback = nil)
       @config_hash    = config_hash
       @testing        = testing
       @start_callback = start_callback
@@ -54,7 +54,7 @@ module AdminUI
     end
 
     def setup_dbstore
-      db_conn = DBStoreMigration.new(@config, @logger)
+      db_conn = DBStoreMigration.new(@config, @logger, @testing)
       db_conn.migrate_to_db
     end
 
@@ -68,7 +68,7 @@ module AdminUI
       @login       = Login.new(@config, @logger, client)
       @tasks       = Tasks.new(@config, @logger)
       @varz        = VARZ.new(@config, @logger, nats, @testing)
-      @stats       = Stats.new(@config, @logger, @cc, @varz)
+      @stats       = Stats.new(@config, @logger, @cc, @varz, @testing)
       @view_models = ViewModels.new(@config, @logger, @cc, @log_files, @stats, @tasks, @varz, @testing)
       @operation   = Operation.new(@config, @logger, @cc, client, @varz, @view_models)
     end

@@ -70,7 +70,7 @@ describe AdminUI::DBStoreMigration do
   end
 
   def db_connection
-    Sequel.connect db_uri
+    Sequel.connect(db_uri, single_threaded: true, max_connections: 1)
   end
 
   def migrate_database

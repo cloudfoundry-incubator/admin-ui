@@ -30,9 +30,9 @@ describe AdminUI::CC do
   let(:log_files) { AdminUI::LogFiles.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
   let(:tasks) { AdminUI::Tasks.new(config, logger) }
-  let(:varz) { AdminUI::VARZ.new(config, logger, nats) }
-  let(:stats) { AdminUI::Stats.new(config, logger, cc, varz) }
-  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, tasks, varz) }
+  let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
+  let(:stats) { AdminUI::Stats.new(config, logger, cc, varz, true) }
+  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, tasks, varz, true) }
 
   before do
     AdminUI::Config.any_instance.stub(:validate)

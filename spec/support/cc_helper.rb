@@ -1076,7 +1076,7 @@ module CCHelper
       if @cc_organization_created
         cc_organization_taken
       else
-        Sequel.connect(config.ccdb_uri, single_threaded: false, max_connections: 1, timeout: 1) do |connection|
+        Sequel.connect(config.ccdb_uri, single_threaded: true, max_connections: 1, timeout: 1) do |connection|
           items = connection[:organizations]
           loop do
             begin
@@ -1453,7 +1453,7 @@ module CCHelper
   end
 
   def populate_db(db_uri, path, ordered_inserts)
-    Sequel.connect(db_uri, single_threaded: false, max_connections: 1, timeout: 1) do |connection|
+    Sequel.connect(db_uri, single_threaded: true, max_connections: 1, timeout: 1) do |connection|
       Sequel::Migrator.apply(connection, path)
 
       ordered_inserts.each do |entry|
@@ -1472,7 +1472,7 @@ module CCHelper
   end
 
   def sql(uri, sql)
-    Sequel.connect(uri, single_threaded: false, max_connections: 1, timeout: 1) do |connection|
+    Sequel.connect(uri, single_threaded: true, max_connections: 1, timeout: 1) do |connection|
       loop do
         begin
           connection.run(sql)

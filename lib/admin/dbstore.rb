@@ -6,10 +6,11 @@ require_relative 'utils'
 
 module AdminUI
   class DBStore
-    def initialize(config, logger)
-      @config = config
-      @logger = logger
-      @db_uri = @config.db_uri
+    def initialize(config, logger, testing)
+      @config  = config
+      @logger  = logger
+      @testing = testing
+      @db_uri  = @config.db_uri
     end
 
     def connect
@@ -19,7 +20,7 @@ module AdminUI
         @logger.debug("AdminUI::DBStore.connect: creating new instance of sqlite database at #{ filename }")
         FileUtils.mkpath File.dirname(filename)
       end
-      Sequel.connect(@db_uri, logger: @logger, single_threaded: false, max_connections: 14)
+      Sequel.connect(@db_uri, logger: @logger, single_threaded: @testing, max_connections: 14)
     end
   end
 end
