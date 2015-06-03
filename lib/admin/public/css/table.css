@@ -276,7 +276,11 @@ div.dataTables_info
 table.dataTable tr.DTTT_selected.odd,
 table.dataTable tr.DTTT_selected.even,
 table.dataTable tr.DTTT_selected.odd td.sorting_1,
-table.dataTable tr.DTTT_selected.even td.sorting_1
+table.dataTable tr.DTTT_selected.odd td.sorting_2,
+table.dataTable tr.DTTT_selected.odd td.sorting_3,
+table.dataTable tr.DTTT_selected.even td.sorting_1,
+table.dataTable tr.DTTT_selected.even td.sorting_2,
+table.dataTable tr.DTTT_selected.even td.sorting_3
 {
     background-color: rgb(120, 120, 120);
     color: rgb(220, 220, 220);
@@ -287,8 +291,27 @@ table.dataTable tr.odd td.sorting_1
     background-color: rgb(235, 235, 235);
 }
 
+table.dataTable tr.odd td.sorting_2
+{
+    background-color: rgb(225, 225, 225);
+}
+
+table.dataTable tr.odd td.sorting_3
+{
+    background-color: rgb(215, 215, 215);
+}
+
 table.dataTable tr.even td.sorting_1
 {
     background-color: rgb(227, 227, 227);
 }
 
+table.dataTable tr.even td.sorting_2
+{
+    background-color: rgb(217, 217, 217);
+}
+
+table.dataTable tr.even td.sorting_3
+{
+    background-color: rgb(207, 207, 207);
+}
