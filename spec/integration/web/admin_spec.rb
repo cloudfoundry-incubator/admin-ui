@@ -3158,7 +3158,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               },
                               { columns:         @driver.find_elements(xpath: "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 expected_length: 14,
-                                labels:          ['Name', 'Index', 'Status', 'Started', 'Stack', 'CPU', 'Memory', 'Total', 'Running', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk'],
+                                labels:          ['Name', 'Index', 'Status', 'Started', 'Stacks', 'CPU', 'Memory', 'Total', 'Running', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk'],
                                 colspans:        nil
                               }
                              ])
@@ -3201,7 +3201,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'URI',                   tag: 'a', value: nats_dea_varz },
                            { label: 'Started',               tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")") },
                            { label: 'Uptime',                tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_dea['uptime'] }\")") },
-                           { label: 'Stack',                 tag: nil, value: varz_dea['stacks'][0] },
+                           { label: 'Stack',                 tag: 'a', value: varz_dea['stacks'][0] },
                            { label: 'Cores',                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['num_cores'] })") },
                            { label: 'CPU',                   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu'] })") },
                            { label: 'CPU Load Avg',          tag: nil, value: "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") }%" },
@@ -3214,6 +3214,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Memory Free',           tag: nil, value: "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })") }%" },
                            { label: 'Disk Free',             tag: nil, value: "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") }%" }
                           ])
+          end
+
+          it 'has stacks link' do
+            check_filter_link('DEAs', 5, 'Stacks', varz_dea['stacks'][0])
           end
 
           it 'has application instances link' do
