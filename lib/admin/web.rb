@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'yajl'
+require_relative 'cc_rest_client'
 require_relative 'cc_rest_client_response_error'
 require_relative 'logger'
 require_relative 'view_models/all_actions'
@@ -7,12 +8,13 @@ require_relative 'view_models/download'
 
 module AdminUI
   class Web < Sinatra::Base
-    def initialize(config, logger, cc, login, log_files, operation, stats, tasks, varz, view_models)
+    def initialize(config, logger, cc, client, login, log_files, operation, stats, tasks, varz, view_models)
       super({})
 
       @config      = config
       @logger      = logger
       @cc          = cc
+      @client      = client
       @login       = login
       @log_files   = log_files
       @operation   = operation
@@ -292,6 +294,7 @@ module AdminUI
     get '/settings', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/settings')
       Yajl::Encoder.encode(admin:                  session[:admin],
+                           build:                  @client.build,
                            cloud_controller_uri:   @config.cloud_controller_uri,
                            table_height:           @config.table_height,
                            table_page_size:        @config.table_page_size,
@@ -439,6 +442,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', '/stats_view_model')
       extended_result = AllActions.new(@logger, @view_models.stats, params).items
       extended_result[:items][:label] = @config.cloud_controller_uri
+      extended_result[:items][:build] = @client.build
       Yajl::Encoder.encode(extended_result)
     end
 

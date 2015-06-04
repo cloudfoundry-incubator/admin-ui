@@ -933,12 +933,12 @@ describe AdminUI::Admin, type: :integration do
     context 'log' do
       let(:retrieved) { get_json("/log?path=#{ log_file_displayed }", true) }
       it 'retrieves' do
-        expect(retrieved['data']).to eq(log_file_displayed_contents)
-        expect(retrieved['file_size']).to eq(log_file_displayed_contents_length)
-        expect(retrieved['page_size']).to eq(log_file_page_size)
-        expect(retrieved['path']).to eq(log_file_displayed)
-        expect(retrieved['read_size']).to eq(log_file_displayed_contents_length)
-        expect(retrieved['start']).to eq(0)
+        expect(retrieved).to include('data'      => log_file_displayed_contents,
+                                     'file_size' => log_file_displayed_contents_length,
+                                     'page_size' => log_file_page_size,
+                                     'path'      => log_file_displayed,
+                                     'read_size' => log_file_displayed_contents_length,
+                                     'start'     => 0)
       end
     end
 
@@ -1097,6 +1097,18 @@ describe AdminUI::Admin, type: :integration do
       let(:path)              { "/services_view_model/#{ cc_service[:guid] }" }
       let(:view_model_source) { view_models_services_detail }
       it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'settings' do
+      let(:retrieved) { get_json('/settings') }
+      it 'retrieves' do
+        expect(retrieved).to eq('admin'                  => true,
+                                'build'                  => '2222',
+                                'cloud_controller_uri'   => cloud_controller_uri,
+                                'table_height'           => table_height,
+                                'table_page_size'        => table_page_size,
+                                'tasks_refresh_interval' => tasks_refresh_interval)
+      end
     end
 
     context 'space_quotas_view_model' do

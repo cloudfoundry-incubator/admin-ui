@@ -19,7 +19,7 @@ module AdminUI
 
       items.push(to_row(current_statistic)) if current_statistic
 
-      statistics['items'].each do |statistic|
+      statistics.each do |statistic|
         Thread.pass
         items.push(to_row(Utils.symbolize_keys(statistic)))
       end

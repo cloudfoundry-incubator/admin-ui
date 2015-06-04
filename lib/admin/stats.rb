@@ -40,24 +40,16 @@ module AdminUI
     end
 
     def stats
-      result = {}
-
-      result['label'] = @config.cloud_controller_uri
-      result['items']  = []
-
-      begin
-        items = @persistence.retrieve
-        items.each do |item|
-          item[:timestamp] = item[:timestamp].to_i
-        end
-        @logger.debug("AdminUI::Stats.stats: Retrieved #{ items.length } records.")
-        result['items'] = items
-      rescue => error
-        @logger.debug("AdminUI::Stats.stats: Error retrieving stats data: #{ error }")
-        @logger.debug(error.backtrace.join("\n"))
+      items = @persistence.retrieve
+      items.each do |item|
+        item[:timestamp] = item[:timestamp].to_i
       end
-
-      result
+      @logger.debug("AdminUI::Stats.stats: Retrieved #{ items.length } records.")
+      items
+    rescue => error
+      @logger.debug("AdminUI::Stats.stats: Error retrieving stats data: #{ error }")
+      @logger.debug(error.backtrace.join("\n"))
+      []
     end
 
     def current_stats

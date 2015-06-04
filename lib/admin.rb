@@ -59,18 +59,18 @@ module AdminUI
     end
 
     def setup_components
-      client = CCRestClient.new(@config, @logger)
       email  = EMail.new(@config, @logger)
       nats   = NATS.new(@config, @logger, email)
 
-      @cc          = CC.new(@config, @logger, client, @testing)
+      @client      = CCRestClient.new(@config, @logger)
+      @cc          = CC.new(@config, @logger, @client, @testing)
       @log_files   = LogFiles.new(@config, @logger)
-      @login       = Login.new(@config, @logger, client)
+      @login       = Login.new(@config, @logger, @client)
       @tasks       = Tasks.new(@config, @logger)
       @varz        = VARZ.new(@config, @logger, nats, @testing)
       @stats       = Stats.new(@config, @logger, @cc, @varz, @testing)
       @view_models = ViewModels.new(@config, @logger, @cc, @log_files, @stats, @tasks, @varz, @testing)
-      @operation   = Operation.new(@config, @logger, @cc, client, @varz, @view_models)
+      @operation   = Operation.new(@config, @logger, @cc, @client, @varz, @view_models)
     end
 
     def display_files
@@ -125,6 +125,7 @@ module AdminUI
       web = web_class.new(@config,
                           @logger,
                           @cc,
+                          @client,
                           @login,
                           @log_files,
                           @operation,

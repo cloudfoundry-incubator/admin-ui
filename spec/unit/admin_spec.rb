@@ -25,9 +25,6 @@ describe AdminUI::Admin do
   let(:private_key_pass_phrase) { 'private_key_pass_phrase'  }
   let(:secured_client_connection) { false }
   let(:stats_file) { '/tmp/admin_ui_stats.json' }
-  let(:table_height) { '300px' }
-  let(:table_page_size) { 10 }
-  let(:tasks_refresh_interval) { 6000 }
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)  { "sqlite://#{ uaadb_file }" }
   let(:config) do
@@ -45,9 +42,6 @@ describe AdminUI::Admin do
                                    private_key_pass_phrase: private_key_pass_phrase
                                  },
       stats_file:                stats_file,
-      table_height:              table_height,
-      table_page_size:           table_page_size,
-      tasks_refresh_interval:    tasks_refresh_interval,
       uaadb_uri:                 uaadb_uri,
       uaa_client:                { id: 'id', secret: 'secret' }
     }
@@ -930,16 +924,6 @@ describe AdminUI::Admin do
         verify_not_found('/routes_view_model/route1')
       end
 
-      it '/settings succeeds' do
-        json = get_json('/settings')
-
-        expect(json).to eq('admin'                  => true,
-                           'cloud_controller_uri'   => cloud_controller_uri,
-                           'table_height'           => table_height,
-                           'table_page_size'        => table_page_size,
-                           'tasks_refresh_interval' => tasks_refresh_interval)
-      end
-
       it '/service_bindings_view_model succeeds' do
         verify_disconnected_view_model_items('/service_bindings_view_model')
       end
@@ -1618,10 +1602,6 @@ describe AdminUI::Admin do
       it '/stats succeeds' do
         get_body('/stats')
       end
-
-      it '/stats_view_model succeeds' do
-        get_body('/stats_view_model')
-      end
     end
 
     context 'Login not required via http' do
@@ -1712,15 +1692,14 @@ describe AdminUI::Admin do
           expect(body).to_not be_nil
           json = Yajl::Parser.parse(body)
 
-          expect(json).to eq('label' => cloud_controller_uri,
-                             'items' => [{ 'apps'              => 1,
-                                           'deas'              => 2,
-                                           'organizations'     => 3,
-                                           'running_instances' => 4,
-                                           'spaces'            => 5,
-                                           'timestamp'         => 6,
-                                           'total_instances'   => 7,
-                                           'users'             => 8 }])
+          expect(json).to eq([{ 'apps'              => 1,
+                                'deas'              => 2,
+                                'organizations'     => 3,
+                                'running_instances' => 4,
+                                'spaces'            => 5,
+                                'timestamp'         => 6,
+                                'total_instances'   => 7,
+                                'users'             => 8 }])
         end
       end
 

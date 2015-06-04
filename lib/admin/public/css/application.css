@@ -29,12 +29,19 @@ html.waiting *
 .titleText
 {
     float: left;
-    padding: 4px 10px 4px 20px;
+    padding: 4px 10px 4px 6px;
     font-size: 1.08em;
     font-weight: bold;
 }
 
 .cloudControllerText
+{
+    float: left;
+    padding: 7px 10px 0px 0px;
+    font-size: .8em;
+}
+
+.build
 {
     float: left;
     padding: 7px 20px 0px 0px;

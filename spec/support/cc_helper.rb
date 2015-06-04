@@ -485,6 +485,15 @@ module CCHelper
     }
   end
 
+  # /info returned from the system is not symbols
+  def cc_info
+    {
+      'authorization_endpoint' => 'http://authorization_endpoint',
+      'build'                  => '2222',
+      'token_endpoint'         => 'http://token_endpoint'
+    }
+  end
+
   def cc_organization
     {
       billing_enabled:     false,
@@ -874,21 +883,6 @@ module CCHelper
 
   private
 
-  def authorization_endpoint
-    'http://authorization_endpoint'
-  end
-
-  def token_endpoint
-    'http://token_endpoint'
-  end
-
-  def cc_info
-    {
-      'authorization_endpoint' => authorization_endpoint,
-      'token_endpoint'         => token_endpoint
-    }
-  end
-
   def uaa_oauth
     {
       'token_type'   => 'bearer',
@@ -1054,7 +1048,7 @@ module CCHelper
       OK.new(cc_info)
     end
 
-    AdminUI::Utils.stub(:http_request).with(anything, "#{ token_endpoint }/oauth/token", AdminUI::Utils::HTTP_POST, anything, anything) do
+    AdminUI::Utils.stub(:http_request).with(anything, "#{ cc_info['token_endpoint'] }/oauth/token", AdminUI::Utils::HTTP_POST, anything, anything) do
       OK.new(uaa_oauth)
     end
   end

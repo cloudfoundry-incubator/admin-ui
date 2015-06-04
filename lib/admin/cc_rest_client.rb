@@ -9,6 +9,11 @@ module AdminUI
       @logger = logger
     end
 
+    def build
+      info
+      @build
+    end
+
     def delete_cc(path)
       cf_request(get_cc_url(path), Utils::HTTP_DELETE)
     end
@@ -150,6 +155,11 @@ module AdminUI
 
       if response.is_a?(Net::HTTPOK)
         body_json = Yajl::Parser.parse(response.body)
+
+        @build = body_json['build']
+        if @build.nil?
+          fail "Information retrieved from #{ get_cc_url('/info') } does not include build"
+        end
 
         @authorization_endpoint = body_json['authorization_endpoint']
         if @authorization_endpoint.nil?

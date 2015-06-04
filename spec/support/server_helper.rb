@@ -32,6 +32,9 @@ shared_context :server_context do
   let(:log_file_displayed_modified_milliseconds) { AdminUI::Utils.time_in_milliseconds(log_file_displayed_modified) }
   let(:log_file_page_size) { 100 }
   let(:port) { 8071 }
+  let(:table_height) { '300px' }
+  let(:table_page_size) { 10 }
+  let(:tasks_refresh_interval) { 6000 }
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri) { "sqlite://#{ uaadb_file }" }
   let(:config) do
@@ -47,6 +50,9 @@ shared_context :server_context do
       mbus:                                'nats://nats:c1oudc0w@localhost:14222',
       nats_discovery_interval:             3,
       port:                                port,
+      table_height:                        table_height,
+      table_page_size:                     table_page_size,
+      tasks_refresh_interval:              tasks_refresh_interval,
       uaadb_uri:                           uaadb_uri,
       uaa_client:                          { id: 'id', secret: 'secret' },
       varz_discovery_interval:             3
