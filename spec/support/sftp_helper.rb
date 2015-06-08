@@ -48,7 +48,7 @@ module SFTPHelper
 
     uri = URI.parse(config.log_files[0])
 
-    ::Net::SFTP.stub(:start) do |host, user, options, &blk|
+    allow(::Net::SFTP).to receive(:start) do |host, user, options, &blk|
       expect(host).to eq(uri.host)
       expect(user).to eq(uri.user)
       expect(options).to include(port: uri.port) unless uri.port.nil?
@@ -59,66 +59,66 @@ module SFTPHelper
       @sftp_start = true
     end
 
-    MockSession.any_instance.stub(:close!) do
+    allow_any_instance_of(MockSession).to receive(:close!) do
       @sftp_close = true
     end
 
-    MockSession.any_instance.stub(:download!) do |_source, target|
+    allow_any_instance_of(MockSession).to receive(:download!) do |_session, _source, target|
       @sftp_download = true
       File.open(target, 'w') do |file|
         file.write(file_content)
       end
     end
 
-    MockSession.any_instance.stub(:fstat!) do
+    allow_any_instance_of(MockSession).to receive(:fstat!) do
       @sftp_fstat = true
 
       ::Net::SFTP::Protocol::V01::Attributes.new
     end
 
-    MockSession.any_instance.stub(:open!) do
+    allow_any_instance_of(MockSession).to receive(:open!) do
       @sftp_open = true
       nil
     end
 
-    MockSession.any_instance.stub(:read!) do |_, start, read_size|
+    allow_any_instance_of(MockSession).to receive(:read!) do |_session, _handle, start, read_size|
       @sftp_read = true
       file_content.slice(start, read_size)
     end
 
-    ::Net::SFTP::Protocol::V01::Attributes.any_instance.stub(:directory?) do
+    allow_any_instance_of(::Net::SFTP::Protocol::V01::Attributes).to receive(:directory?) do
       @sftp_attributes_directory = true
       !is_file
     end
 
-    ::Net::SFTP::Protocol::V01::Attributes.any_instance.stub(:file?) do
+    allow_any_instance_of(::Net::SFTP::Protocol::V01::Attributes).to receive(:file?) do
       @sftp_attributes_file = true
       is_file
     end
 
-    ::Net::SFTP::Protocol::V01::Attributes.any_instance.stub(:mtime) do
+    allow_any_instance_of(::Net::SFTP::Protocol::V01::Attributes).to receive(:mtime) do
       @sftp_attributes_mtime = true
       file_mtime
     end
 
-    ::Net::SFTP::Protocol::V01::Attributes.any_instance.stub(:name) do
+    allow_any_instance_of(::Net::SFTP::Protocol::V01::Attributes).to receive(:name) do
       @sftp_attributes_name = true
       "#{ file_name }#{ file_extension }"
     end
 
-    ::Net::SFTP::Protocol::V01::Attributes.any_instance.stub(:size) do
+    allow_any_instance_of(::Net::SFTP::Protocol::V01::Attributes).to receive(:size) do
       @sftp_attributes_size = true
       file_content.length
     end
 
-    ::Net::SFTP::Operations::Dir.any_instance.stub(:entries) do
+    allow_any_instance_of(::Net::SFTP::Operations::Dir).to receive(:entries) do
       # We have to make sure if_file is now true
       is_file = true
       @sftp_dir_entries = true
       [MockEntry.new("#{ file_name }#{ file_extension }")]
     end
 
-    ::Net::SFTP::Operations::Dir.any_instance.stub(:glob) do
+    allow_any_instance_of(::Net::SFTP::Operations::Dir).to receive(:glob) do
       # We have to make sure if_file is now true
       is_file = true
       @sftp_dir_glob = true

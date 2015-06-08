@@ -83,7 +83,7 @@ describe AdminUI::DBStoreMigration do
   context 'when config property db_uri is using sqlite and the database file does not exist' do
     it 'automatically creates a sqlite database instance.' do
       launch_admin_daemon(config)
-      expect(File.exist?(db_file)).to be_true
+      expect(File.exist?(db_file)).to be(true)
       stop_admin_daemon
     end
   end
@@ -94,7 +94,7 @@ describe AdminUI::DBStoreMigration do
     it 'automatically creates a sqlite database instance.' do
       FileUtils.rm_rf '/tmp/new_dir'  if File.exist?('/tmp/new_dir')
       launch_admin_daemon(config)
-      expect(File.exist?(db_file)).to be_true
+      expect(File.exist?(db_file)).to be(true)
       stop_admin_daemon
       FileUtils.rm_rf '/tmp/new_dir'
     end
@@ -105,8 +105,8 @@ describe AdminUI::DBStoreMigration do
       merged_config = config.merge(stats_file: stats_file)
       FileUtils.cp("#{ db_migration_spec_dir }/#{ stats_file_spec }", "#{ stats_file }")
       launch_admin_daemon(merged_config)
-      expect(File.file?(db_file)).to be_true
-      expect(File.file?(backup_stats_file)).to be_true
+      expect(File.file?(db_file)).to be(true)
+      expect(File.file?(backup_stats_file)).to be(true)
       db_conn = db_connection
       db_conn.fetch('select count(*) as rows from stats') do |row|
         expect(row[:rows].to_i).to eq(2)

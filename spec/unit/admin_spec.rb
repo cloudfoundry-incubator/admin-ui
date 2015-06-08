@@ -135,7 +135,7 @@ describe AdminUI::Admin do
     request['Content-Length'] = 0
 
     response = http.request(request)
-    expect(response.is_a?(Net::HTTPOK)).to be_true
+    expect(response.is_a?(Net::HTTPOK)).to be(true)
 
     body = response.body
     expect(body['redirect']).not_to be_nil
@@ -175,7 +175,7 @@ describe AdminUI::Admin do
       request = Net::HTTP::Get.new('/')
 
       response = http.request(request)
-      expect(response.is_a?(Net::HTTPSeeOther)).to be_true
+      expect(response.is_a?(Net::HTTPSeeOther)).to be(true)
 
       location = response['location']
       expect(location).not_to be_nil
@@ -234,7 +234,7 @@ describe AdminUI::Admin do
     shared_examples 'common create organization' do
       it 'returns failure code due to disconnection' do
         response = post('/organizations', '{"name":"new_org"}')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -251,7 +251,7 @@ describe AdminUI::Admin do
     shared_examples 'common create space quota definition space' do
       it 'returns failure code due to disconnection' do
         response = put('/space_quota_definitions/space_quota1/spaces/space1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -268,7 +268,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete application' do
       it 'returns failure code due to disconnection' do
         response = delete('/applications/application1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -285,7 +285,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete application instance' do
       it 'returns failure code due to disconnection' do
         response = delete('/applications/application1/index0')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -302,7 +302,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete application recursive' do
       it 'returns failure code due to disconnection' do
         response = delete('/applications/application1?recursive=true')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -319,7 +319,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete domain' do
       it 'returns failure code due to disconnection' do
         response = delete('/domains/domain1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -336,7 +336,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete domain recursive' do
       it 'returns failure code due to disconnection' do
         response = delete('/domains/domain1?recursive=true')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -353,7 +353,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete organization' do
       it 'returns failure code due to disconnection' do
         response = delete('/organizations/organization1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -370,7 +370,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete organization recursive' do
       it 'returns failure code due to disconnection' do
         response = delete('/organizations/organization1?recursive=true')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -387,7 +387,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete organization role' do
       it 'returns failure code due to disconnection' do
         response = delete('/organizations/organization1/auditors/user1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -404,7 +404,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete quota definition' do
       it 'returns failure code due to disconnection' do
         response = delete('/quota_definitions/quota1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -421,7 +421,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete route' do
       it 'returns failure code due to disconnection' do
         response = delete('/routes/route1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -438,7 +438,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete service' do
       it 'returns failure code due to disconnection' do
         response = delete('/services/service1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -455,7 +455,7 @@ describe AdminUI::Admin do
     shared_examples 'common purge service' do
       it 'returns failure code due to disconnection' do
         response = delete('/services/service1?purge=true')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -472,7 +472,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete service binding' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_bindings/service_binding1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -489,7 +489,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete service broker' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_brokers/service_broker1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -506,7 +506,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete service instance' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_instances/service_instance1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -523,7 +523,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete service instance recursive' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_instances/service_instance1?recursive=true')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -540,7 +540,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete service key' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_keys/service_key1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -557,7 +557,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete service plan' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_plans/service_plan1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -574,7 +574,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete service plan visibility' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_plan_visibilities/service_plan_visibility1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -591,7 +591,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete space' do
       it 'returns failure code due to disconnection' do
         response = delete('/spaces/space1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -608,7 +608,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete space recursive' do
       it 'returns failure code due to disconnection' do
         response = delete('/spaces/space1?recursive=true')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -625,7 +625,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete space quota definition' do
       it 'returns failure code due to disconnection' do
         response = delete('/space_quota_definitions/space_quota1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -642,7 +642,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete space quota definition space' do
       it 'returns failure code due to disconnection' do
         response = delete('/space_quota_definitions/space_quota1/spaces/space1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -659,7 +659,7 @@ describe AdminUI::Admin do
     shared_examples 'common delete space role' do
       it 'returns failure code due to disconnection' do
         response = delete('/spaces/space1/auditors/user1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -676,7 +676,7 @@ describe AdminUI::Admin do
     shared_examples 'common manage application' do
       it 'returns failure code due to disconnection' do
         response = put('/applications/application1', '{"state":"STARTED"}')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -693,7 +693,7 @@ describe AdminUI::Admin do
     shared_examples 'common manage organization' do
       it 'returns failure code due to disconnection' do
         response = put('/organizations/organization1', '{"quota_definition_guid":"quota1"}')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -710,7 +710,7 @@ describe AdminUI::Admin do
     shared_examples 'common manage service plan' do
       it 'returns failure code due to disconnection' do
         response = put('/service_plans/service_plan1', '{"public": true }')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -727,7 +727,7 @@ describe AdminUI::Admin do
     shared_examples 'common restage application' do
       it 'returns failure code due to disconnection' do
         response = post('/applications/application1/restage', '{}')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be_true
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
@@ -751,7 +751,7 @@ describe AdminUI::Admin do
       request['Cookie'] = cookie
 
       response = http.request(request)
-      expect(response.is_a?(Net::HTTPOK)).to be_true
+      expect(response.is_a?(Net::HTTPOK)).to be(true)
 
       body = response.body
       expect(body).to_not be_nil
@@ -792,7 +792,7 @@ describe AdminUI::Admin do
       request['Cookie'] = cookie
 
       response = http.request(request)
-      expect(response.is_a?(Net::HTTPNotFound)).to be_true
+      expect(response.is_a?(Net::HTTPNotFound)).to be(true)
     end
 
     shared_examples 'common all tabs succeed' do
@@ -1067,7 +1067,7 @@ describe AdminUI::Admin do
       request['Content-Length'] = 0
 
       response = http.request(request)
-      expect(response.is_a?(Net::HTTPSeeOther)).to be_true
+      expect(response.is_a?(Net::HTTPSeeOther)).to be(true)
 
       location = response['location']
       expect(location).not_to be_nil
@@ -1575,7 +1575,7 @@ describe AdminUI::Admin do
       request = Net::HTTP::Get.new(path)
 
       response = http.request(request)
-      expect(response.is_a?(Net::HTTPOK)).to be_true
+      expect(response.is_a?(Net::HTTPOK)).to be(true)
 
       response
     end
@@ -1625,7 +1625,7 @@ describe AdminUI::Admin do
         request = Net::HTTP::Get.new('/current_statistics')
 
         response = http.request(request)
-        expect(response.is_a?(Net::HTTPOK)).to be_true
+        expect(response.is_a?(Net::HTTPOK)).to be(true)
 
         body = response.body
         expect(body).to_not be_nil
@@ -1666,7 +1666,7 @@ describe AdminUI::Admin do
           request['Content-Length'] = 0
 
           response = http.request(request)
-          expect(response.is_a?(Net::HTTPOK)).to be_true
+          expect(response.is_a?(Net::HTTPOK)).to be(true)
 
           body = response.body
           expect(body).to_not be_nil
@@ -1686,7 +1686,7 @@ describe AdminUI::Admin do
           request = Net::HTTP::Get.new('/statistics')
 
           response = http.request(request)
-          expect(response.is_a?(Net::HTTPOK)).to be_true
+          expect(response.is_a?(Net::HTTPOK)).to be(true)
 
           body = response.body
           expect(body).to_not be_nil

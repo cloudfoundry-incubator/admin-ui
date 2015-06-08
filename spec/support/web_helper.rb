@@ -18,7 +18,7 @@ shared_context :web_context do
     @driver = selenium_web_driver
     @driver.manage.timeouts.implicit_wait = 360
 
-    AdminUI::Utils.stub(:time_in_milliseconds) do
+    allow(AdminUI::Utils).to receive(:time_in_milliseconds) do
       current_date
     end
   end
@@ -58,7 +58,7 @@ shared_context :web_context do
   end
 
   def check_details(expected_properties)
-    expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{ tab_id }DetailsLabel").displayed? }).to be_true
+    expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{ tab_id }DetailsLabel").displayed? }).to be(true)
     properties = Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_elements(xpath: "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[1]") }
     values     = Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_elements(xpath: "//div[@id='#{ tab_id }PropertiesContainer']/table/tr[*]/td[2]") }
     property_index = 0
@@ -90,7 +90,7 @@ shared_context :web_context do
     rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
     end
     chart = @driver.find_element(id: "#{ id }Chart")
-    expect(chart.displayed?).to be_true
+    expect(chart.displayed?).to be(true)
     rows = chart.find_elements(xpath: "//table[@class='jqplot-table-legend']/tbody/tr")
     expect(rows[0].text).to eq('Organizations')
     expect(rows[1].text).to eq('Spaces')
@@ -151,7 +151,7 @@ shared_context :web_context do
   end
 
   def check_table_layout(columns_array)
-    expect(@driver.find_element(id: "#{ tab_id }Table").displayed?).to be_true
+    expect(@driver.find_element(id: "#{ tab_id }Table").displayed?).to be(true)
     columns_array.each do |columns|
       check_table_headers(columns)
     end

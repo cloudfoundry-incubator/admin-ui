@@ -125,8 +125,8 @@ describe AdminUI::LogFiles do
         infos = log_files.infos
         info = infos[0]
         file = log_files.file(info[:path])
-        expect(sftp_start).to be_true
-        expect(sftp_download).to be_true
+        expect(sftp_start).to be(true)
+        expect(sftp_download).to be(true)
         content = IO.read(file.path)
         expect(content).to eq(log_file_content)
       end
@@ -135,10 +135,10 @@ describe AdminUI::LogFiles do
         infos = log_files.infos
         info = infos[0]
         content = log_files.content(info[:path], nil)
-        expect(sftp_start).to be_true
-        expect(sftp_open).to be_true
-        expect(sftp_read).to be_true
-        expect(sftp_close).to be_true
+        expect(sftp_start).to be(true)
+        expect(sftp_open).to be(true)
+        expect(sftp_read).to be(true)
+        expect(sftp_close).to be(true)
         expect(content).to eq(data:      log_file_content,
                               file_size: log_file_content.length,
                               page_size: config.log_file_page_size,
@@ -154,10 +154,10 @@ describe AdminUI::LogFiles do
         infos = log_files.infos
         info = infos[0]
         content = log_files.content(info[:path], start)
-        expect(sftp_start).to be_true
-        expect(sftp_open).to be_true
-        expect(sftp_read).to be_true
-        expect(sftp_close).to be_true
+        expect(sftp_start).to be(true)
+        expect(sftp_open).to be(true)
+        expect(sftp_read).to be(true)
+        expect(sftp_close).to be(true)
         expect(content).to eq(back:      0,
                               data:      log_file_content.slice(start, log_file_content.length - start),
                               file_size: log_file_content.length,
@@ -178,14 +178,14 @@ describe AdminUI::LogFiles do
         it 'returns the log file in the infos call' do
           infos = log_files.infos
 
-          expect(sftp_start).to be_true
-          expect(sftp_open).to be_true
-          expect(sftp_fstat).to be_true
-          expect(sftp_attributes_file).to be_true
-          expect(sftp_attributes_directory).to be_false
-          expect(sftp_attributes_size).to be_true
-          expect(sftp_attributes_mtime).to be_true
-          expect(sftp_close).to be_true
+          expect(sftp_start).to be(true)
+          expect(sftp_open).to be(true)
+          expect(sftp_fstat).to be(true)
+          expect(sftp_attributes_file).to be(true)
+          expect(sftp_attributes_directory).to be(false)
+          expect(sftp_attributes_size).to be(true)
+          expect(sftp_attributes_mtime).to be(true)
+          expect(sftp_close).to be(true)
 
           expect(infos).to include(path: log_file_uri,
                                    size: log_file_content.length,
@@ -201,14 +201,14 @@ describe AdminUI::LogFiles do
         it 'returns the log file in the infos call' do
           infos = log_files.infos
 
-          expect(sftp_start).to be_true
-          expect(sftp_open).to be_true
-          expect(sftp_fstat).to be_true
-          expect(sftp_attributes_file).to be_true
-          expect(sftp_attributes_directory).to be_false
-          expect(sftp_attributes_size).to be_true
-          expect(sftp_attributes_mtime).to be_true
-          expect(sftp_close).to be_true
+          expect(sftp_start).to be(true)
+          expect(sftp_open).to be(true)
+          expect(sftp_fstat).to be(true)
+          expect(sftp_attributes_file).to be(true)
+          expect(sftp_attributes_directory).to be(false)
+          expect(sftp_attributes_size).to be(true)
+          expect(sftp_attributes_mtime).to be(true)
+          expect(sftp_close).to be(true)
 
           expect(infos).to include(path: log_file_uri,
                                    size: log_file_content.length,
@@ -228,15 +228,15 @@ describe AdminUI::LogFiles do
         it 'returns the log file in the infos call' do
           infos = log_files.infos
 
-          expect(sftp_start).to be_true
-          expect(sftp_open).to be_true
-          expect(sftp_fstat).to be_true
-          expect(sftp_attributes_file).to be_true
-          expect(sftp_attributes_directory).to be_true
-          expect(sftp_dir_entries).to be_true
-          expect(sftp_attributes_size).to be_true
-          expect(sftp_attributes_mtime).to be_true
-          expect(sftp_close).to be_true
+          expect(sftp_start).to be(true)
+          expect(sftp_open).to be(true)
+          expect(sftp_fstat).to be(true)
+          expect(sftp_attributes_file).to be(true)
+          expect(sftp_attributes_directory).to be(true)
+          expect(sftp_dir_entries).to be(true)
+          expect(sftp_attributes_size).to be(true)
+          expect(sftp_attributes_mtime).to be(true)
+          expect(sftp_close).to be(true)
 
           expect(infos).to include(path: "#{ log_file_uri }/#{ log_file_name }#{ log_file_extension }",
                                    size: log_file_content.length,
@@ -252,15 +252,15 @@ describe AdminUI::LogFiles do
         it 'returns the log file in the infos call' do
           infos = log_files.infos
 
-          expect(sftp_start).to be_true
-          expect(sftp_open).to be_true
-          expect(sftp_fstat).to be_true
-          expect(sftp_attributes_file).to be_true
-          expect(sftp_attributes_directory).to be_true
-          expect(sftp_dir_entries).to be_true
-          expect(sftp_attributes_size).to be_true
-          expect(sftp_attributes_mtime).to be_true
-          expect(sftp_close).to be_true
+          expect(sftp_start).to be(true)
+          expect(sftp_open).to be(true)
+          expect(sftp_fstat).to be(true)
+          expect(sftp_attributes_file).to be(true)
+          expect(sftp_attributes_directory).to be(true)
+          expect(sftp_dir_entries).to be(true)
+          expect(sftp_attributes_size).to be(true)
+          expect(sftp_attributes_mtime).to be(true)
+          expect(sftp_close).to be(true)
 
           expect(infos).to include(path: "#{ log_file_uri }/#{ log_file_name }#{ log_file_extension }",
                                    size: log_file_content.length,
@@ -281,11 +281,11 @@ describe AdminUI::LogFiles do
         it 'returns the log file in the infos call' do
           infos = log_files.infos
 
-          expect(sftp_start).to be_true
-          expect(sftp_dir_glob).to be_true
-          expect(sftp_attributes_file).to be_true
-          expect(sftp_attributes_size).to be_true
-          expect(sftp_attributes_mtime).to be_true
+          expect(sftp_start).to be(true)
+          expect(sftp_dir_glob).to be(true)
+          expect(sftp_attributes_file).to be(true)
+          expect(sftp_attributes_size).to be(true)
+          expect(sftp_attributes_mtime).to be(true)
 
           expect(infos).to include(path: "#{ base_path }/#{ log_file_name }#{ log_file_extension }",
                                    size: log_file_content.length,
@@ -302,11 +302,11 @@ describe AdminUI::LogFiles do
         it 'returns the log file in the infos call' do
           infos = log_files.infos
 
-          expect(sftp_start).to be_true
-          expect(sftp_dir_glob).to be_true
-          expect(sftp_attributes_file).to be_true
-          expect(sftp_attributes_size).to be_true
-          expect(sftp_attributes_mtime).to be_true
+          expect(sftp_start).to be(true)
+          expect(sftp_dir_glob).to be(true)
+          expect(sftp_attributes_file).to be(true)
+          expect(sftp_attributes_size).to be(true)
+          expect(sftp_attributes_mtime).to be(true)
 
           expect(infos).to include(path: "#{ base_path }/#{ log_file_name }#{ log_file_extension }",
                                    size: log_file_content.length,

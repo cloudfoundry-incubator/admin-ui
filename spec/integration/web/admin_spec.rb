@@ -45,51 +45,51 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     end
 
     it 'has tabs' do
-      expect(scroll_tab_into_view('Organizations', true).displayed?).to be_true
-      expect(scroll_tab_into_view('Spaces').displayed?).to be_true
-      expect(scroll_tab_into_view('Applications').displayed?).to be_true
-      expect(scroll_tab_into_view('ApplicationInstances').displayed?).to be_true
-      expect(scroll_tab_into_view('ServiceInstances').displayed?).to be_true
-      expect(scroll_tab_into_view('ServiceBindings').displayed?).to be_true
-      expect(scroll_tab_into_view('ServiceKeys').displayed?).to be_true
-      expect(scroll_tab_into_view('OrganizationRoles').displayed?).to be_true
-      expect(scroll_tab_into_view('SpaceRoles').displayed?).to be_true
-      expect(scroll_tab_into_view('Clients').displayed?).to be_true
-      expect(scroll_tab_into_view('Users').displayed?).to be_true
-      expect(scroll_tab_into_view('Domains').displayed?).to be_true
-      expect(scroll_tab_into_view('Quotas').displayed?).to be_true
-      expect(scroll_tab_into_view('SpaceQuotas').displayed?).to be_true
-      expect(scroll_tab_into_view('Events').displayed?).to be_true
-      expect(scroll_tab_into_view('ServiceBrokers').displayed?).to be_true
-      expect(scroll_tab_into_view('Services').displayed?).to be_true
-      expect(scroll_tab_into_view('ServicePlans').displayed?).to be_true
-      expect(scroll_tab_into_view('ServicePlanVisibilities').displayed?).to be_true
-      expect(scroll_tab_into_view('DEAs').displayed?).to be_true
-      expect(scroll_tab_into_view('CloudControllers').displayed?).to be_true
-      expect(scroll_tab_into_view('HealthManagers').displayed?).to be_true
-      expect(scroll_tab_into_view('Gateways').displayed?).to be_true
-      expect(scroll_tab_into_view('Routers').displayed?).to be_true
-      expect(scroll_tab_into_view('Routes').displayed?).to be_true
-      expect(scroll_tab_into_view('Components').displayed?).to be_true
-      expect(scroll_tab_into_view('Logs').displayed?).to be_true
-      expect(scroll_tab_into_view('Tasks').displayed?).to be_true
-      expect(scroll_tab_into_view('Stats').displayed?).to be_true
+      expect(scroll_tab_into_view('Organizations', true).displayed?).to be(true)
+      expect(scroll_tab_into_view('Spaces').displayed?).to be(true)
+      expect(scroll_tab_into_view('Applications').displayed?).to be(true)
+      expect(scroll_tab_into_view('ApplicationInstances').displayed?).to be(true)
+      expect(scroll_tab_into_view('ServiceInstances').displayed?).to be(true)
+      expect(scroll_tab_into_view('ServiceBindings').displayed?).to be(true)
+      expect(scroll_tab_into_view('ServiceKeys').displayed?).to be(true)
+      expect(scroll_tab_into_view('OrganizationRoles').displayed?).to be(true)
+      expect(scroll_tab_into_view('SpaceRoles').displayed?).to be(true)
+      expect(scroll_tab_into_view('Clients').displayed?).to be(true)
+      expect(scroll_tab_into_view('Users').displayed?).to be(true)
+      expect(scroll_tab_into_view('Domains').displayed?).to be(true)
+      expect(scroll_tab_into_view('Quotas').displayed?).to be(true)
+      expect(scroll_tab_into_view('SpaceQuotas').displayed?).to be(true)
+      expect(scroll_tab_into_view('Events').displayed?).to be(true)
+      expect(scroll_tab_into_view('ServiceBrokers').displayed?).to be(true)
+      expect(scroll_tab_into_view('Services').displayed?).to be(true)
+      expect(scroll_tab_into_view('ServicePlans').displayed?).to be(true)
+      expect(scroll_tab_into_view('ServicePlanVisibilities').displayed?).to be(true)
+      expect(scroll_tab_into_view('DEAs').displayed?).to be(true)
+      expect(scroll_tab_into_view('CloudControllers').displayed?).to be(true)
+      expect(scroll_tab_into_view('HealthManagers').displayed?).to be(true)
+      expect(scroll_tab_into_view('Gateways').displayed?).to be(true)
+      expect(scroll_tab_into_view('Routers').displayed?).to be(true)
+      expect(scroll_tab_into_view('Routes').displayed?).to be(true)
+      expect(scroll_tab_into_view('Components').displayed?).to be(true)
+      expect(scroll_tab_into_view('Logs').displayed?).to be(true)
+      expect(scroll_tab_into_view('Tasks').displayed?).to be(true)
+      expect(scroll_tab_into_view('Stats').displayed?).to be(true)
     end
 
     it 'has a left scroll button' do
-      expect(@driver.find_element(id: 'MenuButtonLeft').displayed?).to be_true
+      expect(@driver.find_element(id: 'MenuButtonLeft').displayed?).to be(true)
     end
 
     it 'has a right scroll button' do
-      expect(@driver.find_element(id: 'MenuButtonRight').displayed?).to be_true
+      expect(@driver.find_element(id: 'MenuButtonRight').displayed?).to be(true)
     end
 
     it 'has a refresh button' do
-      expect(@driver.find_element(id: 'MenuButtonRefresh').displayed?).to be_true
+      expect(@driver.find_element(id: 'MenuButtonRefresh').displayed?).to be(true)
     end
 
     it 'shows the logged in user' do
-      expect(@driver.find_element(class: 'userContainer').displayed?).to be_true
+      expect(@driver.find_element(class: 'userContainer').displayed?).to be(true)
       expect(@driver.find_element(class: 'user').text).to eq('admin')
     end
 
@@ -238,7 +238,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       def confirm(message)
-        expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+        expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
         expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
         expect(@driver.find_element(id: 'ModalDialogContents').text).to eq(message)
         @driver.find_element(id: 'modalDialogButton0').click
@@ -246,7 +246,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
       def check_operation_result
         Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-        expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+        expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
         Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: 'ModalDialogTitle').text == 'Success' }
         @driver.find_element(id: 'modalDialogButton0').click
       end
@@ -254,7 +254,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       shared_examples 'click button without selecting a single row' do
         it 'alerts the user to select at least one row when clicking the button' do
           @driver.find_element(id: button_id).click
-          expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+          expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
           expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
           expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
           @driver.find_element(id: 'modalDialogButton0').click
@@ -369,9 +369,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             @driver.find_element(id: 'ToolTables_OrganizationsTable_0').click
 
             # Check whether the dialog is displayed
-            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
             expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Create Organization')
-            expect(@driver.find_element(id: 'organizationName').displayed?).to be_true
+            expect(@driver.find_element(id: 'organizationName').displayed?).to be(true)
 
             # Click the create button without input an organization name
             @driver.find_element(id: 'modalDialogButton0').click
@@ -430,8 +430,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               @driver.find_element(id: 'ToolTables_OrganizationsTable_1').click
 
               # Check whether the dialog is displayed
-              expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
-              expect(@driver.find_element(id: 'quotaSelector').displayed?).to be_true
+              expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
+              expect(@driver.find_element(id: 'quotaSelector').displayed?).to be(true)
               expect(@driver.find_element(xpath: '//select[@id="quotaSelector"]/option[1]').text).to eq(cc_quota_definition[:name])
               expect(@driver.find_element(xpath: '//select[@id="quotaSelector"]/option[2]').text).to eq(cc_quota_definition2[:name])
 
@@ -2069,7 +2069,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has private shared organizations' do
-            expect(@driver.find_element(id: 'DomainsOrganizationsDetailsLabel').displayed?).to be_true
+            expect(@driver.find_element(id: 'DomainsOrganizationsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='DomainsOrganizationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
                                 expected_length: 2,
@@ -3387,7 +3387,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has nodes' do
-            expect(@driver.find_element(id: 'GatewaysNodesDetailsLabel').displayed?).to be_true
+            expect(@driver.find_element(id: 'GatewaysNodesDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='GatewaysNodesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
                                 expected_length: 2,
@@ -3463,7 +3463,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has top10 applications' do
-            expect(@driver.find_element(id: 'RoutersTop10ApplicationsDetailsLabel').displayed?).to be_true
+            expect(@driver.find_element(id: 'RoutersTop10ApplicationsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='RoutersTop10ApplicationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
                                 expected_length: 5,
@@ -3550,7 +3550,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           expect(columns[1].text).to eq(@driver.execute_script("return Format.formatNumber(#{ log_file_displayed_contents_length })"))
           # TODO: Cannot check date due to web_helper stub for AdminUI::Utils.time_in_milliseconds
           # expect(columns[2].text).to eq(@driver.execute_script("return Format.formatString(\"#{ log_file_displayed_modified.utc.to_datetime.rfc3339 }\")"))
-          expect(@driver.find_element(id: 'LogContainer').displayed?).to be_true
+          expect(@driver.find_element(id: 'LogContainer').displayed?).to be(true)
           expect(@driver.find_element(id: 'LogLink').text).to eq(columns[0].text)
           expect(@driver.find_element(id: 'LogContents').text).to eq(log_file_displayed_contents)
         end
@@ -3606,7 +3606,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           expect(cells[1].text).to eq(@driver.execute_script('return Constants.STATUS__RUNNING'))
 
           @driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr")[0].click
-          expect(@driver.find_element(id: 'TaskContents').text.length > 0).to be_true
+          expect(@driver.find_element(id: 'TaskContents').text.length > 0).to be(true)
         end
       end
 
@@ -3649,7 +3649,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_default_stats_table
           @driver.find_element(id: 'ToolTables_StatsTable_0').click
           Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
-          expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be_true
+          expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
           expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
           rows = @driver.find_elements(xpath: "//div[@id='ModalDialogContentsSimple']/div/table/tbody/tr")
           rows.each do |row|

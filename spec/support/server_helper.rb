@@ -76,7 +76,7 @@ shared_context :server_context do
     nats_stub
     varz_stub
 
-    ::WEBrick::Log.any_instance.stub(:log)
+    allow_any_instance_of(::WEBrick::Log).to receive(:log)
 
     mutex                  = Mutex.new
     condition              = ConditionVariable.new

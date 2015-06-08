@@ -13,7 +13,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     end
 
     it 'shows the logged in user' do
-      expect(@driver.find_element(class: 'userContainer').displayed?).to be_true
+      expect(@driver.find_element(class: 'userContainer').displayed?).to be(true)
       expect(@driver.find_element(class: 'user').text).to eq('user')
     end
 
@@ -193,7 +193,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     end
 
     it 'Tasks tab does not exist' do
-      expect(scroll_tab_into_view('Tasks', true).displayed?).to be_false
+      expect(scroll_tab_into_view('Tasks', true).displayed?).to be(false)
     end
 
     context 'Stats tab does not have a create stats button' do

@@ -4,13 +4,13 @@ require_relative '../spec_helper'
 
 module NATSHelper
   def nats_stub
-    ::NATS.stub(:start) do |_, &blk|
+    allow(::NATS).to receive(:start) do |_, &blk|
       blk.call
     end
 
-    ::NATS.stub(:stop)
+    allow(::NATS).to receive(:stop)
 
-    ::NATS.stub(:request).with('vcap.component.discover') do |_, &blk|
+    allow(::NATS).to receive(:request).with('vcap.component.discover') do |_, &blk|
       blk.call(Yajl::Encoder.encode(nats_cloud_controller))
       blk.call(Yajl::Encoder.encode(nats_dea))
       blk.call(Yajl::Encoder.encode(nats_health_manager))

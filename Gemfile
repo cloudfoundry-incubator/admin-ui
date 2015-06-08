@@ -20,6 +20,6 @@ group :development do
 end
 
 group :test do
-  gem 'rspec', '2.14.1'
-  gem 'selenium-webdriver', '2.42.0'
+  gem 'rspec', '2.99.0'
+  gem 'selenium-webdriver', '2.46.2'
 end

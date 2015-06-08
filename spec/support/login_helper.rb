@@ -4,7 +4,7 @@ module LoginHelper
   def login_stub_admin
     login_stub_common
 
-    AdminUI::Login.any_instance.stub(:login_user) do
+    allow_any_instance_of(AdminUI::Login).to receive(:login_user) do
       ['admin', AdminUI::Login::LOGIN_ADMIN]
     end
   end
@@ -12,7 +12,7 @@ module LoginHelper
   def login_stub_user
     login_stub_common
 
-    AdminUI::Login.any_instance.stub(:login_user) do
+    allow_any_instance_of(AdminUI::Login).to receive(:login_user) do
       ['user', AdminUI::Login::LOGIN_USER]
     end
   end
@@ -20,7 +20,7 @@ module LoginHelper
   def login_stub_fail
     login_stub_common
 
-    AdminUI::Login.any_instance.stub(:login_user) do
+    allow_any_instance_of(AdminUI::Login).to receive(:login_user) do
       ['bogus', nil]
     end
   end
@@ -28,11 +28,11 @@ module LoginHelper
   private
 
   def login_stub_common
-    AdminUI::Login.any_instance.stub(:logout) do |redirect_uri|
+    allow_any_instance_of(AdminUI::Login).to receive(:logout) do |_login, redirect_uri|
       redirect_uri
     end
 
-    AdminUI::Login.any_instance.stub(:login_redirect_uri) do |redirect_uri|
+    allow_any_instance_of(AdminUI::Login).to receive(:login_redirect_uri) do |_login, redirect_uri|
       redirect_uri
     end
   end

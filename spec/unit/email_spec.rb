@@ -17,7 +17,7 @@ describe AdminUI::EMail do
   end
 
   before do
-    AdminUI::Config.any_instance.stub(:validate)
+    allow_any_instance_of(AdminUI::Config).to receive(:validate)
   end
 
   after do
@@ -33,13 +33,13 @@ describe AdminUI::EMail do
     end
 
     it 'is not configured' do
-      expect(email.configured?).to be_false
+      expect(email.configured?).to be_falsey
     end
 
     it 'does not send email because not configured even though disconnected components present' do
       email.send_email(disconnected_components)
-      expect(smtp_start).to be_false
-      expect(smtp_send_message).to be_false
+      expect(smtp_start).to be(false)
+      expect(smtp_send_message).to be(false)
     end
   end
 
@@ -65,13 +65,13 @@ describe AdminUI::EMail do
       end
 
       it 'is configued' do
-        expect(email.configured?).to be_true
+        expect(email.configured?).to be(true)
       end
 
       it 'does not send email because no disconnected components' do
         email.send_email([])
-        expect(smtp_start).to be_false
-        expect(smtp_send_message).to be_false
+        expect(smtp_start).to be(false)
+        expect(smtp_send_message).to be(false)
       end
     end
 
@@ -82,8 +82,8 @@ describe AdminUI::EMail do
 
       it 'sends email because disconnected component present' do
         email.send_email(disconnected_component)
-        expect(smtp_start).to be_true
-        expect(smtp_send_message).to be_true
+        expect(smtp_start).to be(true)
+        expect(smtp_send_message).to be(true)
       end
     end
 
@@ -94,8 +94,8 @@ describe AdminUI::EMail do
 
       it 'sends email because disconnected components present' do
         email.send_email(disconnected_components)
-        expect(smtp_start).to be_true
-        expect(smtp_send_message).to be_true
+        expect(smtp_start).to be(true)
+        expect(smtp_send_message).to be(true)
       end
     end
   end
