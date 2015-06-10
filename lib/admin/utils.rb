@@ -59,8 +59,7 @@ module AdminUI
     end
 
     def self.minutes_in_an_hour(num_minutes)
-      minutes_in_a_day = num_minutes % (24 * 60)
-      minutes_in_a_day % 60
+      num_minutes % 60
     end
 
     def self.symbolize_keys(object)
