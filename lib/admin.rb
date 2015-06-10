@@ -54,8 +54,8 @@ module AdminUI
     end
 
     def setup_dbstore
-      db_conn = DBStoreMigration.new(@config, @logger, @testing)
-      db_conn.migrate_to_db
+      connection = DBStoreMigration.new(@config, @logger, @testing)
+      connection.migrate_to_db
     end
 
     def setup_components

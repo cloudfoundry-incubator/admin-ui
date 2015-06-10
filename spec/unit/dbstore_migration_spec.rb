@@ -53,7 +53,7 @@ describe AdminUI::DBStoreMigration do
 
     @pid = Process.spawn({}, "ruby bin/admin -c #{ config_file }", spawn_opts)
 
-    sleep(5)
+    sleep(1)
   end
 
   def stop_admin_daemon
@@ -67,10 +67,6 @@ describe AdminUI::DBStoreMigration do
     @pid = Process.spawn({}, "rm -rf #{ ccdb_file } #{ config_file } #{ data_file } #{ log_file } #{ db_file } #{ uaadb_file } #{ backup_stats_file } #{ db_migration_dir }/#{ db_migration_1 } ", spawn_opts)
     Process.wait(@pid)
     FileUtils.rm_f stats_file if File.exist?(stats_file)
-  end
-
-  def db_connection
-    Sequel.connect(db_uri, single_threaded: true, max_connections: 1)
   end
 
   def migrate_database
@@ -107,9 +103,10 @@ describe AdminUI::DBStoreMigration do
       launch_admin_daemon(merged_config)
       expect(File.file?(db_file)).to be(true)
       expect(File.file?(backup_stats_file)).to be(true)
-      db_conn = db_connection
-      db_conn.fetch('select count(*) as rows from stats') do |row|
-        expect(row[:rows].to_i).to eq(2)
+      Sequel.connect(db_uri, single_threaded: true, max_connections: 1) do |connection|
+        connection.fetch('select count(*) as rows from stats') do |row|
+          expect(row[:rows].to_i).to eq(2)
+        end
       end
       stop_admin_daemon
     end
@@ -120,14 +117,15 @@ describe AdminUI::DBStoreMigration do
       db_migration_1 = plans[1]
       FileUtils.cp "#{ db_migration_spec_dir }/#{ db_migration_1 }", db_migration_dir
       launch_admin_daemon(config)
-      db_conn = db_connection
-      db_conn.fetch('select tbl_name from sqlite_master where sql like :pattern', pattern: 'CREATE TABLE%extra_column%') do |row|
-        expect(row[:tbl_name]).to eq('stats')
-      end
-      i = 0
-      db_conn.fetch('select filename from schema_migrations') do |row|
-        expect(row[:filename]).to eq(plans[i])
-        i += 1
+      Sequel.connect(db_uri, single_threaded: true, max_connections: 1) do |connection|
+        connection.fetch('select tbl_name from sqlite_master where sql like :pattern', pattern: 'CREATE TABLE%extra_column%') do |row|
+          expect(row[:tbl_name]).to eq('stats')
+        end
+        i = 0
+        connection.fetch('select filename from schema_migrations') do |row|
+          expect(row[:filename]).to eq(plans[i])
+          i += 1
+        end
       end
       FileUtils.rm_rf "#{ db_migration_dir }/#{ db_migration_1 }"
       stop_admin_daemon
@@ -140,9 +138,10 @@ describe AdminUI::DBStoreMigration do
       db_migration_1 = plans[1]
       FileUtils.cp "#{ db_migration_spec_dir }/#{ db_migration_1 }", db_migration_dir
       migrate_database
-      db_conn = db_connection
-      db_conn.fetch('select tbl_name from sqlite_master where sql like :pattern', pattern: 'CREATE TABLE%extra_column%') do |row|
-        expect(row[:tbl_name]).to eq('stats')
+      Sequel.connect(db_uri, single_threaded: true, max_connections: 1) do |connection|
+        connection.fetch('select tbl_name from sqlite_master where sql like :pattern', pattern: 'CREATE TABLE%extra_column%') do |row|
+          expect(row[:tbl_name]).to eq('stats')
+        end
       end
       stop_admin_daemon
     end
