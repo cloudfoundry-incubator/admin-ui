@@ -1,6 +1,0 @@
-inherit_from:
-  - ../../.rubocop.yml
-
-HashSyntax:
-  Enabled: false
-  

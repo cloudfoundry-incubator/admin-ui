@@ -30,14 +30,8 @@ LineLength:
 MethodLength:
   Enabled: false
 
-ModuleLength:
-  Enabled: false
-
 ParameterLists:
   Enabled: false
 
 PerceivedComplexity:
-  Enabled: false
-
-UselessSetterCall:
   Enabled: false
