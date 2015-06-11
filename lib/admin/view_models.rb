@@ -160,7 +160,7 @@ module AdminUI
     end
 
     def application_instance(app_guid, instance_id)
-      details(:application_instances, "#{ app_guid }/#{ instance_id }")
+      details(:application_instances, "#{app_guid}/#{instance_id}")
     end
 
     def application_instances
@@ -252,7 +252,7 @@ module AdminUI
     end
 
     def organization_role(organization_guid, role, user_guid)
-      details(:organization_roles, "#{ organization_guid }/#{ role }/#{ user_guid }")
+      details(:organization_roles, "#{organization_guid}/#{role}/#{user_guid}")
     end
 
     def organization_roles
@@ -352,7 +352,7 @@ module AdminUI
     end
 
     def space_role(space_guid, role, user_guid)
-      details(:space_roles, "#{ space_guid }/#{ role }/#{ user_guid }")
+      details(:space_roles, "#{space_guid}/#{role}/#{user_guid}")
     end
 
     def space_roles
@@ -409,11 +409,11 @@ module AdminUI
     def discover(key)
       key_string = key.to_s
 
-      @logger.debug("[#{ @interval } second interval] Starting view model #{ key_string } discovery...")
+      @logger.debug("[#{@interval} second interval] Starting view model #{key_string} discovery...")
 
       start = Time.now
 
-      result_cache = send("discover_#{ key_string }".to_sym)
+      result_cache = send("discover_#{key_string}".to_sym)
 
       finish = Time.now
 
@@ -421,7 +421,7 @@ module AdminUI
 
       hash = @caches[key]
       hash[:semaphore].synchronize do
-        @logger.debug("Caching view model #{ key_string } data.  Compilation time: #{ finish - start } seconds")
+        @logger.debug("Caching view model #{key_string} data.  Compilation time: #{finish - start} seconds")
 
         # Only replace the cached result if the value is connected or this is the first time
         hash[:result] = result_cache if connected || hash[:result].nil?
@@ -453,7 +453,7 @@ module AdminUI
     def discover_application_instances
       AdminUI::ApplicationInstancesViewModel.new(@logger, @cc, @varz).items
     rescue => error
-      @logger.debug("Error during discover_application_instances: #{ error.inspect }")
+      @logger.debug("Error during discover_application_instances: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -461,7 +461,7 @@ module AdminUI
     def discover_applications
       AdminUI::ApplicationsViewModel.new(@logger, @cc, @varz).items
     rescue => error
-      @logger.debug("Error during discover_applications: #{ error.inspect }")
+      @logger.debug("Error during discover_applications: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -469,7 +469,7 @@ module AdminUI
     def discover_clients
       AdminUI::ClientsViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_clients: #{ error.inspect }")
+      @logger.debug("Error during discover_clients: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -477,7 +477,7 @@ module AdminUI
     def discover_cloud_controllers
       AdminUI::CloudControllersViewModel.new(@logger, @varz).items
     rescue => error
-      @logger.debug("Error during discover_cloud_controllers: #{ error.inspect }")
+      @logger.debug("Error during discover_cloud_controllers: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -485,7 +485,7 @@ module AdminUI
     def discover_components
       AdminUI::ComponentsViewModel.new(@logger, @varz).items
     rescue => error
-      @logger.debug("Error during discover_components: #{ error.inspect }")
+      @logger.debug("Error during discover_components: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -493,7 +493,7 @@ module AdminUI
     def discover_deas
       AdminUI::DEAsViewModel.new(@logger, @varz).items
     rescue => error
-      @logger.debug("Error during discover_deas: #{ error.inspect }")
+      @logger.debug("Error during discover_deas: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -501,7 +501,7 @@ module AdminUI
     def discover_domains
       AdminUI::DomainsViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_domains: #{ error.inspect }")
+      @logger.debug("Error during discover_domains: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -509,7 +509,7 @@ module AdminUI
     def discover_events
       AdminUI::EventsViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_events: #{ error.inspect }")
+      @logger.debug("Error during discover_events: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -517,7 +517,7 @@ module AdminUI
     def discover_gateways
       AdminUI::GatewaysViewModel.new(@logger, @varz).items
     rescue => error
-      @logger.debug("Error during discover_gateways: #{ error.inspect }")
+      @logger.debug("Error during discover_gateways: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -525,7 +525,7 @@ module AdminUI
     def discover_health_managers
       AdminUI::HealthManagersViewModel.new(@logger, @varz).items
     rescue => error
-      @logger.debug("Error during discover_health_managers: #{ error.inspect }")
+      @logger.debug("Error during discover_health_managers: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -533,7 +533,7 @@ module AdminUI
     def discover_logs
       AdminUI::LogsViewModel.new(@logger, @log_files).items
     rescue => error
-      @logger.debug("Error during discover_logs: #{ error.inspect }")
+      @logger.debug("Error during discover_logs: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -541,7 +541,7 @@ module AdminUI
     def discover_organizations
       AdminUI::OrganizationsViewModel.new(@logger, @cc, @varz).items
     rescue => error
-      @logger.debug("Error during discover_organizations: #{ error.inspect }")
+      @logger.debug("Error during discover_organizations: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -549,7 +549,7 @@ module AdminUI
     def discover_organization_roles
       AdminUI::OrganizationRolesViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_organization_roles: #{ error.inspect }")
+      @logger.debug("Error during discover_organization_roles: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -557,7 +557,7 @@ module AdminUI
     def discover_quotas
       AdminUI::QuotasViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_quotas: #{ error.inspect }")
+      @logger.debug("Error during discover_quotas: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -565,7 +565,7 @@ module AdminUI
     def discover_routers
       AdminUI::RoutersViewModel.new(@logger, @cc, @varz).items
     rescue => error
-      @logger.debug("Error during discover_routers: #{ error.inspect }")
+      @logger.debug("Error during discover_routers: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -573,7 +573,7 @@ module AdminUI
     def discover_routes
       AdminUI::RoutesViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_routes: #{ error.inspect }")
+      @logger.debug("Error during discover_routes: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -581,7 +581,7 @@ module AdminUI
     def discover_service_bindings
       AdminUI::ServiceBindingsViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_service_bindings: #{ error.inspect }")
+      @logger.debug("Error during discover_service_bindings: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -589,7 +589,7 @@ module AdminUI
     def discover_service_brokers
       AdminUI::ServiceBrokersViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_service_brokers: #{ error.inspect }")
+      @logger.debug("Error during discover_service_brokers: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -597,7 +597,7 @@ module AdminUI
     def discover_service_instances
       AdminUI::ServiceInstancesViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_service_instances: #{ error.inspect }")
+      @logger.debug("Error during discover_service_instances: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -605,7 +605,7 @@ module AdminUI
     def discover_service_keys
       AdminUI::ServiceKeysViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_service_keys: #{ error.inspect }")
+      @logger.debug("Error during discover_service_keys: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -613,7 +613,7 @@ module AdminUI
     def discover_service_plans
       AdminUI::ServicePlansViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_service_plans: #{ error.inspect }")
+      @logger.debug("Error during discover_service_plans: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -621,7 +621,7 @@ module AdminUI
     def discover_service_plan_visibilities
       AdminUI::ServicePlanVisibilitiesViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_service_plan_visibilities: #{ error.inspect }")
+      @logger.debug("Error during discover_service_plan_visibilities: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -629,7 +629,7 @@ module AdminUI
     def discover_services
       AdminUI::ServicesViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_services: #{ error.inspect }")
+      @logger.debug("Error during discover_services: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -637,7 +637,7 @@ module AdminUI
     def discover_space_quotas
       AdminUI::SpaceQuotasViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_space_quotas: #{ error.inspect }")
+      @logger.debug("Error during discover_space_quotas: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -645,7 +645,7 @@ module AdminUI
     def discover_space_roles
       AdminUI::SpaceRolesViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_space_roles: #{ error.inspect }")
+      @logger.debug("Error during discover_space_roles: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -653,7 +653,7 @@ module AdminUI
     def discover_spaces
       AdminUI::SpacesViewModel.new(@logger, @cc, @varz).items
     rescue => error
-      @logger.debug("Error during discover_spaces: #{ error.inspect }")
+      @logger.debug("Error during discover_spaces: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -661,7 +661,7 @@ module AdminUI
     def discover_stacks
       AdminUI::StacksViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_stacks: #{ error.inspect }")
+      @logger.debug("Error during discover_stacks: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -669,7 +669,7 @@ module AdminUI
     def discover_stats
       AdminUI::StatsViewModel.new(@logger, @stats).items
     rescue => error
-      @logger.debug("Error during discover_stats: #{ error.inspect }")
+      @logger.debug("Error during discover_stats: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -677,7 +677,7 @@ module AdminUI
     def discover_tasks
       AdminUI::TasksViewModel.new(@logger, @tasks).items
     rescue => error
-      @logger.debug("Error during discover_tasks: #{ error.inspect }")
+      @logger.debug("Error during discover_tasks: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -685,7 +685,7 @@ module AdminUI
     def discover_users
       AdminUI::UsersViewModel.new(@logger, @cc).items
     rescue => error
-      @logger.debug("Error during discover_users: #{ error.inspect }")
+      @logger.debug("Error during discover_users: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end

@@ -5,7 +5,7 @@ describe AdminUI::LogFiles do
   include SFTPHelper
 
   let(:db_file)   { '/tmp/admin_ui_store.db' }
-  let(:db_uri)    { "sqlite://#{ db_file }" }
+  let(:db_uri)    { "sqlite://#{db_file}" }
   let(:system_log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(system_log_file) }
 
@@ -28,12 +28,12 @@ describe AdminUI::LogFiles do
   end
 
   after do
-    Process.wait(Process.spawn({}, "rm -fr #{ db_file } #{ system_log_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{db_file} #{system_log_file}"))
   end
 
   context 'File' do
     let(:log_file_directory) { '/tmp/admin_logs' }
-    let(:log_file_qualified_name) { "#{ log_file_directory}/#{ log_file_name }#{ log_file_extension }" }
+    let(:log_file_qualified_name) { "#{log_file_directory}/#{log_file_name}#{log_file_extension}" }
 
     before do
       Dir.mkdir(log_file_directory)
@@ -44,7 +44,7 @@ describe AdminUI::LogFiles do
     end
 
     after do
-      Process.wait(Process.spawn({}, "rm -fr #{ db_file } #{ log_file_directory }"))
+      Process.wait(Process.spawn({}, "rm -fr #{db_file} #{log_file_directory}"))
     end
 
     shared_examples 'common FILE actions' do
@@ -107,7 +107,7 @@ describe AdminUI::LogFiles do
     end
 
     context 'glob' do
-      let(:log_file_uri) { "#{ log_file_directory }/**/*#{ log_file_extension }" }
+      let(:log_file_uri) { "#{log_file_directory}/**/*#{log_file_extension}" }
 
       it_behaves_like('common FILE actions') {}
     end
@@ -173,7 +173,7 @@ describe AdminUI::LogFiles do
       let(:is_file) { true }
 
       context 'user and password credentials' do
-        let(:log_file_uri) { "sftp://user:password@bogus.com/#{ log_file_directory }/#{ log_file_name }#{ log_file_extension }" }
+        let(:log_file_uri) { "sftp://user:password@bogus.com/#{log_file_directory}/#{log_file_name}#{log_file_extension}" }
 
         it 'returns the log file in the infos call' do
           infos = log_files.infos
@@ -196,7 +196,7 @@ describe AdminUI::LogFiles do
       end
 
       context 'user and implied key' do
-        let(:log_file_uri) { "sftp://user@bogus.com/#{ log_file_directory }/#{ log_file_name }#{ log_file_extension }" }
+        let(:log_file_uri) { "sftp://user@bogus.com/#{log_file_directory}/#{log_file_name}#{log_file_extension}" }
 
         it 'returns the log file in the infos call' do
           infos = log_files.infos
@@ -223,7 +223,7 @@ describe AdminUI::LogFiles do
       let(:is_file) { false }
 
       context 'user and password credentials' do
-        let(:log_file_uri) { "sftp://user:password@bogus.com/#{ log_file_directory }" }
+        let(:log_file_uri) { "sftp://user:password@bogus.com/#{log_file_directory}" }
 
         it 'returns the log file in the infos call' do
           infos = log_files.infos
@@ -238,7 +238,7 @@ describe AdminUI::LogFiles do
           expect(sftp_attributes_mtime).to be(true)
           expect(sftp_close).to be(true)
 
-          expect(infos).to include(path: "#{ log_file_uri }/#{ log_file_name }#{ log_file_extension }",
+          expect(infos).to include(path: "#{log_file_uri}/#{log_file_name}#{log_file_extension}",
                                    size: log_file_content.length,
                                    time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
@@ -247,7 +247,7 @@ describe AdminUI::LogFiles do
       end
 
       context 'user and implied key' do
-        let(:log_file_uri) { "sftp://user@bogus.com/#{ log_file_directory }" }
+        let(:log_file_uri) { "sftp://user@bogus.com/#{log_file_directory}" }
 
         it 'returns the log file in the infos call' do
           infos = log_files.infos
@@ -262,7 +262,7 @@ describe AdminUI::LogFiles do
           expect(sftp_attributes_mtime).to be(true)
           expect(sftp_close).to be(true)
 
-          expect(infos).to include(path: "#{ log_file_uri }/#{ log_file_name }#{ log_file_extension }",
+          expect(infos).to include(path: "#{log_file_uri}/#{log_file_name}#{log_file_extension}",
                                    size: log_file_content.length,
                                    time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
@@ -275,8 +275,8 @@ describe AdminUI::LogFiles do
       let(:is_file) { false }
 
       context 'user and password credentials' do
-        let(:base_path) { "sftp://user:password@bogus.com/#{ log_file_directory }" }
-        let(:log_file_uri) { "#{ base_path }/**/*#{ log_file_extension }" }
+        let(:base_path) { "sftp://user:password@bogus.com/#{log_file_directory}" }
+        let(:log_file_uri) { "#{base_path}/**/*#{log_file_extension}" }
 
         it 'returns the log file in the infos call' do
           infos = log_files.infos
@@ -287,7 +287,7 @@ describe AdminUI::LogFiles do
           expect(sftp_attributes_size).to be(true)
           expect(sftp_attributes_mtime).to be(true)
 
-          expect(infos).to include(path: "#{ base_path }/#{ log_file_name }#{ log_file_extension }",
+          expect(infos).to include(path: "#{base_path}/#{log_file_name}#{log_file_extension}",
                                    size: log_file_content.length,
                                    time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
@@ -296,8 +296,8 @@ describe AdminUI::LogFiles do
       end
 
       context 'user and implied key' do
-        let(:base_path) { "sftp://user@bogus.com/#{ log_file_directory }" }
-        let(:log_file_uri) { "#{ base_path }/**/*#{ log_file_extension }" }
+        let(:base_path) { "sftp://user@bogus.com/#{log_file_directory}" }
+        let(:log_file_uri) { "#{base_path}/**/*#{log_file_extension}" }
 
         it 'returns the log file in the infos call' do
           infos = log_files.infos
@@ -308,7 +308,7 @@ describe AdminUI::LogFiles do
           expect(sftp_attributes_size).to be(true)
           expect(sftp_attributes_mtime).to be(true)
 
-          expect(infos).to include(path: "#{ base_path }/#{ log_file_name }#{ log_file_extension }",
+          expect(infos).to include(path: "#{base_path}/#{log_file_name}#{log_file_extension}",
                                    size: log_file_content.length,
                                    time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end

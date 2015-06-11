@@ -49,8 +49,8 @@ module AdminUI
         fqdn = domain[:name]
         host = route[:host]
         path = route[:path]
-        fqdn = "#{ host }.#{ fqdn }" if host.length > 0
-        fqdn = "#{ fqdn }#{ path }" if path # Add path check since older versions will have nil path
+        fqdn = "#{host}.#{fqdn}" if host.length > 0
+        fqdn = "#{fqdn}#{path}" if path # Add path check since older versions will have nil path
         app_id = app_route[:app_id]
         app_fqdns = fqdns_hash[app_id]
         if app_fqdns.nil?
@@ -188,7 +188,7 @@ module AdminUI
         row.push(application[:disk_quota])
 
         if organization && space
-          row.push("#{ organization[:name] }/#{ space[:name] }")
+          row.push("#{organization[:name]}/#{space[:name]}")
         else
           row.push(nil)
         end

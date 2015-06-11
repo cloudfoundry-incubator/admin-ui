@@ -11,24 +11,24 @@ module AdminUI
 
     def create_organization(control_message)
       url = 'v2/organizations'
-      @logger.debug("POST #{ url }, #{ control_message }")
+      @logger.debug("POST #{url}, #{control_message}")
       @client.post_cc(url, control_message)
       @cc.invalidate_organizations
       @view_models.invalidate_organizations
     end
 
     def create_space_quota_definition_space(space_quota_definition_guid, space_guid)
-      url = "v2/space_quota_definitions/#{ space_quota_definition_guid }/spaces/#{ space_guid }"
-      @logger.debug("PUT #{ url }")
+      url = "v2/space_quota_definitions/#{space_quota_definition_guid}/spaces/#{space_guid}"
+      @logger.debug("PUT #{url}")
       @client.put_cc(url, '{}')
       @cc.invalidate_spaces
       @view_models.invalidate_spaces
     end
 
     def delete_application(app_guid, recursive)
-      url = "v2/apps/#{ app_guid }"
+      url = "v2/apps/#{app_guid}"
       url += '?recursive=true' if recursive
-      @logger.debug("DELETE #{ url }")
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_applications
       @varz.invalidate
@@ -42,17 +42,17 @@ module AdminUI
     end
 
     def delete_application_instance(app_guid, instance_index)
-      url = "v2/apps/#{ app_guid }/instances/#{ instance_index }"
-      @logger.debug("DELETE #{ url }")
+      url = "v2/apps/#{app_guid}/instances/#{instance_index}"
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @varz.invalidate
       @view_models.invalidate_application_instances
     end
 
     def delete_domain(domain_guid, recursive)
-      url = "v2/domains/#{ domain_guid }"
+      url = "v2/domains/#{domain_guid}"
       url += '?recursive=true' if recursive
-      @logger.debug("DELETE #{ url }")
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_domains
       @view_models.invalidate_domains
@@ -62,9 +62,9 @@ module AdminUI
     end
 
     def delete_organization(org_guid, recursive)
-      url = "v2/organizations/#{ org_guid }"
+      url = "v2/organizations/#{org_guid}"
       url += '?recursive=true' if recursive
-      @logger.debug("DELETE #{ url }")
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_organizations
       @cc.invalidate_organizations_auditors
@@ -99,8 +99,8 @@ module AdminUI
     end
 
     def delete_organization_role(org_guid, role, user_guid)
-      url = "v2/organizations/#{ org_guid }/#{ role }/#{ user_guid }"
-      @logger.debug("DELETE #{ url }")
+      url = "v2/organizations/#{org_guid}/#{role}/#{user_guid}"
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_organizations_auditors if role == 'auditors'
       @cc.invalidate_organizations_billing_managers if role == 'billing_managers'
@@ -110,25 +110,25 @@ module AdminUI
     end
 
     def delete_quota_definition(quota_definition_guid)
-      url = "v2/quota_definitions/#{ quota_definition_guid }"
-      @logger.debug("DELETE #{ url }")
+      url = "v2/quota_definitions/#{quota_definition_guid}"
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_quota_definitions
       @view_models.invalidate_quotas
     end
 
     def delete_route(route_guid)
-      url = "v2/routes/#{ route_guid }"
-      @logger.debug("DELETE #{ url }")
+      url = "v2/routes/#{route_guid}"
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_routes
       @view_models.invalidate_routes
     end
 
     def delete_service(service_guid, purge)
-      url = "v2/services/#{ service_guid }"
+      url = "v2/services/#{service_guid}"
       url += '?purge=true' if purge
-      @logger.debug("DELETE #{ url }")
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_services
       @cc.invalidate_service_plans
@@ -146,16 +146,16 @@ module AdminUI
     end
 
     def delete_service_binding(service_binding_guid)
-      url = "v2/service_bindings/#{ service_binding_guid }"
-      @logger.debug("DELETE #{ url }")
+      url = "v2/service_bindings/#{service_binding_guid}"
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_bindings
       @view_models.invalidate_service_bindings
     end
 
     def delete_service_broker(service_broker_guid)
-      url = "v2/service_brokers/#{ service_broker_guid }"
-      @logger.debug("DELETE #{ url }")
+      url = "v2/service_brokers/#{service_broker_guid}"
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_clients
       @cc.invalidate_service_brokers
@@ -169,9 +169,9 @@ module AdminUI
     end
 
     def delete_service_instance(service_instance_guid, recursive)
-      url = "v2/service_instances/#{ service_instance_guid }"
+      url = "v2/service_instances/#{service_instance_guid}"
       url += '?recursive=true' if recursive
-      @logger.debug("DELETE #{ url }")
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_instances
       @view_models.invalidate_service_instances
@@ -183,16 +183,16 @@ module AdminUI
     end
 
     def delete_service_key(service_key_guid)
-      url = "v2/service_keys/#{ service_key_guid }"
-      @logger.debug("DELETE #{ url }")
+      url = "v2/service_keys/#{service_key_guid}"
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_keys
       @view_models.invalidate_service_keys
     end
 
     def delete_service_plan(service_plan_guid)
-      url = "v2/service_plans/#{ service_plan_guid }"
-      @logger.debug("DELETE #{ url }")
+      url = "v2/service_plans/#{service_plan_guid}"
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_plans
       @cc.invalidate_service_plan_visibilities
@@ -201,17 +201,17 @@ module AdminUI
     end
 
     def delete_service_plan_visibility(service_plan_visibility_guid)
-      url = "v2/service_plan_visibilities/#{ service_plan_visibility_guid }"
-      @logger.debug("DELETE #{ url }")
+      url = "v2/service_plan_visibilities/#{service_plan_visibility_guid}"
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_plan_visibilities
       @view_models.invalidate_service_plan_visibilities
     end
 
     def delete_space(space_guid, recursive)
-      url = "v2/spaces/#{ space_guid }"
+      url = "v2/spaces/#{space_guid}"
       url += '?recursive=true' if recursive
-      @logger.debug("DELETE #{ url }")
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_spaces
       @cc.invalidate_spaces_auditors
@@ -235,24 +235,24 @@ module AdminUI
     end
 
     def delete_space_quota_definition(space_quota_definition_guid)
-      url = "v2/space_quota_definitions/#{ space_quota_definition_guid }"
-      @logger.debug("DELETE #{ url }")
+      url = "v2/space_quota_definitions/#{space_quota_definition_guid}"
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_space_quota_definitions
       @view_models.invalidate_space_quotas
     end
 
     def delete_space_quota_definition_space(space_quota_definition_guid, space_guid)
-      url = "v2/space_quota_definitions/#{ space_quota_definition_guid }/spaces/#{ space_guid }"
-      @logger.debug("DELETE #{ url }")
+      url = "v2/space_quota_definitions/#{space_quota_definition_guid}/spaces/#{space_guid}"
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_spaces
       @view_models.invalidate_spaces
     end
 
     def delete_space_role(space_guid, role, user_guid)
-      url = "v2/spaces/#{ space_guid }/#{ role }/#{ user_guid }"
-      @logger.debug("DELETE #{ url }")
+      url = "v2/spaces/#{space_guid}/#{role}/#{user_guid}"
+      @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_spaces_auditors if role == 'auditors'
       @cc.invalidate_spaces_developers if role == 'developers'
@@ -261,8 +261,8 @@ module AdminUI
     end
 
     def manage_application(app_guid, control_message)
-      url = "v2/apps/#{ app_guid }"
-      @logger.debug("PUT #{ url }, #{ control_message }")
+      url = "v2/apps/#{app_guid}"
+      @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
       @cc.invalidate_applications
       @varz.invalidate
@@ -271,24 +271,24 @@ module AdminUI
     end
 
     def manage_service_plan(service_plan_guid, control_message)
-      url = "/v2/service_plans/#{ service_plan_guid}"
-      @logger.debug("PUT #{ url }, #{ control_message }")
+      url = "/v2/service_plans/#{service_plan_guid}"
+      @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
       @cc.invalidate_service_plans
       @view_models.invalidate_service_plans
     end
 
     def manage_organization(org_guid, control_message)
-      url = "v2/organizations/#{ org_guid }"
-      @logger.debug("PUT #{ url }, #{ control_message }")
+      url = "v2/organizations/#{org_guid}"
+      @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
       @cc.invalidate_organizations
       @view_models.invalidate_organizations
     end
 
     def restage_application(app_guid)
-      url = "v2/apps/#{ app_guid }/restage"
-      @logger.debug("POST #{ url }")
+      url = "v2/apps/#{app_guid}/restage"
+      @logger.debug("POST #{url}")
       @client.post_cc(url, '{}')
       @cc.invalidate_applications
       @varz.invalidate
@@ -297,7 +297,7 @@ module AdminUI
     end
 
     def remove_component(uri)
-      @logger.debug("REMOVE component #{ uri }")
+      @logger.debug("REMOVE component #{uri}")
       @varz.remove(uri)
       @view_models.invalidate_cloud_controllers
       @view_models.invalidate_components

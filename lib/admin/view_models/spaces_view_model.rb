@@ -139,7 +139,7 @@ module AdminUI
         row.push(space_guid)
 
         if organization
-          row.push("#{ organization[:name] }/#{ space[:name] }")
+          row.push("#{organization[:name]}/#{space[:name]}")
         else
           row.push(nil)
         end

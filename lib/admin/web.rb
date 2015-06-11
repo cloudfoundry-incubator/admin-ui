@@ -51,7 +51,7 @@ module AdminUI
     end
 
     get '/application_instances_view_model/:app_guid/:instance_id', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/application_instances_view_model/#{ params[:app_guid] }/#{ params[:instance_id] }")
+      @logger.info_user(session[:username], 'get', "/application_instances_view_model/#{params[:app_guid]}/#{params[:instance_id]}")
       result = @view_models.application_instance(params[:app_guid], params[:instance_id])
       return Yajl::Encoder.encode(result) if result
       404
@@ -63,7 +63,7 @@ module AdminUI
     end
 
     get '/applications_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/applications_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/applications_view_model/#{params[:guid]}")
       result = @view_models.application(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -75,7 +75,7 @@ module AdminUI
     end
 
     get '/clients_view_model/:id', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/clients_view_model/#{ params[:id] }")
+      @logger.info_user(session[:username], 'get', "/clients_view_model/#{params[:id]}")
       result = @view_models.client(params[:id])
       return Yajl::Encoder.encode(result) if result
       404
@@ -87,7 +87,7 @@ module AdminUI
     end
 
     get '/cloud_controllers_view_model/:name', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/cloud_controllers_view_model/#{ params[:name] }")
+      @logger.info_user(session[:username], 'get', "/cloud_controllers_view_model/#{params[:name]}")
       result = @view_models.cloud_controller(params[:name])
       return Yajl::Encoder.encode(result) if result
       404
@@ -99,7 +99,7 @@ module AdminUI
     end
 
     get '/components_view_model/:name', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/components_view_model/#{ params[:name] }")
+      @logger.info_user(session[:username], 'get', "/components_view_model/#{params[:name]}")
       result = @view_models.component(params[:name])
       return Yajl::Encoder.encode(result) if result
       404
@@ -116,7 +116,7 @@ module AdminUI
     end
 
     get '/deas_view_model/:name', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/deas_view_model/#{ params[:name] }")
+      @logger.info_user(session[:username], 'get', "/deas_view_model/#{params[:name]}")
       result = @view_models.dea(params[:name])
       return Yajl::Encoder.encode(result) if result
       404
@@ -128,14 +128,14 @@ module AdminUI
     end
 
     get '/domains_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/domains_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/domains_view_model/#{params[:guid]}")
       result = @view_models.domain(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/download', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/download?path=#{ params['path'] }")
+      @logger.info_user(session[:username], 'get', "/download?path=#{params['path']}")
       file = @log_files.file(params['path'])
       if file.nil?
         redirect_to_login
@@ -152,7 +152,7 @@ module AdminUI
     end
 
     get '/events_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/events_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/events_view_model/#{params[:guid]}")
       result = @view_models.event(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -167,7 +167,7 @@ module AdminUI
     end
 
     get '/gateways_view_model/:name', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/gateways_view_model/#{ params[:name] }")
+      @logger.info_user(session[:username], 'get', "/gateways_view_model/#{params[:name]}")
       result = @view_models.gateway(params[:name])
       return Yajl::Encoder.encode(result) if result
       404
@@ -179,14 +179,14 @@ module AdminUI
     end
 
     get '/health_managers_view_model/:name', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/health_managers_view_model/#{ params[:name] }")
+      @logger.info_user(session[:username], 'get', "/health_managers_view_model/#{params[:name]}")
       result = @view_models.health_manager(params[:name])
       return Yajl::Encoder.encode(result) if result
       404
     end
 
     get '/log', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/log?path=#{ params['path'] }")
+      @logger.info_user(session[:username], 'get', "/log?path=#{params['path']}")
       result = @log_files.content(params['path'], params['start'])
       if result.nil?
         redirect_to_login
@@ -205,10 +205,10 @@ module AdminUI
         elsif AdminUI::Login::LOGIN_USER == user_type
           authenticated(user_name, false)
         else
-          redirect "scopeError.html?user=#{ user_name }", 303
+          redirect "scopeError.html?user=#{user_name}", 303
         end
       rescue => error
-        @logger.debug("Error during /login: #{ error.inspect }")
+        @logger.debug("Error during /login: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         halt 500, error.message
       end
@@ -220,7 +220,7 @@ module AdminUI
         session.destroy
         Yajl::Encoder.encode('redirect' => @login.logout(request.base_url))
       rescue => error
-        @logger.debug("Error during /logout: #{ error.inspect }")
+        @logger.debug("Error during /logout: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         halt 500, error.message
       end
@@ -237,7 +237,7 @@ module AdminUI
     end
 
     get '/organizations_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/organizations_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/organizations_view_model/#{params[:guid]}")
       result = @view_models.organization(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -249,7 +249,7 @@ module AdminUI
     end
 
     get '/organization_roles_view_model/:organization_guid/:role/:user_guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/organization_roles_view_model/#{ params[:organization_guid] }/#{ params[:role] }/#{ params[:user_guid] }")
+      @logger.info_user(session[:username], 'get', "/organization_roles_view_model/#{params[:organization_guid]}/#{params[:role]}/#{params[:user_guid]}")
       result = @view_models.organization_role(params[:organization_guid], params[:role], params[:user_guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -261,7 +261,7 @@ module AdminUI
     end
 
     get '/quotas_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/quotas_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/quotas_view_model/#{params[:guid]}")
       result = @view_models.quota(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -273,7 +273,7 @@ module AdminUI
     end
 
     get '/routers_view_model/:name', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/routers_view_model/#{ params[:name] }")
+      @logger.info_user(session[:username], 'get', "/routers_view_model/#{params[:name]}")
       result = @view_models.router(params[:name])
       return Yajl::Encoder.encode(result) if result
       404
@@ -285,7 +285,7 @@ module AdminUI
     end
 
     get '/routes_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/routes_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/routes_view_model/#{params[:guid]}")
       result = @view_models.route(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -307,7 +307,7 @@ module AdminUI
     end
 
     get '/service_bindings_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/service_bindings_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/service_bindings_view_model/#{params[:guid]}")
       result = @view_models.service_binding(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -319,7 +319,7 @@ module AdminUI
     end
 
     get '/service_brokers_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/service_brokers_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/service_brokers_view_model/#{params[:guid]}")
       result = @view_models.service_broker(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -331,7 +331,7 @@ module AdminUI
     end
 
     get '/service_instances_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/service_instances_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/service_instances_view_model/#{params[:guid]}")
       result = @view_models.service_instance(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -343,7 +343,7 @@ module AdminUI
     end
 
     get '/service_keys_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/service_keys_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/service_keys_view_model/#{params[:guid]}")
       result = @view_models.service_key(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -355,7 +355,7 @@ module AdminUI
     end
 
     get '/service_plans_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/service_plans_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/service_plans_view_model/#{params[:guid]}")
       result = @view_models.service_plan(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -367,7 +367,7 @@ module AdminUI
     end
 
     get '/service_plan_visibilities_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/service_plan_visibilities_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/service_plan_visibilities_view_model/#{params[:guid]}")
       result = @view_models.service_plan_visibility(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -379,7 +379,7 @@ module AdminUI
     end
 
     get '/services_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/services_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/services_view_model/#{params[:guid]}")
       result = @view_models.service(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -391,7 +391,7 @@ module AdminUI
     end
 
     get '/space_quotas_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/space_quotas_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/space_quotas_view_model/#{params[:guid]}")
       result = @view_models.space_quota(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -403,7 +403,7 @@ module AdminUI
     end
 
     get '/space_roles_view_model/:space_guid/:role/:user_guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/space_roles_view_model/#{ params[:space_guid] }/#{ params[:role] }/#{ params[:user_guid] }")
+      @logger.info_user(session[:username], 'get', "/space_roles_view_model/#{params[:space_guid]}/#{params[:role]}/#{params[:user_guid]}")
       result = @view_models.space_role(params[:space_guid], params[:role], params[:user_guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -415,7 +415,7 @@ module AdminUI
     end
 
     get '/spaces_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/spaces_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/spaces_view_model/#{params[:guid]}")
       result = @view_models.space(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -427,7 +427,7 @@ module AdminUI
     end
 
     get '/stacks_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/stacks_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/stacks_view_model/#{params[:guid]}")
       result = @view_models.stack(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -457,7 +457,7 @@ module AdminUI
     end
 
     get '/task_status', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/task_status?task_id=#{ params['task_id'] };updates=#{ params['updates'] }")
+      @logger.info_user(session[:username], 'get', "/task_status?task_id=#{params['task_id']};updates=#{params['updates']}")
       result = @tasks.task(params['task_id'].to_i,
                            params['updates'] || 'false',
                            session[:last_task_update] || 0)
@@ -476,7 +476,7 @@ module AdminUI
     end
 
     get '/users_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/users_view_model/#{ params[:guid] }")
+      @logger.info_user(session[:username], 'get', "/users_view_model/#{params[:guid]}")
       result = @view_models.user(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -492,16 +492,16 @@ module AdminUI
 
     post '/applications/:app_guid/restage', auth: [:admin] do
       begin
-        @logger.info_user(session[:username], 'post', "/applications/#{ params[:app_guid] }/restage")
+        @logger.info_user(session[:username], 'post', "/applications/#{params[:app_guid]}/restage")
         @operation.restage_application(params[:app_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during restage application: #{ error.to_h }")
+        @logger.debug("Error during restage application: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during restage application: #{ error.inspect }")
+        @logger.debug("Error during restage application: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -597,16 +597,16 @@ module AdminUI
     post '/organizations', auth: [:admin] do
       begin
         control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'post', "/organizations; body = #{ control_message }")
+        @logger.info_user(session[:username], 'post', "/organizations; body = #{control_message}")
         @operation.create_organization(control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during create organization: #{ error.to_h }")
+        @logger.debug("Error during create organization: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during create organization: #{ error.inspect }")
+        @logger.debug("Error during create organization: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -751,14 +751,14 @@ module AdminUI
                                   users:             params['users'].empty? ? nil : params['users'].to_i)
 
       query = '/statistics?'
-      query += "apps=#{ params['apps'] };" unless params['apps'].empty?
-      query += "deas=#{ params['deas'] };" unless params['deas'].empty?
-      query += "organizations=#{ params['organizations'] };" unless params['organizations'].empty?
-      query += "running_instances=#{ params['running_instances'] };" unless params['running_instances'].empty?
-      query += "spaces=#{ params['spaces'] };" unless params['spaces'].empty?
-      query += "timestamp=#{ params['timestamp'] };"
-      query += "total_instances=#{ params['total_instances'] };" unless params['total_instances'].empty?
-      query += "users=#{ params['users'] };" unless params['users'].empty?
+      query += "apps=#{params['apps']};" unless params['apps'].empty?
+      query += "deas=#{params['deas']};" unless params['deas'].empty?
+      query += "organizations=#{params['organizations']};" unless params['organizations'].empty?
+      query += "running_instances=#{params['running_instances']};" unless params['running_instances'].empty?
+      query += "spaces=#{params['spaces']};" unless params['spaces'].empty?
+      query += "timestamp=#{params['timestamp']};"
+      query += "total_instances=#{params['total_instances']};" unless params['total_instances'].empty?
+      query += "users=#{params['users']};" unless params['users'].empty?
       query = query.chomp(';')
       query = '/statistics' if query == '/statistics?'
 
@@ -797,16 +797,16 @@ module AdminUI
     put '/applications/:app_guid', auth: [:admin] do
       begin
         control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/applications/#{ params[:app_guid] }; body = #{ control_message}")
+        @logger.info_user(session[:username], 'put', "/applications/#{params[:app_guid]}; body = #{control_message}")
         @operation.manage_application(params[:app_guid], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update application: #{ error.to_h }")
+        @logger.debug("Error during update application: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update application: #{ error.inspect }")
+        @logger.debug("Error during update application: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -815,16 +815,16 @@ module AdminUI
     put '/organizations/:org_guid', auth: [:admin] do
       begin
         control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/organizations/#{ params[:org_guid] }; body = #{ control_message }")
+        @logger.info_user(session[:username], 'put', "/organizations/#{params[:org_guid]}; body = #{control_message}")
         @operation.manage_organization(params[:org_guid], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update organization: #{ error.to_h }")
+        @logger.debug("Error during update organization: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update organization: #{ error.inspect }")
+        @logger.debug("Error during update organization: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -833,33 +833,33 @@ module AdminUI
     put '/service_plans/:service_plan_guid', auth: [:admin] do
       begin
         control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/service_plans/#{ params[:service_plan_guid] }; body = #{ control_message }")
+        @logger.info_user(session[:username], 'put', "/service_plans/#{params[:service_plan_guid]}; body = #{control_message}")
         @operation.manage_service_plan(params[:service_plan_guid], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update service plan: #{ error.to_h }")
+        @logger.debug("Error during update service plan: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update service plan #{ error.inspect }")
+        @logger.debug("Error during update service plan #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     put '/space_quota_definitions/:space_quota_definition_guid/spaces/:space_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'put', "/space_quota_definitions/#{ params[:space_quota_definition_guid] }/spaces/#{ params[:space_guid] }")
+      @logger.info_user(session[:username], 'put', "/space_quota_definitions/#{params[:space_quota_definition_guid]}/spaces/#{params[:space_guid]}")
       begin
         @operation.create_space_quota_definition_space(params[:space_quota_definition_guid], params[:space_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during put space quota definition space: #{ error.to_h }")
+        @logger.debug("Error during put space quota definition space: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during put space quota definition space: #{ error.inspect }")
+        @logger.debug("Error during put space quota definition space: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -867,48 +867,48 @@ module AdminUI
 
     delete '/applications/:app_guid', auth: [:admin] do
       recursive = params[:recursive] == 'true'
-      url = "/applications/#{ params[:app_guid] }"
+      url = "/applications/#{params[:app_guid]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
       begin
         @operation.delete_application(params[:app_guid], recursive)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete application: #{ error.to_h }")
+        @logger.debug("Error during delete application: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete application: #{ error.inspect }")
+        @logger.debug("Error during delete application: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/applications/:app_guid/:instance_index', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/applications/#{ params[:app_guid] }/#{ params[:instance_index] }")
+      @logger.info_user(session[:username], 'delete', "/applications/#{params[:app_guid]}/#{params[:instance_index]}")
       begin
         @operation.delete_application_instance(params[:app_guid], params[:instance_index])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete application instance: #{ error.to_h }")
+        @logger.debug("Error during delete application instance: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete application instance: #{ error.inspect }")
+        @logger.debug("Error during delete application instance: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/components', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/components/#{ params[:uri] }")
+      @logger.info_user(session[:username], 'delete', "/components/#{params[:uri]}")
       begin
         @operation.remove_component(params[:uri])
         204
       rescue => error
-        @logger.debug("Error during removing component: #{ error.inspect }")
+        @logger.debug("Error during removing component: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -916,19 +916,19 @@ module AdminUI
 
     delete '/domains/:domain_guid', auth: [:admin] do
       recursive = params[:recursive] == 'true'
-      url = "/domains/#{ params[:domain_guid] }"
+      url = "/domains/#{params[:domain_guid]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
       begin
         @operation.delete_domain(params[:domain_guid], recursive)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete domain: #{ error.to_h }")
+        @logger.debug("Error during delete domain: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete domain: #{ error.inspect }")
+        @logger.debug("Error during delete domain: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -936,104 +936,104 @@ module AdminUI
 
     delete '/organizations/:org_guid', auth: [:admin] do
       recursive = params[:recursive] == 'true'
-      url = "/organizations/#{ params[:org_guid] }"
+      url = "/organizations/#{params[:org_guid]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
       begin
         @operation.delete_organization(params[:org_guid], recursive)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete organization: #{ error.to_h }")
+        @logger.debug("Error during delete organization: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete organization: #{ error.inspect }")
+        @logger.debug("Error during delete organization: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/organizations/:org_guid/:role/:user_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/organizations/#{ params[:org_guid] }/#{ params[:role] }/#{ params[:user_guid] }")
+      @logger.info_user(session[:username], 'delete', "/organizations/#{params[:org_guid]}/#{params[:role]}/#{params[:user_guid]}")
       begin
         @operation.delete_organization_role(params[:org_guid], params[:role], params[:user_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete organization role: #{ error.to_h }")
+        @logger.debug("Error during delete organization role: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete organization role: #{ error.inspect }")
+        @logger.debug("Error during delete organization role: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/quota_definitions/:quota_definition_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/quota_definitions/#{ params[:quota_definition_guid] }")
+      @logger.info_user(session[:username], 'delete', "/quota_definitions/#{params[:quota_definition_guid]}")
       begin
         @operation.delete_quota_definition(params[:quota_definition_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete quota definition: #{ error.to_h }")
+        @logger.debug("Error during delete quota definition: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete quota definition: #{ error.inspect }")
+        @logger.debug("Error during delete quota definition: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/routes/:route_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/routes/#{ params[:route_guid] }")
+      @logger.info_user(session[:username], 'delete', "/routes/#{params[:route_guid]}")
       begin
         @operation.delete_route(params[:route_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete route: #{ error.to_h }")
+        @logger.debug("Error during delete route: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete route: #{ error.inspect }")
+        @logger.debug("Error during delete route: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/service_bindings/:service_binding_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/service_bindings/#{ params[:service_binding_guid] }")
+      @logger.info_user(session[:username], 'delete', "/service_bindings/#{params[:service_binding_guid]}")
       begin
         @operation.delete_service_binding(params[:service_binding_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service binding: #{ error.to_h }")
+        @logger.debug("Error during delete service binding: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service binding: #{ error.inspect }")
+        @logger.debug("Error during delete service binding: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/service_brokers/:service_broker_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/service_brokers/#{ params[:service_broker_guid] }")
+      @logger.info_user(session[:username], 'delete', "/service_brokers/#{params[:service_broker_guid]}")
       begin
         @operation.delete_service_broker(params[:service_broker_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service broker: #{ error.to_h }")
+        @logger.debug("Error during delete service broker: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service broker: #{ error.inspect }")
+        @logger.debug("Error during delete service broker: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -1041,70 +1041,70 @@ module AdminUI
 
     delete '/service_instances/:service_instance_guid', auth: [:admin] do
       recursive = params[:recursive] == 'true'
-      url = "/service_instances/#{ params[:service_instance_guid] }"
+      url = "/service_instances/#{params[:service_instance_guid]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
       begin
         @operation.delete_service_instance(params[:service_instance_guid], recursive)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service instance: #{ error.to_h }")
+        @logger.debug("Error during delete service instance: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service instance: #{ error.inspect }")
+        @logger.debug("Error during delete service instance: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/service_keys/:service_key_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/service_keys/#{ params[:service_key_guid] }")
+      @logger.info_user(session[:username], 'delete', "/service_keys/#{params[:service_key_guid]}")
       begin
         @operation.delete_service_key(params[:service_key_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service key: #{ error.to_h }")
+        @logger.debug("Error during delete service key: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service key: #{ error.inspect }")
+        @logger.debug("Error during delete service key: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/service_plans/:service_plan_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/service_plans/#{ params[:service_plan_guid] }")
+      @logger.info_user(session[:username], 'delete', "/service_plans/#{params[:service_plan_guid]}")
       begin
         @operation.delete_service_plan(params[:service_plan_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service plan: #{ error.to_h }")
+        @logger.debug("Error during delete service plan: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service plan: #{ error.inspect }")
+        @logger.debug("Error during delete service plan: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/service_plan_visibilities/:service_plan_visibility_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/service_plan_visibilities/#{ params[:service_plan_visibility_guid] }")
+      @logger.info_user(session[:username], 'delete', "/service_plan_visibilities/#{params[:service_plan_visibility_guid]}")
       begin
         @operation.delete_service_plan_visibility(params[:service_plan_visibility_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service plan visibility: #{ error.to_h }")
+        @logger.debug("Error during delete service plan visibility: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service plan visibility: #{ error.inspect }")
+        @logger.debug("Error during delete service plan visibility: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -1112,53 +1112,53 @@ module AdminUI
 
     delete '/services/:service_guid', auth: [:admin] do
       purge = params[:purge] == 'true'
-      url = "/services/#{ params[:service_guid] }"
+      url = "/services/#{params[:service_guid]}"
       url += '?purge=true' if purge
       @logger.info_user(session[:username], 'delete', url)
       begin
         @operation.delete_service(params[:service_guid], purge)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service: #{ error.to_h }")
+        @logger.debug("Error during delete service: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service: #{ error.inspect }")
+        @logger.debug("Error during delete service: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/space_quota_definitions/:space_quota_definition_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/space_quota_definitions/#{ params[:space_quota_definition_guid] }")
+      @logger.info_user(session[:username], 'delete', "/space_quota_definitions/#{params[:space_quota_definition_guid]}")
       begin
         @operation.delete_space_quota_definition(params[:space_quota_definition_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete space quota definition: #{ error.to_h }")
+        @logger.debug("Error during delete space quota definition: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete space quota definition: #{ error.inspect }")
+        @logger.debug("Error during delete space quota definition: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/space_quota_definitions/:space_quota_definition_guid/spaces/:space_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/space_quota_definitions/#{ params[:space_quota_definition_guid] }/spaces/#{ params[:space_guid] }")
+      @logger.info_user(session[:username], 'delete', "/space_quota_definitions/#{params[:space_quota_definition_guid]}/spaces/#{params[:space_guid]}")
       begin
         @operation.delete_space_quota_definition_space(params[:space_quota_definition_guid], params[:space_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete space quota definition space: #{ error.to_h }")
+        @logger.debug("Error during delete space quota definition space: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete space quota definition space: #{ error.inspect }")
+        @logger.debug("Error during delete space quota definition space: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -1166,36 +1166,36 @@ module AdminUI
 
     delete '/spaces/:space_guid', auth: [:admin] do
       recursive = params[:recursive] == 'true'
-      url = "/spaces/#{ params[:space_guid] }"
+      url = "/spaces/#{params[:space_guid]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
       begin
         @operation.delete_space(params[:space_guid], recursive)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete space: #{ error.to_h }")
+        @logger.debug("Error during delete space: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete space: #{ error.inspect }")
+        @logger.debug("Error during delete space: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
     end
 
     delete '/spaces/:space_guid/:role/:user_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/spaces/#{ params[:space_guid] }/#{ params[:role] }/#{ params[:user_guid] }")
+      @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/#{params[:role]}/#{params[:user_guid]}")
       begin
         @operation.delete_space_role(params[:space_guid], params[:role], params[:user_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete space role: #{ error.to_h }")
+        @logger.debug("Error during delete space role: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete space role: #{ error.inspect }")
+        @logger.debug("Error during delete space role: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -1212,8 +1212,8 @@ module AdminUI
 
       session[:admin] = admin
 
-      @logger.info_user(username, 'authenticated', "is admin? #{ admin }")
-      redirect "application.html?user=#{ username }", 303
+      @logger.info_user(username, 'authenticated', "is admin? #{admin}")
+      redirect "application.html?user=#{username}", 303
     end
 
     def redirect_to_login
@@ -1225,13 +1225,13 @@ module AdminUI
         redirect @login.login_redirect_uri(local_redirect_uri(request)), 303
       end
     rescue => error
-      @logger.debug("Error during redirect_to_login: #{ error.inspect }")
+      @logger.debug("Error during redirect_to_login: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       halt 500, error.message
     end
 
     def local_redirect_uri(request)
-      "#{ request.base_url }/login"
+      "#{request.base_url}/login"
     end
   end
 end

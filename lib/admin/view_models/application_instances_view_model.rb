@@ -45,7 +45,7 @@ module AdminUI
 
             row = []
 
-            row.push("#{ id }/#{ instance_index }")
+            row.push("#{id}/#{instance_index}")
             row.push(application_instance['application_name'])
             row.push(id)
             row.push(instance_index)
@@ -80,7 +80,7 @@ module AdminUI
             end
 
             if organization && space
-              row.push("#{ organization[:name] }/#{ space[:name] }")
+              row.push("#{organization[:name]}/#{space[:name]}")
             else
               row.push(nil)
             end
@@ -89,7 +89,7 @@ module AdminUI
 
             items.push(row)
 
-            hash["#{ id }/#{ instance_id }"] =
+            hash["#{id}/#{instance_id}"] =
             {
               'application_instance' => application_instance,
               'organization'         => organization,

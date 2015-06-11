@@ -212,7 +212,7 @@ describe AdminUI::Config do
       it 'converts stats_refresh_time to stats_refresh_schedules' do
         schedule_minutes = 30
         config = AdminUI::Config.load('stats_refresh_time' => schedule_minutes)
-        expect(config.stats_refresh_schedules).to eq(["#{ schedule_minutes } * * * *"])
+        expect(config.stats_refresh_schedules).to eq(["#{schedule_minutes} * * * *"])
       end
 
       it 'converts stats_refresh_time to stats_refresh_schedules - 66+60*24*31*13 minutes (1 year, 1 month, 1 day, 1 hour, 6 mintues into the future)' do

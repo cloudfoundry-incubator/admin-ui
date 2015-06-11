@@ -34,19 +34,19 @@ module AdminUI
                             @config.receiver_emails)
         end
 
-        @logger.debug("Email '#{ title }' sent to #{ recipients }")
+        @logger.debug("Email '#{title}' sent to #{recipients}")
       rescue => error
-        @logger.debug("Error sending email '#{ title }' to addresses #{ recipients }: #{ error }")
+        @logger.debug("Error sending email '#{title}' to addresses #{recipients}: #{error}")
       end
     end
 
     private
 
     def email_title(disconnected)
-      title = "[#{ @config.cloud_controller_uri }] "
+      title = "[#{@config.cloud_controller_uri}] "
 
       if disconnected.length == 1
-        title += "#{ disconnected.first['type'] } is down"
+        title += "#{disconnected.first['type']} is down"
       else
         title += 'Multiple Cloud Foundry components are down'
       end
@@ -58,8 +58,8 @@ module AdminUI
       rows = ''
       disconnected.each do |item|
         rows += "<tr style='background-color: rgb(230, 230, 230); color: rgb(35, 35, 35);'>"
-        rows += "  <td style='border: 1px solid rgb(100, 100, 100);'>#{ item['type'] }</td>"
-        rows += "  <td style='border: 1px solid rgb(100, 100, 100);'>#{ item['uri'] }</td>"
+        rows += "  <td style='border: 1px solid rgb(100, 100, 100);'>#{item['type']}</td>"
+        rows += "  <td style='border: 1px solid rgb(100, 100, 100);'>#{item['uri']}</td>"
         rows += '</tr>'
       end
 
@@ -68,15 +68,15 @@ module AdminUI
 
     def email_content(recipients, title, rows)
       <<END_OF_MESSAGE
-From: #{ @config.sender_email_account }
-To: #{ recipients }
+From: #{@config.sender_email_account}
+To: #{recipients}
 Importance: High
 MIME-Version: 1.0
 Content-type: text/html
-Subject: #{ title }
+Subject: #{title}
 
 <div style="font-family: verdana,tahoma,sans-serif; font-size: .9em; color: rgb(35, 35, 35);">
-  <div style="font-weight: bold; margin-bottom: 1em;">Cloud Controller: #{ @config.cloud_controller_uri }</div>
+  <div style="font-weight: bold; margin-bottom: 1em;">Cloud Controller: #{@config.cloud_controller_uri}</div>
   <div style="margin-bottom: .7em;">The following Cloud Foundry components are down:</div>
 </div>
 
@@ -85,7 +85,7 @@ Subject: #{ title }
     <th style="border: 1px solid rgb(100, 100, 100);">Type</th>
     <th style="border: 1px solid rgb(100, 100, 100);">URI</th>
   </tr>
-  #{ rows }
+  #{rows}
 </table>
 END_OF_MESSAGE
     end

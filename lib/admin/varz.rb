@@ -116,7 +116,7 @@ module AdminUI
       cache = { 'connected' => false, 'items' => item_hash }
 
       begin
-        @logger.debug("[#{ @config.varz_discovery_interval } second interval] Starting VARZ discovery...")
+        @logger.debug("[#{@config.varz_discovery_interval} second interval] Starting VARZ discovery...")
 
         nats_result = @nats.get
 
@@ -127,7 +127,7 @@ module AdminUI
           item_hash[uri] = item_result(uri, item)
         end
       rescue => error
-        @logger.debug("Error during VARZ discovery: #{ error.inspect }")
+        @logger.debug("Error during VARZ discovery: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
       end
 
@@ -152,14 +152,14 @@ module AdminUI
         else
           result.merge!('connected' => false,
                         'data'      => (item.nil? ? {} : item),
-                        'error'     => "#{ response.code }<br/><br/>#{ response.body }")
-          @logger.debug("item_result(#{ uri }) : error [#{ response.code } - #{ response.body }]")
+                        'error'     => "#{response.code}<br/><br/>#{response.body}")
+          @logger.debug("item_result(#{uri}) : error [#{response.code} - #{response.body}]")
         end
       rescue => error
         result.merge!('connected' => false,
                       'data'      => (item.nil? ? {} : item),
-                      'error'     => "#{ error.inspect }")
-        @logger.debug("item_result(#{ uri }) : error [#{ error.inspect }]")
+                      'error'     => "#{error.inspect}")
+        @logger.debug("item_result(#{uri}) : error [#{error.inspect}]")
       end
 
       result

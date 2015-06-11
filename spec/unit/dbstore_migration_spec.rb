@@ -8,14 +8,14 @@ require_relative '../spec_helper'
 describe AdminUI::DBStoreMigration do
   let(:backup_stats_file)      { '/tmp/admin_ui_stats.json.bak' }
   let(:ccdb_file)              { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri)               { "sqlite://#{ ccdb_file }" }
+  let(:ccdb_uri)               { "sqlite://#{ccdb_file}" }
   let(:cloud_controller_uri)   { 'http://api.localhost' }
   let(:config_file)            { '/tmp/admin_ui.yml' }
   let(:data_file)              { '/tmp/admin_ui_data.json' }
   let(:db_file)                { '/tmp/admin_ui_store.db' }
   let(:db_migration_dir)       { 'db/migrations' }
   let(:db_migration_spec_dir)  { 'spec/db' }
-  let(:db_uri)                 { "sqlite://#{ db_file }" }
+  let(:db_uri)                 { "sqlite://#{db_file}" }
   let(:host)                   { 'localhost' }
   let(:log_file)               { '/tmp/admin_ui.log' }
   let(:plans)                  { ['20140530_new_initial_schema.rb', '201405301000_change_table_schema.rb'] }
@@ -25,7 +25,7 @@ describe AdminUI::DBStoreMigration do
   let(:tasks_fresh_interval)   { 6000 }
   let(:tasks_refresh_interval) { 6000 }
   let(:uaadb_file)             { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri)              { "sqlite://#{ uaadb_file }" }
+  let(:uaadb_uri)              { "sqlite://#{uaadb_file}" }
   let(:config)                 do
     {
       ccdb_uri:               ccdb_uri,
@@ -51,7 +51,7 @@ describe AdminUI::DBStoreMigration do
                    out:   '/dev/null',
                    err:   '/dev/null' }
 
-    @pid = Process.spawn({}, "ruby bin/admin -c #{ config_file }", spawn_opts)
+    @pid = Process.spawn({}, "ruby bin/admin -c #{config_file}", spawn_opts)
 
     sleep(1)
   end
@@ -64,7 +64,7 @@ describe AdminUI::DBStoreMigration do
     spawn_opts = { chdir: project_path,
                    out:   '/dev/null',
                    err:   '/dev/null' }
-    @pid = Process.spawn({}, "rm -rf #{ ccdb_file } #{ config_file } #{ data_file } #{ log_file } #{ db_file } #{ uaadb_file } #{ backup_stats_file } #{ db_migration_dir }/#{ db_migration_1 } ", spawn_opts)
+    @pid = Process.spawn({}, "rm -rf #{ccdb_file} #{config_file} #{data_file} #{log_file} #{db_file} #{uaadb_file} #{backup_stats_file} #{db_migration_dir}/#{db_migration_1} ", spawn_opts)
     Process.wait(@pid)
     FileUtils.rm_f stats_file if File.exist?(stats_file)
   end
@@ -72,7 +72,7 @@ describe AdminUI::DBStoreMigration do
   def migrate_database
     spawn_opts = { out: '/dev/null', err: '/dev/null' }
 
-    pid = Process.spawn({}, "sequel -m #{ db_migration_dir } sqlite://#{ db_file }", spawn_opts)
+    pid = Process.spawn({}, "sequel -m #{db_migration_dir} sqlite://#{db_file}", spawn_opts)
     Process.wait(pid)
   end
 
@@ -99,7 +99,7 @@ describe AdminUI::DBStoreMigration do
   context 'when stats file exists and database instance does not' do
     it 'migrates stats persistence from file stats to database' do
       merged_config = config.merge(stats_file: stats_file)
-      FileUtils.cp("#{ db_migration_spec_dir }/#{ stats_file_spec }", "#{ stats_file }")
+      FileUtils.cp("#{db_migration_spec_dir}/#{stats_file_spec}", "#{stats_file}")
       launch_admin_daemon(merged_config)
       expect(File.file?(db_file)).to be(true)
       expect(File.file?(backup_stats_file)).to be(true)
@@ -115,7 +115,7 @@ describe AdminUI::DBStoreMigration do
   context 'when there is more than on one database migration plan in db/migrations directory' do
     it 'applies database migration plans according to chronological order' do
       db_migration_1 = plans[1]
-      FileUtils.cp "#{ db_migration_spec_dir }/#{ db_migration_1 }", db_migration_dir
+      FileUtils.cp "#{db_migration_spec_dir}/#{db_migration_1}", db_migration_dir
       launch_admin_daemon(config)
       Sequel.connect(db_uri, single_threaded: true, max_connections: 1) do |connection|
         connection.fetch('select tbl_name from sqlite_master where sql like :pattern', pattern: 'CREATE TABLE%extra_column%') do |row|
@@ -127,7 +127,7 @@ describe AdminUI::DBStoreMigration do
           i += 1
         end
       end
-      FileUtils.rm_rf "#{ db_migration_dir }/#{ db_migration_1 }"
+      FileUtils.rm_rf "#{db_migration_dir}/#{db_migration_1}"
       stop_admin_daemon
     end
   end
@@ -136,7 +136,7 @@ describe AdminUI::DBStoreMigration do
     it 'allows one to run sequel migration from another process' do
       launch_admin_daemon(config)
       db_migration_1 = plans[1]
-      FileUtils.cp "#{ db_migration_spec_dir }/#{ db_migration_1 }", db_migration_dir
+      FileUtils.cp "#{db_migration_spec_dir}/#{db_migration_1}", db_migration_dir
       migrate_database
       Sequel.connect(db_uri, single_threaded: true, max_connections: 1) do |connection|
         connection.fetch('select tbl_name from sqlite_master where sql like :pattern', pattern: 'CREATE TABLE%extra_column%') do |row|

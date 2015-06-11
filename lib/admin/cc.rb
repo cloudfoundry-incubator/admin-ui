@@ -59,7 +59,7 @@ module AdminUI
           db_uri:  ccdb_uri,
           table:   :events,
           columns: [:actee, :actee_name, :actee_type, :actor, :actor_name, :actor_type, :created_at, :guid, :id, :metadata, :organization_guid, :space_guid, :space_id, :timestamp, :type, :updated_at],
-          where:   "\"timestamp\" >= CURRENT_TIMESTAMP - INTERVAL '#{ @config.event_days } DAYS'"
+          where:   "\"timestamp\" >= CURRENT_TIMESTAMP - INTERVAL '#{@config.event_days} DAYS'"
         },
         groups:
         {
@@ -500,7 +500,7 @@ module AdminUI
     private
 
     def discover(key)
-      @logger.debug("[#{ @config.cloud_controller_discovery_interval } second interval] Starting CC #{ key } discovery...")
+      @logger.debug("[#{@config.cloud_controller_discovery_interval} second interval] Starting CC #{key} discovery...")
 
       cache = @caches[key]
 
@@ -511,7 +511,7 @@ module AdminUI
       finish = Time.now
 
       cache[:semaphore].synchronize do
-        @logger.debug("Caching CC #{ key } data.  Count: #{ result_cache['items'].length }.  Retrieval time: #{ finish - start } seconds")
+        @logger.debug("Caching CC #{key} data.  Count: #{result_cache['items'].length}.  Retrieval time: #{finish - start} seconds")
         cache[:result] = result_cache
         cache[:condition].broadcast
       end
@@ -584,10 +584,10 @@ module AdminUI
               # TODO: If the sql has parenthesis around the select clause, you get an array of values instead of a hash
               cache[:select] = cache[:select].sub('(', '').sub(')', '')
 
-              @logger.debug("Select for key #{ key }, table #{ table }: #{ cache[:select] }")
-              @logger.debug("Columns removed for key #{ key }, table #{ table }: #{ columns - db_columns }")
+              @logger.debug("Select for key #{key}, table #{table}: #{cache[:select]}")
+              @logger.debug("Columns removed for key #{key}, table #{table}: #{columns - db_columns}")
             else
-              @logger.debug("Table #{ table } does not exist")
+              @logger.debug("Table #{table} does not exist")
             end
           end
 
@@ -605,7 +605,7 @@ module AdminUI
 
       result
     rescue => error
-      @logger.debug("Error during discovery of #{ key }: #{ error.inspect }")
+      @logger.debug("Error during discovery of #{key}: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end

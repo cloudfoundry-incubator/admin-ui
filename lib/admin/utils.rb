@@ -29,7 +29,7 @@ module AdminUI
       uri = URI.parse(uri_string)
 
       path  = uri.path
-      path += "?#{ uri.query }" unless uri.query.nil?
+      path += "?#{uri.query}" unless uri.query.nil?
 
       http             = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl     = uri.scheme.to_s.downcase == 'https'

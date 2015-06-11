@@ -34,7 +34,7 @@ module AdminUI
     def get_uaa(path)
       info
 
-      uri = "#{ @token_endpoint }/#{ path }"
+      uri = "#{@token_endpoint}/#{path}"
 
       resources = []
       loop do
@@ -43,7 +43,7 @@ module AdminUI
         total_results = json['totalResults']
         start_index = resources.length + 1
         return resources unless total_results > start_index
-        uri = "#{ @token_endpoint }/#{ path }?startIndex=#{ start_index }"
+        uri = "#{@token_endpoint}/#{path}?startIndex=#{start_index}"
       end
 
       resources
@@ -59,12 +59,12 @@ module AdminUI
 
     def sso_logout(redirect_uri)
       info
-      "#{ @authorization_endpoint }/logout.do?redirect=#{ redirect_uri }"
+      "#{@authorization_endpoint}/logout.do?redirect=#{redirect_uri}"
     end
 
     def sso_login_redirect(redirect_uri)
       info
-      "#{ @authorization_endpoint }/oauth/authorize?response_type=code&client_id=#{ @config.uaa_client_id }&redirect_uri=#{ redirect_uri }"
+      "#{@authorization_endpoint}/oauth/authorize?response_type=code&client_id=#{@config.uaa_client_id}&redirect_uri=#{redirect_uri}"
     end
 
     def sso_login_token_json(code, redirect_uri)
@@ -74,12 +74,12 @@ module AdminUI
                                     'code'         => code,
                                     'redirect_uri' => redirect_uri)
       response = Utils.http_request(@config,
-                                    "#{ @token_endpoint }/oauth/token",
+                                    "#{@token_endpoint}/oauth/token",
                                     Utils::HTTP_POST,
                                     [@config.uaa_client_id, @config.uaa_client_secret],
                                     content)
       return Yajl::Parser.parse(response.body) if response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated)
-      @logger.debug("Unexpected response code from sso_login_token_json is #{ response.code }, message #{ response.message }, body #{ response.body }")
+      @logger.debug("Unexpected response code from sso_login_token_json is #{response.code}, message #{response.message}, body #{response.body}")
       nil
     end
 
@@ -116,9 +116,9 @@ module AdminUI
 
     def get_cc_url(path)
       if path && path[0] == '/'
-        return "#{ @config.cloud_controller_uri }#{ path }"
+        return "#{@config.cloud_controller_uri}#{path}"
       else
-        return "#{ @config.cloud_controller_uri }/#{ path }"
+        return "#{@config.cloud_controller_uri}/#{path}"
       end
     end
 
@@ -128,14 +128,14 @@ module AdminUI
       @token = nil
 
       response = Utils.http_request(@config,
-                                    "#{ @token_endpoint }/oauth/token",
+                                    "#{@token_endpoint}/oauth/token",
                                     Utils::HTTP_POST,
                                     [@config.uaa_client_id, @config.uaa_client_secret],
                                     'grant_type=client_credentials')
 
       if response.is_a?(Net::HTTPOK)
         body_json = Yajl::Parser.parse(response.body)
-        @token = "#{ body_json['token_type'] } #{ body_json['access_token'] }"
+        @token = "#{body_json['token_type']} #{body_json['access_token']}"
       else
         fail AdminUI::CCRestClientResponseError, response
       end
@@ -148,9 +148,9 @@ module AdminUI
       begin
         response = Utils.http_request(@config, get_cc_url('/info'), Utils::HTTP_GET)
       rescue => error
-        @logger.debug("Error during /info: #{ error.inspect }")
+        @logger.debug("Error during /info: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
-        raise "Unable to fetch from #{ get_cc_url('/info') }"
+        raise "Unable to fetch from #{get_cc_url('/info')}"
       end
 
       if response.is_a?(Net::HTTPOK)
@@ -158,20 +158,20 @@ module AdminUI
 
         @build = body_json['build']
         if @build.nil?
-          fail "Information retrieved from #{ get_cc_url('/info') } does not include build"
+          fail "Information retrieved from #{get_cc_url('/info')} does not include build"
         end
 
         @authorization_endpoint = body_json['authorization_endpoint']
         if @authorization_endpoint.nil?
-          fail "Information retrieved from #{ get_cc_url('/info') } does not include authorization_endpoint"
+          fail "Information retrieved from #{get_cc_url('/info')} does not include authorization_endpoint"
         end
 
         @token_endpoint = body_json['token_endpoint']
         if @token_endpoint.nil?
-          fail "Information retrieved from #{ get_cc_url('/info') } does not include token_endpoint"
+          fail "Information retrieved from #{get_cc_url('/info')} does not include token_endpoint"
         end
       else
-        fail "Unable to fetch from #{ get_cc_url('/info') }"
+        fail "Unable to fetch from #{get_cc_url('/info')}"
       end
     end
   end

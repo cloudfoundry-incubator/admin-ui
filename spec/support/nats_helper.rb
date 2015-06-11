@@ -65,22 +65,22 @@ module NATSHelper
   end
 
   def nats_cloud_controller_varz
-    "http://#{ nats_cloud_controller['host'] }/varz"
+    "http://#{nats_cloud_controller['host']}/varz"
   end
 
   def nats_dea_varz
-    "http://#{ nats_dea['host'] }/varz"
+    "http://#{nats_dea['host']}/varz"
   end
 
   def nats_health_manager_varz
-    "http://#{ nats_health_manager['host'] }/varz"
+    "http://#{nats_health_manager['host']}/varz"
   end
 
   def nats_provisioner_varz
-    "http://#{ nats_provisioner['host'] }/varz"
+    "http://#{nats_provisioner['host']}/varz"
   end
 
   def nats_router_varz
-    "http://#{ nats_router['host'] }/varz"
+    "http://#{nats_router['host']}/varz"
   end
 end

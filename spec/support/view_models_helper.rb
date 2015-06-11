@@ -12,7 +12,7 @@ module ViewModelsHelper
   def view_models_application_instances
     [
       [
-        "#{ cc_app[:guid] }/#{ cc_app_instance_index }",
+        "#{cc_app[:guid]}/#{cc_app_instance_index}",
         cc_app[:name],
         cc_app[:guid],
         cc_app_instance_index,
@@ -26,7 +26,7 @@ module ViewModelsHelper
         varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+        "#{cc_organization[:name]}/#{cc_space[:name]}",
         nats_dea['host']
       ]
     ]
@@ -51,7 +51,7 @@ module ViewModelsHelper
         cc_app[:package_state],
         cc_app[:created_at].to_datetime.rfc3339,
         cc_app[:updated_at].to_datetime.rfc3339,
-        ["#{ cc_route[:host] }.#{ cc_domain[:name] }#{ cc_route[:path] }"],
+        ["#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}"],
         cc_stack[:name],
         cc_app[:detected_buildpack],
         1,
@@ -62,7 +62,7 @@ module ViewModelsHelper
         varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
   end
@@ -236,7 +236,7 @@ module ViewModelsHelper
         cc_event_space[:actor_type],
         cc_event_space[:actor_name],
         cc_event_space[:actor],
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
   end
@@ -360,7 +360,7 @@ module ViewModelsHelper
   def view_models_organization_roles
     [
       [
-        "#{ cc_organization[:guid] }/auditors/#{ uaa_user[:id] }",
+        "#{cc_organization[:guid]}/auditors/#{uaa_user[:id]}",
         cc_organization[:name],
         cc_organization[:guid],
         uaa_user[:username],
@@ -368,7 +368,7 @@ module ViewModelsHelper
         'Auditor'
       ],
       [
-        "#{ cc_organization[:guid] }/billing_managers/#{ uaa_user[:id] }",
+        "#{cc_organization[:guid]}/billing_managers/#{uaa_user[:id]}",
         cc_organization[:name],
         cc_organization[:guid],
         uaa_user[:username],
@@ -376,7 +376,7 @@ module ViewModelsHelper
         'Billing Manager'
       ],
       [
-        "#{ cc_organization[:guid] }/managers/#{ uaa_user[:id] }",
+        "#{cc_organization[:guid]}/managers/#{uaa_user[:id]}",
         cc_organization[:name],
         cc_organization[:guid],
         uaa_user[:username],
@@ -384,7 +384,7 @@ module ViewModelsHelper
         'Manager'
       ],
       [
-        "#{ cc_organization[:guid] }/users/#{ uaa_user[:id] }",
+        "#{cc_organization[:guid]}/users/#{uaa_user[:id]}",
         cc_organization[:name],
         cc_organization[:guid],
         uaa_user[:username],
@@ -458,7 +458,7 @@ module ViewModelsHelper
           'name'   => cc_app[:name],
           'rpm'    => varz_router['top10_app_requests'][0]['rpm'],
           'rps'    => varz_router['top10_app_requests'][0]['rps'],
-          'target' => "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+          'target' => "#{cc_organization[:name]}/#{cc_space[:name]}"
         }
       ]
     }
@@ -475,7 +475,7 @@ module ViewModelsHelper
         cc_route[:created_at].to_datetime.rfc3339,
         cc_route[:updated_at].to_datetime.rfc3339,
         1,
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
   end
@@ -523,7 +523,7 @@ module ViewModelsHelper
         cc_service_broker[:guid],
         cc_service_broker[:created_at].to_datetime.rfc3339,
         cc_service_broker[:updated_at].to_datetime.rfc3339,
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
   end
@@ -601,7 +601,7 @@ module ViewModelsHelper
         cc_service_broker[:guid],
         cc_service_broker[:created_at].to_datetime.rfc3339,
         cc_service_broker[:updated_at].to_datetime.rfc3339,
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
   end
@@ -651,7 +651,7 @@ module ViewModelsHelper
         cc_service_broker[:guid],
         cc_service_broker[:created_at].to_datetime.rfc3339,
         cc_service_broker[:updated_at].to_datetime.rfc3339,
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
   end
@@ -822,28 +822,28 @@ module ViewModelsHelper
   def view_models_space_roles
     [
       [
-        "#{ cc_space[:guid] }/auditors/#{ uaa_user[:id] }",
+        "#{cc_space[:guid]}/auditors/#{uaa_user[:id]}",
         cc_space[:name],
         cc_space[:guid],
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+        "#{cc_organization[:name]}/#{cc_space[:name]}",
         uaa_user[:username],
         uaa_user[:id],
         'Auditor'
       ],
       [
-        "#{ cc_space[:guid] }/developers/#{ uaa_user[:id] }",
+        "#{cc_space[:guid]}/developers/#{uaa_user[:id]}",
         cc_space[:name],
         cc_space[:guid],
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+        "#{cc_organization[:name]}/#{cc_space[:name]}",
         uaa_user[:username],
         uaa_user[:id],
         'Developer'
       ],
       [
-        "#{ cc_space[:guid] }/managers/#{ uaa_user[:id] }",
+        "#{cc_space[:guid]}/managers/#{uaa_user[:id]}",
         cc_space[:name],
         cc_space[:guid],
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+        "#{cc_organization[:name]}/#{cc_space[:name]}",
         uaa_user[:username],
         uaa_user[:id],
         'Manager'
@@ -867,7 +867,7 @@ module ViewModelsHelper
         cc_space[:guid],
         cc_space[:name],
         cc_space[:guid],
-        "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+        "#{cc_organization[:name]}/#{cc_space[:name]}",
         cc_space[:created_at].to_datetime.rfc3339,
         cc_space[:updated_at].to_datetime.rfc3339,
         1,

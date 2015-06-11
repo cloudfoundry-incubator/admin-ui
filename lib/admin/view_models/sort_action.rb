@@ -61,8 +61,8 @@ module AdminUI
 
       index = 0
       while index < i_sorting_cols
-        i_sort_col                   = params["iSortCol_#{ index }"].to_i
-        s_sort_dir                   = params["sSortDir_#{ index }"]
+        i_sort_col                   = params["iSortCol_#{index}"].to_i
+        s_sort_dir                   = params["sSortDir_#{index}"]
         case_insensitive_sort_column = case_insensitive_sort_columns.include?(i_sort_col)
 
         result.push(SortColumn.new(i_sort_col, s_sort_dir == 'asc', case_insensitive_sort_column))

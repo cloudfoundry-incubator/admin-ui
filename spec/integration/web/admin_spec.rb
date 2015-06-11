@@ -26,7 +26,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
     def check_allowscriptaccess_attribute(copy_node_id)
       expect(@driver.find_element(id: copy_node_id).text).to eq('Copy')
-      expect(@driver.find_element(xpath: "//a[@id='#{ copy_node_id }']/div/embed").attribute('allowscriptaccess')).to eq('sameDomain')
+      expect(@driver.find_element(xpath: "//a[@id='#{copy_node_id}']/div/embed").attribute('allowscriptaccess')).to eq('sameDomain')
     end
 
     def refresh_button
@@ -41,7 +41,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       rescue Selenium::WebDriver::Error::TimeOutError
       end
       expect(@driver.find_element(class: 'cloudControllerText').text).to eq(cloud_controller_uri)
-      expect(@driver.find_element(class: 'build').text).to eq("Build #{ cc_info['build'] }")
+      expect(@driver.find_element(class: 'build').text).to eq("Build #{cc_info['build']}")
     end
 
     it 'has tabs' do
@@ -212,29 +212,29 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         # Third, wait until the desired page has been rendered
         begin
-          Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{ tab_id }Page").displayed? }
+          Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{tab_id}Page").displayed? }
         rescue Selenium::WebDriver::Error::TimeOutError
         end
-        expect(@driver.find_element(id: "#{ tab_id }Page").displayed?).to eq(true)
+        expect(@driver.find_element(id: "#{tab_id}Page").displayed?).to eq(true)
 
         if table_has_data
           # Fourth, wait until the table on the desired page has data
           begin
-            Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(xpath: "//table[@id='#{ tab_id }Table']/tbody/tr").text != 'No data available in table' }
+            Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(xpath: "//table[@id='#{tab_id}Table']/tbody/tr").text != 'No data available in table' }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
-          expect(@driver.find_element(xpath: "//table[@id='#{ tab_id }Table']/tbody/tr").text).not_to eq('No data available in table')
+          expect(@driver.find_element(xpath: "//table[@id='#{tab_id}Table']/tbody/tr").text).not_to eq('No data available in table')
         end
       end
 
       def check_checkbox_guid(table_id, guid)
-        inputs = @driver.find_elements(xpath: "//table[@id='#{ table_id }']/tbody/tr/td[1]/input")
+        inputs = @driver.find_elements(xpath: "//table[@id='#{table_id}']/tbody/tr/td[1]/input")
         expect(inputs.length).to eq(1)
         expect(inputs[0].attribute('value')).to eq(guid)
       end
 
       def check_first_row(table_id)
-        @driver.find_elements(xpath: "//table[@id='#{ table_id }']/tbody/tr/td[1]/input")[0].click
+        @driver.find_elements(xpath: "//table[@id='#{table_id}']/tbody/tr/td[1]/input")[0].click
       end
 
       def confirm(message)
@@ -273,10 +273,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           if check_no_data_available
             begin
-              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='#{ table_id }']/tbody/tr").text == 'No data available in table' }
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='#{table_id}']/tbody/tr").text == 'No data available in table' }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='#{ table_id }']/tbody/tr").text).to eq('No data available in table')
+            expect(@driver.find_element(xpath: "//table[@id='#{table_id}']/tbody/tr").text).to eq('No data available in table')
           end
         end
       end
@@ -316,13 +316,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              '1',
                              '0',
-                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:instances] })"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_app[:instances]})"),
                              '1',
-                             @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
-                             @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })"),
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})"),
                              '1',
                              cc_app[:state] == 'STARTED' ? '1' : '0',
                              cc_app[:state] == 'STOPPED' ? '1' : '0',
@@ -509,9 +509,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_details([{ label: 'Name',                      tag: 'div', value: cc_organization[:name] },
                            { label: 'GUID',                      tag:   nil, value: cc_organization[:guid] },
                            { label: 'Status',                    tag:   nil, value: cc_organization[:status].upcase },
-                           { label: 'Created',                   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Updated',                   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Billing Enabled',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_organization[:billing_enabled] })") },
+                           { label: 'Created',                   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_organization[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',                   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_organization[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Billing Enabled',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_organization[:billing_enabled]})") },
                            { label: 'Events Target',             tag:   'a', value: '1' },
                            { label: 'Spaces',                    tag:   'a', value: '1' },
                            { label: 'Organization Roles',        tag:   'a', value: '4' },
@@ -523,13 +523,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Total Routes',              tag:   'a', value: '1' },
                            { label: 'Used Routes',               tag:   nil, value: '1' },
                            { label: 'Unused Routes',             tag:   nil, value: '0' },
-                           { label: 'Instances Used',            tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:instances] })") },
+                           { label: 'Instances Used',            tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{cc_app[:instances]})") },
                            { label: 'Services Used',             tag:   'a', value: '1' },
-                           { label: 'Memory Used',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })") },
-                           { label: 'Disk Used',                 tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })") },
-                           { label: 'CPU Used',                  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })") },
-                           { label: 'Memory Reserved',           tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })") },
-                           { label: 'Disk Reserved',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })") },
+                           { label: 'Memory Used',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})") },
+                           { label: 'Disk Used',                 tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})") },
+                           { label: 'CPU Used',                  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100})") },
+                           { label: 'Memory Reserved',           tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})") },
+                           { label: 'Disk Reserved',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})") },
                            { label: 'Total Apps',                tag:   'a', value: '1' },
                            { label: 'Started Apps',              tag:   nil, value: cc_app[:state] == 'STARTED' ? '1' : '0' },
                            { label: 'Stopped Apps',              tag:   nil, value: cc_app[:state] == 'STOPPED' ? '1' : '0' },
@@ -540,11 +540,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events target link' do
-            check_filter_link('Organizations', 6, 'Events', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 6, 'Events', "#{cc_organization[:name]}/")
           end
 
           it 'has spaces link' do
-            check_filter_link('Organizations', 7, 'Spaces', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 7, 'Spaces', "#{cc_organization[:name]}/")
           end
 
           it 'has organization roles link' do
@@ -552,7 +552,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has space roles link' do
-            check_filter_link('Organizations', 9, 'SpaceRoles', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 9, 'SpaceRoles', "#{cc_organization[:name]}/")
           end
 
           it 'has quotas link' do
@@ -572,19 +572,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has routes link' do
-            check_filter_link('Organizations', 14, 'Routes', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 14, 'Routes', "#{cc_organization[:name]}/")
           end
 
           it 'has application instances link' do
-            check_filter_link('Organizations', 17, 'ApplicationInstances', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 17, 'ApplicationInstances', "#{cc_organization[:name]}/")
           end
 
           it 'has services instances link' do
-            check_filter_link('Organizations', 18, 'ServiceInstances', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 18, 'ServiceInstances', "#{cc_organization[:name]}/")
           end
 
           it 'has applications link' do
-            check_filter_link('Organizations', 24, 'Applications', "#{ cc_organization[:name] }/")
+            check_filter_link('Organizations', 24, 'Applications', "#{cc_organization[:name]}/")
           end
         end
       end
@@ -611,7 +611,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '',
                              cc_space[:name],
                              cc_space[:guid],
-                             "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+                             "#{cc_organization[:name]}/#{cc_space[:name]}",
                              cc_space[:created_at].to_datetime.rfc3339,
                              cc_space[:updated_at].to_datetime.rfc3339,
                              '1',
@@ -621,13 +621,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              '1',
                              '0',
-                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:instances] })"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_app[:instances]})"),
                              '1',
-                             @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
-                             @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })"),
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})"),
                              '1',
                              cc_app[:state] == 'STARTED' ? '1' : '0',
                              cc_app[:state] == 'STOPPED' ? '1' : '0',
@@ -692,8 +692,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_details([{ label: 'Name',            tag: 'div', value: cc_space[:name] },
                            { label: 'GUID',            tag:   nil, value: cc_space[:guid] },
                            { label: 'Organization',    tag:   'a', value: cc_organization[:name] },
-                           { label: 'Created',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_space[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Updated',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_space[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Created',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Events',          tag:   'a', value: '1' },
                            { label: 'Events Target',   tag:   'a', value: '1' },
                            { label: 'Roles',           tag:   'a', value: '3' },
@@ -701,13 +701,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Total Routes',    tag:   'a', value: '1' },
                            { label: 'Used Routes',     tag:   nil, value: '1' },
                            { label: 'Unused Routes',   tag:   nil, value: '0' },
-                           { label: 'Instances Used',  tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:instances] })") },
+                           { label: 'Instances Used',  tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{cc_app[:instances]})") },
                            { label: 'Services Used',   tag:   'a', value: '1' },
-                           { label: 'Memory Used',     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })") },
-                           { label: 'Disk Used',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })") },
-                           { label: 'CPU Used',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })") },
-                           { label: 'Memory Reserved', tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })") },
-                           { label: 'Disk Reserved',   tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })") },
+                           { label: 'Memory Used',     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})") },
+                           { label: 'Disk Used',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})") },
+                           { label: 'CPU Used',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100})") },
+                           { label: 'Memory Reserved', tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})") },
+                           { label: 'Disk Reserved',   tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})") },
                            { label: 'Total Apps',      tag:   'a', value: '1' },
                            { label: 'Started Apps',    tag:   nil, value: cc_app[:state] == 'STARTED' ? '1' : '0' },
                            { label: 'Stopped Apps',    tag:   nil, value: cc_app[:state] == 'STOPPED' ? '1' : '0' },
@@ -726,7 +726,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events target link' do
-            check_filter_link('Spaces', 6, 'Events', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 6, 'Events', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has space roles link' do
@@ -738,19 +738,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has routes link' do
-            check_filter_link('Spaces', 9, 'Routes', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 9, 'Routes', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has application instances link' do
-            check_filter_link('Spaces', 12, 'ApplicationInstances', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 12, 'ApplicationInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has services link' do
-            check_filter_link('Spaces', 13, 'ServiceInstances', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 13, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has applications link' do
-            check_filter_link('Spaces', 19, 'Applications', "#{ cc_organization[:name] }/#{ cc_space[:name] }")
+            check_filter_link('Spaces', 19, 'Applications', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
         end
       end
@@ -782,18 +782,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script('return Constants.STATUS__STAGED'),
                              cc_app[:created_at].to_datetime.rfc3339,
                              cc_app[:updated_at].to_datetime.rfc3339,
-                             "http://#{ cc_route[:host] }.#{ cc_domain[:name] }#{ cc_route[:path] }",
+                             "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}",
                              cc_stack[:name],
                              cc_app[:detected_buildpack],
                              '1',
                              '1',
                              '1',
-                             @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
-                             @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })"),
-                             "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})"),
+                             "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
         end
 
@@ -937,9 +937,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'GUID',                   tag:   nil, value: cc_app[:guid] },
                            { label: 'State',                  tag:   nil, value: cc_app[:state] },
                            { label: 'Package State',          tag:   nil, value: cc_app[:package_state] },
-                           { label: 'Created',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Updated',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_app[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'URI',                    tag:   nil, value: "http://#{ cc_route[:host] }.#{ cc_domain[:name] }#{ cc_route[:path] }" },
+                           { label: 'Created',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_app[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_app[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'URI',                    tag:   nil, value: "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}" },
                            { label: 'Stack',                  tag:   'a', value: cc_stack[:name] },
                            { label: 'Buildpack',              tag:   nil, value: cc_app[:detected_buildpack] },
                            { label: 'Command',                tag:   nil, value: cc_app[:command] },
@@ -948,11 +948,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Events',                 tag:   'a', value: '1' },
                            { label: 'Instances',              tag:   'a', value: '1' },
                            { label: 'Service Bindings',       tag:   'a', value: '1' },
-                           { label: 'Memory Used',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })") },
-                           { label: 'Disk Used',              tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })") },
-                           { label: 'CPU Used',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })") },
-                           { label: 'Memory Reserved',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })") },
-                           { label: 'Disk Reserved',          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })") },
+                           { label: 'Memory Used',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})") },
+                           { label: 'Disk Used',              tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})") },
+                           { label: 'CPU Used',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100})") },
+                           { label: 'Memory Reserved',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})") },
+                           { label: 'Disk Reserved',          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})") },
                            { label: 'Space',                  tag:   'a', value: cc_space[:name] },
                            { label: 'Organization',           tag:   'a', value: cc_organization[:name] }
                           ])
@@ -1006,18 +1006,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '',
                              cc_app[:name],
                              cc_app[:guid],
-                             @driver.execute_script("return Format.formatNumber(#{ cc_app_instance_index })"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_app_instance_index})"),
                              varz_dea_app_instance,
                              varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
                              Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
-                             "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }",
+                             "http://#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0]}",
                              cc_stack[:name],
-                             @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
-                             @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })"),
-                             "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})"),
+                             "#{cc_organization[:name]}/#{cc_space[:name]}",
                              nats_dea['host']
                            ])
         end
@@ -1027,7 +1027,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          check_checkbox_guid('ApplicationInstancesTable', "#{ cc_app[:guid] }/#{ cc_app_instance_index }")
+          check_checkbox_guid('ApplicationInstancesTable', "#{cc_app[:guid]}/#{cc_app_instance_index}")
         end
 
         context 'manage application instances' do
@@ -1058,18 +1058,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([{ label: 'Name',             tag: 'div', value: cc_app[:name] },
                            { label: 'Application GUID', tag:   'a', value: cc_app[:guid] },
-                           { label: 'Index',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_app_instance_index })") },
+                           { label: 'Index',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app_instance_index})") },
                            { label: 'Instance ID',      tag:   nil, value: varz_dea_app_instance },
                            { label: 'State',            tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] },
-                           { label: 'Started',          tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{ (varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp'] * 1000) })") },
-                           { label: 'URI',              tag:   'a', value: "http://#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0] }" },
+                           { label: 'Started',          tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp'] * 1000)})") },
+                           { label: 'URI',              tag:   'a', value: "http://#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0]}" },
                            { label: 'Stack',            tag:   'a', value: cc_stack[:name] },
                            { label: 'Droplet Hash',     tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['droplet_sha1'] },
-                           { label: 'Memory Used',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })") },
-                           { label: 'Disk Used',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })") },
-                           { label: 'CPU Used',         tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })") },
-                           { label: 'Memory Reserved',  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:memory] })") },
-                           { label: 'Disk Reserved',    tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:disk_quota] })") },
+                           { label: 'Memory Used',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})") },
+                           { label: 'Disk Used',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})") },
+                           { label: 'CPU Used',         tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100})") },
+                           { label: 'Memory Reserved',  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})") },
+                           { label: 'Disk Reserved',    tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})") },
                            { label: 'Space',            tag:   'a', value: cc_space[:name] },
                            { label: 'Organization',     tag:   'a', value: cc_organization[:name] },
                            { label: 'DEA',              tag:   'a', value: nats_dea['host'] }
@@ -1119,7 +1119,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_route[:created_at].to_datetime.rfc3339,
                              cc_route[:updated_at].to_datetime.rfc3339,
                              '1',
-                             "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+                             "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
         end
 
@@ -1161,8 +1161,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Path',         tag:   nil, value: cc_route[:path] },
                            { label: 'GUID',         tag: 'div', value: cc_route[:guid] },
                            { label: 'Domain',       tag:   'a', value: cc_domain[:name] },
-                           { label: 'Created',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:created_at].to_datetime.rfc3339 }\")") } },
-                           { label: 'Updated',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{ cc_route[:updated_at].to_datetime.rfc3339 }\")") } },
+                           { label: 'Created',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route[:created_at].to_datetime.rfc3339}\")") } },
+                           { label: 'Updated',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route[:updated_at].to_datetime.rfc3339}\")") } },
                            { label: 'Applications', tag:   'a', value: '1' },
                            { label: 'Space',        tag:   'a', value: cc_space[:name] },
                            { label: 'Organization', tag:   'a', value: cc_organization[:name] }
@@ -1174,7 +1174,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has applications link' do
-            check_filter_link('Routes', 6, 'Applications', "#{ cc_route[:host] }.#{ cc_domain[:name] }#{ cc_route[:path] }")
+            check_filter_link('Routes', 6, 'Applications', "#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}")
           end
 
           it 'has spaces link' do
@@ -1224,9 +1224,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_plan[:unique_id],
                              cc_service_plan[:created_at].to_datetime.rfc3339,
                              cc_service_plan[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:active] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:public] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:free] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              cc_service[:provider],
                              cc_service[:label],
                              cc_service[:guid],
@@ -1234,13 +1234,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service[:version],
                              cc_service[:created_at].to_datetime.rfc3339,
                              cc_service[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service[:active] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service[:bindable] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})"),
                              cc_service_broker[:name],
                              cc_service_broker[:guid],
                              cc_service_broker[:created_at].to_datetime.rfc3339,
                              cc_service_broker[:updated_at].to_datetime.rfc3339,
-                             "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+                             "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
         end
 
@@ -1298,38 +1298,38 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([{ label: 'Service Instance Name',                        tag: 'div', value: cc_service_instance[:name] },
                            { label: 'Service Instance GUID',                        tag:   nil, value: cc_service_instance[:guid] },
-                           { label: 'Service Instance Created',                     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Instance Updated',                     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Instance Created',                     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Instance Updated',                     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Service Instance Dashboard URL',               tag:   nil, value: cc_service_instance[:dashboard_url] },
                            { label: 'Service Instance Events',                      tag:   'a', value: '1' },
                            { label: 'Service Bindings',                             tag:   'a', value: '1' },
                            { label: 'Service Keys',                                 tag:   'a', value: '1' },
                            { label: 'Service Instance Last Operation Type',         tag:  nil, value: cc_service_instance_operation[:type] },
                            { label: 'Service Instance Last Operation State',        tag:  nil, value: cc_service_instance_operation[:state] },
-                           { label: 'Service Instance Last Operation Created',      tag:  nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance_operation[:created_at] }\")") },
-                           { label: 'Service Instance Last Operation Updated',      tag:  nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance_operation[:updated_at] }\")") },
+                           { label: 'Service Instance Last Operation Created',      tag:  nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance_operation[:created_at]}\")") },
+                           { label: 'Service Instance Last Operation Updated',      tag:  nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance_operation[:updated_at]}\")") },
                            { label: 'Service Instance Last Operation Description',  tag:  nil, value: cc_service_instance_operation[:description] },
                            { label: 'Service Plan Name',                            tag:   'a', value: cc_service_plan[:name] },
                            { label: 'Service Plan GUID',                            tag:   nil, value: cc_service_plan[:guid] },
                            { label: 'Service Plan Unique ID',                       tag:   nil, value: cc_service_plan[:unique_id] },
-                           { label: 'Service Plan Created',                         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Plan Updated',                         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Plan Active',                          tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:active] })") },
-                           { label: 'Service Plan Public',                          tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:public] })") },
-                           { label: 'Service Plan Free',                            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:free] })") },
+                           { label: 'Service Plan Created',                         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Plan Updated',                         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Plan Active',                          tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
+                           { label: 'Service Plan Public',                          tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
+                           { label: 'Service Plan Free',                            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                            { label: 'Service Provider',                             tag:   nil, value: cc_service[:provider] },
                            { label: 'Service Label',                                tag:   'a', value: cc_service[:label] },
                            { label: 'Service GUID',                                 tag:   nil, value: cc_service[:guid] },
                            { label: 'Service Unique ID',                            tag:   nil, value: cc_service[:unique_id] },
                            { label: 'Service Version',                              tag:   nil, value: cc_service[:version] },
-                           { label: 'Service Created',                              tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Updated',                              tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Active',                               tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service[:active] })") },
-                           { label: 'Service Bindable',                             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service[:bindable] })") },
+                           { label: 'Service Created',                              tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Updated',                              tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Active',                               tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
+                           { label: 'Service Bindable',                             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})") },
                            { label: 'Service Broker Name',                          tag:   'a', value: cc_service_broker[:name] },
                            { label: 'Service Broker GUID',                          tag:   nil, value: cc_service_broker[:guid] },
-                           { label: 'Service Broker Created',                       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Broker Updated',                       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Broker Created',                       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Broker Updated',                       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Space',                                        tag:   'a', value: cc_space[:name] },
                            { label: 'Organization',                                 tag:   'a', value: cc_organization[:name] }
                           ])
@@ -1405,9 +1405,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_plan[:unique_id],
                              cc_service_plan[:created_at].to_datetime.rfc3339,
                              cc_service_plan[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:active] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:public] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:free] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              cc_service[:provider],
                              cc_service[:label],
                              cc_service[:guid],
@@ -1415,12 +1415,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service[:version],
                              cc_service[:created_at].to_datetime.rfc3339,
                              cc_service[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service[:active] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
                              cc_service_broker[:name],
                              cc_service_broker[:guid],
                              cc_service_broker[:created_at].to_datetime.rfc3339,
                              cc_service_broker[:updated_at].to_datetime.rfc3339,
-                             "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+                             "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
         end
 
@@ -1459,35 +1459,35 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([{ label: 'Service Binding GUID',           tag: 'div', value: cc_service_binding[:guid] },
-                           { label: 'Service Binding Created',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_binding[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Binding Updated',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_binding[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Binding Created',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_binding[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Binding Updated',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_binding[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Service Binding Events',         tag:   'a', value: '1' },
                            { label: 'Application Name',               tag:   'a', value: cc_app[:name] },
                            { label: 'Application GUID',               tag:   nil, value: cc_app[:guid] },
                            { label: 'Service Instance Name',          tag:   'a', value: cc_service_instance[:name] },
                            { label: 'Service Instance GUID',          tag:   nil, value: cc_service_instance[:guid] },
-                           { label: 'Service Instance Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Instance Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Instance Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Instance Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Service Plan Name',              tag:   'a', value: cc_service_plan[:name] },
                            { label: 'Service Plan GUID',              tag:   nil, value: cc_service_plan[:guid] },
                            { label: 'Service Plan Unique ID',         tag:   nil, value: cc_service_plan[:unique_id] },
-                           { label: 'Service Plan Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Plan Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Plan Active',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:active] })") },
-                           { label: 'Service Plan Public',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:public] })") },
-                           { label: 'Service Plan Free',              tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:free] })") },
+                           { label: 'Service Plan Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Plan Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Plan Active',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
+                           { label: 'Service Plan Public',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
+                           { label: 'Service Plan Free',              tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                            { label: 'Service Provider',               tag:   nil, value: cc_service[:provider] },
                            { label: 'Service Label',                  tag:   'a', value: cc_service[:label] },
                            { label: 'Service GUID',                   tag:   nil, value: cc_service[:guid] },
                            { label: 'Service Unique ID',              tag:   nil, value: cc_service[:unique_id] },
                            { label: 'Service Version',                tag:   nil, value: cc_service[:version] },
-                           { label: 'Service Created',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Updated',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Active',                 tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service[:active] })") },
+                           { label: 'Service Created',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Updated',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Active',                 tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
                            { label: 'Service Broker Name',            tag:   'a', value: cc_service_broker[:name] },
                            { label: 'Service Broker GUID',            tag:   nil, value: cc_service_broker[:guid] },
-                           { label: 'Service Broker Created',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Broker Updated',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Broker Created',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Broker Updated',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Space',                          tag:   'a', value: cc_space[:name] },
                            { label: 'Organization',                   tag:   'a', value: cc_organization[:name] }
                           ])
@@ -1562,9 +1562,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_plan[:unique_id],
                              cc_service_plan[:created_at].to_datetime.rfc3339,
                              cc_service_plan[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:active] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:public] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:free] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              cc_service[:provider],
                              cc_service[:label],
                              cc_service[:guid],
@@ -1572,12 +1572,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service[:version],
                              cc_service[:created_at].to_datetime.rfc3339,
                              cc_service[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service[:active] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
                              cc_service_broker[:name],
                              cc_service_broker[:guid],
                              cc_service_broker[:created_at].to_datetime.rfc3339,
                              cc_service_broker[:updated_at].to_datetime.rfc3339,
-                             "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+                             "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
         end
 
@@ -1617,33 +1617,33 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([{ label: 'Service Key Name',           tag: 'div', value: cc_service_key[:name] },
                            { label: 'Service Key GUID',           tag:   nil, value: cc_service_key[:guid] },
-                           { label: 'Service Key Created',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_key[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Key Updated',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_key[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Key Created',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_key[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Key Updated',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_key[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Service Key Events',         tag:   'a', value: '1' },
                            { label: 'Service Instance Name',      tag:   'a', value: cc_service_instance[:name] },
                            { label: 'Service Instance GUID',      tag:   nil, value: cc_service_instance[:guid] },
-                           { label: 'Service Instance Created',   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Instance Updated',   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_instance[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Instance Created',   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Instance Updated',   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Service Plan Name',          tag:   'a', value: cc_service_plan[:name] },
                            { label: 'Service Plan GUID',          tag:   nil, value: cc_service_plan[:guid] },
                            { label: 'Service Plan Unique ID',     tag:   nil, value: cc_service_plan[:unique_id] },
-                           { label: 'Service Plan Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Plan Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Plan Active',        tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:active] })") },
-                           { label: 'Service Plan Public',        tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:public] })") },
-                           { label: 'Service Plan Free',          tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:free] })") },
+                           { label: 'Service Plan Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Plan Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Plan Active',        tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
+                           { label: 'Service Plan Public',        tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
+                           { label: 'Service Plan Free',          tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                            { label: 'Service Provider',           tag:   nil, value: cc_service[:provider] },
                            { label: 'Service Label',              tag:   'a', value: cc_service[:label] },
                            { label: 'Service GUID',               tag:   nil, value: cc_service[:guid] },
                            { label: 'Service Unique ID',          tag:   nil, value: cc_service[:unique_id] },
                            { label: 'Service Version',            tag:   nil, value: cc_service[:version] },
-                           { label: 'Service Created',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Updated',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Active',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service[:active] })") },
+                           { label: 'Service Created',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Updated',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Active',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
                            { label: 'Service Broker Name',        tag:   'a', value: cc_service_broker[:name] },
                            { label: 'Service Broker GUID',        tag:   nil, value: cc_service_broker[:guid] },
-                           { label: 'Service Broker Created',     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Broker Updated',     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Broker Created',     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Broker Updated',     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Space',                      tag:   'a', value: cc_space[:name] },
                            { label: 'Organization',               tag:   'a', value: cc_organization[:name] }
                           ])
@@ -1776,7 +1776,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '',
                              cc_space[:name],
                              cc_space[:guid],
-                             "#{ cc_organization[:name] }/#{ cc_space[:name] }",
+                             "#{cc_organization[:name]}/#{cc_space[:name]}",
                              uaa_user[:username],
                              uaa_user[:id],
                              'Auditor'
@@ -1856,7 +1856,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_client[:authorized_grant_types],
                              uaa_client[:web_server_redirect_uri],
                              uaa_client[:authorities],
-                             @driver.execute_script("return Format.formatBoolean(#{ uaa_client_autoapprove })"),
+                             @driver.execute_script("return Format.formatBoolean(#{uaa_client_autoapprove})"),
                              '1',
                              cc_service_broker[:name]
                            ])
@@ -1877,7 +1877,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Authorized Grant Type',  tag:   nil, value: uaa_client[:authorized_grant_types] },
                            { label: 'Redirect URI',           tag:   nil, value: uaa_client[:web_server_redirect_uri] },
                            { label: 'Authority',              tag:   nil, value: uaa_client[:authorities] },
-                           { label: 'Auto Approve',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ uaa_client_autoapprove })") },
+                           { label: 'Auto Approve',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_client_autoapprove})") },
                            { label: 'Events',                 tag:   'a', value: '1' },
                            { label: 'Additional Information', tag:   nil, value: uaa_client[:additional_information] },
                            { label: 'Service Broker',         tag:   'a', value: cc_service_broker[:name] }
@@ -1920,8 +1920,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_user[:email],
                              uaa_user[:familyname],
                              uaa_user[:givenname],
-                             @driver.execute_script("return Format.formatBoolean(#{ uaa_user[:active] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ uaa_user[:version] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{uaa_user[:active]})"),
+                             @driver.execute_script("return Format.formatNumber(#{uaa_user[:version]})"),
                              uaa_group[:displayname],
                              '1',
                              '4',
@@ -1948,13 +1948,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([{ label: 'Username',                           tag: 'div', value: uaa_user[:username] },
                            { label: 'GUID',                               tag:   nil, value: uaa_user[:id] },
-                           { label: 'Created',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ uaa_user[:created].to_datetime.rfc3339 }\")") },
-                           { label: 'Updated',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ uaa_user[:lastmodified].to_datetime.rfc3339 }\")") },
-                           { label: 'Email',                              tag:   'a', value: "mailto:#{ uaa_user[:email] }" },
+                           { label: 'Created',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_user[:created].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_user[:lastmodified].to_datetime.rfc3339}\")") },
+                           { label: 'Email',                              tag:   'a', value: "mailto:#{uaa_user[:email]}" },
                            { label: 'Family Name',                        tag:   nil, value: uaa_user[:familyname] },
                            { label: 'Given Name',                         tag:   nil, value: uaa_user[:givenname] },
-                           { label: 'Active',                             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ uaa_user[:active] })") },
-                           { label: 'Version',                            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ uaa_user[:version] })") },
+                           { label: 'Active',                             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_user[:active]})") },
+                           { label: 'Version',                            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_user[:version]})") },
                            { label: 'Group',                              tag:   nil, value: uaa_group[:displayname] },
                            { label: 'Events',                             tag:   'a', value: '1' },
                            { label: 'Organization Total Roles',           tag:   'a', value: '4' },
@@ -2061,8 +2061,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([{ label: 'Name',                tag: 'div', value: cc_domain[:name] },
                            { label: 'GUID',                tag:   nil, value: cc_domain[:guid] },
-                           { label: 'Created',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Updated',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_domain[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Created',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_domain[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_domain[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Owning Organization', tag:   'a', value: cc_organization[:name] },
                            { label: 'Routes',              tag:   'a', value: '1' }
                           ])
@@ -2115,11 +2115,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_quota_definition[:guid],
                              cc_quota_definition[:created_at].to_datetime.rfc3339,
                              cc_quota_definition[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatNumber(#{ cc_quota_definition[:total_services] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_quota_definition[:total_routes] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_quota_definition[:memory_limit] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_quota_definition[:instance_memory_limit] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_quota_definition[:non_basic_services_allowed] })"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_services]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_routes]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:memory_limit]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:instance_memory_limit]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_quota_definition[:non_basic_services_allowed]})"),
                              '1'
                            ])
         end
@@ -2160,13 +2160,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([{ label: 'Name',                       tag: 'div', value: cc_quota_definition[:name] },
                            { label: 'GUID',                       tag:   nil, value: cc_quota_definition[:guid] },
-                           { label: 'Created',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Updated',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Total Services',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_quota_definition[:total_services] })") },
-                           { label: 'Total Routes',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_quota_definition[:total_routes] })") },
-                           { label: 'Memory Limit',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_quota_definition[:memory_limit] })") },
-                           { label: 'Instance Memory Limit',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_quota_definition[:instance_memory_limit] })") },
-                           { label: 'Non-Basic Services Allowed', tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_quota_definition[:non_basic_services_allowed] })") },
+                           { label: 'Created',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_quota_definition[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_quota_definition[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Total Services',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_services]})") },
+                           { label: 'Total Routes',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_routes]})") },
+                           { label: 'Memory Limit',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:memory_limit]})") },
+                           { label: 'Instance Memory Limit',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:instance_memory_limit]})") },
+                           { label: 'Non-Basic Services Allowed', tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_quota_definition[:non_basic_services_allowed]})") },
                            { label: 'Organizations',              tag:   'a', value: '1' }
                           ])
           end
@@ -2200,11 +2200,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_space_quota_definition[:guid],
                              cc_space_quota_definition[:created_at].to_datetime.rfc3339,
                              cc_space_quota_definition[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:total_services] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:total_routes] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:memory_limit] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:instance_memory_limit] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_space_quota_definition[:non_basic_services_allowed] })"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:total_services]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:total_routes]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:memory_limit]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:instance_memory_limit]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_space_quota_definition[:non_basic_services_allowed]})"),
                              '1',
                              cc_organization[:name],
                              cc_organization[:guid]
@@ -2247,13 +2247,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([{ label: 'Name',                       tag: 'div', value: cc_space_quota_definition[:name] },
                            { label: 'GUID',                       tag:   nil, value: cc_space_quota_definition[:guid] },
-                           { label: 'Created',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_space_quota_definition[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Updated',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_space_quota_definition[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Total Services',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:total_services] })") },
-                           { label: 'Total Routes',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:total_routes] })") },
-                           { label: 'Memory Limit',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:memory_limit] })") },
-                           { label: 'Instance Memory Limit',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{ cc_space_quota_definition[:instance_memory_limit] })") },
-                           { label: 'Non-Basic Services Allowed', tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_space_quota_definition[:non_basic_services_allowed] })") },
+                           { label: 'Created',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space_quota_definition[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space_quota_definition[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Total Services',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:total_services]})") },
+                           { label: 'Total Routes',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:total_routes]})") },
+                           { label: 'Memory Limit',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:memory_limit]})") },
+                           { label: 'Instance Memory Limit',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:instance_memory_limit]})") },
+                           { label: 'Non-Basic Services Allowed', tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_space_quota_definition[:non_basic_services_allowed]})") },
                            { label: 'Spaces',                     tag:   'a', value: '1' },
                            { label: 'Organization',               tag:   'a', value: cc_organization[:name] }
                           ])
@@ -2287,7 +2287,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_stack[:created_at].to_datetime.rfc3339,
                              cc_stack[:updated_at].to_datetime.rfc3339,
                              '1',
-                             @driver.execute_script("return Format.formatNumber(#{ cc_app[:instances] })"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_app[:instances]})"),
                              cc_stack[:description]
                            ])
         end
@@ -2304,11 +2304,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([{ label: 'Name',                  tag: 'div', value: cc_stack[:name] },
                            { label: 'GUID',                  tag:   nil, value: cc_stack[:guid] },
-                           { label: 'Created',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Updated',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_quota_definition[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Created',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_quota_definition[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_quota_definition[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Description',           tag:   nil, value: cc_stack[:description] },
                            { label: 'Applications',          tag:   'a', value: '1' },
-                           { label: 'Application Instances', tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{ cc_app[:instances] })") }
+                           { label: 'Application Instances', tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{cc_app[:instances]})") }
                           ])
           end
 
@@ -2350,7 +2350,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_event_space[:actor_type],
                              cc_event_space[:actor_name],
                              cc_event_space[:actor],
-                             "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+                             "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
         end
 
@@ -2364,7 +2364,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            check_details([{ label: 'Event Timestamp', tag: 'div', value: @driver.execute_script("return Format.formatDateString(\"#{ cc_event_space[:timestamp].to_datetime.rfc3339 }\")") },
+            check_details([{ label: 'Event Timestamp', tag: 'div', value: @driver.execute_script("return Format.formatDateString(\"#{cc_event_space[:timestamp].to_datetime.rfc3339}\")") },
                            { label: 'Event GUID',      tag:   nil, value: cc_event_space[:guid] },
                            { label: 'Event Type',      tag:   nil, value: cc_event_space[:type] },
                            { label: 'Actee Type',      tag:   nil, value: cc_event_space[:actee_type] },
@@ -2606,8 +2606,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([{ label: 'Service Broker Name',          tag: 'div', value: cc_service_broker[:name] },
                            { label: 'Service Broker GUID',          tag:   nil, value: cc_service_broker[:guid] },
-                           { label: 'Service Broker Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Broker Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Broker Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Broker Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Service Broker Auth Username', tag:   nil, value: cc_service_broker[:auth_username] },
                            { label: 'Service Broker Broker URL',    tag:   nil, value: cc_service_broker[:broker_url] },
                            { label: 'Service Broker Events',        tag:   'a', value: '1' },
@@ -2683,9 +2683,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service[:version],
                              cc_service[:created_at].to_datetime.rfc3339,
                              cc_service[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service[:active] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service[:bindable] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service[:plan_updateable] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:plan_updateable]})"),
                              '1',
                              '1',
                              '1',
@@ -2758,11 +2758,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service GUID',                  tag:   nil, value: cc_service[:guid] },
                            { label: 'Service Unique ID',             tag:   nil, value: cc_service[:unique_id] },
                            { label: 'Service Version',               tag:   nil, value: cc_service[:version] },
-                           { label: 'Service Created',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Updated',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Active',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service[:active] })") },
-                           { label: 'Service Bindable',              tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service[:bindable] })") },
-                           { label: 'Service Plan Updateable',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service[:plan_updateable] })") },
+                           { label: 'Service Created',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Updated',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Active',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
+                           { label: 'Service Bindable',              tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})") },
+                           { label: 'Service Plan Updateable',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:plan_updateable]})") },
                            { label: 'Service Description',           tag:   nil, value: cc_service[:description] },
                            { label: 'Service Tag',                   tag:   nil, value: service_tags_json[0] },
                            { label: 'Service Tag',                   tag:   nil, value: service_tags_json[1] },
@@ -2770,7 +2770,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service Info URL',              tag:   'a', value: cc_service[:info_url] },
                            { label: 'Service Display Name',          tag:   nil, value: service_extra_json['displayName'] },
                            { label: 'Service Provider Display Name', tag:   nil, value: service_extra_json['providerDisplayName'] },
-                           { label: 'Service Icon',                  tag: 'img', value: @driver.execute_script("return Format.formatIconImage(\"#{ service_extra_json['imageUrl'] }\", \"service icon\", \"flot:left;\")").gsub(/'/, "\"").gsub(/[ ]+/, ' ').gsub(/ >/, '>') },
+                           { label: 'Service Icon',                  tag: 'img', value: @driver.execute_script("return Format.formatIconImage(\"#{service_extra_json['imageUrl']}\", \"service icon\", \"flot:left;\")").gsub(/'/, "\"").gsub(/[ ]+/, ' ').gsub(/ >/, '>') },
                            { label: 'Service Long Description',      tag:   nil, value: service_extra_json['longDescription'] },
                            { label: 'Service Documentation URL',     tag:   'a', value: service_extra_json['documentationUrl'] },
                            { label: 'Service Support URL',           tag:   'a', value: service_extra_json['supportUrl'] },
@@ -2782,8 +2782,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service Keys',                  tag:   'a', value: '1' },
                            { label: 'Service Broker Name',           tag:   'a', value: cc_service_broker[:name] },
                            { label: 'Service Broker GUID',           tag:   nil, value: cc_service_broker[:guid] },
-                           { label: 'Service Broker Created',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Broker Updated',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") }
+                           { label: 'Service Broker Created',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Broker Updated',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") }
                           ])
           end
 
@@ -2843,9 +2843,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_plan[:unique_id],
                              cc_service_plan[:created_at].to_datetime.rfc3339,
                              cc_service_plan[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:active] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:public] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:free] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              '1',
                              '1',
                              '1',
@@ -2858,8 +2858,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service[:version],
                              cc_service[:created_at].to_datetime.rfc3339,
                              cc_service[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service[:active] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service[:bindable] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})"),
                              cc_service_broker[:name],
                              cc_service_broker[:guid],
                              cc_service_broker[:created_at].to_datetime.rfc3339,
@@ -2878,7 +2878,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         context 'manage service plans' do
           def manage_service_plan(buttonIndex)
             check_first_row('ServicePlansTable')
-            @driver.find_element(id: "ToolTables_ServicePlansTable_#{ buttonIndex }").click
+            @driver.find_element(id: "ToolTables_ServicePlansTable_#{buttonIndex}").click
             check_operation_result
           end
 
@@ -2947,11 +2947,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_details([{ label: 'Service Plan Name',         tag: 'div', value: cc_service_plan[:name] },
                            { label: 'Service Plan GUID',         tag:   nil, value: cc_service_plan[:guid] },
                            { label: 'Service Plan Unique ID',    tag:   nil, value: cc_service_plan[:unique_id] },
-                           { label: 'Service Plan Created',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Plan Updated',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Plan Active',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:active] })") },
-                           { label: 'Service Plan Public',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:public] })") },
-                           { label: 'Service Plan Free',         tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:free] })") },
+                           { label: 'Service Plan Created',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Plan Updated',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Plan Active',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
+                           { label: 'Service Plan Public',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
+                           { label: 'Service Plan Free',         tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                            { label: 'Service Plan Description',  tag:   nil, value: cc_service_plan[:description] },
                            { label: 'Service Plan Display Name', tag:   nil, value: service_plan_extra_json['displayName'] },
                            { label: 'Service Plan Bullet',       tag:   nil, value: service_plan_extra_json['bullets'][0] },
@@ -2966,14 +2966,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service GUID',              tag:   nil, value: cc_service[:guid] },
                            { label: 'Service Unique ID',         tag:   nil, value: cc_service[:unique_id] },
                            { label: 'Service Version',           tag:   nil, value: cc_service[:version] },
-                           { label: 'Service Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Active',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service[:active] })") },
-                           { label: 'Service Bindable',          tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service[:bindable] })") },
+                           { label: 'Service Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Active',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
+                           { label: 'Service Bindable',          tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})") },
                            { label: 'Service Broker Name',       tag:   'a', value: cc_service_broker[:name] },
                            { label: 'Service Broker GUID',       tag:   nil, value: cc_service_broker[:guid] },
-                           { label: 'Service Broker Created',    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Broker Updated',    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") }
+                           { label: 'Service Broker Created',    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Broker Updated',    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") }
                           ])
           end
 
@@ -3037,9 +3037,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_plan[:unique_id],
                              cc_service_plan[:created_at].to_datetime.rfc3339,
                              cc_service_plan[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:active] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:public] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:free] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              cc_service[:provider],
                              cc_service[:label],
                              cc_service[:guid],
@@ -3047,8 +3047,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service[:version],
                              cc_service[:created_at].to_datetime.rfc3339,
                              cc_service[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service[:active] })"),
-                             @driver.execute_script("return Format.formatBoolean(#{ cc_service[:bindable] })"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})"),
                              cc_service_broker[:name],
                              cc_service_broker[:guid],
                              cc_service_broker[:created_at].to_datetime.rfc3339,
@@ -3095,34 +3095,34 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([{ label: 'Service Plan Visibility GUID',    tag: 'div', value: cc_service_plan_visibility[:guid] },
-                           { label: 'Service Plan Visibility Created', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan_visibility[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Plan Visibility Updated', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan_visibility[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Plan Visibility Created', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan_visibility[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Plan Visibility Updated', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan_visibility[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Service Plan Visibility Events',  tag:   'a', value: '1' },
                            { label: 'Service Plan Name',               tag:   'a', value: cc_service_plan[:name] },
                            { label: 'Service Plan GUID',               tag:   nil, value: cc_service_plan[:guid] },
                            { label: 'Service Plan Unique ID',          tag:   nil, value: cc_service_plan[:unique_id] },
-                           { label: 'Service Plan Created',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Plan Updated',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_plan[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Plan Active',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:active] })") },
-                           { label: 'Service Plan Public',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:public] })") },
-                           { label: 'Service Plan Free',               tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service_plan[:free] })") },
+                           { label: 'Service Plan Created',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Plan Updated',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Plan Active',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
+                           { label: 'Service Plan Public',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
+                           { label: 'Service Plan Free',               tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                            { label: 'Service Provider',                tag:   nil, value: cc_service[:provider] },
                            { label: 'Service Label',                   tag:   'a', value: cc_service[:label] },
                            { label: 'Service GUID',                    tag:   nil, value: cc_service[:guid] },
                            { label: 'Service Unique ID',               tag:   nil, value: cc_service[:unique_id] },
                            { label: 'Service Version',                 tag:   nil, value: cc_service[:version] },
-                           { label: 'Service Created',                 tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Updated',                 tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service[:updated_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Active',                  tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service[:active] })") },
-                           { label: 'Service Bindable',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{ cc_service[:bindable] })") },
+                           { label: 'Service Created',                 tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Updated',                 tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Active',                  tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
+                           { label: 'Service Bindable',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})") },
                            { label: 'Service Broker Name',             tag:   'a', value: cc_service_broker[:name] },
                            { label: 'Service Broker GUID',             tag:   nil, value: cc_service_broker[:guid] },
-                           { label: 'Service Broker Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Service Broker Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_service_broker[:updated_at].to_datetime.rfc3339 }\")") },
+                           { label: 'Service Broker Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Service Broker Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Organization Name',               tag:   'a', value: cc_organization[:name] },
                            { label: 'Organization GUID',               tag:   nil, value: cc_organization[:guid] },
-                           { label: 'Organization Created',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:created_at].to_datetime.rfc3339 }\")") },
-                           { label: 'Organization Updated',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{ cc_organization[:updated_at].to_datetime.rfc3339 }\")") }
+                           { label: 'Organization Created',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_organization[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Organization Updated',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_organization[:updated_at].to_datetime.rfc3339}\")") }
                           ])
           end
 
@@ -3167,19 +3167,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='DEAsTable']/tbody/tr/td"),
                            [
                              nats_dea['host'],
-                             @driver.execute_script("return Format.formatNumber(#{ nats_dea['index'] })"),
+                             @driver.execute_script("return Format.formatNumber(#{nats_dea['index']})"),
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
                              varz_dea['start'],
                              varz_dea['stacks'][0],
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['mem'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]].length })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]].length })"),
-                             @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })"),
-                             @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })")
+                             @driver.execute_script("return Format.formatNumber(#{varz_dea['cpu']})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_dea['mem']})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]].length})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]].length})"),
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_dea['available_memory_ratio'].to_f * 100})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_dea['available_disk_ratio'].to_f * 100})")
                            ])
         end
 
@@ -3198,22 +3198,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([{ label: 'Name',                  tag: nil, value: nats_dea['host'] },
-                           { label: 'Index',                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ nats_dea['index'] })") },
+                           { label: 'Index',                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{nats_dea['index']})") },
                            { label: 'URI',                   tag: 'a', value: nats_dea_varz },
-                           { label: 'Started',               tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_dea['start'] }\")") },
-                           { label: 'Uptime',                tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_dea['uptime'] }\")") },
+                           { label: 'Started',               tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{varz_dea['start']}\")") },
+                           { label: 'Uptime',                tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{varz_dea['uptime']}\")") },
                            { label: 'Stack',                 tag: 'a', value: varz_dea['stacks'][0] },
-                           { label: 'Cores',                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['num_cores'] })") },
-                           { label: 'CPU',                   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu'] })") },
-                           { label: 'CPU Load Avg',          tag: nil, value: "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['cpu_load_avg'].to_f * 100 })") }%" },
-                           { label: 'Memory',                tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['mem'] })") },
-                           { label: 'Total Instances',       tag: 'a', value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'].length })") },
-                           { label: 'Running Instances',     tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'].length })") },
-                           { label: 'Instances Memory Used', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']) })") },
-                           { label: 'Instances Disk Used',   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']) })") },
-                           { label: 'Instances CPU Used',    tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 })") },
-                           { label: 'Memory Free',           tag: nil, value: "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_memory_ratio'].to_f * 100 })") }%" },
-                           { label: 'Disk Free',             tag: nil, value: "#{ @driver.execute_script("return Format.formatNumber(#{ varz_dea['available_disk_ratio'].to_f * 100 })") }%" }
+                           { label: 'Cores',                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['num_cores']})") },
+                           { label: 'CPU',                   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['cpu']})") },
+                           { label: 'CPU Load Avg',          tag: nil, value: "#{@driver.execute_script("return Format.formatNumber(#{varz_dea['cpu_load_avg'].to_f * 100})")}%" },
+                           { label: 'Memory',                tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['mem']})") },
+                           { label: 'Total Instances',       tag: 'a', value: @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'].length})") },
+                           { label: 'Running Instances',     tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'].length})") },
+                           { label: 'Instances Memory Used', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})") },
+                           { label: 'Instances Disk Used',   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})") },
+                           { label: 'Instances CPU Used',    tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100})") },
+                           { label: 'Memory Free',           tag: nil, value: "#{@driver.execute_script("return Format.formatNumber(#{varz_dea['available_memory_ratio'].to_f * 100})")}%" },
+                           { label: 'Disk Free',             tag: nil, value: "#{@driver.execute_script("return Format.formatNumber(#{varz_dea['available_disk_ratio'].to_f * 100})")}%" }
                           ])
           end
 
@@ -3241,12 +3241,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='CloudControllersTable']/tbody/tr/td"),
                            [
                              nats_cloud_controller['host'],
-                             @driver.execute_script("return Format.formatNumber(#{ nats_cloud_controller['index'] })"),
+                             @driver.execute_script("return Format.formatNumber(#{nats_cloud_controller['index']})"),
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
                              varz_cloud_controller['start'],
-                             @driver.execute_script("return Format.formatNumber(#{ varz_cloud_controller['num_cores'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_cloud_controller['cpu'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_cloud_controller['mem'] })")
+                             @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['num_cores']})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['cpu']})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['mem']})")
                            ])
         end
 
@@ -3258,15 +3258,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             select_first_row
             check_details([{ label: 'Name',             tag: nil, value: nats_cloud_controller['host'] },
-                           { label: 'Index',            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ nats_cloud_controller['index'] })") },
+                           { label: 'Index',            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{nats_cloud_controller['index']})") },
                            { label: 'URI',              tag: 'a', value: nats_cloud_controller_varz },
-                           { label: 'Started',          tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
-                           { label: 'Uptime',           tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_cloud_controller['uptime'] }\")") },
-                           { label: 'Cores',            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_cloud_controller['num_cores'] })") },
-                           { label: 'CPU',              tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_cloud_controller['cpu'] })") },
-                           { label: 'Memory',           tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_cloud_controller['mem'] })") },
-                           { label: 'Requests',         tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_cloud_controller['vcap_sinatra']['requests']['completed'] })") },
-                           { label: 'Pending Requests', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_cloud_controller['vcap_sinatra']['requests']['outstanding'] })") }
+                           { label: 'Started',          tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{varz_cloud_controller['start']}\")") },
+                           { label: 'Uptime',           tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{varz_cloud_controller['uptime']}\")") },
+                           { label: 'Cores',            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['num_cores']})") },
+                           { label: 'CPU',              tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['cpu']})") },
+                           { label: 'Memory',           tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['mem']})") },
+                           { label: 'Requests',         tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['vcap_sinatra']['requests']['completed']})") },
+                           { label: 'Pending Requests', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['vcap_sinatra']['requests']['outstanding']})") }
                           ])
           end
         end
@@ -3286,10 +3286,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='HealthManagersTable']/tbody/tr/td"),
                            [
                              nats_health_manager['host'],
-                             @driver.execute_script("return Format.formatNumber(#{ nats_health_manager['index'] })"),
+                             @driver.execute_script("return Format.formatNumber(#{nats_health_manager['index']})"),
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_health_manager['numCPUS'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_health_manager['memoryStats']['numBytesAllocated'] })")
+                             @driver.execute_script("return Format.formatNumber(#{varz_health_manager['numCPUS']})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_health_manager['memoryStats']['numBytesAllocated']})")
                            ])
         end
 
@@ -3301,28 +3301,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             select_first_row
             check_details([{ label: 'Name',                                         tag: nil, value: nats_health_manager['host'] },
-                           { label: 'Index',                                        tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ nats_health_manager['index'] })") },
+                           { label: 'Index',                                        tag: nil, value: @driver.execute_script("return Format.formatNumber(#{nats_health_manager['index']})") },
                            { label: 'URI',                                          tag: 'a', value: nats_health_manager_varz },
-                           { label: 'Cores',                                        tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager['numCPUS'] })") },
-                           { label: 'Memory',                                       tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager['memoryStats']['numBytesAllocated'] })") },
-                           { label: 'Actual State Listener Store Usage Percentage', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('ActualStateListenerStoreUsagePercentage') })") },
-                           { label: 'Desired Apps',                                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('NumberOfDesiredApps') })") },
-                           { label: 'Desired Apps Pending Staging',                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('NumberOfDesiredAppsPendingStaging') })") },
-                           { label: 'Undesired Running Apps',                       tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('NumberOfUndesiredRunningApps') })") },
-                           { label: 'Apps With All Instances Reporting',            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('NumberOfAppsWithAllInstancesReporting') })") },
-                           { label: 'Apps With Missing Instances',                  tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('NumberOfAppsWithMissingInstances') })") },
-                           { label: 'Desired Instances',                            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('NumberOfDesiredInstances') })") },
-                           { label: 'Running Instances',                            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('NumberOfRunningInstances') })") },
-                           { label: 'Crashed Instances',                            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('NumberOfCrashedInstances') })") },
-                           { label: 'Desired State Sync Time in Milliseconds',      tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('DesiredStateSyncTimeInMilliseconds') })") },
-                           { label: 'Received Heartbeats',                          tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('ReceivedHeartbeats') })") },
-                           { label: 'Saved Heartbeats',                             tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('SavedHeartbeats') })") },
-                           { label: 'Start Crashed',                                tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('StartCrashed') })") },
-                           { label: 'Start Evacuating',                             tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('StartEvacuating') })") },
-                           { label: 'Start Missing',                                tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('StartMissing') })") },
-                           { label: 'Stop Duplicate',                               tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('StopDuplicate') })") },
-                           { label: 'Stop Extra',                                   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('StopExtra') })") },
-                           { label: 'Stop Evacuation Complete',                     tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_health_manager_metric('StopEvacuationComplete') })") }
+                           { label: 'Cores',                                        tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager['numCPUS']})") },
+                           { label: 'Memory',                                       tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager['memoryStats']['numBytesAllocated']})") },
+                           { label: 'Actual State Listener Store Usage Percentage', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('ActualStateListenerStoreUsagePercentage')})") },
+                           { label: 'Desired Apps',                                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('NumberOfDesiredApps')})") },
+                           { label: 'Desired Apps Pending Staging',                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('NumberOfDesiredAppsPendingStaging')})") },
+                           { label: 'Undesired Running Apps',                       tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('NumberOfUndesiredRunningApps')})") },
+                           { label: 'Apps With All Instances Reporting',            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('NumberOfAppsWithAllInstancesReporting')})") },
+                           { label: 'Apps With Missing Instances',                  tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('NumberOfAppsWithMissingInstances')})") },
+                           { label: 'Desired Instances',                            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('NumberOfDesiredInstances')})") },
+                           { label: 'Running Instances',                            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('NumberOfRunningInstances')})") },
+                           { label: 'Crashed Instances',                            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('NumberOfCrashedInstances')})") },
+                           { label: 'Desired State Sync Time in Milliseconds',      tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('DesiredStateSyncTimeInMilliseconds')})") },
+                           { label: 'Received Heartbeats',                          tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('ReceivedHeartbeats')})") },
+                           { label: 'Saved Heartbeats',                             tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('SavedHeartbeats')})") },
+                           { label: 'Start Crashed',                                tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('StartCrashed')})") },
+                           { label: 'Start Evacuating',                             tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('StartEvacuating')})") },
+                           { label: 'Start Missing',                                tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('StartMissing')})") },
+                           { label: 'Stop Duplicate',                               tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('StopDuplicate')})") },
+                           { label: 'Stop Extra',                                   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('StopExtra')})") },
+                           { label: 'Stop Evacuation Complete',                     tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('StopEvacuationComplete')})") }
                           ])
           end
         end
@@ -3351,14 +3351,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='GatewaysTable']/tbody/tr/td"),
                            [
                              nats_provisioner['type'][0..-13],
-                             @driver.execute_script("return Format.formatNumber(#{ nats_provisioner['index'] })"),
+                             @driver.execute_script("return Format.formatNumber(#{nats_provisioner['index']})"),
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
                              varz_provisioner['start'],
                              varz_provisioner['config']['service'][:description],
-                             @driver.execute_script("return Format.formatNumber(#{ varz_provisioner['cpu'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_provisioner['mem'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_provisioner['nodes'].length })"),
-                             @driver.execute_script("return Format.formatNumber(#{ @capacity })")
+                             @driver.execute_script("return Format.formatNumber(#{varz_provisioner['cpu']})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_provisioner['mem']})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_provisioner['nodes'].length})"),
+                             @driver.execute_script("return Format.formatNumber(#{@capacity})")
                            ])
         end
 
@@ -3373,16 +3373,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([{ label: 'Name',               tag: nil, value: nats_provisioner['type'][0..-13] },
-                           { label: 'Index',              tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ nats_provisioner['index'] })") },
+                           { label: 'Index',              tag: nil, value: @driver.execute_script("return Format.formatNumber(#{nats_provisioner['index']})") },
                            { label: 'URI',                tag: 'a', value: nats_provisioner_varz },
                            { label: 'Supported Versions', tag: nil, value: varz_provisioner['config']['service']['supported_versions'][0] },
                            { label: 'Description',        tag: nil, value: varz_provisioner['config']['service']['description'] },
-                           { label: 'Started',            tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_provisioner['start'] }\")") },
-                           { label: 'Uptime',             tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_provisioner['uptime'] }\")") },
-                           { label: 'Cores',              tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_provisioner['num_cores'] })") },
-                           { label: 'CPU',                tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_provisioner['cpu'] })") },
-                           { label: 'Memory',             tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_provisioner['mem'] })") },
-                           { label: 'Available Capacity', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ @capacity })") }
+                           { label: 'Started',            tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{varz_provisioner['start']}\")") },
+                           { label: 'Uptime',             tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{varz_provisioner['uptime']}\")") },
+                           { label: 'Cores',              tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_provisioner['num_cores']})") },
+                           { label: 'CPU',                tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_provisioner['cpu']})") },
+                           { label: 'Memory',             tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_provisioner['mem']})") },
+                           { label: 'Available Capacity', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{@capacity})") }
                           ])
           end
 
@@ -3397,7 +3397,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_table_data(@driver.find_elements(xpath: "//table[@id='GatewaysNodesTable']/tbody/tr/td"),
                              [
                                varz_provisioner['nodes'].keys[0],
-                               @driver.execute_script("return Format.formatNumber(#{ varz_provisioner['nodes'][varz_provisioner['nodes'].keys[0]]['available_capacity'] })")
+                               @driver.execute_script("return Format.formatNumber(#{varz_provisioner['nodes'][varz_provisioner['nodes'].keys[0]]['available_capacity']})")
                              ])
           end
 
@@ -3421,15 +3421,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='RoutersTable']/tbody/tr/td"),
                            [
                              nats_router['host'],
-                             @driver.execute_script("return Format.formatNumber(#{ nats_router['index'] })"),
+                             @driver.execute_script("return Format.formatNumber(#{nats_router['index']})"),
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
                              varz_router['start'],
-                             @driver.execute_script("return Format.formatNumber(#{ varz_router['num_cores'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_router['cpu'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_router['mem'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_router['droplets'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_router['requests'] })"),
-                             @driver.execute_script("return Format.formatNumber(#{ varz_router['bad_requests'] })")
+                             @driver.execute_script("return Format.formatNumber(#{varz_router['num_cores']})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_router['cpu']})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_router['mem']})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_router['droplets']})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_router['requests']})"),
+                             @driver.execute_script("return Format.formatNumber(#{varz_router['bad_requests']})")
                            ])
         end
 
@@ -3444,21 +3444,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([{ label: 'Name',          tag: nil, value: nats_router['host'] },
-                           { label: 'Index',         tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ nats_router['index'] })") },
+                           { label: 'Index',         tag: nil, value: @driver.execute_script("return Format.formatNumber(#{nats_router['index']})") },
                            { label: 'URI',           tag: 'a', value: nats_router_varz },
-                           { label: 'Started',       tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_router['start'] }\")") },
-                           { label: 'Uptime',        tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{ varz_router['uptime'] }\")") },
-                           { label: 'Cores',         tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_router['num_cores'] })") },
-                           { label: 'CPU',           tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_router['cpu'] })") },
-                           { label: 'Memory',        tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_router['mem'] })") },
-                           { label: 'Droplets',      tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_router['droplets'] })") },
-                           { label: 'Requests',      tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_router['requests'] })") },
-                           { label: 'Bad Requests',  tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_router['bad_requests'] })") },
-                           { label: '2XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_router['responses_2xx'] })") },
-                           { label: '3XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_router['responses_3xx'] })") },
-                           { label: '4XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_router['responses_4xx'] })") },
-                           { label: '5XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_router['responses_5xx'] })") },
-                           { label: 'XXX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ varz_router['responses_xxx'] })") }
+                           { label: 'Started',       tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{varz_router['start']}\")") },
+                           { label: 'Uptime',        tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{varz_router['uptime']}\")") },
+                           { label: 'Cores',         tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['num_cores']})") },
+                           { label: 'CPU',           tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['cpu']})") },
+                           { label: 'Memory',        tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['mem']})") },
+                           { label: 'Droplets',      tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['droplets']})") },
+                           { label: 'Requests',      tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['requests']})") },
+                           { label: 'Bad Requests',  tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['bad_requests']})") },
+                           { label: '2XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_2xx']})") },
+                           { label: '3XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_3xx']})") },
+                           { label: '4XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_4xx']})") },
+                           { label: '5XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_5xx']})") },
+                           { label: 'XXX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_xxx']})") }
                           ])
           end
 
@@ -3474,9 +3474,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              [
                                cc_app[:name],
                                cc_app[:guid],
-                               @driver.execute_script("return Format.formatNumber(#{ varz_router['top10_app_requests'][0]['rpm'] })"),
-                               @driver.execute_script("return Format.formatNumber(#{ varz_router['top10_app_requests'][0]['rps'] })"),
-                               "#{ cc_organization[:name] }/#{ cc_space[:name] }"
+                               @driver.execute_script("return Format.formatNumber(#{varz_router['top10_app_requests'][0]['rpm']})"),
+                               @driver.execute_script("return Format.formatNumber(#{varz_router['top10_app_requests'][0]['rps']})"),
+                               "#{cc_organization[:name]}/#{cc_space[:name]}"
                              ])
           end
 
@@ -3501,7 +3501,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            [
                              nats_cloud_controller['host'],
                              nats_cloud_controller['type'],
-                             @driver.execute_script("return Format.formatNumber(#{ nats_cloud_controller['index'] })"),
+                             @driver.execute_script("return Format.formatNumber(#{nats_cloud_controller['index']})"),
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
                              varz_cloud_controller['start']
                            ])
@@ -3520,8 +3520,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             select_first_row
             check_details([{  label: 'Name',    tag: nil, value: nats_cloud_controller['host'] },
                            {  label: 'Type',    tag: nil, value: nats_cloud_controller['type'] },
-                           {  label: 'Index',   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{ nats_cloud_controller['index'] })") },
-                           {  label: 'Started', tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{ varz_cloud_controller['start'] }\")") },
+                           {  label: 'Index',   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{nats_cloud_controller['index']})") },
+                           {  label: 'Started', tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{varz_cloud_controller['start']}\")") },
                            {  label: 'URI',     tag: 'a', value: nats_cloud_controller_varz },
                            {  label: 'State',   tag: nil, value: @driver.execute_script('return Constants.STATUS__RUNNING') }
                           ])
@@ -3547,9 +3547,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           columns = row.find_elements(tag_name: 'td')
           expect(columns.length).to eq(3)
           expect(columns[0].text).to eq(log_file_displayed)
-          expect(columns[1].text).to eq(@driver.execute_script("return Format.formatNumber(#{ log_file_displayed_contents_length })"))
+          expect(columns[1].text).to eq(@driver.execute_script("return Format.formatNumber(#{log_file_displayed_contents_length})"))
           # TODO: Cannot check date due to web_helper stub for AdminUI::Utils.time_in_milliseconds
-          # expect(columns[2].text).to eq(@driver.execute_script("return Format.formatString(\"#{ log_file_displayed_modified.utc.to_datetime.rfc3339 }\")"))
+          # expect(columns[2].text).to eq(@driver.execute_script("return Format.formatString(\"#{log_file_displayed_modified.utc.to_datetime.rfc3339}\")"))
           expect(@driver.find_element(id: 'LogContainer').displayed?).to be(true)
           expect(@driver.find_element(id: 'LogLink').text).to eq(columns[0].text)
           expect(@driver.find_element(id: 'LogContents').text).to eq(log_file_displayed_contents)

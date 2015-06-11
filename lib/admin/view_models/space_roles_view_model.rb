@@ -62,14 +62,14 @@ module AdminUI
 
         organization = organization_hash[space[:organization_id]]
 
-        key = "#{ space[:guid] }/#{ path_role }/#{ user_cc[:guid] }"
+        key = "#{space[:guid]}/#{path_role}/#{user_cc[:guid]}"
 
         row.push(key)
         row.push(space[:name])
         row.push(space[:guid])
 
         if organization
-          row.push("#{ organization[:name] }/#{ space[:name] }")
+          row.push("#{organization[:name]}/#{space[:name]}")
         else
           row.push(nil)
         end

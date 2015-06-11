@@ -103,7 +103,7 @@ module SFTPHelper
 
     allow_any_instance_of(::Net::SFTP::Protocol::V01::Attributes).to receive(:name) do
       @sftp_attributes_name = true
-      "#{ file_name }#{ file_extension }"
+      "#{file_name}#{file_extension}"
     end
 
     allow_any_instance_of(::Net::SFTP::Protocol::V01::Attributes).to receive(:size) do
@@ -115,14 +115,14 @@ module SFTPHelper
       # We have to make sure if_file is now true
       is_file = true
       @sftp_dir_entries = true
-      [MockEntry.new("#{ file_name }#{ file_extension }")]
+      [MockEntry.new("#{file_name}#{file_extension}")]
     end
 
     allow_any_instance_of(::Net::SFTP::Operations::Dir).to receive(:glob) do
       # We have to make sure if_file is now true
       is_file = true
       @sftp_dir_glob = true
-      [MockEntry.new("#{ file_name }#{ file_extension }")]
+      [MockEntry.new("#{file_name}#{file_extension}")]
     end
   end
 end

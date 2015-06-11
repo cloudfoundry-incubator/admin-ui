@@ -56,7 +56,7 @@ module VARZHelper
   end
 
   def varz_dea_app_instance
-    "#{ cc_app[:guid] }_instance0"
+    "#{cc_app[:guid]}_instance0"
   end
 
   def varz_dea
@@ -83,7 +83,7 @@ module VARZHelper
         {
           'application_id'          => cc_app[:guid],
           'application_name'        => cc_app[:name],
-          'application_uris'        => ["#{ cc_route[:host] }.#{ cc_domain[:name]}#{ cc_route[:path] }"],
+          'application_uris'        => ["#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}"],
           'computed_pcpu'           => 0.12118232960961232,
           'droplet_sha1'            => cc_app[:droplet_hash],
           'limits'                  =>

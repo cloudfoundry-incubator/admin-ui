@@ -68,7 +68,7 @@ module AdminUI
       result['items'] = {}
 
       begin
-        @logger.debug("[#{ @config.nats_discovery_interval } second interval] Starting NATS discovery...")
+        @logger.debug("[#{@config.nats_discovery_interval} second interval] Starting NATS discovery...")
 
         @start_time = Time.now.to_f
 
@@ -101,7 +101,7 @@ module AdminUI
       rescue => error
         result['connected'] = false
 
-        @logger.debug("Error during NATS discovery: #{ error.inspect }")
+        @logger.debug("Error during NATS discovery: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
       end
 
@@ -126,11 +126,11 @@ module AdminUI
               @logger.debug('Error during NATS parse data: parsed data not a hash')
             end
           rescue => error
-            @logger.debug("Error during NATS parse data: #{ error.inspect }")
+            @logger.debug("Error during NATS parse data: #{error.inspect}")
             @logger.debug(error.backtrace.join("\n"))
           end
         rescue => error
-          @logger.debug("Error during NATS read data: #{ error.inspect }")
+          @logger.debug("Error during NATS read data: #{error.inspect}")
           @logger.debug(error.backtrace.join("\n"))
         end
       end
@@ -143,7 +143,7 @@ module AdminUI
         file.write(Yajl::Encoder.encode(@cache, pretty: true))
       end
     rescue => error
-      @logger.debug("Error during NATS write data: #{ error.inspect }")
+      @logger.debug("Error during NATS write data: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
     end
 
@@ -184,7 +184,7 @@ module AdminUI
 
         write_cache
       rescue => error
-        @logger.debug("Error during NATS save data: #{ error.inspect }")
+        @logger.debug("Error during NATS save data: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
       end
     end
@@ -195,7 +195,7 @@ module AdminUI
         begin
           @email.send_email(disconnected)
         rescue => error
-          @logger.debug("Error during send email: #{ error.inspect }")
+          @logger.debug("Error during send email: #{error.inspect}")
           @logger.debug(error.backtrace.join("\n"))
         end
       end
@@ -210,19 +210,19 @@ module AdminUI
       else
         component_entry = component_entry(type, uri)
         if component_entry['count'] < @config.component_connection_retries
-          @logger.debug("The #{ type } component #{ uri } is not responding, its status will be checked again next refresh")
+          @logger.debug("The #{type} component #{uri} is not responding, its status will be checked again next refresh")
         elsif component_entry['count'] == @config.component_connection_retries
-          @logger.debug("The #{ type } component #{ uri } has been recognized as disconnected")
+          @logger.debug("The #{type} component #{uri} has been recognized as disconnected")
           disconnectedList.push(component_entry)
         else
-          @logger.debug("The #{ type } component #{ uri } is still not responding")
+          @logger.debug("The #{type} component #{uri} is still not responding")
         end
       end
     end
 
     def monitored?(component)
       @config.monitored_components.each do |type|
-        return true if component =~ /#{ type }/ || type.casecmp('ALL') == 0
+        return true if component =~ /#{type}/ || type.casecmp('ALL') == 0
       end
       false
     end
@@ -237,13 +237,13 @@ module AdminUI
     end
 
     def item_uri(item)
-      "http://#{ item['host'] }/varz"
+      "http://#{item['host']}/varz"
     end
 
     # Determine key for comparison.  Type and index are insufficient.  Host must be included (without port) as well.
     def item_key(uri_string, item)
       uri = URI.parse(uri_string)
-      "#{ item['type'] }:#{ item['index'] }:#{ uri.host }"
+      "#{item['type']}:#{item['index']}:#{uri.host}"
     end
   end
 end

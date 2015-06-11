@@ -48,7 +48,7 @@ module AdminUI
 
         if organization
           if space
-            row.push("#{ organization[:name] }/#{ space[:name] }")
+            row.push("#{organization[:name]}/#{space[:name]}")
           else
             row.push(organization[:name])
           end

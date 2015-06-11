@@ -7,7 +7,7 @@ module AdminUI
     def items
       do_items
     rescue => error
-      @logger.debug("Error within #{ self.class.name }: #{ error.inspect }")
+      @logger.debug("Error within #{self.class.name}: #{error.inspect}")
       @logger.debug(error.backtrace.join("\n"))
       result
     end
@@ -22,7 +22,7 @@ module AdminUI
     # }
     # Any raised exception will be logged and treated as not connected with no results
     def do_items
-      fail "do_items method must be overridden by subclass #{ self.class.name }"
+      fail "do_items method must be overridden by subclass #{self.class.name}"
     end
 
     # Useful method for subclasses to return items object

@@ -11,7 +11,7 @@ describe AdminUI::Admin do
   include ThreadHelper
 
   let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri) { "sqlite://#{ ccdb_file }" }
+  let(:ccdb_uri) { "sqlite://#{ccdb_file}" }
   let(:certificate_file_path)   { '/tmp/admin_ui_server.crt' }
   let(:certificate_request_file_path) { '/tmp/admin_ui_server.csr' }
   let(:cloud_controller_uri) { 'http://api.localhost' }
@@ -26,12 +26,12 @@ describe AdminUI::Admin do
   let(:secured_client_connection) { false }
   let(:stats_file) { '/tmp/admin_ui_stats.json' }
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri)  { "sqlite://#{ uaadb_file }" }
+  let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
   let(:config) do
     { ccdb_uri:                  ccdb_uri,
       cloud_controller_uri:      cloud_controller_uri,
       data_file:                 data_file,
-      db_uri:                    "sqlite://#{ db_file }",
+      db_uri:                    "sqlite://#{db_file}",
       log_file:                  log_file,
       mbus:                      'nats://nats:c1oudc0w@localhost:14222',
       port:                      port,
@@ -84,13 +84,13 @@ describe AdminUI::Admin do
 
     kill_threads
 
-    Process.wait(Process.spawn({}, "rm -fr #{ ccdb_file } #{ data_file } #{ db_file } #{ log_file } #{ stats_file } #{ uaadb_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{log_file} #{stats_file} #{uaadb_file}"))
   end
 
   def generate_certificate
-    system "openssl genrsa -des3 -out #{ private_key_file_path } -3 -passout pass:#{private_key_pass_phrase} 1024 > /dev/null 2>&1"
-    system "openssl req -new -key #{ private_key_file_path } -out #{ certificate_request_file_path } -passin pass:#{ private_key_pass_phrase } -config #{ openssl_config } > /dev/null 2>&1"
-    system "openssl x509 -req -days 365 -in #{ certificate_request_file_path } -signkey #{ private_key_file_path } -out #{ certificate_file_path } -passin pass:#{ private_key_pass_phrase } > /dev/null 2>&1"
+    system "openssl genrsa -des3 -out #{private_key_file_path} -3 -passout pass:#{private_key_pass_phrase} 1024 > /dev/null 2>&1"
+    system "openssl req -new -key #{private_key_file_path} -out #{certificate_request_file_path} -passin pass:#{private_key_pass_phrase} -config #{openssl_config} > /dev/null 2>&1"
+    system "openssl x509 -req -days 365 -in #{certificate_request_file_path} -signkey #{private_key_file_path} -out #{certificate_file_path} -passin pass:#{private_key_pass_phrase} > /dev/null 2>&1"
   end
 
   def create_http
@@ -108,7 +108,7 @@ describe AdminUI::Admin do
     uri = URI.parse('/')
     loop do
       path  = uri.path
-      path += "?#{ uri.query }" unless uri.query.nil?
+      path += "?#{uri.query}" unless uri.query.nil?
 
       request = Net::HTTP::Get.new(path)
       request['Cookie'] = cookie
@@ -709,7 +709,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common manage service plan' do
       it 'returns failure code due to disconnection' do
-        response = put('/service_plans/service_plan1', '{"public": true }')
+        response = put('/service_plans/service_plan1', '{"public":true}')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end

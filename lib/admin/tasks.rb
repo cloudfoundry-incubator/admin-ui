@@ -15,7 +15,7 @@ module AdminUI
     def new_dea
       script_path = File.join(File.dirname(__FILE__), 'scripts', 'newDEA.sh')
 
-      launch_command("#{ script_path }")
+      launch_command("#{script_path}")
     end
 
     def tasks
@@ -107,7 +107,7 @@ module AdminUI
             update_task!(task, type, line)
           end
         rescue => error
-          @logger.debug("Error during handle_task_output!: #{ error.inspect }")
+          @logger.debug("Error during handle_task_output!: #{error.inspect}")
           @logger.debug(error.backtrace.join("\n"))
         end
       end

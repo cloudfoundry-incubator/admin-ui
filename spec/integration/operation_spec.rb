@@ -8,15 +8,15 @@ describe AdminUI::Operation, type: :integration do
   include VARZHelper
 
   let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri) { "sqlite://#{ ccdb_file }" }
+  let(:ccdb_uri) { "sqlite://#{ccdb_file}" }
   let(:data_file) { '/tmp/admin_ui_data.json' }
   let(:db_file) { '/tmp/admin_ui_store.db' }
-  let(:db_uri) { "sqlite://#{ db_file }" }
+  let(:db_uri) { "sqlite://#{db_file}" }
   let(:insert_second_quota_definition) { false }
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(log_file) }
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri) { "sqlite://#{ uaadb_file }" }
+  let(:uaadb_uri) { "sqlite://#{uaadb_file}" }
   let(:config) do
     AdminUI::Config.load(ccdb_uri:                            ccdb_uri,
                          cloud_controller_discovery_interval: 10,
@@ -32,7 +32,7 @@ describe AdminUI::Operation, type: :integration do
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
 
   def cleanup_files
-    Process.wait(Process.spawn({}, "rm -fr #{ ccdb_file } #{ data_file } #{ db_file } #{ log_file } #{ uaadb_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{log_file} #{uaadb_file}"))
   end
 
   before do
@@ -118,7 +118,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(100_004)
           expect(exception.cf_error_code).to eq('CF-AppNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The app name could not be found: #{ cc_app[:guid] }")
+          expect(exception.message).to eq("The app name could not be found: #{cc_app[:guid]}")
         end
 
         it 'fails starting deleted app' do
@@ -167,7 +167,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(100_004)
           expect(exception.cf_error_code).to eq('CF-AppNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The app name could not be found: #{ cc_app[:guid] }")
+          expect(exception.message).to eq("The app name could not be found: #{cc_app[:guid]}")
         end
 
         it 'fails deleting instance of deleted app' do
@@ -207,7 +207,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(130_002)
           expect(exception.cf_error_code).to eq('CF-DomainNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The domain could not be found: #{ cc_domain[:guid] }")
+          expect(exception.message).to eq("The domain could not be found: #{cc_domain[:guid]}")
         end
 
         it 'fails deleting deleted domain' do
@@ -227,11 +227,11 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def create_organization
-        operation.create_organization("{\"name\":\"#{ cc_organization2[:name] }\"}")
+        operation.create_organization("{\"name\":\"#{cc_organization2[:name]}\"}")
       end
 
       def set_organization_quota
-        operation.manage_organization(cc_organization[:guid], "{\"quota_definition_guid\":\"#{ cc_quota_definition2[:guid] }\"}")
+        operation.manage_organization(cc_organization[:guid], "{\"quota_definition_guid\":\"#{cc_quota_definition2[:guid]}\"}")
       end
 
       def activate_organization
@@ -291,7 +291,7 @@ describe AdminUI::Operation, type: :integration do
             expect(exception.cf_code).to eq(30_003)
             expect(exception.cf_error_code).to eq('CF-OrganizationNotFound')
             expect(exception.http_code).to eq(404)
-            expect(exception.message).to eq("The organization could not be found: #{ cc_organization[:guid] }")
+            expect(exception.message).to eq("The organization could not be found: #{cc_organization[:guid]}")
           end
 
           context 'fails setting quota for a deleted organization' do
@@ -327,7 +327,7 @@ describe AdminUI::Operation, type: :integration do
             expect(exception.cf_code).to eq(30_002)
             expect(exception.cf_error_code).to eq('CF-OrganizationNameTaken')
             expect(exception.http_code).to eq(400)
-            expect(exception.message).to eq("The organization name is taken: #{ cc_organization2[:name] }")
+            expect(exception.message).to eq("The organization name is taken: #{cc_organization2[:name]}")
           end
 
           it 'failed creating created organization' do
@@ -379,7 +379,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(30_003)
           expect(exception.cf_error_code).to eq('CF-OrganizationNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The organization could not be found: #{ cc_organization[:guid] }")
+          expect(exception.message).to eq("The organization could not be found: #{cc_organization[:guid]}")
         end
 
         it 'failed deleting organization auditor role due to deleted organization' do
@@ -423,7 +423,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(240_001)
           expect(exception.cf_error_code).to eq('CF-QuotaDefinitionNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("Quota Definition could not be found: #{ cc_quota_definition[:guid] }")
+          expect(exception.message).to eq("Quota Definition could not be found: #{cc_quota_definition[:guid]}")
         end
 
         it 'fails deleting deleted quota definition' do
@@ -455,7 +455,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(210_002)
           expect(exception.cf_error_code).to eq('CF-RouteNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The route could not be found: #{ cc_route[:guid] }")
+          expect(exception.message).to eq("The route could not be found: #{cc_route[:guid]}")
         end
 
         it 'fails deleting deleted route' do
@@ -495,7 +495,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(120_003)
           expect(exception.cf_error_code).to eq('CF-ServiceNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The service could not be found: #{ cc_service[:guid] }")
+          expect(exception.message).to eq("The service could not be found: #{cc_service[:guid]}")
         end
 
         it 'fails deleting deleted service' do
@@ -531,7 +531,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(90_004)
           expect(exception.cf_error_code).to eq('CF-ServiceBindingNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The service binding could not be found: #{ cc_service_binding[:guid] }")
+          expect(exception.message).to eq("The service binding could not be found: #{cc_service_binding[:guid]}")
         end
 
         it 'fails deleting deleted service binding' do
@@ -603,7 +603,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(60_004)
           expect(exception.cf_error_code).to eq('CF-ServiceInstanceNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The service instance could not be found: #{ cc_service_instance[:guid] }")
+          expect(exception.message).to eq("The service instance could not be found: #{cc_service_instance[:guid]}")
         end
 
         it 'fails deleting deleted service instance' do
@@ -639,7 +639,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(360_003)
           expect(exception.cf_error_code).to eq('CF-ServiceKeyNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The service key could not be found: #{ cc_service_key[:guid] }")
+          expect(exception.message).to eq("The service key could not be found: #{cc_service_key[:guid]}")
         end
 
         it 'fails deleting deleted service key' do
@@ -658,11 +658,11 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def make_service_plan_public
-        operation.manage_service_plan(cc_service_plan[:guid], '{"public": true }')
+        operation.manage_service_plan(cc_service_plan[:guid], '{"public":true}')
       end
 
       def make_service_plan_private
-        operation.manage_service_plan(cc_service_plan[:guid], '{"public": false }')
+        operation.manage_service_plan(cc_service_plan[:guid], '{"public":false}')
       end
 
       def delete_service_plan
@@ -693,7 +693,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(110_003)
           expect(exception.cf_error_code).to eq('CF-ServicePlanNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The service plan could not be found: #{ cc_service_plan[:guid] }")
+          expect(exception.message).to eq("The service plan could not be found: #{cc_service_plan[:guid]}")
         end
 
         it 'fails making service plan public when service plan is deleted' do
@@ -733,7 +733,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(260_003)
           expect(exception.cf_error_code).to eq('CF-ServicePlanVisibilityNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The service plan visibility could not be found: #{ cc_service_plan[:guid] }")
+          expect(exception.message).to eq("The service plan visibility could not be found: #{cc_service_plan[:guid]}")
         end
 
         it 'fails deleting deleted service plan visibility' do
@@ -773,7 +773,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(40_004)
           expect(exception.cf_error_code).to eq('CF-SpaceNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The app space could not be found: #{ cc_space[:guid] }")
+          expect(exception.message).to eq("The app space could not be found: #{cc_space[:guid]}")
         end
 
         it 'fails deleting deleted space' do
@@ -809,7 +809,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(310_007)
           expect(exception.cf_error_code).to eq('CF-SpaceQuotaDefinitionNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("Space Quota Definition could not be found: #{ cc_space_quota_definition[:guid] }")
+          expect(exception.message).to eq("Space Quota Definition could not be found: #{cc_space_quota_definition[:guid]}")
         end
 
         it 'fails deleting deleted space quota definition' do
@@ -851,7 +851,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(310_007)
           expect(exception.cf_error_code).to eq('CF-SpaceQuotaDefinitionNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("Space Quota Definition could not be found: #{ cc_space_quota_definition[:guid] }")
+          expect(exception.message).to eq("Space Quota Definition could not be found: #{cc_space_quota_definition[:guid]}")
         end
 
         context 'fails setting space quota for a deleted space quota definition' do
@@ -901,7 +901,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(40_004)
           expect(exception.cf_error_code).to eq('CF-SpaceNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The app space could not be found: #{ cc_space[:guid] }")
+          expect(exception.message).to eq("The app space could not be found: #{cc_space[:guid]}")
         end
 
         it 'failed deleting space auditor role due to deleted space' do

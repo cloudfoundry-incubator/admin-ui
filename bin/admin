@@ -38,7 +38,7 @@ end.parse!
 begin
   @config = YAML.load_file(config_file)
 rescue => exception
-  puts "Can't load config file: #{ exception }"
+  puts "Can't load config file: #{exception}"
   exit 1
 end
 

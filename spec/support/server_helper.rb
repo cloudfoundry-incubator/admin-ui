@@ -16,11 +16,11 @@ shared_context :server_context do
   include ViewModelsHelper
 
   let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri) { "sqlite://#{ ccdb_file }" }
+  let(:ccdb_uri) { "sqlite://#{ccdb_file}" }
   let(:cloud_controller_uri) { 'http://api.localhost' }
   let(:data_file) { '/tmp/admin_ui_data.json' }
   let(:db_file) { '/tmp/admin_ui_store.db' }
-  let(:db_uri) { "sqlite://#{ db_file }" }
+  let(:db_uri) { "sqlite://#{db_file}" }
   let(:event_type) { 'space' }
   let(:host) { 'localhost' }
   let(:insert_second_quota_definition) { false }
@@ -36,7 +36,7 @@ shared_context :server_context do
   let(:table_page_size) { 10 }
   let(:tasks_refresh_interval) { 6000 }
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri) { "sqlite://#{ uaadb_file }" }
+  let(:uaadb_uri) { "sqlite://#{uaadb_file}" }
   let(:config) do
     {
       ccdb_uri:                            ccdb_uri,
@@ -60,7 +60,7 @@ shared_context :server_context do
   end
 
   def cleanup_files
-    Process.wait(Process.spawn({}, "rm -fr #{ ccdb_file } #{ data_file } #{ db_file } #{ log_file } #{ log_file_displayed } #{ uaadb_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{log_file} #{log_file_displayed} #{uaadb_file}"))
   end
 
   before do

@@ -14,7 +14,7 @@ describe AdminUI::Admin, type: :integration do
     uri = URI.parse('/')
     loop do
       path  = uri.path
-      path += "?#{ uri.query }" unless uri.query.nil?
+      path += "?#{uri.query}" unless uri.query.nil?
 
       request = Net::HTTP::Get.new(path)
       request['Cookie'] = cookie
@@ -59,7 +59,7 @@ describe AdminUI::Admin, type: :integration do
         msg = op_msg[1]
         esmsg = msg
         esmsg = Regexp.escape(msg) if escapes
-        next unless line =~ /\[ admin \] : \[ #{ op } \] : #{ esmsg }/
+        next unless line =~ /\[ admin \] : \[ #{op} \] : #{esmsg}/
         found_match += 1
         break
       end
@@ -81,7 +81,7 @@ describe AdminUI::Admin, type: :integration do
 
     body = response.body
     expect(body).to_not be_nil
-    verify_sys_log_entries([['get', "#{ path }"]], escapes)
+    verify_sys_log_entries([['get', "#{path}"]], escapes)
     Yajl::Parser.parse(body)
   end
 
@@ -165,33 +165,33 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def stop_app
-      response = put_request("/applications/#{ cc_app[:guid] }", '{"state":"STOPPED"}')
+      response = put_request("/applications/#{cc_app[:guid]}", '{"state":"STOPPED"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/applications/#{ cc_app[:guid] }; body = {\"state\":\"STOPPED\"}"]], true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"state\":\"STOPPED\"}"]], true)
     end
 
     def start_app
-      response = put_request("/applications/#{ cc_app[:guid] }", '{"state":"STARTED"}')
+      response = put_request("/applications/#{cc_app[:guid]}", '{"state":"STARTED"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/applications/#{ cc_app[:guid] }; body = {\"state\":\"STARTED\"}"]], true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"state\":\"STARTED\"}"]], true)
     end
 
     def restage_app
-      response = post_request("/applications/#{ cc_app[:guid] }/restage", '{}')
+      response = post_request("/applications/#{cc_app[:guid]}/restage", '{}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['post', "/applications/#{ cc_app[:guid] }/restage"]], true)
+      verify_sys_log_entries([['post', "/applications/#{cc_app[:guid]}/restage"]], true)
     end
 
     def delete_app
-      response = delete_request("/applications/#{ cc_app[:guid] }")
+      response = delete_request("/applications/#{cc_app[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/applications/#{ cc_app[:guid] }"]])
+      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}"]])
     end
 
     def delete_app_recursive
-      response = delete_request("/applications/#{ cc_app[:guid] }?recursive=true")
+      response = delete_request("/applications/#{cc_app[:guid]}?recursive=true")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/applications/#{ cc_app[:guid] }?recursive=true"]], true)
+      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}?recursive=true"]], true)
     end
 
     it 'has user name and applications in the log file' do
@@ -230,9 +230,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_app_instance
-      response = delete_request("/applications/#{ cc_app[:guid] }/#{ cc_app_instance_index }")
+      response = delete_request("/applications/#{cc_app[:guid]}/#{cc_app_instance_index}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/applications/#{ cc_app[:guid] }/#{ cc_app_instance_index }"]])
+      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/#{cc_app_instance_index}"]])
     end
 
     it 'has user name and application instances request in the log file' do
@@ -254,15 +254,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_domain
-      response = delete_request("/domains/#{ cc_domain[:guid] }")
+      response = delete_request("/domains/#{cc_domain[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/domains/#{ cc_domain[:guid] }"]])
+      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}"]])
     end
 
     def delete_domain_recursive
-      response = delete_request("/domains/#{ cc_domain[:guid] }?recursive=true")
+      response = delete_request("/domains/#{cc_domain[:guid]}?recursive=true")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/domains/#{ cc_domain[:guid] }?recursive=true"]], true)
+      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}?recursive=true"]], true)
     end
 
     it 'has user name and domains request in the log file' do
@@ -288,39 +288,39 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def create_org
-      response = post_request('/organizations', "{\"name\":\"#{ cc_organization2[:name] }\"}")
+      response = post_request('/organizations', "{\"name\":\"#{cc_organization2[:name]}\"}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['post', "/organizations; body = {\"name\":\"#{ cc_organization2[:name] }\"}"]], true)
+      verify_sys_log_entries([['post', "/organizations; body = {\"name\":\"#{cc_organization2[:name]}\"}"]], true)
     end
 
     def set_quota
-      response = put_request("/organizations/#{ cc_organization[:guid] }", "{\"quota_definition_guid\":\"#{ cc_quota_definition2[:guid] }\"}")
+      response = put_request("/organizations/#{cc_organization[:guid]}", "{\"quota_definition_guid\":\"#{cc_quota_definition2[:guid]}\"}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/organizations/#{ cc_organization[:guid] }; body = {\"quota_definition_guid\":\"#{ cc_quota_definition2[:guid] }\"}"]], true)
+      verify_sys_log_entries([['put', "/organizations/#{cc_organization[:guid]}; body = {\"quota_definition_guid\":\"#{cc_quota_definition2[:guid]}\"}"]], true)
     end
 
     def activate_org
-      response = put_request("/organizations/#{ cc_organization[:guid] }", '{"status":"active"}')
+      response = put_request("/organizations/#{cc_organization[:guid]}", '{"status":"active"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/organizations/#{ cc_organization[:guid] }; body = {\"status\":\"active\"}"]], true)
+      verify_sys_log_entries([['put', "/organizations/#{cc_organization[:guid]}; body = {\"status\":\"active\"}"]], true)
     end
 
     def suspend_org
-      response = put_request("/organizations/#{ cc_organization[:guid] }", '{"status":"suspended"}')
+      response = put_request("/organizations/#{cc_organization[:guid]}", '{"status":"suspended"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/organizations/#{ cc_organization[:guid] }; body = {\"status\":\"suspended\"}"]], true)
+      verify_sys_log_entries([['put', "/organizations/#{cc_organization[:guid]}; body = {\"status\":\"suspended\"}"]], true)
     end
 
     def delete_org
-      response = delete_request("/organizations/#{ cc_organization[:guid] }")
+      response = delete_request("/organizations/#{cc_organization[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/organizations/#{ cc_organization[:guid] }"]])
+      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}"]])
     end
 
     def delete_org_recursive
-      response = delete_request("/organizations/#{ cc_organization[:guid] }?recursive=true")
+      response = delete_request("/organizations/#{cc_organization[:guid]}?recursive=true")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/organizations/#{ cc_organization[:guid] }?recursive=true"]], true)
+      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}?recursive=true"]], true)
     end
 
     it 'has user name and organizations request in the log file' do
@@ -367,9 +367,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_organization_role
-      response = delete_request("/organizations/#{ cc_organization[:guid] }/auditors/#{ cc_user[:guid] }")
+      response = delete_request("/organizations/#{cc_organization[:guid]}/auditors/#{cc_user[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/organizations/#{ cc_organization[:guid] }/auditors/#{ cc_user[:guid] }"]])
+      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/auditors/#{cc_user[:guid]}"]])
     end
 
     it 'has user name and organization roles request in the log file' do
@@ -391,9 +391,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_quota
-      response = delete_request("/quota_definitions/#{ cc_quota_definition[:guid] }")
+      response = delete_request("/quota_definitions/#{cc_quota_definition[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/quota_definitions/#{ cc_quota_definition[:guid] }"]])
+      verify_sys_log_entries([['delete', "/quota_definitions/#{cc_quota_definition[:guid]}"]])
     end
 
     it 'has user name and quotas request in the log file' do
@@ -415,9 +415,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_route
-      response = delete_request("/routes/#{ cc_route[:guid] }")
+      response = delete_request("/routes/#{cc_route[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/routes/#{ cc_route[:guid] }"]])
+      verify_sys_log_entries([['delete', "/routes/#{cc_route[:guid]}"]])
     end
 
     it 'has user name and routes request in the log file' do
@@ -439,15 +439,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_service
-      response = delete_request("/services/#{ cc_service[:guid] }")
+      response = delete_request("/services/#{cc_service[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/services/#{ cc_service[:guid] }"]])
+      verify_sys_log_entries([['delete', "/services/#{cc_service[:guid]}"]])
     end
 
     def purge_service
-      response = delete_request("/services/#{ cc_service[:guid] }?purge=true")
+      response = delete_request("/services/#{cc_service[:guid]}?purge=true")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/services/#{ cc_service[:guid] }?purge=true"]], true)
+      verify_sys_log_entries([['delete', "/services/#{cc_service[:guid]}?purge=true"]], true)
     end
 
     it 'has user name and services request in the log file' do
@@ -473,9 +473,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_service_binding
-      response = delete_request("/service_bindings/#{ cc_service_binding[:guid] }")
+      response = delete_request("/service_bindings/#{cc_service_binding[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_bindings/#{ cc_service_binding[:guid] }"]])
+      verify_sys_log_entries([['delete', "/service_bindings/#{cc_service_binding[:guid]}"]])
     end
 
     it 'has user name and service bindings request in the log file' do
@@ -497,9 +497,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_service_broker
-      response = delete_request("/service_brokers/#{ cc_service_broker[:guid] }")
+      response = delete_request("/service_brokers/#{cc_service_broker[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_brokers/#{ cc_service_broker[:guid] }"]])
+      verify_sys_log_entries([['delete', "/service_brokers/#{cc_service_broker[:guid]}"]])
     end
 
     it 'has user name and service brokers request in the log file' do
@@ -521,15 +521,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_service_instance
-      response = delete_request("/service_instances/#{ cc_service_instance[:guid] }")
+      response = delete_request("/service_instances/#{cc_service_instance[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_instances/#{ cc_service_instance[:guid] }"]])
+      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}"]])
     end
 
     def delete_service_instance_recursive
-      response = delete_request("/service_instances/#{ cc_service_instance[:guid] }?recursive=true")
+      response = delete_request("/service_instances/#{cc_service_instance[:guid]}?recursive=true")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_instances/#{ cc_service_instance[:guid] }?recursive=true"]], true)
+      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}?recursive=true"]], true)
     end
 
     it 'has user name and service instances request in the log file' do
@@ -555,9 +555,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_service_key
-      response = delete_request("/service_keys/#{ cc_service_key[:guid] }")
+      response = delete_request("/service_keys/#{cc_service_key[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_keys/#{ cc_service_key[:guid] }"]])
+      verify_sys_log_entries([['delete', "/service_keys/#{cc_service_key[:guid]}"]])
     end
 
     it 'has user name and service keys request in the log file' do
@@ -579,21 +579,21 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def make_service_plan_private
-      response = put_request("/service_plans/#{ cc_service_plan[:guid] }", '{"public": false }')
+      response = put_request("/service_plans/#{cc_service_plan[:guid]}", '{"public":false}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/service_plans/#{ cc_service_plan[:guid] }; body = {\"public\": false }"]], true)
+      verify_sys_log_entries([['put', "/service_plans/#{cc_service_plan[:guid]}; body = {\"public\":false}"]], true)
     end
 
     def make_service_plan_public
-      response = put_request("/service_plans/#{ cc_service_plan[:guid] }", '{"public": true }')
+      response = put_request("/service_plans/#{cc_service_plan[:guid]}", '{"public":true}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/service_plans/#{ cc_service_plan[:guid] }; body = {\"public\": true }"]], true)
+      verify_sys_log_entries([['put', "/service_plans/#{cc_service_plan[:guid]}; body = {\"public\":true}"]], true)
     end
 
     def delete_service_plan
-      response = delete_request("/service_plans/#{ cc_service_plan[:guid] }")
+      response = delete_request("/service_plans/#{cc_service_plan[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_plans/#{ cc_service_plan[:guid] }"]])
+      verify_sys_log_entries([['delete', "/service_plans/#{cc_service_plan[:guid]}"]])
     end
 
     it 'has user name and service plan request in the log file' do
@@ -621,9 +621,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_service_plan_visibility
-      response = delete_request("/service_plan_visibilities/#{ cc_service_plan_visibility[:guid] }")
+      response = delete_request("/service_plan_visibilities/#{cc_service_plan_visibility[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_plan_visibilities/#{ cc_service_plan_visibility[:guid] }"]])
+      verify_sys_log_entries([['delete', "/service_plan_visibilities/#{cc_service_plan_visibility[:guid]}"]])
     end
 
     it 'has user name and service plan visibility request in the log file' do
@@ -645,15 +645,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_space
-      response = delete_request("/spaces/#{ cc_space[:guid] }")
+      response = delete_request("/spaces/#{cc_space[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/spaces/#{ cc_space[:guid] }"]])
+      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}"]])
     end
 
     def delete_space_recursive
-      response = delete_request("/spaces/#{ cc_space[:guid] }?recursive=true")
+      response = delete_request("/spaces/#{cc_space[:guid]}?recursive=true")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/spaces/#{ cc_space[:guid] }?recursive=true"]], true)
+      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}?recursive=true"]], true)
     end
 
     it 'has user name and space request in the log file' do
@@ -679,9 +679,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_space_quota
-      response = delete_request("/space_quota_definitions/#{ cc_space_quota_definition[:guid] }")
+      response = delete_request("/space_quota_definitions/#{cc_space_quota_definition[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/space_quota_definitions/#{ cc_space_quota_definition[:guid] }"]])
+      verify_sys_log_entries([['delete', "/space_quota_definitions/#{cc_space_quota_definition[:guid]}"]])
     end
 
     it 'has user name and quotas request in the log file' do
@@ -698,15 +698,15 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     def create_space_quota_space
-      response = put_request("/space_quota_definitions/#{ cc_space_quota_definition2[:guid] }/spaces/#{ cc_space[:guid] }")
+      response = put_request("/space_quota_definitions/#{cc_space_quota_definition2[:guid]}/spaces/#{cc_space[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/space_quota_definitions/#{ cc_space_quota_definition2[:guid] }/spaces/#{ cc_space[:guid] }"]], true)
+      verify_sys_log_entries([['put', "/space_quota_definitions/#{cc_space_quota_definition2[:guid]}/spaces/#{cc_space[:guid]}"]], true)
     end
 
     def delete_space_quota_space
-      response = delete_request("/space_quota_definitions/#{ cc_space_quota_definition[:guid] }/spaces/#{ cc_space[:guid] }")
+      response = delete_request("/space_quota_definitions/#{cc_space_quota_definition[:guid]}/spaces/#{cc_space[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/space_quota_definitions/#{ cc_space_quota_definition[:guid] }/spaces/#{ cc_space[:guid] }"]])
+      verify_sys_log_entries([['delete', "/space_quota_definitions/#{cc_space_quota_definition[:guid]}/spaces/#{cc_space[:guid]}"]])
     end
 
     context 'deletes a space quota space' do
@@ -743,9 +743,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_space_role
-      response = delete_request("/spaces/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }")
+      response = delete_request("/spaces/#{cc_space[:guid]}/auditors/#{cc_user[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/spaces/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }"]])
+      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/auditors/#{cc_user[:guid]}"]])
     end
 
     it 'has user name and space roles request in the log file' do
@@ -794,7 +794,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'application_instances_view_model detail' do
-      let(:path)              { "/application_instances_view_model/#{ cc_app[:guid] }/#{ varz_dea_app_instance }" }
+      let(:path)              { "/application_instances_view_model/#{cc_app[:guid]}/#{varz_dea_app_instance}" }
       let(:view_model_source) { view_models_application_instances_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -807,7 +807,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'applications_view_model detail' do
-      let(:path)              { "/applications_view_model/#{ cc_app[:guid] }" }
+      let(:path)              { "/applications_view_model/#{cc_app[:guid]}" }
       let(:view_model_source) { view_models_applications_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -820,7 +820,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'clients_view_model detail' do
-      let(:path)              { "/clients_view_model/#{ uaa_client[:client_id] }" }
+      let(:path)              { "/clients_view_model/#{uaa_client[:client_id]}" }
       let(:view_model_source) { view_models_clients_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -832,7 +832,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'cloud_controllers_view_model detail' do
-      let(:path)              { "/cloud_controllers_view_model/#{ nats_cloud_controller['host'] }" }
+      let(:path)              { "/cloud_controllers_view_model/#{nats_cloud_controller['host']}" }
       let(:view_model_source) { view_models_cloud_controllers_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -844,7 +844,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'components_view_model detail' do
-      let(:path)              { "/components_view_model/#{ nats_cloud_controller['host'] }" }
+      let(:path)              { "/components_view_model/#{nats_cloud_controller['host']}" }
       let(:view_model_source) { view_models_cloud_controllers_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -869,7 +869,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'deas_view_model detail' do
-      let(:path)              { "/deas_view_model/#{ nats_dea['host'] }" }
+      let(:path)              { "/deas_view_model/#{nats_dea['host']}" }
       let(:view_model_source) { view_models_deas_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -881,13 +881,13 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'domains_view_model detail' do
-      let(:path)              { "/domains_view_model/#{ cc_domain[:guid] }" }
+      let(:path)              { "/domains_view_model/#{cc_domain[:guid]}" }
       let(:view_model_source) { view_models_domains_detail }
       it_behaves_like('retrieves view_model detail')
     end
 
     context 'download' do
-      let(:response) { get_response("/download?path=#{ log_file_displayed }") }
+      let(:response) { get_response("/download?path=#{log_file_displayed}") }
       it 'retrieves' do
         body = response.body
         expect(body).to eq(log_file_displayed_contents)
@@ -901,7 +901,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'events_view_model detail' do
-      let(:path)              { "/events_view_model/#{ cc_event_space[:guid] }" }
+      let(:path)              { "/events_view_model/#{cc_event_space[:guid]}" }
       let(:view_model_source) { view_models_events_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -913,7 +913,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'gateways_view_model detail' do
-      let(:path)              { "/gateways_view_model/#{ nats_provisioner['type'].sub('-Provisioner', '') }" }
+      let(:path)              { "/gateways_view_model/#{nats_provisioner['type'].sub('-Provisioner', '')}" }
       let(:view_model_source) { view_models_gateways_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -925,13 +925,13 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'health_managers_view_model detail' do
-      let(:path)              { "/health_managers_view_model/#{ nats_health_manager['host'] }" }
+      let(:path)              { "/health_managers_view_model/#{nats_health_manager['host']}" }
       let(:view_model_source) { view_models_health_managers_detail }
       it_behaves_like('retrieves view_model detail')
     end
 
     context 'log' do
-      let(:retrieved) { get_json("/log?path=#{ log_file_displayed }", true) }
+      let(:retrieved) { get_json("/log?path=#{log_file_displayed}", true) }
       it 'retrieves' do
         expect(retrieved).to include('data'      => log_file_displayed_contents,
                                      'file_size' => log_file_displayed_contents_length,
@@ -955,7 +955,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'organizations_view_model detail' do
-      let(:path)              { "/organizations_view_model/#{ cc_organization[:guid] }" }
+      let(:path)              { "/organizations_view_model/#{cc_organization[:guid]}" }
       let(:view_model_source) { view_models_organizations_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -967,7 +967,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'organization_roles_view_model detail' do
-      let(:path)              { "/organization_roles_view_model/#{ cc_organization[:guid] }/auditors/#{ cc_user[:guid] }" }
+      let(:path)              { "/organization_roles_view_model/#{cc_organization[:guid]}/auditors/#{cc_user[:guid]}" }
       let(:view_model_source) { view_models_organization_roles_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -979,7 +979,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'quotas_view_model detail' do
-      let(:path)              { "/quotas_view_model/#{ cc_quota_definition[:guid] }" }
+      let(:path)              { "/quotas_view_model/#{cc_quota_definition[:guid]}" }
       let(:view_model_source) { view_models_quotas_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -991,7 +991,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'routers_view_model detail' do
-      let(:path)              { "/routers_view_model/#{ nats_router['host'] }" }
+      let(:path)              { "/routers_view_model/#{nats_router['host']}" }
       let(:view_model_source) { view_models_routers_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1003,7 +1003,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'routes_view_model detail' do
-      let(:path)              { "/routes_view_model/#{ cc_route[:guid] }" }
+      let(:path)              { "/routes_view_model/#{cc_route[:guid]}" }
       let(:view_model_source) { view_models_routes_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1016,7 +1016,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_bindings_view_model detail' do
-      let(:path)              { "/service_bindings_view_model/#{ cc_service_binding[:guid] }" }
+      let(:path)              { "/service_bindings_view_model/#{cc_service_binding[:guid]}" }
       let(:view_model_source) { view_models_service_bindings_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1029,7 +1029,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_brokers_view_model detail' do
-      let(:path)              { "/service_brokers_view_model/#{ cc_service_broker[:guid] }" }
+      let(:path)              { "/service_brokers_view_model/#{cc_service_broker[:guid]}" }
       let(:view_model_source) { view_models_service_brokers_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1042,7 +1042,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_instances_view_model detail' do
-      let(:path)              { "/service_instances_view_model/#{ cc_service_instance[:guid] }" }
+      let(:path)              { "/service_instances_view_model/#{cc_service_instance[:guid]}" }
       let(:view_model_source) { view_models_service_instances_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1055,7 +1055,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_keys_view_model detail' do
-      let(:path)              { "/service_keys_view_model/#{ cc_service_key[:guid] }" }
+      let(:path)              { "/service_keys_view_model/#{cc_service_key[:guid]}" }
       let(:view_model_source) { view_models_service_keys_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1068,7 +1068,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_plans_view_model detail' do
-      let(:path)              { "/service_plans_view_model/#{ cc_service_plan[:guid] }" }
+      let(:path)              { "/service_plans_view_model/#{cc_service_plan[:guid]}" }
       let(:view_model_source) { view_models_service_plans_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1081,7 +1081,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_plan_visibilities_view_model detail' do
-      let(:path)              { "/service_plan_visibilities_view_model/#{ cc_service_plan_visibility[:guid] }" }
+      let(:path)              { "/service_plan_visibilities_view_model/#{cc_service_plan_visibility[:guid]}" }
       let(:view_model_source) { view_models_service_plan_visibilities_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1094,7 +1094,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'services_view_model detail' do
-      let(:path)              { "/services_view_model/#{ cc_service[:guid] }" }
+      let(:path)              { "/services_view_model/#{cc_service[:guid]}" }
       let(:view_model_source) { view_models_services_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1118,7 +1118,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'space_quotas_view_model detail' do
-      let(:path)              { "/space_quotas_view_model/#{ cc_space_quota_definition[:guid] }" }
+      let(:path)              { "/space_quotas_view_model/#{cc_space_quota_definition[:guid]}" }
       let(:view_model_source) { view_models_space_quotas_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1130,7 +1130,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'space_roles_view_model detail' do
-      let(:path)              { "/space_roles_view_model/#{ cc_space[:guid] }/auditors/#{ cc_user[:guid] }" }
+      let(:path)              { "/space_roles_view_model/#{cc_space[:guid]}/auditors/#{cc_user[:guid]}" }
       let(:view_model_source) { view_models_space_roles_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1142,7 +1142,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'spaces_view_model detail' do
-      let(:path)              { "/spaces_view_model/#{ cc_space[:guid] }" }
+      let(:path)              { "/spaces_view_model/#{cc_space[:guid]}" }
       let(:view_model_source) { view_models_spaces_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1154,7 +1154,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'stacks_view_model detail' do
-      let(:path)              { "/stacks_view_model/#{ cc_stack[:guid] }" }
+      let(:path)              { "/stacks_view_model/#{cc_stack[:guid]}" }
       let(:view_model_source) { view_models_stacks_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -1173,7 +1173,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'users_view_model detail' do
-      let(:path)              { "/users_view_model/#{ cc_user[:guid] }" }
+      let(:path)              { "/users_view_model/#{cc_user[:guid]}" }
       let(:view_model_source) { view_models_users_detail }
       it_behaves_like('retrieves view_model detail')
     end

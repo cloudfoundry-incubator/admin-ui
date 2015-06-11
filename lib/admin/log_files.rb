@@ -98,7 +98,7 @@ module AdminUI
           contents = IO.read(@path, read_size, start)
           return create_content_result(file_size, start, read_size, contents)
         rescue => error
-          @logger.debug("Error retrieving contents of log file #{ path }: #{ error.inspect }")
+          @logger.debug("Error retrieving contents of log file #{path}: #{error.inspect}")
           @logger.debug(error.backtrace.join("\n"))
         end
 
@@ -109,7 +109,7 @@ module AdminUI
         begin
           return File.new(@path)
         rescue => error
-          @logger.debug("Error downloading file of log file #{ path }: #{ error.inspect }")
+          @logger.debug("Error downloading file of log file #{path}: #{error.inspect}")
           @logger.debug(error.backtrace.join("\n"))
         end
 
@@ -127,7 +127,7 @@ module AdminUI
                          time: Utils.time_in_milliseconds(stat.mtime))
           end
         rescue => error
-          @logger.debug("Error retreiving infos of log file #{ @path }: #{ error.inspect }")
+          @logger.debug("Error retreiving infos of log file #{@path}: #{error.inspect}")
           @logger.debug(error.backtrace.join("\n"))
         end
 
@@ -178,7 +178,7 @@ module AdminUI
             end
           end
         rescue => error
-          @logger.debug("Error retrieving contents of sftp log file #{ path }: #{ error.inspect }")
+          @logger.debug("Error retrieving contents of sftp log file #{path}: #{error.inspect}")
           @logger.debug(error.backtrace.join("\n"))
         end
 
@@ -201,7 +201,7 @@ module AdminUI
 
           return temp_file
         rescue => error
-          @logger.debug("Error downloading file of sftp log file #{ path }: #{ error.inspect }")
+          @logger.debug("Error downloading file of sftp log file #{path}: #{error.inspect}")
           @logger.debug(error.backtrace.join("\n"))
         end
 
@@ -241,7 +241,7 @@ module AdminUI
             end
           end
         rescue => error
-          @logger.debug("Error retreiving infos of sftp log file #{ @path }: #{ error.inspect }")
+          @logger.debug("Error retreiving infos of sftp log file #{@path}: #{error.inspect}")
           @logger.debug(error.backtrace.join("\n"))
         end
 
@@ -249,11 +249,11 @@ module AdminUI
       end
 
       def create_info_result(uri, path, size, mtime)
-        uri_string = "sftp://#{ uri.user }"
-        uri_string += ":#{ uri.password }" unless uri.password.nil?
-        uri_string += "@#{ uri.host }"
-        uri_string += ":#{ uri.port }" unless uri.port.nil?
-        uri_string += "#{ path }"
+        uri_string = "sftp://#{uri.user}"
+        uri_string += ":#{uri.password}" unless uri.password.nil?
+        uri_string += "@#{uri.host}"
+        uri_string += ":#{uri.port}" unless uri.port.nil?
+        uri_string += "#{path}"
 
         {
           path: uri_string,
@@ -268,7 +268,7 @@ module AdminUI
         entries.each do |entry|
           attributes = entry.attributes
           if attributes.file?
-            results.push(create_info_result(uri, "#{ base_path }/#{ entry.name }", attributes.size, attributes.mtime))
+            results.push(create_info_result(uri, "#{base_path}/#{entry.name}", attributes.size, attributes.mtime))
           end
         end
 

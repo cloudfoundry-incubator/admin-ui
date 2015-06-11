@@ -6,10 +6,10 @@ describe AdminUI::CC, type: :integration do
   include ViewModelsHelper
 
   let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri) { "sqlite://#{ ccdb_file }" }
+  let(:ccdb_uri) { "sqlite://#{ccdb_file}" }
   let(:data_file) { '/tmp/admin_ui.data' }
   let(:db_file) { '/tmp/admin_ui_store.db' }
-  let(:db_uri) { "sqlite://#{ db_file }" }
+  let(:db_uri) { "sqlite://#{db_file}" }
   let(:event_type) { 'space' }
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:log_file_displayed) { '/tmp/admin_ui_displayed.log' }
@@ -17,7 +17,7 @@ describe AdminUI::CC, type: :integration do
   let(:log_file_displayed_modified) { Time.new(1976, 7, 4, 12, 34, 56, 0) }
   let(:logger) { Logger.new(log_file) }
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri)  { "sqlite://#{ uaadb_file }" }
+  let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
   let(:config) do
     AdminUI::Config.load(ccdb_uri:                            ccdb_uri,
                          cloud_controller_discovery_interval: 1,
@@ -33,7 +33,7 @@ describe AdminUI::CC, type: :integration do
   end
 
   def cleanup_files
-    Process.wait(Process.spawn({}, "rm -fr #{ ccdb_file } #{ data_file } #{ db_file } #{ log_file } #{ log_file_displayed } #{ uaadb_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{log_file} #{log_file_displayed} #{uaadb_file}"))
   end
 
   before do

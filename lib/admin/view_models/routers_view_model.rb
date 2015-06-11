@@ -64,7 +64,7 @@ module AdminUI
 
             space        = space_hash[application[:space_id]]
             organization = space.nil? ? nil : organization_hash[space[:organization_id]]
-            target       = organization.nil? ? nil : "#{ organization[:name] }/#{ space[:name]}"
+            target       = organization.nil? ? nil : "#{organization[:name]}/#{space[:name]}"
 
             top10_app_rows.push('guid'   => application[:guid],
                                 'name'   => application[:name],

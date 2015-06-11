@@ -119,7 +119,7 @@ module AdminUI
       # post init processing: convert stats_fresh_time
       if to_convert_stats_refresh_time == true
         stats_refresh_time = filtered_select[:stats_refresh_time]
-        config_instance.stats_refresh_schedules.push("#{ Utils.minutes_in_an_hour(stats_refresh_time) } #{ Utils.hours_in_a_day(stats_refresh_time) > 0 ? Utils.hours_in_a_day(stats_refresh_time) : '*' } * * *")
+        config_instance.stats_refresh_schedules.push("#{Utils.minutes_in_an_hour(stats_refresh_time)} #{Utils.hours_in_a_day(stats_refresh_time) > 0 ? Utils.hours_in_a_day(stats_refresh_time) : '*'} * * *")
       end
       @config = config_instance
     end

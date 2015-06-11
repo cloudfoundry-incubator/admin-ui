@@ -6,13 +6,13 @@ describe AdminUI::CC, type: :integration do
   include ThreadHelper
 
   let(:ccdb_file)  { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri)   { "sqlite://#{ ccdb_file }" }
+  let(:ccdb_uri)   { "sqlite://#{ccdb_file}" }
   let(:db_file)    { '/tmp/admin_ui_store.db' }
-  let(:db_uri)     { "sqlite://#{ db_file }" }
+  let(:db_uri)     { "sqlite://#{db_file}" }
   let(:log_file)   { '/tmp/admin_ui.log' }
   let(:logger)     { Logger.new(log_file) }
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri)  { "sqlite://#{ uaadb_file }" }
+  let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
   let(:config) do
     AdminUI::Config.load(ccdb_uri:             ccdb_uri,
                          cloud_controller_uri: 'http://api.cloudfoundry',
@@ -23,7 +23,7 @@ describe AdminUI::CC, type: :integration do
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
 
   def cleanup_files
-    Process.wait(Process.spawn({}, "rm -fr #{ ccdb_file } #{ db_file } #{ log_file } #{ uaadb_file }"))
+    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{db_file} #{log_file} #{uaadb_file}"))
   end
 
   before do

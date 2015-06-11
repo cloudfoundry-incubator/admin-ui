@@ -22,7 +22,7 @@ module AdminUI
               begin
                 entry[:block].call
               rescue => error
-                @logger.debug("Error during #{ entry[:key] }: #{ error.inspect }")
+                @logger.debug("Error during #{entry[:key]}: #{error.inspect}")
                 @logger.debug(error.backtrace.join("\n"))
               end
             else

@@ -4,7 +4,7 @@ require_relative '../dbstore'
 module AdminUI
   class StatsDBStore < AdminUI::DBStore
     def append(record)
-      @logger.debug("AdminUI::StatsDBStore.append: appending record #{ record } to database")
+      @logger.debug("AdminUI::StatsDBStore.append: appending record #{record} to database")
       connection = connect
       begin
         connection.synchronize do
