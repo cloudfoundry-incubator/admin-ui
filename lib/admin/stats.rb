@@ -1,4 +1,5 @@
 require 'cron_parser'
+require 'thread'
 require_relative 'db/stats_dbstore'
 require_relative 'utils'
 
@@ -7,11 +8,17 @@ module AdminUI
     attr_reader :time_last_run
 
     def initialize(config, logger, cc, varz, testing)
-      @config          = config
-      @logger          = logger
-      @cc              = cc
-      @varz            = varz
-      @persistence     = AdminUI::StatsDBStore.new(config, logger, testing)
+      @config = config
+      @logger = logger
+      @cc     = cc
+      @varz   = varz
+
+      @running = true
+
+      @semaphore = Mutex.new
+      @condition = ConditionVariable.new
+
+      @persistence = AdminUI::StatsDBStore.new(config, logger, testing)
 
       @data_collection_schedulers = []
       @config.stats_refresh_schedules.each do |spec|
@@ -26,8 +33,8 @@ module AdminUI
         @logger.debug("AdminUI::Stats.initialize: Stats data collection follows schedules #{@config.stats_refresh_schedules}")
       end
 
-      thread = Thread.new do
-        loop do
+      @thread = Thread.new do
+        while @running
           wait_time = schedule_stats
           if  wait_time <= 0
             @logger.debug('AdminUI::Stats.initialize: Stats collection is disabled.')
@@ -36,7 +43,7 @@ module AdminUI
         end
       end
 
-      thread.priority = -2
+      @thread.priority = -2
     end
 
     def stats
@@ -90,15 +97,29 @@ module AdminUI
       target_time.to_i
     end
 
+    def shutdown
+      return unless @running
+
+      @running = false
+
+      @semaphore.synchronize do
+        @condition.broadcast
+      end
+
+      @thread.join
+    end
+
     private
 
     def schedule_stats
       target_time = calculate_time_until_generate_stats
       return -1 if target_time < 0
-      while Time.now.to_i < target_time
+      while @running && Time.now.to_i < target_time
         wait_time = target_time - Time.now.to_i
         @logger.debug("AdminUI::Stats.schedule_stats(in loop): wait_time #{wait_time} second; now #{Time.now}.")
-        sleep(wait_time)
+        @semaphore.synchronize do
+          @condition.wait(@semaphore, wait_time) if @running
+        end
       end
       generate_stats
       target_time
@@ -127,10 +148,12 @@ module AdminUI
 
       attempt = 0
 
-      while !save_stats(stats) && (attempt < @config.stats_retries)
+      while @running && !save_stats(stats) && (attempt < @config.stats_retries)
         attempt += 1
         @logger.debug("AdminUI::Stats.generate_stats: Waiting #{@config.stats_retry_interval} seconds before trying to save stats again...")
-        sleep(@config.stats_retry_interval)
+        @semaphore.synchronize do
+          @condition.wait(@semaphore, @config.stats_retry_interval) if @running
+        end
         stats = current_stats
       end
 

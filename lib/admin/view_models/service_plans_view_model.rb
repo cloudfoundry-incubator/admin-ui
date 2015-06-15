@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class ServicePlansViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class ServicePlansViewModel < AdminUI::BaseViewModel
     def do_items
       service_plans = @cc.service_plans
 
@@ -36,7 +30,9 @@ module AdminUI
 
       event_counters = {}
       events['items'].each do |event|
+        return result unless @running
         Thread.pass
+
         next unless event[:actee_type] == 'service_plan'
         actee = event[:actee]
         event_counters[actee] = 0 if event_counters[actee].nil?
@@ -45,7 +41,9 @@ module AdminUI
 
       service_plan_visibility_counters = {}
       service_plan_visibilities['items'].each do |service_plan_visibility|
+        return result unless @running
         Thread.pass
+
         service_plan_id = service_plan_visibility[:service_plan_id]
         next if service_plan_id.nil?
         service_plan_visibility_counters[service_plan_id] = 0 if service_plan_visibility_counters[service_plan_id].nil?
@@ -54,7 +52,9 @@ module AdminUI
 
       service_instance_counters = {}
       service_instances['items'].each do |service_instance|
+        return result unless @running
         Thread.pass
+
         service_plan_id = service_instance[:service_plan_id]
         next if service_plan_id.nil?
         service_instance_counters[service_plan_id] = 0 if service_instance_counters[service_plan_id].nil?
@@ -63,7 +63,9 @@ module AdminUI
 
       service_binding_counters = {}
       service_bindings['items'].each do |service_binding|
+        return result unless @running
         Thread.pass
+
         service_instance_id = service_binding[:service_instance_id]
         next if service_instance_id.nil?
         service_instance = service_instance_hash[service_instance_id]
@@ -76,7 +78,9 @@ module AdminUI
 
       service_key_counters = {}
       service_keys['items'].each do |service_key|
+        return result unless @running
         Thread.pass
+
         service_instance_id = service_key[:service_instance_id]
         next if service_instance_id.nil?
         service_instance = service_instance_hash[service_instance_id]
@@ -91,6 +95,7 @@ module AdminUI
       hash  = {}
 
       service_plans['items'].each do |service_plan|
+        return result unless @running
         Thread.pass
 
         guid           = service_plan[:guid]

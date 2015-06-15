@@ -5,12 +5,16 @@ module AdminUI
   class ScheduledThreadPool
     def initialize(logger, number_threads, priority)
       @logger = logger
-      @queue  = []
-      @mutex  = Mutex.new
+
+      @running   = true
+      @queue     = []
+      @mutex     = Mutex.new
+      @condition = ConditionVariable.new
+      @threads   = []
 
       number_threads.times do
         thread = Thread.new do
-          loop do
+          while @running
             entry = nil
 
             @mutex.synchronize do
@@ -25,18 +29,23 @@ module AdminUI
                 @logger.debug("Error during #{entry[:key]}: #{error.inspect}")
                 @logger.debug(error.backtrace.join("\n"))
               end
-            else
-              sleep 1
+            elsif @running
+              # sleep using the @mutex and @condition so shutdown can interrupt
+              @mutex.synchronize do
+                @condition.wait(@mutex, 1) if @running
+              end
             end
           end
         end
 
         thread.priority = priority
+
+        @threads.push(thread)
       end
     end
 
     def schedule(key, time, &block)
-      return if key.nil? || time.nil? || block.nil?
+      return if !@running || key.nil? || time.nil? || block.nil?
       @mutex.synchronize do
         index = @queue.index { |entry| key == entry[:key] }
         if index
@@ -58,6 +67,20 @@ module AdminUI
         end
       end
     end
+
+    def shutdown
+      return unless @running
+
+      @running = false
+
+      @mutex.synchronize do
+        @condition.broadcast
+      end
+
+      @threads.each(&:join)
+    end
+
+    private
 
     def insert_index(time)
       s = 0

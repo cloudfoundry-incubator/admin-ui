@@ -1,15 +1,9 @@
 require 'thread'
 require 'yajl'
-require_relative 'base'
+require_relative 'base_view_model'
 
 module AdminUI
-  class ClientsViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class ClientsViewModel < AdminUI::BaseViewModel
     def do_items
       clients = @cc.clients
 
@@ -27,7 +21,9 @@ module AdminUI
 
       event_counters = {}
       events['items'].each do |event|
+        return result unless @running
         Thread.pass
+
         if event[:actee_type] == 'service_dashboard_client'
           actee = event[:actee]
           event_counters[actee] = 0 if event_counters[actee].nil?
@@ -46,6 +42,7 @@ module AdminUI
       hash  = {}
 
       clients['items'].each do |client|
+        return result unless @running
         Thread.pass
 
         client_id = client[:client_id]

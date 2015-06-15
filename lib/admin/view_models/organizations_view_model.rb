@@ -60,7 +60,9 @@ module AdminUI
       space_role_counters                           = {}
 
       events['items'].each do |event|
+        return result unless @running
         Thread.pass
+
         organization_guid = event[:organization_guid]
         next if organization_guid.nil?
         event_target_counters[organization_guid] = 0 if event_target_counters[organization_guid].nil?
@@ -68,7 +70,9 @@ module AdminUI
       end
 
       space_hash.each_value do |space|
+        return result unless @running
         Thread.pass
+
         organization_id = space[:organization_id]
         organization_space_counters[organization_id] = 0 if organization_space_counters[organization_id].nil?
         organization_space_counters[organization_id] += 1
@@ -84,7 +88,9 @@ module AdminUI
       count_space_roles(space_hash, spaces_managers, space_role_counters)
 
       service_instances['items'].each do |service_instance|
+        return result unless @running
         Thread.pass
+
         space = space_hash[service_instance[:space_id]]
         next if space.nil?
         organization_id = space[:organization_id]
@@ -93,7 +99,9 @@ module AdminUI
       end
 
       domains['items'].each do |domain|
+        return result unless @running
         Thread.pass
+
         owning_organization_id = domain[:owning_organization_id]
         next if owning_organization_id.nil?
         organization_domain_counters[owning_organization_id] = 0 if organization_domain_counters[owning_organization_id].nil?
@@ -101,7 +109,9 @@ module AdminUI
       end
 
       space_quotas['items'].each do |space_quota|
+        return result unless @running
         Thread.pass
+
         organization_id = space_quota[:organization_id]
         next if organization_id.nil?
         space_quota_counters[organization_id] = 0 if space_quota_counters[organization_id].nil?
@@ -109,7 +119,9 @@ module AdminUI
       end
 
       routes['items'].each do |route|
+        return result unless @running
         Thread.pass
+
         space = space_hash[route[:space_id]]
         next if space.nil?
         organization_id = space[:organization_id]
@@ -128,7 +140,9 @@ module AdminUI
       end
 
       service_plan_visibilities['items'].each do |service_plan_visibility|
+        return result unless @running
         Thread.pass
+
         organization_id = service_plan_visibility[:organization_id]
         next if organization_id.nil?
         organization_service_plan_visibility_counters[organization_id] = 0 if organization_service_plan_visibility_counters[organization_id].nil?
@@ -138,7 +152,9 @@ module AdminUI
       instance_hash = create_instance_hash(deas)
 
       applications['items'].each do |application|
+        return result unless @running
         Thread.pass
+
         space = space_hash[application[:space_id]]
         next if space.nil?
         organization_id = space[:organization_id]
@@ -170,6 +186,7 @@ module AdminUI
       hash  = {}
 
       organizations['items'].each do |organization|
+        return result unless @running
         Thread.pass
 
         organization_id   = organization[:id]

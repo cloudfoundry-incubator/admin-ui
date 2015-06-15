@@ -1,4 +1,5 @@
 require 'date'
+require 'thread'
 require_relative 'scheduled_thread_pool'
 require_relative 'view_models/application_instances_view_model'
 require_relative 'view_models/applications_view_model'
@@ -43,18 +44,54 @@ module AdminUI
       @varz      = varz
       @testing   = testing
 
+      @running = true
+
       # TODO: Need config for number of threads
-      @pool      = AdminUI::ScheduledThreadPool.new(logger, 2, -1)
+      @pool = AdminUI::ScheduledThreadPool.new(logger, 2, -1)
 
       # Using an interval of half of the cloud_controller_interval.  The value of 1 is there for a test-time boundary
       @interval = [@config.cloud_controller_discovery_interval / 2, 1].max
 
-      @caches = {}
-      # These keys need to conform to their respective discover_x methods.
-      # For instance applications conforms to discover_applications
-      [:application_instances, :applications, :clients, :cloud_controllers, :components, :deas, :domains, :events, :gateways, :health_managers, :logs, :organizations, :organization_roles, :quotas, :routers, :routes, :services, :service_bindings, :service_brokers, :service_instances, :service_keys, :service_plans, :service_plan_visibilities, :space_quotas, :space_roles, :spaces, :stacks, :stats, :tasks, :users].each do |key|
-        hash = { semaphore: Mutex.new, condition: ConditionVariable.new, result: nil }
-        @caches[key] = hash
+      @caches =
+        {
+          application_instances:     { clazz: AdminUI::ApplicationInstancesViewModel },
+          applications:              { clazz: AdminUI::ApplicationsViewModel },
+          clients:                   { clazz: AdminUI::ClientsViewModel },
+          cloud_controllers:         { clazz: AdminUI::CloudControllersViewModel },
+          components:                { clazz: AdminUI::ComponentsViewModel },
+          deas:                      { clazz: AdminUI::DEAsViewModel },
+          domains:                   { clazz: AdminUI::DomainsViewModel },
+          events:                    { clazz: AdminUI::EventsViewModel },
+          gateways:                  { clazz: AdminUI::GatewaysViewModel },
+          health_managers:           { clazz: AdminUI::HealthManagersViewModel },
+          logs:                      { clazz: AdminUI::LogsViewModel },
+          organizations:             { clazz: AdminUI::OrganizationsViewModel },
+          organization_roles:        { clazz: AdminUI::OrganizationRolesViewModel },
+          quotas:                    { clazz: AdminUI::QuotasViewModel },
+          routers:                   { clazz: AdminUI::RoutersViewModel },
+          routes:                    { clazz: AdminUI::RoutesViewModel },
+          services:                  { clazz: AdminUI::ServicesViewModel },
+          service_bindings:          { clazz: AdminUI::ServiceBindingsViewModel },
+          service_brokers:           { clazz: AdminUI::ServiceBrokersViewModel },
+          service_instances:         { clazz: AdminUI::ServiceInstancesViewModel },
+          service_keys:              { clazz: AdminUI::ServiceKeysViewModel },
+          service_plans:             { clazz: AdminUI::ServicePlansViewModel },
+          service_plan_visibilities: { clazz: AdminUI::ServicePlanVisibilitiesViewModel },
+          space_quotas:              { clazz: AdminUI::SpaceQuotasViewModel },
+          space_roles:               { clazz: AdminUI::SpaceRolesViewModel },
+          spaces:                    { clazz: AdminUI::SpacesViewModel },
+          stacks:                    { clazz: AdminUI::StacksViewModel },
+          stats:                     { clazz: AdminUI::StatsViewModel },
+          tasks:                     { clazz: AdminUI::TasksViewModel },
+          users:                     { clazz: AdminUI::UsersViewModel }
+        }
+
+      @caches.each_pair do |key, cache|
+        cache.merge!(condition:          ConditionVariable.new,
+                     result:             nil,
+                     semaphore:          Mutex.new,
+                     view_model_factory: cache[:clazz].new(@logger, @cc, @log_files, @nats, @stats, @tasks, @varz))
+
         schedule(key)
       end
     end
@@ -339,6 +376,21 @@ module AdminUI
       result_cache(:services)
     end
 
+    def shutdown
+      return unless @running
+
+      @running = false
+
+      @caches.each do |_key, cache|
+        cache[:view_model_factory].shutdown
+        cache[:semaphore].synchronize do
+          cache[:condition].broadcast
+        end
+      end
+
+      @pool.shutdown
+    end
+
     def space(guid)
       details(:spaces, guid)
     end
@@ -391,9 +443,9 @@ module AdminUI
 
     def invalidate_cache(key)
       if @testing
-        hash = @caches[key]
-        hash[:semaphore].synchronize do
-          hash[:result] = nil
+        cache = @caches[key]
+        cache[:semaphore].synchronize do
+          cache[:result] = nil
         end
       end
 
@@ -401,293 +453,63 @@ module AdminUI
     end
 
     def schedule(key, time = Time.now)
+      return unless @running
+
       @pool.schedule(key, time) do
         discover(key)
       end
     end
 
     def discover(key)
+      cache      = @caches[key]
       key_string = key.to_s
 
       @logger.debug("[#{@interval} second interval] Starting view model #{key_string} discovery...")
 
       start = Time.now
 
-      result_cache = send("discover_#{key_string}".to_sym)
+      result_cache = cache[:view_model_factory].items
 
       finish = Time.now
 
       connected = result_cache[:connected]
 
-      hash = @caches[key]
-      hash[:semaphore].synchronize do
+      cache[:semaphore].synchronize do
         @logger.debug("Caching view model #{key_string} data.  Compilation time: #{finish - start} seconds")
 
         # Only replace the cached result if the value is connected or this is the first time
-        hash[:result] = result_cache if connected || hash[:result].nil?
+        cache[:result] = result_cache if connected || cache[:result].nil?
 
-        hash[:condition].broadcast
+        cache[:condition].broadcast
       end
 
       # If not a connected new value, reschedule the discovery soon
       interval = @interval
-      interval = 5 if interval > 5 && connected == false
+      interval = 10 if interval > 10 && connected == false
 
       # Set up the next scheduled discovery for this key
       schedule(key, Time.now + interval)
     end
 
+    def disconnected_result
+      {
+        connected: false,
+        items:     []
+      }
+    end
+
     def result_cache(key)
-      hash = @caches[key]
-      hash[:semaphore].synchronize do
-        hash[:condition].wait(hash[:semaphore]) while hash[:result].nil?
-        hash[:result]
+      cache = @caches[key]
+      cache[:semaphore].synchronize do
+        cache[:condition].wait(cache[:semaphore]) while @running && cache[:result].nil?
+        return disconnected_result if cache[:result].nil?
+        cache[:result]
       end
     end
 
     def details(key, hash_key)
       detail_hash = result_cache(key)[:detail_hash]
       return detail_hash[hash_key] if detail_hash
-    end
-
-    def discover_application_instances
-      AdminUI::ApplicationInstancesViewModel.new(@logger, @cc, @varz).items
-    rescue => error
-      @logger.debug("Error during discover_application_instances: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_applications
-      AdminUI::ApplicationsViewModel.new(@logger, @cc, @varz).items
-    rescue => error
-      @logger.debug("Error during discover_applications: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_clients
-      AdminUI::ClientsViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_clients: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_cloud_controllers
-      AdminUI::CloudControllersViewModel.new(@logger, @varz).items
-    rescue => error
-      @logger.debug("Error during discover_cloud_controllers: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_components
-      AdminUI::ComponentsViewModel.new(@logger, @varz).items
-    rescue => error
-      @logger.debug("Error during discover_components: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_deas
-      AdminUI::DEAsViewModel.new(@logger, @varz).items
-    rescue => error
-      @logger.debug("Error during discover_deas: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_domains
-      AdminUI::DomainsViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_domains: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_events
-      AdminUI::EventsViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_events: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_gateways
-      AdminUI::GatewaysViewModel.new(@logger, @varz).items
-    rescue => error
-      @logger.debug("Error during discover_gateways: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_health_managers
-      AdminUI::HealthManagersViewModel.new(@logger, @varz).items
-    rescue => error
-      @logger.debug("Error during discover_health_managers: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_logs
-      AdminUI::LogsViewModel.new(@logger, @log_files).items
-    rescue => error
-      @logger.debug("Error during discover_logs: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_organizations
-      AdminUI::OrganizationsViewModel.new(@logger, @cc, @varz).items
-    rescue => error
-      @logger.debug("Error during discover_organizations: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_organization_roles
-      AdminUI::OrganizationRolesViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_organization_roles: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_quotas
-      AdminUI::QuotasViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_quotas: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_routers
-      AdminUI::RoutersViewModel.new(@logger, @cc, @varz).items
-    rescue => error
-      @logger.debug("Error during discover_routers: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_routes
-      AdminUI::RoutesViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_routes: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_service_bindings
-      AdminUI::ServiceBindingsViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_service_bindings: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_service_brokers
-      AdminUI::ServiceBrokersViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_service_brokers: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_service_instances
-      AdminUI::ServiceInstancesViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_service_instances: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_service_keys
-      AdminUI::ServiceKeysViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_service_keys: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_service_plans
-      AdminUI::ServicePlansViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_service_plans: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_service_plan_visibilities
-      AdminUI::ServicePlanVisibilitiesViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_service_plan_visibilities: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_services
-      AdminUI::ServicesViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_services: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_space_quotas
-      AdminUI::SpaceQuotasViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_space_quotas: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_space_roles
-      AdminUI::SpaceRolesViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_space_roles: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_spaces
-      AdminUI::SpacesViewModel.new(@logger, @cc, @varz).items
-    rescue => error
-      @logger.debug("Error during discover_spaces: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_stacks
-      AdminUI::StacksViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_stacks: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_stats
-      AdminUI::StatsViewModel.new(@logger, @stats).items
-    rescue => error
-      @logger.debug("Error during discover_stats: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_tasks
-      AdminUI::TasksViewModel.new(@logger, @tasks).items
-    rescue => error
-      @logger.debug("Error during discover_tasks: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
-    end
-
-    def discover_users
-      AdminUI::UsersViewModel.new(@logger, @cc).items
-    rescue => error
-      @logger.debug("Error during discover_users: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
-      result
     end
   end
 end

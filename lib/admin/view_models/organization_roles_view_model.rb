@@ -1,14 +1,8 @@
-require_relative 'base'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class OrganizationRolesViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class OrganizationRolesViewModel < AdminUI::BaseViewModel
     def do_items
       organizations                  = @cc.organizations
       organizations_auditors         = @cc.organizations_auditors
@@ -48,6 +42,7 @@ module AdminUI
 
     def add_rows(organization_role_array, path_role, human_role, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
       organization_role_array['items'].each do |organization_role|
+        return result unless @running
         Thread.pass
 
         row = []

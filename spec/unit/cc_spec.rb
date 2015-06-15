@@ -2,8 +2,6 @@ require 'logger'
 require_relative '../spec_helper'
 
 describe AdminUI::CC do
-  include ThreadHelper
-
   let(:ccdb_file)  { '/tmp/admin_ui_ccdb.db' }
   let(:ccdb_uri)   { "sqlite://#{ccdb_file}" }
   let(:db_file)    { '/tmp/admin_ui_store.db' }
@@ -27,7 +25,7 @@ describe AdminUI::CC do
   end
 
   after do
-    kill_threads
+    cc.shutdown
 
     Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{db_file} #{log_file} #{uaadb_file}"))
   end

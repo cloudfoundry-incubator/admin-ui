@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class CloudControllersViewModel < AdminUI::Base
-    def initialize(logger, varz)
-      super(logger)
-
-      @varz = varz
-    end
-
+  class CloudControllersViewModel < AdminUI::BaseViewModel
     def do_items
       cloud_controllers = @varz.cloud_controllers
 
@@ -20,7 +14,9 @@ module AdminUI
       hash  = {}
 
       cloud_controllers['items'].each do |cloud_controller|
+        return result unless @running
         Thread.pass
+
         row = []
 
         row.push(cloud_controller['name'])

@@ -2,8 +2,6 @@ require 'logger'
 require_relative '../spec_helper'
 
 describe AdminUI::CC do
-  include ThreadHelper
-
   let(:ccdb_file)  { '/tmp/admin_ui_ccdb.db' }
   let(:ccdb_uri)   { "sqlite://#{ccdb_file}" }
   let(:data_file)  { '/tmp/admin_ui.data' }
@@ -23,7 +21,6 @@ describe AdminUI::CC do
                          uaadb_uri:            uaadb_uri,
                          uaa_client:           { id: 'id', secret: 'secret' })
   end
-
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
   let(:cc) { AdminUI::CC.new(config, logger, client, true) }
   let(:email) { AdminUI::EMail.new(config, logger) }
@@ -39,7 +36,11 @@ describe AdminUI::CC do
   end
 
   after do
-    kill_threads
+    view_models.shutdown
+    stats.shutdown
+    varz.shutdown
+    nats.shutdown
+    cc.shutdown
 
     Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{log_file} #{uaadb_file}"))
   end

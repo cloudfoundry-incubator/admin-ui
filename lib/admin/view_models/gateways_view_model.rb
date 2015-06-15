@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class GatewaysViewModel < AdminUI::Base
-    def initialize(logger, varz)
-      super(logger)
-
-      @varz = varz
-    end
-
+  class GatewaysViewModel < AdminUI::BaseViewModel
     def do_items
       gateways = @varz.gateways
 
@@ -20,7 +14,9 @@ module AdminUI
       hash  = {}
 
       gateways['items'].each do |gateway|
+        return result unless @running
         Thread.pass
+
         row = []
 
         row.push(gateway['name'])

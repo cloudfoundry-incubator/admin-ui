@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class LogsViewModel < AdminUI::Base
-    def initialize(logger, log_files)
-      super(logger)
-
-      @log_files = log_files
-    end
-
+  class LogsViewModel < AdminUI::BaseViewModel
     def do_items
       logs = @log_files.infos
 
@@ -19,7 +13,9 @@ module AdminUI
       items = []
 
       logs.each do |log|
+        return result unless @running
         Thread.pass
+
         row = []
 
         row.push(log[:path])

@@ -3,8 +3,6 @@ require 'logger'
 require_relative '../spec_helper'
 
 describe AdminUI::Stats do
-  include ThreadHelper
-
   let(:data_file) { '/tmp/admin_ui_data.json' }
   let(:db_file)   { '/tmp/admin_ui_store.db' }
   let(:db_uri)    { "sqlite://#{db_file}" }
@@ -21,8 +19,7 @@ describe AdminUI::Stats do
                         data_file:               data_file,
                         mbus:                    'nats://nats:c1oudc0w@localhost:14222',
                         monitored_components:    [],
-                        db_uri:                  db_uri,
-                        nats_discovery_timeout:  1)
+                        db_uri:                  db_uri)
   end
 
   before do
@@ -30,7 +27,10 @@ describe AdminUI::Stats do
   end
 
   after do
-    kill_threads
+    stats.shutdown
+    cc.shutdown
+    varz.shutdown
+    nats.shutdown
 
     Process.wait(Process.spawn({}, "rm -fr #{data_file} #{db_file} #{log_file}"))
   end

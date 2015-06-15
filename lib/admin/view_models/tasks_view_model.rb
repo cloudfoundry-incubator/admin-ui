@@ -1,15 +1,9 @@
-require_relative 'base'
+require_relative 'base_view_model'
 require 'date'
 require 'thread'
 
 module AdminUI
-  class TasksViewModel < AdminUI::Base
-    def initialize(logger, tasks)
-      super(logger)
-
-      @tasks = tasks
-    end
-
+  class TasksViewModel < AdminUI::BaseViewModel
     def do_items
       tasks = @tasks.tasks
 
@@ -19,7 +13,9 @@ module AdminUI
       items = []
 
       tasks.each do |task|
+        return result unless @running
         Thread.pass
+
         row = []
 
         row.push(task[:command])

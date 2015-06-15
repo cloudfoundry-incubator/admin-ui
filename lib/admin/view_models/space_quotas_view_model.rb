@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class SpaceQuotasViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class SpaceQuotasViewModel < AdminUI::BaseViewModel
     def do_items
       space_quota_definitions = @cc.space_quota_definitions
 
@@ -26,7 +20,9 @@ module AdminUI
       space_counters = {}
 
       spaces['items'].each do |space|
+        return result unless @running
         Thread.pass
+
         space_quota_definition_id = space[:space_quota_definition_id]
         space_counters[space_quota_definition_id] = 0 if space_counters[space_quota_definition_id].nil?
         space_counters[space_quota_definition_id] += 1
@@ -36,6 +32,7 @@ module AdminUI
       hash  = {}
 
       space_quota_definitions['items'].each do |space_quota_definition|
+        return result unless @running
         Thread.pass
 
         guid          = space_quota_definition[:guid]

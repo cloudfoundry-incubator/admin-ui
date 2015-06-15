@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class DomainsViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class DomainsViewModel < AdminUI::BaseViewModel
     def do_items
       domains = @cc.domains
 
@@ -29,7 +23,9 @@ module AdminUI
       domains_organizations_hash = {}
       if organizations_connected && organizations_private_domains_connected
         organizations_private_domains['items'].each do |organization_private_domain|
+          return result unless @running
           Thread.pass
+
           domain_id = organization_private_domain[:private_domain_id]
           domain_organizations_array = domains_organizations_hash[domain_id]
           if domain_organizations_array.nil?
@@ -45,7 +41,9 @@ module AdminUI
 
       domain_route_counters = {}
       routes['items'].each do |route|
+        return result unless @running
         Thread.pass
+
         domain_id = route[:domain_id]
         domain_route_counters[domain_id] = 0 if domain_route_counters[domain_id].nil?
         domain_route_counters[domain_id] += 1
@@ -55,7 +53,9 @@ module AdminUI
       hash  = {}
 
       domains['items'].each do |domain|
+        return result unless @running
         Thread.pass
+
         domain_id                  = domain[:id]
         owning_organization_id     = domain[:owning_organization_id]
         organization               = owning_organization_id.nil? ? nil : organization_hash[owning_organization_id]

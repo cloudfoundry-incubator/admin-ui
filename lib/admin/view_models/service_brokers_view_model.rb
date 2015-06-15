@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class ServiceBrokersViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class ServiceBrokersViewModel < AdminUI::BaseViewModel
     def do_items
       service_brokers   = @cc.service_brokers
 
@@ -40,7 +34,9 @@ module AdminUI
 
       event_counters = {}
       events['items'].each do |event|
+        return result unless @running
         Thread.pass
+
         if event[:actee_type] == 'service_broker'
           actee = event[:actee]
           event_counters[actee] = 0 if event_counters[actee].nil?
@@ -54,7 +50,9 @@ module AdminUI
 
       service_counters = {}
       services['items'].each do |service|
+        return result unless @running
         Thread.pass
+
         service_broker_id = service[:service_broker_id]
         next if service_broker_id.nil?
         service_counters[service_broker_id] = 0 if service_counters[service_broker_id].nil?
@@ -63,7 +61,9 @@ module AdminUI
 
       service_plan_counters = {}
       service_plans['items'].each do |service_plan|
+        return result unless @running
         Thread.pass
+
         service = service_hash[service_plan[:service_id]]
         next if service.nil?
         service_broker_id = service[:service_broker_id]
@@ -74,7 +74,9 @@ module AdminUI
 
       service_plan_visibility_counters = {}
       service_plan_visibilities['items'].each do |service_plan_visibility|
+        return result unless @running
         Thread.pass
+
         service_plan_id = service_plan_visibility[:service_plan_id]
         next if service_plan_id.nil?
         service_plan = service_plan_hash[service_plan_id]
@@ -89,7 +91,9 @@ module AdminUI
 
       service_instance_counters = {}
       service_instances['items'].each do |service_instance|
+        return result unless @running
         Thread.pass
+
         service_plan_id = service_instance[:service_plan_id]
         next if service_plan_id.nil?
         service_plan = service_plan_hash[service_plan_id]
@@ -104,7 +108,9 @@ module AdminUI
 
       service_binding_counters = {}
       service_bindings['items'].each do |service_binding|
+        return result unless @running
         Thread.pass
+
         service_instance_id = service_binding[:service_instance_id]
         next if service_instance_id.nil?
         service_instance = service_instance_hash[service_instance_id]
@@ -123,7 +129,9 @@ module AdminUI
 
       service_key_counters = {}
       service_keys['items'].each do |service_key|
+        return result unless @running
         Thread.pass
+
         service_instance_id = service_key[:service_instance_id]
         next if service_instance_id.nil?
         service_instance = service_instance_hash[service_instance_id]
@@ -144,6 +152,7 @@ module AdminUI
       hash  = {}
 
       service_brokers['items'].each do |service_broker|
+        return result unless @running
         Thread.pass
 
         guid                     = service_broker[:guid]

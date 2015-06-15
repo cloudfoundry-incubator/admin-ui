@@ -1,4 +1,5 @@
 require 'nats/client'
+require 'thread'
 require 'uri'
 require 'yajl'
 
@@ -9,6 +10,8 @@ module AdminUI
       @logger = logger
       @email  = email
 
+      @running = true
+
       FileUtils.mkpath File.dirname(@config.data_file)
 
       @semaphore = Mutex.new
@@ -16,18 +19,17 @@ module AdminUI
 
       @cache = {}
 
-      thread = Thread.new do
-        loop do
-          schedule_discovery
-        end
+      @thread = Thread.new do
+        schedule_discovery while @running
       end
 
-      thread.priority = -2
+      @thread.priority = -2
     end
 
     def get
       @semaphore.synchronize do
-        @condition.wait(@semaphore) while @cache['items'].nil?
+        @condition.wait(@semaphore) while @running && @cache['items'].nil?
+        return disconnected_result if @cache['items'].nil?
         @cache.clone
       end
     end
@@ -46,7 +48,27 @@ module AdminUI
       end
     end
 
+    def shutdown
+      return unless @running
+
+      @running = false
+
+      @semaphore.synchronize do
+        @condition.broadcast
+      end
+
+      @thread.join
+    end
+
     private
+
+    def disconnected_result
+      {
+        'connected' => false,
+        'items'     => {},
+        'notified'  => {}
+      }
+    end
 
     def schedule_discovery
       nats_discovery_results = nats_discovery
@@ -59,7 +81,7 @@ module AdminUI
         send_email(disconnected)
 
         @condition.broadcast
-        @condition.wait(@semaphore, @config.nats_discovery_interval)
+        @condition.wait(@semaphore, @config.nats_discovery_interval) if @running
       end
     end
 
@@ -75,7 +97,7 @@ module AdminUI
         @last_discovery_time = 0
 
         thread = Thread.new do
-          while (@last_discovery_time == 0 && (Time.now.to_f - @start_time < @config.nats_discovery_interval)) || (Time.now.to_f - @last_discovery_time < @config.nats_discovery_timeout)
+          while @running && ((@last_discovery_time == 0 && (Time.now.to_f - @start_time < @config.nats_discovery_interval)) || (Time.now.to_f - @last_discovery_time < @config.nats_discovery_timeout))
             sleep(@config.nats_discovery_timeout)
           end
           ::NATS.stop
@@ -116,11 +138,15 @@ module AdminUI
           begin
             parsed = Yajl::Parser.parse(read)
             if parsed.is_a?(Hash)
-              if parsed.key?('items')
-                return parsed if parsed.key?('notified')
-                @logger.debug("Error during NATS parse data: 'notified' key not present")
+              if parsed.key?('connected')
+                if parsed.key?('items')
+                  return parsed if parsed.key?('notified')
+                  @logger.debug("Error during NATS parse data: 'notified' key not present")
+                else
+                  @logger.debug("Error during NATS parse data: 'items' key not present")
+                end
               else
-                @logger.debug("Error during NATS parse data: 'items' key not present")
+                @logger.debug("Error during NATS parse data: 'connected' key not present")
               end
             else
               @logger.debug('Error during NATS parse data: parsed data not a hash')
@@ -134,7 +160,7 @@ module AdminUI
           @logger.debug(error.backtrace.join("\n"))
         end
       end
-      { 'items' => {}, 'notified' => {} }
+      disconnected_result
     end
 
     # The call to this method must be in a synchronized block

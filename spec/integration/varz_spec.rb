@@ -3,32 +3,30 @@ require_relative '../spec_helper'
 
 describe AdminUI::VARZ, type: :integration do
   include NATSHelper
-  include ThreadHelper
   include VARZHelper
 
   let(:data_file) { '/tmp/admin_ui_data.json' }
   let(:db_file)   { '/tmp/admin_ui_store.db' }
   let(:db_uri)    { "sqlite://#{db_file}" }
   let(:log_file) { '/tmp/admin_ui.log' }
-
-  before do
-    AdminUI::Config.any_instance.stub(:validate)
-    nats_stub
-  end
-
   let(:logger) { Logger.new(log_file) }
   let(:config) do
     AdminUI::Config.load(data_file:            data_file,
                          db_uri:               db_uri,
                          monitored_components: [])
   end
-
   let(:email) { AdminUI::EMail.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
   let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
 
+  before do
+    AdminUI::Config.any_instance.stub(:validate)
+    nats_stub
+  end
+
   after do
-    kill_threads
+    varz.shutdown
+    nats.shutdown
 
     Process.wait(Process.spawn({}, "rm -fr #{data_file} #{db_file} #{log_file}"))
   end

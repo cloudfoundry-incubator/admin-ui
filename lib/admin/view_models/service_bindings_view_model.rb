@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class ServiceBindingsViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class ServiceBindingsViewModel < AdminUI::BaseViewModel
     def do_items
       service_bindings = @cc.service_bindings
 
@@ -37,7 +31,9 @@ module AdminUI
 
       event_counters = {}
       events['items'].each do |event|
+        return result unless @running
         Thread.pass
+
         next unless event[:actee_type] == 'service_binding'
         actee = event[:actee]
         event_counters[actee] = 0 if event_counters[actee].nil?
@@ -48,6 +44,7 @@ module AdminUI
       hash  = {}
 
       service_bindings['items'].each do |service_binding|
+        return result unless @running
         Thread.pass
 
         guid             = service_binding[:guid]

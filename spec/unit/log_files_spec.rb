@@ -8,16 +8,13 @@ describe AdminUI::LogFiles do
   let(:db_uri)    { "sqlite://#{db_file}" }
   let(:system_log_file) { '/tmp/admin_ui.log' }
   let(:logger) { Logger.new(system_log_file) }
-
   let(:log_file_sftp_key) { '/somedir/somefile' }
   let(:config) do
     AdminUI::Config.load(db_uri:            db_uri,
                          log_files:         [log_file_uri],
                          log_file_sftp_key: [log_file_sftp_key])
   end
-
   let(:log_files) { AdminUI::LogFiles.new(config, logger) }
-
   let(:log_file_name) { 'test' }
   let(:log_file_extension) { 'log' }
   let(:log_file_content) { 'This is sample file content.  It is not really very long.  But, will suffice for testing' }

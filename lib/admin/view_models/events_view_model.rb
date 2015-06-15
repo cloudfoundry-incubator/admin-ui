@@ -1,14 +1,9 @@
-require_relative 'base'
+require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class EventsViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class EventsViewModel < AdminUI::BaseViewModel
     def do_items
       events = @cc.events
 
@@ -27,6 +22,7 @@ module AdminUI
       hash  = {}
 
       events['items'].each do |event|
+        return result unless @running
         Thread.pass
 
         space        = space_id_hash[event[:space_id]]

@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class DEAsViewModel < AdminUI::Base
-    def initialize(logger, varz)
-      super(logger)
-
-      @varz = varz
-    end
-
+  class DEAsViewModel < AdminUI::BaseViewModel
     def do_items
       deas = @varz.deas
 
@@ -20,7 +14,9 @@ module AdminUI
       hash  = {}
 
       deas['items'].each do |dea|
+        return result unless @running
         Thread.pass
+
         row = []
 
         row.push(dea['name'])

@@ -1,16 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class ApplicationInstancesViewModel < AdminUI::Base
-    def initialize(logger, cc, varz)
-      super(logger)
-
-      @cc   = cc
-      @varz = varz
-    end
-
+  class ApplicationInstancesViewModel < AdminUI::BaseViewModel
     def do_items
       deas = @varz.deas
 
@@ -34,6 +27,7 @@ module AdminUI
         host = dea['name']
         data['instance_registry'].each_value do |application|
           application.each_value do |application_instance|
+            return result unless @running
             Thread.pass
 
             id             = application_instance['application_id']

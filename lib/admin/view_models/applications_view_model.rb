@@ -1,16 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class ApplicationsViewModel < AdminUI::Base
-    def initialize(logger, cc, varz)
-      super(logger)
-
-      @cc   = cc
-      @varz = varz
-    end
-
+  class ApplicationsViewModel < AdminUI::BaseViewModel
     def do_items
       applications = @cc.applications
 
@@ -41,7 +34,9 @@ module AdminUI
 
       fqdns_hash = {}
       apps_routes['items'].each do |app_route|
+        return result unless @running
         Thread.pass
+
         route = route_hash[app_route[:route_id]]
         next if route.nil?
         domain = domain_hash[route[:domain_id]]
@@ -62,7 +57,9 @@ module AdminUI
 
       event_counters = {}
       events['items'].each do |event|
+        return result unless @running
         Thread.pass
+
         if event[:actee_type] == 'app'
           actee = event[:actee]
           event_counters[actee] = 0 if event_counters[actee].nil?
@@ -76,7 +73,9 @@ module AdminUI
 
       service_binding_counters = {}
       service_bindings['items'].each do |service_binding|
+        return result unless @running
         Thread.pass
+
         app_id = service_binding[:app_id]
         service_binding_counters[app_id] = 0 if service_binding_counters[app_id].nil?
         service_binding_counters[app_id] += 1
@@ -87,7 +86,9 @@ module AdminUI
         next unless dea['connected']
         dea['data']['instance_registry'].each_value do |application|
           application.each_value do |instance|
+            return result unless @running
             Thread.pass
+
             application_id = instance['application_id']
             application_usage_counters = application_usage_counters_hash[application_id]
             if application_usage_counters.nil?
@@ -109,6 +110,7 @@ module AdminUI
       hash  = {}
 
       applications['items'].each do |application|
+        return result unless @running
         Thread.pass
 
         guid             = application[:guid]

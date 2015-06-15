@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class HealthManagersViewModel < AdminUI::Base
-    def initialize(logger, varz)
-      super(logger)
-
-      @varz = varz
-    end
-
+  class HealthManagersViewModel < AdminUI::BaseViewModel
     def do_items
       health_managers = @varz.health_managers
 
@@ -20,7 +14,9 @@ module AdminUI
       hash  = {}
 
       health_managers['items'].each do |health_manager|
+        return result unless @running
         Thread.pass
+
         row = []
 
         row.push(health_manager['name'])

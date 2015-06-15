@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class RoutesViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class RoutesViewModel < AdminUI::BaseViewModel
     def do_items
       routes = @cc.routes
 
@@ -30,7 +24,9 @@ module AdminUI
       app_counters = {}
 
       apps_routes['items'].each do |app_route|
+        return result unless @running
         Thread.pass
+
         route_id = app_route[:route_id]
         app_counters[route_id] = 0 if app_counters[route_id].nil?
         app_counters[route_id] += 1
@@ -40,7 +36,9 @@ module AdminUI
       hash  = {}
 
       routes['items'].each do |route|
+        return result unless @running
         Thread.pass
+
         domain       = domain_hash[route[:domain_id]]
         space        = space_hash[route[:space_id]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]

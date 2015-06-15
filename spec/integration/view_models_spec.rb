@@ -2,7 +2,6 @@ require 'logger'
 require_relative '../spec_helper'
 
 describe AdminUI::CC, type: :integration do
-  include ThreadHelper
   include ViewModelsHelper
 
   let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
@@ -19,18 +18,24 @@ describe AdminUI::CC, type: :integration do
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
   let(:config) do
-    AdminUI::Config.load(ccdb_uri:                            ccdb_uri,
-                         cloud_controller_discovery_interval: 1,
-                         cloud_controller_uri:                'http://api.cloudfoundry',
-                         data_file:                           data_file,
-                         db_uri:                              db_uri,
-                         log_file:                            log_file,
-                         log_files:                           [log_file_displayed],
-                         mbus:                                'nats://nats:c1oudc0w@localhost:14222',
-                         nats_discovery_interval:             1,
-                         uaadb_uri:                           uaadb_uri,
-                         varz_discovery_interval:             1)
+    AdminUI::Config.load(ccdb_uri:             ccdb_uri,
+                         cloud_controller_uri: 'http://api.cloudfoundry',
+                         data_file:            data_file,
+                         db_uri:               db_uri,
+                         log_file:             log_file,
+                         log_files:            [log_file_displayed],
+                         mbus:                 'nats://nats:c1oudc0w@localhost:14222',
+                         uaadb_uri:            uaadb_uri)
   end
+  let(:client) { AdminUI::CCRestClient.new(config, logger) }
+  let(:cc) { AdminUI::CC.new(config, logger, client, true) }
+  let(:email) { AdminUI::EMail.new(config, logger) }
+  let(:log_files) { AdminUI::LogFiles.new(config, logger) }
+  let(:nats) { AdminUI::NATS.new(config, logger, email) }
+  let(:tasks) { AdminUI::Tasks.new(config, logger) }
+  let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
+  let(:stats) { AdminUI::Stats.new(config, logger, cc, varz, true) }
+  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, tasks, varz, true) }
 
   def cleanup_files
     Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{log_file} #{log_file_displayed} #{uaadb_file}"))
@@ -50,18 +55,13 @@ describe AdminUI::CC, type: :integration do
     varz_stub
   end
 
-  let(:client) { AdminUI::CCRestClient.new(config, logger) }
-  let(:cc) { AdminUI::CC.new(config, logger, client, true) }
-  let(:email) { AdminUI::EMail.new(config, logger) }
-  let(:log_files) { AdminUI::LogFiles.new(config, logger) }
-  let(:nats) { AdminUI::NATS.new(config, logger, email) }
-  let(:tasks) { AdminUI::Tasks.new(config, logger) }
-  let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
-  let(:stats) { AdminUI::Stats.new(config, logger, cc, varz, true) }
-  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, tasks, varz, true) }
-
   after do
-    kill_threads
+    view_models.shutdown
+    stats.shutdown
+    varz.shutdown
+    nats.shutdown
+    cc.shutdown
+
     cleanup_files
   end
 

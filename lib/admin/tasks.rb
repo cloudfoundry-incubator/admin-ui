@@ -1,4 +1,5 @@
 require 'open3'
+require 'thread'
 require_relative 'utils'
 
 module AdminUI

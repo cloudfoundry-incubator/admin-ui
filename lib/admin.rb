@@ -25,6 +25,8 @@ module AdminUI
       @config_hash    = config_hash
       @testing        = testing
       @start_callback = start_callback
+
+      @running = true
     end
 
     def start
@@ -39,10 +41,33 @@ module AdminUI
       launch_web
     end
 
+    def shutdown
+      return unless @running
+
+      @running = false
+
+      @view_models.shutdown
+      @stats.shutdown
+      @varz.shutdown
+      @nats.shutdown
+      @cc.shutdown
+
+      Rack::Handler::WEBrick.shutdown
+    end
+
     private
 
     def setup_traps
-      %w(TERM INT).each { |sig| trap(sig) { exit! } }
+      %w(TERM INT).each do |signal|
+        trap(signal) do
+          puts "\n\n"
+          puts 'Shutting down ...'
+          shutdown
+          puts 'Exiting'
+          puts "\n"
+          exit!
+        end
+      end
     end
 
     def setup_config
@@ -59,15 +84,15 @@ module AdminUI
     end
 
     def setup_components
-      email  = EMail.new(@config, @logger)
-      nats   = NATS.new(@config, @logger, email)
+      email = EMail.new(@config, @logger)
 
       @client      = CCRestClient.new(@config, @logger)
       @cc          = CC.new(@config, @logger, @client, @testing)
       @log_files   = LogFiles.new(@config, @logger)
       @login       = Login.new(@config, @logger, @client)
       @tasks       = Tasks.new(@config, @logger)
-      @varz        = VARZ.new(@config, @logger, nats, @testing)
+      @nats        = NATS.new(@config, @logger, email)
+      @varz        = VARZ.new(@config, @logger, @nats, @testing)
       @stats       = Stats.new(@config, @logger, @cc, @varz, @testing)
       @view_models = ViewModels.new(@config, @logger, @cc, @log_files, @stats, @tasks, @varz, @testing)
       @operation   = Operation.new(@config, @logger, @cc, @client, @varz, @view_models)

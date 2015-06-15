@@ -1,16 +1,10 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 require_relative '../utils'
 
 module AdminUI
-  class StatsViewModel < AdminUI::Base
-    def initialize(logger, stats)
-      super(logger)
-
-      @stats = stats
-    end
-
+  class StatsViewModel < AdminUI::BaseViewModel
     def do_items
       statistics        = @stats.stats
       current_statistic = @stats.current_stats
@@ -20,7 +14,9 @@ module AdminUI
       items.push(to_row(current_statistic)) if current_statistic
 
       statistics.each do |statistic|
+        return result unless @running
         Thread.pass
+
         items.push(to_row(Utils.symbolize_keys(statistic)))
       end
 

@@ -11,6 +11,8 @@ module AdminUI
       @logger  = logger
       @testing = testing
 
+      @running = true
+
       # TODO: Need config for number of connections/threads
       # SQLite for testing does not appear to work well with multiple connections
       @max_connections = testing ? 1 : 4
@@ -226,7 +228,12 @@ module AdminUI
       }
 
       @caches.each_pair do |key, cache|
-        cache.merge!(semaphore: Mutex.new, condition: ConditionVariable.new, exists: nil, result: nil, select: nil)
+        cache.merge!(condition: ConditionVariable.new,
+                     exists:    nil,
+                     result:    nil,
+                     select:    nil,
+                     semaphore: Mutex.new)
+
         schedule(key)
       end
     end
@@ -246,7 +253,9 @@ module AdminUI
       return nil unless hash['connected']
       instances = 0
       hash['items'].each do |app|
+        break unless @running
         Thread.pass
+
         instances += app[:instances] if app[:state] == 'STARTED'
       end
       instances
@@ -257,7 +266,9 @@ module AdminUI
       return nil unless hash['connected']
       instances = 0
       hash['items'].each do |app|
+        break unless @running
         Thread.pass
+
         instances += app[:instances]
       end
       instances
@@ -453,6 +464,20 @@ module AdminUI
       result_cache(:services)
     end
 
+    def shutdown
+      return unless @running
+
+      @running = false
+
+      @caches.each_pair do |_key, cache|
+        cache[:semaphore].synchronize do
+          cache[:condition].broadcast
+        end
+      end
+
+      @pool.shutdown
+    end
+
     def space_quota_definitions
       result_cache(:space_quota_definitions)
     end
@@ -500,9 +525,9 @@ module AdminUI
     private
 
     def discover(key)
-      @logger.debug("[#{@config.cloud_controller_discovery_interval} second interval] Starting CC #{key} discovery...")
-
       cache = @caches[key]
+
+      @logger.debug("[#{@config.cloud_controller_discovery_interval} second interval] Starting CC #{key} discovery...")
 
       start = Time.now
 
@@ -522,13 +547,17 @@ module AdminUI
 
     def invalidate_cache(key)
       cache = @caches[key]
+
       cache[:semaphore].synchronize do
         cache[:result] = nil
       end
+
       schedule(key)
     end
 
     def schedule(key, time = Time.now)
+      return unless @running
+
       @pool.schedule(key, time) do
         discover(key)
       end
@@ -536,12 +565,10 @@ module AdminUI
 
     def result_cache(key)
       cache = @caches[key]
+
       cache[:semaphore].synchronize do
-        if @testing
-          cache[:condition].wait(cache[:semaphore]) while cache[:result].nil?
-        else
-          return result if cache[:result].nil?
-        end
+        cache[:condition].wait(cache[:semaphore]) while @testing && @running && cache[:result].nil?
+        return result if cache[:result].nil?
         cache[:result]
       end
     end
@@ -595,7 +622,9 @@ module AdminUI
           if exists
             items = []
             connection.fetch(cache[:select]) do |row|
+              return result unless @running
               Thread.pass
+
               items.push(row)
             end
             return result(items)

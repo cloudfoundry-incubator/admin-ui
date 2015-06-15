@@ -1,15 +1,9 @@
-require_relative 'base'
+require_relative 'base_view_model'
 require 'date'
 require 'thread'
 
 module AdminUI
-  class UsersViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class UsersViewModel < AdminUI::BaseViewModel
     def do_items
       groups                         = @cc.groups
       group_membership               = @cc.group_membership
@@ -48,7 +42,9 @@ module AdminUI
 
       member_groups = {}
       group_membership['items'].each do |group_membership_entry|
+        return result unless @running
         Thread.pass
+
         group_id = group_membership_entry[:group_id]
         member_id = group_membership_entry[:member_id]
         member_groups_entry = member_groups[member_id]
@@ -61,7 +57,9 @@ module AdminUI
 
       event_counters = {}
       events['items'].each do |event|
+        return result unless @running
         Thread.pass
+
         next unless event[:actor_type] == 'user'
         # A user actor_type is used for a client.  But, the actor_name is nil in this case
         next if event[:actor_name].nil?
@@ -90,6 +88,7 @@ module AdminUI
       hash  = {}
 
       users_uaa['items'].each do |user_uaa|
+        return result unless @running
         Thread.pass
 
         guid = user_uaa[:id]

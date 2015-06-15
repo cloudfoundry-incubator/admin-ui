@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class ComponentsViewModel < AdminUI::Base
-    def initialize(logger, varz)
-      super(logger)
-
-      @varz = varz
-    end
-
+  class ComponentsViewModel < AdminUI::BaseViewModel
     def do_items
       components = @varz.components
 
@@ -20,7 +14,9 @@ module AdminUI
       hash  = {}
 
       components['items'].each do |component|
+        return result unless @running
         Thread.pass
+
         row = []
 
         row.push(component['name'])

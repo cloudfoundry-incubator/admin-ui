@@ -1,14 +1,8 @@
-require_relative 'base'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class SpaceRolesViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class SpaceRolesViewModel < AdminUI::BaseViewModel
     def do_items
       spaces            = @cc.spaces
       spaces_auditors   = @cc.spaces_auditors
@@ -47,6 +41,7 @@ module AdminUI
 
     def add_rows(space_role_array, path_role, human_role, space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
       space_role_array['items'].each do |space_role|
+        return result unless @running
         Thread.pass
 
         row = []

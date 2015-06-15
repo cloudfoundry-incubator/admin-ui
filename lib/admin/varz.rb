@@ -10,18 +10,18 @@ module AdminUI
       @nats    = nats
       @testing = testing
 
+      @running = true
+
       @semaphore = Mutex.new
       @condition = ConditionVariable.new
 
       @cache = nil
 
-      thread = Thread.new do
-        loop do
-          schedule_discovery
-        end
+      @thread = Thread.new do
+        schedule_discovery while @running
       end
 
-      thread.priority = -2
+      @thread.priority = -2
     end
 
     def components
@@ -83,16 +83,25 @@ module AdminUI
       end
     end
 
+    def shutdown
+      return unless @running
+
+      @running = false
+
+      @semaphore.synchronize do
+        @condition.broadcast
+      end
+
+      @thread.join
+    end
+
     private
 
     def filter(typePattern)
       cache = {}
       @semaphore.synchronize do
-        if @testing
-          @condition.wait(@semaphore) while @cache.nil?
-        else
-          return { 'connected' => false, 'items' => [] } if @cache.nil?
-        end
+        @condition.wait(@semaphore) while @testing && @running && @cache.nil?
+        return { 'connected' => false, 'items' => [] } if @cache.nil?
         cache = @cache.clone
       end
 
@@ -123,7 +132,9 @@ module AdminUI
         cache['connected'] = nats_result['connected']
 
         nats_result['items'].each do |uri, item|
+          break unless @running
           Thread.pass
+
           item_hash[uri] = item_result(uri, item)
         end
       rescue => error
@@ -136,7 +147,7 @@ module AdminUI
       @semaphore.synchronize do
         @cache = cache
         @condition.broadcast
-        @condition.wait(@semaphore, @config.varz_discovery_interval)
+        @condition.wait(@semaphore, @config.varz_discovery_interval) if @running
       end
     end
 

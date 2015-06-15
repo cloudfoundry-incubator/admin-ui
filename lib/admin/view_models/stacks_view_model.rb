@@ -1,14 +1,9 @@
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class StacksViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class StacksViewModel < AdminUI::BaseViewModel
     def do_items
       stacks = @cc.stacks
 
@@ -22,7 +17,9 @@ module AdminUI
       application_counters = {}
 
       applications['items'].each do |application|
+        return result unless @running
         Thread.pass
+
         stack_id = application[:stack_id]
         next if stack_id.nil?
         application_counter = application_counters[stack_id]
@@ -40,6 +37,7 @@ module AdminUI
       hash  = {}
 
       stacks['items'].each do |stack|
+        return result unless @running
         Thread.pass
 
         guid = stack[:guid]

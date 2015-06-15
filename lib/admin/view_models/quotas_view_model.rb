@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class QuotasViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class QuotasViewModel < AdminUI::BaseViewModel
     def do_items
       quota_definitions = @cc.quota_definitions
 
@@ -23,7 +17,9 @@ module AdminUI
       organization_counters = {}
 
       organizations['items'].each do |organization|
+        return result unless @running
         Thread.pass
+
         quota_definition_id = organization[:quota_definition_id]
         organization_counters[quota_definition_id] = 0 if organization_counters[quota_definition_id].nil?
         organization_counters[quota_definition_id] += 1
@@ -33,7 +29,9 @@ module AdminUI
       hash  = {}
 
       quota_definitions['items'].each do |quota_definition|
+        return result unless @running
         Thread.pass
+
         row = []
 
         row.push(quota_definition[:guid])

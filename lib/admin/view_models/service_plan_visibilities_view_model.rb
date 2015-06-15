@@ -1,15 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class ServicePlanVisibilitiesViewModel < AdminUI::Base
-    def initialize(logger, cc)
-      super(logger)
-
-      @cc = cc
-    end
-
+  class ServicePlanVisibilitiesViewModel < AdminUI::BaseViewModel
     def do_items
       service_plan_visibilities = @cc.service_plan_visibilities
 
@@ -34,7 +28,9 @@ module AdminUI
 
       event_counters = {}
       events['items'].each do |event|
+        return result unless @running
         Thread.pass
+
         next unless event[:actee_type] == 'service_plan_visibility'
         actee = event[:actee]
         event_counters[actee] = 0 if event_counters[actee].nil?
@@ -42,6 +38,7 @@ module AdminUI
       end
 
       service_plan_visibilities['items'].each do |service_plan_visibility|
+        return result unless @running
         Thread.pass
 
         guid            = service_plan_visibility[:guid]

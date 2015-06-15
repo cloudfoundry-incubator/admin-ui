@@ -39,6 +39,7 @@ module AdminUI
       event_counters        = {}
       event_target_counters = {}
       events['items'].each do |event|
+        return result unless @running
         Thread.pass
 
         if event[:actee_type] == 'space'
@@ -63,14 +64,18 @@ module AdminUI
       count_space_roles(spaces_managers, space_role_counters)
 
       service_instances['items'].each do |service_instance|
+        return result unless @running
         Thread.pass
+
         space_id = service_instance[:space_id]
         space_service_instance_counters[space_id] = 0 if space_service_instance_counters[space_id].nil?
         space_service_instance_counters[space_id] += 1
       end
 
       routes['items'].each do |route|
+        return result unless @running
         Thread.pass
+
         space_id = route[:space_id]
         space_route_counters = space_route_counters_hash[space_id]
         if space_route_counters.nil?
@@ -89,7 +94,9 @@ module AdminUI
       instance_hash = create_instance_hash(deas)
 
       applications['items'].each do |application|
+        return result unless @running
         Thread.pass
+
         space_id = application[:space_id]
         space_app_counters = space_app_counters_hash[space_id]
         if space_app_counters.nil?
@@ -119,7 +126,9 @@ module AdminUI
       hash  = {}
 
       spaces['items'].each do |space|
+        return result unless @running
         Thread.pass
+
         space_id   = space[:id]
         space_guid = space[:guid]
 

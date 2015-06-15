@@ -1,16 +1,9 @@
-require_relative 'base'
 require 'date'
 require 'thread'
+require_relative 'base_view_model'
 
 module AdminUI
-  class RoutersViewModel < AdminUI::Base
-    def initialize(logger, cc, varz)
-      super(logger)
-
-      @cc   = cc
-      @varz = varz
-    end
-
+  class RoutersViewModel < AdminUI::BaseViewModel
     def do_items
       routers = @varz.routers
 
@@ -29,7 +22,9 @@ module AdminUI
       hash  = {}
 
       routers['items'].each do |router|
+        return result unless @running
         Thread.pass
+
         row = []
 
         row.push(router['name'])
