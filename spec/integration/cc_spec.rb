@@ -36,6 +36,7 @@ describe AdminUI::CC, type: :integration do
 
   after do
     cc.shutdown
+    cc.join
 
     cleanup_files
   end

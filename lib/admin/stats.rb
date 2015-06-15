@@ -105,7 +105,9 @@ module AdminUI
       @semaphore.synchronize do
         @condition.broadcast
       end
+    end
 
+    def join
       @thread.join
     end
 

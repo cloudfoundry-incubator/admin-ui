@@ -57,6 +57,12 @@ describe AdminUI::Operation, type: :integration do
     nats.shutdown
     cc.shutdown
 
+    view_models.join
+    stats.join
+    varz.join
+    nats.join
+    cc.join
+
     cleanup_files
   end
 

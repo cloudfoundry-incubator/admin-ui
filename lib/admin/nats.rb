@@ -56,7 +56,9 @@ module AdminUI
       @semaphore.synchronize do
         @condition.broadcast
       end
+    end
 
+    def join
       @thread.join
     end
 
@@ -98,7 +100,10 @@ module AdminUI
 
         thread = Thread.new do
           while @running && ((@last_discovery_time == 0 && (Time.now.to_f - @start_time < @config.nats_discovery_interval)) || (Time.now.to_f - @last_discovery_time < @config.nats_discovery_timeout))
-            sleep(@config.nats_discovery_timeout)
+            # sleep using the @mutex and @condition so shutdown can interrupt
+            @semaphore.synchronize do
+              @condition.wait(@semaphore, @config.nats_discovery_timeout) if @running
+            end
           end
           ::NATS.stop
         end

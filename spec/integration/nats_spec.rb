@@ -25,6 +25,7 @@ describe AdminUI::NATS, type: :integration do
 
   after do
     nats.shutdown
+    nats.join
 
     Process.wait(Process.spawn({}, "rm -fr #{data_file} #{db_file} #{log_file}"))
   end

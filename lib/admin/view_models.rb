@@ -391,6 +391,10 @@ module AdminUI
       @pool.shutdown
     end
 
+    def join
+      @pool.join
+    end
+
     def space(guid)
       details(:spaces, guid)
     end

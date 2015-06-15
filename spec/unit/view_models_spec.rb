@@ -42,6 +42,12 @@ describe AdminUI::CC do
     nats.shutdown
     cc.shutdown
 
+    view_models.join
+    stats.join
+    varz.join
+    nats.join
+    cc.join
+
     Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{log_file} #{uaadb_file}"))
   end
 

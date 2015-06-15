@@ -478,6 +478,10 @@ module AdminUI
       @pool.shutdown
     end
 
+    def join
+      @pool.join
+    end
+
     def space_quota_definitions
       result_cache(:space_quota_definitions)
     end

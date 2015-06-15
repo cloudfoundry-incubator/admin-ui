@@ -32,6 +32,11 @@ describe AdminUI::Stats do
     varz.shutdown
     nats.shutdown
 
+    stats.join
+    cc.join
+    varz.join
+    nats.join
+
     Process.wait(Process.spawn({}, "rm -fr #{data_file} #{db_file} #{log_file}"))
   end
 

@@ -76,7 +76,9 @@ module AdminUI
       @mutex.synchronize do
         @condition.broadcast
       end
+    end
 
+    def join
       @threads.each(&:join)
     end
 

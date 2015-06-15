@@ -26,6 +26,7 @@ describe AdminUI::CC do
 
   after do
     cc.shutdown
+    cc.join
 
     Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{db_file} #{log_file} #{uaadb_file}"))
   end
