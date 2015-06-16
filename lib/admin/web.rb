@@ -69,6 +69,18 @@ module AdminUI
       404
     end
 
+    get '/buildpacks_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/buildpacks_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.buildpacks, params).items)
+    end
+
+    get '/buildpacks_view_model/:guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/buildpacks_view_model/#{params[:guid]}")
+      result = @view_models.buildpack(params[:guid])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/clients_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/clients_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.clients, params).items)
@@ -515,6 +527,14 @@ module AdminUI
                 filename:    'applications.csv')
     end
 
+    post '/buildpacks_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/buildpacks_view_model')
+      file = Download.download(request.body.read, 'buildpacks', @view_models.buildpacks)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'buildpacks.csv')
+    end
+
     post '/clients_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'post', '/clients_view_model')
       file = Download.download(request.body.read, 'clients', @view_models.clients)
@@ -812,6 +832,24 @@ module AdminUI
       end
     end
 
+    put '/buildpacks/:buildpack_guid', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'put', "/buildpacks/#{params[:buildpack_guid]}; body = #{control_message}")
+        @operation.manage_buildpack(params[:buildpack_guid], control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during update buildpack: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.debug("Error during update buildpack: #{error.inspect}")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     put '/organizations/:org_guid', auth: [:admin] do
       begin
         control_message = request.body.read.to_s
@@ -897,6 +935,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during delete application instance: #{error.inspect}")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/buildpacks/:buildpack_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/buildpacks/#{params[:buildpack_guid]}")
+      begin
+        @operation.delete_buildpack(params[:buildpack_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during delete buildpack: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.debug("Error during delete buildpack: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end

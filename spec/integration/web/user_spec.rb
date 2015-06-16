@@ -120,6 +120,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Buildpacks tab does not have enable, disable, lock, unlock or delete buttons' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Buildpacks' }
+        let(:page_id)   { 'BuildpacksPage' }
+        let(:button_id) { 'ToolTables_BuildpacksTable_0' }
+      end
+    end
+
     context 'Domains tab does not have delete button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Domains' }

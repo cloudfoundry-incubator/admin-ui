@@ -72,6 +72,14 @@ describe AdminUI::CC do
       verify_disconnected_items(view_models.applications)
     end
 
+    it 'returns nil buildpack as expected' do
+      expect(view_models.buildpack('bogus')).to be_nil
+    end
+
+    it 'returns zero buildpacks as expected' do
+      verify_disconnected_items(view_models.buildpacks)
+    end
+
     it 'returns nil client as expected' do
       expect(view_models.client('bogus')).to be_nil
     end

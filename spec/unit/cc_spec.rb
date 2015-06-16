@@ -56,6 +56,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.apps_routes)
     end
 
+    it 'returns zero buildpacks as expected' do
+      verify_disconnected_items(cc.buildpacks)
+    end
+
     it 'returns zero clients as expected' do
       verify_disconnected_items(cc.clients)
     end

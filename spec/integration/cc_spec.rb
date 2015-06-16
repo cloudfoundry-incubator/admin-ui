@@ -49,6 +49,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.applications['items'].length).to eq(0)
     end
 
+    it 'clears the buildpack cache' do
+      expect(cc.buildpacks['items'].length).to eq(1)
+      cc_clear_buildpacks_cache_stub(config)
+      cc.invalidate_buildpacks
+      expect(cc.buildpacks['items'].length).to eq(0)
+    end
+
     it 'clears the client cache' do
       expect(cc.clients['items'].length).to eq(1)
       uaa_clear_clients_cache_stub(config)
@@ -227,6 +234,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected apps_routes' do
       let(:results)  { cc.apps_routes }
       let(:expected) { cc_app_route }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected buildpacks' do
+      let(:results)  { cc.buildpacks }
+      let(:expected) { cc_buildpack }
 
       it_behaves_like('common cc retrieval')
     end

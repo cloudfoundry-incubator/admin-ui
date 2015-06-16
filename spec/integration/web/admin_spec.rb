@@ -56,6 +56,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('SpaceRoles').displayed?).to be(true)
       expect(scroll_tab_into_view('Clients').displayed?).to be(true)
       expect(scroll_tab_into_view('Users').displayed?).to be(true)
+      expect(scroll_tab_into_view('Buildpacks').displayed?).to be(true)
       expect(scroll_tab_into_view('Domains').displayed?).to be(true)
       expect(scroll_tab_into_view('Quotas').displayed?).to be(true)
       expect(scroll_tab_into_view('SpaceQuotas').displayed?).to be(true)
@@ -1979,6 +1980,160 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has space roles link' do
             check_filter_link('Users', 16, 'SpaceRoles', uaa_user[:id])
+          end
+        end
+      end
+
+      context 'Buildpacks' do
+        let(:tab_id)     { 'Buildpacks' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='BuildpacksTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 8,
+                                labels:          [' ', 'Name', 'GUID', 'Created', 'Updated', 'Position', 'Enabled', 'Locked'],
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_buildpack[:name],
+                             cc_buildpack[:guid],
+                             cc_buildpack[:created_at].to_datetime.rfc3339,
+                             cc_buildpack[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatNumber(#{cc_buildpack[:position]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_buildpack[:enabled]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_buildpack[:locked]})")
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_BuildpacksTable_5')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('BuildpacksTable', cc_buildpack[:guid])
+        end
+
+        context 'manage buildpack' do
+          def manage_buildpack(buttonIndex)
+            check_first_row('BuildpacksTable')
+            @driver.find_element(id: 'ToolTables_BuildpacksTable_' + buttonIndex.to_s).click
+            check_operation_result
+          end
+
+          def check_buildpack_enabled(enabled)
+            Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[7]").text == enabled }
+          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            expect(@driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[7]").text).to eq(enabled)
+          end
+
+          def check_buildpack_locked(locked)
+            Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[8]").text == locked }
+          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            expect(@driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[8]").text).to eq(locked)
+          end
+
+          it 'has an Enable button' do
+            expect(@driver.find_element(id: 'ToolTables_BuildpacksTable_0').text).to eq('Enable')
+          end
+
+          it 'has a Disable button' do
+            expect(@driver.find_element(id: 'ToolTables_BuildpacksTable_1').text).to eq('Disable')
+          end
+
+          it 'has a Lock button' do
+            expect(@driver.find_element(id: 'ToolTables_BuildpacksTable_2').text).to eq('Lock')
+          end
+
+          it 'has an Unlock button' do
+            expect(@driver.find_element(id: 'ToolTables_BuildpacksTable_3').text).to eq('Unlock')
+          end
+
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'ToolTables_BuildpacksTable_4').text).to eq('Delete')
+          end
+
+          context 'Enable button' do
+            it_behaves_like('click button without selecting a single row') do
+              let(:button_id) { 'ToolTables_BuildpacksTable_0' }
+            end
+          end
+
+          context 'Disable button' do
+            it_behaves_like('click button without selecting a single row') do
+              let(:button_id) { 'ToolTables_BuildpacksTable_1' }
+            end
+          end
+
+          context 'Lock button' do
+            it_behaves_like('click button without selecting a single row') do
+              let(:button_id) { 'ToolTables_BuildpacksTable_2' }
+            end
+          end
+
+          context 'Unlock button' do
+            it_behaves_like('click button without selecting a single row') do
+              let(:button_id) { 'ToolTables_BuildpacksTable_3' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting a single row') do
+              let(:button_id) { 'ToolTables_BuildpacksTable_4' }
+            end
+          end
+
+          it 'disables the selected application' do
+            manage_buildpack(1)
+            check_buildpack_enabled('false')
+          end
+
+          it 'enables the selected application' do
+            manage_buildpack(1)
+            check_buildpack_enabled('false')
+            manage_buildpack(0)
+            check_buildpack_enabled('true')
+          end
+
+          it 'locks the selected application' do
+            manage_buildpack(2)
+            check_buildpack_locked('true')
+          end
+
+          it 'unlocks the selected application' do
+            manage_buildpack(2)
+            check_buildpack_locked('true')
+            manage_buildpack(3)
+            check_buildpack_locked('false')
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'ToolTables_BuildpacksTable_4' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected buildpacks?' }
+              let(:table_id)        { 'BuildpacksTable' }
+            end
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ label: 'Name',     tag: 'div', value: cc_buildpack[:name] },
+                           { label: 'GUID',     tag:   nil, value: cc_buildpack[:guid] },
+                           { label: 'Created',  tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_buildpack[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',  tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_buildpack[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Position', tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_buildpack[:position]})") },
+                           { label: 'Enabled',  tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_buildpack[:enabled]})") },
+                           { label: 'Locked',   tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_buildpack[:locked]})") },
+                           { label: 'Key',      tag:   nil, value: cc_buildpack[:key] },
+                           { label: 'Filename', tag:   nil, value: cc_buildpack[:filename] }
+                          ])
           end
         end
       end

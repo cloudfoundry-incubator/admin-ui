@@ -28,6 +28,7 @@
         <script src="js/app/tab.js"></script>
         <script src="js/app/tabs/applicationInstancesTab.js"></script>
         <script src="js/app/tabs/applicationsTab.js"></script>
+        <script src="js/app/tabs/buildpacksTab.js"></script>
         <script src="js/app/tabs/clientsTab.js"></script>              
         <script src="js/app/tabs/cloudControllersTab.js"></script>        
         <script src="js/app/tabs/componentsTab.js"></script>
@@ -104,6 +105,7 @@
 	            <span id="SpaceRoles" class="menuItem">Space Roles</span>
 	            <span id="Clients" class="menuItem">Clients</span>
 	            <span id="Users" class="menuItem">Users</span>
+	            <span id="Buildpacks" class="menuItem">Buildpacks</span>
 	            <span id="Domains" class="menuItem">Domains</span>
 	            <span id="Quotas" class="menuItem">Quotas</span>
 	            <span id="SpaceQuotas" class="menuItem">Space Quotas</span>
@@ -667,6 +669,17 @@
                 <div class="verticalPageSection">
                     <div id="UsersDetailsLabel" class="propertyLabel">Details</div>
                     <div id="UsersPropertiesContainer"></div>
+                </div>
+            </div>
+            
+            <div id="BuildpacksPage" class="page hiddenPage">
+                <div id="BuildpacksTableContainer" class="pageSection">
+                    <table id="BuildpacksTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="BuildpacksDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="BuildpacksPropertiesContainer"></div>
                 </div>
             </div>
             

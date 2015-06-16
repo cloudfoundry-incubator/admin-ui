@@ -121,6 +121,20 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected buildpacks_view_model' do
+      let(:results)    { view_models.buildpacks }
+      let(:expected)   { view_models_buildpacks }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected buildpacks_view_model detail' do
+      let(:results)  { view_models.buildpack(cc_buildpack[:guid]) }
+      let(:expected) { view_models_buildpacks_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected clients_view_model' do
       let(:event_type) { 'service_dashboard_client' }
       let(:results)    { view_models.clients }

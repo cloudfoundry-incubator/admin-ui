@@ -49,6 +49,14 @@ module AdminUI
       @view_models.invalidate_application_instances
     end
 
+    def delete_buildpack(buildpack_guid)
+      url = "v2/buildpacks/#{buildpack_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_buildpacks
+      @view_models.invalidate_buildpacks
+    end
+
     def delete_domain(domain_guid, recursive)
       url = "v2/domains/#{domain_guid}"
       url += '?recursive=true' if recursive
@@ -270,12 +278,12 @@ module AdminUI
       @view_models.invalidate_application_instances
     end
 
-    def manage_service_plan(service_plan_guid, control_message)
-      url = "/v2/service_plans/#{service_plan_guid}"
+    def manage_buildpack(buildpack_guid, control_message)
+      url = "v2/buildpacks/#{buildpack_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
-      @cc.invalidate_service_plans
-      @view_models.invalidate_service_plans
+      @cc.invalidate_buildpacks
+      @view_models.invalidate_buildpacks
     end
 
     def manage_organization(org_guid, control_message)
@@ -284,6 +292,14 @@ module AdminUI
       @client.put_cc(url, control_message)
       @cc.invalidate_organizations
       @view_models.invalidate_organizations
+    end
+
+    def manage_service_plan(service_plan_guid, control_message)
+      url = "/v2/service_plans/#{service_plan_guid}"
+      @logger.debug("PUT #{url}, #{control_message}")
+      @client.put_cc(url, control_message)
+      @cc.invalidate_service_plans
+      @view_models.invalidate_service_plans
     end
 
     def restage_application(app_guid)

@@ -77,6 +77,25 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_buildpacks
+    [
+      [
+        cc_buildpack[:guid],
+        cc_buildpack[:name],
+        cc_buildpack[:guid],
+        cc_buildpack[:created_at].to_datetime.rfc3339,
+        cc_buildpack[:updated_at].to_datetime.rfc3339,
+        cc_buildpack[:position],
+        cc_buildpack[:enabled],
+        cc_buildpack[:locked]
+      ]
+    ]
+  end
+
+  def view_models_buildpacks_detail
+    cc_buildpack
+  end
+
   def view_models_clients
     [
       [

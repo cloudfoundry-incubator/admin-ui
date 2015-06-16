@@ -47,6 +47,7 @@ module CCHelper
 
   def cc_stub(config, insert_second_quota_definition = false, event_type = 'space')
     @cc_apps_deleted                      = false
+    @cc_buildpacks_deleted                = false
     @cc_domains_deleted                   = false
     @cc_organizations_deleted             = false
     @cc_quota_definitions_deleted         = false
@@ -68,6 +69,7 @@ module CCHelper
 
     cc_login_stubs(config)
     cc_app_stubs(config)
+    cc_buildpack_stubs(config)
     cc_domain_stubs(config)
     cc_organization_stubs(config)
     cc_quota_definition_stubs(config)
@@ -90,6 +92,12 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM apps')
 
     @cc_apps_deleted = true
+  end
+
+  def cc_clear_buildpacks_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM buildpacks')
+
+    @cc_buildpacks_deleted = true
   end
 
   def cc_clear_domains_cache_stub(config)
@@ -217,7 +225,7 @@ module CCHelper
       buildpack:             nil,
       command:               'node test.js',
       created_at:            Time.new('2015-04-23 08:00:00 -0500'),
-      detected_buildpack:    'Node.js',
+      detected_buildpack:    cc_buildpack[:name],
       diego:                 false,
       disk_quota:            12,
       docker_image:          'docker_image_1',
@@ -249,6 +257,21 @@ module CCHelper
     {
       app_id:   cc_app[:id],
       route_id: cc_route[:id]
+    }
+  end
+
+  def cc_buildpack
+    {
+      created_at:             Time.new('2015-04-23 08:00:04 -0500'),
+      enabled:                true,
+      filename:               'buildpack1.zip',
+      guid:                   'buildpack1',
+      id:                     1,
+      key:                    'buildpack_key1',
+      locked:                 false,
+      name:                   'Node.js',
+      position:               1,
+      updated_at:             Time.new('2015-04-23 08:00:05 -0500')
     }
   end
 
@@ -891,7 +914,8 @@ module CCHelper
   end
 
   def ccdb_inserts(insert_second_quota_definition, event_type)
-    result = [[:quota_definitions,              cc_quota_definition],
+    result = [[:buildpacks,                     cc_buildpack],
+              [:quota_definitions,              cc_quota_definition],
               [:service_brokers,                cc_service_broker_with_password],
               [:service_dashboard_clients,      cc_service_dashboard_client],
               [:stacks,                         cc_stack],
@@ -1016,6 +1040,59 @@ module CCHelper
     @cc_apps_deleted
   end
   # rubocop:enable Style/TrivialAccessors
+
+  def cc_buildpack_not_found
+    NotFound.new('code'        => 10_000,
+                 'description' => 'Unknown request',
+                 'error_code'  => 'CF-NotFound')
+  end
+
+  def cc_buildpack_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        cc_clear_buildpacks_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"enabled":true}', anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE buildpacks SET enabled = 'true' WHERE guid = '#{cc_buildpack[:guid]}'")
+        OK.new('{}')
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"enabled":false}', anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE buildpacks SET enabled = 'false' WHERE guid = '#{cc_buildpack[:guid]}'")
+        OK.new('{}')
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"locked":true}', anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE buildpacks SET locked = 'true' WHERE guid = '#{cc_buildpack[:guid]}'")
+        OK.new('{}')
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"locked":false}', anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE buildpacks SET locked = 'false' WHERE guid = '#{cc_buildpack[:guid]}'")
+        OK.new('{}')
+      end
+    end
+  end
 
   def cc_domain_not_found
     NotFound.new('code'        => 130_002,

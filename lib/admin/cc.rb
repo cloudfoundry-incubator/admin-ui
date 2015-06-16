@@ -22,21 +22,25 @@ module AdminUI
       ccdb_uri  = @config.ccdb_uri
       uaadb_uri = @config.uaadb_uri
 
-      # These keys need to conform to their respective methods.
-      # For instance applications conforms to applications
       @caches =
       {
         applications:
         {
           db_uri:  ccdb_uri,
           table:   :apps,
-          columns: [:buildpack, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :droplet_hash, :enable_ssh, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :name, :package_pending_since, :package_state, :package_updated_at, :production, :space_id, :stack_id, :staging_task_id, :state, :type, :updated_at, :version]
+          columns: [:allow_ssh, :buildpack, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :droplet_hash, :enable_ssh, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :name, :package_pending_since, :package_state, :package_updated_at, :production, :space_id, :stack_id, :staging_task_id, :state, :type, :updated_at, :version]
         },
         apps_routes:
         {
           db_uri:  ccdb_uri,
           table:   :apps_routes,
           columns: [:app_id, :route_id]
+        },
+        buildpacks:
+        {
+          db_uri:  ccdb_uri,
+          table:   :buildpacks,
+          columns: [:created_at, :enabled, :filename, :guid, :id, :key, :locked, :name, :position, :priority, :updated_at]
         },
         clients:
         {
@@ -278,6 +282,10 @@ module AdminUI
       result_cache(:apps_routes)
     end
 
+    def buildpacks
+      result_cache(:buildpacks)
+    end
+
     def clients
       result_cache(:clients)
     end
@@ -304,6 +312,10 @@ module AdminUI
 
     def invalidate_applications
       invalidate_cache(:applications)
+    end
+
+    def invalidate_buildpacks
+      invalidate_cache(:buildpacks)
     end
 
     def invalidate_clients

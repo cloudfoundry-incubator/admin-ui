@@ -3,6 +3,7 @@ require 'thread'
 require_relative 'scheduled_thread_pool'
 require_relative 'view_models/application_instances_view_model'
 require_relative 'view_models/applications_view_model'
+require_relative 'view_models/buildpacks_view_model'
 require_relative 'view_models/clients_view_model'
 require_relative 'view_models/cloud_controllers_view_model'
 require_relative 'view_models/components_view_model'
@@ -56,6 +57,7 @@ module AdminUI
         {
           application_instances:     { clazz: AdminUI::ApplicationInstancesViewModel },
           applications:              { clazz: AdminUI::ApplicationsViewModel },
+          buildpacks:                { clazz: AdminUI::BuildpacksViewModel },
           clients:                   { clazz: AdminUI::ClientsViewModel },
           cloud_controllers:         { clazz: AdminUI::CloudControllersViewModel },
           components:                { clazz: AdminUI::ComponentsViewModel },
@@ -102,6 +104,10 @@ module AdminUI
 
     def invalidate_applications
       invalidate_cache(:applications)
+    end
+
+    def invalidate_buildpacks
+      invalidate_cache(:buildpacks)
     end
 
     def invalidate_cloud_controllers
@@ -210,6 +216,14 @@ module AdminUI
 
     def applications
       result_cache(:applications)
+    end
+
+    def buildpack(guid)
+      details(:buildpacks, guid)
+    end
+
+    def buildpacks
+      result_cache(:buildpacks)
     end
 
     def client(id)
@@ -465,10 +479,9 @@ module AdminUI
     end
 
     def discover(key)
-      cache      = @caches[key]
-      key_string = key.to_s
+      cache = @caches[key]
 
-      @logger.debug("[#{@interval} second interval] Starting view model #{key_string} discovery...")
+      @logger.debug("[#{@interval} second interval] Starting view model #{key} discovery...")
 
       start = Time.now
 
@@ -479,7 +492,7 @@ module AdminUI
       connected = result_cache[:connected]
 
       cache[:semaphore].synchronize do
-        @logger.debug("Caching view model #{key_string} data.  Compilation time: #{finish - start} seconds")
+        @logger.debug("Caching view model #{key} data.  Compilation time: #{finish - start} seconds")
 
         # Only replace the cached result if the value is connected or this is the first time
         cache[:result] = result_cache if connected || cache[:result].nil?

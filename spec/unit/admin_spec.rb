@@ -315,6 +315,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete application recursive')
     end
 
+    shared_examples 'common delete buildpack' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/buildpacks/buildpack1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete buildpack via http' do
+      it_behaves_like('common delete buildpack')
+    end
+
+    context 'delete buildpack via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete buildpack')
+    end
+
     shared_examples 'common delete domain' do
       it 'returns failure code due to disconnection' do
         response = delete('/domains/domain1')
@@ -689,6 +706,23 @@ describe AdminUI::Admin do
       it_behaves_like('common manage application')
     end
 
+    shared_examples 'common manage buildpack' do
+      it 'returns failure code due to disconnection' do
+        response = put('/buildpacks/buildpack1', '{"enabled":true}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'manage buildpack via http' do
+      it_behaves_like('common manage buildpack')
+    end
+
+    context 'manage buildpack via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common manage buildpack')
+    end
+
     shared_examples 'common manage organization' do
       it 'returns failure code due to disconnection' do
         response = put('/organizations/organization1', '{"quota_definition_guid":"quota1"}')
@@ -813,6 +847,14 @@ describe AdminUI::Admin do
 
       it '/applications_view_model/:guid returns not found' do
         verify_not_found('/applications_view_model/application1')
+      end
+
+      it '/buildpacks_view_model succeeds' do
+        verify_disconnected_view_model_items('/buildpacks_view_model')
+      end
+
+      it '/buildpacks_view_model/:guid returns not found' do
+        verify_not_found('/buildpacks_view_model/buildpack1')
       end
 
       it '/clients_view_model succeeds' do
@@ -1094,6 +1136,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/applications_view_model/application1')
       end
 
+      it '/buildpacks_view_model redirects as expected' do
+        get_redirects_as_expected('/buildpacks_view_model')
+      end
+
+      it '/buildpacks_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/buildpacks_view_model/buildpack1')
+      end
+
       it '/clients_view_model redirects as expected' do
         get_redirects_as_expected('/clients_view_model')
       end
@@ -1330,6 +1380,10 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/applications/application1/index0')
       end
 
+      it 'deletes /buildpacks/:guid redirects as expected' do
+        delete_redirects_as_expected('/buildpacks/buildpack1')
+      end
+
       it 'deletes /domains/:guid redirects as expected' do
         delete_redirects_as_expected('/domains/domain1')
       end
@@ -1424,6 +1478,10 @@ describe AdminUI::Admin do
 
       it 'posts /applications_view_model redirects as expected' do
         post_redirects_as_expected('/applications_view_model')
+      end
+
+      it 'posts /buildpacks_view_model redirects as expected' do
+        post_redirects_as_expected('/buildpacks_view_model')
       end
 
       it 'posts /clients_view_model redirects as expected' do
@@ -1544,6 +1602,10 @@ describe AdminUI::Admin do
 
       it 'puts /applications/:guid redirects as expected' do
         put_redirects_as_expected('/applications/application1', '{"state":"STARTED"}')
+      end
+
+      it 'puts /buildpacks/:guid redirects as expected' do
+        put_redirects_as_expected('/buildpacks/buildpack', '{"enabled":true}')
       end
 
       it 'puts /organizations/:guid redirects as expected' do

@@ -160,7 +160,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure the original application status is STARTED
       expect(get_json('/applications_view_model')['items']['items'][0][3]).to eq('STARTED')
     end
 
@@ -225,7 +224,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is an application instance
       expect(get_json('/application_instances_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -244,12 +242,76 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage buildpack' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/buildpacks_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def make_buildpack_disabled
+      response = put_request("/buildpacks/#{cc_buildpack[:guid]}", '{"enabled":false}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/buildpacks/#{cc_buildpack[:guid]}; body = {\"enabled\":false}"]], true)
+    end
+
+    def make_buildpack_enabled
+      response = put_request("/buildpacks/#{cc_buildpack[:guid]}", '{"enabled":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/buildpacks/#{cc_buildpack[:guid]}; body = {\"enabled\":true}"]], true)
+    end
+
+    def make_buildpack_locked
+      response = put_request("/buildpacks/#{cc_buildpack[:guid]}", '{"locked":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/buildpacks/#{cc_buildpack[:guid]}; body = {\"locked\":true}"]], true)
+    end
+
+    def make_buildpack_unlocked
+      response = put_request("/buildpacks/#{cc_buildpack[:guid]}", '{"locked":false}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/buildpacks/#{cc_buildpack[:guid]}; body = {\"locked\":false}"]], true)
+    end
+
+    def delete_buildpack
+      response = delete_request("/buildpacks/#{cc_buildpack[:guid]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/buildpacks/#{cc_buildpack[:guid]}"]])
+    end
+
+    it 'has user name and buildpack request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/buildpacks_view_model']], true)
+    end
+
+    it 'disables buildpack' do
+      expect { make_buildpack_disabled }.to change { get_json('/buildpacks_view_model')['items']['items'][0][6].to_s }.from('true').to('false')
+    end
+
+    it 'enables buildpack' do
+      make_buildpack_disabled
+      expect { make_buildpack_enabled }.to change { get_json('/buildpacks_view_model')['items']['items'][0][6].to_s }.from('false').to('true')
+    end
+
+    it 'locks buildpack' do
+      expect { make_buildpack_locked }.to change { get_json('/buildpacks_view_model')['items']['items'][0][7].to_s }.from('false').to('true')
+    end
+
+    it 'unlocks buildpack' do
+      make_buildpack_locked
+      expect { make_buildpack_unlocked }.to change { get_json('/buildpacks_view_model')['items']['items'][0][7].to_s }.from('true').to('false')
+    end
+
+    it 'deletes a buildpack' do
+      expect { delete_buildpack }.to change { get_json('/buildpacks_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage domain' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is a domain
       expect(get_json('/domains_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -283,7 +345,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is an organization
       expect(get_json('/organizations_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -362,7 +423,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there are organization roles
       expect(get_json('/organization_roles_view_model')['items']['items'].length).to eq(4)
     end
 
@@ -386,7 +446,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is a quota
       expect(get_json('/quotas_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -410,7 +469,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is a route
       expect(get_json('/routes_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -434,7 +492,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is a service
       expect(get_json('/services_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -468,7 +525,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is a service binding
       expect(get_json('/service_bindings_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -492,7 +548,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is a service broker
       expect(get_json('/service_brokers_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -516,7 +571,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is a service instance
       expect(get_json('/service_instances_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -550,7 +604,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is a service key
       expect(get_json('/service_keys_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -574,7 +627,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is a service plan
       expect(get_json('/service_plans_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -600,10 +652,13 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_plans_view_model']], true)
     end
 
-    it 'make service plans private and back to public' do
+    it 'makes service plan private' do
       expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][7].to_s }.from('true').to('false')
-      make_service_plan_public
-      expect(get_json('/service_plans_view_model')['items']['items'][0][7]).to equal(true)
+    end
+
+    it 'makes service plan public' do
+      make_service_plan_private
+      expect { make_service_plan_public }.to change { get_json('/service_plans_view_model')['items']['items'][0][7].to_s }.from('false').to('true')
     end
 
     it 'deletes a service plan' do
@@ -616,7 +671,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is a service plan visibility
       expect(get_json('/service_plan_visibilities_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -640,7 +694,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is a space
       expect(get_json('/spaces_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -674,7 +727,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there is a space quota
       expect(get_json('/space_quotas_view_model')['items']['items'].length).to eq(1)
     end
 
@@ -711,7 +763,6 @@ describe AdminUI::Admin, type: :integration do
 
     context 'deletes a space quota space' do
       before do
-        # Make sure there is a space quota
         expect(get_json('/space_quotas_view_model')['items']['items'].length).to eq(1)
       end
 
@@ -723,7 +774,6 @@ describe AdminUI::Admin, type: :integration do
     context 'sets a space quota for space' do
       let(:insert_second_quota_definition) { true }
       before do
-        # Make sure there are two space quotas
         expect(get_json('/space_quotas_view_model')['items']['items'].length).to eq(2)
       end
 
@@ -738,7 +788,6 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      # Make sure there are space roles
       expect(get_json('/space_roles_view_model')['items']['items'].length).to eq(3)
     end
 
@@ -809,6 +858,18 @@ describe AdminUI::Admin, type: :integration do
     context 'applications_view_model detail' do
       let(:path)              { "/applications_view_model/#{cc_app[:guid]}" }
       let(:view_model_source) { view_models_applications_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'buildpacks_view_model' do
+      let(:path)              { '/buildpacks_view_model' }
+      let(:view_model_source) { view_models_buildpacks }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'buildpacks_view_model detail' do
+      let(:path)              { "/buildpacks_view_model/#{cc_buildpack[:guid]}" }
+      let(:view_model_source) { view_models_buildpacks_detail }
       it_behaves_like('retrieves view_model detail')
     end
 

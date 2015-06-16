@@ -69,7 +69,6 @@ describe AdminUI::Operation, type: :integration do
   context 'Stubbed HTTP' do
     context 'manage application' do
       before do
-        # Make sure the original application status is STARTED
         expect(cc.applications['items'][0][:state]).to eq('STARTED')
       end
 
@@ -98,9 +97,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       it 'starts the stopped application' do
-        # Make sure the application is stopped at first.
         stop_application
-
         expect { start_application }.to change { cc.applications['items'][0][:state] }.from('STOPPED').to('STARTED')
       end
 
@@ -152,7 +149,6 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage application instance' do
       before do
-        # Make sure there is an application instance
         expect(varz.deas['items'].length).to eq(1)
         expect(varz.deas['items'][0]['data']['instance_registry'].length).to eq(1)
       end
@@ -183,9 +179,90 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'buildpack' do
+      before do
+        expect(cc.buildpacks['items'][0][:enabled]).to eq(true)
+        expect(cc.buildpacks['items'][0][:locked]).to eq(false)
+      end
+
+      def delete_buildpack
+        operation.delete_buildpack(cc_buildpack[:guid])
+      end
+
+      def disable_buildpack
+        operation.manage_buildpack(cc_buildpack[:guid], '{"enabled":false}')
+      end
+
+      def enable_buildpack
+        operation.manage_buildpack(cc_buildpack[:guid], '{"enabled":true}')
+      end
+
+      def lock_buildpack
+        operation.manage_buildpack(cc_buildpack[:guid], '{"locked":true}')
+      end
+
+      def unlock_buildpack
+        operation.manage_buildpack(cc_buildpack[:guid], '{"locked":false}')
+      end
+
+      it 'disables the buildpack' do
+        expect { disable_buildpack }.to change { cc.buildpacks['items'][0][:enabled] }.from(true).to(false)
+      end
+
+      it 'enables the buildpack' do
+        disable_buildpack
+        expect { enable_buildpack }.to change { cc.buildpacks['items'][0][:enabled] }.from(false).to(true)
+      end
+
+      it 'locks the buildpack' do
+        expect { lock_buildpack }.to change { cc.buildpacks['items'][0][:locked] }.from(false).to(true)
+      end
+
+      it 'unlocks the buildpack' do
+        lock_buildpack
+        expect { unlock_buildpack }.to change { cc.buildpacks['items'][0][:locked] }.from(true).to(false)
+      end
+
+      it 'deletes the buildpack' do
+        expect { delete_buildpack }.to change { cc.buildpacks['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_buildpack
+        end
+
+        def verify_buildpack_not_found(exception)
+          expect(exception.cf_code).to eq(10_000)
+          expect(exception.cf_error_code).to eq('CF-NotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq('Unknown request')
+        end
+
+        it 'fails disabling deleted buildpack' do
+          expect { disable_buildpack }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_buildpack_not_found(exception) }
+        end
+
+        it 'fails enabling deleted buildpack' do
+          expect { enable_buildpack }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_buildpack_not_found(exception) }
+        end
+
+        it 'fails locked deleted buildpack' do
+          expect { lock_buildpack }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_buildpack_not_found(exception) }
+        end
+
+        it 'fails unlocking deleted buildpack' do
+          expect { unlock_buildpack }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_buildpack_not_found(exception) }
+        end
+
+        it 'fails deleting deleted buildpack' do
+          expect { delete_buildpack }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_buildpack_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage domain' do
       before do
-        # Make sure there is a domain
         expect(cc.domains['items'].length).to eq(1)
       end
 
@@ -229,7 +306,6 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage organization' do
       before do
-        # Make sure there is an organization
         expect(cc.organizations['items'].length).to eq(1)
       end
 
@@ -270,9 +346,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       it 'activates the organization' do
-        # Make sure the organization is suspended first.
         suspend_organization
-
         expect { activate_organization }.to change { cc.organizations['items'][0][:status] }.from('suspended').to('active')
       end
 
@@ -409,7 +483,6 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage quota definition' do
       before do
-        # Make sure there is a quota definition
         expect(cc.quota_definitions['items'].length).to eq(1)
       end
 
@@ -441,7 +514,6 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage route' do
       before do
-        # Make sure there is a route
         expect(cc.routes['items'].length).to eq(1)
       end
 
@@ -473,7 +545,6 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage service' do
       before do
-        # Make sure there is a service
         expect(cc.services['items'].length).to eq(1)
       end
 
@@ -517,7 +588,6 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage service binding' do
       before do
-        # Make sure there is a service binding
         expect(cc.service_bindings['items'].length).to eq(1)
       end
 
@@ -549,7 +619,6 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage service broker' do
       before do
-        # Make sure there is a service broker
         expect(cc.service_brokers['items'].length).to eq(1)
       end
 
@@ -581,7 +650,6 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage service instance' do
       before do
-        # Make sure there is a service instance
         expect(cc.service_instances['items'].length).to eq(1)
       end
 
@@ -625,7 +693,6 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage service key' do
       before do
-        # Make sure there is a service key
         expect(cc.service_keys['items'].length).to eq(1)
       end
 
@@ -657,10 +724,7 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage service plan' do
       before do
-        # Make sure there is a service plan
         expect(cc.service_plans['items'].length).to eq(1)
-
-        # Make sure the original service plan's public field is true
         expect(cc.service_plans['items'][0][:public].to_s).to eq('true')
       end
 
@@ -677,9 +741,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       it 'makes service plan public' do
-        # Make sure the service plan is private first.
         make_service_plan_private
-
         expect { make_service_plan_public }.to change { cc.service_plans['items'][0][:public].to_s }.from('false').to('true')
       end
 
@@ -719,7 +781,6 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage service plan visibility' do
       before do
-        # Make sure there is a service plan visibility
         expect(cc.service_plan_visibilities['items'].length).to eq(1)
       end
 
@@ -751,7 +812,6 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage space' do
       before do
-        # Make sure there is a space
         expect(cc.spaces['items'].length).to eq(1)
       end
 
@@ -795,7 +855,6 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage space quota definition' do
       before do
-        # Make sure there is a space quota definition
         expect(cc.space_quota_definitions['items'].length).to eq(1)
       end
 
