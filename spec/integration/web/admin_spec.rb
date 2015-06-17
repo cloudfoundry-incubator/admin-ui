@@ -91,7 +91,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
     it 'shows the logged in user' do
       expect(@driver.find_element(class: 'userContainer').displayed?).to be(true)
-      expect(@driver.find_element(class: 'user').text).to eq('admin')
+      expect(@driver.find_element(class: 'user').text).to eq(LoginHelper::LOGIN_ADMIN)
     end
 
     context 'formatStringCleansed' do

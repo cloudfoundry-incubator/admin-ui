@@ -310,7 +310,8 @@ module AdminUI
                            cloud_controller_uri:   @config.cloud_controller_uri,
                            table_height:           @config.table_height,
                            table_page_size:        @config.table_page_size,
-                           tasks_refresh_interval: @config.tasks_refresh_interval)
+                           tasks_refresh_interval: @config.tasks_refresh_interval,
+                           user:                   session[:username])
     end
 
     get '/service_bindings_view_model', auth: [:user] do
@@ -1268,7 +1269,7 @@ module AdminUI
       session[:admin] = admin
 
       @logger.info_user(username, 'authenticated', "is admin? #{admin}")
-      redirect "application.html?user=#{username}", 303
+      redirect 'application.html', 303
     end
 
     def redirect_to_login

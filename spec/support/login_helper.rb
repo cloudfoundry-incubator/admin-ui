@@ -1,11 +1,13 @@
 require_relative '../spec_helper'
 
 module LoginHelper
+  LOGIN_ADMIN = 'admin'
+  LOGIN_USER  = 'user'
+
   def login_stub_admin
     login_stub_common
-
     allow_any_instance_of(AdminUI::Login).to receive(:login_user) do
-      ['admin', AdminUI::Login::LOGIN_ADMIN]
+      [LOGIN_ADMIN, AdminUI::Login::LOGIN_ADMIN]
     end
   end
 
@@ -13,7 +15,7 @@ module LoginHelper
     login_stub_common
 
     allow_any_instance_of(AdminUI::Login).to receive(:login_user) do
-      ['user', AdminUI::Login::LOGIN_USER]
+      [LOGIN_USER, AdminUI::Login::LOGIN_USER]
     end
   end
 
