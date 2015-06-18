@@ -2,6 +2,8 @@ require 'logger'
 require_relative '../spec_helper'
 
 describe AdminUI::NATS do
+  include ConfigHelper
+
   let(:data_file) { '/tmp/admin_ui_data.json' }
   let(:db_file)   { '/tmp/admin_ui_store.db' }
   let(:db_uri)    { "sqlite://#{db_file}" }
@@ -17,7 +19,7 @@ describe AdminUI::NATS do
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
 
   before do
-    AdminUI::Config.any_instance.stub(:validate)
+    config_stub
   end
 
   after do

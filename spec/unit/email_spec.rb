@@ -2,6 +2,7 @@ require 'logger'
 require_relative '../spec_helper'
 
 describe AdminUI::EMail do
+  include ConfigHelper
   include SMTPHelper
 
   let(:log_file) { '/tmp/admin_ui.log' }
@@ -17,7 +18,7 @@ describe AdminUI::EMail do
   end
 
   before do
-    allow_any_instance_of(AdminUI::Config).to receive(:validate)
+    config_stub
   end
 
   after do

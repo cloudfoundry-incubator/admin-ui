@@ -37,11 +37,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     it 'has a title' do
       # Need to wait until the page has been rendered
       begin
-        Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(class: 'cloudControllerText').text == cloud_controller_uri }
+        Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(class_name: 'cloudControllerText').text == cloud_controller_uri }
       rescue Selenium::WebDriver::Error::TimeOutError
       end
-      expect(@driver.find_element(class: 'cloudControllerText').text).to eq(cloud_controller_uri)
-      expect(@driver.find_element(class: 'build').text).to eq("Build #{cc_info['build']}")
+      expect(@driver.find_element(class_name: 'cloudControllerText').text).to eq(cloud_controller_uri)
+      expect(@driver.find_element(class_name: 'build').text).to eq("Build #{cc_info['build']}")
     end
 
     it 'has tabs' do
@@ -90,8 +90,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     end
 
     it 'shows the logged in user' do
-      expect(@driver.find_element(class: 'userContainer').displayed?).to be(true)
-      expect(@driver.find_element(class: 'user').text).to eq(LoginHelper::LOGIN_ADMIN)
+      expect(@driver.find_element(class_name: 'userContainer').displayed?).to be(true)
+      expect(@driver.find_element(class_name: 'user').text).to eq(LoginHelper::LOGIN_ADMIN)
     end
 
     context 'formatStringCleansed' do

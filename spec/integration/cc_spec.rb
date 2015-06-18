@@ -3,6 +3,7 @@ require_relative '../spec_helper'
 
 describe AdminUI::CC, type: :integration do
   include CCHelper
+  include ConfigHelper
 
   let(:ccdb_file)  { '/tmp/admin_ui_ccdb.db' }
   let(:ccdb_uri)   { "sqlite://#{ccdb_file}" }
@@ -28,7 +29,7 @@ describe AdminUI::CC, type: :integration do
   before do
     cleanup_files
 
-    AdminUI::Config.any_instance.stub(:validate)
+    config_stub
     cc_stub(config)
   end
 

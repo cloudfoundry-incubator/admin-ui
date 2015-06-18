@@ -2,6 +2,7 @@ require 'logger'
 require_relative '../spec_helper'
 
 describe AdminUI::VARZ, type: :integration do
+  include ConfigHelper
   include NATSHelper
   include VARZHelper
 
@@ -20,7 +21,7 @@ describe AdminUI::VARZ, type: :integration do
   let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
 
   before do
-    AdminUI::Config.any_instance.stub(:validate)
+    config_stub
     nats_stub
   end
 

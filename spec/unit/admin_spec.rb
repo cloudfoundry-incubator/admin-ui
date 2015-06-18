@@ -51,7 +51,7 @@ describe AdminUI::Admin do
 
     File.delete(db_file) if File.exist?(db_file)
 
-    ::WEBrick::Log.any_instance.stub(:log)
+    allow_any_instance_of(::WEBrick::Log).to receive(:log)
 
     mutex                  = Mutex.new
     condition              = ConditionVariable.new

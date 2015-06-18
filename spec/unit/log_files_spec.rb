@@ -2,6 +2,7 @@ require 'logger'
 require_relative '../spec_helper'
 
 describe AdminUI::LogFiles do
+  include ConfigHelper
   include SFTPHelper
 
   let(:db_file)   { '/tmp/admin_ui_store.db' }
@@ -21,7 +22,7 @@ describe AdminUI::LogFiles do
   let(:log_file_mtime) { Time.new(1976, 7, 4, 12, 34, 56, 0) }
 
   before do
-    AdminUI::Config.any_instance.stub(:validate)
+    config_stub
   end
 
   after do

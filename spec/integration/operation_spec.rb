@@ -3,6 +3,7 @@ require_relative '../spec_helper'
 
 describe AdminUI::Operation, type: :integration do
   include CCHelper
+  include ConfigHelper
   include NATSHelper
   include VARZHelper
 
@@ -44,7 +45,7 @@ describe AdminUI::Operation, type: :integration do
   before do
     cleanup_files
 
-    AdminUI::Config.any_instance.stub(:validate)
+    config_stub
     cc_stub(config, insert_second_quota_definition)
     nats_stub
     varz_stub

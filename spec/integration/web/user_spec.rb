@@ -13,8 +13,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     end
 
     it 'shows the logged in user' do
-      expect(@driver.find_element(class: 'userContainer').displayed?).to be(true)
-      expect(@driver.find_element(class: 'user').text).to eq(LoginHelper::LOGIN_USER)
+      expect(@driver.find_element(class_name: 'userContainer').displayed?).to be(true)
+      expect(@driver.find_element(class_name: 'user').text).to eq(LoginHelper::LOGIN_USER)
     end
 
     shared_examples 'verifies first button is copy button' do

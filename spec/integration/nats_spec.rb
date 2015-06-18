@@ -3,6 +3,7 @@ require 'nats/client'
 require_relative '../spec_helper'
 
 describe AdminUI::NATS, type: :integration do
+  include ConfigHelper
   include NATSHelper
 
   let(:data_file) { '/tmp/admin_ui_data.json' }
@@ -19,7 +20,7 @@ describe AdminUI::NATS, type: :integration do
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
 
   before do
-    AdminUI::Config.any_instance.stub(:validate)
+    config_stub
     nats_stub
   end
 

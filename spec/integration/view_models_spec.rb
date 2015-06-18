@@ -1,7 +1,8 @@
 require 'logger'
 require_relative '../spec_helper'
 
-describe AdminUI::CC, type: :integration do
+describe AdminUI::ViewModels, type: :integration do
+  include ConfigHelper
   include ViewModelsHelper
 
   let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
@@ -49,7 +50,7 @@ describe AdminUI::CC, type: :integration do
     end
     File.utime(log_file_displayed_modified, log_file_displayed_modified, log_file_displayed)
 
-    AdminUI::Config.any_instance.stub(:validate)
+    config_stub
     cc_stub(config, false, event_type)
     nats_stub
     varz_stub

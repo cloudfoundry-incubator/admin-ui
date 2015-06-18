@@ -2,6 +2,8 @@ require 'logger'
 require_relative '../spec_helper'
 
 describe AdminUI::CC do
+  include ConfigHelper
+
   let(:ccdb_file)  { '/tmp/admin_ui_ccdb.db' }
   let(:ccdb_uri)   { "sqlite://#{ccdb_file}" }
   let(:db_file)    { '/tmp/admin_ui_store.db' }
@@ -21,7 +23,7 @@ describe AdminUI::CC do
   let(:cc) { AdminUI::CC.new(config, logger, client, true) }
 
   before do
-    AdminUI::Config.any_instance.stub(:validate)
+    config_stub
   end
 
   after do

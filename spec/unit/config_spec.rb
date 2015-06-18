@@ -1,9 +1,11 @@
 require_relative '../spec_helper'
 
 describe AdminUI::Config do
+  include ConfigHelper
+
   context 'Single values' do
     before do
-      AdminUI::Config.any_instance.stub(:validate)
+      config_stub
     end
 
     it 'bind_address' do
