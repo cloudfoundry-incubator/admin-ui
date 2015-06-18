@@ -65,7 +65,7 @@ module AdminUI
           db_uri:  ccdb_uri,
           table:   :events,
           columns: [:actee, :actee_name, :actee_type, :actor, :actor_name, :actor_type, :created_at, :guid, :id, :metadata, :organization_guid, :space_guid, :space_id, :timestamp, :type, :updated_at],
-          where:   "\"timestamp\" >= CURRENT_TIMESTAMP - INTERVAL '#{@config.event_days} DAYS'"
+          where:   "\"timestamp\" >= CURRENT_TIMESTAMP - INTERVAL '#{@config.event_days}' DAY"
         },
         groups:
         {
@@ -625,7 +625,7 @@ module AdminUI
               cache[:select] = statement.sql
 
               # TODO: If the sql has parenthesis around the select clause, you get an array of values instead of a hash
-              cache[:select] = cache[:select].sub('(', '').sub(')', '')
+              cache[:select] = cache[:select].gsub('(', '').gsub(')', '')
 
               @logger.debug("Select for key #{key}, table #{table}: #{cache[:select]}")
               @logger.debug("Columns removed for key #{key}, table #{table}: #{columns - db_columns}")
