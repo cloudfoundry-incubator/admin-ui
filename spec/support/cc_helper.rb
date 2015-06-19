@@ -638,7 +638,7 @@ module CCHelper
       provider:          'test',
       requires:          nil,
       service_broker_id: cc_service_broker[:id],
-      tags:              '["tag1", "tag2"]',
+      tags:              '["service_tag1", "service_tag2"]',
       unique_id:         'service_unique_id',
       updated_at:        Time.new('2015-04-23 08:00:45 -0500'),
       url:               nil,
@@ -701,6 +701,7 @@ module CCHelper
       name:            'TestService-random',
       service_plan_id: cc_service_plan[:id],
       space_id:        cc_space[:id],
+      tags:            '["service_instance_tag1", "service_instance_tag2"]',
       updated_at:      Time.new('2015-04-23 08:00:51 -0500')
     }
   end

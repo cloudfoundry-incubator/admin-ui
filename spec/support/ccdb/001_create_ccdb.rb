@@ -519,6 +519,8 @@ Sequel.migration do
       String :health_check_type, :default=>"port", :text=>true
       String :command, :size=>4096
       TrueClass :enable_ssh, :default=>false
+      String :encrypted_docker_credentials_json, :text=>true
+      String :docker_salt, :text=>true
       
       index [:app_guid]
       index [:created_at]
@@ -567,7 +569,7 @@ Sequel.migration do
       String :host, :default=>"", :null=>false
       foreign_key :domain_id, :domains, :null=>false, :key=>[:id]
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
-      String :path, :default=>"", :size=>255, :null=>false
+      String :path, :default=>"", :null=>false
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -597,6 +599,7 @@ Sequel.migration do
       String :dashboard_url, :text=>true
       TrueClass :is_gateway_service, :default=>true, :null=>false
       String :syslog_drain_url, :text=>true
+      String :tags, :size=>1275
       
       index [:name]
       index [:created_at], :name=>:si_created_at_index

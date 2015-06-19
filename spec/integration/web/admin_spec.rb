@@ -1297,6 +1297,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
+            service_instance_tags_json = Yajl::Parser.parse(cc_service_instance[:tags])
             check_details([{ label: 'Service Instance Name',                        tag: 'div', value: cc_service_instance[:name] },
                            { label: 'Service Instance GUID',                        tag:   nil, value: cc_service_instance[:guid] },
                            { label: 'Service Instance Created',                     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:created_at].to_datetime.rfc3339}\")") },
@@ -1310,6 +1311,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service Instance Last Operation Created',      tag:  nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance_operation[:created_at]}\")") },
                            { label: 'Service Instance Last Operation Updated',      tag:  nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance_operation[:updated_at]}\")") },
                            { label: 'Service Instance Last Operation Description',  tag:  nil, value: cc_service_instance_operation[:description] },
+                           { label: 'Service Instance Tag',                         tag:   nil, value: service_instance_tags_json[0] },
+                           { label: 'Service Instance Tag',                         tag:   nil, value: service_instance_tags_json[1] },
                            { label: 'Service Plan Name',                            tag:   'a', value: cc_service_plan[:name] },
                            { label: 'Service Plan GUID',                            tag:   nil, value: cc_service_plan[:guid] },
                            { label: 'Service Plan Unique ID',                       tag:   nil, value: cc_service_plan[:unique_id] },
@@ -1349,23 +1352,23 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has service plans link' do
-            check_filter_link('ServiceInstances', 13, 'ServicePlans', cc_service_plan[:guid])
+            check_filter_link('ServiceInstances', 15, 'ServicePlans', cc_service_plan[:guid])
           end
 
           it 'has services link' do
-            check_filter_link('ServiceInstances', 22, 'Services', cc_service[:guid])
+            check_filter_link('ServiceInstances', 24, 'Services', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('ServiceInstances', 30, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('ServiceInstances', 32, 'ServiceBrokers', cc_service_broker[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('ServiceInstances', 34, 'Spaces', cc_space[:guid])
+            check_filter_link('ServiceInstances', 36, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceInstances', 35, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceInstances', 37, 'Organizations', cc_organization[:guid])
           end
         end
       end
