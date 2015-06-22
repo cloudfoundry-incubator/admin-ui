@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'membrane', '1.1.0'
-gem 'nats', '0.5.0.beta.16', require: 'nats/client'
+gem 'nats', '0.5.0'
 gem 'net-sftp', '2.1.2'
 gem 'parse-cron', '0.1.4'
 gem 'rack-ssl', '1.4.1'
