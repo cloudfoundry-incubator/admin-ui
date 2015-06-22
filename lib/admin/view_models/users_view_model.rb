@@ -139,19 +139,19 @@ module AdminUI
         if user_cc
           id = user_cc[:id]
 
-          org_auditors         = users_organizations_auditors[id] || 0
-          org_billing_managers = users_organizations_billing_managers[id] || 0
-          org_managers         = users_organizations_managers[id] || 0
-          org_users            = users_organizations_users[id] || 0
-          spc_auditors         = users_spaces_auditors[id] || 0
-          spc_developers       = users_spaces_developers[id] || 0
-          spc_managers         = users_spaces_managers[id] || 0
+          organization_auditors         = users_organizations_auditors[id] || 0
+          organization_billing_managers = users_organizations_billing_managers[id] || 0
+          organization_managers         = users_organizations_managers[id] || 0
+          organization_users            = users_organizations_users[id] || 0
+          spc_auditors                  = users_spaces_auditors[id] || 0
+          spc_developers                = users_spaces_developers[id] || 0
+          spc_managers                  = users_spaces_managers[id] || 0
 
-          row.push(org_auditors + org_billing_managers + org_managers + org_users)
-          row.push(org_auditors)
-          row.push(org_billing_managers)
-          row.push(org_managers)
-          row.push(org_users)
+          row.push(organization_auditors + organization_billing_managers + organization_managers + organization_users)
+          row.push(organization_auditors)
+          row.push(organization_billing_managers)
+          row.push(organization_managers)
+          row.push(organization_users)
 
           row.push(spc_auditors + spc_developers + spc_managers)
           row.push(spc_auditors)

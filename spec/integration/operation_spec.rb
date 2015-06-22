@@ -314,6 +314,10 @@ describe AdminUI::Operation, type: :integration do
         operation.create_organization("{\"name\":\"#{cc_organization2[:name]}\"}")
       end
 
+      def rename_organization
+        operation.manage_organization(cc_organization[:guid], "{\"name\":\"#{cc_organization2[:name]}\"}")
+      end
+
       def set_organization_quota
         operation.manage_organization(cc_organization[:guid], "{\"quota_definition_guid\":\"#{cc_quota_definition2[:guid]}\"}")
       end
@@ -337,6 +341,10 @@ describe AdminUI::Operation, type: :integration do
       it 'creates a new organization' do
         expect { create_organization }.to change { cc.organizations['items'].length }.from(1).to(2)
         expect(cc.organizations['items'][1][:name]).to eq(cc_organization2[:name])
+      end
+
+      it 'renames the organization' do
+        expect { rename_organization }.to change { cc.organizations['items'][0][:name] }.from(cc_organization[:name]).to(cc_organization2[:name])
       end
 
       context 'sets the quota for an organization' do
@@ -374,6 +382,10 @@ describe AdminUI::Operation, type: :integration do
             expect(exception.cf_error_code).to eq('CF-OrganizationNotFound')
             expect(exception.http_code).to eq(404)
             expect(exception.message).to eq("The organization could not be found: #{cc_organization[:guid]}")
+          end
+
+          it 'fails renaming deleted organization' do
+            expect { rename_organization }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_not_found(exception) }
           end
 
           context 'fails setting quota for a deleted organization' do

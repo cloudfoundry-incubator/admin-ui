@@ -69,8 +69,8 @@ module AdminUI
       @view_models.invalidate_routes
     end
 
-    def delete_organization(org_guid, recursive)
-      url = "v2/organizations/#{org_guid}"
+    def delete_organization(organization_guid, recursive)
+      url = "v2/organizations/#{organization_guid}"
       url += '?recursive=true' if recursive
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -106,8 +106,8 @@ module AdminUI
       @view_models.invalidate_routes
     end
 
-    def delete_organization_role(org_guid, role, user_guid)
-      url = "v2/organizations/#{org_guid}/#{role}/#{user_guid}"
+    def delete_organization_role(organization_guid, role, user_guid)
+      url = "v2/organizations/#{organization_guid}/#{role}/#{user_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_organizations_auditors if role == 'auditors'
@@ -286,8 +286,8 @@ module AdminUI
       @view_models.invalidate_buildpacks
     end
 
-    def manage_organization(org_guid, control_message)
-      url = "v2/organizations/#{org_guid}"
+    def manage_organization(organization_guid, control_message)
+      url = "v2/organizations/#{organization_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
       @cc.invalidate_organizations

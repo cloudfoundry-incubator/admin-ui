@@ -348,10 +348,16 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/organizations_view_model')['items']['items'].length).to eq(1)
     end
 
-    def create_org
+    def create_organization
       response = post_request('/organizations', "{\"name\":\"#{cc_organization2[:name]}\"}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
       verify_sys_log_entries([['post', "/organizations; body = {\"name\":\"#{cc_organization2[:name]}\"}"]], true)
+    end
+
+    def rename_organization
+      response = put_request("/organizations/#{cc_organization[:guid]}", "{\"name\":\"#{cc_organization2[:name]}\"}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/organizations/#{cc_organization[:guid]}; body = {\"name\":\"#{cc_organization2[:name]}\"}"]], true)
     end
 
     def set_quota
@@ -360,25 +366,25 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['put', "/organizations/#{cc_organization[:guid]}; body = {\"quota_definition_guid\":\"#{cc_quota_definition2[:guid]}\"}"]], true)
     end
 
-    def activate_org
+    def activate_organization
       response = put_request("/organizations/#{cc_organization[:guid]}", '{"status":"active"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
       verify_sys_log_entries([['put', "/organizations/#{cc_organization[:guid]}; body = {\"status\":\"active\"}"]], true)
     end
 
-    def suspend_org
+    def suspend_organization
       response = put_request("/organizations/#{cc_organization[:guid]}", '{"status":"suspended"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
       verify_sys_log_entries([['put', "/organizations/#{cc_organization[:guid]}; body = {\"status\":\"suspended\"}"]], true)
     end
 
-    def delete_org
+    def delete_organization
       response = delete_request("/organizations/#{cc_organization[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
       verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}"]])
     end
 
-    def delete_org_recursive
+    def delete_organization_recursive
       response = delete_request("/organizations/#{cc_organization[:guid]}?recursive=true")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
       verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}?recursive=true"]], true)
@@ -389,8 +395,12 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'creates an organization' do
-      expect { create_org }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(2)
+      expect { create_organization }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(2)
       expect(get_json('/organizations_view_model', false)['items']['items'][1][1]).to eq(cc_organization2[:name])
+    end
+
+    it 'renames an organization' do
+      expect { rename_organization }.to change { get_json('/organizations_view_model')['items']['items'][0][1] }.from(cc_organization[:name]).to(cc_organization2[:name])
     end
 
     context 'sets the quota for organization' do
@@ -401,20 +411,20 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'activates the organization' do
-      suspend_org
-      expect { activate_org }.to change { get_json('/organizations_view_model')['items']['items'][0][3] }.from('suspended').to('active')
+      suspend_organization
+      expect { activate_organization }.to change { get_json('/organizations_view_model')['items']['items'][0][3] }.from('suspended').to('active')
     end
 
     it 'suspends the organization' do
-      expect { suspend_org }.to change { get_json('/organizations_view_model')['items']['items'][0][3] }.from('active').to('suspended')
+      expect { suspend_organization }.to change { get_json('/organizations_view_model')['items']['items'][0][3] }.from('active').to('suspended')
     end
 
     it 'deletes an organization' do
-      expect { delete_org }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(0)
+      expect { delete_organization }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(0)
     end
 
     it 'deletes an organization recursive' do
-      expect { delete_org_recursive }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(0)
+      expect { delete_organization_recursive }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 

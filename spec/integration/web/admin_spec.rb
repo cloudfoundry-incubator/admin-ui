@@ -252,12 +252,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         @driver.find_element(id: 'modalDialogButton0').click
       end
 
-      shared_examples 'click button without selecting a single row' do
+      shared_examples 'click button without selecting any rows' do
         it 'alerts the user to select at least one row when clicking the button' do
           @driver.find_element(id: button_id).click
           expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
           expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
           expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select at least one row!')
+          @driver.find_element(id: 'modalDialogButton0').click
+        end
+      end
+
+      shared_examples 'click button without selecting exactly one row' do
+        it 'alerts the user to select exactly one row when clicking the button' do
+          @driver.find_element(id: button_id).click
+          expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
+          expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Error')
+          expect(@driver.find_element(id: 'ModalDialogContents').text).to eq('Please select exactly one row!')
           @driver.find_element(id: 'modalDialogButton0').click
         end
       end
@@ -334,7 +344,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_OrganizationsTable_6')
+          check_allowscriptaccess_attribute('ToolTables_OrganizationsTable_7')
         end
 
         it 'has a checkbox in the first column' do
@@ -346,24 +356,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_0').text).to eq('Create')
           end
 
+          it 'has a Rename button' do
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_1').text).to eq('Rename')
+          end
+
           it 'has a Set Quota button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_1').text).to eq('Set Quota')
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_2').text).to eq('Set Quota')
           end
 
           it 'has an Activate button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_2').text).to eq('Activate')
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_3').text).to eq('Activate')
           end
 
           it 'has a Suspend button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_3').text).to eq('Suspend')
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_4').text).to eq('Suspend')
           end
 
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_4').text).to eq('Delete')
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_5').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_5').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_6').text).to eq('Delete Recursive')
           end
 
           it 'creates an organization' do
@@ -393,34 +407,69 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text).to eq(cc_organization2[:name])
           end
 
-          context 'Set Quota button' do
-            it_behaves_like('click button without selecting a single row') do
+          context 'Rename button' do
+            it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'ToolTables_OrganizationsTable_1' }
             end
           end
 
-          context 'Activate button' do
-            it_behaves_like('click button without selecting a single row') do
+          context 'Set Quota button' do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_OrganizationsTable_2' }
             end
           end
 
-          context 'Suspend button' do
-            it_behaves_like('click button without selecting a single row') do
+          context 'Activate button' do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_OrganizationsTable_3' }
             end
           end
 
-          context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+          context 'Suspend button' do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_OrganizationsTable_4' }
             end
           end
 
-          context 'Delete Recursive button' do
-            it_behaves_like('click button without selecting a single row') do
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_OrganizationsTable_5' }
             end
+          end
+
+          context 'Delete Recursive button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'ToolTables_OrganizationsTable_6' }
+            end
+          end
+
+          it 'renames an organization' do
+            check_first_row('OrganizationsTable')
+            @driver.find_element(id: 'ToolTables_OrganizationsTable_1').click
+
+            # Check whether the dialog is displayed
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Rename Organization')
+            expect(@driver.find_element(id: 'organizationName').displayed?).to be(true)
+
+            # Click the rename button without input an organization name
+            @driver.find_element(id: 'organizationName').clear
+            @driver.find_element(id: 'modalDialogButton0').click
+            alert = @driver.switch_to.alert
+            expect(alert.text).to eq('Please input the name of the organization first!')
+            alert.dismiss
+
+            # Input the name of the organization and click 'Rename'
+            @driver.find_element(id: 'organizationName').send_keys cc_organization2[:name]
+            @driver.find_element(id: 'modalDialogButton0').click
+
+            check_operation_result
+
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[2]").text == cc_organization2[:name] }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[2]").text).to eq(cc_organization2[:name])
           end
 
           context 'set quota' do
@@ -428,7 +477,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             it 'sets the quota for the organization' do
               check_first_row('OrganizationsTable')
-              @driver.find_element(id: 'ToolTables_OrganizationsTable_1').click
+              @driver.find_element(id: 'ToolTables_OrganizationsTable_2').click
 
               # Check whether the dialog is displayed
               expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
@@ -450,19 +499,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          def manage_org(button_id, message)
+          def manage_organization(button_id, message)
             check_first_row('OrganizationsTable')
             @driver.find_element(id: button_id).click
             confirm(message)
             check_operation_result
           end
 
-          def activate_org
-            manage_org('ToolTables_OrganizationsTable_2', 'Are you sure you want to activate the selected organizations?')
+          def activate_organization
+            manage_organization('ToolTables_OrganizationsTable_3', 'Are you sure you want to activate the selected organizations?')
           end
 
-          def suspend_org
-            manage_org('ToolTables_OrganizationsTable_3', 'Are you sure you want to suspend the selected organizations?')
+          def suspend_organization
+            manage_organization('ToolTables_OrganizationsTable_4', 'Are you sure you want to suspend the selected organizations?')
           end
 
           def check_organization_status(status)
@@ -472,21 +521,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'activates the selected organization' do
-            suspend_org
+            suspend_organization
             check_organization_status('SUSPENDED')
 
-            activate_org
+            activate_organization
             check_organization_status('ACTIVE')
           end
 
           it 'suspends the selected organization' do
-            suspend_org
+            suspend_organization
             check_organization_status('SUSPENDED')
           end
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_OrganizationsTable_4' }
+              let(:button_id)       { 'ToolTables_OrganizationsTable_5' }
               let(:confirm_message) { 'Are you sure you want to delete the selected organizations?' }
               let(:table_id)        { 'OrganizationsTable' }
             end
@@ -494,7 +543,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_OrganizationsTable_5' }
+              let(:button_id)       { 'ToolTables_OrganizationsTable_6' }
               let(:confirm_message) { 'Are you sure you want to delete the selected organizations and their contained spaces, space quotas, applications, routes, service instances, service bindings and service keys?' }
               let(:table_id)        { 'OrganizationsTable' }
             end
@@ -656,13 +705,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_SpacesTable_0' }
             end
           end
 
           context 'Delete Recursive button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_SpacesTable_1' }
             end
           end
@@ -846,37 +895,37 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Start button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ApplicationsTable_0' }
             end
           end
 
           context 'Stop button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ApplicationsTable_1' }
             end
           end
 
           context 'Restart button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ApplicationsTable_2' }
             end
           end
 
           context 'Restage button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ApplicationsTable_3' }
             end
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ApplicationsTable_4' }
             end
           end
 
           context 'Delete Recursive button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ApplicationsTable_5' }
             end
           end
@@ -1037,7 +1086,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Restart button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ApplicationInstancesTable_0' }
             end
           end
@@ -1138,7 +1187,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_RoutesTable_0' }
             end
           end
@@ -1263,13 +1312,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ServiceInstancesTable_0' }
             end
           end
 
           context 'Delete Recursive button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ServiceInstancesTable_1' }
             end
           end
@@ -1442,7 +1491,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ServiceBindingsTable_0' }
             end
           end
@@ -1599,7 +1648,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ServiceKeysTable_0' }
             end
           end
@@ -1720,7 +1769,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_OrganizationRolesTable_0' }
             end
           end
@@ -1797,7 +1846,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_SpaceRolesTable_0' }
             end
           end
@@ -2059,31 +2108,31 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Enable button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_BuildpacksTable_0' }
             end
           end
 
           context 'Disable button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_BuildpacksTable_1' }
             end
           end
 
           context 'Lock button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_BuildpacksTable_2' }
             end
           end
 
           context 'Unlock button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_BuildpacksTable_3' }
             end
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_BuildpacksTable_4' }
             end
           end
@@ -2183,13 +2232,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_DomainsTable_0' }
             end
           end
 
           context 'Delete Recursive button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_DomainsTable_1' }
             end
           end
@@ -2296,7 +2345,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_QuotasTable_0' }
             end
           end
@@ -2383,7 +2432,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_SpaceQuotasTable_0' }
             end
           end
@@ -2742,7 +2791,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ServiceBrokersTable_0' }
             end
           end
@@ -2875,13 +2924,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ServicesTable_0' }
             end
           end
 
           context 'Purge button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ServicesTable_1' }
             end
           end
@@ -3063,19 +3112,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Public button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ServicePlansTable_0' }
             end
           end
 
           context 'Private button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ServicePlansTable_1' }
             end
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ServicePlansTable_2' }
             end
           end
@@ -3232,7 +3281,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'Delete button' do
-            it_behaves_like('click button without selecting a single row') do
+            it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ServicePlanVisibilitiesTable_0' }
             end
           end

@@ -851,11 +851,11 @@ module AdminUI
       end
     end
 
-    put '/organizations/:org_guid', auth: [:admin] do
+    put '/organizations/:organization_guid', auth: [:admin] do
       begin
         control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/organizations/#{params[:org_guid]}; body = #{control_message}")
-        @operation.manage_organization(params[:org_guid], control_message)
+        @logger.info_user(session[:username], 'put', "/organizations/#{params[:organization_guid]}; body = #{control_message}")
+        @operation.manage_organization(params[:organization_guid], control_message)
         204
       rescue CCRestClientResponseError => error
         @logger.debug("Error during update organization: #{error.to_h}")
@@ -990,13 +990,13 @@ module AdminUI
       end
     end
 
-    delete '/organizations/:org_guid', auth: [:admin] do
+    delete '/organizations/:organization_guid', auth: [:admin] do
       recursive = params[:recursive] == 'true'
-      url = "/organizations/#{params[:org_guid]}"
+      url = "/organizations/#{params[:organization_guid]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
       begin
-        @operation.delete_organization(params[:org_guid], recursive)
+        @operation.delete_organization(params[:organization_guid], recursive)
         204
       rescue CCRestClientResponseError => error
         @logger.debug("Error during delete organization: #{error.to_h}")
@@ -1010,10 +1010,10 @@ module AdminUI
       end
     end
 
-    delete '/organizations/:org_guid/:role/:user_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/organizations/#{params[:org_guid]}/#{params[:role]}/#{params[:user_guid]}")
+    delete '/organizations/:organization_guid/:role/:user_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/#{params[:role]}/#{params[:user_guid]}")
       begin
-        @operation.delete_organization_role(params[:org_guid], params[:role], params[:user_guid])
+        @operation.delete_organization_role(params[:organization_guid], params[:role], params[:user_guid])
         204
       rescue CCRestClientResponseError => error
         @logger.debug("Error during delete organization role: #{error.to_h}")
