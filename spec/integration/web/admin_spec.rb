@@ -391,7 +391,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             # Click the create button without input an organization name
             @driver.find_element(id: 'modalDialogButton0').click
             alert = @driver.switch_to.alert
-            expect(alert.text).to eq('Please input the name of the organization first!')
+            expect(alert.text).to eq('Please input the name first!')
             alert.dismiss
 
             # Input the name of the organization and click 'Create'
@@ -450,17 +450,17 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             # Check whether the dialog is displayed
             expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
             expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Rename Organization')
-            expect(@driver.find_element(id: 'organizationName').displayed?).to be(true)
+            expect(@driver.find_element(id: 'objectName').displayed?).to be(true)
 
             # Click the rename button without input an organization name
-            @driver.find_element(id: 'organizationName').clear
+            @driver.find_element(id: 'objectName').clear
             @driver.find_element(id: 'modalDialogButton0').click
             alert = @driver.switch_to.alert
-            expect(alert.text).to eq('Please input the name of the organization first!')
+            expect(alert.text).to eq('Please input the name first!')
             alert.dismiss
 
             # Input the name of the organization and click 'Rename'
-            @driver.find_element(id: 'organizationName').send_keys cc_organization2[:name]
+            @driver.find_element(id: 'objectName').send_keys cc_organization2[:name]
             @driver.find_element(id: 'modalDialogButton0').click
 
             check_operation_result
@@ -499,19 +499,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          def manage_organization(button_id, message)
+          def manage_organization(button_id)
             check_first_row('OrganizationsTable')
             @driver.find_element(id: button_id).click
-            confirm(message)
             check_operation_result
           end
 
           def activate_organization
-            manage_organization('ToolTables_OrganizationsTable_3', 'Are you sure you want to activate the selected organizations?')
+            manage_organization('ToolTables_OrganizationsTable_3')
           end
 
           def suspend_organization
-            manage_organization('ToolTables_OrganizationsTable_4', 'Are you sure you want to suspend the selected organizations?')
+            manage_organization('ToolTables_OrganizationsTable_4')
           end
 
           def check_organization_status(status)
@@ -848,7 +847,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ApplicationsTable_6')
+          check_allowscriptaccess_attribute('ToolTables_ApplicationsTable_5')
         end
 
         it 'has a checkbox in the first column' do
@@ -878,20 +877,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_1').text).to eq('Stop')
           end
 
-          it 'has a Restart button' do
-            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_2').text).to eq('Restart')
-          end
-
           it 'has a Restage button' do
-            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_3').text).to eq('Restage')
+            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_2').text).to eq('Restage')
           end
 
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_4').text).to eq('Delete')
+            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_3').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_5').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_4').text).to eq('Delete Recursive')
           end
 
           context 'Start button' do
@@ -906,27 +901,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Restart button' do
+          context 'Restage button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ApplicationsTable_2' }
             end
           end
 
-          context 'Restage button' do
+          context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ApplicationsTable_3' }
             end
           end
 
-          context 'Delete button' do
-            it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ApplicationsTable_4' }
-            end
-          end
-
           context 'Delete Recursive button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ApplicationsTable_5' }
+              let(:button_id) { 'ToolTables_ApplicationsTable_4' }
             end
           end
 
@@ -946,23 +935,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_app_state('STARTED')
           end
 
-          it 'restarts the selected application' do
-            # let app in stopped state first
-            manage_application(1)
-            check_app_state('STOPPED')
-
-            # restart the app
-            manage_application(2)
-            check_app_state('STARTED')
-          end
-
           it 'restages the selected application' do
-            manage_application(3)
+            manage_application(2)
           end
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ApplicationsTable_4' }
+              let(:button_id)       { 'ToolTables_ApplicationsTable_3' }
               let(:confirm_message) { 'Are you sure you want to delete the selected applications?' }
               let(:table_id)        { 'ApplicationsTable' }
             end
@@ -970,7 +949,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ApplicationsTable_5' }
+              let(:button_id)       { 'ToolTables_ApplicationsTable_4' }
               let(:confirm_message) { 'Are you sure you want to delete the selected applications and their associated service bindings?' }
               let(:table_id)        { 'ApplicationsTable' }
             end
@@ -2137,24 +2116,24 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          it 'disables the selected application' do
+          it 'disables the selected buildpack' do
             manage_buildpack(1)
             check_buildpack_enabled('false')
           end
 
-          it 'enables the selected application' do
+          it 'enables the selected buildpack' do
             manage_buildpack(1)
             check_buildpack_enabled('false')
             manage_buildpack(0)
             check_buildpack_enabled('true')
           end
 
-          it 'locks the selected application' do
+          it 'locks the selected buildpack' do
             manage_buildpack(2)
             check_buildpack_locked('true')
           end
 
-          it 'unlocks the selected application' do
+          it 'unlocks the selected buildpack' do
             manage_buildpack(2)
             check_buildpack_locked('true')
             manage_buildpack(3)
