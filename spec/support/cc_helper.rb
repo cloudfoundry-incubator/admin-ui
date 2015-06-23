@@ -530,6 +530,10 @@ module CCHelper
     }
   end
 
+  def cc_organization_rename
+    'renamed_test_org'
+  end
+
   def cc_organization2
     {
       billing_enabled:     false,
@@ -775,6 +779,10 @@ module CCHelper
       space_quota_definition_id: cc_space_quota_definition[:id],
       updated_at:                Time.new('2015-04-23 08:01:01 -0500')
     }
+  end
+
+  def cc_space_rename
+    'renamed_test_space'
   end
 
   def cc_space_auditor
@@ -1219,11 +1227,11 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_organization2[:name]}\"}", anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_organization_rename}\"}", anything) do
       if @cc_organizations_deleted
         cc_organization_not_found
       else
-        sql(config.ccdb_uri, "UPDATE organizations SET name = '#{cc_organization2[:name]}' WHERE guid = '#{cc_organization[:guid]}'")
+        sql(config.ccdb_uri, "UPDATE organizations SET name = '#{cc_organization_rename}' WHERE guid = '#{cc_organization[:guid]}'")
         OK.new('{}')
       end
     end
@@ -1494,6 +1502,15 @@ module CCHelper
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_managers WHERE space_id = '#{cc_space[:id]}' AND user_id = '#{cc_user[:id]}'")
         Net::HTTPCreated.new(1.0, 201, 'Created')
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_space_rename}\"}", anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE spaces SET name = '#{cc_space_rename}' WHERE guid = '#{cc_space[:guid]}'")
+        OK.new('{}')
       end
     end
   end

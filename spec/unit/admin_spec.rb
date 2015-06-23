@@ -757,6 +757,23 @@ describe AdminUI::Admin do
       it_behaves_like('common manage service plan')
     end
 
+    shared_examples 'common manage space' do
+      it 'returns failure code due to disconnection' do
+        response = put('/spaces/space1', '{"name":"bogus"}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'manage space via http' do
+      it_behaves_like('common manage space')
+    end
+
+    context 'manage space via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common manage space')
+    end
+
     shared_examples 'common restage application' do
       it 'returns failure code due to disconnection' do
         response = post('/applications/application1/restage', '{}')
@@ -1614,6 +1631,10 @@ describe AdminUI::Admin do
 
       it 'puts /service_plans/:guid redirects as expected' do
         put_redirects_as_expected('/service_plans/application1', '{"public":true}')
+      end
+
+      it 'puts /spaces/:guid redirects as expected' do
+        put_redirects_as_expected('/spaces/space1', '{"name":"bogus"}')
       end
 
       it 'puts /space_quota_definitions/:guid/spaces/:guid redirects as expected' do

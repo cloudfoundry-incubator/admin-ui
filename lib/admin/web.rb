@@ -887,6 +887,24 @@ module AdminUI
       end
     end
 
+    put '/spaces/:space_guid', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'put', "/spaces/#{params[:space_guid]}; body = #{control_message}")
+        @operation.manage_space(params[:space_guid], control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during update space: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.debug("Error during update space: #{error.inspect}")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     put '/space_quota_definitions/:space_quota_definition_guid/spaces/:space_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'put', "/space_quota_definitions/#{params[:space_quota_definition_guid]}/spaces/#{params[:space_guid]}")
       begin

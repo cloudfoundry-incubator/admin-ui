@@ -302,6 +302,14 @@ module AdminUI
       @view_models.invalidate_service_plans
     end
 
+    def manage_space(space_guid, control_message)
+      url = "v2/spaces/#{space_guid}"
+      @logger.debug("PUT #{url}, #{control_message}")
+      @client.put_cc(url, control_message)
+      @cc.invalidate_spaces
+      @view_models.invalidate_spaces
+    end
+
     def restage_application(app_guid)
       url = "v2/apps/#{app_guid}/restage"
       @logger.debug("POST #{url}")

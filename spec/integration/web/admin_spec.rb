@@ -395,7 +395,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             alert.dismiss
 
             # Input the name of the organization and click 'Create'
-            @driver.find_element(id: 'organizationName').send_keys cc_organization2[:name]
+            @driver.find_element(id: 'organizationName').send_keys(cc_organization2[:name])
             @driver.find_element(id: 'modalDialogButton0').click
 
             check_operation_result
@@ -452,7 +452,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Rename Organization')
             expect(@driver.find_element(id: 'objectName').displayed?).to be(true)
 
-            # Click the rename button without input an organization name
+            # Click the rename button without input
             @driver.find_element(id: 'objectName').clear
             @driver.find_element(id: 'modalDialogButton0').click
             alert = @driver.switch_to.alert
@@ -460,16 +460,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             alert.dismiss
 
             # Input the name of the organization and click 'Rename'
-            @driver.find_element(id: 'objectName').send_keys cc_organization2[:name]
+            @driver.find_element(id: 'objectName').send_keys(cc_organization_rename)
             @driver.find_element(id: 'modalDialogButton0').click
 
             check_operation_result
 
             begin
-              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[2]").text == cc_organization2[:name] }
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[2]").text == cc_organization_rename }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[2]").text).to eq(cc_organization2[:name])
+            expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[2]").text).to eq(cc_organization_rename)
           end
 
           context 'set quota' do
@@ -687,7 +687,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_SpacesTable_2')
+          check_allowscriptaccess_attribute('ToolTables_SpacesTable_3')
         end
 
         it 'has a checkbox in the first column' do
@@ -695,29 +695,68 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage spaces' do
+          it 'has a Rename button' do
+            expect(@driver.find_element(id: 'ToolTables_SpacesTable_0').text).to eq('Rename')
+          end
+
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_SpacesTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'ToolTables_SpacesTable_1').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'ToolTables_SpacesTable_1').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'ToolTables_SpacesTable_2').text).to eq('Delete Recursive')
           end
 
-          context 'Delete button' do
-            it_behaves_like('click button without selecting any rows') do
+          context 'Rename button' do
+            it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'ToolTables_SpacesTable_0' }
             end
           end
 
-          context 'Delete Recursive button' do
+          context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_SpacesTable_1' }
             end
           end
 
+          context 'Delete Recursive button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'ToolTables_SpacesTable_2' }
+            end
+          end
+
+          it 'renames a space' do
+            check_first_row('SpacesTable')
+            @driver.find_element(id: 'ToolTables_SpacesTable_0').click
+
+            # Check whether the dialog is displayed
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Rename Space')
+            expect(@driver.find_element(id: 'objectName').displayed?).to be(true)
+
+            # Click the rename button without input
+            @driver.find_element(id: 'objectName').clear
+            @driver.find_element(id: 'modalDialogButton0').click
+            alert = @driver.switch_to.alert
+            expect(alert.text).to eq('Please input the name first!')
+            alert.dismiss
+
+            # Input the name of the space and click 'Rename'
+            @driver.find_element(id: 'objectName').send_keys(cc_space_rename)
+            @driver.find_element(id: 'modalDialogButton0').click
+
+            check_operation_result
+
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[2]").text == cc_space_rename }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[2]").text).to eq(cc_space_rename)
+          end
+
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_SpacesTable_0' }
+              let(:button_id)       { 'ToolTables_SpacesTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected spaces?' }
               let(:table_id)        { 'SpacesTable' }
             end
@@ -725,7 +764,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_SpacesTable_1' }
+              let(:button_id)       { 'ToolTables_SpacesTable_2' }
               let(:confirm_message) { 'Are you sure you want to delete the selected spaces and their contained applications, routes, service instances, service bindings and service keys?' }
               let(:table_id)        { 'SpacesTable' }
             end

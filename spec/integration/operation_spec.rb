@@ -315,7 +315,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def rename_organization
-        operation.manage_organization(cc_organization[:guid], "{\"name\":\"#{cc_organization2[:name]}\"}")
+        operation.manage_organization(cc_organization[:guid], "{\"name\":\"#{cc_organization_rename}\"}")
       end
 
       def set_organization_quota
@@ -344,7 +344,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       it 'renames the organization' do
-        expect { rename_organization }.to change { cc.organizations['items'][0][:name] }.from(cc_organization[:name]).to(cc_organization2[:name])
+        expect { rename_organization }.to change { cc.organizations['items'][0][:name] }.from(cc_organization[:name]).to(cc_organization_rename)
       end
 
       context 'sets the quota for an organization' do
@@ -828,12 +828,20 @@ describe AdminUI::Operation, type: :integration do
         expect(cc.spaces['items'].length).to eq(1)
       end
 
+      def rename_space
+        operation.manage_space(cc_space[:guid], "{\"name\":\"#{cc_space_rename}\"}")
+      end
+
       def delete_space
         operation.delete_space(cc_space[:guid], false)
       end
 
       def delete_space_recursive
         operation.delete_space(cc_space[:guid], true)
+      end
+
+      it 'renames the space' do
+        expect { rename_space }.to change { cc.spaces['items'][0][:name] }.from(cc_space[:name]).to(cc_space_rename)
       end
 
       it 'deletes space' do
@@ -854,6 +862,10 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_error_code).to eq('CF-SpaceNotFound')
           expect(exception.http_code).to eq(404)
           expect(exception.message).to eq("The app space could not be found: #{cc_space[:guid]}")
+        end
+
+        it 'fails renaming deleted space' do
+          expect { rename_space }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
         end
 
         it 'fails deleting deleted space' do

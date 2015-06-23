@@ -355,9 +355,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def rename_organization
-      response = put_request("/organizations/#{cc_organization[:guid]}", "{\"name\":\"#{cc_organization2[:name]}\"}")
+      response = put_request("/organizations/#{cc_organization[:guid]}", "{\"name\":\"#{cc_organization_rename}\"}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/organizations/#{cc_organization[:guid]}; body = {\"name\":\"#{cc_organization2[:name]}\"}"]], true)
+      verify_sys_log_entries([['put', "/organizations/#{cc_organization[:guid]}; body = {\"name\":\"#{cc_organization_rename}\"}"]], true)
     end
 
     def set_quota
@@ -400,7 +400,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'renames an organization' do
-      expect { rename_organization }.to change { get_json('/organizations_view_model')['items']['items'][0][1] }.from(cc_organization[:name]).to(cc_organization2[:name])
+      expect { rename_organization }.to change { get_json('/organizations_view_model')['items']['items'][0][1] }.from(cc_organization[:name]).to(cc_organization_rename)
     end
 
     context 'sets the quota for organization' do
@@ -707,6 +707,12 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/spaces_view_model')['items']['items'].length).to eq(1)
     end
 
+    def rename_space
+      response = put_request("/spaces/#{cc_space[:guid]}", "{\"name\":\"#{cc_space_rename}\"}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/spaces/#{cc_space[:guid]}; body = {\"name\":\"#{cc_space_rename}\"}"]], true)
+    end
+
     def delete_space
       response = delete_request("/spaces/#{cc_space[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -721,6 +727,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'has user name and space request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/spaces_view_model']], true)
+    end
+
+    it 'renames a space' do
+      expect { rename_space }.to change { get_json('/spaces_view_model')['items']['items'][0][1] }.from(cc_space[:name]).to(cc_space_rename)
     end
 
     it 'deletes a space' do

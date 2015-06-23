@@ -40,7 +40,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Organizations tab does not have create, set quota, activate, suspend and delete buttons' do
+    context 'Organizations tab does not have create, rename, set quota, activate, suspend and delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Organizations' }
         let(:page_id)   { 'OrganizationsPage' }
@@ -48,7 +48,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Spaces tab does not have delete button' do
+    context 'Spaces tab does not have rename and delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Spaces' }
         let(:page_id)   { 'SpacesPage' }
@@ -56,7 +56,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Applications tab does not have start, stop, restart, restage or delete buttons' do
+    context 'Applications tab does not have start, stop, restage or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Applications' }
         let(:page_id)   { 'ApplicationsPage' }
