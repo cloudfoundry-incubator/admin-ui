@@ -149,7 +149,7 @@ module AdminUI
         {
           db_uri:  ccdb_uri,
           table:   :service_instances,
-          columns: [:created_at, :dashboard_url, :gateway_name, :gateway_data, :guid, :id, :name, :service_plan_id, :space_id, :tags, :updated_at]
+          columns: [:created_at, :dashboard_url, :gateway_name, :gateway_data, :guid, :id, :is_gateway_service, :name, :service_plan_id, :space_id, :tags, :updated_at]
         },
         service_instance_operations:
         {

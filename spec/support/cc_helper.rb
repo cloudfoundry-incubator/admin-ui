@@ -19,9 +19,9 @@ module CCHelper
   # Failing with NoMethodError: undefined method `closed?
   class Created < Net::HTTPOK
     attr_reader :body
-    def initialize(hash)
+    def initialize
       super(1.0, 201, 'Created')
-      @body = Yajl::Encoder.encode(hash)
+      @body = Yajl::Encoder.encode({})
     end
   end
 
@@ -253,6 +253,10 @@ module CCHelper
     }
   end
 
+  def cc_app_rename
+    'renamed_test'
+  end
+
   def cc_app_route
     {
       app_id:   cc_app[:id],
@@ -273,6 +277,10 @@ module CCHelper
       position:               1,
       updated_at:             Time.new('2015-04-23 08:00:05 -0500')
     }
+  end
+
+  def cc_buildpack_rename
+    'renamed Node.js'
   end
 
   def cc_domain
@@ -597,6 +605,10 @@ module CCHelper
     }
   end
 
+  def cc_quota_definition_rename
+    'renamed_test_quota_1'
+  end
+
   def cc_quota_definition2
     {
       created_at:                 Time.new,
@@ -687,6 +699,10 @@ module CCHelper
     cc_service_broker.merge(auth_password: 'password')
   end
 
+  def cc_service_broker_rename
+    'renamed_TestServiceBroker'
+  end
+
   def cc_service_dashboard_client
     {
       service_broker_id: cc_service_broker[:id],
@@ -696,18 +712,23 @@ module CCHelper
 
   def cc_service_instance
     {
-      created_at:      Time.new('2015-04-23 08:00:50 -0500'),
-      guid:            'service_instance1',
-      id:              21,
-      dashboard_url:   'http://www.ibm.com',
-      gateway_data:    nil,
-      gateway_name:    nil,
-      name:            'TestService-random',
-      service_plan_id: cc_service_plan[:id],
-      space_id:        cc_space[:id],
-      tags:            '["service_instance_tag1", "service_instance_tag2"]',
-      updated_at:      Time.new('2015-04-23 08:00:51 -0500')
+      created_at:         Time.new('2015-04-23 08:00:50 -0500'),
+      guid:               'service_instance1',
+      id:                 21,
+      dashboard_url:      'http://www.ibm.com',
+      gateway_data:       nil,
+      gateway_name:       nil,
+      is_gateway_service: true,
+      name:               'TestService-random',
+      service_plan_id:    cc_service_plan[:id],
+      space_id:           cc_space[:id],
+      tags:               '["service_instance_tag1", "service_instance_tag2"]',
+      updated_at:         Time.new('2015-04-23 08:00:51 -0500')
     }
+  end
+
+  def cc_service_instance_rename
+    'renamed_TestService-random'
   end
 
   def cc_service_instance_operation
@@ -820,6 +841,10 @@ module CCHelper
       total_services:             100,
       updated_at:                 Time.new('2015-04-23 08:01:03 -0500')
     }
+  end
+
+  def cc_space_quota_definition_rename
+    'renamed_test_s_q_1' # Name needs to be 20 characters or less or the UI will truncate
   end
 
   def cc_space_quota_definition2
@@ -994,7 +1019,16 @@ module CCHelper
       if @cc_apps_deleted
         cc_app_not_found
       else
-        Created.new('{}')
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_app_rename}\"}", anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE apps SET name = '#{cc_app_rename}' WHERE guid = '#{cc_app[:guid]}'")
+        Created.new
       end
     end
 
@@ -1003,7 +1037,7 @@ module CCHelper
         cc_app_not_found
       else
         sql(config.ccdb_uri, "UPDATE apps SET state = 'STOPPED' WHERE guid = '#{cc_app[:guid]}'")
-        OK.new('{}')
+        Created.new
       end
     end
 
@@ -1012,7 +1046,7 @@ module CCHelper
         cc_app_not_found
       else
         sql(config.ccdb_uri, "UPDATE apps SET state = 'STARTED' WHERE guid = '#{cc_app[:guid]}'")
-        OK.new('{}')
+        Created.new
       end
     end
 
@@ -1057,12 +1091,12 @@ module CCHelper
   end
 
   def cc_buildpack_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_buildpack_rename}\"}", anything) do
       if @cc_buildpacks_deleted
         cc_buildpack_not_found
       else
-        cc_clear_buildpacks_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        sql(config.ccdb_uri, "UPDATE buildpacks SET name = '#{cc_buildpack_rename}' WHERE guid = '#{cc_buildpack[:guid]}'")
+        Created.new
       end
     end
 
@@ -1071,7 +1105,7 @@ module CCHelper
         cc_buildpack_not_found
       else
         sql(config.ccdb_uri, "UPDATE buildpacks SET enabled = 'true' WHERE guid = '#{cc_buildpack[:guid]}'")
-        OK.new('{}')
+        Created.new
       end
     end
 
@@ -1080,7 +1114,7 @@ module CCHelper
         cc_buildpack_not_found
       else
         sql(config.ccdb_uri, "UPDATE buildpacks SET enabled = 'false' WHERE guid = '#{cc_buildpack[:guid]}'")
-        OK.new('{}')
+        Created.new
       end
     end
 
@@ -1089,7 +1123,7 @@ module CCHelper
         cc_buildpack_not_found
       else
         sql(config.ccdb_uri, "UPDATE buildpacks SET locked = 'true' WHERE guid = '#{cc_buildpack[:guid]}'")
-        OK.new('{}')
+        Created.new
       end
     end
 
@@ -1098,7 +1132,16 @@ module CCHelper
         cc_buildpack_not_found
       else
         sql(config.ccdb_uri, "UPDATE buildpacks SET locked = 'false' WHERE guid = '#{cc_buildpack[:guid]}'")
-        OK.new('{}')
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        cc_clear_buildpacks_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
   end
@@ -1169,7 +1212,43 @@ module CCHelper
           end
         end
         @cc_organization_created = true
-        OK.new('{}')
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_organization_rename}\"}", anything) do
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE organizations SET name = '#{cc_organization_rename}' WHERE guid = '#{cc_organization[:guid]}'")
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"quota_definition_guid\":\"#{cc_quota_definition2[:guid]}\"}", anything) do
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE organizations SET quota_definition_id = (SELECT id FROM quota_definitions WHERE guid = '#{cc_quota_definition2[:guid]}')")
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"status":"suspended"}', anything) do
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE organizations SET status = 'suspended' WHERE guid = '#{cc_organization[:guid]}'")
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"status":"active"}', anything) do
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE organizations SET status = 'active' WHERE guid = '#{cc_organization[:guid]}'")
+        Created.new
       end
     end
 
@@ -1196,7 +1275,7 @@ module CCHelper
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_auditors WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPCreated.new(1.0, 201, 'Created')
+        Created.new
       end
     end
 
@@ -1205,7 +1284,7 @@ module CCHelper
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_billing_managers WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPCreated.new(1.0, 201, 'Created')
+        Created.new
       end
     end
 
@@ -1214,7 +1293,7 @@ module CCHelper
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_managers WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPCreated.new(1.0, 201, 'Created')
+        Created.new
       end
     end
 
@@ -1223,43 +1302,7 @@ module CCHelper
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_users WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPCreated.new(1.0, 201, 'Created')
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_organization_rename}\"}", anything) do
-      if @cc_organizations_deleted
-        cc_organization_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE organizations SET name = '#{cc_organization_rename}' WHERE guid = '#{cc_organization[:guid]}'")
-        OK.new('{}')
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"quota_definition_guid\":\"#{cc_quota_definition2[:guid]}\"}", anything) do
-      if @cc_organizations_deleted
-        cc_organization_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE organizations SET quota_definition_id = (SELECT id FROM quota_definitions WHERE guid = '#{cc_quota_definition2[:guid]}')")
-        OK.new('{}')
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"status":"suspended"}', anything) do
-      if @cc_organizations_deleted
-        cc_organization_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE organizations SET status = 'suspended' WHERE guid = '#{cc_organization[:guid]}'")
-        OK.new('{}')
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"status":"active"}', anything) do
-      if @cc_organizations_deleted
-        cc_organization_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE organizations SET status = 'active' WHERE guid = '#{cc_organization[:guid]}'")
-        OK.new('{}')
+        Created.new
       end
     end
   end
@@ -1271,6 +1314,15 @@ module CCHelper
   end
 
   def cc_quota_definition_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/quota_definitions/#{cc_quota_definition[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_quota_definition_rename}\"}", anything) do
+      if @cc_quota_definitions_deleted
+        cc_quota_definition_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE quota_definitions SET name = '#{cc_quota_definition_rename}' WHERE guid = '#{cc_quota_definition[:guid]}'")
+        Created.new
+      end
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/quota_definitions/#{cc_quota_definition[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_quota_definitions_deleted
         cc_quota_definition_not_found
@@ -1348,6 +1400,15 @@ module CCHelper
   end
 
   def cc_service_broker_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_brokers/#{cc_service_broker[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_service_broker_rename}\"}", anything) do
+      if @cc_service_brokers_deleted
+        cc_service_broker_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE service_brokers SET name = '#{cc_service_broker_rename}' WHERE guid = '#{cc_service_broker[:guid]}'")
+        OK.new({})
+      end
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_brokers/#{cc_service_broker[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_service_brokers_deleted
         cc_service_broker_not_found
@@ -1365,6 +1426,15 @@ module CCHelper
   end
 
   def cc_service_instance_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_service_instance_rename}\"}", anything) do
+      if @cc_service_instances_deleted
+        cc_service_instance_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE service_instances SET name = '#{cc_service_instance_rename}' WHERE guid = '#{cc_service_instance[:guid]}'")
+        Created.new
+      end
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_service_instances_deleted
         cc_service_instance_not_found
@@ -1408,21 +1478,12 @@ module CCHelper
   end
 
   def cc_service_plan_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_plans/#{cc_service_plan[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
-      if @cc_service_plans_deleted
-        cc_service_plan_not_found
-      else
-        cc_clear_service_plans_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
-      end
-    end
-
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_plans/#{cc_service_plan[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"public":true}', anything) do
       if @cc_service_plans_deleted
         cc_service_plan_not_found
       else
         sql(config.ccdb_uri, "UPDATE service_plans SET public = 'true' WHERE guid = '#{cc_service_plan[:guid]}'")
-        OK.new('{}')
+        Created.new
       end
     end
 
@@ -1431,7 +1492,16 @@ module CCHelper
         cc_service_plan_not_found
       else
         sql(config.ccdb_uri, "UPDATE service_plans SET public = 'false' WHERE guid = '#{cc_service_plan[:guid]}'")
-        OK.new('{}')
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_plans/#{cc_service_plan[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_service_plans_deleted
+        cc_service_plan_not_found
+      else
+        cc_clear_service_plans_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
   end
@@ -1460,6 +1530,15 @@ module CCHelper
   end
 
   def cc_space_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_space_rename}\"}", anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE spaces SET name = '#{cc_space_rename}' WHERE guid = '#{cc_space[:guid]}'")
+        Created.new
+      end
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_spaces_deleted
         cc_space_not_found
@@ -1483,7 +1562,7 @@ module CCHelper
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_auditors WHERE space_id = '#{cc_space[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPCreated.new(1.0, 201, 'Created')
+        Created.new
       end
     end
 
@@ -1492,7 +1571,7 @@ module CCHelper
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_developers WHERE space_id = '#{cc_space[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPCreated.new(1.0, 201, 'Created')
+        Created.new
       end
     end
 
@@ -1501,16 +1580,7 @@ module CCHelper
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_managers WHERE space_id = '#{cc_space[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPCreated.new(1.0, 201, 'Created')
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_space_rename}\"}", anything) do
-      if @cc_spaces_deleted
-        cc_space_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE spaces SET name = '#{cc_space_rename}' WHERE guid = '#{cc_space[:guid]}'")
-        OK.new('{}')
+        Created.new
       end
     end
   end
@@ -1522,6 +1592,24 @@ module CCHelper
   end
 
   def cc_space_quota_definition_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/space_quota_definitions/#{cc_space_quota_definition[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_space_quota_definition_rename}\"}", anything) do
+      if @cc_space_quota_definitions_deleted
+        cc_space_quota_definition_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE space_quota_definitions SET name = '#{cc_space_quota_definition_rename}' WHERE guid = '#{cc_space_quota_definition[:guid]}'")
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/space_quota_definitions/#{cc_space_quota_definition2[:guid]}/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PUT, anything, anything, anything) do
+      if @cc_space_quota_definitions_deleted
+        cc_space_quota_definition_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE spaces SET space_quota_definition_id = (SELECT id FROM space_quota_definitions WHERE guid = '#{cc_space_quota_definition2[:guid]}')")
+        Created.new
+      end
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/space_quota_definitions/#{cc_space_quota_definition[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_space_quota_definitions_deleted
         cc_space_quota_definition_not_found
@@ -1536,16 +1624,7 @@ module CCHelper
         cc_space_quota_definition_not_found
       else
         sql(config.ccdb_uri, 'UPDATE spaces SET space_quota_definition_id = null')
-        OK.new('{}')
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/space_quota_definitions/#{cc_space_quota_definition2[:guid]}/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PUT, anything, anything, anything) do
-      if @cc_space_quota_definitions_deleted
-        cc_space_quota_definition_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE spaces SET space_quota_definition_id = (SELECT id FROM space_quota_definitions WHERE guid = '#{cc_space_quota_definition2[:guid]}')")
-        OK.new('{}')
+        Created.new
       end
     end
   end

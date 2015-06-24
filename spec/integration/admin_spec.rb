@@ -163,6 +163,12 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/applications_view_model')['items']['items'][0][3]).to eq('STARTED')
     end
 
+    def rename_app
+      response = put_request("/applications/#{cc_app[:guid]}", "{\"name\":\"#{cc_app_rename}\"}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"name\":\"#{cc_app_rename}\"}"]], true)
+    end
+
     def stop_app
       response = put_request("/applications/#{cc_app[:guid]}", '{"state":"STOPPED"}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -195,6 +201,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'has user name and applications in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/applications_view_model']], true)
+    end
+
+    it 'renames an application' do
+      expect { rename_app }.to change { get_json('/applications_view_model')['items']['items'][0][1] }.from(cc_app[:name]).to(cc_app_rename)
     end
 
     it 'stops a running application' do
@@ -250,6 +260,12 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/buildpacks_view_model')['items']['items'].length).to eq(1)
     end
 
+    def rename_buildpack
+      response = put_request("/buildpacks/#{cc_buildpack[:guid]}", "{\"name\":\"#{cc_buildpack_rename}\"}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/buildpacks/#{cc_buildpack[:guid]}; body = {\"name\":\"#{cc_buildpack_rename}\"}"]], true)
+    end
+
     def make_buildpack_disabled
       response = put_request("/buildpacks/#{cc_buildpack[:guid]}", '{"enabled":false}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -282,6 +298,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'has user name and buildpack request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/buildpacks_view_model']], true)
+    end
+
+    it 'renames a buildpack' do
+      expect { rename_buildpack }.to change { get_json('/buildpacks_view_model')['items']['items'][0][1] }.from(cc_buildpack[:name]).to(cc_buildpack_rename)
     end
 
     it 'disables buildpack' do
@@ -459,6 +479,12 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/quotas_view_model')['items']['items'].length).to eq(1)
     end
 
+    def rename_quota
+      response = put_request("/quota_definitions/#{cc_quota_definition[:guid]}", "{\"name\":\"#{cc_quota_definition_rename}\"}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/quota_definitions/#{cc_quota_definition[:guid]}; body = {\"name\":\"#{cc_quota_definition_rename}\"}"]], true)
+    end
+
     def delete_quota
       response = delete_request("/quota_definitions/#{cc_quota_definition[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -467,6 +493,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'has user name and quotas request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/quotas_view_model']], true)
+    end
+
+    it 'renames a quota' do
+      expect { rename_quota }.to change { get_json('/quotas_view_model')['items']['items'][0][1] }.from(cc_quota_definition[:name]).to(cc_quota_definition_rename)
     end
 
     it 'deletes a quota' do
@@ -561,6 +591,12 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/service_brokers_view_model')['items']['items'].length).to eq(1)
     end
 
+    def rename_service_broker
+      response = put_request("/service_brokers/#{cc_service_broker[:guid]}", "{\"name\":\"#{cc_service_broker_rename}\"}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/service_brokers/#{cc_service_broker[:guid]}; body = {\"name\":\"#{cc_service_broker_rename}\"}"]], true)
+    end
+
     def delete_service_broker
       response = delete_request("/service_brokers/#{cc_service_broker[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -569,6 +605,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'has user name and service brokers request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_brokers_view_model']], true)
+    end
+
+    it 'renames a service broker' do
+      expect { rename_service_broker }.to change { get_json('/service_brokers_view_model')['items']['items'][0][1] }.from(cc_service_broker[:name]).to(cc_service_broker_rename)
     end
 
     it 'deletes a service broker' do
@@ -584,20 +624,30 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/service_instances_view_model')['items']['items'].length).to eq(1)
     end
 
-    def delete_service_instance
-      response = delete_request("/service_instances/#{cc_service_instance[:guid]}")
+    def rename_service_instance
+      response = put_request("/service_instances/#{cc_service_instance[:guid]}/#{cc_service_instance[:is_gateway_service]}", "{\"name\":\"#{cc_service_instance_rename}\"}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}"]])
+      verify_sys_log_entries([['put', "/service_instances/#{cc_service_instance[:guid]}/#{cc_service_instance[:is_gateway_service]}; body = {\"name\":\"#{cc_service_instance_rename}\"}"]], true)
+    end
+
+    def delete_service_instance
+      response = delete_request("/service_instances/#{cc_service_instance[:guid]}/#{cc_service_instance[:is_gateway_service]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/#{cc_service_instance[:is_gateway_service]}"]])
     end
 
     def delete_service_instance_recursive
-      response = delete_request("/service_instances/#{cc_service_instance[:guid]}?recursive=true")
+      response = delete_request("/service_instances/#{cc_service_instance[:guid]}/#{cc_service_instance[:is_gateway_service]}?recursive=true")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}?recursive=true"]], true)
+      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/#{cc_service_instance[:is_gateway_service]}?recursive=true"]], true)
     end
 
     it 'has user name and service instances request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_instances_view_model']], true)
+    end
+
+    it 'renames a service instance' do
+      expect { rename_service_instance }.to change { get_json('/service_instances_view_model')['items']['items'][0][1] }.from(cc_service_instance[:name]).to(cc_service_instance_rename)
     end
 
     it 'deletes a service instance' do
@@ -750,6 +800,12 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/space_quotas_view_model')['items']['items'].length).to eq(1)
     end
 
+    def rename_space_quota
+      response = put_request("/space_quota_definitions/#{cc_space_quota_definition[:guid]}", "{\"name\":\"#{cc_space_quota_definition_rename}\"}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/space_quota_definitions/#{cc_space_quota_definition[:guid]}; body = {\"name\":\"#{cc_space_quota_definition_rename}\"}"]], true)
+    end
+
     def delete_space_quota
       response = delete_request("/space_quota_definitions/#{cc_space_quota_definition[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -758,6 +814,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'has user name and quotas request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/space_quotas_view_model']], true)
+    end
+
+    it 'renames a space quota' do
+      expect { rename_space_quota }.to change { get_json('/space_quotas_view_model')['items']['items'][0][1] }.from(cc_space_quota_definition[:name]).to(cc_space_quota_definition_rename)
     end
 
     it 'deletes a space quota' do

@@ -74,6 +74,7 @@ module AdminUI
 
         guid                       = service_instance[:guid]
         id                         = service_instance[:id]
+        is_gateway_service         = service_instance[:is_gateway_service].nil? ? true : service_instance[:is_gateway_service]
         service_instance_operation = service_instance_operation_hash[id]
         service_plan_id            = service_instance[:service_plan_id]
         service_plan               = service_plan_id.nil? ? nil : service_plan_hash[service_plan_id]
@@ -88,7 +89,7 @@ module AdminUI
 
         row = []
 
-        row.push(guid)
+        row.push("#{guid}/#{is_gateway_service}")
         row.push(service_instance[:name])
         row.push(guid)
         row.push(service_instance[:created_at].to_datetime.rfc3339)
@@ -98,6 +99,8 @@ module AdminUI
         else
           row.push(nil)
         end
+
+        row.push(!is_gateway_service)
 
         if event_counter
           row.push(event_counter)
@@ -210,7 +213,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..33).to_a, (1..33).to_a - [5, 6, 7])
+      result(true, items, hash, (1..34).to_a, (1..34).to_a - [6, 7, 8])
     end
   end
 end

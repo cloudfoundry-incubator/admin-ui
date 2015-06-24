@@ -73,6 +73,10 @@ describe AdminUI::Operation, type: :integration do
         expect(cc.applications['items'][0][:state]).to eq('STARTED')
       end
 
+      def rename_application
+        operation.manage_application(cc_app[:guid], "{\"name\":\"#{cc_app_rename}\"}")
+      end
+
       def delete_application
         operation.delete_application(cc_app[:guid], false)
       end
@@ -91,6 +95,10 @@ describe AdminUI::Operation, type: :integration do
 
       def stop_application
         operation.manage_application(cc_app[:guid], '{"state":"STOPPED"}')
+      end
+
+      it 'renames the application' do
+        expect { rename_application }.to change { cc.applications['items'][0][:name] }.from(cc_app[:name]).to(cc_app_rename)
       end
 
       it 'stops the running application' do
@@ -124,6 +132,10 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_error_code).to eq('CF-AppNotFound')
           expect(exception.http_code).to eq(404)
           expect(exception.message).to eq("The app name could not be found: #{cc_app[:guid]}")
+        end
+
+        it 'fails renaming deleted app' do
+          expect { rename_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
         end
 
         it 'fails starting deleted app' do
@@ -186,6 +198,10 @@ describe AdminUI::Operation, type: :integration do
         expect(cc.buildpacks['items'][0][:locked]).to eq(false)
       end
 
+      def rename_buildpack
+        operation.manage_buildpack(cc_buildpack[:guid], "{\"name\":\"#{cc_buildpack_rename}\"}")
+      end
+
       def delete_buildpack
         operation.delete_buildpack(cc_buildpack[:guid])
       end
@@ -204,6 +220,10 @@ describe AdminUI::Operation, type: :integration do
 
       def unlock_buildpack
         operation.manage_buildpack(cc_buildpack[:guid], '{"locked":false}')
+      end
+
+      it 'renames the buildpack' do
+        expect { rename_buildpack }.to change { cc.buildpacks['items'][0][:name] }.from(cc_buildpack[:name]).to(cc_buildpack_rename)
       end
 
       it 'disables the buildpack' do
@@ -238,6 +258,10 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_error_code).to eq('CF-NotFound')
           expect(exception.http_code).to eq(404)
           expect(exception.message).to eq('Unknown request')
+        end
+
+        it 'fails renaming deleted buildpack' do
+          expect { rename_buildpack }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_buildpack_not_found(exception) }
         end
 
         it 'fails disabling deleted buildpack' do
@@ -499,8 +523,16 @@ describe AdminUI::Operation, type: :integration do
         expect(cc.quota_definitions['items'].length).to eq(1)
       end
 
+      def rename_quota_definition
+        operation.manage_quota_definition(cc_quota_definition[:guid], "{\"name\":\"#{cc_quota_definition_rename}\"}")
+      end
+
       def delete_quota_definition
         operation.delete_quota_definition(cc_quota_definition[:guid])
+      end
+
+      it 'renames the quota definition' do
+        expect { rename_quota_definition }.to change { cc.quota_definitions['items'][0][:name] }.from(cc_quota_definition[:name]).to(cc_quota_definition_rename)
       end
 
       it 'deletes quota definition' do
@@ -517,6 +549,10 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_error_code).to eq('CF-QuotaDefinitionNotFound')
           expect(exception.http_code).to eq(404)
           expect(exception.message).to eq("Quota Definition could not be found: #{cc_quota_definition[:guid]}")
+        end
+
+        it 'fails renaming deleted quota definition' do
+          expect { rename_quota_definition }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_quota_definition_not_found(exception) }
         end
 
         it 'fails deleting deleted quota definition' do
@@ -635,8 +671,16 @@ describe AdminUI::Operation, type: :integration do
         expect(cc.service_brokers['items'].length).to eq(1)
       end
 
+      def rename_service_broker
+        operation.manage_service_broker(cc_service_broker[:guid], "{\"name\":\"#{cc_service_broker_rename}\"}")
+      end
+
       def delete_service_broker
         operation.delete_service_broker(cc_service_broker[:guid])
+      end
+
+      it 'renames the service broker' do
+        expect { rename_service_broker }.to change { cc.service_brokers['items'][0][:name] }.from(cc_service_broker[:name]).to(cc_service_broker_rename)
       end
 
       it 'deletes service broker' do
@@ -655,6 +699,10 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.message).to eq('Unknown request')
         end
 
+        it 'fails renaming deleted service broker' do
+          expect { rename_service_broker }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_broker_not_found(exception) }
+        end
+
         it 'fails deleting deleted service broker' do
           expect { delete_service_broker }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_broker_not_found(exception) }
         end
@@ -666,12 +714,20 @@ describe AdminUI::Operation, type: :integration do
         expect(cc.service_instances['items'].length).to eq(1)
       end
 
+      def rename_service_instance
+        operation.manage_service_instance(cc_service_instance[:guid], cc_service_instance[:is_gateway_service], "{\"name\":\"#{cc_service_instance_rename}\"}")
+      end
+
       def delete_service_instance
-        operation.delete_service_instance(cc_service_instance[:guid], false)
+        operation.delete_service_instance(cc_service_instance[:guid], cc_service_instance[:is_gateway_service], false)
       end
 
       def delete_service_instance_recursive
-        operation.delete_service_instance(cc_service_instance[:guid], true)
+        operation.delete_service_instance(cc_service_instance[:guid], cc_service_instance[:is_gateway_service], true)
+      end
+
+      it 'renames the service instance' do
+        expect { rename_service_instance }.to change { cc.service_instances['items'][0][:name] }.from(cc_service_instance[:name]).to(cc_service_instance_rename)
       end
 
       it 'deletes service instance' do
@@ -692,6 +748,10 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_error_code).to eq('CF-ServiceInstanceNotFound')
           expect(exception.http_code).to eq(404)
           expect(exception.message).to eq("The service instance could not be found: #{cc_service_instance[:guid]}")
+        end
+
+        it 'fails renaming deleted service instance' do
+          expect { rename_service_instance }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_instance_not_found(exception) }
         end
 
         it 'fails deleting deleted service instance' do
@@ -883,8 +943,16 @@ describe AdminUI::Operation, type: :integration do
         expect(cc.space_quota_definitions['items'].length).to eq(1)
       end
 
+      def rename_space_quota_definition
+        operation.manage_space_quota_definition(cc_space_quota_definition[:guid], "{\"name\":\"#{cc_space_quota_definition_rename}\"}")
+      end
+
       def delete_space_quota_definition
         operation.delete_space_quota_definition(cc_space_quota_definition[:guid])
+      end
+
+      it 'renames the space quota definition' do
+        expect { rename_space_quota_definition }.to change { cc.space_quota_definitions['items'][0][:name] }.from(cc_space_quota_definition[:name]).to(cc_space_quota_definition_rename)
       end
 
       it 'deletes space_quota definition' do
@@ -901,6 +969,10 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_error_code).to eq('CF-SpaceQuotaDefinitionNotFound')
           expect(exception.http_code).to eq(404)
           expect(exception.message).to eq("Space Quota Definition could not be found: #{cc_space_quota_definition[:guid]}")
+        end
+
+        it 'fails renaming deleted space quota definition' do
+          expect { rename_space_quota_definition }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_quota_definition_not_found(exception) }
         end
 
         it 'fails deleting deleted space quota definition' do

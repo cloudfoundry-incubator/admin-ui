@@ -521,7 +521,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete service instance' do
       it 'returns failure code due to disconnection' do
-        response = delete('/service_instances/service_instance1')
+        response = delete('/service_instances/service_instance1/true')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -538,7 +538,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete service instance recursive' do
       it 'returns failure code due to disconnection' do
-        response = delete('/service_instances/service_instance1?recursive=true')
+        response = delete('/service_instances/service_instance1/true?recursive=true')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -740,6 +740,57 @@ describe AdminUI::Admin do
       it_behaves_like('common manage organization')
     end
 
+    shared_examples 'common manage quota definition' do
+      it 'returns failure code due to disconnection' do
+        response = put('/quota_definitions/quota_definition1', '{"name":"bogus"}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'manage quota definition via http' do
+      it_behaves_like('common manage quota definition')
+    end
+
+    context 'manage quota definition via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common manage quota definition')
+    end
+
+    shared_examples 'common manage service broker' do
+      it 'returns failure code due to disconnection' do
+        response = put('/service_brokers/service_broker1', '{"name":"bogus"}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'manage service broker via http' do
+      it_behaves_like('common manage service broker')
+    end
+
+    context 'manage service broker via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common manage service broker')
+    end
+
+    shared_examples 'common manage service instance' do
+      it 'returns failure code due to disconnection' do
+        response = put('/service_instances/service_instance1/true', '{"name":"bogus"}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'manage service instance via http' do
+      it_behaves_like('common manage service instance')
+    end
+
+    context 'manage service instance via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common manage service instance')
+    end
+
     shared_examples 'common manage service plan' do
       it 'returns failure code due to disconnection' do
         response = put('/service_plans/service_plan1', '{"public":true}')
@@ -772,6 +823,23 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common manage space')
+    end
+
+    shared_examples 'common manage space quota definition' do
+      it 'returns failure code due to disconnection' do
+        response = put('/space_quota_definitions/space_quota_definition1', '{"name":"bogus"}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'manage space quota definition via http' do
+      it_behaves_like('common manage space quota definition')
+    end
+
+    context 'manage space quota definition via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common manage space quota definition')
     end
 
     shared_examples 'common restage application' do
@@ -1437,12 +1505,12 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/service_brokers/service_broker1')
       end
 
-      it 'deletes /service_instances/:guid redirects as expected' do
-        delete_redirects_as_expected('/service_instances/service_instance1')
+      it 'deletes /service_instances/:guid/true redirects as expected' do
+        delete_redirects_as_expected('/service_instances/service_instance1/true')
       end
 
-      it 'deletes /service_instances/:guid?recursive=true redirects as expected' do
-        delete_redirects_as_expected('/service_instances/service_instance1?recursive=true')
+      it 'deletes /service_instances/:guid/true?recursive=true redirects as expected' do
+        delete_redirects_as_expected('/service_instances/service_instance1/true?recursive=true')
       end
 
       it 'deletes /service_keys/:guid redirects as expected' do
@@ -1629,12 +1697,28 @@ describe AdminUI::Admin do
         put_redirects_as_expected('/organizations/organization1', '{"quota_definition_guid":"quota1"}')
       end
 
+      it 'puts /quota_definitions/:guid redirects as expected' do
+        put_redirects_as_expected('/quota_definitions/quota_definition1', '{"name":"bogus"}')
+      end
+
+      it 'puts /service_brokers/:guid redirects as expected' do
+        put_redirects_as_expected('/service_brokers/service_broker1', '{"name":"bogus"}')
+      end
+
+      it 'puts /service_instances/:guid/true redirects as expected' do
+        put_redirects_as_expected('/service_instances/service_instance1/true', '{"name":"bogus"}')
+      end
+
       it 'puts /service_plans/:guid redirects as expected' do
         put_redirects_as_expected('/service_plans/application1', '{"public":true}')
       end
 
       it 'puts /spaces/:guid redirects as expected' do
         put_redirects_as_expected('/spaces/space1', '{"name":"bogus"}')
+      end
+
+      it 'puts /space_quota_definitions/:guid redirects as expected' do
+        put_redirects_as_expected('/space_quota_definitions/space_quota_definition1', '{"name":"bogus"}')
       end
 
       it 'puts /space_quota_definitions/:guid/spaces/:guid redirects as expected' do

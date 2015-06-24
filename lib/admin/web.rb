@@ -869,6 +869,60 @@ module AdminUI
       end
     end
 
+    put '/quota_definitions/:quota_definition_guid', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'put', "/quota_definitions/#{params[:quota_definition_guid]}; body = #{control_message}")
+        @operation.manage_quota_definition(params[:quota_definition_guid], control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during update quota definition: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.debug("Error during update quota definition: #{error.inspect}")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    put '/service_brokers/:service_broker_guid', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'put', "/service_brokers/#{params[:service_broker_guid]}; body = #{control_message}")
+        @operation.manage_service_broker(params[:service_broker_guid], control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during update service broker: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.debug("Error during update service broker: #{error.inspect}")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    put '/service_instances/:service_instance_guid/:is_gateway_service', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'put', "/service_instances/#{params[:service_instance_guid]}/#{params[:is_gateway_service]}; body = #{control_message}")
+        @operation.manage_service_instance(params[:service_instance_guid], params[:is_gateway_service] == 'true', control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during update service instance: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.debug("Error during update service instance #{error.inspect}")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     put '/service_plans/:service_plan_guid', auth: [:admin] do
       begin
         control_message = request.body.read.to_s
@@ -900,6 +954,24 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during update space: #{error.inspect}")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    put '/space_quota_definitions/:space_quota_definition_guid', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'put', "/space_quota_definitions/#{params[:space_quota_definition_guid]}; body = #{control_message}")
+        @operation.manage_space_quota_definition(params[:space_quota_definition_guid], control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during update space quota definition: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.debug("Error during update space quota definition: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end
@@ -1113,13 +1185,13 @@ module AdminUI
       end
     end
 
-    delete '/service_instances/:service_instance_guid', auth: [:admin] do
+    delete '/service_instances/:service_instance_guid/:is_gateway_service', auth: [:admin] do
       recursive = params[:recursive] == 'true'
-      url = "/service_instances/#{params[:service_instance_guid]}"
+      url = "/service_instances/#{params[:service_instance_guid]}/#{params[:is_gateway_service]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
       begin
-        @operation.delete_service_instance(params[:service_instance_guid], recursive)
+        @operation.delete_service_instance(params[:service_instance_guid], params[:is_gateway_service], recursive)
         204
       rescue CCRestClientResponseError => error
         @logger.debug("Error during delete service instance: #{error.to_h}")

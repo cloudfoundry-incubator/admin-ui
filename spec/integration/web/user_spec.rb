@@ -40,7 +40,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Organizations tab does not have create, rename, set quota, activate, suspend and delete buttons' do
+    context 'Organizations tab does not have create, rename, set quota, activate, suspend or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Organizations' }
         let(:page_id)   { 'OrganizationsPage' }
@@ -48,7 +48,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Spaces tab does not have rename and delete buttons' do
+    context 'Spaces tab does not have rename or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Spaces' }
         let(:page_id)   { 'SpacesPage' }
@@ -56,7 +56,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Applications tab does not have start, stop, restage or delete buttons' do
+    context 'Applications tab does not have rename, start, stop, restage or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Applications' }
         let(:page_id)   { 'ApplicationsPage' }
@@ -80,7 +80,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Service Instances tab does not have delete button' do
+    context 'Service Instances tab does not have rename or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceInstances' }
         let(:page_id)   { 'ServiceInstancesPage' }
@@ -120,7 +120,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Buildpacks tab does not have enable, disable, lock, unlock or delete buttons' do
+    context 'Buildpacks tab does not have rename, enable, disable, lock, unlock or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Buildpacks' }
         let(:page_id)   { 'BuildpacksPage' }
@@ -136,7 +136,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Quotas tab does not have delete button' do
+    context 'Quotas tab does not have rename or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Quotas' }
         let(:page_id)   { 'QuotasPage' }
@@ -144,7 +144,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Space Quotas tab does not have delete button' do
+    context 'Space Quotas tab does not have rename or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'SpaceQuotas' }
         let(:page_id)   { 'SpaceQuotasPage' }
@@ -152,7 +152,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Service Brokers tab does not have delete button' do
+    context 'Service Brokers tab does not have rename or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceBrokers' }
         let(:page_id)   { 'ServiceBrokersPage' }
@@ -160,7 +160,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Services tab does not have delete and purge buttons' do
+    context 'Services tab does not have delete or purge buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Services' }
         let(:page_id)   { 'ServicesPage' }
@@ -168,7 +168,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Service Plans tab does not have public, private and delete buttons' do
+    context 'Service Plans tab does not have public, private or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServicePlans' }
         let(:page_id)   { 'ServicePlansPage' }

@@ -176,8 +176,8 @@ module AdminUI
       @view_models.invalidate_service_plan_visibilities
     end
 
-    def delete_service_instance(service_instance_guid, recursive)
-      url = "v2/service_instances/#{service_instance_guid}"
+    def delete_service_instance(service_instance_guid, is_gateway_service, recursive)
+      url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}" : "/v2/user_provided_service_instances/#{service_instance_guid}"
       url += '?recursive=true' if recursive
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -294,6 +294,30 @@ module AdminUI
       @view_models.invalidate_organizations
     end
 
+    def manage_quota_definition(quota_definition_guid, control_message)
+      url = "v2/quota_definitions/#{quota_definition_guid}"
+      @logger.debug("PUT #{url}, #{control_message}")
+      @client.put_cc(url, control_message)
+      @cc.invalidate_quota_definitions
+      @view_models.invalidate_quotas
+    end
+
+    def manage_service_broker(service_broker_guid, control_message)
+      url = "/v2/service_brokers/#{service_broker_guid}"
+      @logger.debug("PUT #{url}, #{control_message}")
+      @client.put_cc(url, control_message)
+      @cc.invalidate_service_brokers
+      @view_models.invalidate_service_brokers
+    end
+
+    def manage_service_instance(service_instance_guid, is_gateway_service, control_message)
+      url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}" : "/v2/user_provided_service_instances/#{service_instance_guid}"
+      @logger.debug("PUT #{url}, #{control_message}")
+      @client.put_cc(url, control_message)
+      @cc.invalidate_service_instances
+      @view_models.invalidate_service_instances
+    end
+
     def manage_service_plan(service_plan_guid, control_message)
       url = "/v2/service_plans/#{service_plan_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
@@ -308,6 +332,14 @@ module AdminUI
       @client.put_cc(url, control_message)
       @cc.invalidate_spaces
       @view_models.invalidate_spaces
+    end
+
+    def manage_space_quota_definition(space_quota_definition_guid, control_message)
+      url = "v2/space_quota_definitions/#{space_quota_definition_guid}"
+      @logger.debug("PUT #{url}, #{control_message}")
+      @client.put_cc(url, control_message)
+      @cc.invalidate_space_quota_definitions
+      @view_models.invalidate_space_quotas
     end
 
     def restage_application(app_guid)
