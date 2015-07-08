@@ -323,9 +323,6 @@ a
     left: 0px;
     height: 10px;
     width: 0px;
-    /*
-    background-color: rgb(0, 150, 250);
-    */
     background-color: rgb(120, 120, 120);
     cursor: pointer;
 }

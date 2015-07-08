@@ -13,6 +13,22 @@ button.DTTT_button, div.DTTT_button, a.DTTT_button
     padding: 3px 9px;
 }
 
+.dataTables_processing {
+	position: absolute;
+	top: 125px;
+	left: 15px;
+	width: 250px;
+	height: 30px;
+	margin-left: unset;
+	margin-top: unset;
+	padding: 14px 0 2px 0;
+	border: 2px outset rgb(140, 140, 140);
+	text-align: center;
+    color: rgb(20, 20, 20);
+    font-size: .9em;
+    background-color: rgb(220, 220, 220);
+}
+
 .dataTables_scroll
 {
     clear: both;
