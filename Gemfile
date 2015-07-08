@@ -5,8 +5,8 @@ gem 'nats', '0.5.0'
 gem 'net-sftp', '2.1.2'
 gem 'parse-cron', '0.1.4'
 gem 'rack-ssl', '1.4.1'
-gem 'sequel', '4.23.0'
-gem 'sequel_pg', '1.6.12'
+gem 'sequel', '4.24.0'
+gem 'sequel_pg', '1.6.13'
 gem 'sinatra', '1.4.6'
 gem 'sqlite3', '1.3.10'
 gem 'yajl-ruby', '1.2.1'
@@ -16,7 +16,7 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '0.32.0'
+  gem 'rubocop', '0.32.1'
 end
 
 group :test do
