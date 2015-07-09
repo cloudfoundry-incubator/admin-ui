@@ -10,6 +10,7 @@ require_relative 'view_models/components_view_model'
 require_relative 'view_models/deas_view_model'
 require_relative 'view_models/domains_view_model'
 require_relative 'view_models/events_view_model'
+require_relative 'view_models/feature_flags_view_model'
 require_relative 'view_models/gateways_view_model'
 require_relative 'view_models/health_managers_view_model'
 require_relative 'view_models/logs_view_model'
@@ -36,14 +37,8 @@ require_relative 'view_models/users_view_model'
 module AdminUI
   class ViewModels
     def initialize(config, logger, cc, log_files, stats, tasks, varz, testing)
-      @cc        = cc
-      @config    = config
-      @log_files = log_files
-      @logger    = logger
-      @stats     = stats
-      @tasks     = tasks
-      @varz      = varz
-      @testing   = testing
+      @logger  = logger
+      @testing = testing
 
       @running = true
 
@@ -51,7 +46,7 @@ module AdminUI
       @pool = AdminUI::ScheduledThreadPool.new(logger, 2, -1)
 
       # Using an interval of half of the cloud_controller_interval.  The value of 1 is there for a test-time boundary
-      @interval = [@config.cloud_controller_discovery_interval / 2, 1].max
+      @interval = [config.cloud_controller_discovery_interval / 2, 1].max
 
       @caches =
         {
@@ -64,6 +59,7 @@ module AdminUI
           deas:                      { clazz: AdminUI::DEAsViewModel },
           domains:                   { clazz: AdminUI::DomainsViewModel },
           events:                    { clazz: AdminUI::EventsViewModel },
+          feature_flags:             { clazz: AdminUI::FeatureFlagsViewModel },
           gateways:                  { clazz: AdminUI::GatewaysViewModel },
           health_managers:           { clazz: AdminUI::HealthManagersViewModel },
           logs:                      { clazz: AdminUI::LogsViewModel },
@@ -92,7 +88,7 @@ module AdminUI
         cache.merge!(condition:          ConditionVariable.new,
                      result:             nil,
                      semaphore:          Mutex.new,
-                     view_model_factory: cache[:clazz].new(@logger, @cc, @log_files, @nats, @stats, @tasks, @varz))
+                     view_model_factory: cache[:clazz].new(@logger, cc, log_files, stats, tasks, varz, @testing))
 
         schedule(key)
       end
@@ -124,6 +120,10 @@ module AdminUI
 
     def invalidate_domains
       invalidate_cache(:domains)
+    end
+
+    def invalidate_feature_flags
+      invalidate_cache(:feature_flags)
     end
 
     def invalidate_gateways
@@ -272,6 +272,14 @@ module AdminUI
 
     def events
       result_cache(:events)
+    end
+
+    def feature_flag(name)
+      details(:feature_flags, name)
+    end
+
+    def feature_flags
+      result_cache(:feature_flags)
     end
 
     def gateway(name)

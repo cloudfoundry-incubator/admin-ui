@@ -268,6 +268,23 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_feature_flags
+    [
+      [
+        cc_feature_flag[:name],
+        cc_feature_flag[:name],
+        cc_feature_flag[:guid],
+        cc_feature_flag[:created_at].to_datetime.rfc3339,
+        cc_feature_flag[:updated_at].to_datetime.rfc3339,
+        cc_feature_flag[:enabled]
+      ]
+    ]
+  end
+
+  def view_models_feature_flags_detail
+    cc_feature_flag
+  end
+
   def view_models_gateways
     [
       [

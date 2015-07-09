@@ -19,17 +19,15 @@ describe AdminUI::ViewModels, type: :integration do
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
   let(:config) do
-    AdminUI::Config.load(ccdb_uri:             ccdb_uri,
-                         cloud_controller_uri: 'http://api.cloudfoundry',
-                         data_file:            data_file,
-                         db_uri:               db_uri,
-                         log_file:             log_file,
-                         log_files:            [log_file_displayed],
-                         mbus:                 'nats://nats:c1oudc0w@localhost:14222',
-                         uaadb_uri:            uaadb_uri)
+    AdminUI::Config.load(ccdb_uri:  ccdb_uri,
+                         data_file: data_file,
+                         db_uri:    db_uri,
+                         log_file:  log_file,
+                         log_files: [log_file_displayed],
+                         mbus:      'nats://nats:c1oudc0w@localhost:14222',
+                         uaadb_uri: uaadb_uri)
   end
-  let(:client) { AdminUI::CCRestClient.new(config, logger) }
-  let(:cc) { AdminUI::CC.new(config, logger, client, true) }
+  let(:cc) { AdminUI::CC.new(config, logger, true) }
   let(:email) { AdminUI::EMail.new(config, logger) }
   let(:log_files) { AdminUI::LogFiles.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
@@ -217,6 +215,20 @@ describe AdminUI::ViewModels, type: :integration do
     context 'returns connected events_view_model detail' do
       let(:results)  { view_models.event(cc_event_space[:guid]) }
       let(:expected) { view_models_events_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
+    context 'returns connected feature_flags_view_model' do
+      let(:results)    { view_models.feature_flags }
+      let(:expected)   { view_models_feature_flags }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected feature_flags_view_model detail' do
+      let(:results)  { view_models.feature_flag(cc_feature_flag[:name]) }
+      let(:expected) { view_models_feature_flags_detail }
 
       it_behaves_like('common view model retrieval detail')
     end

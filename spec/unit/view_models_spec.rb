@@ -14,17 +14,14 @@ describe AdminUI::ViewModels do
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
   let(:config) do
-    AdminUI::Config.load(ccdb_uri:             ccdb_uri,
-                         cloud_controller_uri: 'http://api.localhost',
-                         data_file:            data_file,
-                         db_uri:               db_uri,
-                         log_files:            [log_file],
-                         mbus:                 'nats://nats:c1oudc0w@localhost:14222',
-                         uaadb_uri:            uaadb_uri,
-                         uaa_client:           { id: 'id', secret: 'secret' })
+    AdminUI::Config.load(ccdb_uri:  ccdb_uri,
+                         data_file: data_file,
+                         db_uri:    db_uri,
+                         log_files: [log_file],
+                         mbus:      'nats://nats:c1oudc0w@localhost:14222',
+                         uaadb_uri: uaadb_uri)
   end
-  let(:client) { AdminUI::CCRestClient.new(config, logger) }
-  let(:cc) { AdminUI::CC.new(config, logger, client, true) }
+  let(:cc) { AdminUI::CC.new(config, logger, true) }
   let(:email) { AdminUI::EMail.new(config, logger) }
   let(:log_files) { AdminUI::LogFiles.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
@@ -128,6 +125,14 @@ describe AdminUI::ViewModels do
 
     it 'returns zero events as expected' do
       verify_disconnected_items(view_models.events)
+    end
+
+    it 'returns nil feature_flag as expected' do
+      expect(view_models.feature_flag('bogus')).to be_nil
+    end
+
+    it 'returns zero feature_flags as expected' do
+      verify_disconnected_items(view_models.feature_flags)
     end
 
     it 'returns nil gateway as expected' do

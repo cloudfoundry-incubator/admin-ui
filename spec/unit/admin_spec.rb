@@ -723,6 +723,23 @@ describe AdminUI::Admin do
       it_behaves_like('common manage buildpack')
     end
 
+    shared_examples 'common manage feature flag' do
+      it 'returns failure code due to disconnection' do
+        response = put('/feature_flags/feature_flag1', '{"enabled":true}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'manage feature flag via http' do
+      it_behaves_like('common manage feature flag')
+    end
+
+    context 'manage feature flag via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common manage feature flag')
+    end
+
     shared_examples 'common manage organization' do
       it 'returns failure code due to disconnection' do
         response = put('/organizations/organization1', '{"quota_definition_guid":"quota1"}')
@@ -988,6 +1005,14 @@ describe AdminUI::Admin do
 
       it '/events_view_model/:guid returns not found' do
         verify_not_found('/events_view_model/event1')
+      end
+
+      it '/feature_flags_view_model succeeds' do
+        verify_disconnected_view_model_items('/feature_flags_view_model')
+      end
+
+      it '/feature_flags_view_model/:name returns not found' do
+        verify_not_found('/feature_flags_view_model/name')
       end
 
       it '/gateways_view_model succeeds' do
@@ -1279,6 +1304,14 @@ describe AdminUI::Admin do
 
       it '/events_view_model/:guid redirects as expected' do
         get_redirects_as_expected('/events_view_model/domain1')
+      end
+
+      it '/feature_flags_view_model redirects as expected' do
+        get_redirects_as_expected('/feature_flags_view_model')
+      end
+
+      it '/feature_flags_view_model/:name redirects as expected' do
+        get_redirects_as_expected('/feature_flags_view_model/name')
       end
 
       it '/gateways_view_model redirects as expected' do
@@ -1581,10 +1614,6 @@ describe AdminUI::Admin do
         post_redirects_as_expected('/components_view_model')
       end
 
-      it 'posts /organizations redirects as expected' do
-        post_redirects_as_expected('/organizations', '{"name":"new_org"}')
-      end
-
       it 'posts /deas_view_model redirects as expected' do
         post_redirects_as_expected('/deas_view_model')
       end
@@ -1597,6 +1626,10 @@ describe AdminUI::Admin do
         post_redirects_as_expected('/events_view_model')
       end
 
+      it 'posts /feature_flags_view_model redirects as expected' do
+        post_redirects_as_expected('/feature_flags_view_model')
+      end
+
       it 'posts /gateways_view_model redirects as expected' do
         post_redirects_as_expected('/gateways_view_model')
       end
@@ -1607,6 +1640,10 @@ describe AdminUI::Admin do
 
       it 'posts /logs_view_model redirects as expected' do
         post_redirects_as_expected('/logs_view_model')
+      end
+
+      it 'posts /organizations redirects as expected' do
+        post_redirects_as_expected('/organizations', '{"name":"new_org"}')
       end
 
       it 'posts /organizations_view_model redirects as expected' do
@@ -1691,6 +1728,10 @@ describe AdminUI::Admin do
 
       it 'puts /buildpacks/:guid redirects as expected' do
         put_redirects_as_expected('/buildpacks/buildpack', '{"enabled":true}')
+      end
+
+      it 'puts /feature_flags/:name redirects as expected' do
+        put_redirects_as_expected('/feature_flags/name', '{"enabled":true}')
       end
 
       it 'puts /organizations/:guid redirects as expected' do

@@ -28,7 +28,7 @@ describe AdminUI::Operation, type: :integration do
                          uaa_client:           { id: 'id', secret: 'secret' })
   end
   let(:client) { AdminUI::CCRestClient.new(config, logger) }
-  let(:cc) { AdminUI::CC.new(config, logger, client, true) }
+  let(:cc) { AdminUI::CC.new(config, logger, true) }
   let(:email) { AdminUI::EMail.new(config, logger) }
   let(:log_files) { AdminUI::LogFiles.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
@@ -192,7 +192,7 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
-    context 'buildpack' do
+    context 'manage buildpack' do
       before do
         expect(cc.buildpacks['items'][0][:enabled]).to eq(true)
         expect(cc.buildpacks['items'][0][:locked]).to eq(false)
@@ -325,6 +325,50 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting recursive deleted domain' do
           expect { delete_domain_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_domain_not_found(exception) }
+        end
+      end
+    end
+
+    context 'manage feature_flag' do
+      before do
+        expect(cc.feature_flags['items'][0][:enabled]).to eq(true)
+      end
+
+      def disable_feature_flag
+        operation.manage_feature_flag(cc_feature_flag[:name], '{"enabled":false}')
+      end
+
+      def enable_feature_flag
+        operation.manage_feature_flag(cc_feature_flag[:name], '{"enabled":true}')
+      end
+
+      it 'disables the feature_flag' do
+        expect { disable_feature_flag }.to change { cc.feature_flags['items'][0][:enabled] }.from(true).to(false)
+      end
+
+      it 'enables the feature_flag ' do
+        disable_feature_flag
+        expect { enable_feature_flag }.to change { cc.feature_flags['items'][0][:enabled] }.from(false).to(true)
+      end
+
+      context 'errors' do
+        before do
+          cc_clear_feature_flags_cache_stub(config)
+        end
+
+        def verify_feature_flag_not_found(exception)
+          expect(exception.cf_code).to eq(330_000)
+          expect(exception.cf_error_code).to eq('CF-FeatureFlagNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The feature flag could not be found: #{cc_feature_flag[:name]}")
+        end
+
+        it 'fails disabling deleted feature_flag' do
+          expect { disable_feature_flag }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_feature_flag_not_found(exception) }
+        end
+
+        it 'fails enabling deleted feature_flag' do
+          expect { enable_feature_flag }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_feature_flag_not_found(exception) }
         end
       end
     end

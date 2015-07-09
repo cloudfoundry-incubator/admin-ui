@@ -13,8 +13,7 @@ describe AdminUI::Stats do
   let(:email) { AdminUI::EMail.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
   let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
-  let(:client) { AdminUI::CCRestClient.new(config, logger) }
-  let(:cc) { AdminUI::CC.new(config, logger, client, true) }
+  let(:cc) { AdminUI::CC.new(config, logger, true) }
   let(:stats) { AdminUI::Stats.new(config, logger, cc, varz, true) }
   let(:config) do
     AdminUI::Config.new(stats_refresh_schedules: stats_refresh_schedules,

@@ -286,6 +286,14 @@ module AdminUI
       @view_models.invalidate_buildpacks
     end
 
+    def manage_feature_flag(feature_flag_name, control_message)
+      url = "v2/config/feature_flags/#{feature_flag_name}"
+      @logger.debug("PUT #{url}, #{control_message}")
+      @client.put_cc(url, control_message)
+      @cc.invalidate_feature_flags
+      @view_models.invalidate_feature_flags
+    end
+
     def manage_organization(organization_guid, control_message)
       url = "v2/organizations/#{organization_guid}"
       @logger.debug("PUT #{url}, #{control_message}")

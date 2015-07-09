@@ -13,14 +13,11 @@ describe AdminUI::CC do
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
   let(:config) do
-    AdminUI::Config.load(ccdb_uri:             ccdb_uri,
-                         cloud_controller_uri: 'http://api.localhost',
-                         db_uri:               db_uri,
-                         uaadb_uri:            uaadb_uri,
-                         uaa_client:           { id: 'id', secret: 'secret' })
+    AdminUI::Config.load(ccdb_uri:  ccdb_uri,
+                         db_uri:    db_uri,
+                         uaadb_uri: uaadb_uri)
   end
-  let(:client) { AdminUI::CCRestClient.new(config, logger) }
-  let(:cc) { AdminUI::CC.new(config, logger, client, true) }
+  let(:cc) { AdminUI::CC.new(config, logger, true) }
 
   before do
     config_stub
@@ -76,6 +73,10 @@ describe AdminUI::CC do
 
     it 'returns zero events as expected' do
       verify_disconnected_items(cc.events)
+    end
+
+    it 'returns zero feature_flags as expected' do
+      verify_disconnected_items(cc.feature_flags)
     end
 
     it 'returns zero group_membership expected' do

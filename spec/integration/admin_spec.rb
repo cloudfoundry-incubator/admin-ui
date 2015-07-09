@@ -360,6 +360,40 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage feature flag' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/feature_flags_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def make_feature_flag_disabled
+      response = put_request("/feature_flags/#{cc_feature_flag[:name]}", '{"enabled":false}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/feature_flags/#{cc_feature_flag[:name]}; body = {\"enabled\":false}"]], true)
+    end
+
+    def make_feature_flag_enabled
+      response = put_request("/feature_flags/#{cc_feature_flag[:name]}", '{"enabled":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/feature_flags/#{cc_feature_flag[:name]}; body = {\"enabled\":true}"]], true)
+    end
+
+    it 'has user name and feature flag request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/feature_flags_view_model']], true)
+    end
+
+    it 'disables feature flag' do
+      expect { make_feature_flag_disabled }.to change { get_json('/feature_flags_view_model')['items']['items'][0][5].to_s }.from('true').to('false')
+    end
+
+    it 'enables feature flag' do
+      make_feature_flag_disabled
+      expect { make_feature_flag_enabled }.to change { get_json('/feature_flags_view_model')['items']['items'][0][5].to_s }.from('false').to('true')
+    end
+  end
+
   context 'manage organization' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -1044,6 +1078,18 @@ describe AdminUI::Admin, type: :integration do
     context 'events_view_model detail' do
       let(:path)              { "/events_view_model/#{cc_event_space[:guid]}" }
       let(:view_model_source) { view_models_events_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'feature_flags_view_model' do
+      let(:path)              { '/feature_flags_view_model' }
+      let(:view_model_source) { view_models_feature_flags }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'feature_flags_view_model detail' do
+      let(:path)              { "/feature_flags_view_model/#{cc_feature_flag[:name]}" }
+      let(:view_model_source) { view_models_feature_flags_detail }
       it_behaves_like('retrieves view_model detail')
     end
 

@@ -35,6 +35,7 @@
         <script src="js/app/tabs/deasTab.js"></script>
         <script src="js/app/tabs/domainsTab.js"></script>
         <script src="js/app/tabs/eventsTab.js"></script>
+        <script src="js/app/tabs/featureFlagsTab.js"></script>
         <script src="js/app/tabs/gatewaysTab.js"></script>    
         <script src="js/app/tabs/healthManagersTab.js"></script> 
         <script src="js/app/tabs/logsTab.js"></script>
@@ -107,6 +108,7 @@
 	            <span id="Users" class="menuItem">Users</span>
 	            <span id="Buildpacks" class="menuItem">Buildpacks</span>
 	            <span id="Domains" class="menuItem">Domains</span>
+	            <span id="FeatureFlags" class="menuItem">Feature Flags</span>
 	            <span id="Quotas" class="menuItem">Quotas</span>
 	            <span id="SpaceQuotas" class="menuItem">Space Quotas</span>
 	            <span id="Stacks" class="menuItem">Stacks</span>
@@ -702,6 +704,17 @@
                 </div>
             </div>
 
+            <div id="FeatureFlagsPage" class="page hiddenPage">
+                <div id="FeatureFlagsTableContainer" class="pageSection">
+                    <table id="FeatureFlagsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="FeatureFlagsDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="FeatureFlagsPropertiesContainer"></div>
+                </div>
+            </div>
+            
             <div id="QuotasPage" class="page hiddenPage">
                 <div id="QuotasTableContainer" class="pageSection">
                     <table id="QuotasTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>

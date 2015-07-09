@@ -14,13 +14,10 @@ describe AdminUI::CC, type: :integration do
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
   let(:config) do
-    AdminUI::Config.load(ccdb_uri:             ccdb_uri,
-                         cloud_controller_uri: 'http://api.cloudfoundry',
-                         db_uri:               db_uri,
-                         uaadb_uri:            uaadb_uri,
-                         uaa_client:           { id: 'id', secret: 'secret' })
+    AdminUI::Config.load(ccdb_uri:  ccdb_uri,
+                         db_uri:    db_uri,
+                         uaadb_uri: uaadb_uri)
   end
-  let(:client) { AdminUI::CCRestClient.new(config, logger) }
 
   def cleanup_files
     Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{db_file} #{log_file} #{uaadb_file}"))
@@ -33,7 +30,7 @@ describe AdminUI::CC, type: :integration do
     cc_stub(config)
   end
 
-  let(:cc) { AdminUI::CC.new(config, logger, client, true) }
+  let(:cc) { AdminUI::CC.new(config, logger, true) }
 
   after do
     cc.shutdown
@@ -69,6 +66,13 @@ describe AdminUI::CC, type: :integration do
       cc_clear_domains_cache_stub(config)
       cc.invalidate_domains
       expect(cc.domains['items'].length).to eq(0)
+    end
+
+    it 'clears the feature_flags cache' do
+      expect(cc.feature_flags['items'].length).to eq(1)
+      cc_clear_feature_flags_cache_stub(config)
+      cc.invalidate_feature_flags
+      expect(cc.feature_flags['items'].length).to eq(0)
     end
 
     it 'clears the organizations cache' do
@@ -270,6 +274,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected events' do
       let(:results)  { cc.events }
       let(:expected) { cc_event_space }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected feature_flags' do
+      let(:results)  { cc.feature_flags }
+      let(:expected) { cc_feature_flag }
 
       it_behaves_like('common cc retrieval')
     end

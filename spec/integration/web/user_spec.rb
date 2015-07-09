@@ -136,6 +136,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Feature Flags tab does not have enable or disable buttons' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'FeatureFlags' }
+        let(:page_id)   { 'FeatureFlagsPage' }
+        let(:button_id) { 'ToolTables_FeatureFlagsTable_0' }
+      end
+    end
+
     context 'Quotas tab does not have rename or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Quotas' }

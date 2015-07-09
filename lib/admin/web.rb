@@ -173,6 +173,18 @@ module AdminUI
     get '/favicon.ico' do
     end
 
+    get '/feature_flags_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/feature_flags_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.feature_flags, params).items)
+    end
+
+    get '/feature_flags_view_model/:name', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/feature_flags_view_model/#{params[:name]}")
+      result = @view_models.feature_flag(params[:name])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/gateways_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/gateways_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.gateways, params).items)
@@ -591,6 +603,14 @@ module AdminUI
                 filename:    'events.csv')
     end
 
+    post '/feature_flags_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/feature_flags_view_model')
+      file = Download.download(request.body.read, 'feature_flags', @view_models.feature_flags)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'feature_flags.csv')
+    end
+
     post '/gateways_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'post', '/gateways_view_model')
       file = Download.download(request.body.read, 'gateways', @view_models.gateways)
@@ -846,6 +866,24 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.debug("Error during update buildpack: #{error.inspect}")
+        @logger.debug(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    put '/feature_flags/:feature_flag_name', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'put', "/feature_flags/#{params[:feature_flag_name]}; body = #{control_message}")
+        @operation.manage_feature_flag(params[:feature_flag_name], control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.debug("Error during update feature_flag: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.debug("Error during update feature_flag: #{error.inspect}")
         @logger.debug(error.backtrace.join("\n"))
         500
       end

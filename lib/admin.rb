@@ -93,7 +93,7 @@ module AdminUI
       email = EMail.new(@config, @logger)
 
       @client      = CCRestClient.new(@config, @logger)
-      @cc          = CC.new(@config, @logger, @client, @testing)
+      @cc          = CC.new(@config, @logger, @testing)
       @log_files   = LogFiles.new(@config, @logger)
       @login       = Login.new(@config, @logger, @client)
       @tasks       = Tasks.new(@config, @logger)

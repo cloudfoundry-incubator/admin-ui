@@ -58,6 +58,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('Users').displayed?).to be(true)
       expect(scroll_tab_into_view('Buildpacks').displayed?).to be(true)
       expect(scroll_tab_into_view('Domains').displayed?).to be(true)
+      expect(scroll_tab_into_view('FeatureFlags').displayed?).to be(true)
       expect(scroll_tab_into_view('Quotas').displayed?).to be(true)
       expect(scroll_tab_into_view('SpaceQuotas').displayed?).to be(true)
       expect(scroll_tab_into_view('Events').displayed?).to be(true)
@@ -2358,6 +2359,100 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has routes link' do
             check_filter_link('Domains', 5, 'Routes', cc_domain[:name])
+          end
+        end
+      end
+
+      context 'Feature Flags' do
+        let(:tab_id)   { 'FeatureFlags' }
+        let(:table_id) { 'FeatureFlagsTable' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='FeatureFlagsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 6,
+                                labels:          [' ', 'Name', 'GUID', 'Created', 'Updated', 'Enabled'],
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='FeatureFlagsTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_feature_flag[:name],
+                             cc_feature_flag[:guid],
+                             cc_feature_flag[:created_at].to_datetime.rfc3339,
+                             cc_feature_flag[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatBoolean(#{cc_feature_flag[:enabled]})")
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_FeatureFlagsTable_2')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('FeatureFlagsTable', cc_feature_flag[:name])
+        end
+
+        context 'manage feature flag' do
+          def manage_feature_flag(buttonIndex)
+            check_first_row('FeatureFlagsTable')
+            @driver.find_element(id: 'ToolTables_FeatureFlagsTable_' + buttonIndex.to_s).click
+            check_operation_result
+          end
+
+          def check_feature_flag_enabled(enabled)
+            Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='FeatureFlagsTable']/tbody/tr/td[6]").text == enabled }
+          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            expect(@driver.find_element(xpath: "//table[@id='FeatureFlagsTable']/tbody/tr/td[6]").text).to eq(enabled)
+          end
+
+          it 'has an Enable button' do
+            expect(@driver.find_element(id: 'ToolTables_FeatureFlagsTable_0').text).to eq('Enable')
+          end
+
+          it 'has a Disable button' do
+            expect(@driver.find_element(id: 'ToolTables_FeatureFlagsTable_1').text).to eq('Disable')
+          end
+
+          context 'Enable button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'ToolTables_FeatureFlagsTable_0' }
+            end
+          end
+
+          context 'Disable button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'ToolTables_FeatureFlagsTable_1' }
+            end
+          end
+
+          it 'disables the selected feature flag' do
+            manage_feature_flag(1)
+            check_feature_flag_enabled('false')
+          end
+
+          it 'enables the selected feature flag' do
+            manage_feature_flag(1)
+            check_feature_flag_enabled('false')
+            manage_feature_flag(0)
+            check_feature_flag_enabled('true')
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ label: 'Name',          tag: 'div', value: cc_feature_flag[:name] },
+                           { label: 'GUID',          tag:   nil, value: cc_feature_flag[:guid] },
+                           { label: 'Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_feature_flag[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_feature_flag[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Enabled',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_feature_flag[:enabled]})") },
+                           { label: 'Error Message', tag:   nil, value: cc_feature_flag[:error_message] }
+                          ])
           end
         end
       end
