@@ -2,7 +2,7 @@ Sequel.migration do
   change do
     create_table(:authz_approvals) do
       String :user_id, :size=>36, :null=>false
-      String :client_id, :size=>36, :null=>false
+      String :client_id, :size=>255, :null=>false
       String :scope, :size=>255, :null=>false
       DateTime :expiresat, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       String :status, :default=>"APPROVED", :size=>50, :null=>false
@@ -100,7 +100,7 @@ Sequel.migration do
     end
     
     create_table(:oauth_client_details) do
-      String :client_id, :size=>256, :null=>false
+      String :client_id, :size=>255, :null=>false
       String :resource_ids, :size=>1024
       String :client_secret, :size=>256
       String :scope, :size=>1024
@@ -143,7 +143,7 @@ Sequel.migration do
     end
     
     create_table(:sec_audit, :ignore_index_errors=>true) do
-      String :principal_id, :size=>36, :fixed=>true, :null=>false
+      String :principal_id, :size=>255, :null=>false
       Integer :event_type, :null=>false
       String :origin, :size=>255, :null=>false
       String :event_data, :size=>255
@@ -172,6 +172,8 @@ Sequel.migration do
       String :origin, :default=>"uaa", :size=>36, :null=>false
       String :external_id, :size=>255
       String :identity_zone_id, :default=>"uaa", :size=>36, :null=>false
+      String :salt, :size=>36
+      DateTime :passwd_lastmodified
       
       primary_key [:id]
       

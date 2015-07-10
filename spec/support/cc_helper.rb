@@ -212,7 +212,7 @@ module CCHelper
 
   def cc_clear_spaces_cache_stub(config)
     cc_clear_routes_cache_stub(config)
-    cc_clear_service_instances_cache_stub(config)
+    cc_clear_service_brokers_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM apps')
     sql(config.ccdb_uri, 'DELETE FROM spaces_auditors')
@@ -230,34 +230,36 @@ module CCHelper
 
   def cc_app
     {
-      buildpack:             nil,
-      command:               'node test.js',
-      created_at:            Time.new('2015-04-23 08:00:00 -0500'),
-      detected_buildpack:    cc_buildpack[:name],
-      diego:                 false,
-      disk_quota:            12,
-      docker_image:          'docker_image_1',
-      droplet_hash:          'droplet_hash1',
-      enable_ssh:            true,
-      guid:                  'application1',
-      health_check_timeout:  nil,
-      health_check_type:     'port',
-      id:                    0,
-      instances:             1,
-      metadata:              '{}',
-      memory:                11,
-      name:                  'test',
-      package_pending_since: Time.new('2015-04-23 08:00:01 -0500'),
-      package_state:        'STAGED',
-      package_updated_at:    Time.new('2015-04-23 08:00:02 -0500'),
-      production:            nil,
-      space_id:              cc_space[:id],
-      stack_id:              cc_stack[:id],
-      staging_task_id:       nil,
-      state:                 'STARTED',
-      type:                  'web',
-      updated_at:            Time.new('2015-04-23 08:00:03 -0500'),
-      version:               nil
+      buildpack:                  nil,
+      command:                    'node test.js',
+      created_at:                 Time.new('2015-04-23 08:00:00 -0500'),
+      detected_buildpack:         cc_buildpack[:name],
+      diego:                      false,
+      disk_quota:                 12,
+      docker_image:               'docker_image_1',
+      droplet_hash:               'droplet_hash1',
+      enable_ssh:                 true,
+      guid:                       'application1',
+      health_check_timeout:       nil,
+      health_check_type:          'port',
+      id:                         0,
+      instances:                  1,
+      metadata:                   '{}',
+      memory:                     11,
+      name:                       'test',
+      package_pending_since:      Time.new('2015-04-23 08:00:01 -0500'),
+      package_state:              'STAGED',
+      package_updated_at:         Time.new('2015-04-23 08:00:02 -0500'),
+      production:                 true,
+      space_id:                   cc_space[:id],
+      stack_id:                   cc_stack[:id],
+      staging_failed_description: 'Staging failed due to blah blah',
+      staging_failed_reason:      'No app',
+      staging_task_id:            nil,
+      state:                      'STARTED',
+      type:                       'web',
+      updated_at:                 Time.new('2015-04-23 08:00:03 -0500'),
+      version:                    nil
     }
   end
 
@@ -328,7 +330,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      space_id:          cc_space[:id],
       timestamp:         Time.new('2015-04-23 08:00:11 -0500'),
       type:              'audit.app.create',
       updated_at:        Time.new('2015-04-23 08:00:12 -0500')
@@ -349,7 +350,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:14 -0500'),
       type:              'audit.service.create',
       updated_at:        Time.new('2015-04-23 08:00:15 -0500')
@@ -370,7 +370,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      space_id:          cc_space[:id],
       timestamp:         Time.new('2015-04-23 08:00:17 -0500'),
       type:              'audit.service_binding.create',
       updated_at:        Time.new('2015-04-23 08:00:18 -0500')
@@ -391,7 +390,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:20 -0500'),
       type:              'audit.service_broker.create',
       updated_at:        Time.new('2015-04-23 08:00:21 -0500')
@@ -412,7 +410,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:23 -0500'),
       type:              'audit.service_dashboard_client.create',
       updated_at:        Time.new('2015-04-23 08:00:24 -0500')
@@ -433,7 +430,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      space_id:          cc_space[:id],
       timestamp:         Time.new('2015-04-23 08:00:26 -0500'),
       type:              'audit.service_instance.create',
       updated_at:        Time.new('2015-04-23 08:00:27 -0500')
@@ -454,7 +450,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      space_id:          cc_space[:id],
       timestamp:         Time.new('2015-04-23 08:00:29 -0500'),
       type:              'audit.service_key.create',
       updated_at:        Time.new('2015-04-23 08:00:30 -0500')
@@ -475,7 +470,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:32 -0500'),
       type:              'audit.service_plan.create',
       updated_at:        Time.new('2015-04-23 08:00:33 -0500')
@@ -496,7 +490,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        '',
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:35 -0500'),
       type:              'audit.service_plan_visibility.create',
       updated_at:        Time.new('2015-04-23 08:00:36 -0500')
@@ -517,7 +510,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      space_id:          cc_space[:id],
       timestamp:         Time.new('2015-04-23 08:00:38 -0500'),
       type:              'audit.space.create',
       updated_at:        Time.new('2015-04-23 08:00:39 -0500')
@@ -619,6 +611,7 @@ module CCHelper
       memory_limit:               1024,
       name:                       'test_quota_1',
       non_basic_services_allowed: true,
+      total_private_domains:      10,
       total_routes:               100,
       total_services:             100,
       updated_at:                 Time.new('2015-04-23 08:00:45 -0500')
@@ -638,6 +631,7 @@ module CCHelper
       memory_limit:               1024,
       name:                       'test_quota_2',
       non_basic_services_allowed: true,
+      total_private_domains:      10,
       total_routes:               100,
       total_services:             100,
       updated_at:                 nil
@@ -672,6 +666,7 @@ module CCHelper
       long_description:  nil,
       plan_updateable:   true,
       provider:          'test',
+      purging:           false,
       requires:          nil,
       service_broker_id: cc_service_broker[:id],
       tags:              '["service_tag1", "service_tag2"]',
@@ -710,6 +705,7 @@ module CCHelper
       guid:          'service_broker1',
       id:            22,
       name:          'TestServiceBroker',
+      space_id:      cc_space[:id],
       updated_at:    Time.new('2015-04-23 08:00:53 -0500')
     }
   end
@@ -940,16 +936,17 @@ module CCHelper
 
   def uaa_user
     {
-      active:       true,
-      created:      Time.new('2015-04-23 08:01:13 -0500'),
-      email:        'admin',
-      familyname:   'Flintstone',
-      givenname:    'Fred',
-      id:           'user1',
-      lastmodified: Time.new('2015-04-23 08:01:14 -0500'),
-      username:     'admin',
-      verified:     true,
-      version:      5
+      active:              true,
+      created:             Time.new('2015-04-23 08:01:13 -0500'),
+      email:               'admin',
+      familyname:          'Flintstone',
+      givenname:           'Fred',
+      id:                  'user1',
+      lastmodified:        Time.new('2015-04-23 08:01:14 -0500'),
+      passwd_lastmodified: Time.new('2015-04-23 08:01:15 -0500'),
+      username:            'admin',
+      verified:            true,
+      version:             5
     }
   end
 
@@ -969,35 +966,35 @@ module CCHelper
 
   def ccdb_inserts(insert_second_quota_definition, event_type)
     result = [[:buildpacks,                     cc_buildpack],
+              [:droplets,                       cc_droplet],
               [:feature_flags,                  cc_feature_flag],
               [:quota_definitions,              cc_quota_definition],
-              [:service_brokers,                cc_service_broker_with_password],
               [:service_dashboard_clients,      cc_service_dashboard_client],
               [:stacks,                         cc_stack],
               [:organizations,                  cc_organization],
-              [:services,                       cc_service],
               [:domains,                        cc_domain],
-              [:service_plans,                  cc_service_plan],
-              [:service_plan_visibilities,      cc_service_plan_visibility],
               [:space_quota_definitions,        cc_space_quota_definition],
+              [:organizations_private_domains,  cc_organization_private_domain],
               [:spaces,                         cc_space],
               [:apps,                           cc_app],
-              [:droplets,                       cc_droplet],
               [:routes,                         cc_route],
-              [:service_instances,              cc_service_instance],
-              [:service_instance_operations,    cc_service_instance_operation],
+              [:service_brokers,                cc_service_broker_with_password],
               [:users,                          cc_user],
               [:apps_routes,                    cc_app_route],
-              [:service_bindings,               cc_service_binding_with_credentials],
-              [:service_keys,                   cc_service_key_with_credentials],
               [:organizations_auditors,         cc_organization_auditor],
               [:organizations_billing_managers, cc_organization_billing_manager],
               [:organizations_managers,         cc_organization_manager],
-              [:organizations_private_domains,  cc_organization_private_domain],
               [:organizations_users,            cc_organization_user],
+              [:services,                       cc_service],
               [:spaces_auditors,                cc_space_auditor],
               [:spaces_developers,              cc_space_developer],
-              [:spaces_managers,                cc_space_manager]
+              [:spaces_managers,                cc_space_manager],
+              [:service_plans,                  cc_service_plan],
+              [:service_instances,              cc_service_instance],
+              [:service_plan_visibilities,      cc_service_plan_visibility],
+              [:service_bindings,               cc_service_binding_with_credentials],
+              [:service_instance_operations,    cc_service_instance_operation],
+              [:service_keys,                   cc_service_key_with_credentials]
              ]
 
     result << [:quota_definitions, cc_quota_definition2] if insert_second_quota_definition

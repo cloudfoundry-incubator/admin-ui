@@ -1996,12 +1996,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 3,
                                 labels:          ['', 'Organization Roles', 'Space Roles', ''],
-                                colspans:        %w(11 5 4)
+                                colspans:        %w(12 5 4)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 20,
-                                labels:          ['Username', 'GUID', 'Created', 'Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
+                                expected_length: 21,
+                                labels:          ['Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
                                 colspans:        nil
                               }
                              ])
@@ -2012,6 +2012,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_user[:id],
                              uaa_user[:created].to_datetime.rfc3339,
                              uaa_user[:lastmodified].to_datetime.rfc3339,
+                             uaa_user[:passwd_lastmodified].to_datetime.rfc3339,
                              uaa_user[:email],
                              uaa_user[:familyname],
                              uaa_user[:givenname],
@@ -2045,6 +2046,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'GUID',                               tag:   nil, value: uaa_user[:id] },
                            { label: 'Created',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_user[:created].to_datetime.rfc3339}\")") },
                            { label: 'Updated',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_user[:lastmodified].to_datetime.rfc3339}\")") },
+                           { label: 'Password Updated',                   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_user[:passwd_lastmodified].to_datetime.rfc3339}\")") },
                            { label: 'Email',                              tag:   'a', value: "mailto:#{uaa_user[:email]}" },
                            { label: 'Family Name',                        tag:   nil, value: uaa_user[:familyname] },
                            { label: 'Given Name',                         tag:   nil, value: uaa_user[:givenname] },
@@ -2065,15 +2067,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('Users', 10, 'Events', uaa_user[:id])
+            check_filter_link('Users', 11, 'Events', uaa_user[:id])
           end
 
           it 'has organization roles link' do
-            check_filter_link('Users', 11, 'OrganizationRoles', uaa_user[:id])
+            check_filter_link('Users', 12, 'OrganizationRoles', uaa_user[:id])
           end
 
           it 'has space roles link' do
-            check_filter_link('Users', 16, 'SpaceRoles', uaa_user[:id])
+            check_filter_link('Users', 17, 'SpaceRoles', uaa_user[:id])
           end
         end
       end
@@ -2463,8 +2465,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='QuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                expected_length: 11,
-                                labels:          [' ', 'Name', 'GUID', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Organizations'],
+                                expected_length: 12,
+                                labels:          [' ', 'Name', 'GUID', 'Created', 'Updated', 'Total Private Domains', 'Total Services', 'Total Routes', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Organizations'],
                                 colspans:        nil
                               }
                              ])
@@ -2476,6 +2478,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_quota_definition[:guid],
                              cc_quota_definition[:created_at].to_datetime.rfc3339,
                              cc_quota_definition[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_private_domains]})"),
                              @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_services]})"),
                              @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_routes]})"),
                              @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:memory_limit]})"),
@@ -2540,6 +2543,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'GUID',                       tag:   nil, value: cc_quota_definition[:guid] },
                            { label: 'Created',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_quota_definition[:created_at].to_datetime.rfc3339}\")") },
                            { label: 'Updated',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_quota_definition[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Total Private Domains',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_private_domains]})") },
                            { label: 'Total Services',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_services]})") },
                            { label: 'Total Routes',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_routes]})") },
                            { label: 'Memory Limit',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:memory_limit]})") },
@@ -2550,7 +2554,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has organizations link' do
-            check_filter_link('Quotas', 9, 'Organizations', cc_quota_definition[:name])
+            check_filter_link('Quotas', 10, 'Organizations', cc_quota_definition[:name])
           end
         end
       end

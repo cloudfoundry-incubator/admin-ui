@@ -107,6 +107,12 @@ module AdminUI
           row.push(nil)
         end
 
+        if user_uaa[:passwd_lastmodified]
+          row.push(user_uaa[:passwd_lastmodified].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
         row.push(user_uaa[:email])
         row.push(user_uaa[:familyname])
         row.push(user_uaa[:givenname])
@@ -171,7 +177,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..19).to_a, (0..9).to_a)
+      result(true, items, hash, (0..20).to_a, (0..10).to_a)
     end
 
     private

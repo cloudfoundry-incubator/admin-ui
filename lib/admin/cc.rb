@@ -27,7 +27,7 @@ module AdminUI
         {
           db_uri:  ccdb_uri,
           table:   :apps,
-          columns: [:allow_ssh, :buildpack, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :droplet_hash, :enable_ssh, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :name, :package_pending_since, :package_state, :package_updated_at, :production, :space_id, :stack_id, :staging_task_id, :state, :type, :updated_at, :version]
+          columns: [:allow_ssh, :buildpack, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :droplet_hash, :enable_ssh, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :name, :package_pending_since, :package_state, :package_updated_at, :production, :space_id, :stack_id, :staging_failed_description, :staging_failed_reason, :staging_task_id, :state, :type, :updated_at, :version]
         },
         apps_routes:
         {
@@ -124,7 +124,7 @@ module AdminUI
         {
           db_uri:  ccdb_uri,
           table:   :quota_definitions,
-          columns: [:created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :total_routes, :total_services, :updated_at]
+          columns: [:created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :total_private_domains, :total_routes, :total_services, :updated_at]
         },
         routes:
         {
@@ -142,7 +142,7 @@ module AdminUI
         {
           db_uri:  ccdb_uri,
           table:   :service_brokers,
-          columns: [:auth_username, :broker_url, :created_at, :guid, :id, :name, :updated_at]
+          columns: [:auth_username, :broker_url, :created_at, :guid, :id, :name, :space_id, :updated_at]
         },
         service_dashboard_clients:
         {
@@ -184,7 +184,7 @@ module AdminUI
         {
           db_uri:  ccdb_uri,
           table:   :services,
-          columns: [:active, :bindable, :created_at, :description, :documentation_url, :extra, :guid, :id, :info_url, :label, :long_description, :plan_updateable, :provider, :requires, :service_broker_id, :tags, :unique_id, :updated_at, :url, :version]
+          columns: [:active, :bindable, :created_at, :description, :documentation_url, :extra, :guid, :id, :info_url, :label, :long_description, :plan_updateable, :purging, :provider, :requires, :service_broker_id, :tags, :unique_id, :updated_at, :url, :version]
         },
         space_quota_definitions:
         {
@@ -232,7 +232,7 @@ module AdminUI
         {
           db_uri:  uaadb_uri,
           table:   :users,
-          columns: [:active, :created, :email, :familyname, :givenname, :id, :lastmodified, :username, :verified, :version]
+          columns: [:active, :created, :email, :familyname, :givenname, :id, :lastmodified, :passwd_lastmodified, :username, :verified, :version]
         }
       }
 
