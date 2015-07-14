@@ -133,6 +133,7 @@ module AdminUI
         row.push(guid)
         row.push(application[:state])
         row.push(application[:package_state])
+        row.push(application[:staging_failed_reason])
 
         row.push(application[:created_at].to_datetime.rfc3339)
 
@@ -207,7 +208,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..18).to_a, (1..9).to_a << 18)
+      result(true, items, hash, (1..19).to_a, (1..10).to_a << 19)
     end
   end
 end

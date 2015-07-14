@@ -49,6 +49,7 @@ module ViewModelsHelper
         cc_app[:guid],
         cc_app[:state],
         cc_app[:package_state],
+        cc_app[:staging_failed_reason],
         cc_app[:created_at].to_datetime.rfc3339,
         cc_app[:updated_at].to_datetime.rfc3339,
         ["#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}"],
