@@ -1,5 +1,6 @@
 require 'logger'
 require 'openssl'
+require 'thread'
 require 'webrick/httprequest'
 require 'webrick/https'
 require_relative 'admin/config'
@@ -68,7 +69,13 @@ module AdminUI
         trap(signal) do
           puts "\n\n"
           puts 'Shutting down ...'
-          shutdown
+
+          # Synchronize cannot be called from a trap context in ruby 2.x
+          thread = Thread.new do
+            shutdown
+          end
+          thread.join
+
           puts 'Exiting'
           puts "\n"
           exit!
