@@ -23,6 +23,7 @@ module AdminUI
       organizations_users            = @cc.organizations_users
       quotas                         = @cc.quota_definitions
       routes                         = @cc.routes
+      service_brokers                = @cc.service_brokers
       service_instances              = @cc.service_instances
       service_plan_visibilities      = @cc.service_plan_visibilities
       space_quotas                   = @cc.space_quota_definitions
@@ -38,6 +39,7 @@ module AdminUI
       events_connected                    = events['connected']
       organizations_roles_connected       = organizations_auditors['connected'] && organizations_billing_managers['connected'] && organizations_managers['connected'] && organizations_users['connected']
       routes_connected                    = routes['connected']
+      service_brokers_connected           = service_brokers['connected']
       service_instances_connected         = service_instances['connected']
       service_plan_visibilities_connected = service_plan_visibilities['connected']
       space_quotas_connected              = space_quotas['connected']
@@ -52,6 +54,7 @@ module AdminUI
       organization_space_counters                   = {}
       organization_role_counters                    = {}
       organization_domain_counters                  = {}
+      organization_service_broker_counters          = {}
       organization_service_instance_counters        = {}
       organization_service_plan_visibility_counters = {}
       organization_route_counters_hash              = {}
@@ -86,6 +89,19 @@ module AdminUI
       count_space_roles(space_hash, spaces_auditors, space_role_counters)
       count_space_roles(space_hash, spaces_developers, space_role_counters)
       count_space_roles(space_hash, spaces_managers, space_role_counters)
+
+      service_brokers['items'].each do |service_broker|
+        return result unless @running
+        Thread.pass
+
+        space_id = service_broker[:space_id]
+        next if space_id.nil?
+        space = space_hash[space_id]
+        next if space.nil?
+        organization_id = space[:organization_id]
+        organization_service_broker_counters[organization_id] = 0 if organization_service_broker_counters[organization_id].nil?
+        organization_service_broker_counters[organization_id] += 1
+      end
 
       service_instances['items'].each do |service_instance|
         return result unless @running
@@ -196,6 +212,7 @@ module AdminUI
         event_target_counter                         = event_target_counters[organization_guid]
         organization_role_counter                    = organization_role_counters[organization_id]
         organization_space_counter                   = organization_space_counters[organization_id]
+        organization_service_broker_counter          = organization_service_broker_counters[organization_id]
         organization_service_instance_counter        = organization_service_instance_counters[organization_id]
         organization_service_plan_visibility_counter = organization_service_plan_visibility_counters[organization_id]
         organization_app_counters                    = organization_app_counters_hash[organization_id]
@@ -272,6 +289,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if organization_service_broker_counter
+          row.push(organization_service_broker_counter)
+        elsif spaces_connected && service_brokers_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if organization_service_plan_visibility_counter
           row.push(organization_service_plan_visibility_counter)
         elsif service_plan_visibilities_connected
@@ -342,7 +367,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..29).to_a, (1..5).to_a << 10)
+      result(true, items, hash, (1..30).to_a, (1..5).to_a << 10)
     end
 
     private

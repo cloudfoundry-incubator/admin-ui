@@ -369,6 +369,7 @@ module ViewModelsHelper
         1,
         1,
         1,
+        1,
         0,
         cc_app[:instances],
         1,
@@ -594,13 +595,18 @@ module ViewModelsHelper
         1,
         1,
         1,
-        1
+        1,
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
   end
 
   def view_models_service_brokers_detail
-    cc_service_broker
+    {
+      'organization'   => cc_organization,
+      'service_broker' => cc_service_broker,
+      'space'          => cc_space
+    }
   end
 
   def view_models_service_instances
@@ -913,6 +919,7 @@ module ViewModelsHelper
         1,
         3,
         cc_space_quota_definition[:name],
+        1,
         1,
         1,
         0,

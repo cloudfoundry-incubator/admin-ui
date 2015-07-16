@@ -11,6 +11,7 @@ module AdminUI
       return result unless service_brokers['connected']
 
       events                    = @cc.events
+      organizations             = @cc.organizations
       service_bindings          = @cc.service_bindings
       service_dashboard_clients = @cc.service_dashboard_clients
       service_instances         = @cc.service_instances
@@ -18,6 +19,7 @@ module AdminUI
       service_plans             = @cc.service_plans
       service_plan_visibilities = @cc.service_plan_visibilities
       services                  = @cc.services
+      spaces                    = @cc.spaces
 
       events_connected                    = events['connected']
       service_bindings_connected          = service_bindings['connected']
@@ -27,10 +29,12 @@ module AdminUI
       service_plan_visibilities_connected = service_plan_visibilities['connected']
       services_connected                  = service_plans['connected']
 
+      organization_hash             = Hash[organizations['items'].map { |item| [item[:id], item] }]
       service_dashboard_client_hash = Hash[service_dashboard_clients['items'].map { |item| [item[:service_broker_id], item] }]
       service_hash                  = Hash[services['items'].map { |item| [item[:id], item] }]
       service_instance_hash         = Hash[service_instances['items'].map { |item| [item[:id], item] }]
       service_plan_hash             = Hash[service_plans['items'].map { |item| [item[:id], item] }]
+      space_hash                    = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
       event_counters = {}
       events['items'].each do |event|
@@ -158,6 +162,9 @@ module AdminUI
         guid                     = service_broker[:guid]
         id                       = service_broker[:id]
         service_dashboard_client = service_dashboard_client_hash[id]
+        space_id                 = service_broker[:space_id]
+        space                    = space_id.nil? ? nil : space_hash[space_id]
+        organization             = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         event_counter                   = event_counters[guid]
         service_binding_counter         = service_binding_counters[id]
@@ -242,12 +249,23 @@ module AdminUI
           row.push(nil)
         end
 
+        if organization && space
+          row.push("#{organization[:name]}/#{space[:name]}")
+        else
+          row.push(nil)
+        end
+
         items.push(row)
 
-        hash[guid] = service_broker
+        hash[guid] =
+        {
+          'organization'   => organization,
+          'service_broker' => service_broker,
+          'space'          => space
+        }
       end
 
-      result(true, items, hash, (1..12).to_a, (1..4).to_a << 6)
+      result(true, items, hash, (1..13).to_a, [1, 2, 3, 4, 6, 13])
     end
   end
 end

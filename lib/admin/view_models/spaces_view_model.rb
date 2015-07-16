@@ -18,6 +18,7 @@ module AdminUI
       events            = @cc.events
       organizations     = @cc.organizations
       routes            = @cc.routes
+      service_brokers   = @cc.service_brokers
       service_instances = @cc.service_instances
       space_quotas      = @cc.space_quota_definitions
       spaces_auditors   = @cc.spaces_auditors
@@ -29,6 +30,7 @@ module AdminUI
       deas_connected              = deas['connected']
       events_connected            = events['connected']
       routes_connected            = routes['connected']
+      service_brokers_connected   = service_brokers['connected']
       service_instances_connected = service_instances['connected']
       spaces_roles_connected      = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
 
@@ -55,6 +57,7 @@ module AdminUI
       end
 
       space_role_counters             = {}
+      space_service_broker_counters   = {}
       space_service_instance_counters = {}
       space_route_counters_hash       = {}
       space_app_counters_hash         = {}
@@ -62,6 +65,16 @@ module AdminUI
       count_space_roles(spaces_auditors, space_role_counters)
       count_space_roles(spaces_developers, space_role_counters)
       count_space_roles(spaces_managers, space_role_counters)
+
+      service_brokers['items'].each do |service_broker|
+        return result unless @running
+        Thread.pass
+
+        space_id = service_broker[:space_id]
+        next if space_id.nil?
+        space_service_broker_counters[space_id] = 0 if space_service_broker_counters[space_id].nil?
+        space_service_broker_counters[space_id] += 1
+      end
 
       service_instances['items'].each do |service_instance|
         return result unless @running
@@ -137,6 +150,7 @@ module AdminUI
         event_target_counter           = event_target_counters[space_guid]
         space_quota                    = space_quota_hash[space[:space_quota_definition_id]]
         space_role_counter             = space_role_counters[space_id]
+        space_service_broker_counter   = space_service_broker_counters[space_id]
         space_service_instance_counter = space_service_instance_counters[space_id]
         space_app_counters             = space_app_counters_hash[space_id]
         space_route_counters           = space_route_counters_hash[space_id]
@@ -187,6 +201,14 @@ module AdminUI
 
         if space_quota
           row.push(space_quota[:name])
+        else
+          row.push(nil)
+        end
+
+        if space_service_broker_counter
+          row.push(space_service_broker_counter)
+        elsif service_brokers_connected
+          row.push(0)
         else
           row.push(nil)
         end
@@ -254,7 +276,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..25).to_a, (1..5).to_a << 9)
+      result(true, items, hash, (1..26).to_a, (1..5).to_a << 9)
     end
 
     private
