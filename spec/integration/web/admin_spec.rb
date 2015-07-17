@@ -2962,8 +2962,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceBrokersTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                expected_length: 14,
-                                labels:          [' ', 'Name', 'GUID', 'Created', 'Updated', 'Events', 'Service Dashboard Client', 'Services', 'Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Target'],
+                                expected_length: 15,
+                                labels:          [' ', 'Name', 'GUID', 'Created', 'Updated', 'Events', 'Service Dashboard Client', 'Services', 'Service Plans', 'Public Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Target'],
                                 colspans:        nil
                               }
                              ])
@@ -2977,6 +2977,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_broker[:updated_at].to_datetime.rfc3339,
                              '1',
                              uaa_client[:client_id],
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -3048,6 +3049,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service Dashboard Client',     tag:   'a', value: uaa_client[:client_id] },
                            { label: 'Services',                     tag:   'a', value: '1' },
                            { label: 'Service Plans',                tag:   'a', value: '1' },
+                           { label: 'Public Service Plans',         tag:   nil, value: '1' },
                            { label: 'Service Plan Visibilities',    tag:   'a', value: '1' },
                            { label: 'Service Instances',            tag:   'a', value: '1' },
                            { label: 'Service Bindings',             tag:   'a', value: '1' },
@@ -3074,27 +3076,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has service plan visibilities link' do
-            check_filter_link('ServiceBrokers', 10, 'ServicePlanVisibilities', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 11, 'ServicePlanVisibilities', cc_service_broker[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('ServiceBrokers', 11, 'ServiceInstances', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 12, 'ServiceInstances', cc_service_broker[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('ServiceBrokers', 12, 'ServiceBindings', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 13, 'ServiceBindings', cc_service_broker[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('ServiceBrokers', 13, 'ServiceKeys', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 14, 'ServiceKeys', cc_service_broker[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('ServiceBrokers', 14, 'Spaces', cc_space[:guid])
+            check_filter_link('ServiceBrokers', 15, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceBrokers', 15, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceBrokers', 16, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -3108,12 +3110,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 3,
                                 labels:          ['', 'Service', 'Service Broker'],
-                                colspans:        %w(1 16 4)
+                                colspans:        %w(1 17 4)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 21,
-                                labels:          [' ', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Plan Updateable', 'Events', 'Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Name', 'GUID', 'Created', 'Updated'],
+                                expected_length: 22,
+                                labels:          [' ', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Plan Updateable', 'Events', 'Service Plans', 'Public Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Name', 'GUID', 'Created', 'Updated'],
                                 colspans:        nil
                               }
                              ])
@@ -3131,6 +3133,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service[:plan_updateable]})"),
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -3219,6 +3222,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service Support URL',           tag:   'a', value: service_extra_json['supportUrl'] },
                            { label: 'Service Events',                tag:   'a', value: '1' },
                            { label: 'Service Plans',                 tag:   'a', value: '1' },
+                           { label: 'Public Service Plans',          tag:   nil, value: '1' },
                            { label: 'Service Plan Visibilities',     tag:   'a', value: '1' },
                            { label: 'Service Instances',             tag:   'a', value: '1' },
                            { label: 'Service Bindings',              tag:   'a', value: '1' },
@@ -3239,23 +3243,23 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has service plan visibilities link' do
-            check_filter_link('Services', 23, 'ServicePlanVisibilities', cc_service[:guid])
+            check_filter_link('Services', 24, 'ServicePlanVisibilities', cc_service[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('Services', 24, 'ServiceInstances', cc_service[:guid])
+            check_filter_link('Services', 25, 'ServiceInstances', cc_service[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('Services', 25, 'ServiceBindings', cc_service[:guid])
+            check_filter_link('Services', 26, 'ServiceBindings', cc_service[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('Services', 26, 'ServiceKeys', cc_service[:guid])
+            check_filter_link('Services', 27, 'ServiceKeys', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Services', 27, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Services', 28, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end

@@ -596,6 +596,7 @@ module ViewModelsHelper
         1,
         1,
         1,
+        1,
         "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
@@ -816,6 +817,7 @@ module ViewModelsHelper
         cc_service[:active],
         cc_service[:bindable],
         cc_service[:plan_updateable],
+        1,
         1,
         1,
         1,
