@@ -4,8 +4,10 @@ require_relative 'base_view_model'
 module AdminUI
   class HasInstancesViewModel < AdminUI::BaseViewModel
     def add_instance_metrics(counters_hash, application, instance_hash)
-      counters_hash['reserved_memory'] += application[:memory] * application[:instances]
-      counters_hash['reserved_disk'] += application[:disk_quota] * application[:instances]
+      if application[:state] == 'STARTED'
+        counters_hash['reserved_memory'] += application[:memory] * application[:instances]
+        counters_hash['reserved_disk'] += application[:disk_quota] * application[:instances]
+      end
 
       instances = instance_hash[application[:guid]]
 
