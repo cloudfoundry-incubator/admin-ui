@@ -297,6 +297,10 @@ a
     margin-right: 3px;
 }
 
+.headerCheckBox
+{
+}
+
 .logContents
 {
     border: 1px outset rgb(50, 50, 50);
