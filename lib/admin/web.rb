@@ -746,7 +746,7 @@ module AdminUI
       file = Download.download(request.body.read, 'services', @view_models.services)
       send_file(file.path,
                 disposition: 'attachment',
-                filename:    'servicess.csv')
+                filename:    'services.csv')
     end
 
     post '/space_quotas_view_model', auth: [:user] do
