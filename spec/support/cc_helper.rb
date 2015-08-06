@@ -330,6 +330,7 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
+      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:11 -0500'),
       type:              'audit.app.create',
       updated_at:        Time.new('2015-04-23 08:00:12 -0500')
@@ -350,6 +351,7 @@ module CCHelper
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
+      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:14 -0500'),
       type:              'audit.service.create',
       updated_at:        Time.new('2015-04-23 08:00:15 -0500')
@@ -370,6 +372,7 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
+      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:17 -0500'),
       type:              'audit.service_binding.create',
       updated_at:        Time.new('2015-04-23 08:00:18 -0500')
@@ -390,6 +393,7 @@ module CCHelper
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
+      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:20 -0500'),
       type:              'audit.service_broker.create',
       updated_at:        Time.new('2015-04-23 08:00:21 -0500')
@@ -410,6 +414,7 @@ module CCHelper
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
+      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:23 -0500'),
       type:              'audit.service_dashboard_client.create',
       updated_at:        Time.new('2015-04-23 08:00:24 -0500')
@@ -430,6 +435,7 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
+      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:26 -0500'),
       type:              'audit.service_instance.create',
       updated_at:        Time.new('2015-04-23 08:00:27 -0500')
@@ -450,6 +456,7 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
+      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:29 -0500'),
       type:              'audit.service_key.create',
       updated_at:        Time.new('2015-04-23 08:00:30 -0500')
@@ -470,6 +477,7 @@ module CCHelper
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
+      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:32 -0500'),
       type:              'audit.service_plan.create',
       updated_at:        Time.new('2015-04-23 08:00:33 -0500')
@@ -490,6 +498,7 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        '',
+      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:35 -0500'),
       type:              'audit.service_plan_visibility.create',
       updated_at:        Time.new('2015-04-23 08:00:36 -0500')
@@ -510,6 +519,7 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
+      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:38 -0500'),
       type:              'audit.space.create',
       updated_at:        Time.new('2015-04-23 08:00:39 -0500')
@@ -604,6 +614,7 @@ module CCHelper
 
   def cc_quota_definition
     {
+      app_instance_limit:         10,
       created_at:                 Time.new('2015-04-23 08:00:44 -0500'),
       guid:                       'quota1',
       id:                         17,
@@ -624,6 +635,7 @@ module CCHelper
 
   def cc_quota_definition2
     {
+      app_instance_limit:         10,
       created_at:                 Time.new,
       guid:                       'quota2',
       id:                         18,

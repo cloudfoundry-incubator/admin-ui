@@ -30,13 +30,13 @@ Sequel.migration do
       DateTime :updated_at
       String :space_guid, :text=>true
       String :name
-      String :desired_droplet_guid, :text=>true
+      String :droplet_guid, :text=>true
       String :desired_state, :default=>"STOPPED", :text=>true
       String :encrypted_environment_variables, :text=>true
       String :salt, :text=>true
       String :buildpack, :text=>true
       
-      index [:desired_droplet_guid], :name=>:apps_desired_droplet_guid
+      index [:droplet_guid], :name=>:apps_desired_droplet_guid
       index [:created_at]
       index [:guid], :unique=>true
       index [:name]
@@ -162,6 +162,7 @@ Sequel.migration do
       String :actee, :text=>true, :null=>false
       String :actee_type, :text=>true, :null=>false
       String :metadata, :text=>true
+      Integer :space_id
       String :organization_guid, :default=>"", :text=>true, :null=>false
       String :space_guid, :default=>"", :text=>true, :null=>false
       String :actor_name, :text=>true
@@ -211,6 +212,7 @@ Sequel.migration do
       Integer :total_routes, :null=>false
       Integer :instance_memory_limit, :default=>-1, :null=>false
       Integer :total_private_domains, :default=>-1, :null=>false
+      Integer :app_instance_limit, :default=>-1
       
       index [:created_at], :name=>:qd_created_at_index
       index [:guid], :name=>:qd_guid_index, :unique=>true
@@ -270,6 +272,19 @@ Sequel.migration do
       index [:uaa_id], :name=>:s_d_clients_uaa_id_unique, :unique=>true
       index [:updated_at], :name=>:s_d_clients_updated_at_index
       index [:service_broker_id], :name=>:svc_dash_cli_svc_brkr_id_idx
+    end
+    
+    create_table(:service_instance_dashboard_clients, :ignore_index_errors=>true) do
+      primary_key :id
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :uaa_id, :text=>true, :null=>false
+      Integer :managed_service_instance_id
+      
+      index [:created_at], :name=>:s_i_d_clients_created_at_index
+      index [:uaa_id], :name=>:s_i_d_clients_uaa_id_unique, :unique=>true
+      index [:updated_at], :name=>:s_i_d_clients_updated_at_index
+      index [:managed_service_instance_id], :name=>:svc_inst_dash_cli_svc_inst_id_idx
     end
     
     create_table(:service_usage_events, :ignore_index_errors=>true) do
@@ -356,6 +371,7 @@ Sequel.migration do
       String :salt, :text=>true
       String :procfile, :text=>true
       String :buildpack, :text=>true
+      String :error, :text=>true
       
       index [:buildpack_guid], :name=>:bp_guid
       index [:app_guid]
@@ -754,7 +770,7 @@ Sequel.migration do
       DateTime :updated_at
       String :name, :text=>true, :null=>false
       String :salt, :text=>true
-      String :credentials, :size=>2048, :null=>false
+      String :credentials, :text=>true, :null=>false
       foreign_key :service_instance_id, :service_instances, :null=>false, :key=>[:id]
       
       index [:created_at], :name=>:sk_created_at_index
