@@ -3201,7 +3201,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             service_tags_json = Yajl::Parser.parse(cc_service[:tags])
             service_extra_json = Yajl::Parser.parse(cc_service[:extra])
+            # rubocop:disable Style/ExtraSpacing
             check_details([{ label: 'Service Provider',              tag:   nil, value: cc_service[:provider] },
+                           # rubocop:enable Style/ExtraSpacing
                            { label: 'Service Label',                 tag: 'div', value: cc_service[:label] },
                            { label: 'Service GUID',                  tag:   nil, value: cc_service[:guid] },
                            { label: 'Service Unique ID',             tag:   nil, value: cc_service[:unique_id] },
@@ -3218,7 +3220,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service Info URL',              tag:   'a', value: cc_service[:info_url] },
                            { label: 'Service Display Name',          tag:   nil, value: service_extra_json['displayName'] },
                            { label: 'Service Provider Display Name', tag:   nil, value: service_extra_json['providerDisplayName'] },
-                           { label: 'Service Icon',                  tag: 'img', value: @driver.execute_script("return Format.formatIconImage(\"#{service_extra_json['imageUrl']}\", \"service icon\", \"flot:left;\")").gsub(/'/, "\"").gsub(/[ ]+/, ' ').gsub(/ >/, '>') },
+                           { label: 'Service Icon',                  tag: 'img', value: @driver.execute_script("return Format.formatIconImage(\"#{service_extra_json['imageUrl']}\", \"service icon\", \"flot:left;\")").tr("'", '"') },
                            { label: 'Service Long Description',      tag:   nil, value: service_extra_json['longDescription'] },
                            { label: 'Service Documentation URL',     tag:   'a', value: service_extra_json['documentationUrl'] },
                            { label: 'Service Support URL',           tag:   'a', value: service_extra_json['supportUrl'] },

@@ -11,7 +11,7 @@ describe AdminUI::Admin do
 
   let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
   let(:ccdb_uri) { "sqlite://#{ccdb_file}" }
-  let(:certificate_file_path)   { '/tmp/admin_ui_server.crt' }
+  let(:certificate_file_path) { '/tmp/admin_ui_server.crt' }
   let(:certificate_request_file_path) { '/tmp/admin_ui_server.csr' }
   let(:cloud_controller_uri) { 'http://api.localhost' }
   let(:data_file) { '/tmp/admin_ui_data.json' }

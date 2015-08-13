@@ -1108,11 +1108,9 @@ module CCHelper
     end
   end
 
-  # rubocop:disable Style/TrivialAccessors
   def cc_apps_deleted
     @cc_apps_deleted
   end
-  # rubocop:enable Style/TrivialAccessors
 
   def cc_buildpack_not_found
     NotFound.new('code'        => 10_000,

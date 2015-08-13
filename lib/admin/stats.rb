@@ -36,7 +36,7 @@ module AdminUI
       @thread = Thread.new do
         while @running
           wait_time = schedule_stats
-          if  wait_time <= 0
+          if wait_time <= 0
             @logger.debug('AdminUI::Stats.initialize: Stats collection is disabled.')
             break
           end

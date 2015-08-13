@@ -4,6 +4,7 @@ require_relative 'utils'
 
 module AdminUI
   class Config
+    # rubocop:disable Style/ExtraSpacing
     DEFAULTS_CONFIG =
     {
       bind_address:                                 '0.0.0.0',
@@ -100,6 +101,7 @@ module AdminUI
         schema
       end
     end
+    # rubocop:enable Style/ExtraSpacing
 
     def self.load(config)
       # pre-processing: work on deprecated properties
@@ -108,7 +110,7 @@ module AdminUI
         filtered_select[:stats_refresh_schedules] = []
       elsif filtered_select[:stats_refresh_schedules].nil?
         to_convert_stats_refresh_time = true
-        filtered_select[:stats_refresh_schedules] = []    # this is to override default value of ['0 5 * * *']
+        filtered_select[:stats_refresh_schedules] = [] # this is to override default value of ['0 5 * * *']
       elsif filtered_select[:stats_refresh_time].nil?
         # let the mechanism of :stats_refresh_schedules to take effect, so do nothing else.
       else

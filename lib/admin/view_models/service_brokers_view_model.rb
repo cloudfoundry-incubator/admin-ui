@@ -5,7 +5,7 @@ require_relative 'base_view_model'
 module AdminUI
   class ServiceBrokersViewModel < AdminUI::BaseViewModel
     def do_items
-      service_brokers   = @cc.service_brokers
+      service_brokers = @cc.service_brokers
 
       # service_brokers have to exist.  Other record types are optional
       return result unless service_brokers['connected']

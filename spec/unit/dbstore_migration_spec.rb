@@ -85,10 +85,10 @@ describe AdminUI::DBStoreMigration do
   end
 
   context 'when config property db_uri is using sqlite and both the database file and its directory do not exist' do
-    let(:db_file)    { '/tmp/new_dir/admin_ui_store.db' }
+    let(:db_file) { '/tmp/new_dir/admin_ui_store.db' }
 
     it 'automatically creates a sqlite database instance.' do
-      FileUtils.rm_rf '/tmp/new_dir'  if File.exist?('/tmp/new_dir')
+      FileUtils.rm_rf '/tmp/new_dir' if File.exist?('/tmp/new_dir')
       launch_admin_daemon(config)
       expect(File.exist?(db_file)).to be(true)
       stop_admin_daemon

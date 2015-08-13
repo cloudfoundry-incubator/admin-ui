@@ -638,7 +638,7 @@ module AdminUI
               cache[:select] = statement.sql
 
               # TODO: If the sql has parenthesis around the select clause, you get an array of values instead of a hash
-              cache[:select] = cache[:select].gsub('(', '').gsub(')', '')
+              cache[:select] = cache[:select].delete('(').delete(')')
 
               @logger.debug("Select for key #{key}, table #{table}: #{cache[:select]}")
               @logger.debug("Columns removed for key #{key}, table #{table}: #{columns - db_columns}")

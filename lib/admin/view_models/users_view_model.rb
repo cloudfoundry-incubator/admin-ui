@@ -119,7 +119,7 @@ module AdminUI
         row.push(user_uaa[:active])
         row.push(user_uaa[:version])
 
-        authorities  = []
+        authorities = []
         member_groups_entry = member_groups[guid]
         if member_groups_entry
           member_groups_entry.each do |group_id|

@@ -131,12 +131,12 @@ describe AdminUI::Config do
       context 'sender_email' do
         let(:sender_email) do
           {
-            'server'     => 'localhost',
-            'port'       => 25,
-            'domain'     => 'localhost',
-            'account'    => 'bogus@localhost.com',
-            'secret'     => 'my password',
-            'authtype'   => 'login'
+            'server'   => 'localhost',
+            'port'     => 25,
+            'domain'   => 'localhost',
+            'account'  => 'bogus@localhost.com',
+            'secret'   => 'my password',
+            'authtype' => 'login'
           }
         end
         let(:config) { AdminUI::Config.load('sender_email' => sender_email) }
@@ -167,7 +167,7 @@ describe AdminUI::Config do
       end
 
       context 'ssl is in use' do
-        let(:ssl) { { 'certificate_file_path'    => 'certificate_file_path', 'private_key_file_path'    => 'private_key_file_path', 'private_key_pass_phrase'  => 'private_key_pass_phrase', 'max_session_idle_length'  => 4 } }
+        let(:ssl) { { 'certificate_file_path' => 'certificate_file_path', 'private_key_file_path' => 'private_key_file_path', 'private_key_pass_phrase' => 'private_key_pass_phrase', 'max_session_idle_length' => 4 } }
         let(:config) { AdminUI::Config.load('ssl' => ssl) }
 
         it 'ssl_certificate_file_path' do
@@ -620,9 +620,9 @@ describe AdminUI::Config do
         end
 
         it 'sender_email_authtype' do
-          expect { AdminUI::Config.load(config.merge(sender_email: { account: 'hi', authtype: 3, server: 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(sender_email: { account: 'hi', authtype: 3, server: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
 
-          expect { AdminUI::Config.load(config.merge(sender_email: { account: 'hi', authtype: 'logon', server: 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(sender_email: { account: 'hi', authtype: 'logon', server: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'sender_email_domain' do
@@ -634,7 +634,7 @@ describe AdminUI::Config do
         end
 
         it 'sender_email_secret' do
-          expect { AdminUI::Config.load(config.merge(sender_email: { account: 'hi', secret: 3, server: 'hi'  })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(sender_email: { account: 'hi', secret: 3, server: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'sender_email_server' do
@@ -644,19 +644,19 @@ describe AdminUI::Config do
 
       context 'ssl' do
         it 'ssl_certificate_file_path' do
-          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 1,  private_key_file_path: 'hi', private_key_pass_phrase: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 1, private_key_file_path: 'hi', private_key_pass_phrase: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'ssl_private_key_file_path' do
-          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi',  private_key_file_path: 1, private_key_pass_phrase: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi', private_key_file_path: 1, private_key_pass_phrase: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'ssl_private_key_pass_phrase' do
-          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi',  private_key_file_path: 'hi', private_key_pass_phrase: 1, max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi', private_key_file_path: 'hi', private_key_pass_phrase: 1, max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'max_session_idle_length' do
-          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi',  private_key_file_path: 'hi', private_key_pass_phrase: 'hi', max_session_idle_length: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi', private_key_file_path: 'hi', private_key_pass_phrase: 'hi', max_session_idle_length: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 
@@ -790,15 +790,15 @@ describe AdminUI::Config do
         end
 
         it 'ssl_private_key_file_path' do
-          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi',  private_key_pass_phrase: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi', private_key_pass_phrase: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'ssl_private_key_pass_phrase' do
-          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi',  private_key_file_path: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi', private_key_file_path: 'hi', max_session_idle_length: 1 })) }.to raise_error(Membrane::SchemaValidationError)
         end
 
         it 'max_session_idle_length' do
-          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi',  private_key_file_path: 'hi', private_key_pass_phrase: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+          expect { AdminUI::Config.load(config.merge(ssl: { certificate_file_path: 'hi', private_key_file_path: 'hi', private_key_pass_phrase: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
         end
       end
 

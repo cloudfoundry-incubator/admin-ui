@@ -230,7 +230,7 @@ module VARZHelper
           'supported_versions' => ['8.9']
         }
       },
-      'nodes'     =>
+      'nodes' =>
       {
         'test_node1' =>
         {
