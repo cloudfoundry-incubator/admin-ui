@@ -380,6 +380,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected service_instance_dashboard_clients' do
+      let(:results)  { cc.service_instance_dashboard_clients }
+      let(:expected) { cc_service_instance_dashboard_client }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected service_instance_operations' do
       let(:results)  { cc.service_instance_operations }
       let(:expected) { cc_service_instance_operation }

@@ -10,14 +10,22 @@ module AdminUI
       # clients have to exist
       return result unless clients['connected']
 
-      events                    = @cc.events
-      service_brokers           = @cc.service_brokers
-      service_dashboard_clients = @cc.service_dashboard_clients
+      events                             = @cc.events
+      organizations                      = @cc.organizations
+      service_brokers                    = @cc.service_brokers
+      service_dashboard_clients          = @cc.service_dashboard_clients
+      service_instances                  = @cc.service_instances
+      service_instance_dashboard_clients = @cc.service_instance_dashboard_clients
+      spaces                             = @cc.spaces
 
       events_connected = events['connected']
 
-      service_broker_hash           = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
-      service_dashboard_client_hash = Hash[service_dashboard_clients['items'].map { |item| [item[:uaa_id], item] }]
+      organization_hash                      = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      service_broker_hash                    = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
+      service_dashboard_client_hash          = Hash[service_dashboard_clients['items'].map { |item| [item[:uaa_id], item] }]
+      service_instance_hash                  = Hash[service_instances['items'].map { |item| [item[:id], item] }]
+      service_instance_dashboard_client_hash = Hash[service_instance_dashboard_clients['items'].map { |item| [item[:uaa_id], item] }]
+      space_hash                             = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
       event_counters = {}
       events['items'].each do |event|
@@ -47,8 +55,12 @@ module AdminUI
 
         client_id = client[:client_id]
 
-        service_dashboard_client = service_dashboard_client_hash[client_id]
-        service_broker           = service_dashboard_client.nil? ? nil : service_broker_hash[service_dashboard_client[:service_broker_id]]
+        service_dashboard_client          = service_dashboard_client_hash[client_id]
+        service_broker                    = service_dashboard_client.nil? ? nil : service_broker_hash[service_dashboard_client[:service_broker_id]]
+        service_instance_dashboard_client = service_instance_dashboard_client_hash[client_id]
+        service_instance                  = service_instance_dashboard_client.nil? ? nil : service_instance_hash[service_instance_dashboard_client[:managed_service_instance_id]]
+        space                             = service_instance.nil? ? nil : space_hash[service_instance[:space_id]]
+        organization                      = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         event_counter = event_counters[client_id]
 
@@ -105,16 +117,31 @@ module AdminUI
           row.push(nil)
         end
 
+        if service_instance
+          row.push(service_instance[:name])
+        else
+          row.push(nil)
+        end
+
+        if organization && space
+          row.push("#{organization[:name]}/#{space[:name]}")
+        else
+          row.push(nil)
+        end
+
         items.push(row)
 
         hash[client_id] =
         {
-          'client'         => client,
-          'service_broker' => service_broker
+          'client'           => client,
+          'organization'     => organization,
+          'service_broker'   => service_broker,
+          'service_instance' => service_instance,
+          'space'            => space
         }
       end
 
-      result(true, items, hash, (0..7).to_a, (0..5).to_a << 7)
+      result(true, items, hash, (0..9).to_a, (0..9).to_a - [6])
     end
   end
 end

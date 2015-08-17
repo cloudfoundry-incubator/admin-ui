@@ -181,6 +181,7 @@ module AdminUI
       url += '?recursive=true' if recursive
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
+      @cc.invalidate_clients
       @cc.invalidate_service_instances
       @view_models.invalidate_service_instances
       return unless recursive

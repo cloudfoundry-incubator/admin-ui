@@ -107,15 +107,20 @@ module ViewModelsHelper
         uaa_client[:authorities].split(',').sort,
         uaa_client_autoapprove,
         1,
-        cc_service_broker[:name]
+        cc_service_broker[:name],
+        cc_service_instance[:name],
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
   end
 
   def view_models_clients_detail
     {
-      'client'         => uaa_client,
-      'service_broker' => cc_service_broker
+      'client'           => uaa_client,
+      'organization'     => cc_organization,
+      'service_broker'   => cc_service_broker,
+      'service_instance' => cc_service_instance,
+      'space'            => cc_space
     }
   end
 
@@ -621,6 +626,7 @@ module ViewModelsHelper
         cc_service_instance[:updated_at].to_datetime.rfc3339,
         !cc_service_instance[:is_gateway_service],
         1,
+        uaa_client[:client_id],
         1,
         1,
         cc_service_instance_operation[:type],
