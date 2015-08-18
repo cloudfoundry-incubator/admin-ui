@@ -37,15 +37,16 @@ Sequel.migration do
       primary_key [:code]
     end
     
-    create_table(:external_group_mapping) do
+    create_table(:external_group_mapping, :ignore_index_errors=>true) do
       String :group_id, :size=>36, :null=>false
       String :external_group, :size=>255, :null=>false
       DateTime :added, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      String :origin, :size=>36
       
-      primary_key [:group_id, :external_group]
+      index [:origin, :external_group, :group_id], :name=>:external_group_unique_key, :unique=>true
     end
     
-    create_table(:group_membership) do
+    create_table(:group_membership, :ignore_index_errors=>true) do
       String :group_id, :size=>36, :null=>false
       String :member_id, :size=>36, :null=>false
       String :member_type, :default=>"USER", :size=>8, :null=>false
@@ -53,7 +54,7 @@ Sequel.migration do
       DateTime :added, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       String :origin, :default=>"uaa", :size=>36, :null=>false
       
-      primary_key [:group_id, :member_id]
+      index [:member_id, :group_id], :name=>:group_membership_unique_key, :unique=>true
     end
     
     create_table(:groups, :ignore_index_errors=>true) do
@@ -62,10 +63,11 @@ Sequel.migration do
       DateTime :created, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :lastmodified, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       Bignum :version, :default=>0, :null=>false
+      String :identity_zone_id, :default=>"uaa", :size=>36, :null=>false
       
       primary_key [:id]
       
-      index [:displayname], :name=>:unique_uk_2, :unique=>true
+      index [:displayname, :identity_zone_id], :name=>:groups_unique_key, :unique=>true
     end
     
     create_table(:identity_provider, :ignore_index_errors=>true) do
