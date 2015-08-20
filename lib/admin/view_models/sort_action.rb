@@ -1,3 +1,4 @@
+require 'set'
 require_relative 'base_action'
 
 module AdminUI
@@ -59,13 +60,21 @@ module AdminUI
 
       result = []
 
+      sort_indices_used = Set.new
+
       index = 0
       while index < i_sorting_cols
-        i_sort_col                   = params["iSortCol_#{index}"].to_i
-        s_sort_dir                   = params["sSortDir_#{index}"]
-        case_insensitive_sort_column = case_insensitive_sort_columns.include?(i_sort_col)
-
-        result.push(SortColumn.new(i_sort_col, s_sort_dir == 'asc', case_insensitive_sort_column))
+        sort_col = params["iSortCol_#{index}"]
+        unless sort_col.nil?
+          i_sort_col = sort_col.to_i
+          unless sort_indices_used.add?(i_sort_col).nil?
+            s_sort_dir = params["sSortDir_#{index}"]
+            if %w(asc desc).include?(s_sort_dir)
+              case_insensitive_sort_column = case_insensitive_sort_columns.include?(i_sort_col)
+              result.push(SortColumn.new(i_sort_col, s_sort_dir == 'asc', case_insensitive_sort_column))
+            end
+          end
+        end
 
         index += 1
       end
