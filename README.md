@@ -710,7 +710,7 @@ More details about Sequal migration framework and ways to perform manual schema 
 You can provide an option to reference the configuration file when you execute the administration ui or you 
 can let it default to config/default.yml
 
-```	
+```
 ruby bin/admin [-c <configuration file>]
 ```
 

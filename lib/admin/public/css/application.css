@@ -111,18 +111,18 @@ html.waiting *
 
 .menuItemContainer
 {
-	position: absolute;
-	height: 28px;
+    position: absolute;
+    height: 28px;
     left: 32px;
     right: 58px;
-	letter-spacing: -4px;
-	overflow: hidden;
+    letter-spacing: -4px;
+    overflow: hidden;
 }
 
 .menuItem
 {
-	display: inline-block;
-	letter-spacing: normal;
+    display: inline-block;
+    letter-spacing: normal;
     cursor: pointer;
     padding: 5px 10px 7px 10px;
     border-left: 1px solid rgb(0, 65, 125);
@@ -161,25 +161,25 @@ html.waiting *
 
 .menuButtonLeft
 {
-	cursor: pointer;
-	padding: 6px 4px 0px 4px;
-	position: absolute;
+    cursor: pointer;
+    padding: 6px 4px 0px 4px;
+    position: absolute;
     left: 0px;
 }   
 
 .menuButtonRight
 {
-	cursor: pointer;
-	padding: 6px 4px 0px 4px;
-	position: absolute;
+    cursor: pointer;
+    padding: 6px 4px 0px 4px;
+    position: absolute;
     right: 28px;
 }
 
 .menuButtonRefresh
 {
-	cursor: pointer;
-	padding: 3px 4px 0px 4px;
-	position: absolute;
+    cursor: pointer;
+    padding: 3px 4px 0px 4px;
+    position: absolute;
     right: 6px;
 }
 
@@ -385,7 +385,7 @@ a
 
 .modalDialog
 {
-	position: absolute;
+    position: absolute;
     background-color: rgb(220, 220, 220);
     border: 2px outset rgb(140, 140, 140);
     z-index:1011;

@@ -20,22 +20,22 @@
                 }
             });
         
-	        function logout()
-	        {
-	            var deferred = $.ajax({
-	                                      url: Constants.URL__LOGOUT,
-	                                      dataType: "json",
-	                                      type: "GET"
-	                                  });
-	
-	            deferred.done(function(result, status)
-	            {
-	                if (result.redirect)
-	                {
-	                    window.location.href = result.redirect;
-	                }
-	            });
-	        };
+            function logout()
+            {
+                var deferred = $.ajax({
+                                          url: Constants.URL__LOGOUT,
+                                          dataType: "json",
+                                          type: "GET"
+                                      });
+    
+                deferred.done(function(result, status)
+                {
+                    if (result.redirect)
+                    {
+                        window.location.href = result.redirect;
+                    }
+                });
+            };
         </script>
     </head>
 
