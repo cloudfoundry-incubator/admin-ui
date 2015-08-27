@@ -100,6 +100,7 @@ module ViewModelsHelper
   def view_models_clients
     [
       [
+        uaa_identity_zone[:name],
         uaa_client[:client_id],
         uaa_client[:scope].split(',').sort,
         uaa_client[:authorized_grant_types].split(',').sort,
@@ -117,6 +118,7 @@ module ViewModelsHelper
   def view_models_clients_detail
     {
       'client'           => uaa_client,
+      'identity_zone'    => uaa_identity_zone,
       'organization'     => cc_organization,
       'service_broker'   => cc_service_broker,
       'service_instance' => cc_service_instance,
@@ -339,6 +341,50 @@ module ViewModelsHelper
       'type'      => nats_health_manager['type'],
       'uri'       => nats_health_manager_varz
     }
+  end
+
+  def view_models_identity_providers
+    [
+      [
+        uaa_identity_zone[:name],
+        uaa_identity_provider[:name],
+        uaa_identity_provider[:id],
+        uaa_identity_provider[:created].to_datetime.rfc3339,
+        uaa_identity_provider[:lastmodified].to_datetime.rfc3339,
+        uaa_identity_provider[:origin_key],
+        uaa_identity_provider[:type],
+        uaa_identity_provider[:active],
+        uaa_identity_provider[:version]
+      ]
+    ]
+  end
+
+  def view_models_identity_providers_detail
+    {
+      'identity_provider' => uaa_identity_provider,
+      'identity_zone'     => uaa_identity_zone
+    }
+  end
+
+  def view_models_identity_zones
+    [
+      [
+        uaa_identity_zone[:name],
+        uaa_identity_zone[:id],
+        uaa_identity_zone[:created].to_datetime.rfc3339,
+        uaa_identity_zone[:lastmodified].to_datetime.rfc3339,
+        uaa_identity_zone[:subdomain],
+        uaa_identity_zone[:version],
+        1,
+        1,
+        1,
+        uaa_identity_zone[:description]
+      ]
+    ]
+  end
+
+  def view_models_identity_zones_detail
+    uaa_identity_zone
   end
 
   def view_models_logs(log_file_displayed, log_file_displayed_contents_length, log_file_displayed_modified_milliseconds)
@@ -1002,6 +1048,7 @@ module ViewModelsHelper
   def view_models_users
     [
       [
+        uaa_identity_zone[:name],
         uaa_user[:username],
         uaa_user[:id],
         uaa_user[:created].to_datetime.rfc3339,
@@ -1029,9 +1076,10 @@ module ViewModelsHelper
 
   def view_models_users_detail
     {
-      'groups'   => [uaa_group[:displayname]],
-      'user_cc'  => cc_user,
-      'user_uaa' => uaa_user
+      'groups'        => [uaa_group[:displayname]],
+      'identity_zone' => uaa_identity_zone,
+      'user_cc'       => cc_user,
+      'user_uaa'      => uaa_user
     }
   end
 end

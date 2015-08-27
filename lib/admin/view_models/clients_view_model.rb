@@ -11,6 +11,7 @@ module AdminUI
       return result unless clients['connected']
 
       events                             = @cc.events
+      identity_zones                     = @cc.identity_zones
       organizations                      = @cc.organizations
       service_brokers                    = @cc.service_brokers
       service_dashboard_clients          = @cc.service_dashboard_clients
@@ -20,6 +21,7 @@ module AdminUI
 
       events_connected = events['connected']
 
+      identity_zone_hash                     = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
       organization_hash                      = Hash[organizations['items'].map { |item| [item[:id], item] }]
       service_broker_hash                    = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
       service_dashboard_client_hash          = Hash[service_dashboard_clients['items'].map { |item| [item[:uaa_id], item] }]
@@ -55,6 +57,7 @@ module AdminUI
 
         client_id = client[:client_id]
 
+        identity_zone                     = identity_zone_hash[client[:identity_zone_id]]
         service_dashboard_client          = service_dashboard_client_hash[client_id]
         service_broker                    = service_dashboard_client.nil? ? nil : service_broker_hash[service_dashboard_client[:service_broker_id]]
         service_instance_dashboard_client = service_instance_dashboard_client_hash[client_id]
@@ -65,6 +68,12 @@ module AdminUI
         event_counter = event_counters[client_id]
 
         row = []
+
+        if identity_zone
+          row.push(identity_zone[:name])
+        else
+          row.push(nil)
+        end
 
         row.push(client_id)
 
@@ -134,6 +143,7 @@ module AdminUI
         hash[client_id] =
         {
           'client'           => client,
+          'identity_zone'    => identity_zone,
           'organization'     => organization,
           'service_broker'   => service_broker,
           'service_instance' => service_instance,
@@ -141,7 +151,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (0..9).to_a, (0..9).to_a - [6])
+      result(true, items, hash, (0..10).to_a, (0..10).to_a - [7])
     end
   end
 end

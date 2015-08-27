@@ -45,7 +45,7 @@ module AdminUI
         {
           db_uri:  uaadb_uri,
           table:   :oauth_client_details,
-          columns: [:additional_information, :authorities, :authorized_grant_types, :client_id, :scope, :web_server_redirect_uri]
+          columns: [:additional_information, :authorities, :authorized_grant_types, :client_id, :identity_zone_id, :scope, :web_server_redirect_uri]
         },
         domains:
         {
@@ -76,13 +76,25 @@ module AdminUI
         {
           db_uri:  uaadb_uri,
           table:   :groups,
-          columns: [:created, :displayname, :id, :lastmodified, :version]
+          columns: [:created, :displayname, :id, :identity_zone_id, :lastmodified, :version]
         },
         group_membership:
         {
           db_uri:  uaadb_uri,
           table:   :group_membership,
           columns: [:group_id, :member_id]
+        },
+        identity_providers:
+        {
+          db_uri:  uaadb_uri,
+          table:   :identity_provider,
+          columns: [:active, :config, :created, :id, :identity_zone_id, :lastmodified, :name, :origin_key, :type, :version]
+        },
+        identity_zones:
+        {
+          db_uri:  uaadb_uri,
+          table:   :identity_zone,
+          columns: [:created, :description, :id, :lastmodified, :name, :subdomain, :version]
         },
         organizations:
         {
@@ -238,7 +250,7 @@ module AdminUI
         {
           db_uri:  uaadb_uri,
           table:   :users,
-          columns: [:active, :created, :email, :familyname, :givenname, :id, :lastmodified, :passwd_lastmodified, :username, :verified, :version]
+          columns: [:active, :created, :email, :familyname, :givenname, :id, :identity_zone_id, :lastmodified, :passwd_lastmodified, :username, :verified, :version]
         }
       }
 
@@ -323,6 +335,14 @@ module AdminUI
 
     def groups
       result_cache(:groups)
+    end
+
+    def identity_providers
+      result_cache(:identity_providers)
+    end
+
+    def identity_zones
+      result_cache(:identity_zones)
     end
 
     def invalidate_applications

@@ -209,6 +209,30 @@ module AdminUI
       404
     end
 
+    get '/identity_providers_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/identity_providers_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.identity_providers, params).items)
+    end
+
+    get '/identity_providers_view_model/:guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/identity_providers_view_model/#{params[:guid]}")
+      result = @view_models.identity_provider(params[:guid])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
+    get '/identity_zones_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/identity_zones_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.identity_zones, params).items)
+    end
+
+    get '/identity_zones_view_model/:id', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/identity_zones_view_model/#{params[:id]}")
+      result = @view_models.identity_zone(params[:id])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/log', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/log?path=#{params['path']}")
       result = @log_files.content(params['path'], params['start'])
@@ -625,6 +649,22 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'health_managers.csv')
+    end
+
+    post '/identity_providers_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/identity_providers_view_model')
+      file = Download.download(request.body.read, 'identity_providers', @view_models.identity_providers)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'identity_providers.csv')
+    end
+
+    post '/identity_zones_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/identity_zones_view_model')
+      file = Download.download(request.body.read, 'identity_zones', @view_models.identity_zones)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'identity_zones.csv')
     end
 
     post '/logs_view_model', auth: [:user] do

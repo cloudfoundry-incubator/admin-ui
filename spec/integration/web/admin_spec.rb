@@ -66,6 +66,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('Services').displayed?).to be(true)
       expect(scroll_tab_into_view('ServicePlans').displayed?).to be(true)
       expect(scroll_tab_into_view('ServicePlanVisibilities').displayed?).to be(true)
+      expect(scroll_tab_into_view('IdentityZones').displayed?).to be(true)
+      expect(scroll_tab_into_view('IdentityProviders').displayed?).to be(true)
       expect(scroll_tab_into_view('DEAs').displayed?).to be(true)
       expect(scroll_tab_into_view('CloudControllers').displayed?).to be(true)
       expect(scroll_tab_into_view('HealthManagers').displayed?).to be(true)
@@ -1961,17 +1963,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 2,
                                 labels:          ['', 'Service Instance'],
-                                colspans:        %w(8 2)
+                                colspans:        %w(9 2)
                               },
                               { columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 10,
-                                labels:          ['Identifier', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Service Broker', 'Name', 'Target'],
+                                expected_length: 11,
+                                labels:          ['Identity Zone', 'Identifier', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Service Broker', 'Name', 'Target'],
                                 colspans:        nil
                               }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='ClientsTable']/tbody/tr/td"),
                            [
+                             uaa_identity_zone[:name],
                              uaa_client[:client_id],
                              uaa_client[:scope],
                              uaa_client[:authorized_grant_types],
@@ -1995,7 +1998,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            check_details([{ label: 'Identifier',                    tag: 'div', value: uaa_client[:client_id] },
+            # rubocop:disable Style/ExtraSpacing
+            check_details([{ label: 'Identity Zone',                 tag:   'a', value: uaa_identity_zone[:name] },
+                           # rubocop:enable Style/ExtraSpacing
+                           { label: 'Identifier',                    tag: 'div', value: uaa_client[:client_id] },
                            { label: 'Scope',                         tag:   nil, value: uaa_client[:scope] },
                            { label: 'Authorized Grant Type',         tag:   nil, value: uaa_client[:authorized_grant_types] },
                            { label: 'Redirect URI',                  tag:   nil, value: uaa_client[:web_server_redirect_uri] },
@@ -2010,24 +2016,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
+          it 'has identity zones link' do
+            check_filter_link('Clients', 0, 'IdentityZones', uaa_identity_zone[:id])
+          end
+
           it 'has events link' do
-            check_filter_link('Clients', 6, 'Events', uaa_client[:client_id])
+            check_filter_link('Clients', 7, 'Events', uaa_client[:client_id])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Clients', 8, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Clients', 9, 'ServiceBrokers', cc_service_broker[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('Clients', 9, 'ServiceInstances', cc_service_instance[:guid])
+            check_filter_link('Clients', 10, 'ServiceInstances', cc_service_instance[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('Clients', 10, 'Spaces', cc_space[:guid])
+            check_filter_link('Clients', 11, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Clients', 11, 'Organizations', cc_organization[:guid])
+            check_filter_link('Clients', 12, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -2039,18 +2049,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 3,
                                 labels:          ['', 'Organization Roles', 'Space Roles', ''],
-                                colspans:        %w(12 5 4)
+                                colspans:        %w(13 5 4)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 21,
-                                labels:          ['Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
+                                expected_length: 22,
+                                labels:          ['Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
                                 colspans:        nil
                               }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='UsersTable']/tbody/tr/td"),
                            [
+                             uaa_identity_zone[:name],
                              uaa_user[:username],
                              uaa_user[:id],
                              uaa_user[:created].to_datetime.rfc3339,
@@ -2085,7 +2096,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            check_details([{ label: 'Username',                           tag: 'div', value: uaa_user[:username] },
+            # rubocop:disable Style/ExtraSpacing
+            check_details([{ label: 'Identity Zone',                      tag:   'a', value: uaa_identity_zone[:name] },
+                           # rubocop:enable Style/ExtraSpacing
+                           { label: 'Username',                           tag: 'div', value: uaa_user[:username] },
                            { label: 'GUID',                               tag:   nil, value: uaa_user[:id] },
                            { label: 'Created',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_user[:created].to_datetime.rfc3339}\")") },
                            { label: 'Updated',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_user[:lastmodified].to_datetime.rfc3339}\")") },
@@ -2109,16 +2123,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
+          it 'has identity zones link' do
+            check_filter_link('Users', 0, 'IdentityZones', uaa_identity_zone[:id])
+          end
+
           it 'has events link' do
-            check_filter_link('Users', 11, 'Events', uaa_user[:id])
+            check_filter_link('Users', 12, 'Events', uaa_user[:id])
           end
 
           it 'has organization roles link' do
-            check_filter_link('Users', 12, 'OrganizationRoles', uaa_user[:id])
+            check_filter_link('Users', 13, 'OrganizationRoles', uaa_user[:id])
           end
 
           it 'has space roles link' do
-            check_filter_link('Users', 17, 'SpaceRoles', uaa_user[:id])
+            check_filter_link('Users', 18, 'SpaceRoles', uaa_user[:id])
           end
         end
       end
@@ -3623,6 +3641,124 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has organizations link' do
             check_filter_link('ServicePlanVisibilities', 25, 'Organizations', cc_organization[:guid])
+          end
+        end
+      end
+
+      context 'Identity Zones' do
+        let(:tab_id) { 'IdentityZones' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='IdentityZonesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 10,
+                                labels:          ['Name', 'ID', 'Created', 'Updated', 'Subdomain', 'Version', 'Identity Providers', 'Clients', 'Users', 'Description'],
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='IdentityZonesTable']/tbody/tr/td"),
+                           [
+                             uaa_identity_zone[:name],
+                             uaa_identity_zone[:id],
+                             uaa_identity_zone[:created].to_datetime.rfc3339,
+                             uaa_identity_zone[:lastmodified].to_datetime.rfc3339,
+                             uaa_identity_zone[:subdomain],
+                             @driver.execute_script("return Format.formatNumber(#{uaa_identity_zone[:version]})"),
+                             '1',
+                             '1',
+                             '1',
+                             uaa_identity_zone[:description]
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_IdentityZonesTable_0')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ label: 'Name',               tag: 'div', value: uaa_identity_zone[:name] },
+                           { label: 'ID',                 tag:   nil, value: uaa_identity_zone[:id] },
+                           { label: 'Created',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_identity_zone[:created].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_identity_zone[:lastmodified].to_datetime.rfc3339}\")") },
+                           { label: 'Subdomain',          tag:   nil, value: uaa_identity_zone[:subdomain] },
+                           { label: 'Version',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_identity_zone[:version]})") },
+                           { label: 'Description',        tag:   nil, value: uaa_identity_zone[:description] },
+                           { label: 'Identity Providers', tag:   'a', value: '1' },
+                           { label: 'Clients',            tag:   'a', value: '1' },
+                           { label: 'Users',              tag:   'a', value: '1' }
+                          ])
+          end
+
+          it 'has identity providers link' do
+            check_filter_link('IdentityZones', 7, 'IdentityProviders', uaa_identity_zone[:id])
+          end
+
+          it 'has clients link' do
+            check_filter_link('IdentityZones', 8, 'Clients', uaa_identity_zone[:id])
+          end
+
+          it 'has users link' do
+            check_filter_link('IdentityZones', 9, 'Users', uaa_identity_zone[:id])
+          end
+        end
+      end
+
+      context 'Identity Providers' do
+        let(:tab_id) { 'IdentityProviders' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='IdentityProvidersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 9,
+                                labels:          ['Identity Zone', 'Name', 'GUID', 'Created', 'Updated', 'Origin Key', 'Type', 'Active', 'Version'],
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='IdentityProvidersTable']/tbody/tr/td"),
+                           [
+                             uaa_identity_zone[:name],
+                             uaa_identity_provider[:name],
+                             uaa_identity_provider[:id],
+                             uaa_identity_provider[:created].to_datetime.rfc3339,
+                             uaa_identity_provider[:lastmodified].to_datetime.rfc3339,
+                             uaa_identity_provider[:origin_key],
+                             uaa_identity_provider[:type],
+                             @driver.execute_script("return Format.formatBoolean(#{uaa_identity_provider[:active]})"),
+                             @driver.execute_script("return Format.formatNumber(#{uaa_identity_provider[:version]})")
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_IdentityProvidersTable_0')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            # rubocop:disable Style/ExtraSpacing
+            check_details([{ label: 'Identity Zone', tag:   'a', value: uaa_identity_zone[:name] },
+                           # rubocop:enable Style/ExtraSpacing
+                           { label: 'Name',          tag: 'div', value: uaa_identity_provider[:name] },
+                           { label: 'GUID',          tag:   nil, value: uaa_identity_provider[:id] },
+                           { label: 'Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_identity_provider[:created].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_identity_provider[:lastmodified].to_datetime.rfc3339}\")") },
+                           { label: 'Origin Key',    tag:   nil, value: uaa_identity_provider[:origin_key] },
+                           { label: 'Type',          tag:   nil, value: uaa_identity_provider[:type] },
+                           { label: 'Active',        tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_identity_provider[:active]})") },
+                           { label: 'Version',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_identity_provider[:version]})") }
+                          ])
+          end
+
+          it 'has identity zones link' do
+            check_filter_link('IdentityProviders', 0, 'IdentityZones', uaa_identity_zone[:id])
           end
         end
       end

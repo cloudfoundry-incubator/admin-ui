@@ -1117,6 +1117,30 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
+    context 'identity_providers_view_model' do
+      let(:path)              { '/identity_providers_view_model' }
+      let(:view_model_source) { view_models_identity_providers }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'identity_providers_view_model detail' do
+      let(:path)              { "/identity_providers_view_model/#{uaa_identity_provider[:id]}" }
+      let(:view_model_source) { view_models_identity_providers_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'identity_zones_view_model' do
+      let(:path)              { '/identity_zones_view_model' }
+      let(:view_model_source) { view_models_identity_zones }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'identity_zones_view_model detail' do
+      let(:path)              { "/identity_zones_view_model/#{uaa_identity_zone[:id]}" }
+      let(:view_model_source) { view_models_identity_zones_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'log' do
       let(:retrieved) { get_json("/log?path=#{log_file_displayed}", true) }
       it 'retrieves' do

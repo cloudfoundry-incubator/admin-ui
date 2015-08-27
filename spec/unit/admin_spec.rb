@@ -964,7 +964,7 @@ describe AdminUI::Admin do
       end
 
       it '/clients_view_model/:id returns not found' do
-        verify_not_found('/clients_view_model/id')
+        verify_not_found('/clients_view_model/client1')
       end
 
       it '/cloud_controllers_view_model succeeds' do
@@ -1029,6 +1029,22 @@ describe AdminUI::Admin do
 
       it '/health_managers_view_model/:name returns not found' do
         verify_not_found('/health_managers_view_model/name')
+      end
+
+      it '/identity_providers_view_model succeeds' do
+        verify_disconnected_view_model_items('/identity_providers_view_model')
+      end
+
+      it '/identity_providers_view_model/:guid returns not found' do
+        verify_not_found('/identity_providers_view_model/identity_provider1')
+      end
+
+      it '/identity_zones_view_model succeeds' do
+        verify_disconnected_view_model_items('/identity_zones_view_model')
+      end
+
+      it '/identity_zones_view_model/:id returns not found' do
+        verify_not_found('/identity_zones_view_model/identity_zone1')
       end
 
       it '/logs_view_model succeeds' do
@@ -1259,7 +1275,7 @@ describe AdminUI::Admin do
       end
 
       it '/clients_view_model/:id redirects as expected' do
-        get_redirects_as_expected('/clients_view_model/id')
+        get_redirects_as_expected('/clients_view_model/client1')
       end
 
       it '/cloud_controllers_view_model redirects as expected' do
@@ -1328,6 +1344,22 @@ describe AdminUI::Admin do
 
       it '/health_managers_view_model/:name redirects as expected' do
         get_redirects_as_expected('/health_managers_view_model/name')
+      end
+
+      it '/identity_providers_view_model redirects as expected' do
+        get_redirects_as_expected('/identity_providers_view_model')
+      end
+
+      it '/identity_providers_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/identity_providers_view_model/identity_provider1')
+      end
+
+      it '/identity_zones_view_model redirects as expected' do
+        get_redirects_as_expected('/identity_zones_view_model')
+      end
+
+      it '/identity_zones_view_model/:id redirects as expected' do
+        get_redirects_as_expected('/identity_zones_view_model/identity_zone1')
       end
 
       it '/log redirects as expected' do
@@ -1636,6 +1668,14 @@ describe AdminUI::Admin do
 
       it 'posts /health_managers_view_model redirects as expected' do
         post_redirects_as_expected('/health_managers_view_model')
+      end
+
+      it 'posts /identity_providers_view_model redirects as expected' do
+        post_redirects_as_expected('/identity_providers_view_model')
+      end
+
+      it 'posts /identity_zones_view_model redirects as expected' do
+        post_redirects_as_expected('/identity_zones_view_model')
       end
 
       it 'posts /logs_view_model redirects as expected' do

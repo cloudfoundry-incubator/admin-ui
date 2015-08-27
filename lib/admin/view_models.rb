@@ -13,6 +13,8 @@ require_relative 'view_models/events_view_model'
 require_relative 'view_models/feature_flags_view_model'
 require_relative 'view_models/gateways_view_model'
 require_relative 'view_models/health_managers_view_model'
+require_relative 'view_models/identity_providers_view_model'
+require_relative 'view_models/identity_zones_view_model'
 require_relative 'view_models/logs_view_model'
 require_relative 'view_models/organization_roles_view_model'
 require_relative 'view_models/organizations_view_model'
@@ -62,6 +64,8 @@ module AdminUI
           feature_flags:             { clazz: AdminUI::FeatureFlagsViewModel },
           gateways:                  { clazz: AdminUI::GatewaysViewModel },
           health_managers:           { clazz: AdminUI::HealthManagersViewModel },
+          identity_providers:        { clazz: AdminUI::IdentityProvidersViewModel },
+          identity_zones:            { clazz: AdminUI::IdentityZonesViewModel },
           logs:                      { clazz: AdminUI::LogsViewModel },
           organizations:             { clazz: AdminUI::OrganizationsViewModel },
           organization_roles:        { clazz: AdminUI::OrganizationRolesViewModel },
@@ -296,6 +300,22 @@ module AdminUI
 
     def health_managers
       result_cache(:health_managers)
+    end
+
+    def identity_provider(guid)
+      details(:identity_providers, guid)
+    end
+
+    def identity_providers
+      result_cache(:identity_providers)
+    end
+
+    def identity_zone(id)
+      details(:identity_zones, id)
+    end
+
+    def identity_zones
+      result_cache(:identity_zones)
     end
 
     def logs

@@ -87,6 +87,14 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.groups)
     end
 
+    it 'returns zero identity_providers as expected' do
+      verify_disconnected_items(cc.identity_providers)
+    end
+
+    it 'returns zero identity_zones as expected' do
+      verify_disconnected_items(cc.identity_zones)
+    end
+
     it 'returns zero organizations as expected' do
       verify_disconnected_items(cc.organizations)
     end

@@ -261,6 +261,34 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected identity_providers_view_model' do
+      let(:results)  { view_models.identity_providers }
+      let(:expected) { view_models_identity_providers }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected identity_providers_view_model detail' do
+      let(:results)  { view_models.identity_provider(uaa_identity_provider[:id]) }
+      let(:expected) { view_models_identity_providers_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
+    context 'returns connected identity_zones_view_model' do
+      let(:results)  { view_models.identity_zones }
+      let(:expected) { view_models_identity_zones }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected identity_zones_view_model detail' do
+      let(:results)  { view_models.identity_zone(uaa_identity_zone[:id]) }
+      let(:expected) { view_models_identity_zones_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected logs_view_model' do
       let(:results)                                  { view_models.logs }
       let(:log_file_displayed_contents_length)       { log_file_displayed_contents.length }

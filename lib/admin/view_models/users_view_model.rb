@@ -33,12 +33,14 @@ module AdminUI
                            users_cc['connected'] &&
                            users_uaa['connected']
 
-      events = @cc.events
+      events         = @cc.events
+      identity_zones = @cc.identity_zones
 
       events_connected = events['connected']
 
-      group_hash   = Hash[groups['items'].map { |item| [item[:id], item] }]
-      user_cc_hash = Hash[users_cc['items'].map { |item| [item[:guid], item] }]
+      group_hash         = Hash[groups['items'].map { |item| [item[:id], item] }]
+      identity_zone_hash = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
+      user_cc_hash       = Hash[users_cc['items'].map { |item| [item[:guid], item] }]
 
       member_groups = {}
       group_membership['items'].each do |group_membership_entry|
@@ -94,8 +96,15 @@ module AdminUI
         guid = user_uaa[:id]
 
         event_counter = event_counters[guid]
+        identity_zone = identity_zone_hash[user_uaa[:identity_zone_id]]
 
         row = []
+
+        if identity_zone
+          row.push(identity_zone[:name])
+        else
+          row.push(nil)
+        end
 
         row.push(user_uaa[:username])
         row.push(guid)
@@ -171,13 +180,14 @@ module AdminUI
 
         hash[guid] =
         {
-          'groups'   => authorities,
-          'user_cc'  => user_cc,
-          'user_uaa' => user_uaa
+          'groups'        => authorities,
+          'identity_zone' => identity_zone,
+          'user_cc'       => user_cc,
+          'user_uaa'      => user_uaa
         }
       end
 
-      result(true, items, hash, (0..20).to_a, (0..10).to_a)
+      result(true, items, hash, (0..21).to_a, (0..11).to_a)
     end
 
     private

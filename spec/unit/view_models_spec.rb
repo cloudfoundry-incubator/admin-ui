@@ -151,6 +151,22 @@ describe AdminUI::ViewModels do
       verify_disconnected_items(view_models.health_managers)
     end
 
+    it 'returns nil identity_provider as expected' do
+      expect(view_models.identity_provider('bogus')).to be_nil
+    end
+
+    it 'returns zero identity_providers as expected' do
+      verify_disconnected_items(view_models.identity_providers)
+    end
+
+    it 'returns nil identity_zone as expected' do
+      expect(view_models.identity_zone('bogus')).to be_nil
+    end
+
+    it 'returns zero identity_zones as expected' do
+      verify_disconnected_items(view_models.identity_zones)
+    end
+
     it 'returns nil organization as expected' do
       expect(view_models.organization('bogus')).to be_nil
     end

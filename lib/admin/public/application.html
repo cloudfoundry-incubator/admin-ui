@@ -37,7 +37,9 @@
         <script src="js/app/tabs/eventsTab.js"></script>
         <script src="js/app/tabs/featureFlagsTab.js"></script>
         <script src="js/app/tabs/gatewaysTab.js"></script>    
-        <script src="js/app/tabs/healthManagersTab.js"></script> 
+        <script src="js/app/tabs/healthManagersTab.js"></script>
+        <script src="js/app/tabs/identityProvidersTab.js"></script>  
+        <script src="js/app/tabs/identityZonesTab.js"></script>  
         <script src="js/app/tabs/logsTab.js"></script>
         <script src="js/app/tabs/organizationRolesTab.js"></script>
         <script src="js/app/tabs/organizationsTab.js"></script>
@@ -117,6 +119,8 @@
                 <span id="Services" class="menuItem">Services</span>
                 <span id="ServicePlans" class="menuItem">Service Plans</span>
                 <span id="ServicePlanVisibilities" class="menuItem">Service Plan Visibilities</span>
+                <span id="IdentityZones" class="menuItem">Identity Zones</span>
+                <span id="IdentityProviders" class="menuItem">Identity Providers</span>
                 <span id="DEAs" class="menuItem">DEAs</span>
                 <span id="CloudControllers" class="menuItem">Cloud Controllers</span>
                 <span id="HealthManagers" class="menuItem">Health Managers</span>
@@ -624,16 +628,17 @@
                     <div id="SpaceRolesPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="ClientsPage" class="page hiddenPage">
                 <div id="ClientsTableContainer" class="pageSection">
                     <table id="ClientsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                              <tr class="customTableHeaderGroup">
-                                <th colspan="8"> </th>
+                                <th colspan="9"> </th>
                                 <th colspan="2">Service Instance</th>
                             </tr>
                             <tr>
+                                <th>Identity Zone</th>
                                 <th>Identifier</th>
                                 <th>Scopes</th>
                                 <th>Authorized Grant Types</th>
@@ -662,11 +667,12 @@
                     <table id="UsersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
-                                <th colspan="12"> </th>
+                                <th colspan="13"> </th>
                                 <th colspan="5">Organization Roles</th>
                                 <th colspan="4">Space Roles</th>
                             </tr>
                             <tr>
+                                <th>Identity Zone</th>
                                 <th>Username</th>
                                 <th>GUID</th>
                                 <th>Created</th>
@@ -1007,6 +1013,28 @@
                 </div>
             </div>
 
+            <div id="IdentityZonesPage" class="page hiddenPage">
+                <div id="IdentityZonesTableContainer" class="pageSection">
+                    <table id="IdentityZonesTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="IdentityZonesDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="IdentityZonesPropertiesContainer"></div>
+                </div>
+            </div>
+            
+            <div id="IdentityProvidersPage" class="page hiddenPage">
+                <div id="IdentityProvidersTableContainer" class="pageSection">
+                    <table id="IdentityProvidersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="IdentityProvidersDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="IdentityProvidersPropertiesContainer"></div>
+                </div>
+            </div>
+            
             <div id="DEAsPage" class="page hiddenPage">
                 <div id="DEAsTableContainer" class="pageSection">
                     <table id="DEAsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">

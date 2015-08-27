@@ -299,6 +299,20 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected identity_providers' do
+      let(:results)  { cc.identity_providers }
+      let(:expected) { uaa_identity_provider }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected identity_zones' do
+      let(:results)  { cc.identity_zones }
+      let(:expected) { uaa_identity_zone }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected organizations' do
       let(:results)  { cc.organizations }
       let(:expected) { cc_organization }
