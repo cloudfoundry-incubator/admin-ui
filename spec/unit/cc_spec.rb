@@ -147,10 +147,6 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.service_instances)
     end
 
-    it 'returns zero service_instance_dashboard_clients as expected' do
-      verify_disconnected_items(cc.service_instance_dashboard_clients)
-    end
-
     it 'returns zero service_instance_operations as expected' do
       verify_disconnected_items(cc.service_instance_operations)
     end

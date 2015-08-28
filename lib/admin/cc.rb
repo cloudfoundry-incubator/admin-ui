@@ -168,12 +168,6 @@ module AdminUI
           table:   :service_instances,
           columns: [:created_at, :dashboard_url, :gateway_name, :gateway_data, :guid, :id, :is_gateway_service, :name, :service_plan_id, :space_id, :tags, :updated_at]
         },
-        service_instance_dashboard_clients:
-        {
-          db_uri:  ccdb_uri,
-          table:   :service_instance_dashboard_clients,
-          columns: [:managed_service_instance_id, :uaa_id]
-        },
         service_instance_operations:
         {
           db_uri:  ccdb_uri,
@@ -489,10 +483,6 @@ module AdminUI
 
     def service_dashboard_clients
       result_cache(:service_dashboard_clients)
-    end
-
-    def service_instance_dashboard_clients
-      result_cache(:service_instance_dashboard_clients)
     end
 
     def service_instance_operations

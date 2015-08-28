@@ -1286,12 +1286,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 7,
                                 labels:          ['', 'Service Instance', 'Service Instance Last Operation', 'Service Plan', 'Service', 'Service Broker', ''],
-                                colspans:        %w(1 9 4 8 9 4 1)
+                                colspans:        %w(1 8 4 8 9 4 1)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 36,
-                                labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'User Provided', 'Events', 'Service Instance Dashboard Client', 'Service Bindings', 'Service Keys', 'Type', 'State', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
+                                expected_length: 35,
+                                labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'User Provided', 'Events', 'Service Bindings', 'Service Keys', 'Type', 'State', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
                                 colspans:        nil
                               }
                              ])
@@ -1305,7 +1305,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_instance[:updated_at].to_datetime.rfc3339,
                              @driver.execute_script("return Format.formatBoolean(#{!cc_service_instance[:is_gateway_service]})"),
                              '1',
-                             uaa_client[:client_id],
                              '1',
                              '1',
                              cc_service_instance_operation[:type],
@@ -1413,7 +1412,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service Instance User Provided',               tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{!cc_service_instance[:is_gateway_service]})") },
                            { label: 'Service Instance Dashboard URL',               tag:   nil, value: cc_service_instance[:dashboard_url] },
                            { label: 'Service Instance Events',                      tag:   'a', value: '1' },
-                           { label: 'Service Instance Dashboard Client',            tag:   'a', value: uaa_client[:client_id] },
                            { label: 'Service Bindings',                             tag:   'a', value: '1' },
                            { label: 'Service Keys',                                 tag:   'a', value: '1' },
                            { label: 'Service Instance Last Operation Type',         tag:  nil, value: cc_service_instance_operation[:type] },
@@ -1453,36 +1451,32 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('ServiceInstances', 6, 'Events', cc_service_instance[:guid])
           end
 
-          it 'has clients link' do
-            check_filter_link('ServiceInstances', 7, 'Clients', uaa_client[:client_id])
-          end
-
           it 'has service bindings link' do
-            check_filter_link('ServiceInstances', 8, 'ServiceBindings', cc_service_instance[:guid])
+            check_filter_link('ServiceInstances', 7, 'ServiceBindings', cc_service_instance[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('ServiceInstances', 9, 'ServiceKeys', cc_service_instance[:guid])
+            check_filter_link('ServiceInstances', 8, 'ServiceKeys', cc_service_instance[:guid])
           end
 
           it 'has service plans link' do
-            check_filter_link('ServiceInstances', 17, 'ServicePlans', cc_service_plan[:guid])
+            check_filter_link('ServiceInstances', 16, 'ServicePlans', cc_service_plan[:guid])
           end
 
           it 'has services link' do
-            check_filter_link('ServiceInstances', 26, 'Services', cc_service[:guid])
+            check_filter_link('ServiceInstances', 25, 'Services', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('ServiceInstances', 34, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('ServiceInstances', 33, 'ServiceBrokers', cc_service_broker[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('ServiceInstances', 38, 'Spaces', cc_space[:guid])
+            check_filter_link('ServiceInstances', 37, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceInstances', 39, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceInstances', 38, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -1961,13 +1955,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                expected_length: 2,
-                                labels:          ['', 'Service Instance'],
-                                colspans:        %w(9 2)
-                              },
-                              { columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 11,
-                                labels:          ['Identity Zone', 'Identifier', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Service Broker', 'Name', 'Target'],
+                                expected_length: 9,
+                                labels:          ['Identity Zone', 'Identifier', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Service Broker'],
                                 colspans:        nil
                               }
                              ])
@@ -1982,9 +1971,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_client[:authorities],
                              @driver.execute_script("return Format.formatBoolean(#{uaa_client_autoapprove})"),
                              '1',
-                             cc_service_broker[:name],
-                             cc_service_instance[:name],
-                             "#{cc_organization[:name]}/#{cc_space[:name]}"
+                             cc_service_broker[:name]
                            ])
         end
 
@@ -1999,20 +1986,17 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             # rubocop:disable Style/ExtraSpacing
-            check_details([{ label: 'Identity Zone',                 tag:   'a', value: uaa_identity_zone[:name] },
+            check_details([{ label: 'Identity Zone',          tag:   'a', value: uaa_identity_zone[:name] },
                            # rubocop:enable Style/ExtraSpacing
-                           { label: 'Identifier',                    tag: 'div', value: uaa_client[:client_id] },
-                           { label: 'Scope',                         tag:   nil, value: uaa_client[:scope] },
-                           { label: 'Authorized Grant Type',         tag:   nil, value: uaa_client[:authorized_grant_types] },
-                           { label: 'Redirect URI',                  tag:   nil, value: uaa_client[:web_server_redirect_uri] },
-                           { label: 'Authority',                     tag:   nil, value: uaa_client[:authorities] },
-                           { label: 'Auto Approve',                  tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_client_autoapprove})") },
-                           { label: 'Events',                        tag:   'a', value: '1' },
-                           { label: 'Additional Information',        tag:   nil, value: uaa_client[:additional_information] },
-                           { label: 'Service Broker',                tag:   'a', value: cc_service_broker[:name] },
-                           { label: 'Service Instance',              tag:   'a', value: cc_service_instance[:name] },
-                           { label: 'Service Instance Space',        tag:   'a', value: cc_space[:name] },
-                           { label: 'Service Instance Organization', tag:   'a', value: cc_organization[:name] }
+                           { label: 'Identifier',             tag: 'div', value: uaa_client[:client_id] },
+                           { label: 'Scope',                  tag:   nil, value: uaa_client[:scope] },
+                           { label: 'Authorized Grant Type',  tag:   nil, value: uaa_client[:authorized_grant_types] },
+                           { label: 'Redirect URI',           tag:   nil, value: uaa_client[:web_server_redirect_uri] },
+                           { label: 'Authority',              tag:   nil, value: uaa_client[:authorities] },
+                           { label: 'Auto Approve',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_client_autoapprove})") },
+                           { label: 'Events',                 tag:   'a', value: '1' },
+                           { label: 'Additional Information', tag:   nil, value: uaa_client[:additional_information] },
+                           { label: 'Service Broker',         tag:   'a', value: cc_service_broker[:name] }
                           ])
           end
 
@@ -2026,18 +2010,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has service brokers link' do
             check_filter_link('Clients', 9, 'ServiceBrokers', cc_service_broker[:guid])
-          end
-
-          it 'has service instances link' do
-            check_filter_link('Clients', 10, 'ServiceInstances', cc_service_instance[:guid])
-          end
-
-          it 'has spaces link' do
-            check_filter_link('Clients', 11, 'Spaces', cc_space[:guid])
-          end
-
-          it 'has organizations link' do
-            check_filter_link('Clients', 12, 'Organizations', cc_organization[:guid])
           end
         end
       end
