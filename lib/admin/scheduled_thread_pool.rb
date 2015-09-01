@@ -26,8 +26,8 @@ module AdminUI
               begin
                 entry[:block].call
               rescue => error
-                @logger.debug("Error during #{entry[:key]}: #{error.inspect}")
-                @logger.debug(error.backtrace.join("\n"))
+                @logger.error("Error during #{entry[:key]}: #{error.inspect}")
+                @logger.error(error.backtrace.join("\n"))
               end
             elsif @running
               # sleep using the @mutex and @condition so shutdown can interrupt

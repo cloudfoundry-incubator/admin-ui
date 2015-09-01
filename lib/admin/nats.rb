@@ -128,8 +128,8 @@ module AdminUI
       rescue => error
         result['connected'] = false
 
-        @logger.debug("Error during NATS discovery: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during NATS discovery: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
       end
 
       result
@@ -146,23 +146,23 @@ module AdminUI
               if parsed.key?('connected')
                 if parsed.key?('items')
                   return parsed if parsed.key?('notified')
-                  @logger.debug("Error during NATS parse data: 'notified' key not present")
+                  @logger.error("Error during NATS parse data: 'notified' key not present")
                 else
-                  @logger.debug("Error during NATS parse data: 'items' key not present")
+                  @logger.error("Error during NATS parse data: 'items' key not present")
                 end
               else
-                @logger.debug("Error during NATS parse data: 'connected' key not present")
+                @logger.error("Error during NATS parse data: 'connected' key not present")
               end
             else
-              @logger.debug('Error during NATS parse data: parsed data not a hash')
+              @logger.error('Error during NATS parse data: parsed data not a hash')
             end
           rescue => error
-            @logger.debug("Error during NATS parse data: #{error.inspect}")
-            @logger.debug(error.backtrace.join("\n"))
+            @logger.error("Error during NATS parse data: #{error.inspect}")
+            @logger.error(error.backtrace.join("\n"))
           end
         rescue => error
-          @logger.debug("Error during NATS read data: #{error.inspect}")
-          @logger.debug(error.backtrace.join("\n"))
+          @logger.error("Error during NATS read data: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
         end
       end
       disconnected_result
@@ -174,8 +174,8 @@ module AdminUI
         file.write(Yajl::Encoder.encode(@cache, pretty: true))
       end
     rescue => error
-      @logger.debug("Error during NATS write data: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
+      @logger.error("Error during NATS write data: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
     end
 
     def save_data(nats_discovery_results, disconnected)
@@ -215,8 +215,8 @@ module AdminUI
 
         write_cache
       rescue => error
-        @logger.debug("Error during NATS save data: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during NATS save data: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
       end
     end
 
@@ -226,8 +226,8 @@ module AdminUI
         begin
           @email.send_email(disconnected)
         rescue => error
-          @logger.debug("Error during send email: #{error.inspect}")
-          @logger.debug(error.backtrace.join("\n"))
+          @logger.error("Error during send email: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
         end
       end
 
@@ -241,12 +241,12 @@ module AdminUI
       else
         component_entry = component_entry(type, uri)
         if component_entry['count'] < @config.component_connection_retries
-          @logger.debug("The #{type} component #{uri} is not responding, its status will be checked again next refresh")
+          @logger.warn("The #{type} component #{uri} is not responding, its status will be checked again next refresh")
         elsif component_entry['count'] == @config.component_connection_retries
-          @logger.debug("The #{type} component #{uri} has been recognized as disconnected")
+          @logger.warn("The #{type} component #{uri} has been recognized as disconnected")
           disconnectedList.push(component_entry)
         else
-          @logger.debug("The #{type} component #{uri} is still not responding")
+          @logger.warn("The #{type} component #{uri} is still not responding")
         end
       end
     end

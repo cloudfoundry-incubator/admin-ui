@@ -26,8 +26,8 @@ module AdminUI
           cron_parser = CronParser.new(spec)
           @data_collection_schedulers.push(cron_parser)
         rescue => error
-          @logger.debug("AdminUI::Stats.initialize: Error detected in the #{spec} of stats_refresh_schedule property as specified in config/default.yml")
-          @logger.debug(error.backtrace.join("\n"))
+          @logger.error("AdminUI::Stats.initialize: Error detected in the #{spec} of stats_refresh_schedule property as specified in config/default.yml")
+          @logger.error(error.backtrace.join("\n"))
           raise error
         end
         @logger.debug("AdminUI::Stats.initialize: Stats data collection follows schedules #{@config.stats_refresh_schedules}")
@@ -37,7 +37,7 @@ module AdminUI
         while @running
           wait_time = schedule_stats
           if wait_time <= 0
-            @logger.debug('AdminUI::Stats.initialize: Stats collection is disabled.')
+            @logger.warn('AdminUI::Stats.initialize: Stats collection is disabled.')
             break
           end
         end
@@ -54,8 +54,8 @@ module AdminUI
       @logger.debug("AdminUI::Stats.stats: Retrieved #{items.length} records.")
       items
     rescue => error
-      @logger.debug("AdminUI::Stats.stats: Error retrieving stats data: #{error}")
-      @logger.debug(error.backtrace.join("\n"))
+      @logger.error("AdminUI::Stats.stats: Error retrieving stats data: #{error}")
+      @logger.error(error.backtrace.join("\n"))
       []
     end
 
@@ -88,8 +88,8 @@ module AdminUI
             target_time = refresh_time
           end
         rescue => error
-          @logger.debug("AdminUI::Stats.calculate_time_until_generate_stats: Error detected in the #{spec} of stats_refresh_schedule property as specified in config/default.yml")
-          @logger.debug(error.backtrace.join("\n"))
+          @logger.error("AdminUI::Stats.calculate_time_until_generate_stats: Error detected in the #{spec} of stats_refresh_schedule property as specified in config/default.yml")
+          @logger.error(error.backtrace.join("\n"))
           raise error
         end
       end
@@ -126,8 +126,8 @@ module AdminUI
       generate_stats
       target_time
     rescue => error
-      @logger.debug("AdminUI::Stats.schedule_stats: Error generating stats: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
+      @logger.error("AdminUI::Stats.schedule_stats: Error generating stats: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
     end
 
     def save_stats(stats)
@@ -137,8 +137,8 @@ module AdminUI
         begin
           result = @persistence.append(stats)
         rescue => error
-          @logger.debug("AdminUI::Stats.save_stats: Error writing stats: #stats, error: #{error}")
-          @logger.debug(error.backtrace.join("\n"))
+          @logger.error("AdminUI::Stats.save_stats: Error writing stats: #stats, error: #{error}")
+          @logger.error(error.backtrace.join("\n"))
         end
       end
 
@@ -159,7 +159,7 @@ module AdminUI
         stats = current_stats
       end
 
-      @logger.debug('AdminUI::Stats.generate_stats: Reached max number of stat retries, giving up for now...') if attempt == @config.stats_retries
+      @logger.error('AdminUI::Stats.generate_stats: Reached max number of stat retries, giving up for now...') if attempt == @config.stats_retries
     end
   end
 end

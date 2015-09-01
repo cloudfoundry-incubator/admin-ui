@@ -79,7 +79,7 @@ module AdminUI
                                     [@config.uaa_client_id, @config.uaa_client_secret],
                                     content)
       return Yajl::Parser.parse(response.body) if response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated)
-      @logger.debug("Unexpected response code from sso_login_token_json is #{response.code}, message #{response.message}, body #{response.body}")
+      @logger.error("Unexpected response code from sso_login_token_json is #{response.code}, message #{response.message}, body #{response.body}")
       nil
     end
 
@@ -146,11 +146,11 @@ module AdminUI
 
       response = nil
       begin
-        response = Utils.http_request(@config, get_cc_url('/info'), Utils::HTTP_GET)
+        response = Utils.http_request(@config, get_cc_url('/v2/info'), Utils::HTTP_GET)
       rescue => error
-        @logger.debug("Error during /info: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
-        raise "Unable to fetch from #{get_cc_url('/info')}"
+        @logger.error("Error fetching #{get_cc_url('/v2/info')}: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        raise "Unable to fetch from #{get_cc_url('/v2/info')}"
       end
 
       if response.is_a?(Net::HTTPOK)
@@ -158,20 +158,20 @@ module AdminUI
 
         @build = body_json['build']
         if @build.nil?
-          fail "Information retrieved from #{get_cc_url('/info')} does not include build"
+          fail "Information retrieved from #{get_cc_url('/v2/info')} does not include build"
         end
 
         @authorization_endpoint = body_json['authorization_endpoint']
         if @authorization_endpoint.nil?
-          fail "Information retrieved from #{get_cc_url('/info')} does not include authorization_endpoint"
+          fail "Information retrieved from #{get_cc_url('/v2/info')} does not include authorization_endpoint"
         end
 
         @token_endpoint = body_json['token_endpoint']
         if @token_endpoint.nil?
-          fail "Information retrieved from #{get_cc_url('/info')} does not include token_endpoint"
+          fail "Information retrieved from #{get_cc_url('/v2/info')} does not include token_endpoint"
         end
       else
-        fail "Unable to fetch from #{get_cc_url('/info')}"
+        fail "Unable to fetch from #{get_cc_url('/v2/info')}"
       end
     end
   end

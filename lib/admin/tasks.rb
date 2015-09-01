@@ -108,8 +108,8 @@ module AdminUI
             update_task!(task, type, line)
           end
         rescue => error
-          @logger.debug("Error during handle_task_output!: #{error.inspect}")
-          @logger.debug(error.backtrace.join("\n"))
+          @logger.error("Error during handle_task_output!: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
         end
       end
 

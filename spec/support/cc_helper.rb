@@ -538,7 +538,7 @@ module CCHelper
     }
   end
 
-  # /info returned from the system is not symbols
+  # /v2/info returned from the system is not symbols
   def cc_info
     {
       'authorization_endpoint' => 'http://authorization_endpoint',
@@ -1259,7 +1259,7 @@ module CCHelper
   end
 
   def cc_login_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/info", AdminUI::Utils::HTTP_GET) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/info", AdminUI::Utils::HTTP_GET) do
       OK.new(cc_info)
     end
 

@@ -140,8 +140,8 @@ module AdminUI
           item_hash[uri] = item_result(uri, item)
         end
       rescue => error
-        @logger.debug("Error during VARZ discovery: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during VARZ discovery: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
       end
 
       @logger.debug('Caching VARZ data...')
@@ -166,13 +166,13 @@ module AdminUI
           result.merge!('connected' => false,
                         'data'      => (item.nil? ? {} : item),
                         'error'     => "#{response.code}<br/><br/>#{response.body}")
-          @logger.debug("item_result(#{uri}) : error [#{response.code} - #{response.body}]")
+          @logger.error("item_result(#{uri}) : error [#{response.code} - #{response.body}]")
         end
       rescue => error
         result.merge!('connected' => false,
                       'data'      => (item.nil? ? {} : item),
                       'error'     => "#{error.inspect}")
-        @logger.debug("item_result(#{uri}) : error [#{error.inspect}]")
+        @logger.error("item_result(#{uri}) : error [#{error.inspect}]")
       end
 
       result

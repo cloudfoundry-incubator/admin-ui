@@ -663,7 +663,7 @@ module AdminUI
               @logger.debug("Select for key #{key}, table #{table}: #{cache[:select]}")
               @logger.debug("Columns removed for key #{key}, table #{table}: #{columns - db_columns}")
             else
-              @logger.debug("Table #{table} does not exist")
+              @logger.warn("Table #{table} does not exist")
             end
           end
 
@@ -683,8 +683,8 @@ module AdminUI
 
       result
     rescue => error
-      @logger.debug("Error during discovery of #{key}: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
+      @logger.error("Error during discovery of #{key}: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
       result
     end
   end

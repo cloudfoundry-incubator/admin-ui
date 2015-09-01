@@ -7,8 +7,8 @@ module AdminUI
     def items
       do_items
     rescue => error
-      @logger.debug("Error within #{self.class.name}: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
+      @logger.error("Error within #{self.class.name}: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
       result
     end
 

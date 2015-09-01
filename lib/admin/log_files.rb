@@ -98,8 +98,8 @@ module AdminUI
           contents = IO.read(@path, read_size, start)
           return create_content_result(file_size, start, read_size, contents)
         rescue => error
-          @logger.debug("Error retrieving contents of log file #{path}: #{error.inspect}")
-          @logger.debug(error.backtrace.join("\n"))
+          @logger.error("Error retrieving contents of log file #{path}: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
         end
 
         nil
@@ -109,8 +109,8 @@ module AdminUI
         begin
           return File.new(@path)
         rescue => error
-          @logger.debug("Error downloading file of log file #{path}: #{error.inspect}")
-          @logger.debug(error.backtrace.join("\n"))
+          @logger.error("Error downloading file of log file #{path}: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
         end
 
         nil
@@ -127,8 +127,8 @@ module AdminUI
                          time: Utils.time_in_milliseconds(stat.mtime))
           end
         rescue => error
-          @logger.debug("Error retreiving infos of log file #{@path}: #{error.inspect}")
-          @logger.debug(error.backtrace.join("\n"))
+          @logger.error("Error retreiving infos of log file #{@path}: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
         end
 
         results
@@ -178,8 +178,8 @@ module AdminUI
             end
           end
         rescue => error
-          @logger.debug("Error retrieving contents of sftp log file #{path}: #{error.inspect}")
-          @logger.debug(error.backtrace.join("\n"))
+          @logger.error("Error retrieving contents of sftp log file #{path}: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
         end
 
         nil
@@ -201,8 +201,8 @@ module AdminUI
 
           return temp_file
         rescue => error
-          @logger.debug("Error downloading file of sftp log file #{path}: #{error.inspect}")
-          @logger.debug(error.backtrace.join("\n"))
+          @logger.error("Error downloading file of sftp log file #{path}: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
         end
 
         nil
@@ -241,8 +241,8 @@ module AdminUI
             end
           end
         rescue => error
-          @logger.debug("Error retreiving infos of sftp log file #{@path}: #{error.inspect}")
-          @logger.debug(error.backtrace.join("\n"))
+          @logger.error("Error retreiving infos of sftp log file #{@path}: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
         end
 
         results

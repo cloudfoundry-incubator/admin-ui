@@ -35,7 +35,7 @@ module AdminUI
       condition do
         unless session[:username] && (!roles.include?(:admin) || session[:admin])
           env['rack.session.options'][:expire_after] = @config.ssl_max_session_idle_length.to_i if @config.secured_client_connection
-          @logger.debug('Authorization failure, redirecting to login...')
+          @logger.error('Authorization failure, redirecting to login...')
           redirect_to_login
         end
       end
@@ -256,8 +256,8 @@ module AdminUI
           redirect "scopeError.html?user=#{user_name}", 303
         end
       rescue => error
-        @logger.debug("Error during /login: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during /login: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         halt 500, error.message
       end
     end
@@ -268,8 +268,8 @@ module AdminUI
         session.destroy
         Yajl::Encoder.encode('redirect' => @login.logout(request.base_url))
       rescue => error
-        @logger.debug("Error during /logout: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during /logout: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         halt 500, error.message
       end
     end
@@ -545,13 +545,13 @@ module AdminUI
         @operation.restage_application(params[:app_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during restage application: #{error.to_h}")
+        @logger.error("Error during restage application: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during restage application: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during restage application: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -682,13 +682,13 @@ module AdminUI
         @operation.create_organization(control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during create organization: #{error.to_h}")
+        @logger.error("Error during create organization: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during create organization: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during create organization: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -882,13 +882,13 @@ module AdminUI
         @operation.manage_application(params[:app_guid], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update application: #{error.to_h}")
+        @logger.error("Error during update application: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update application: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during update application: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -900,13 +900,13 @@ module AdminUI
         @operation.manage_buildpack(params[:buildpack_guid], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update buildpack: #{error.to_h}")
+        @logger.error("Error during update buildpack: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update buildpack: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during update buildpack: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -918,13 +918,13 @@ module AdminUI
         @operation.manage_feature_flag(params[:feature_flag_name], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update feature_flag: #{error.to_h}")
+        @logger.error("Error during update feature_flag: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update feature_flag: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during update feature_flag: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -936,13 +936,13 @@ module AdminUI
         @operation.manage_organization(params[:organization_guid], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update organization: #{error.to_h}")
+        @logger.error("Error during update organization: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update organization: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during update organization: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -954,13 +954,13 @@ module AdminUI
         @operation.manage_quota_definition(params[:quota_definition_guid], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update quota definition: #{error.to_h}")
+        @logger.error("Error during update quota definition: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update quota definition: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during update quota definition: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -972,13 +972,13 @@ module AdminUI
         @operation.manage_service_broker(params[:service_broker_guid], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update service broker: #{error.to_h}")
+        @logger.error("Error during update service broker: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update service broker: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during update service broker: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -990,13 +990,13 @@ module AdminUI
         @operation.manage_service_instance(params[:service_instance_guid], params[:is_gateway_service] == 'true', control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update service instance: #{error.to_h}")
+        @logger.error("Error during update service instance: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update service instance #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during update service instance #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1008,13 +1008,13 @@ module AdminUI
         @operation.manage_service_plan(params[:service_plan_guid], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update service plan: #{error.to_h}")
+        @logger.error("Error during update service plan: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update service plan #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during update service plan #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1026,13 +1026,13 @@ module AdminUI
         @operation.manage_space(params[:space_guid], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update space: #{error.to_h}")
+        @logger.error("Error during update space: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update space: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during update space: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1044,13 +1044,13 @@ module AdminUI
         @operation.manage_space_quota_definition(params[:space_quota_definition_guid], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during update space quota definition: #{error.to_h}")
+        @logger.error("Error during update space quota definition: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during update space quota definition: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during update space quota definition: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1061,13 +1061,13 @@ module AdminUI
         @operation.create_space_quota_definition_space(params[:space_quota_definition_guid], params[:space_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during put space quota definition space: #{error.to_h}")
+        @logger.error("Error during put space quota definition space: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during put space quota definition space: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during put space quota definition space: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1081,13 +1081,13 @@ module AdminUI
         @operation.delete_application(params[:app_guid], recursive)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete application: #{error.to_h}")
+        @logger.error("Error during delete application: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete application: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete application: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1098,13 +1098,13 @@ module AdminUI
         @operation.delete_application_instance(params[:app_guid], params[:instance_index])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete application instance: #{error.to_h}")
+        @logger.error("Error during delete application instance: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete application instance: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete application instance: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1115,13 +1115,13 @@ module AdminUI
         @operation.delete_buildpack(params[:buildpack_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete buildpack: #{error.to_h}")
+        @logger.error("Error during delete buildpack: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete buildpack: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete buildpack: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1132,8 +1132,8 @@ module AdminUI
         @operation.remove_component(params[:uri])
         204
       rescue => error
-        @logger.debug("Error during removing component: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during removing component: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1147,13 +1147,13 @@ module AdminUI
         @operation.delete_domain(params[:domain_guid], recursive)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete domain: #{error.to_h}")
+        @logger.error("Error during delete domain: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete domain: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete domain: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1167,13 +1167,13 @@ module AdminUI
         @operation.delete_organization(params[:organization_guid], recursive)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete organization: #{error.to_h}")
+        @logger.error("Error during delete organization: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete organization: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete organization: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1184,13 +1184,13 @@ module AdminUI
         @operation.delete_organization_role(params[:organization_guid], params[:role], params[:user_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete organization role: #{error.to_h}")
+        @logger.error("Error during delete organization role: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete organization role: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete organization role: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1201,13 +1201,13 @@ module AdminUI
         @operation.delete_quota_definition(params[:quota_definition_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete quota definition: #{error.to_h}")
+        @logger.error("Error during delete quota definition: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete quota definition: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete quota definition: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1218,13 +1218,13 @@ module AdminUI
         @operation.delete_route(params[:route_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete route: #{error.to_h}")
+        @logger.error("Error during delete route: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete route: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete route: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1235,13 +1235,13 @@ module AdminUI
         @operation.delete_service_binding(params[:service_binding_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service binding: #{error.to_h}")
+        @logger.error("Error during delete service binding: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service binding: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete service binding: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1252,13 +1252,13 @@ module AdminUI
         @operation.delete_service_broker(params[:service_broker_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service broker: #{error.to_h}")
+        @logger.error("Error during delete service broker: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service broker: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete service broker: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1272,13 +1272,13 @@ module AdminUI
         @operation.delete_service_instance(params[:service_instance_guid], params[:is_gateway_service], recursive)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service instance: #{error.to_h}")
+        @logger.error("Error during delete service instance: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service instance: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete service instance: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1289,13 +1289,13 @@ module AdminUI
         @operation.delete_service_key(params[:service_key_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service key: #{error.to_h}")
+        @logger.error("Error during delete service key: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service key: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete service key: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1306,13 +1306,13 @@ module AdminUI
         @operation.delete_service_plan(params[:service_plan_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service plan: #{error.to_h}")
+        @logger.error("Error during delete service plan: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service plan: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete service plan: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1323,13 +1323,13 @@ module AdminUI
         @operation.delete_service_plan_visibility(params[:service_plan_visibility_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service plan visibility: #{error.to_h}")
+        @logger.error("Error during delete service plan visibility: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service plan visibility: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete service plan visibility: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1343,13 +1343,13 @@ module AdminUI
         @operation.delete_service(params[:service_guid], purge)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete service: #{error.to_h}")
+        @logger.error("Error during delete service: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete service: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete service: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1360,13 +1360,13 @@ module AdminUI
         @operation.delete_space_quota_definition(params[:space_quota_definition_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete space quota definition: #{error.to_h}")
+        @logger.error("Error during delete space quota definition: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete space quota definition: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete space quota definition: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1377,13 +1377,13 @@ module AdminUI
         @operation.delete_space_quota_definition_space(params[:space_quota_definition_guid], params[:space_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete space quota definition space: #{error.to_h}")
+        @logger.error("Error during delete space quota definition space: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete space quota definition space: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete space quota definition space: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1397,13 +1397,13 @@ module AdminUI
         @operation.delete_space(params[:space_guid], recursive)
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete space: #{error.to_h}")
+        @logger.error("Error during delete space: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete space: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete space: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1414,13 +1414,13 @@ module AdminUI
         @operation.delete_space_role(params[:space_guid], params[:role], params[:user_guid])
         204
       rescue CCRestClientResponseError => error
-        @logger.debug("Error during delete space role: #{error.to_h}")
+        @logger.error("Error during delete space role: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.debug("Error during delete space role: #{error.inspect}")
-        @logger.debug(error.backtrace.join("\n"))
+        @logger.error("Error during delete space role: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
         500
       end
     end
@@ -1449,8 +1449,8 @@ module AdminUI
         redirect @login.login_redirect_uri(local_redirect_uri(request)), 303
       end
     rescue => error
-      @logger.debug("Error during redirect_to_login: #{error.inspect}")
-      @logger.debug(error.backtrace.join("\n"))
+      @logger.error("Error during redirect_to_login: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
       halt 500, error.message
     end
 

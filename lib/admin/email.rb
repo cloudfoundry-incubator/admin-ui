@@ -36,7 +36,7 @@ module AdminUI
 
         @logger.debug("Email '#{title}' sent to #{recipients}")
       rescue => error
-        @logger.debug("Error sending email '#{title}' to addresses #{recipients}: #{error}")
+        @logger.error("Error sending email '#{title}' to addresses #{recipients}: #{error}")
       end
     end
 
