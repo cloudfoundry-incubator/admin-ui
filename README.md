@@ -22,9 +22,9 @@ access GitHub.com, RubyGems.org, Ubuntu software repositories, etc.
 
 ## Installation Steps
 
-### Ubuntu 10.04.4 64 bit
+### Ubuntu 14.04.3 64 bit
 
-This has been tested on Ubuntu 10.04.4 64 bit, Ubuntu 12.04.3 64 bit and Ubuntu 13.04 64 bit.
+This has been tested on Ubuntu 10.04.4 64 bit, Ubuntu 12.04.3 64 bit, Ubuntu 13.04 64 bit and Ubuntu 14.04.3 64 bit.
 
 ### Ubuntu Prerequisite Libraries
 
@@ -38,7 +38,7 @@ sudo apt-get install -f -y --no-install-recommends git-core build-essential libs
 
 ### Ruby
 
-Ruby is required to run the Administration UI.  This has been tested with Ruby 1.9.3-p484.
+Ruby is required to run the Administration UI.  This has been tested with Ruby 2.1.7 with previous testing performed on Ruby 1.9.3-p484.
 Here is a sample installation of ruby using rbenv:
 
 ```
@@ -47,8 +47,8 @@ git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-bu
 echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.profile
 echo 'eval "$(rbenv init -)"' >> ~/.profile
 . ~/.profile
-rbenv install 1.9.3-p484
-rbenv global 1.9.3-p484
+rbenv install 2.1.7
+rbenv global 2.1.7
 ```
 
 ### Ruby Bundler Gem
