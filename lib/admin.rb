@@ -114,7 +114,15 @@ module AdminUI
     def display_files
       return if @testing
       puts "\n\n"
-      puts 'AdminUI files...'
+      puts 'AdminUI...'
+
+      begin
+        puts "  #{RUBY_ENGINE}   #{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}"
+        @logger.info("#{RUBY_ENGINE} #{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}")
+      rescue => error
+        @logger.error("Unable to display RUBY_ENGINE, RUBY_VERSION or RUBY_PATCHLEVEL: #{error.inspect}")
+      end
+
       puts "  data:  #{@config.data_file}"
       puts "  log:   #{@config.log_file}"
       puts "  stats: #{@config.db_uri}"
