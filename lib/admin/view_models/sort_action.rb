@@ -56,27 +56,26 @@ module AdminUI
 
     def self.create_array_from_params(source, params)
       case_insensitive_sort_columns = source[:case_insensitive_sort_columns]
-      i_sorting_cols                = params[:iSortingCols].to_i
+      order                         = params[:order]
 
       result = []
 
+      return result if order.nil?
+      return result unless order.is_a?(Hash)
+
       sort_indices_used = Set.new
 
-      index = 0
-      while index < i_sorting_cols
-        sort_col = params["iSortCol_#{index}"]
-        unless sort_col.nil?
-          i_sort_col = sort_col.to_i
-          unless sort_indices_used.add?(i_sort_col).nil?
-            s_sort_dir = params["sSortDir_#{index}"]
-            if %w(asc desc).include?(s_sort_dir)
-              case_insensitive_sort_column = case_insensitive_sort_columns.include?(i_sort_col)
-              result.push(SortColumn.new(i_sort_col, s_sort_dir == 'asc', case_insensitive_sort_column))
-            end
-          end
-        end
+      order.each_value do |value|
+        next unless value.is_a?(Hash)
 
-        index += 1
+        sort_index = value[:column].to_i
+        sort_dir   = value[:dir]
+
+        next if sort_indices_used.add?(sort_index).nil?
+        next unless %w(asc desc).include?(sort_dir)
+
+        case_insensitive_sort_column = case_insensitive_sort_columns.include?(sort_index)
+        result.push(SortColumn.new(sort_index, sort_dir == 'asc', case_insensitive_sort_column))
       end
 
       result

@@ -928,8 +928,8 @@ describe AdminUI::Admin, type: :integration do
       let(:retrieved) { get_json(path) }
       it 'retrieves' do
         expect(retrieved).to_not be(nil)
-        expect(retrieved['iTotalRecords']).to eq(view_model_source.length)
-        expect(retrieved['iTotalDisplayRecords']).to eq(view_model_source.length)
+        expect(retrieved['recordsTotal']).to eq(view_model_source.length)
+        expect(retrieved['recordsFiltered']).to eq(view_model_source.length)
         outer_items = retrieved['items']
         expect(outer_items).to_not be(nil)
         expect(outer_items['connected']).to eq(true)

@@ -271,7 +271,7 @@ describe AdminUI::Config do
       end
 
       it 'table_height' do
-        table_height = '300px'
+        table_height = '287px'
         config = AdminUI::Config.load('table_height' => table_height)
         expect(config.table_height).to eq(table_height)
       end
@@ -472,7 +472,7 @@ describe AdminUI::Config do
       end
 
       it 'table_height' do
-        expect(config.table_height).to eq('300px')
+        expect(config.table_height).to eq('287px')
       end
 
       it 'table_page_size' do

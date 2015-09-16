@@ -23,7 +23,7 @@ module AdminUI
       stats_refresh_schedules:                  ['0 5 * * *'],
       stats_retries:                                        5,
       stats_retry_interval:                               300,
-      table_height:                                   '300px',
+      table_height:                                   '287px',
       table_page_size:                                     10,
       tasks_refresh_interval:                           5_000,
       uaa_groups_admin:                    ['admin_ui.admin'],

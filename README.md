@@ -541,7 +541,7 @@ Example: <code>300</code>
 <code>table_height</code>
 <dt>
 <dd>
-Maximum height of the data table, will be set to 300px if not configured.  If the records on the page are too large
+Maximum height of the data table, will be set to 287px if not configured.  If the records on the page are too large
 to fit in this height then a vertical scroll bar will appear in the table.  Can be set to either a specific pixel size
 or a percentage.  Using 100% will ensure that all data will be displayed without a scroll bar in the table.
 <br>
