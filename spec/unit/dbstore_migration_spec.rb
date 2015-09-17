@@ -6,38 +6,35 @@ require 'yajl'
 require_relative '../spec_helper'
 
 describe AdminUI::DBStoreMigration do
-  let(:backup_stats_file)      { '/tmp/admin_ui_stats.json.bak' }
-  let(:ccdb_file)              { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri)               { "sqlite://#{ccdb_file}" }
-  let(:cloud_controller_uri)   { 'http://api.localhost' }
-  let(:config_file)            { '/tmp/admin_ui.yml' }
-  let(:data_file)              { '/tmp/admin_ui_data.json' }
-  let(:db_file)                { '/tmp/admin_ui_store.db' }
-  let(:db_migration_dir)       { 'db/migrations' }
-  let(:db_migration_spec_dir)  { 'spec/db' }
-  let(:db_uri)                 { "sqlite://#{db_file}" }
-  let(:host)                   { 'localhost' }
-  let(:log_file)               { '/tmp/admin_ui.log' }
-  let(:plans)                  { ['20140530_new_initial_schema.rb', '201405301000_change_table_schema.rb'] }
-  let(:port)                   { 8071 }
-  let(:stats_file)             { '/tmp/admin_ui_stats.json' }
-  let(:stats_file_spec)        { 'stats.json' }
-  let(:tasks_fresh_interval)   { 6000 }
-  let(:tasks_refresh_interval) { 6000 }
-  let(:uaadb_file)             { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri)              { "sqlite://#{uaadb_file}" }
-  let(:config)                 do
+  let(:backup_stats_file)     { '/tmp/admin_ui_stats.json.bak' }
+  let(:ccdb_file)             { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri)              { "sqlite://#{ccdb_file}" }
+  let(:cloud_controller_uri)  { 'http://api.localhost' }
+  let(:config_file)           { '/tmp/admin_ui.yml' }
+  let(:data_file)             { '/tmp/admin_ui_data.json' }
+  let(:db_file)               { '/tmp/admin_ui_store.db' }
+  let(:db_migration_dir)      { 'db/migrations' }
+  let(:db_migration_spec_dir) { 'spec/db' }
+  let(:db_uri)                { "sqlite://#{db_file}" }
+  let(:host)                  { 'localhost' }
+  let(:log_file)              { '/tmp/admin_ui.log' }
+  let(:plans)                 { ['20140530_new_initial_schema.rb', '201405301000_change_table_schema.rb'] }
+  let(:port)                  { 8071 }
+  let(:stats_file)            { '/tmp/admin_ui_stats.json' }
+  let(:stats_file_spec)       { 'stats.json' }
+  let(:uaadb_file)            { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri)             { "sqlite://#{uaadb_file}" }
+  let(:config) do
     {
-      ccdb_uri:               ccdb_uri,
-      cloud_controller_uri:   cloud_controller_uri,
-      data_file:              data_file,
-      log_file:               log_file,
-      mbus:                   'nats://nats:c1oudc0w@localhost:14222',
-      port:                   port,
-      db_uri:                 db_uri,
-      tasks_refresh_interval: tasks_fresh_interval,
-      uaadb_uri:              uaadb_uri,
-      uaa_client:             { id: 'id', secret: 'secret' }
+      ccdb_uri:             ccdb_uri,
+      cloud_controller_uri: cloud_controller_uri,
+      data_file:            data_file,
+      log_file:             log_file,
+      mbus:                 'nats://nats:c1oudc0w@localhost:14222',
+      port:                 port,
+      db_uri:               db_uri,
+      uaadb_uri:            uaadb_uri,
+      uaa_client:           { id: 'id', secret: 'secret' }
     }
   end
 

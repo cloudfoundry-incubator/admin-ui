@@ -25,7 +25,6 @@ module AdminUI
       stats_retry_interval:                               300,
       table_height:                                   '287px',
       table_page_size:                                     10,
-      tasks_refresh_interval:                           5_000,
       uaa_groups_admin:                    ['admin_ui.admin'],
       uaa_groups_user:                      ['admin_ui.user'],
       varz_discovery_interval:                             30
@@ -78,7 +77,6 @@ module AdminUI
           optional(:stats_retry_interval)                => Integer,
           optional(:table_height)                        => /[^\r\n\t]+/,
           optional(:table_page_size)                     => enum(5, 10, 25, 50, 100, 250, 500, 1000),
-          optional(:tasks_refresh_interval)              => Integer,
           uaa_client:
           {
             id:     /[^\r\n\t]+/,
@@ -282,10 +280,6 @@ module AdminUI
 
     def table_page_size
       @config[:table_page_size]
-    end
-
-    def tasks_refresh_interval
-      @config[:tasks_refresh_interval]
     end
 
     def uaa_client_id

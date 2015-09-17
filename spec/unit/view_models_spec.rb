@@ -25,10 +25,9 @@ describe AdminUI::ViewModels do
   let(:email) { AdminUI::EMail.new(config, logger) }
   let(:log_files) { AdminUI::LogFiles.new(config, logger) }
   let(:nats) { AdminUI::NATS.new(config, logger, email) }
-  let(:tasks) { AdminUI::Tasks.new(config, logger) }
   let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
   let(:stats) { AdminUI::Stats.new(config, logger, cc, varz, true) }
-  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, tasks, varz, true) }
+  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, varz, true) }
 
   before do
     config_stub
@@ -320,10 +319,6 @@ describe AdminUI::ViewModels do
 
     it 'returns zero stats as expected' do
       verify_connected_one_item(view_models.stats)
-    end
-
-    it 'returns zero tasks as expected' do
-      verify_connected_zero_items(view_models.tasks)
     end
   end
 end

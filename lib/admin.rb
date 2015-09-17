@@ -15,7 +15,6 @@ require_relative 'admin/nats'
 require_relative 'admin/operation'
 require_relative 'admin/secure_web'
 require_relative 'admin/stats'
-require_relative 'admin/tasks'
 require_relative 'admin/varz'
 require_relative 'admin/view_models'
 require_relative 'admin/web'
@@ -103,11 +102,10 @@ module AdminUI
       @cc          = CC.new(@config, @logger, @testing)
       @log_files   = LogFiles.new(@config, @logger)
       @login       = Login.new(@config, @logger, @client)
-      @tasks       = Tasks.new(@config, @logger)
       @nats        = NATS.new(@config, @logger, email)
       @varz        = VARZ.new(@config, @logger, @nats, @testing)
       @stats       = Stats.new(@config, @logger, @cc, @varz, @testing)
-      @view_models = ViewModels.new(@config, @logger, @cc, @log_files, @stats, @tasks, @varz, @testing)
+      @view_models = ViewModels.new(@config, @logger, @cc, @log_files, @stats, @varz, @testing)
       @operation   = Operation.new(@config, @logger, @cc, @client, @varz, @view_models)
     end
 
@@ -176,7 +174,6 @@ module AdminUI
                           @log_files,
                           @operation,
                           @stats,
-                          @tasks,
                           @varz,
                           @view_models)
 

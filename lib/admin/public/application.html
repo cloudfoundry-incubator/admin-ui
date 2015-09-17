@@ -58,7 +58,6 @@
         <script src="js/app/tabs/spacesTab.js"></script>
         <script src="js/app/tabs/stacksTab.js"></script>
         <script src="js/app/tabs/statsTab.js"></script>
-        <script src="js/app/tabs/tasksTab.js"></script>
         <script src="js/app/tabs/usersTab.js"></script>
         <script src="js/app/adminUI.js"></script>
 
@@ -128,7 +127,6 @@
                 <span id="Routers" class="menuItem">Routers</span>
                 <span id="Components" class="menuItem">Components</span>
                 <span id="Logs" class="menuItem">Logs</span>
-                <span id="Tasks" class="menuItem hiddenPage">Tasks</span>
                 <span id="Stats" class="menuItem">Stats</span>
             </div>
             <img id="MenuButtonRight" src="images/forward.png" class="menuButtonRight"/>
@@ -1142,24 +1140,6 @@
                         </div>
 
                         <pre id="LogContents" class="logContents"></pre>
-                    </div>
-                </div>
-            </div>
-
-            <div id="TasksPage" class="page hiddenPage">
-                <div id="TasksTableContainer" class="pageSection">
-                    <table id="TasksTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
-                </div>
-
-                <div class="verticalPageSection">
-                    <div id="TaskContainer">
-                        <div class="taskCheckboxContainer">
-                            <input type="checkbox" id="TaskShowTimestamps">timestamps</input>
-                            <input type="checkbox" id="TaskShowStandardOut" checked>stdout</input>
-                            <input type="checkbox" id="TaskShowStandardError">stderr</input>
-                        </div>
-
-                        <pre id="TaskContents" class="logContents"></pre>
                     </div>
                 </div>
             </div>

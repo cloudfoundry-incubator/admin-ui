@@ -192,24 +192,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'DEAs tab does not have a create DEA button' do
-      it_behaves_like('verifies first button is copy button') do
-        let(:tab_id)    { 'DEAs' }
-        let(:page_id)   { 'DEAsPage' }
-        let(:button_id) { 'ToolTables_DEAsTable_0' }
-      end
-    end
-
     context 'Components tab does not have a remove all components button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Components' }
         let(:page_id)   { 'ComponentsPage' }
         let(:button_id) { 'ToolTables_ComponentsTable_0' }
       end
-    end
-
-    it 'Tasks tab does not exist' do
-      expect(scroll_tab_into_view('Tasks', true).displayed?).to be(false)
     end
 
     context 'Stats tab does not have a create stats button' do

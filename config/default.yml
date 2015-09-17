@@ -25,7 +25,6 @@ stats_file: data/stats.json
 stats_refresh_schedules: [ '0 5 * * *' ]
 stats_retries: 5
 stats_retry_interval: 300
-tasks_refresh_interval: 5000
 uaa_client:
   id: admin_ui_client
   secret: admin_ui_secret

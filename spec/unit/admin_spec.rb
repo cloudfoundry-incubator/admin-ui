@@ -1179,10 +1179,6 @@ describe AdminUI::Admin do
         verify_not_found('/stacks_view_model/stack1')
       end
 
-      it '/tasks_view_model succeeds' do
-        verify_connected_view_model_empty_items('/tasks_view_model')
-      end
-
       it '/users_view_model succeeds' do
         verify_disconnected_view_model_items('/users_view_model')
       end
@@ -1502,14 +1498,6 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/stacks_view_model/stack1')
       end
 
-      it '/tasks_view_model redirects as expected' do
-        get_redirects_as_expected('/tasks_view_model')
-      end
-
-      it '/task_status redirects as expected' do
-        get_redirects_as_expected('/task_status')
-      end
-
       it '/users_view_model redirects as expected' do
         get_redirects_as_expected('/users_view_model')
       end
@@ -1752,10 +1740,6 @@ describe AdminUI::Admin do
 
       it 'posts /stats_view_model redirects as expected' do
         post_redirects_as_expected('/stats_view_model')
-      end
-
-      it 'posts /tasks_view_model redirects as expected' do
-        post_redirects_as_expected('/tasks_view_model')
       end
 
       it 'posts /users_view_model redirects as expected' do

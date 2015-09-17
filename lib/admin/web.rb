@@ -8,7 +8,7 @@ require_relative 'view_models/download'
 
 module AdminUI
   class Web < Sinatra::Base
-    def initialize(config, logger, cc, client, login, log_files, operation, stats, tasks, varz, view_models)
+    def initialize(config, logger, cc, client, login, log_files, operation, stats, varz, view_models)
       super({})
 
       @config      = config
@@ -19,7 +19,6 @@ module AdminUI
       @log_files   = log_files
       @operation   = operation
       @stats       = stats
-      @tasks       = tasks
       @varz        = varz
       @view_models = view_models
     end
@@ -341,13 +340,12 @@ module AdminUI
 
     get '/settings', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/settings')
-      Yajl::Encoder.encode(admin:                  session[:admin],
-                           build:                  @client.build,
-                           cloud_controller_uri:   @config.cloud_controller_uri,
-                           table_height:           @config.table_height,
-                           table_page_size:        @config.table_page_size,
-                           tasks_refresh_interval: @config.tasks_refresh_interval,
-                           user:                   session[:username])
+      Yajl::Encoder.encode(admin:                session[:admin],
+                           build:                @client.build,
+                           cloud_controller_uri: @config.cloud_controller_uri,
+                           table_height:         @config.table_height,
+                           table_page_size:      @config.table_page_size,
+                           user:                 session[:username])
     end
 
     get '/service_bindings_view_model', auth: [:user] do
@@ -500,25 +498,6 @@ module AdminUI
       send_file File.expand_path('stats.html', settings.public_folder)
     end
 
-    get '/tasks_view_model', auth: [:user] do
-      @logger.info_user(session[:username], 'get', '/tasks_view_model')
-      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.tasks, params).items)
-    end
-
-    get '/task_status', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/task_status?task_id=#{params['task_id']};updates=#{params['updates']}")
-      result = @tasks.task(params['task_id'].to_i,
-                           params['updates'] || 'false',
-                           session[:last_task_update] || 0)
-
-      if result.nil?
-        Yajl::Encoder.encode({})
-      else
-        session[:last_task_update] = result[:updated]
-        Yajl::Encoder.encode(result)
-      end
-    end
-
     get '/users_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/users_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.users, params).items)
@@ -594,13 +573,6 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'components.csv')
-    end
-
-    post '/deas', auth: [:admin] do
-      @logger.info_user(session[:username], 'post', '/deas')
-      result = { task_id: @tasks.new_dea }
-      @view_models.invalidate_tasks
-      Yajl::Encoder.encode(result)
     end
 
     post '/deas_view_model', auth: [:user] do
@@ -857,14 +829,6 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'stats.csv')
-    end
-
-    post '/tasks_view_model', auth: [:user] do
-      @logger.info_user(session[:username], 'post', '/tasks_view_model')
-      file = Download.download(request.body.read, 'tasks', @view_models.tasks)
-      send_file(file.path,
-                disposition: 'attachment',
-                filename:    'tasks.csv')
     end
 
     post '/users_view_model', auth: [:user] do

@@ -282,12 +282,6 @@ describe AdminUI::Config do
         expect(config.table_page_size).to eq(table_page_size)
       end
 
-      it 'tasks_refresh_interval' do
-        tasks_refresh_interval = 99
-        config = AdminUI::Config.load('tasks_refresh_interval' => tasks_refresh_interval)
-        expect(config.tasks_refresh_interval).to eq(tasks_refresh_interval)
-      end
-
       it 'uaadb_uri' do
         uaadb_uri = 'sqlite://bogus2.db'
         config = AdminUI::Config.load('uaadb_uri' => uaadb_uri)
@@ -477,10 +471,6 @@ describe AdminUI::Config do
 
       it 'table_page_size' do
         expect(config.table_page_size).to eq(10)
-      end
-
-      it 'tasks_refresh_interval' do
-        expect(config.tasks_refresh_interval).to eq(5_000)
       end
 
       context 'uaa_client' do
@@ -702,10 +692,6 @@ describe AdminUI::Config do
 
       it 'table_page_size' do
         expect { AdminUI::Config.load(config.merge(table_page_size: 6)) }.to raise_error(Membrane::SchemaValidationError)
-      end
-
-      it 'tasks_refresh_interval' do
-        expect { AdminUI::Config.load(config.merge(tasks_refresh_interval: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'uaadb_uri' do

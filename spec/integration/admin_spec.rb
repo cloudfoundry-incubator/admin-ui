@@ -1318,7 +1318,6 @@ describe AdminUI::Admin, type: :integration do
                                 'cloud_controller_uri'   => cloud_controller_uri,
                                 'table_height'           => table_height,
                                 'table_page_size'        => table_page_size,
-                                'tasks_refresh_interval' => tasks_refresh_interval,
                                 'user'                   => LoginHelper::LOGIN_ADMIN)
       end
     end
@@ -1388,51 +1387,6 @@ describe AdminUI::Admin, type: :integration do
       let(:path)              { "/users_view_model/#{cc_user[:guid]}" }
       let(:view_model_source) { view_models_users_detail }
       it_behaves_like('retrieves view_model detail')
-    end
-  end
-
-  context 'tasks' do
-    let(:http)   { create_http }
-    let(:cookie) { login_and_return_cookie(http) }
-
-    it 'creates DEA, retrieves all tasks and retrieves status' do
-      request = Net::HTTP::Post.new('/deas')
-      request['Cookie']         = cookie
-      request['Content-Length'] = 0
-
-      response = http.request(request)
-      expect(response.is_a?(Net::HTTPOK)).to be(true)
-
-      body = response.body
-      expect(body).to_not be_nil
-
-      json = Yajl::Parser.parse(body)
-
-      expect(json).to include('task_id' => 0)
-
-      tasks_view_model = get_json('/tasks_view_model')
-      items = tasks_view_model['items']['items']
-      expect(items.length).to eq(1)
-      item = items[0]
-      expect(item[0]).to_not be_nil
-      expect(item[1]).to eq('RUNNING')
-      expect(item[2]).to_not be_nil
-      expect(item[3]).to eq(0)
-
-      task_status = get_json('/task_status?task_id=0', true)
-      expect(task_status['id']).to eq(0)
-      expect(task_status['state']).to eq('RUNNING')
-      expect(task_status['updated']).to be > 0
-      output = task_status['output']
-      found_out = false
-      output.each do |out|
-        next unless out['type'] == 'out'
-        found_out = true
-        expect(out['text'].start_with?('Creating new DEA')).to be(true)
-        expect(out['time']).to be > 0
-        break
-      end
-      expect(found_out).to be(true)
     end
   end
 end

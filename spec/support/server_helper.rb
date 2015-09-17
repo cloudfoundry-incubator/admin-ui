@@ -33,25 +33,23 @@ shared_context :server_context do
   let(:port) { 8071 }
   let(:table_height) { '300px' }
   let(:table_page_size) { 10 }
-  let(:tasks_refresh_interval) { 6000 }
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri) { "sqlite://#{uaadb_file}" }
   let(:config) do
     {
-      ccdb_uri:               ccdb_uri,
-      cloud_controller_uri:   cloud_controller_uri,
-      data_file:              data_file,
-      db_uri:                 db_uri,
-      log_file:               log_file,
-      log_file_page_size:     log_file_page_size,
-      log_files:              [log_file_displayed],
-      mbus:                   'nats://nats:c1oudc0w@localhost:14222',
-      port:                   port,
-      table_height:           table_height,
-      table_page_size:        table_page_size,
-      tasks_refresh_interval: tasks_refresh_interval,
-      uaadb_uri:              uaadb_uri,
-      uaa_client:             { id: 'id', secret: 'secret' }
+      ccdb_uri:             ccdb_uri,
+      cloud_controller_uri: cloud_controller_uri,
+      data_file:            data_file,
+      db_uri:               db_uri,
+      log_file:             log_file,
+      log_file_page_size:   log_file_page_size,
+      log_files:            [log_file_displayed],
+      mbus:                 'nats://nats:c1oudc0w@localhost:14222',
+      port:                 port,
+      table_height:         table_height,
+      table_page_size:      table_page_size,
+      uaadb_uri:            uaadb_uri,
+      uaa_client:           { id: 'id', secret: 'secret' }
     }
   end
 

@@ -33,12 +33,11 @@ require_relative 'view_models/space_roles_view_model'
 require_relative 'view_models/spaces_view_model'
 require_relative 'view_models/stacks_view_model'
 require_relative 'view_models/stats_view_model'
-require_relative 'view_models/tasks_view_model'
 require_relative 'view_models/users_view_model'
 
 module AdminUI
   class ViewModels
-    def initialize(config, logger, cc, log_files, stats, tasks, varz, testing)
+    def initialize(config, logger, cc, log_files, stats, varz, testing)
       @logger  = logger
       @testing = testing
 
@@ -84,7 +83,6 @@ module AdminUI
           spaces:                    { clazz: AdminUI::SpacesViewModel },
           stacks:                    { clazz: AdminUI::StacksViewModel },
           stats:                     { clazz: AdminUI::StatsViewModel },
-          tasks:                     { clazz: AdminUI::TasksViewModel },
           users:                     { clazz: AdminUI::UsersViewModel }
         }
 
@@ -92,7 +90,7 @@ module AdminUI
         cache.merge!(condition:          ConditionVariable.new,
                      result:             nil,
                      semaphore:          Mutex.new,
-                     view_model_factory: cache[:clazz].new(@logger, cc, log_files, stats, tasks, varz, @testing))
+                     view_model_factory: cache[:clazz].new(@logger, cc, log_files, stats, varz, @testing))
 
         schedule(key)
       end
@@ -200,10 +198,6 @@ module AdminUI
 
     def invalidate_stats
       invalidate_cache(:stats)
-    end
-
-    def invalidate_tasks
-      invalidate_cache(:tasks)
     end
 
     def application_instance(app_guid, instance_id)
@@ -471,10 +465,6 @@ module AdminUI
 
     def stats
       result_cache(:stats)
-    end
-
-    def tasks
-      result_cache(:tasks)
     end
 
     def user(guid)

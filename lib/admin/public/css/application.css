@@ -362,13 +362,6 @@ a
     left: 3px;
 }
 
-.taskCheckboxContainer
-{
-    font-size: .95em; 
-    margin-left: 10px;
-    margin-bottom: 2px;  
-}
-
 .modalDialogBackground
 {
     position: fixed;

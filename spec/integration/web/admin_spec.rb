@@ -76,7 +76,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('Routes').displayed?).to be(true)
       expect(scroll_tab_into_view('Components').displayed?).to be(true)
       expect(scroll_tab_into_view('Logs').displayed?).to be(true)
-      expect(scroll_tab_into_view('Tasks').displayed?).to be(true)
       expect(scroll_tab_into_view('Stats').displayed?).to be(true)
     end
 
@@ -3771,11 +3770,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_DEAsTable_1')
-        end
-
-        it 'has a Create new DEA button' do
-          expect(@driver.find_element(id: 'ToolTables_DEAsTable_0').text).to eq('Create new DEA')
+          check_allowscriptaccess_attribute('ToolTables_DEAsTable_0')
         end
 
         context 'selectable' do
@@ -4144,56 +4139,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has allowscriptaccess property set to sameDomain' do
           check_allowscriptaccess_attribute('ToolTables_LogsTable_0')
-        end
-      end
-
-      context 'Tasks' do
-        let(:tab_id) { 'Tasks' }
-        let(:table_has_data) { false }
-
-        it 'has a table' do
-          check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='TasksTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
-                                 expected_length: 3,
-                                 labels:          %w(Command State Started),
-                                 colspans:        nil
-                               }
-                             ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_TasksTable_0')
-        end
-
-        it 'can show task output' do
-          expect(@driver.find_element(xpath: "//table[@id='TasksTable']/tbody/tr").text).to eq('No data available in table')
-          @driver.find_element(id: 'DEAs').click
-          @driver.find_element(id: 'ToolTables_DEAsTable_0').click
-          @driver.find_element(id: 'modalDialogButton0').click
-          @driver.find_element(id: 'modalDialogButton0').click
-          @driver.find_element(id: 'Tasks').click
-
-          # As the page refreshes, we need to catch the stale element error and re-find the element on the page
-          begin
-            Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr").length == 1 }
-          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-          end
-          expect(@driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr").length).to eq(1)
-
-          begin
-            Selenium::WebDriver::Wait.new(timeout: 5).until do
-              refresh_button
-              cells = @driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr/td")
-              cells[0].text == File.join(File.dirname(__FILE__)[0..-22], 'lib/admin/scripts', 'newDEA.sh') &&
-                cells[1].text == @driver.execute_script('return Constants.STATUS__RUNNING')
-            end
-          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-          end
-          cells = @driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr/td")
-          expect(cells[0].text).to eq(File.join(File.dirname(__FILE__)[0..-22], 'lib/admin/scripts', 'newDEA.sh'))
-          expect(cells[1].text).to eq(@driver.execute_script('return Constants.STATUS__RUNNING'))
-
-          @driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr")[0].click
-          expect(@driver.find_element(id: 'TaskContents').text.length > 0).to be(true)
         end
       end
 
