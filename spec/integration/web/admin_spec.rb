@@ -1336,7 +1336,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ServiceInstancesTable_3')
+          check_allowscriptaccess_attribute('ToolTables_ServiceInstancesTable_4')
         end
 
         it 'has a checkbox in the first column' do
@@ -1356,6 +1356,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ToolTables_ServiceInstancesTable_2').text).to eq('Delete Recursive')
           end
 
+          it 'has a Purge button' do
+            expect(@driver.find_element(id: 'ToolTables_ServiceInstancesTable_3').text).to eq('Purge')
+          end
+
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'ToolTables_ServiceInstancesTable_0' }
@@ -1371,6 +1375,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           context 'Delete Recursive button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'ToolTables_ServiceInstancesTable_2' }
+            end
+          end
+
+          context 'Purge button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'ToolTables_ServiceInstancesTable_3' }
             end
           end
 
@@ -1393,6 +1403,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'ToolTables_ServiceInstancesTable_2' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service instances and their associated service bindings and service keys?' }
+            end
+          end
+
+          context 'Purge button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'ToolTables_ServiceInstancesTable_3' }
+              let(:confirm_message) { 'Are you sure you want to purge the selected service instances?' }
             end
           end
         end

@@ -80,7 +80,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Service Instances tab does not have rename or delete buttons' do
+    context 'Service Instances tab does not have rename, delete, delete recursive or purge buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceInstances' }
         let(:page_id)   { 'ServiceInstancesPage' }

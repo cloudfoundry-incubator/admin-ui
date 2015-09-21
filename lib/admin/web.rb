@@ -1229,11 +1229,15 @@ module AdminUI
 
     delete '/service_instances/:service_instance_guid/:is_gateway_service', auth: [:admin] do
       recursive = params[:recursive] == 'true'
+      purge     = params[:purge] == 'true'
       url = "/service_instances/#{params[:service_instance_guid]}/#{params[:is_gateway_service]}"
-      url += '?recursive=true' if recursive
+      if recursive
+        url += '?recursive=true'
+        url += '&purge=true' if purge
+      end
       @logger.info_user(session[:username], 'delete', url)
       begin
-        @operation.delete_service_instance(params[:service_instance_guid], params[:is_gateway_service], recursive)
+        @operation.delete_service_instance(params[:service_instance_guid], params[:is_gateway_service], recursive, purge)
         204
       rescue CCRestClientResponseError => error
         @logger.error("Error during delete service instance: #{error.to_h}")

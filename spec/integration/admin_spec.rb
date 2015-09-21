@@ -676,6 +676,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/#{cc_service_instance[:is_gateway_service]}?recursive=true"]], true)
     end
 
+    def delete_service_instance_recursive_purge
+      response = delete_request("/service_instances/#{cc_service_instance[:guid]}/#{cc_service_instance[:is_gateway_service]}?recursive=true&purge=true")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/#{cc_service_instance[:is_gateway_service]}?recursive=true&purge=true"]], true)
+    end
+
     it 'has user name and service instances request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_instances_view_model']], true)
     end
@@ -690,6 +696,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a service instance recursive' do
       expect { delete_service_instance_recursive }.to change { get_json('/service_instances_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes a service instance recursive purge' do
+      expect { delete_service_instance_recursive_purge }.to change { get_json('/service_instances_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 

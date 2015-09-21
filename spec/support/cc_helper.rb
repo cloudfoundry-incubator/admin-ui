@@ -1538,6 +1538,15 @@ module CCHelper
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}?recursive=true&purge=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_service_instances_deleted
+        cc_service_instance_not_found
+      else
+        cc_clear_service_instances_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
   end
 
   def cc_service_key_not_found

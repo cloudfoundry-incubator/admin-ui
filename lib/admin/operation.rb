@@ -176,9 +176,12 @@ module AdminUI
       @view_models.invalidate_service_plan_visibilities
     end
 
-    def delete_service_instance(service_instance_guid, is_gateway_service, recursive)
+    def delete_service_instance(service_instance_guid, is_gateway_service, recursive, purge)
       url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}" : "/v2/user_provided_service_instances/#{service_instance_guid}"
-      url += '?recursive=true' if recursive
+      if recursive
+        url += '?recursive=true'
+        url += '&purge=true' if purge
+      end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_instances

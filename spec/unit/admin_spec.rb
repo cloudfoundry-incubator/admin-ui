@@ -553,6 +553,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete service instance recursive')
     end
 
+    shared_examples 'common delete service instance recursive purge' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_instances/service_instance1/true?recursive=true&purge=true')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service instance recursive purge via http' do
+      it_behaves_like('common delete service instance recursive purge')
+    end
+
+    context 'delete service instance recursive purge via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service instance recursive purge')
+    end
+
     shared_examples 'common delete service key' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_keys/service_key1')
@@ -1564,6 +1581,10 @@ describe AdminUI::Admin do
 
       it 'deletes /service_instances/:guid/true?recursive=true redirects as expected' do
         delete_redirects_as_expected('/service_instances/service_instance1/true?recursive=true')
+      end
+
+      it 'deletes /service_instances/:guid/true?recursive=true&purge=true redirects as expected' do
+        delete_redirects_as_expected('/service_instances/service_instance1/true?recursive=true&purge=true')
       end
 
       it 'deletes /service_keys/:guid redirects as expected' do

@@ -762,11 +762,15 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_service_instance
-        operation.delete_service_instance(cc_service_instance[:guid], cc_service_instance[:is_gateway_service], false)
+        operation.delete_service_instance(cc_service_instance[:guid], cc_service_instance[:is_gateway_service], false, false)
       end
 
       def delete_service_instance_recursive
-        operation.delete_service_instance(cc_service_instance[:guid], cc_service_instance[:is_gateway_service], true)
+        operation.delete_service_instance(cc_service_instance[:guid], cc_service_instance[:is_gateway_service], true, false)
+      end
+
+      def delete_service_instance_recursive_purge
+        operation.delete_service_instance(cc_service_instance[:guid], cc_service_instance[:is_gateway_service], true, true)
       end
 
       it 'renames the service instance' do
@@ -779,6 +783,10 @@ describe AdminUI::Operation, type: :integration do
 
       it 'deletes service instance recursive' do
         expect { delete_service_instance_recursive }.to change { cc.service_instances['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes service instance recursive purge' do
+        expect { delete_service_instance_recursive_purge }.to change { cc.service_instances['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -803,6 +811,10 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting recursive deleted service instance' do
           expect { delete_service_instance_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_instance_not_found(exception) }
+        end
+
+        it 'fails deleting recursive purge deleted service instance' do
+          expect { delete_service_instance_recursive_purge }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_instance_not_found(exception) }
         end
       end
     end
