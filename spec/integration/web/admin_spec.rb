@@ -2001,10 +2001,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            # rubocop:disable Style/ExtraSpacing
             check_details([{ label: 'Identity Zone',          tag:   'a', value: uaa_identity_zone[:name] },
-                           # rubocop:enable Style/ExtraSpacing
-                           { label: 'Identifier',             tag: 'div', value: uaa_client[:client_id] },
                            { label: 'Scope',                  tag:   nil, value: uaa_client[:scope] },
                            { label: 'Authorized Grant Type',  tag:   nil, value: uaa_client[:authorized_grant_types] },
                            { label: 'Redirect URI',           tag:   nil, value: uaa_client[:web_server_redirect_uri] },
@@ -2084,9 +2081,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            # rubocop:disable Style/ExtraSpacing
             check_details([{ label: 'Identity Zone',                      tag:   'a', value: uaa_identity_zone[:name] },
-                           # rubocop:enable Style/ExtraSpacing
                            { label: 'Username',                           tag: 'div', value: uaa_user[:username] },
                            { label: 'GUID',                               tag:   nil, value: uaa_user[:id] },
                            { label: 'Created',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_user[:created].to_datetime.rfc3339}\")") },
@@ -3235,9 +3230,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             service_tags_json = Yajl::Parser.parse(cc_service[:tags])
             service_extra_json = Yajl::Parser.parse(cc_service[:extra])
-            # rubocop:disable Style/ExtraSpacing
             check_details([{ label: 'Service Provider',              tag:   nil, value: cc_service[:provider] },
-                           # rubocop:enable Style/ExtraSpacing
                            { label: 'Service Label',                 tag: 'div', value: cc_service[:label] },
                            { label: 'Service GUID',                  tag:   nil, value: cc_service[:guid] },
                            { label: 'Service Unique ID',             tag:   nil, value: cc_service[:unique_id] },
@@ -3731,9 +3724,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            # rubocop:disable Style/ExtraSpacing
             check_details([{ label: 'Identity Zone', tag:   'a', value: uaa_identity_zone[:name] },
-                           # rubocop:enable Style/ExtraSpacing
                            { label: 'Name',          tag: 'div', value: uaa_identity_provider[:name] },
                            { label: 'GUID',          tag:   nil, value: uaa_identity_provider[:id] },
                            { label: 'Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_identity_provider[:created].to_datetime.rfc3339}\")") },
