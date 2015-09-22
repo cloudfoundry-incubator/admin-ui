@@ -14,6 +14,8 @@ module AdminUI
       private_domain_creation:   true,
       route_creation:            true,
       service_instance_creation: true,
+      set_roles_by_username:     true, # Added in cf_release 218
+      unset_roles_by_username:   true, # Added in cf_release 218
       user_org_creation:         false
     }.freeze
 

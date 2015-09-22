@@ -2002,6 +2002,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([{ label: 'Identity Zone',          tag:   'a', value: uaa_identity_zone[:name] },
+                           { label: 'Identifier',             tag: 'div', value: uaa_client[:client_id] },
                            { label: 'Scope',                  tag:   nil, value: uaa_client[:scope] },
                            { label: 'Authorized Grant Type',  tag:   nil, value: uaa_client[:authorized_grant_types] },
                            { label: 'Redirect URI',           tag:   nil, value: uaa_client[:web_server_redirect_uri] },
