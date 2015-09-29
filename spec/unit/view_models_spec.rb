@@ -206,6 +206,14 @@ describe AdminUI::ViewModels do
       verify_disconnected_items(view_models.routes)
     end
 
+    it 'returns nil security_group as expected' do
+      expect(view_models.security_group('bogus')).to be_nil
+    end
+
+    it 'returns zero security_groups as expected' do
+      verify_disconnected_items(view_models.security_groups)
+    end
+
     it 'returns nil service_binding as expected' do
       expect(view_models.service_binding('bogus')).to be_nil
     end

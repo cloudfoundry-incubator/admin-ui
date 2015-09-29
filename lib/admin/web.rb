@@ -338,6 +338,18 @@ module AdminUI
       404
     end
 
+    get '/security_groups_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/security_groups_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.security_groups, params).items)
+    end
+
+    get '/security_groups_view_model/:guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/security_groups_view_model/#{params[:guid]}")
+      result = @view_models.security_group(params[:guid])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/settings', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/settings')
       Yajl::Encoder.encode(admin:                session[:admin],
@@ -703,6 +715,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'routes.csv')
+    end
+
+    post '/security_groups_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/security_groups_view_model')
+      file = Download.download(request.body.read, 'security_groups', @view_models.security_groups)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'security_groups.csv')
     end
 
     post '/service_bindings_view_model', auth: [:user] do
@@ -1188,6 +1208,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete route: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/security_groups/:security_group_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/security_groups/#{params[:security_group_guid]}")
+      begin
+        @operation.delete_security_group(params[:security_group_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete security group: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete security group: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

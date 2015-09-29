@@ -131,6 +131,14 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.routes)
     end
 
+    it 'returns zero security_groups as expected' do
+      verify_disconnected_items(cc.security_groups)
+    end
+
+    it 'returns zero security_groups_spaces as expected' do
+      verify_disconnected_items(cc.security_groups_spaces)
+    end
+
     it 'returns zero service_bindings as expected' do
       verify_disconnected_items(cc.service_bindings)
     end

@@ -451,6 +451,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete route')
     end
 
+    shared_examples 'common delete security group' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/security_groups/security_group1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete security group via http' do
+      it_behaves_like('common delete security group')
+    end
+
+    context 'delete security group via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete security group')
+    end
+
     shared_examples 'common delete service' do
       it 'returns failure code due to disconnection' do
         response = delete('/services/service1')
@@ -1108,6 +1125,14 @@ describe AdminUI::Admin do
         verify_not_found('/routes_view_model/route1')
       end
 
+      it '/security_groups_view_model succeeds' do
+        verify_disconnected_view_model_items('/security_groups_view_model')
+      end
+
+      it '/security_groups_view_model/:guid returns not found' do
+        verify_not_found('/security_groups_view_model/security_group1')
+      end
+
       it '/service_bindings_view_model succeeds' do
         verify_disconnected_view_model_items('/service_bindings_view_model')
       end
@@ -1423,6 +1448,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/routes_view_model/route1')
       end
 
+      it '/security_groups_view_model redirects as expected' do
+        get_redirects_as_expected('/security_groups_view_model')
+      end
+
+      it '/security_groups_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/security_groups_view_model/security_group1')
+      end
+
       it '/settings redirects as expected' do
         get_redirects_as_expected('/settings')
       end
@@ -1565,6 +1598,10 @@ describe AdminUI::Admin do
 
       it 'deletes /routes/:guid redirects as expected' do
         delete_redirects_as_expected('/routes/route1')
+      end
+
+      it 'deletes /security_groups/:guid redirects as expected' do
+        delete_redirects_as_expected('/security_groups/security_group1')
       end
 
       it 'deletes /service_bindings/:guid redirects as expected' do
@@ -1713,6 +1750,10 @@ describe AdminUI::Admin do
 
       it 'posts /routes_view_model redirects as expected' do
         post_redirects_as_expected('/routes_view_model')
+      end
+
+      it 'posts /security_groups_view_model redirects as expected' do
+        post_redirects_as_expected('/security_groups_view_model')
       end
 
       it 'posts /service_bindings_view_model redirects as expected' do

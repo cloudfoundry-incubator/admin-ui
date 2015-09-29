@@ -367,6 +367,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected security_groups_view_model' do
+      let(:results)    { view_models.security_groups }
+      let(:expected)   { view_models_security_groups }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected security_groups_view_model detail' do
+      let(:results)  { view_models.security_group(cc_security_group[:guid]) }
+      let(:expected) { view_models_security_groups_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected service_bindings_view_model' do
       let(:event_type) { 'service_binding' }
       let(:results)    { view_models.service_bindings }

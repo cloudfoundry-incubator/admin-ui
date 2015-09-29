@@ -192,6 +192,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Security Groups tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'SecurityGroups' }
+        let(:page_id)   { 'SecurityGroupsPage' }
+        let(:button_id) { 'ToolTables_SecurityGroupsTable_0' }
+      end
+    end
+
     context 'Components tab does not have a remove all components button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Components' }

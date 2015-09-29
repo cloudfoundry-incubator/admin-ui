@@ -133,6 +133,14 @@ module AdminUI
       @view_models.invalidate_routes
     end
 
+    def delete_security_group(security_group_guid)
+      url = "v2/security_groups/#{security_group_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_security_groups
+      @view_models.invalidate_security_groups
+    end
+
     def delete_service(service_guid, purge)
       url = "v2/services/#{service_guid}"
       url += '?purge=true' if purge

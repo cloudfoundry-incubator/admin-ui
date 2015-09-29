@@ -575,6 +575,24 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_security_groups
+    [
+      [
+        cc_security_group[:guid],
+        cc_security_group[:name],
+        cc_security_group[:guid],
+        cc_security_group[:created_at].to_datetime.rfc3339,
+        cc_security_group[:updated_at].to_datetime.rfc3339,
+        cc_security_group[:staging_default],
+        cc_security_group[:running_default]
+      ]
+    ]
+  end
+
+  def view_models_security_groups_detail
+    cc_security_group
+  end
+
   def view_models_service_bindings
     [
       [

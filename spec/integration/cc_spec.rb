@@ -124,6 +124,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.routes['items'].length).to eq(0)
     end
 
+    it 'clears the security group cache' do
+      expect(cc.security_groups['items'].length).to eq(1)
+      cc_clear_security_groups_cache_stub(config)
+      cc.invalidate_security_groups
+      expect(cc.security_groups['items'].length).to eq(0)
+    end
+
     it 'clears the service cache' do
       expect(cc.services['items'].length).to eq(1)
       cc_clear_services_cache_stub(config)
@@ -369,6 +376,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected routes' do
       let(:results)  { cc.routes }
       let(:expected) { cc_route }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected security_groups' do
+      let(:results)  { cc.security_groups }
+      let(:expected) { cc_security_group }
 
       it_behaves_like('common cc retrieval')
     end

@@ -68,6 +68,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('ServicePlanVisibilities').displayed?).to be(true)
       expect(scroll_tab_into_view('IdentityZones').displayed?).to be(true)
       expect(scroll_tab_into_view('IdentityProviders').displayed?).to be(true)
+      expect(scroll_tab_into_view('SecurityGroups').displayed?).to be(true)
       expect(scroll_tab_into_view('DEAs').displayed?).to be(true)
       expect(scroll_tab_into_view('CloudControllers').displayed?).to be(true)
       expect(scroll_tab_into_view('HealthManagers').displayed?).to be(true)
@@ -3739,6 +3740,100 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has identity zones link' do
             check_filter_link('IdentityProviders', 0, 'IdentityZones', uaa_identity_zone[:id])
+          end
+        end
+      end
+
+      context 'Security Groups' do
+        let(:tab_id)   { 'SecurityGroups' }
+        let(:table_id) { 'SecurityGroupsTable' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Staging Default', 'Running Default'],
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='SecurityGroupsTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_security_group[:name],
+                             cc_security_group[:guid],
+                             cc_security_group[:created_at].to_datetime.rfc3339,
+                             cc_security_group[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatBoolean(#{cc_security_group[:staging_default]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_security_group[:running_default]})")
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_SecurityGroupsTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('SecurityGroupsTable', cc_security_group[:guid])
+        end
+
+        context 'manage security groups' do
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'ToolTables_SecurityGroupsTable_0').text).to eq('Delete')
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'ToolTables_SecurityGroupsTable_0' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'ToolTables_SecurityGroupsTable_0' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected security groups?' }
+            end
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ label: 'Name',                tag: 'div', value: cc_security_group[:name] },
+                           { label: 'GUID',                tag:   nil, value: cc_security_group[:guid] },
+                           { label: 'Created',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_security_group[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_security_group[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Staging Default',     tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_security_group[:staging_default]})") },
+                           { label: 'Running Default',     tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_security_group[:running_default]})") }
+                          ])
+          end
+
+          it 'has rules' do
+            expect(@driver.find_element(id: 'SecurityGroupsRulesDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsRulesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+                                expected_length: 6,
+                                labels:          %w(Protocol Destination Log Ports Type Code),
+                                colspans:        nil)
+
+            rules_json = Yajl::Parser.parse(cc_security_group[:rules])
+            rule       = rules_json[0]
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='SecurityGroupsRulesTable']/tbody/tr/td"),
+                             [
+                               rule['protocol'],
+                               rule['destination'],
+                               @driver.execute_script("return Format.formatBoolean(#{rule['log']})"),
+                               rule['ports'],
+                               @driver.execute_script("return Format.formatNumber(#{rule['type']})"),
+                               @driver.execute_script("return Format.formatNumber(#{rule['code']})")
+                             ])
+          end
+
+          it 'rules subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('ToolTables_SecurityGroupsRulesTable_0')
           end
         end
       end

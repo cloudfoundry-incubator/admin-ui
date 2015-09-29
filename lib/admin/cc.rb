@@ -144,6 +144,18 @@ module AdminUI
           table:   :routes,
           columns: [:created_at, :domain_id, :guid, :host, :id, :path, :space_id, :updated_at]
         },
+        security_groups:
+        {
+          db_uri:  ccdb_uri,
+          table:   :security_groups,
+          columns: [:created_at, :guid, :id, :name, :rules, :running_default, :staging_default, :updated_at]
+        },
+        security_groups_spaces:
+        {
+          db_uri:  ccdb_uri,
+          table:   :security_groups_spaces,
+          columns: [:security_group_id, :space_id]
+        },
         service_bindings:
         {
           db_uri:  ccdb_uri,
@@ -387,6 +399,14 @@ module AdminUI
       invalidate_cache(:quota_definitions)
     end
 
+    def invalidate_security_groups
+      invalidate_cache(:security_groups)
+    end
+
+    def invalidate_security_groups_spaces
+      invalidate_cache(:security_groups_spaces)
+    end
+
     def invalidate_service_bindings
       invalidate_cache(:service_bindings)
     end
@@ -471,6 +491,14 @@ module AdminUI
 
     def routes
       result_cache(:routes)
+    end
+
+    def security_groups
+      result_cache(:security_groups)
+    end
+
+    def security_groups_spaces
+      result_cache(:security_groups_spaces)
     end
 
     def service_bindings
