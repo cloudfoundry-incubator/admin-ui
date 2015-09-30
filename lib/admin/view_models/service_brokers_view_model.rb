@@ -64,7 +64,7 @@ module AdminUI
       end
 
       service_plan_counters = {}
-      service_plan_public_counters = {}
+      service_plan_public_active_counters = {}
       service_plans['items'].each do |service_plan|
         return result unless @running
         Thread.pass
@@ -76,9 +76,9 @@ module AdminUI
         service_plan_counters[service_broker_id] = 0 if service_plan_counters[service_broker_id].nil?
         service_plan_counters[service_broker_id] += 1
 
-        next unless service_plan[:public]
-        service_plan_public_counters[service_broker_id] = 0 if service_plan_public_counters[service_broker_id].nil?
-        service_plan_public_counters[service_broker_id] += 1
+        next unless service_plan[:public] && service_plan[:active]
+        service_plan_public_active_counters[service_broker_id] = 0 if service_plan_public_active_counters[service_broker_id].nil?
+        service_plan_public_active_counters[service_broker_id] += 1
       end
 
       service_plan_visibility_counters = {}
@@ -171,14 +171,14 @@ module AdminUI
         space                    = space_id.nil? ? nil : space_hash[space_id]
         organization             = space.nil? ? nil : organization_hash[space[:organization_id]]
 
-        event_counter                   = event_counters[guid]
-        service_binding_counter         = service_binding_counters[id]
-        service_counter                 = service_counters[id]
-        service_instance_counter        = service_instance_counters[id]
-        service_key_counter             = service_key_counters[id]
-        service_plan_counter            = service_plan_counters[id]
-        service_plan_public_counter     = service_plan_public_counters[id]
-        service_plan_visibility_counter = service_plan_visibility_counters[id]
+        event_counter                      = event_counters[guid]
+        service_binding_counter            = service_binding_counters[id]
+        service_counter                    = service_counters[id]
+        service_instance_counter           = service_instance_counters[id]
+        service_key_counter                = service_key_counters[id]
+        service_plan_counter               = service_plan_counters[id]
+        service_plan_public_active_counter = service_plan_public_active_counters[id]
+        service_plan_visibility_counter    = service_plan_visibility_counters[id]
 
         row = []
 
@@ -223,8 +223,8 @@ module AdminUI
           row.push(nil)
         end
 
-        if service_plan_public_counter
-          row.push(service_plan_public_counter)
+        if service_plan_public_active_counter
+          row.push(service_plan_public_active_counter)
         elsif service_plans_connected && services_connected
           row.push(0)
         else

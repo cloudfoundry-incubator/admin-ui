@@ -2996,7 +2996,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceBrokersTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 15,
-                                labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Events', 'Service Dashboard Client', 'Services', 'Service Plans', 'Public Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Target'],
+                                labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Events', 'Service Dashboard Client', 'Services', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Target'],
                                 colspans:        nil
                               }
                              ])
@@ -3082,7 +3082,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service Dashboard Client',     tag:   'a', value: uaa_client[:client_id] },
                            { label: 'Services',                     tag:   'a', value: '1' },
                            { label: 'Service Plans',                tag:   'a', value: '1' },
-                           { label: 'Public Service Plans',         tag:   nil, value: '1' },
+                           { label: 'Public Active Service Plans',  tag:   nil, value: '1' },
                            { label: 'Service Plan Visibilities',    tag:   'a', value: '1' },
                            { label: 'Service Instances',            tag:   'a', value: '1' },
                            { label: 'Service Bindings',             tag:   'a', value: '1' },
@@ -3148,7 +3148,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
                                 expected_length: 22,
-                                labels:          ['', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Plan Updateable', 'Events', 'Service Plans', 'Public Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Name', 'GUID', 'Created', 'Updated'],
+                                labels:          ['', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Plan Updateable', 'Events', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Name', 'GUID', 'Created', 'Updated'],
                                 colspans:        nil
                               }
                              ])
@@ -3255,7 +3255,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Service Support URL',           tag:   'a', value: service_extra_json['supportUrl'] },
                            { label: 'Service Events',                tag:   'a', value: '1' },
                            { label: 'Service Plans',                 tag:   'a', value: '1' },
-                           { label: 'Public Service Plans',          tag:   nil, value: '1' },
+                           { label: 'Public Active Service Plans',   tag:   nil, value: '1' },
                            { label: 'Service Plan Visibilities',     tag:   'a', value: '1' },
                            { label: 'Service Instances',             tag:   'a', value: '1' },
                            { label: 'Service Bindings',              tag:   'a', value: '1' },
