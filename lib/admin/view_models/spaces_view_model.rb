@@ -12,27 +12,29 @@ module AdminUI
       # spaces have to exist.  Other record types are optional
       return result unless spaces['connected']
 
-      applications      = @cc.applications
-      apps_routes       = @cc.apps_routes
-      deas              = @varz.deas
-      events            = @cc.events
-      organizations     = @cc.organizations
-      routes            = @cc.routes
-      service_brokers   = @cc.service_brokers
-      service_instances = @cc.service_instances
-      space_quotas      = @cc.space_quota_definitions
-      spaces_auditors   = @cc.spaces_auditors
-      spaces_developers = @cc.spaces_developers
-      spaces_managers   = @cc.spaces_managers
+      applications           = @cc.applications
+      apps_routes            = @cc.apps_routes
+      deas                   = @varz.deas
+      events                 = @cc.events
+      organizations          = @cc.organizations
+      routes                 = @cc.routes
+      security_groups_spaces = @cc.security_groups_spaces
+      service_brokers        = @cc.service_brokers
+      service_instances      = @cc.service_instances
+      space_quotas           = @cc.space_quota_definitions
+      spaces_auditors        = @cc.spaces_auditors
+      spaces_developers      = @cc.spaces_developers
+      spaces_managers        = @cc.spaces_managers
 
-      applications_connected      = applications['connected']
-      apps_routes_connected       = apps_routes['connected']
-      deas_connected              = deas['connected']
-      events_connected            = events['connected']
-      routes_connected            = routes['connected']
-      service_brokers_connected   = service_brokers['connected']
-      service_instances_connected = service_instances['connected']
-      spaces_roles_connected      = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
+      applications_connected           = applications['connected']
+      apps_routes_connected            = apps_routes['connected']
+      deas_connected                   = deas['connected']
+      events_connected                 = events['connected']
+      routes_connected                 = routes['connected']
+      security_groups_spaces_connected = security_groups_spaces['connected']
+      service_brokers_connected        = service_brokers['connected']
+      service_instances_connected      = service_instances['connected']
+      spaces_roles_connected           = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
 
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
       routes_used_set   = apps_routes['items'].to_set { |app_route| app_route[:route_id] }
@@ -57,6 +59,7 @@ module AdminUI
       end
 
       space_role_counters             = {}
+      space_security_groups_counters  = {}
       space_service_broker_counters   = {}
       space_service_instance_counters = {}
       space_route_counters_hash       = {}
@@ -83,6 +86,15 @@ module AdminUI
         space_id = service_instance[:space_id]
         space_service_instance_counters[space_id] = 0 if space_service_instance_counters[space_id].nil?
         space_service_instance_counters[space_id] += 1
+      end
+
+      security_groups_spaces['items'].each do |security_group_space|
+        return result unless @running
+        Thread.pass
+
+        space_id = security_group_space[:space_id]
+        space_security_groups_counters[space_id] = 0 if space_security_groups_counters[space_id].nil?
+        space_security_groups_counters[space_id] += 1
       end
 
       routes['items'].each do |route|
@@ -150,6 +162,7 @@ module AdminUI
         event_target_counter           = event_target_counters[space_guid]
         space_quota                    = space_quota_hash[space[:space_quota_definition_id]]
         space_role_counter             = space_role_counters[space_id]
+        space_security_groups_counter  = space_security_groups_counters[space_id]
         space_service_broker_counter   = space_service_broker_counters[space_id]
         space_service_instance_counter = space_service_instance_counters[space_id]
         space_app_counters             = space_app_counters_hash[space_id]
@@ -208,6 +221,14 @@ module AdminUI
         if space_service_broker_counter
           row.push(space_service_broker_counter)
         elsif service_brokers_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if space_security_groups_counter
+          row.push(space_security_groups_counter)
+        elsif security_groups_spaces_connected
           row.push(0)
         else
           row.push(nil)
@@ -276,7 +297,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..26).to_a, (1..5).to_a << 9)
+      result(true, items, hash, (1..27).to_a, (1..5).to_a << 9)
     end
 
     private

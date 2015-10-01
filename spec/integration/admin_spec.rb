@@ -584,6 +584,29 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage security group space' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/security_groups_spaces_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_security_group_space
+      response = delete_request("/security_groups/#{cc_security_group[:guid]}/#{cc_space[:guid]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/security_groups/#{cc_security_group[:guid]}/#{cc_space[:guid]}"]])
+    end
+
+    it 'has user name and security groups request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/security_groups_spaces_view_model']], true)
+    end
+
+    it 'deletes a security group space' do
+      expect { delete_security_group_space }.to change { get_json('/security_groups_spaces_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage service' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -1249,6 +1272,18 @@ describe AdminUI::Admin, type: :integration do
     context 'routes_view_model detail' do
       let(:path)              { "/routes_view_model/#{cc_route[:guid]}" }
       let(:view_model_source) { view_models_routes_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'security_groups_spaces_view_model' do
+      let(:path)              { '/security_groups_spaces_view_model' }
+      let(:view_model_source) { view_models_security_groups_spaces }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'security_groups_spaces_view_model detail' do
+      let(:path)              { "/security_groups_spaces_view_model/#{cc_security_group[:guid]}/#{cc_space[:guid]}" }
+      let(:view_model_source) { view_models_security_groups_spaces_detail }
       it_behaves_like('retrieves view_model detail')
     end
 

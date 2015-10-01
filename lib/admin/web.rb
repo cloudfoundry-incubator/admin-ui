@@ -338,6 +338,18 @@ module AdminUI
       404
     end
 
+    get '/security_groups_spaces_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/security_groups_spaces_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.security_groups_spaces, params).items)
+    end
+
+    get '/security_groups_spaces_view_model/:security_group_guid/:space_guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/security_groups_spaces_view_model/#{params[:security_group_guid]}/#{params[:space_guid]}")
+      result = @view_models.security_group_space(params[:security_group_guid], params[:space_guid])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/security_groups_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/security_groups_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.security_groups, params).items)
@@ -715,6 +727,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'routes.csv')
+    end
+
+    post '/security_groups_spaces_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/security_groups_spaces_view_model')
+      file = Download.download(request.body.read, 'security_groups_spaces', @view_models.security_groups_spaces)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'security_groups_spaces.csv')
     end
 
     post '/security_groups_view_model', auth: [:user] do
@@ -1225,6 +1245,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete security group: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/security_groups/:security_group_guid/:space_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/security_groups/#{params[:security_group_guid]}/#{params[:space_guid]}")
+      begin
+        @operation.delete_security_group_space(params[:security_group_guid], params[:space_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete security group space: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete security group space: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

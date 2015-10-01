@@ -23,6 +23,7 @@ module AdminUI
       organizations_users            = @cc.organizations_users
       quotas                         = @cc.quota_definitions
       routes                         = @cc.routes
+      security_groups_spaces         = @cc.security_groups_spaces
       service_brokers                = @cc.service_brokers
       service_instances              = @cc.service_instances
       service_plan_visibilities      = @cc.service_plan_visibilities
@@ -39,6 +40,7 @@ module AdminUI
       events_connected                    = events['connected']
       organizations_roles_connected       = organizations_auditors['connected'] && organizations_billing_managers['connected'] && organizations_managers['connected'] && organizations_users['connected']
       routes_connected                    = routes['connected']
+      security_groups_spaces_connected    = security_groups_spaces['connected']
       service_brokers_connected           = service_brokers['connected']
       service_instances_connected         = service_instances['connected']
       service_plan_visibilities_connected = service_plan_visibilities['connected']
@@ -54,6 +56,7 @@ module AdminUI
       organization_space_counters                   = {}
       organization_role_counters                    = {}
       organization_domain_counters                  = {}
+      organization_security_groups_counters         = {}
       organization_service_broker_counters          = {}
       organization_service_instance_counters        = {}
       organization_service_plan_visibility_counters = {}
@@ -165,6 +168,17 @@ module AdminUI
         organization_service_plan_visibility_counters[organization_id] += 1
       end
 
+      security_groups_spaces['items'].each do |security_group_space|
+        return result unless @running
+        Thread.pass
+
+        space = space_hash[security_group_space[:space_id]]
+        next if space.nil?
+        organization_id = space[:organization_id]
+        organization_security_groups_counters[organization_id] = 0 if organization_security_groups_counters[organization_id].nil?
+        organization_security_groups_counters[organization_id] += 1
+      end
+
       instance_hash = create_instance_hash(deas)
 
       applications['items'].each do |application|
@@ -215,6 +229,7 @@ module AdminUI
         organization_service_broker_counter          = organization_service_broker_counters[organization_id]
         organization_service_instance_counter        = organization_service_instance_counters[organization_id]
         organization_service_plan_visibility_counter = organization_service_plan_visibility_counters[organization_id]
+        organization_security_groups_counter         = organization_security_groups_counters[organization_id]
         organization_app_counters                    = organization_app_counters_hash[organization_id]
         organization_domain_counter                  = organization_domain_counters[organization_id]
         organization_route_counters                  = organization_route_counters_hash[organization_id]
@@ -305,6 +320,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if organization_security_groups_counter
+          row.push(organization_security_groups_counter)
+        elsif spaces_connected && security_groups_spaces_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if organization_route_counters
           row.push(organization_route_counters['total_routes'])
           row.push(organization_route_counters['total_routes'] - organization_route_counters['unused_routes'])
@@ -367,7 +390,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..30).to_a, (1..5).to_a << 10)
+      result(true, items, hash, (1..31).to_a, (1..5).to_a << 10)
     end
 
     private

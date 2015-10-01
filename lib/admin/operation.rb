@@ -84,6 +84,7 @@ module AdminUI
       @view_models.invalidate_organization_roles
       @view_models.invalidate_service_plan_visibilities
       return unless recursive
+      @cc.invalidate_security_groups_spaces
       @cc.invalidate_space_quota_definitions
       @cc.invalidate_spaces
       @cc.invalidate_spaces_auditors
@@ -95,6 +96,7 @@ module AdminUI
       @cc.invalidate_applications
       @cc.invalidate_routes
       @varz.invalidate
+      @view_models.invalidate_security_groups_spaces
       @view_models.invalidate_space_quotas
       @view_models.invalidate_spaces
       @view_models.invalidate_space_roles
@@ -138,7 +140,17 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_security_groups
+      @cc.invalidate_security_groups_spaces
       @view_models.invalidate_security_groups
+      @view_models.invalidate_security_groups_spaces
+    end
+
+    def delete_security_group_space(security_group_guid, space_guid)
+      url = "v2/security_groups/#{security_group_guid}/spaces/#{space_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_security_groups_spaces
+      @view_models.invalidate_security_groups_spaces
     end
 
     def delete_service(service_guid, purge)
@@ -232,10 +244,12 @@ module AdminUI
       url += '?recursive=true' if recursive
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
+      @cc.invalidate_security_groups_spaces
       @cc.invalidate_spaces
       @cc.invalidate_spaces_auditors
       @cc.invalidate_spaces_developers
       @cc.invalidate_spaces_managers
+      @view_models.invalidate_security_groups_spaces
       @view_models.invalidate_spaces
       @view_models.invalidate_space_roles
       return unless recursive

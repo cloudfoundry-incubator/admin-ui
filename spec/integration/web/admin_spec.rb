@@ -69,6 +69,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('IdentityZones').displayed?).to be(true)
       expect(scroll_tab_into_view('IdentityProviders').displayed?).to be(true)
       expect(scroll_tab_into_view('SecurityGroups').displayed?).to be(true)
+      expect(scroll_tab_into_view('SecurityGroupsSpaces').displayed?).to be(true)
       expect(scroll_tab_into_view('DEAs').displayed?).to be(true)
       expect(scroll_tab_into_view('CloudControllers').displayed?).to be(true)
       expect(scroll_tab_into_view('HealthManagers').displayed?).to be(true)
@@ -334,11 +335,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 7,
                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                colspans:        %w(1 14 3 5 2 3 3)
+                                colspans:        %w(1 15 3 5 2 3 3)
                               },
                               { columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 31,
-                                labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                expected_length: 32,
+                                labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Security Groups', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 colspans:        nil
                               }
                              ])
@@ -356,6 +357,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '4',
                              '3',
                              cc_quota_definition[:name],
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -583,6 +585,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Domains',                   tag:   'a', value: '1' },
                            { label: 'Private Service Brokers',   tag:   'a', value: '1' },
                            { label: 'Service Plan Visibilities', tag:   'a', value: '1' },
+                           { label: 'Security Groups',           tag:   'a', value: '1' },
                            { label: 'Total Routes',              tag:   'a', value: '1' },
                            { label: 'Used Routes',               tag:   nil, value: '1' },
                            { label: 'Unused Routes',             tag:   nil, value: '0' },
@@ -638,20 +641,24 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Organizations', 14, 'ServicePlanVisibilities', cc_organization[:guid])
           end
 
+          it 'has security groups spaces link' do
+            check_filter_link('Organizations', 15, 'SecurityGroupsSpaces', "#{cc_organization[:name]}/")
+          end
+
           it 'has routes link' do
-            check_filter_link('Organizations', 15, 'Routes', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 16, 'Routes', "#{cc_organization[:name]}/")
           end
 
           it 'has application instances link' do
-            check_filter_link('Organizations', 18, 'ApplicationInstances', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 19, 'ApplicationInstances', "#{cc_organization[:name]}/")
           end
 
           it 'has services instances link' do
-            check_filter_link('Organizations', 19, 'ServiceInstances', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 20, 'ServiceInstances', "#{cc_organization[:name]}/")
           end
 
           it 'has applications link' do
-            check_filter_link('Organizations', 25, 'Applications', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 26, 'Applications', "#{cc_organization[:name]}/")
           end
         end
       end
@@ -664,12 +671,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
                                 expected_length: 7,
                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                colspans:        %w(1 10 3 5 2 3 3)
+                                colspans:        %w(1 11 3 5 2 3 3)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
-                                expected_length: 27,
-                                labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Events', 'Events Target', 'Roles', 'Space Quota', 'Private Service Brokers', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                expected_length: 28,
+                                labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Events', 'Events Target', 'Roles', 'Space Quota', 'Private Service Brokers', 'Security Groups', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 colspans:        nil
                               }
                              ])
@@ -686,6 +693,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              '3',
                              cc_space_quota_definition[:name],
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -784,6 +792,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Roles',                   tag:   'a', value: '3' },
                            { label: 'Space Quota',             tag:   'a', value: cc_space_quota_definition[:name] },
                            { label: 'Private Service Brokers', tag:   'a', value: '1' },
+                           { label: 'Security Groups',         tag:   'a', value: '1' },
                            { label: 'Total Routes',            tag:   'a', value: '1' },
                            { label: 'Used Routes',             tag:   nil, value: '1' },
                            { label: 'Unused Routes',           tag:   nil, value: '0' },
@@ -827,20 +836,24 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Spaces', 9, 'ServiceBrokers', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
+          it 'has security groups spaces link' do
+            check_filter_link('Spaces', 10, 'SecurityGroupsSpaces', cc_space[:guid])
+          end
+
           it 'has routes link' do
-            check_filter_link('Spaces', 10, 'Routes', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 11, 'Routes', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has application instances link' do
-            check_filter_link('Spaces', 13, 'ApplicationInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 14, 'ApplicationInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has services link' do
-            check_filter_link('Spaces', 14, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 15, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has applications link' do
-            check_filter_link('Spaces', 20, 'Applications', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 21, 'Applications', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
         end
       end
@@ -3750,8 +3763,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
-                                expected_length: 7,
-                                labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Staging Default', 'Running Default'],
+                                expected_length: 8,
+                                labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Staging Default', 'Running Default', 'Spaces'],
                                 colspans:        nil
                               }
                              ])
@@ -3764,7 +3777,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_security_group[:created_at].to_datetime.rfc3339,
                              cc_security_group[:updated_at].to_datetime.rfc3339,
                              @driver.execute_script("return Format.formatBoolean(#{cc_security_group[:staging_default]})"),
-                             @driver.execute_script("return Format.formatBoolean(#{cc_security_group[:running_default]})")
+                             @driver.execute_script("return Format.formatBoolean(#{cc_security_group[:running_default]})"),
+                             '1'
                            ])
         end
 
@@ -3806,7 +3820,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Created',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_security_group[:created_at].to_datetime.rfc3339}\")") },
                            { label: 'Updated',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_security_group[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'Staging Default',     tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_security_group[:staging_default]})") },
-                           { label: 'Running Default',     tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_security_group[:running_default]})") }
+                           { label: 'Running Default',     tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_security_group[:running_default]})") },
+                           { label: 'Spaces',              tag:   'a', value: '1' }
                           ])
           end
 
@@ -3834,6 +3849,101 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'rules subtable has allowscriptaccess property set to sameDomain' do
             check_allowscriptaccess_attribute('ToolTables_SecurityGroupsRulesTable_0')
+          end
+
+          it 'has security groups spaces link' do
+            check_filter_link('SecurityGroups', 6, 'SecurityGroupsSpaces', cc_security_group[:guid])
+          end
+        end
+      end
+
+      context 'Security Groups Spaces' do
+        let(:tab_id)   { 'SecurityGroupsSpaces' }
+        let(:table_id) { 'SecurityGroupsSpacesTable' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsSpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+                                expected_length: 4,
+                                labels:          ['', 'Security Group', 'Space', ''],
+                                colspans:        %w(1 4 4 1)
+                              },
+                              { columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsSpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                expected_length: 10,
+                                labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='SecurityGroupsSpacesTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_security_group[:name],
+                             cc_security_group[:guid],
+                             cc_security_group[:created_at].to_datetime.rfc3339,
+                             cc_security_group[:updated_at].to_datetime.rfc3339,
+                             cc_space[:name],
+                             cc_space[:guid],
+                             cc_space[:created_at].to_datetime.rfc3339,
+                             cc_space[:updated_at].to_datetime.rfc3339,
+                             "#{cc_organization[:name]}/#{cc_space[:name]}"
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('ToolTables_SecurityGroupsSpacesTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('SecurityGroupsSpacesTable', "#{cc_security_group[:guid]}/#{cc_space[:guid]}")
+        end
+
+        context 'manage security group spaces' do
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'ToolTables_SecurityGroupsSpacesTable_0').text).to eq('Delete')
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'ToolTables_SecurityGroupsSpacesTable_0' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'ToolTables_SecurityGroupsSpacesTable_0' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected security groups spaces?' }
+            end
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ label: 'Security Group',         tag: 'div', value: cc_security_group[:name] },
+                           { label: 'Security Group GUID',    tag:   nil, value: cc_security_group[:guid] },
+                           { label: 'Security Group Created', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_security_group[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Security Group Updated', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_security_group[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Space',                  tag:   'a', value: cc_space[:name] },
+                           { label: 'Space GUID',             tag:   nil, value: cc_space[:guid] },
+                           { label: 'Space Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space[:created_at].to_datetime.rfc3339}\")") },
+                           { label: 'Space Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space[:updated_at].to_datetime.rfc3339}\")") },
+                           { label: 'Organization',           tag:   'a', value: cc_organization[:name] }
+                          ])
+          end
+
+          it 'has security groups link' do
+            check_filter_link('SecurityGroupsSpaces', 0, 'SecurityGroups', cc_security_group[:guid])
+          end
+
+          it 'has spaces link' do
+            check_filter_link('SecurityGroupsSpaces', 4, 'Spaces', cc_space[:guid])
+          end
+
+          it 'has organization link' do
+            check_filter_link('SecurityGroupsSpaces', 8, 'Organizations', cc_organization[:guid])
           end
         end
       end

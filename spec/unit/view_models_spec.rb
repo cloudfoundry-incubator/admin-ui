@@ -214,6 +214,14 @@ describe AdminUI::ViewModels do
       verify_disconnected_items(view_models.security_groups)
     end
 
+    it 'returns nil security_group_space as expected' do
+      expect(view_models.security_group_space('bogus', 'bogus')).to be_nil
+    end
+
+    it 'returns zero security_groups_spaces as expected' do
+      verify_disconnected_items(view_models.security_groups_spaces)
+    end
+
     it 'returns nil service_binding as expected' do
       expect(view_models.service_binding('bogus')).to be_nil
     end

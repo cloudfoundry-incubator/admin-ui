@@ -54,6 +54,7 @@ module CCHelper
     @cc_quota_definitions_deleted         = false
     @cc_routes_deleted                    = false
     @cc_security_groups_deleted           = false
+    @cc_security_groups_spaces_deleted    = false
     @cc_services_deleted                  = false
     @cc_service_bindings_deleted          = false
     @cc_service_brokers_deleted           = false
@@ -78,6 +79,7 @@ module CCHelper
     cc_quota_definition_stubs(config)
     cc_route_stubs(config)
     cc_security_group_stubs(config)
+    cc_security_group_space_stubs(config)
     cc_service_stubs(config)
     cc_service_binding_stubs(config)
     cc_service_broker_stubs(config)
@@ -151,9 +153,17 @@ module CCHelper
   end
 
   def cc_clear_security_groups_cache_stub(config)
+    cc_clear_security_groups_spaces_cache_stub(config)
+
     sql(config.ccdb_uri, 'DELETE FROM security_groups')
 
     @cc_security_groups_deleted = true
+  end
+
+  def cc_clear_security_groups_spaces_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM security_groups_spaces')
+
+    @cc_security_groups_spaces_deleted = true
   end
 
   def cc_clear_service_bindings_cache_stub(config)
@@ -220,6 +230,7 @@ module CCHelper
 
   def cc_clear_spaces_cache_stub(config)
     cc_clear_routes_cache_stub(config)
+    cc_clear_security_groups_spaces_cache_stub(config)
     cc_clear_service_brokers_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM apps')
@@ -684,6 +695,13 @@ module CCHelper
     }
   end
 
+  def cc_security_group_space
+    {
+      security_group_id: cc_security_group[:id],
+      space_id:          cc_space[:id]
+    }
+  end
+
   def cc_service
     {
       active:            true,
@@ -1040,6 +1058,7 @@ module CCHelper
               [:space_quota_definitions,        cc_space_quota_definition],
               [:organizations_private_domains,  cc_organization_private_domain],
               [:spaces,                         cc_space],
+              [:security_groups_spaces,         cc_security_group_space],
               [:apps,                           cc_app],
               [:routes,                         cc_route],
               [:service_brokers,                cc_service_broker_with_password],
@@ -1471,6 +1490,17 @@ module CCHelper
       else
         cc_clear_security_groups_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_security_group_space_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/security_groups/#{cc_security_group[:guid]}/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_security_groups_deleted
+        cc_security_group_not_found
+      else
+        cc_clear_security_groups_spaces_cache_stub(config)
+        Created.new
       end
     end
   end

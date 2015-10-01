@@ -416,6 +416,7 @@ module ViewModelsHelper
         1,
         1,
         1,
+        1,
         0,
         cc_app[:instances],
         1,
@@ -584,13 +585,40 @@ module ViewModelsHelper
         cc_security_group[:created_at].to_datetime.rfc3339,
         cc_security_group[:updated_at].to_datetime.rfc3339,
         cc_security_group[:staging_default],
-        cc_security_group[:running_default]
+        cc_security_group[:running_default],
+        1
       ]
     ]
   end
 
   def view_models_security_groups_detail
     cc_security_group
+  end
+
+  def view_models_security_groups_spaces
+    [
+      [
+        "#{cc_security_group[:guid]}/#{cc_space[:guid]}",
+        cc_security_group[:name],
+        cc_security_group[:guid],
+        cc_security_group[:created_at].to_datetime.rfc3339,
+        cc_security_group[:updated_at].to_datetime.rfc3339,
+        cc_space[:name],
+        cc_space[:guid],
+        cc_space[:created_at].to_datetime.rfc3339,
+        cc_space[:updated_at].to_datetime.rfc3339,
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
+      ]
+    ]
+  end
+
+  def view_models_security_groups_spaces_detail
+    {
+      'organization'         => cc_organization,
+      'security_group'       => cc_security_group,
+      'security_group_space' => cc_security_group_space,
+      'space'                => cc_space
+    }
   end
 
   def view_models_service_bindings
@@ -986,6 +1014,7 @@ module ViewModelsHelper
         1,
         3,
         cc_space_quota_definition[:name],
+        1,
         1,
         1,
         1,

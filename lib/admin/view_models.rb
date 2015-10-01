@@ -21,6 +21,7 @@ require_relative 'view_models/organizations_view_model'
 require_relative 'view_models/quotas_view_model'
 require_relative 'view_models/routers_view_model'
 require_relative 'view_models/routes_view_model'
+require_relative 'view_models/security_groups_spaces_view_model'
 require_relative 'view_models/security_groups_view_model'
 require_relative 'view_models/service_bindings_view_model'
 require_relative 'view_models/service_brokers_view_model'
@@ -74,6 +75,7 @@ module AdminUI
           routes:                    { clazz: AdminUI::RoutesViewModel },
           services:                  { clazz: AdminUI::ServicesViewModel },
           security_groups:           { clazz: AdminUI::SecurityGroupsViewModel },
+          security_groups_spaces:    { clazz: AdminUI::SecurityGroupsSpacesViewModel },
           service_bindings:          { clazz: AdminUI::ServiceBindingsViewModel },
           service_brokers:           { clazz: AdminUI::ServiceBrokersViewModel },
           service_instances:         { clazz: AdminUI::ServiceInstancesViewModel },
@@ -160,6 +162,10 @@ module AdminUI
 
     def invalidate_security_groups
       invalidate_cache(:security_groups)
+    end
+
+    def invalidate_security_groups_spaces
+      invalidate_cache(:security_groups_spaces)
     end
 
     def invalidate_service_bindings
@@ -366,8 +372,16 @@ module AdminUI
       details(:security_groups, guid)
     end
 
+    def security_group_space(security_group_guid, space_guid)
+      details(:security_groups_spaces, "#{security_group_guid}/#{space_guid}")
+    end
+
     def security_groups
       result_cache(:security_groups)
+    end
+
+    def security_groups_spaces
+      result_cache(:security_groups_spaces)
     end
 
     def service(guid)

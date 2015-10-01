@@ -666,6 +666,37 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage security group space' do
+      before do
+        expect(cc.security_groups_spaces['items'].length).to eq(1)
+      end
+
+      def delete_security_group_space
+        operation.delete_security_group(cc_security_group[:guid])
+      end
+
+      it 'deletes security group space' do
+        expect { delete_security_group_space }.to change { cc.security_groups_spaces['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          cc_clear_security_groups_cache_stub(config)
+        end
+
+        def verify_security_group_not_found(exception)
+          expect(exception.cf_code).to eq(300_002)
+          expect(exception.cf_error_code).to eq('CF-SecurityGroupNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The security group could not be found: #{cc_security_group[:guid]}")
+        end
+
+        it 'failed deleting security group space due to deleted security group' do
+          expect { delete_security_group_space }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_security_group_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage service' do
       before do
         expect(cc.services['items'].length).to eq(1)
