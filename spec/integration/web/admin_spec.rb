@@ -22,8 +22,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       login('Administration')
     end
 
-    let(:allowscriptaccess) { 'sameDomain' }
-
     def check_allowscriptaccess_attribute(copy_node_id)
       expect(@driver.find_element(id: copy_node_id).text).to eq('Copy')
       expect(@driver.find_element(xpath: "//a[@id='#{copy_node_id}']/div/embed").attribute('allowscriptaccess')).to eq('sameDomain')
@@ -332,12 +330,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'OrganizationsTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 7,
                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
                                 colspans:        %w(1 15 3 5 2 3 3)
                               },
-                              { columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                              { columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 32,
                                 labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Security Groups', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 colspans:        nil
@@ -382,7 +380,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_OrganizationsTable_7')
+          check_allowscriptaccess_attribute('Buttons_OrganizationsTable_7')
         end
 
         it 'has a checkbox in the first column' do
@@ -391,35 +389,35 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage organization' do
           it 'has a Create button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_0').text).to eq('Create')
+            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_0').text).to eq('Create')
           end
 
           it 'has a Rename button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_1').text).to eq('Rename')
+            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_1').text).to eq('Rename')
           end
 
           it 'has a Set Quota button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_2').text).to eq('Set Quota')
+            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_2').text).to eq('Set Quota')
           end
 
           it 'has an Activate button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_3').text).to eq('Activate')
+            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_3').text).to eq('Activate')
           end
 
           it 'has a Suspend button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_4').text).to eq('Suspend')
+            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_4').text).to eq('Suspend')
           end
 
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_5').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_5').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationsTable_6').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_6').text).to eq('Delete Recursive')
           end
 
           it 'creates an organization' do
-            @driver.find_element(id: 'ToolTables_OrganizationsTable_0').click
+            @driver.find_element(id: 'Buttons_OrganizationsTable_0').click
 
             # Check whether the dialog is displayed
             expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
@@ -447,43 +445,43 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
-              let(:button_id) { 'ToolTables_OrganizationsTable_1' }
+              let(:button_id) { 'Buttons_OrganizationsTable_1' }
             end
           end
 
           context 'Set Quota button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_OrganizationsTable_2' }
+              let(:button_id) { 'Buttons_OrganizationsTable_2' }
             end
           end
 
           context 'Activate button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_OrganizationsTable_3' }
+              let(:button_id) { 'Buttons_OrganizationsTable_3' }
             end
           end
 
           context 'Suspend button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_OrganizationsTable_4' }
+              let(:button_id) { 'Buttons_OrganizationsTable_4' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_OrganizationsTable_5' }
+              let(:button_id) { 'Buttons_OrganizationsTable_5' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_OrganizationsTable_6' }
+              let(:button_id) { 'Buttons_OrganizationsTable_6' }
             end
           end
 
           context 'Rename button' do
             it_behaves_like('rename first row') do
-              let(:button_id)     { 'ToolTables_OrganizationsTable_1' }
+              let(:button_id)     { 'Buttons_OrganizationsTable_1' }
               let(:title_text)    { 'Rename Organization' }
               let(:object_rename) { cc_organization_rename }
             end
@@ -494,7 +492,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             it 'sets the quota for the organization' do
               check_first_row('OrganizationsTable')
-              @driver.find_element(id: 'ToolTables_OrganizationsTable_2').click
+              @driver.find_element(id: 'Buttons_OrganizationsTable_2').click
 
               # Check whether the dialog is displayed
               expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
@@ -523,11 +521,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           def activate_organization
-            manage_organization('ToolTables_OrganizationsTable_3')
+            manage_organization('Buttons_OrganizationsTable_3')
           end
 
           def suspend_organization
-            manage_organization('ToolTables_OrganizationsTable_4')
+            manage_organization('Buttons_OrganizationsTable_4')
           end
 
           def check_organization_status(status)
@@ -551,14 +549,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_OrganizationsTable_5' }
+              let(:button_id)       { 'Buttons_OrganizationsTable_5' }
               let(:confirm_message) { 'Are you sure you want to delete the selected organizations?' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_OrganizationsTable_6' }
+              let(:button_id)       { 'Buttons_OrganizationsTable_6' }
               let(:confirm_message) { 'Are you sure you want to delete the selected organizations and their contained spaces, space quotas, applications, routes, service instances, service bindings and service keys?' }
             end
           end
@@ -668,13 +666,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'SpacesTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 7,
                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
                                 colspans:        %w(1 11 3 5 2 3 3)
                               },
                               {
-                                columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 28,
                                 labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Events', 'Events Target', 'Roles', 'Space Quota', 'Private Service Brokers', 'Security Groups', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                 colspans:        nil
@@ -715,7 +713,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_SpacesTable_3')
+          check_allowscriptaccess_attribute('Buttons_SpacesTable_3')
         end
 
         it 'has a checkbox in the first column' do
@@ -724,38 +722,38 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage spaces' do
           it 'has a Rename button' do
-            expect(@driver.find_element(id: 'ToolTables_SpacesTable_0').text).to eq('Rename')
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_0').text).to eq('Rename')
           end
 
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_SpacesTable_1').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_1').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'ToolTables_SpacesTable_2').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_2').text).to eq('Delete Recursive')
           end
 
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
-              let(:button_id) { 'ToolTables_SpacesTable_0' }
+              let(:button_id) { 'Buttons_SpacesTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_SpacesTable_1' }
+              let(:button_id) { 'Buttons_SpacesTable_1' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_SpacesTable_2' }
+              let(:button_id) { 'Buttons_SpacesTable_2' }
             end
           end
 
           context 'Rename button' do
             it_behaves_like('rename first row') do
-              let(:button_id)     { 'ToolTables_SpacesTable_0' }
+              let(:button_id)     { 'Buttons_SpacesTable_0' }
               let(:title_text)    { 'Rename Space' }
               let(:object_rename) { cc_space_rename }
             end
@@ -763,14 +761,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_SpacesTable_1' }
+              let(:button_id)       { 'Buttons_SpacesTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected spaces?' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_SpacesTable_2' }
+              let(:button_id)       { 'Buttons_SpacesTable_2' }
               let(:confirm_message) { 'Are you sure you want to delete the selected spaces and their contained applications, routes, service instances, service bindings and service keys?' }
             end
           end
@@ -864,13 +862,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:event_type) { 'app' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 5,
                                 labels:          ['', '', 'Used', 'Reserved', ''],
                                 colspans:        %w(1 13 3 2 1)
                               },
                               {
-                                columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 20,
                                 labels:          ['', 'Name', 'GUID', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'URIs', 'Stack', 'Buildpacks', 'Events', 'Instances', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
                                 colspans:        nil
@@ -903,7 +901,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ApplicationsTable_6')
+          check_allowscriptaccess_attribute('Buttons_ApplicationsTable_6')
         end
 
         it 'has a checkbox in the first column' do
@@ -913,7 +911,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         context 'manage application' do
           def manage_application(buttonIndex)
             check_first_row('ApplicationsTable')
-            @driver.find_element(id: 'ToolTables_ApplicationsTable_' + buttonIndex.to_s).click
+            @driver.find_element(id: 'Buttons_ApplicationsTable_' + buttonIndex.to_s).click
             check_operation_result
           end
 
@@ -926,68 +924,68 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has a Rename button' do
-            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_0').text).to eq('Rename')
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_0').text).to eq('Rename')
           end
 
           it 'has a Start button' do
-            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_1').text).to eq('Start')
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_1').text).to eq('Start')
           end
 
           it 'has a Stop button' do
-            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_2').text).to eq('Stop')
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_2').text).to eq('Stop')
           end
 
           it 'has a Restage button' do
-            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_3').text).to eq('Restage')
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_3').text).to eq('Restage')
           end
 
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_4').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_4').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'ToolTables_ApplicationsTable_5').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_5').text).to eq('Delete Recursive')
           end
 
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
-              let(:button_id) { 'ToolTables_ApplicationsTable_0' }
+              let(:button_id) { 'Buttons_ApplicationsTable_0' }
             end
           end
 
           context 'Start button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ApplicationsTable_1' }
+              let(:button_id) { 'Buttons_ApplicationsTable_1' }
             end
           end
 
           context 'Stop button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ApplicationsTable_2' }
+              let(:button_id) { 'Buttons_ApplicationsTable_2' }
             end
           end
 
           context 'Restage button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ApplicationsTable_3' }
+              let(:button_id) { 'Buttons_ApplicationsTable_3' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ApplicationsTable_4' }
+              let(:button_id) { 'Buttons_ApplicationsTable_4' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ApplicationsTable_5' }
+              let(:button_id) { 'Buttons_ApplicationsTable_5' }
             end
           end
 
           context 'Rename button' do
             it_behaves_like('rename first row') do
-              let(:button_id)     { 'ToolTables_ApplicationsTable_0' }
+              let(:button_id)     { 'Buttons_ApplicationsTable_0' }
               let(:title_text)    { 'Rename Application' }
               let(:object_rename) { cc_app_rename }
             end
@@ -1015,14 +1013,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ApplicationsTable_4' }
+              let(:button_id)       { 'Buttons_ApplicationsTable_4' }
               let(:confirm_message) { 'Are you sure you want to delete the selected applications?' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ApplicationsTable_5' }
+              let(:button_id)       { 'Buttons_ApplicationsTable_5' }
               let(:confirm_message) { 'Are you sure you want to delete the selected applications and their associated service bindings?' }
             end
           end
@@ -1092,13 +1090,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'ApplicationInstancesTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 5,
                                 labels:          ['', '', 'Used', 'Reserved', ''],
                                 colspans:        %w(1 8 3 2 2)
                               },
                               {
-                                columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 16,
                                 labels:          ['', 'Name', 'Application GUID', 'Index', 'Instance ID', 'State', 'Started', 'URIs', 'Stack', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
                                 colspans:        nil
@@ -1127,7 +1125,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ApplicationInstancesTable_1')
+          check_allowscriptaccess_attribute('Buttons_ApplicationInstancesTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -1136,18 +1134,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage application instances' do
           it 'has a restart button' do
-            expect(@driver.find_element(id: 'ToolTables_ApplicationInstancesTable_0').text).to eq('Restart')
+            expect(@driver.find_element(id: 'Buttons_ApplicationInstancesTable_0').text).to eq('Restart')
           end
 
           context 'Restart button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ApplicationInstancesTable_0' }
+              let(:button_id) { 'Buttons_ApplicationInstancesTable_0' }
             end
           end
 
           context 'Restart button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ApplicationInstancesTable_0' }
+              let(:button_id)       { 'Buttons_ApplicationInstancesTable_0' }
               let(:confirm_message) { 'Are you sure you want to restart the selected application instances?' }
             end
           end
@@ -1206,7 +1204,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'RoutesTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='RoutesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='RoutesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 9,
                                 labels:          ['', 'Host', 'Path', 'GUID', 'Domain', 'Created', 'Updated', 'Applications', 'Target'],
                                 colspans:        nil
@@ -1228,7 +1226,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_RoutesTable_1')
+          check_allowscriptaccess_attribute('Buttons_RoutesTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -1237,18 +1235,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage routes' do
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_RoutesTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_RoutesTable_0').text).to eq('Delete')
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_RoutesTable_0' }
+              let(:button_id) { 'Buttons_RoutesTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_RoutesTable_0' }
+              let(:button_id)       { 'Buttons_RoutesTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected routes?' }
             end
           end
@@ -1296,13 +1294,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:event_type) { 'service_instance' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 7,
                                 labels:          ['', 'Service Instance', 'Service Instance Last Operation', 'Service Plan', 'Service', 'Service Broker', ''],
                                 colspans:        %w(1 8 4 8 9 4 1)
                               },
                               {
-                                columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 35,
                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'User Provided', 'Events', 'Service Bindings', 'Service Keys', 'Type', 'State', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
                                 colspans:        nil
@@ -1350,7 +1348,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ServiceInstancesTable_4')
+          check_allowscriptaccess_attribute('Buttons_ServiceInstancesTable_4')
         end
 
         it 'has a checkbox in the first column' do
@@ -1359,48 +1357,48 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage service instances' do
           it 'has a Rename button' do
-            expect(@driver.find_element(id: 'ToolTables_ServiceInstancesTable_0').text).to eq('Rename')
+            expect(@driver.find_element(id: 'Buttons_ServiceInstancesTable_0').text).to eq('Rename')
           end
 
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_ServiceInstancesTable_1').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_ServiceInstancesTable_1').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'ToolTables_ServiceInstancesTable_2').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'Buttons_ServiceInstancesTable_2').text).to eq('Delete Recursive')
           end
 
           it 'has a Purge button' do
-            expect(@driver.find_element(id: 'ToolTables_ServiceInstancesTable_3').text).to eq('Purge')
+            expect(@driver.find_element(id: 'Buttons_ServiceInstancesTable_3').text).to eq('Purge')
           end
 
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
-              let(:button_id) { 'ToolTables_ServiceInstancesTable_0' }
+              let(:button_id) { 'Buttons_ServiceInstancesTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ServiceInstancesTable_1' }
+              let(:button_id) { 'Buttons_ServiceInstancesTable_1' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ServiceInstancesTable_2' }
+              let(:button_id) { 'Buttons_ServiceInstancesTable_2' }
             end
           end
 
           context 'Purge button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ServiceInstancesTable_3' }
+              let(:button_id) { 'Buttons_ServiceInstancesTable_3' }
             end
           end
 
           context 'Rename button' do
             it_behaves_like('rename first row') do
-              let(:button_id)     { 'ToolTables_ServiceInstancesTable_0' }
+              let(:button_id)     { 'Buttons_ServiceInstancesTable_0' }
               let(:title_text)    { 'Rename Service Instance' }
               let(:object_rename) { cc_service_instance_rename }
             end
@@ -1408,21 +1406,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ServiceInstancesTable_1' }
+              let(:button_id)       { 'Buttons_ServiceInstancesTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service instances?' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ServiceInstancesTable_2' }
+              let(:button_id)       { 'Buttons_ServiceInstancesTable_2' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service instances and their associated service bindings and service keys?' }
             end
           end
 
           context 'Purge button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ServiceInstancesTable_3' }
+              let(:button_id)       { 'Buttons_ServiceInstancesTable_3' }
               let(:confirm_message) { 'Are you sure you want to purge the selected service instances?' }
             end
           end
@@ -1517,13 +1515,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:event_type) { 'service_binding' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 8,
                                 labels:          ['', 'Service Binding', 'Application', 'Service Instance', 'Service Plan', 'Service', 'Service Broker', ''],
                                 colspans:        %w(1 4 2 4 8 8 4 1)
                               },
                               {
-                                columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 32,
                                 labels:          ['', 'GUID', 'Created', 'Updated', 'Events', 'Name', 'GUID', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
                                 colspans:        nil
@@ -1568,7 +1566,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ServiceBindingsTable_1')
+          check_allowscriptaccess_attribute('Buttons_ServiceBindingsTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -1577,18 +1575,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage service bindings' do
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_ServiceBindingsTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_ServiceBindingsTable_0').text).to eq('Delete')
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ServiceBindingsTable_0' }
+              let(:button_id) { 'Buttons_ServiceBindingsTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ServiceBindingsTable_0' }
+              let(:button_id)       { 'Buttons_ServiceBindingsTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service bindings?' }
             end
           end
@@ -1675,13 +1673,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:event_type) { 'service_key' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceKeysTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceKeysTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 7,
                                 labels:          ['', 'Service Key', 'Service Instance', 'Service Plan', 'Service', 'Service Broker', ''],
                                 colspans:        %w(1 5 4 8 8 4 1)
                               },
                               {
-                                columns:         @driver.find_elements(xpath: "//div[@id='ServiceKeysTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                columns:         @driver.find_elements(xpath: "//div[@id='ServiceKeysTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 31,
                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Events', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
                                 colspans:        nil
@@ -1725,7 +1723,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ServiceKeysTable_1')
+          check_allowscriptaccess_attribute('Buttons_ServiceKeysTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -1734,18 +1732,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage service keys' do
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_ServiceKeysTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_ServiceKeysTable_0').text).to eq('Delete')
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ServiceKeysTable_0' }
+              let(:button_id) { 'Buttons_ServiceKeysTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ServiceKeysTable_0' }
+              let(:button_id)       { 'Buttons_ServiceKeysTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service keys?' }
             end
           end
@@ -1826,12 +1824,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'OrganizationRolesTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='OrganizationRolesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 4,
                                 labels:          ['', 'Organization', 'User', ''],
                                 colspans:        %w(1 2 2 1)
                               },
-                              { columns:         @driver.find_elements(xpath: "//div[@id='OrganizationRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                              { columns:         @driver.find_elements(xpath: "//div[@id='OrganizationRolesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 6,
                                 labels:          ['', 'Name', 'GUID', 'Name', 'GUID', 'Role'],
                                 colspans:        nil
@@ -1850,23 +1848,23 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_OrganizationRolesTable_1')
+          check_allowscriptaccess_attribute('Buttons_OrganizationRolesTable_1')
         end
 
         context 'manage organization roles' do
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_OrganizationRolesTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_OrganizationRolesTable_0').text).to eq('Delete')
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_OrganizationRolesTable_0' }
+              let(:button_id) { 'Buttons_OrganizationRolesTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)               { 'ToolTables_OrganizationRolesTable_0' }
+              let(:button_id)               { 'Buttons_OrganizationRolesTable_0' }
               let(:check_no_data_available) { false }
               let(:confirm_message)         { 'Are you sure you want to delete the selected organization roles?' }
             end
@@ -1902,12 +1900,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'SpaceRolesTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpaceRolesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 4,
                                 labels:          ['', 'Space', 'User', ''],
                                 colspans:        %w(1 3 2 1)
                               },
-                              { columns:         @driver.find_elements(xpath: "//div[@id='SpaceRolesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                              { columns:         @driver.find_elements(xpath: "//div[@id='SpaceRolesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 7,
                                 labels:          ['', 'Name', 'GUID', 'Target', 'Name', 'GUID', 'Role'],
                                 colspans:        nil
@@ -1927,23 +1925,23 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_SpaceRolesTable_1')
+          check_allowscriptaccess_attribute('Buttons_SpaceRolesTable_1')
         end
 
         context 'manage space roles' do
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_SpaceRolesTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_SpaceRolesTable_0').text).to eq('Delete')
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_SpaceRolesTable_0' }
+              let(:button_id) { 'Buttons_SpaceRolesTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)               { 'ToolTables_SpaceRolesTable_0' }
+              let(:button_id)               { 'Buttons_SpaceRolesTable_0' }
               let(:check_no_data_available) { false }
               let(:confirm_message)         { 'Are you sure you want to delete the selected space roles?' }
             end
@@ -1984,7 +1982,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:event_type) { 'service_dashboard_client' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 9,
                                 labels:          ['Identity Zone', 'Identifier', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Service Broker'],
                                 colspans:        nil
@@ -2006,7 +2004,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ClientsTable_0')
+          check_allowscriptaccess_attribute('Buttons_ClientsTable_0')
         end
 
         context 'selectable' do
@@ -2046,13 +2044,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id) { 'Users' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 3,
                                 labels:          ['', 'Organization Roles', 'Space Roles', ''],
                                 colspans:        %w(13 5 4)
                               },
                               {
-                                columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 22,
                                 labels:          ['Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
                                 colspans:        nil
@@ -2087,7 +2085,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_UsersTable_0')
+          check_allowscriptaccess_attribute('Buttons_UsersTable_0')
         end
 
         context 'selectable' do
@@ -2144,7 +2142,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'BuildpacksTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='BuildpacksTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='BuildpacksTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 8,
                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Position', 'Enabled', 'Locked'],
                                 colspans:        nil
@@ -2165,7 +2163,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_BuildpacksTable_6')
+          check_allowscriptaccess_attribute('Buttons_BuildpacksTable_6')
         end
 
         it 'has a checkbox in the first column' do
@@ -2175,7 +2173,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         context 'manage buildpack' do
           def manage_buildpack(buttonIndex)
             check_first_row('BuildpacksTable')
-            @driver.find_element(id: 'ToolTables_BuildpacksTable_' + buttonIndex.to_s).click
+            @driver.find_element(id: 'Buttons_BuildpacksTable_' + buttonIndex.to_s).click
             check_operation_result
           end
 
@@ -2192,68 +2190,68 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has a Rename button' do
-            expect(@driver.find_element(id: 'ToolTables_BuildpacksTable_0').text).to eq('Rename')
+            expect(@driver.find_element(id: 'Buttons_BuildpacksTable_0').text).to eq('Rename')
           end
 
           it 'has an Enable button' do
-            expect(@driver.find_element(id: 'ToolTables_BuildpacksTable_1').text).to eq('Enable')
+            expect(@driver.find_element(id: 'Buttons_BuildpacksTable_1').text).to eq('Enable')
           end
 
           it 'has a Disable button' do
-            expect(@driver.find_element(id: 'ToolTables_BuildpacksTable_2').text).to eq('Disable')
+            expect(@driver.find_element(id: 'Buttons_BuildpacksTable_2').text).to eq('Disable')
           end
 
           it 'has a Lock button' do
-            expect(@driver.find_element(id: 'ToolTables_BuildpacksTable_3').text).to eq('Lock')
+            expect(@driver.find_element(id: 'Buttons_BuildpacksTable_3').text).to eq('Lock')
           end
 
           it 'has an Unlock button' do
-            expect(@driver.find_element(id: 'ToolTables_BuildpacksTable_4').text).to eq('Unlock')
+            expect(@driver.find_element(id: 'Buttons_BuildpacksTable_4').text).to eq('Unlock')
           end
 
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_BuildpacksTable_5').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_BuildpacksTable_5').text).to eq('Delete')
           end
 
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
-              let(:button_id) { 'ToolTables_BuildpacksTable_0' }
+              let(:button_id) { 'Buttons_BuildpacksTable_0' }
             end
           end
 
           context 'Enable button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_BuildpacksTable_1' }
+              let(:button_id) { 'Buttons_BuildpacksTable_1' }
             end
           end
 
           context 'Disable button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_BuildpacksTable_2' }
+              let(:button_id) { 'Buttons_BuildpacksTable_2' }
             end
           end
 
           context 'Lock button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_BuildpacksTable_3' }
+              let(:button_id) { 'Buttons_BuildpacksTable_3' }
             end
           end
 
           context 'Unlock button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_BuildpacksTable_4' }
+              let(:button_id) { 'Buttons_BuildpacksTable_4' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_BuildpacksTable_5' }
+              let(:button_id) { 'Buttons_BuildpacksTable_5' }
             end
           end
 
           context 'Rename button' do
             it_behaves_like('rename first row') do
-              let(:button_id)     { 'ToolTables_BuildpacksTable_0' }
+              let(:button_id)     { 'Buttons_BuildpacksTable_0' }
               let(:title_text)    { 'Rename Buildpack' }
               let(:object_rename) { cc_buildpack_rename }
             end
@@ -2285,7 +2283,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_BuildpacksTable_5' }
+              let(:button_id)       { 'Buttons_BuildpacksTable_5' }
               let(:confirm_message) { 'Are you sure you want to delete the selected buildpacks?' }
             end
           end
@@ -2316,7 +2314,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'DomainsTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='DomainsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='DomainsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 8,
                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Owning Organization', 'Private Shared Organizations', 'Routes'],
                                 colspans:        nil
@@ -2337,7 +2335,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_DomainsTable_2')
+          check_allowscriptaccess_attribute('Buttons_DomainsTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -2346,35 +2344,35 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage domains' do
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_DomainsTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_DomainsTable_0').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'ToolTables_DomainsTable_1').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'Buttons_DomainsTable_1').text).to eq('Delete Recursive')
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_DomainsTable_0' }
+              let(:button_id) { 'Buttons_DomainsTable_0' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_DomainsTable_1' }
+              let(:button_id) { 'Buttons_DomainsTable_1' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_DomainsTable_0' }
+              let(:button_id)       { 'Buttons_DomainsTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected domains?' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_DomainsTable_1' }
+              let(:button_id)       { 'Buttons_DomainsTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected domains and their associated routes?' }
             end
           end
@@ -2398,7 +2396,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has private shared organizations' do
             expect(@driver.find_element(id: 'DomainsOrganizationsDetailsLabel').displayed?).to be(true)
 
-            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='DomainsOrganizationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='DomainsOrganizationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 2,
                                 labels:          %w(Organization GUID),
                                 colspans:        nil)
@@ -2411,7 +2409,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'private shared organizations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('ToolTables_DomainsOrganizationsTable_0')
+            check_allowscriptaccess_attribute('Buttons_DomainsOrganizationsTable_0')
           end
 
           it 'has organizations link' do
@@ -2429,7 +2427,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'FeatureFlagsTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='FeatureFlagsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='FeatureFlagsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 6,
                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Enabled'],
                                 colspans:        nil
@@ -2448,7 +2446,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_FeatureFlagsTable_2')
+          check_allowscriptaccess_attribute('Buttons_FeatureFlagsTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -2458,7 +2456,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         context 'manage feature flag' do
           def manage_feature_flag(buttonIndex)
             check_first_row('FeatureFlagsTable')
-            @driver.find_element(id: 'ToolTables_FeatureFlagsTable_' + buttonIndex.to_s).click
+            @driver.find_element(id: 'Buttons_FeatureFlagsTable_' + buttonIndex.to_s).click
             check_operation_result
           end
 
@@ -2469,22 +2467,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has an Enable button' do
-            expect(@driver.find_element(id: 'ToolTables_FeatureFlagsTable_0').text).to eq('Enable')
+            expect(@driver.find_element(id: 'Buttons_FeatureFlagsTable_0').text).to eq('Enable')
           end
 
           it 'has a Disable button' do
-            expect(@driver.find_element(id: 'ToolTables_FeatureFlagsTable_1').text).to eq('Disable')
+            expect(@driver.find_element(id: 'Buttons_FeatureFlagsTable_1').text).to eq('Disable')
           end
 
           context 'Enable button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_FeatureFlagsTable_0' }
+              let(:button_id) { 'Buttons_FeatureFlagsTable_0' }
             end
           end
 
           context 'Disable button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_FeatureFlagsTable_1' }
+              let(:button_id) { 'Buttons_FeatureFlagsTable_1' }
             end
           end
 
@@ -2523,7 +2521,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'QuotasTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='QuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='QuotasTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 13,
                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Total Private Domains', 'Total Services', 'Total Routes', 'Application Instance Limit', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Organizations'],
                                 colspans:        nil
@@ -2549,7 +2547,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_QuotasTable_2')
+          check_allowscriptaccess_attribute('Buttons_QuotasTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -2558,28 +2556,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage quotas' do
           it 'has a Rename button' do
-            expect(@driver.find_element(id: 'ToolTables_QuotasTable_0').text).to eq('Rename')
+            expect(@driver.find_element(id: 'Buttons_QuotasTable_0').text).to eq('Rename')
           end
 
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_QuotasTable_1').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_QuotasTable_1').text).to eq('Delete')
           end
 
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
-              let(:button_id) { 'ToolTables_QuotasTable_0' }
+              let(:button_id) { 'Buttons_QuotasTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_QuotasTable_1' }
+              let(:button_id) { 'Buttons_QuotasTable_1' }
             end
           end
 
           context 'Rename button' do
             it_behaves_like('rename first row') do
-              let(:button_id)     { 'ToolTables_QuotasTable_0' }
+              let(:button_id)     { 'Buttons_QuotasTable_0' }
               let(:title_text)    { 'Rename Quota Definition' }
               let(:object_rename) { cc_quota_definition_rename }
             end
@@ -2587,7 +2585,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_QuotasTable_1' }
+              let(:button_id)       { 'Buttons_QuotasTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected quota definitions?' }
             end
           end
@@ -2625,12 +2623,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'SpaceQuotasTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpaceQuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpaceQuotasTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 3,
                                 labels:          ['', '', 'Organization'],
                                 colspans:        %w(1 10 2)
                               },
-                              { columns:         @driver.find_elements(xpath: "//div[@id='SpaceQuotasTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                              { columns:         @driver.find_elements(xpath: "//div[@id='SpaceQuotasTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 13,
                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Spaces', 'Name', 'GUID'],
                                 colspans:        nil
@@ -2656,7 +2654,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_SpaceQuotasTable_2')
+          check_allowscriptaccess_attribute('Buttons_SpaceQuotasTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -2665,28 +2663,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage space quotas' do
           it 'has a Rename button' do
-            expect(@driver.find_element(id: 'ToolTables_SpaceQuotasTable_0').text).to eq('Rename')
+            expect(@driver.find_element(id: 'Buttons_SpaceQuotasTable_0').text).to eq('Rename')
           end
 
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_SpaceQuotasTable_1').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_SpaceQuotasTable_1').text).to eq('Delete')
           end
 
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
-              let(:button_id) { 'ToolTables_SpaceQuotasTable_0' }
+              let(:button_id) { 'Buttons_SpaceQuotasTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_SpaceQuotasTable_1' }
+              let(:button_id) { 'Buttons_SpaceQuotasTable_1' }
             end
           end
 
           context 'Rename button' do
             it_behaves_like('rename first row') do
-              let(:button_id)     { 'ToolTables_SpaceQuotasTable_0' }
+              let(:button_id)     { 'Buttons_SpaceQuotasTable_0' }
               let(:title_text)    { 'Rename Space Quota Definition' }
               let(:object_rename) { cc_space_quota_definition_rename }
             end
@@ -2694,7 +2692,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_SpaceQuotasTable_1' }
+              let(:button_id)       { 'Buttons_SpaceQuotasTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected space quota definitions?' }
             end
           end
@@ -2734,7 +2732,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id) { 'Stacks' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='StacksTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='StacksTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 7,
                                 labels:          ['Name', 'GUID', 'Created', 'Updated', 'Applications', 'Application Instances', 'Description'],
                                 colspans:        nil
@@ -2754,7 +2752,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_StacksTable_0')
+          check_allowscriptaccess_attribute('Buttons_StacksTable_0')
         end
 
         context 'selectable' do
@@ -2787,13 +2785,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id) { 'Events' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='EventsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='EventsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 4,
                                 labels:          ['', 'Actee', 'Actor', ''],
                                 colspans:        %w(3 3 3 1)
                               },
                               {
-                                columns:         @driver.find_elements(xpath: "//div[@id='EventsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                columns:         @driver.find_elements(xpath: "//div[@id='EventsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 10,
                                 labels:          %w(Timestamp GUID Type Type Name GUID Type Name GUID Target),
                                 colspans:        nil
@@ -2816,7 +2814,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_EventsTable_0')
+          check_allowscriptaccess_attribute('Buttons_EventsTable_0')
         end
 
         context 'selectable' do
@@ -3007,7 +3005,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:event_type) { 'service_broker' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceBrokersTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServiceBrokersTable_wrapper']/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 15,
                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Events', 'Service Dashboard Client', 'Services', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Target'],
                                 colspans:        nil
@@ -3035,7 +3033,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ServiceBrokersTable_2')
+          check_allowscriptaccess_attribute('Buttons_ServiceBrokersTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -3044,28 +3042,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage service brokers' do
           it 'has a Rename button' do
-            expect(@driver.find_element(id: 'ToolTables_ServiceBrokersTable_0').text).to eq('Rename')
+            expect(@driver.find_element(id: 'Buttons_ServiceBrokersTable_0').text).to eq('Rename')
           end
 
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_ServiceBrokersTable_1').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_ServiceBrokersTable_1').text).to eq('Delete')
           end
 
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
-              let(:button_id) { 'ToolTables_ServiceBrokersTable_0' }
+              let(:button_id) { 'Buttons_ServiceBrokersTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ServiceBrokersTable_1' }
+              let(:button_id) { 'Buttons_ServiceBrokersTable_1' }
             end
           end
 
           context 'Rename button' do
             it_behaves_like('rename first row') do
-              let(:button_id)     { 'ToolTables_ServiceBrokersTable_0' }
+              let(:button_id)     { 'Buttons_ServiceBrokersTable_0' }
               let(:title_text)    { 'Rename Service Broker' }
               let(:object_rename) { cc_service_broker_rename }
             end
@@ -3073,7 +3071,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ServiceBrokersTable_1' }
+              let(:button_id)       { 'Buttons_ServiceBrokersTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service brokers?' }
             end
           end
@@ -3153,13 +3151,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:event_type) { 'service' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 3,
                                 labels:          ['', 'Service', 'Service Broker'],
                                 colspans:        %w(1 17 4)
                               },
                               {
-                                columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 22,
                                 labels:          ['', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Plan Updateable', 'Events', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Name', 'GUID', 'Created', 'Updated'],
                                 colspans:        nil
@@ -3194,7 +3192,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ServicesTable_2')
+          check_allowscriptaccess_attribute('Buttons_ServicesTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -3203,35 +3201,35 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage services' do
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_ServicesTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_ServicesTable_0').text).to eq('Delete')
           end
 
           it 'has a Purge button' do
-            expect(@driver.find_element(id: 'ToolTables_ServicesTable_1').text).to eq('Purge')
+            expect(@driver.find_element(id: 'Buttons_ServicesTable_1').text).to eq('Purge')
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ServicesTable_0' }
+              let(:button_id) { 'Buttons_ServicesTable_0' }
             end
           end
 
           context 'Purge button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ServicesTable_1' }
+              let(:button_id) { 'Buttons_ServicesTable_1' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ServicesTable_0' }
+              let(:button_id)       { 'Buttons_ServicesTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected services?' }
             end
           end
 
           context 'Purge button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ServicesTable_1' }
+              let(:button_id)       { 'Buttons_ServicesTable_1' }
               let(:confirm_message) { 'Are you sure you want to purge the selected services?' }
             end
           end
@@ -3316,13 +3314,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:event_type) { 'service_plan' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 4,
                                 labels:          ['', 'Service Plan', 'Service', 'Service Broker'],
                                 colspans:        %w(1 13 9 4)
                               },
                               {
-                                columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 27,
                                 labels:          ['', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Events', 'Visible Organizations', 'Service Instances', 'Service Bindings', 'Service Keys', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated'],
                                 colspans:        nil
@@ -3362,7 +3360,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ServicePlansTable_3')
+          check_allowscriptaccess_attribute('Buttons_ServicePlansTable_3')
         end
 
         it 'has a checkbox in the first column' do
@@ -3372,7 +3370,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         context 'manage service plans' do
           def manage_service_plan(buttonIndex)
             check_first_row('ServicePlansTable')
-            @driver.find_element(id: "ToolTables_ServicePlansTable_#{buttonIndex}").click
+            @driver.find_element(id: "Buttons_ServicePlansTable_#{buttonIndex}").click
             check_operation_result
           end
 
@@ -3387,32 +3385,32 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has a Public button' do
-            expect(@driver.find_element(id: 'ToolTables_ServicePlansTable_0').text).to eq('Public')
+            expect(@driver.find_element(id: 'Buttons_ServicePlansTable_0').text).to eq('Public')
           end
 
           it 'has a Private button' do
-            expect(@driver.find_element(id: 'ToolTables_ServicePlansTable_1').text).to eq('Private')
+            expect(@driver.find_element(id: 'Buttons_ServicePlansTable_1').text).to eq('Private')
           end
 
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_ServicePlansTable_2').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_ServicePlansTable_2').text).to eq('Delete')
           end
 
           context 'Public button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ServicePlansTable_0' }
+              let(:button_id) { 'Buttons_ServicePlansTable_0' }
             end
           end
 
           context 'Private button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ServicePlansTable_1' }
+              let(:button_id) { 'Buttons_ServicePlansTable_1' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ServicePlansTable_2' }
+              let(:button_id) { 'Buttons_ServicePlansTable_2' }
             end
           end
 
@@ -3424,7 +3422,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ServicePlansTable_2' }
+              let(:button_id)       { 'Buttons_ServicePlansTable_2' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service plans?' }
             end
           end
@@ -3506,13 +3504,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:event_type) { 'service_plan_visibility' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServicePlanVisibilitiesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ServicePlanVisibilitiesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 6,
                                 labels:          ['', 'Service Plan Visibility', 'Service Plan', 'Service', 'Service Broker', 'Organization'],
                                 colspans:        %w(1 4 8 9 4 4)
                               },
                               {
-                                columns:         @driver.find_elements(xpath: "//div[@id='ServicePlanVisibilitiesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                                columns:         @driver.find_elements(xpath: "//div[@id='ServicePlanVisibilitiesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 30,
                                 labels:          ['', 'GUID', 'Created', 'Updated', 'Events', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Provider', 'Label', 'GUID', 'Unique ID', 'Version', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Created', 'Updated'],
                                 colspans:        nil
@@ -3555,7 +3553,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ServicePlanVisibilitiesTable_1')
+          check_allowscriptaccess_attribute('Buttons_ServicePlanVisibilitiesTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -3564,18 +3562,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage service plan visibilities' do
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_ServicePlanVisibilitiesTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_ServicePlanVisibilitiesTable_0').text).to eq('Delete')
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_ServicePlanVisibilitiesTable_0' }
+              let(:button_id) { 'Buttons_ServicePlanVisibilitiesTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_ServicePlanVisibilitiesTable_0' }
+              let(:button_id)       { 'Buttons_ServicePlanVisibilitiesTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service plan visibilities?' }
             end
           end
@@ -3645,7 +3643,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id) { 'IdentityZones' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='IdentityZonesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='IdentityZonesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 10,
                                 labels:          ['Name', 'ID', 'Created', 'Updated', 'Subdomain', 'Version', 'Identity Providers', 'Clients', 'Users', 'Description'],
                                 colspans:        nil
@@ -3668,7 +3666,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_IdentityZonesTable_0')
+          check_allowscriptaccess_attribute('Buttons_IdentityZonesTable_0')
         end
 
         context 'selectable' do
@@ -3708,7 +3706,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id) { 'IdentityProviders' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='IdentityProvidersTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='IdentityProvidersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 9,
                                 labels:          ['Identity Zone', 'Name', 'GUID', 'Created', 'Updated', 'Origin Key', 'Type', 'Active', 'Version'],
                                 colspans:        nil
@@ -3730,7 +3728,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_IdentityProvidersTable_0')
+          check_allowscriptaccess_attribute('Buttons_IdentityProvidersTable_0')
         end
 
         context 'selectable' do
@@ -3762,7 +3760,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'SecurityGroupsTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsTableContainer']/div/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 8,
                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Staging Default', 'Running Default', 'Spaces'],
                                 colspans:        nil
@@ -3783,7 +3781,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_SecurityGroupsTable_1')
+          check_allowscriptaccess_attribute('Buttons_SecurityGroupsTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -3792,18 +3790,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage security groups' do
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_SecurityGroupsTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_0').text).to eq('Delete')
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_SecurityGroupsTable_0' }
+              let(:button_id) { 'Buttons_SecurityGroupsTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_SecurityGroupsTable_0' }
+              let(:button_id)       { 'Buttons_SecurityGroupsTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected security groups?' }
             end
           end
@@ -3828,7 +3826,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has rules' do
             expect(@driver.find_element(id: 'SecurityGroupsRulesDetailsLabel').displayed?).to be(true)
 
-            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsRulesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsRulesTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 6,
                                 labels:          %w(Protocol Destination Log Ports Type Code),
                                 colspans:        nil)
@@ -3848,7 +3846,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'rules subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('ToolTables_SecurityGroupsRulesTable_0')
+            check_allowscriptaccess_attribute('Buttons_SecurityGroupsRulesTable_0')
           end
 
           it 'has security groups spaces link' do
@@ -3862,12 +3860,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:table_id) { 'SecurityGroupsSpacesTable' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsSpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsSpacesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 4,
                                 labels:          ['', 'Security Group', 'Space', ''],
                                 colspans:        %w(1 4 4 1)
                               },
-                              { columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsSpacesTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                              { columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsSpacesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 10,
                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
                                 colspans:        nil
@@ -3890,7 +3888,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_SecurityGroupsSpacesTable_1')
+          check_allowscriptaccess_attribute('Buttons_SecurityGroupsSpacesTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -3899,18 +3897,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'manage security group spaces' do
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'ToolTables_SecurityGroupsSpacesTable_0').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_SecurityGroupsSpacesTable_0').text).to eq('Delete')
           end
 
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'ToolTables_SecurityGroupsSpacesTable_0' }
+              let(:button_id) { 'Buttons_SecurityGroupsSpacesTable_0' }
             end
           end
 
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'ToolTables_SecurityGroupsSpacesTable_0' }
+              let(:button_id)       { 'Buttons_SecurityGroupsSpacesTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected security groups spaces?' }
             end
           end
@@ -3952,12 +3950,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id) { 'DEAs' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='DEAsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 3,
                                 labels:          ['', 'Instances', '% Free'],
                                 colspans:        %w(7 5 2)
                               },
-                              { columns:         @driver.find_elements(xpath: "//div[@id='DEAsTableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                              { columns:         @driver.find_elements(xpath: "//div[@id='DEAsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                 expected_length: 14,
                                 labels:          ['Name', 'Index', 'Status', 'Started', 'Stacks', 'CPU', 'Memory', 'Total', 'Running', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk'],
                                 colspans:        nil
@@ -3984,7 +3982,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_DEAsTable_0')
+          check_allowscriptaccess_attribute('Buttons_DEAsTable_0')
         end
 
         context 'selectable' do
@@ -4027,7 +4025,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id) { 'CloudControllers' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='CloudControllersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='CloudControllersTableContainer']/div/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 7,
                                 labels:          %w(Name Index State Started Cores CPU Memory),
                                 colspans:        nil
@@ -4047,7 +4045,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_CloudControllersTable_0')
+          check_allowscriptaccess_attribute('Buttons_CloudControllersTable_0')
         end
 
         context 'selectable' do
@@ -4072,7 +4070,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id) { 'HealthManagers' }
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='HealthManagersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='HealthManagersTableContainer']/div/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 5,
                                 labels:          %w(Name Index State Cores Memory),
                                 colspans:        nil
@@ -4090,7 +4088,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_HealthManagersTable_0')
+          check_allowscriptaccess_attribute('Buttons_HealthManagersTable_0')
         end
 
         context 'selectable' do
@@ -4137,7 +4135,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a table' do
-          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='GatewaysTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='GatewaysTableContainer']/div/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 9,
                                 labels:          ['Name', 'Index', 'State', 'Started', 'Description', 'CPU', 'Memory', 'Nodes', 'Available Capacity'],
                                 colspans:        nil
@@ -4159,7 +4157,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_GatewaysTable_0')
+          check_allowscriptaccess_attribute('Buttons_GatewaysTable_0')
         end
 
         context 'selectable' do
@@ -4185,7 +4183,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has nodes' do
             expect(@driver.find_element(id: 'GatewaysNodesDetailsLabel').displayed?).to be(true)
 
-            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='GatewaysNodesTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='GatewaysNodesTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 2,
                                 labels:          ['Name', 'Available Capacity'],
                                 colspans:        nil)
@@ -4198,7 +4196,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'nodes subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('ToolTables_GatewaysNodesTable_0')
+            check_allowscriptaccess_attribute('Buttons_GatewaysNodesTable_0')
           end
         end
       end
@@ -4207,7 +4205,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id) { 'Routers' }
 
         it 'has a table' do
-          check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='RoutersTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='RoutersTableContainer']/div/div[4]/div/div/table/thead/tr/th"),
                                  expected_length: 10,
                                  labels:          ['Name', 'Index', 'State', 'Started', 'Cores', 'CPU', 'Memory', 'Droplets', 'Requests', 'Bad Requests'],
                                  colspans:        nil
@@ -4230,7 +4228,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_RoutersTable_0')
+          check_allowscriptaccess_attribute('Buttons_RoutersTable_0')
         end
 
         context 'selectable' do
@@ -4261,7 +4259,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has top10 applications' do
             expect(@driver.find_element(id: 'RoutersTop10ApplicationsDetailsLabel').displayed?).to be(true)
 
-            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='RoutersTop10ApplicationsTableContainer']/div[2]/div[5]/div[1]/div/table/thead/tr/th"),
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='RoutersTop10ApplicationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 5,
                                 labels:          %w(Name GUID RPM RPS Target),
                                 colspans:        nil)
@@ -4277,7 +4275,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'top10 subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('ToolTables_RoutersTop10ApplicationsTable_0')
+            check_allowscriptaccess_attribute('Buttons_RoutersTop10ApplicationsTable_0')
           end
         end
       end
@@ -4286,7 +4284,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id) { 'Components' }
 
         it 'has a table' do
-          check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='ComponentsTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='ComponentsTableContainer']/div/div[4]/div/div/table/thead/tr/th"),
                                  expected_length: 5,
                                  labels:          %w(Name Type Index State Started),
                                  colspans:        nil
@@ -4304,11 +4302,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_ComponentsTable_1')
+          check_allowscriptaccess_attribute('Buttons_ComponentsTable_1')
         end
 
         it 'has a Remove OFFLINE components button' do
-          expect(@driver.find_element(id: 'ToolTables_ComponentsTable_0').text).to eq('Remove OFFLINE')
+          expect(@driver.find_element(id: 'Buttons_ComponentsTable_0').text).to eq('Remove OFFLINE')
         end
 
         context 'selectable' do
@@ -4329,7 +4327,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id) { 'Logs' }
 
         it 'has a table' do
-          check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='LogsTableContainer']/div/div[6]/div[1]/div/table/thead/tr/th"),
+          check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='LogsTableContainer']/div/div[4]/div/div/table/thead/tr/th"),
                                  expected_length: 3,
                                  labels:          ['Path', 'Size', 'Last Modified'],
                                  colspans:        nil
@@ -4338,8 +4336,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has contents' do
-          row = first_row
-          row.click
+          select_first_row
+          row = @driver.find_elements(xpath: "//table[@id='LogsTable']/tbody/tr")[0]
           columns = row.find_elements(tag_name: 'td')
           expect(columns.length).to eq(3)
           expect(columns[0].text).to eq(log_file_displayed)
@@ -4352,7 +4350,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('ToolTables_LogsTable_0')
+          check_allowscriptaccess_attribute('Buttons_LogsTable_0')
         end
       end
 
@@ -4369,7 +4367,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('ToolTables_StatsTable_1')
+            check_allowscriptaccess_attribute('Buttons_StatsTable_1')
           end
 
           it 'has a chart' do
@@ -4393,7 +4391,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'can show current stats' do
           check_default_stats_table
-          @driver.find_element(id: 'ToolTables_StatsTable_0').click
+          @driver.find_element(id: 'Buttons_StatsTable_0').click
           Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
           expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
           expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Confirmation')
@@ -4407,7 +4405,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'can create stats' do
           check_default_stats_table
-          @driver.find_element(id: 'ToolTables_StatsTable_0').click
+          @driver.find_element(id: 'Buttons_StatsTable_0').click
           @driver.find_element(id: 'modalDialogButton0').click
 
           # As the page refreshes, we need to catch the stale element error and re-find the element on the page

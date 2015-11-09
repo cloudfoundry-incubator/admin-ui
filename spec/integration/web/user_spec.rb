@@ -44,7 +44,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Organizations' }
         let(:page_id)   { 'OrganizationsPage' }
-        let(:button_id) { 'ToolTables_OrganizationsTable_0' }
+        let(:button_id) { 'Buttons_OrganizationsTable_0' }
       end
     end
 
@@ -52,7 +52,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Spaces' }
         let(:page_id)   { 'SpacesPage' }
-        let(:button_id) { 'ToolTables_SpacesTable_0' }
+        let(:button_id) { 'Buttons_SpacesTable_0' }
       end
     end
 
@@ -60,7 +60,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Applications' }
         let(:page_id)   { 'ApplicationsPage' }
-        let(:button_id) { 'ToolTables_ApplicationsTable_0' }
+        let(:button_id) { 'Buttons_ApplicationsTable_0' }
       end
     end
 
@@ -68,7 +68,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ApplicationInstances' }
         let(:page_id)   { 'ApplicationInstancesPage' }
-        let(:button_id) { 'ToolTables_ApplicationInstancesTable_0' }
+        let(:button_id) { 'Buttons_ApplicationInstancesTable_0' }
       end
     end
 
@@ -76,7 +76,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Routes' }
         let(:page_id)   { 'RoutesPage' }
-        let(:button_id) { 'ToolTables_RoutesTable_0' }
+        let(:button_id) { 'Buttons_RoutesTable_0' }
       end
     end
 
@@ -84,7 +84,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceInstances' }
         let(:page_id)   { 'ServiceInstancesPage' }
-        let(:button_id) { 'ToolTables_ServiceInstancesTable_0' }
+        let(:button_id) { 'Buttons_ServiceInstancesTable_0' }
       end
     end
 
@@ -92,7 +92,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceBindings' }
         let(:page_id)   { 'ServiceBindingsPage' }
-        let(:button_id) { 'ToolTables_ServiceBindingsTable_0' }
+        let(:button_id) { 'Buttons_ServiceBindingsTable_0' }
       end
     end
 
@@ -100,7 +100,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceKeys' }
         let(:page_id)   { 'ServiceKeysPage' }
-        let(:button_id) { 'ToolTables_ServiceKeysTable_0' }
+        let(:button_id) { 'Buttons_ServiceKeysTable_0' }
       end
     end
 
@@ -108,7 +108,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'OrganizationRoles' }
         let(:page_id)   { 'OrganizationRolesPage' }
-        let(:button_id) { 'ToolTables_OrganizationRolesTable_0' }
+        let(:button_id) { 'Buttons_OrganizationRolesTable_0' }
       end
     end
 
@@ -116,7 +116,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'SpaceRoles' }
         let(:page_id)   { 'SpaceRolesPage' }
-        let(:button_id) { 'ToolTables_SpaceRolesTable_0' }
+        let(:button_id) { 'Buttons_SpaceRolesTable_0' }
       end
     end
 
@@ -124,7 +124,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Buildpacks' }
         let(:page_id)   { 'BuildpacksPage' }
-        let(:button_id) { 'ToolTables_BuildpacksTable_0' }
+        let(:button_id) { 'Buttons_BuildpacksTable_0' }
       end
     end
 
@@ -132,7 +132,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Domains' }
         let(:page_id)   { 'DomainsPage' }
-        let(:button_id) { 'ToolTables_DomainsTable_0' }
+        let(:button_id) { 'Buttons_DomainsTable_0' }
       end
     end
 
@@ -140,7 +140,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'FeatureFlags' }
         let(:page_id)   { 'FeatureFlagsPage' }
-        let(:button_id) { 'ToolTables_FeatureFlagsTable_0' }
+        let(:button_id) { 'Buttons_FeatureFlagsTable_0' }
       end
     end
 
@@ -148,7 +148,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Quotas' }
         let(:page_id)   { 'QuotasPage' }
-        let(:button_id) { 'ToolTables_QuotasTable_0' }
+        let(:button_id) { 'Buttons_QuotasTable_0' }
       end
     end
 
@@ -156,7 +156,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'SpaceQuotas' }
         let(:page_id)   { 'SpaceQuotasPage' }
-        let(:button_id) { 'ToolTables_SpaceQuotasTable_0' }
+        let(:button_id) { 'Buttons_SpaceQuotasTable_0' }
       end
     end
 
@@ -164,7 +164,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceBrokers' }
         let(:page_id)   { 'ServiceBrokersPage' }
-        let(:button_id) { 'ToolTables_ServiceBrokersTable_0' }
+        let(:button_id) { 'Buttons_ServiceBrokersTable_0' }
       end
     end
 
@@ -172,7 +172,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Services' }
         let(:page_id)   { 'ServicesPage' }
-        let(:button_id) { 'ToolTables_ServicesTable_0' }
+        let(:button_id) { 'Buttons_ServicesTable_0' }
       end
     end
 
@@ -180,7 +180,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServicePlans' }
         let(:page_id)   { 'ServicePlansPage' }
-        let(:button_id) { 'ToolTables_ServicePlansTable_0' }
+        let(:button_id) { 'Buttons_ServicePlansTable_0' }
       end
     end
 
@@ -188,7 +188,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServicePlanVisibilities' }
         let(:page_id)   { 'ServicePlanVisibilitiesPage' }
-        let(:button_id) { 'ToolTables_ServicePlanVisibilitiesTable_0' }
+        let(:button_id) { 'Buttons_ServicePlanVisibilitiesTable_0' }
       end
     end
 
@@ -196,7 +196,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'SecurityGroups' }
         let(:page_id)   { 'SecurityGroupsPage' }
-        let(:button_id) { 'ToolTables_SecurityGroupsTable_0' }
+        let(:button_id) { 'Buttons_SecurityGroupsTable_0' }
       end
     end
 
@@ -204,7 +204,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'SecurityGroupsSpaces' }
         let(:page_id)   { 'SecurityGroupsSpacesPage' }
-        let(:button_id) { 'ToolTables_SecurityGroupsSpacesTable_0' }
+        let(:button_id) { 'Buttons_SecurityGroupsSpacesTable_0' }
       end
     end
 
@@ -212,7 +212,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Components' }
         let(:page_id)   { 'ComponentsPage' }
-        let(:button_id) { 'ToolTables_ComponentsTable_0' }
+        let(:button_id) { 'Buttons_ComponentsTable_0' }
       end
     end
 
@@ -220,7 +220,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Stats' }
         let(:page_id)   { 'StatsPage' }
-        let(:button_id) { 'ToolTables_StatsTable_0' }
+        let(:button_id) { 'Buttons_StatsTable_0' }
       end
     end
   end

@@ -120,7 +120,7 @@
     cursor: default;
 }
 
-button.DTTT_button, div.DTTT_button, a.DTTT_button
+button.dt_button, div.dt-button, a.dt-button 
 {
     border-radius: 3px;
     font-size: .75em;
@@ -143,9 +143,8 @@ div.dataTables_wrapper:after
     visibility: hidden;
 }
 
-div.DTTT_container
+div.dt-buttons
 {
-    float: left;
     margin: 4px 2px 4px 30px;
 }
 
@@ -238,14 +237,14 @@ table.dataTable tbody th
     border: 1px solid rgb(120, 120, 120);
 }
 
-table.dataTable tr.DTTT_selected.odd,
-table.dataTable tr.DTTT_selected.even,
-table.dataTable tr.DTTT_selected.odd td.sorting_1,
-table.dataTable tr.DTTT_selected.odd td.sorting_2,
-table.dataTable tr.DTTT_selected.odd td.sorting_3,
-table.dataTable tr.DTTT_selected.even td.sorting_1,
-table.dataTable tr.DTTT_selected.even td.sorting_2,
-table.dataTable tr.DTTT_selected.even td.sorting_3
+table.dataTable tbody tr.selected.odd,
+table.dataTable tbody tr.selected.even,
+table.dataTable tbody tr.selected.odd td.sorting_1,
+table.dataTable tbody tr.selected.odd td.sorting_2,
+table.dataTable tbody tr.selected.odd td.sorting_3,
+table.dataTable tbody tr.selected.even td.sorting_1,
+table.dataTable tbody tr.selected.even td.sorting_2,
+table.dataTable tbody tr.selected.even td.sorting_3
 {
     background: rgb(120, 120, 120);
     color: rgb(220, 220, 220);

@@ -102,13 +102,13 @@ shared_context :web_context do
   end
 
   def check_stats_table(id)
-    check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[6]/div[1]/div/table/thead/tr[1]/th"),
+    check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                           expected_length: 3,
                           labels:          ['', 'Instances', ''],
                           colspans:        %w(5 2 1)
                         },
                         {
-                          columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[6]/div[1]/div/table/thead/tr[2]/th"),
+                          columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                           expected_length: 8,
                           labels:          %w(Date Organizations Spaces Users Apps Total Running DEAs),
                           colspans:        nil
@@ -157,17 +157,13 @@ shared_context :web_context do
     end
   end
 
-  def first_row
-    @driver.find_elements(xpath: "//table[@id='#{tab_id}Table']/tbody/tr")[0]
-  end
-
   def login(title)
     @driver.get "http://#{host}:#{port}"
     Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.title == title }
   end
 
   def select_first_row
-    first_row.click
+    @driver.find_elements(xpath: "//table[@id='#{tab_id}Table']/tbody/tr/td")[0].click
   end
 
   def scroll_tab_into_view(id, verify_deas_tab_selected = false)
