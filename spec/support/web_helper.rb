@@ -137,14 +137,14 @@ shared_context :web_context do
     end
   end
 
-  def check_table_headers(headRow)
-    expect(headRow[:columns]).to_not be_nil
-    expect(headRow[:columns].length).to eq(headRow[:expected_length])
+  def check_table_headers(head_row)
+    expect(head_row[:columns]).to_not be_nil
+    expect(head_row[:columns].length).to eq(head_row[:expected_length])
     column_index = 0
-    while column_index < headRow[:expected_length]
-      expect(headRow[:columns][column_index].text).to eq(headRow[:labels][column_index])
-      unless headRow[:colspans].nil?
-        expect(headRow[:columns][column_index].attribute('colspan')).to eq(headRow[:colspans][column_index])
+    while column_index < head_row[:expected_length]
+      expect(head_row[:columns][column_index].text).to eq(head_row[:labels][column_index])
+      unless head_row[:colspans].nil?
+        expect(head_row[:columns][column_index].attribute('colspan')).to eq(head_row[:colspans][column_index])
       end
       column_index += 1
     end

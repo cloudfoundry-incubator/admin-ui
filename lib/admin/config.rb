@@ -4,7 +4,6 @@ require_relative 'utils'
 
 module AdminUI
   class Config
-    # rubocop:disable Style/ExtraSpacing
     DEFAULTS_CONFIG =
     {
       bind_address:                                 '0.0.0.0',
@@ -99,7 +98,6 @@ module AdminUI
         schema
       end
     end
-    # rubocop:enable Style/ExtraSpacing
 
     def self.load(config)
       # pre-processing: work on deprecated properties

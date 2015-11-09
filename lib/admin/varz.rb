@@ -99,7 +99,7 @@ module AdminUI
 
     private
 
-    def filter(typePattern)
+    def filter(type_pattern)
       cache = {}
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @testing && @running && @cache.nil?
@@ -111,10 +111,10 @@ module AdminUI
       result = { 'connected' => cache['connected'], 'items' => result_item_array }
 
       cache['items'].each do |_, item|
-        type_pattern_index = item['type'] =~ typePattern
+        type_pattern_index = item['type'] =~ type_pattern
         next if type_pattern_index.nil?
         result_item = item.clone
-        item_name = type_pattern_index == 0 ? item['host'] : item['type'].sub(typePattern, '')
+        item_name = type_pattern_index == 0 ? item['host'] : item['type'].sub(type_pattern, '')
         result_item['name'] = item_name unless item_name.nil?
         result_item_array.push(result_item)
       end

@@ -909,9 +909,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage application' do
-          def manage_application(buttonIndex)
+          def manage_application(button_index)
             check_first_row('ApplicationsTable')
-            @driver.find_element(id: 'Buttons_ApplicationsTable_' + buttonIndex.to_s).click
+            @driver.find_element(id: 'Buttons_ApplicationsTable_' + button_index.to_s).click
             check_operation_result
           end
 
@@ -2171,9 +2171,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage buildpack' do
-          def manage_buildpack(buttonIndex)
+          def manage_buildpack(button_index)
             check_first_row('BuildpacksTable')
-            @driver.find_element(id: 'Buttons_BuildpacksTable_' + buttonIndex.to_s).click
+            @driver.find_element(id: 'Buttons_BuildpacksTable_' + button_index.to_s).click
             check_operation_result
           end
 
@@ -2454,9 +2454,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage feature flag' do
-          def manage_feature_flag(buttonIndex)
+          def manage_feature_flag(button_index)
             check_first_row('FeatureFlagsTable')
-            @driver.find_element(id: 'Buttons_FeatureFlagsTable_' + buttonIndex.to_s).click
+            @driver.find_element(id: 'Buttons_FeatureFlagsTable_' + button_index.to_s).click
             check_operation_result
           end
 
@@ -3368,9 +3368,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage service plans' do
-          def manage_service_plan(buttonIndex)
+          def manage_service_plan(button_index)
             check_first_row('ServicePlansTable')
-            @driver.find_element(id: "Buttons_ServicePlansTable_#{buttonIndex}").click
+            @driver.find_element(id: "Buttons_ServicePlansTable_#{button_index}").click
             check_operation_result
           end
 

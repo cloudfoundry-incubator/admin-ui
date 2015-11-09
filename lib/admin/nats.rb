@@ -234,7 +234,7 @@ module AdminUI
       thread.priority = -2
     end
 
-    def update_connection_status(type, uri, connected, disconnectedList)
+    def update_connection_status(type, uri, connected, disconnected_list)
       return unless monitored?(type)
       if connected
         @cache['notified'].delete(uri)
@@ -244,7 +244,7 @@ module AdminUI
           @logger.warn("The #{type} component #{uri} is not responding, its status will be checked again next refresh")
         elsif component_entry['count'] == @config.component_connection_retries
           @logger.warn("The #{type} component #{uri} has been recognized as disconnected")
-          disconnectedList.push(component_entry)
+          disconnected_list.push(component_entry)
         else
           @logger.warn("The #{type} component #{uri} is still not responding")
         end
