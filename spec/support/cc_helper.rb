@@ -896,6 +896,7 @@ module CCHelper
 
   def cc_space_quota_definition
     {
+      app_instance_limit:         5,
       created_at:                 Time.new('2015-04-23 08:01:08 -0500'),
       guid:                       'space_quota1',
       id:                         30,
@@ -1402,7 +1403,7 @@ module CCHelper
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_auditors WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Created.new
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
 
@@ -1411,7 +1412,7 @@ module CCHelper
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_billing_managers WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Created.new
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
 
@@ -1420,7 +1421,7 @@ module CCHelper
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_managers WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Created.new
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
 
@@ -1429,7 +1430,7 @@ module CCHelper
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_users WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Created.new
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
   end
@@ -1500,7 +1501,7 @@ module CCHelper
         cc_security_group_not_found
       else
         cc_clear_security_groups_spaces_cache_stub(config)
-        Created.new
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
   end
@@ -1726,7 +1727,7 @@ module CCHelper
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_auditors WHERE space_id = '#{cc_space[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Created.new
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
 
@@ -1735,7 +1736,7 @@ module CCHelper
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_developers WHERE space_id = '#{cc_space[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Created.new
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
 
@@ -1744,7 +1745,7 @@ module CCHelper
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_managers WHERE space_id = '#{cc_space[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Created.new
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
   end
@@ -1788,7 +1789,7 @@ module CCHelper
         cc_space_quota_definition_not_found
       else
         sql(config.ccdb_uri, 'UPDATE spaces SET space_quota_definition_id = null')
-        Created.new
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
   end

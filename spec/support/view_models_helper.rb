@@ -942,6 +942,7 @@ module ViewModelsHelper
         cc_space_quota_definition[:updated_at].to_datetime.rfc3339,
         cc_space_quota_definition[:total_services],
         cc_space_quota_definition[:total_routes],
+        cc_space_quota_definition[:app_instance_limit],
         cc_space_quota_definition[:memory_limit],
         cc_space_quota_definition[:instance_memory_limit],
         cc_space_quota_definition[:non_basic_services_allowed],

@@ -34,7 +34,6 @@ Sequel.migration do
       String :desired_state, :default=>"STOPPED", :text=>true
       String :encrypted_environment_variables, :text=>true
       String :salt, :text=>true
-      String :buildpack, :text=>true
       
       index [:droplet_guid], :name=>:apps_desired_droplet_guid
       index [:created_at]
@@ -75,6 +74,23 @@ Sequel.migration do
       index [:timestamp], :name=>:be_event_timestamp_index
       index [:guid], :name=>:be_guid_index, :unique=>true
       index [:updated_at], :name=>:be_updated_at_index
+    end
+    
+    create_table(:buildpack_lifecycle_data, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :app_guid, :text=>true
+      String :droplet_guid, :text=>true
+      String :stack, :text=>true
+      String :buildpack, :text=>true
+      
+      index [:droplet_guid], :name=>:bp_lifecycle_data_droplet_guid
+      index [:app_guid], :name=>:buildpack_lifecycle_data_app_guid
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
     
     create_table(:buildpacks, :ignore_index_errors=>true) do
@@ -169,11 +185,12 @@ Sequel.migration do
       String :actee_name, :text=>true
       
       index [:actee]
+      index [:actee_type]
       index [:created_at]
       index [:guid], :unique=>true
       index [:organization_guid]
       index [:space_guid]
-      index [:timestamp]
+      index [:timestamp, :id]
       index [:type]
       index [:updated_at]
     end
@@ -198,6 +215,29 @@ Sequel.migration do
       String :name, :text=>true, :null=>false
       
       index [:name], :unique=>true
+    end
+    
+    create_table(:package_docker_data, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :image, :text=>true
+      String :encrypted_user, :text=>true
+      String :user_salt, :text=>true
+      String :encrypted_password, :text=>true
+      String :password_salt, :text=>true
+      String :encrypted_email, :text=>true
+      String :email_salt, :text=>true
+      String :encrypted_login_server, :text=>true
+      String :login_server_salt, :text=>true
+      TrueClass :store_image, :default=>false
+      String :package_guid, :text=>true
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:package_guid], :name=>:package_docker_data_package_guid
+      index [:updated_at]
     end
     
     create_table(:quota_definitions, :ignore_index_errors=>true) do
@@ -272,19 +312,6 @@ Sequel.migration do
       index [:uaa_id], :name=>:s_d_clients_uaa_id_unique, :unique=>true
       index [:updated_at], :name=>:s_d_clients_updated_at_index
       index [:service_broker_id], :name=>:svc_dash_cli_svc_brkr_id_idx
-    end
-    
-    create_table(:service_instance_dashboard_clients, :ignore_index_errors=>true) do
-      primary_key :id
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      String :uaa_id, :text=>true, :null=>false
-      Integer :managed_service_instance_id
-      
-      index [:created_at], :name=>:s_i_d_clients_created_at_index
-      index [:uaa_id], :name=>:s_i_d_clients_uaa_id_unique, :unique=>true
-      index [:updated_at], :name=>:s_i_d_clients_updated_at_index
-      index [:managed_service_instance_id], :name=>:svc_inst_dash_cli_svc_inst_id_idx
     end
     
     create_table(:service_usage_events, :ignore_index_errors=>true) do
@@ -369,9 +396,13 @@ Sequel.migration do
       String :detected_start_command, :size=>4096
       String :encrypted_environment_variables, :text=>true
       String :salt, :text=>true
-      String :procfile, :text=>true
+      String :process_types, :text=>true
       String :buildpack, :text=>true
       String :error, :text=>true
+      String :stack_name, :text=>true
+      String :execution_metadata, :text=>true
+      Integer :memory_limit
+      Integer :disk_limit
       
       index [:buildpack_guid], :name=>:bp_guid
       index [:app_guid]
@@ -389,6 +420,7 @@ Sequel.migration do
       String :name, :null=>false
       TrueClass :wildcard, :default=>true, :null=>false
       foreign_key :owning_organization_id, :organizations, :key=>[:id]
+      String :router_group_guid, :text=>true
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -408,6 +440,7 @@ Sequel.migration do
       Integer :total_routes, :null=>false
       Integer :instance_memory_limit, :default=>-1, :null=>false
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
+      Integer :app_instance_limit, :default=>-1
       
       index [:created_at], :name=>:sqd_created_at_index
       index [:guid], :name=>:sqd_guid_index, :unique=>true
@@ -481,6 +514,7 @@ Sequel.migration do
       String :encrypted_docker_credentials_json, :text=>true
       String :docker_salt, :text=>true
       String :staging_failed_description, :text=>true
+      String :ports, :text=>true
       
       index [:app_guid]
       index [:created_at]
@@ -502,10 +536,12 @@ Sequel.migration do
       foreign_key :domain_id, :domains, :null=>false, :key=>[:id]
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       String :path, :default=>"", :null=>false
+      Integer :service_instance_id
+      Integer :port, :default=>0, :null=>false
       
       index [:created_at]
       index [:guid], :unique=>true
-      index [:host, :domain_id, :path], :unique=>true
+      index [:host, :domain_id, :path, :port], :unique=>true
       index [:updated_at]
     end
     
@@ -702,6 +738,7 @@ Sequel.migration do
       TrueClass :is_gateway_service, :default=>true, :null=>false
       String :syslog_drain_url, :text=>true
       String :tags, :size=>1275
+      String :route_service_url, :text=>true
       
       index [:name]
       index [:created_at], :name=>:si_created_at_index
@@ -723,6 +760,20 @@ Sequel.migration do
       index [:guid], :name=>:spv_guid_index, :unique=>true
       index [:organization_id, :service_plan_id], :name=>:spv_org_id_sp_id_index, :unique=>true
       index [:updated_at], :name=>:spv_updated_at_index
+    end
+    
+    create_table(:route_bindings, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :route_id, :routes, :key=>[:id]
+      foreign_key :service_instance_id, :service_instances, :key=>[:id]
+      String :route_service_url, :text=>true
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
     
     create_table(:service_bindings, :ignore_index_errors=>true) do

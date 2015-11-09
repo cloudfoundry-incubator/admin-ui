@@ -214,7 +214,7 @@ module AdminUI
         {
           db_uri:  ccdb_uri,
           table:   :space_quota_definitions,
-          columns: [:created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :organization_id, :total_routes, :total_services, :updated_at]
+          columns: [:app_instance_limit, :created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :organization_id, :total_routes, :total_services, :updated_at]
         },
         spaces:
         {

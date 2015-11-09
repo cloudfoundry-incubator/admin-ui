@@ -125,7 +125,7 @@ Sequel.migration do
       DateTime :created, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       Bignum :expiresat, :default=>0, :null=>false
       String :user_id, :size=>36
-      String :client_id, :size=>36
+      String :client_id, :size=>255
     end
     
     create_table(:schema_version, :ignore_index_errors=>true) do
