@@ -5,6 +5,8 @@ require 'yajl'
 
 module AdminUI
   class NATS
+    NATS_COMMON_KEYS = %w(credentials host index start type uuid uptime)
+
     def initialize(config, logger, email)
       @config = config
       @logger = logger
@@ -120,7 +122,7 @@ module AdminUI
           ::NATS.request('vcap.component.discover') do |item|
             @last_discovery_time = Time.now.to_f
             item_json = Yajl::Parser.parse(item)
-            result['items'][item_uri(item_json)] = item_json
+            result['items'][item_uri(item_json)] = item_json.keep_if { |key, _value| NATS_COMMON_KEYS.include?(key) }
           end
         end
 
