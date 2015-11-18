@@ -166,13 +166,13 @@ module AdminUI
           result.merge!('connected' => false,
                         'data'      => (item.nil? ? {} : item),
                         'error'     => "#{response.code}<br/><br/>#{response.body}")
-          @logger.error("item_result(#{uri}) : error [#{response.code} - #{response.body}]")
+          @logger.warn("item_result(#{uri}): [#{response.code} - #{response.body}]")
         end
       rescue => error
         result.merge!('connected' => false,
                       'data'      => (item.nil? ? {} : item),
                       'error'     => "#{error.inspect}")
-        @logger.error("item_result(#{uri}) : error [#{error.inspect}]")
+        @logger.warn("item_result(#{uri}): [#{error.inspect}]")
       end
 
       result
