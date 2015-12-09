@@ -699,7 +699,7 @@ module AdminUI
                 # In this case we think the table does not exist because we cannot connect to the database.
                 # We want to try again on the next iteration in case the database becomes available
                 cache[:exists] = nil
-                @logger.error("Table #{table} existence cannot be determined due to invalid database connection to #{cache[:db_uri]}")
+                @logger.error("Table #{table} existence cannot be determined due to invalid database connection")
               end
             end
           end
