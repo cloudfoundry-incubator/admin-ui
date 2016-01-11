@@ -5,28 +5,27 @@ describe AdminUI::LogFiles do
   include ConfigHelper
   include SFTPHelper
 
-  let(:db_file)   { '/tmp/admin_ui_store.db' }
-  let(:db_uri)    { "sqlite://#{db_file}" }
-  let(:system_log_file) { '/tmp/admin_ui.log' }
-  let(:logger) { Logger.new(system_log_file) }
-  let(:log_file_sftp_key) { '/somedir/somefile' }
+  let(:log_file_content)   { 'This is sample file content.  It is not really very long.  But, will suffice for testing' }
+  let(:log_file_extension) { 'log' }
+  let(:log_file_mtime)     { Time.new(1976, 7, 4, 12, 34, 56, 0) }
+  let(:log_file_name)      { 'test' }
+  let(:log_file_sftp_key)  { '/somedir/somefile' }
+  let(:system_log_file)    { '/tmp/admin_ui.log' }
+
   let(:config) do
-    AdminUI::Config.load(db_uri:            db_uri,
-                         log_files:         [log_file_uri],
+    AdminUI::Config.load(log_files:         [log_file_uri],
                          log_file_sftp_key: [log_file_sftp_key])
   end
+
+  let(:logger)    { Logger.new(system_log_file) }
   let(:log_files) { AdminUI::LogFiles.new(config, logger) }
-  let(:log_file_name) { 'test' }
-  let(:log_file_extension) { 'log' }
-  let(:log_file_content) { 'This is sample file content.  It is not really very long.  But, will suffice for testing' }
-  let(:log_file_mtime) { Time.new(1976, 7, 4, 12, 34, 56, 0) }
 
   before do
     config_stub
   end
 
   after do
-    Process.wait(Process.spawn({}, "rm -fr #{db_file} #{system_log_file}"))
+    Process.wait(Process.spawn({}, "rm -fr #{system_log_file}"))
   end
 
   context 'File' do
@@ -42,7 +41,7 @@ describe AdminUI::LogFiles do
     end
 
     after do
-      Process.wait(Process.spawn({}, "rm -fr #{db_file} #{log_file_directory}"))
+      Process.wait(Process.spawn({}, "rm -fr #{log_file_directory}"))
     end
 
     shared_examples 'common FILE actions' do

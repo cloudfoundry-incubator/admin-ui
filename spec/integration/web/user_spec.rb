@@ -21,7 +21,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it 'verifies first button is copy button' do
         begin
           Selenium::WebDriver::Wait.new(timeout: 5).until do
-            scroll_tab_into_view(tab_id, true).click
+            # TODO: Bug in selenium-webdriver 2.48.1.  Entire item must be displayed for it to click.  Workaround following two lines after commented out code
+            # scroll_tab_into_view(tab_id, true).click
+            element = scroll_tab_into_view(tab_id, true)
+            @driver.execute_script('arguments[0].click();', element)
+
             @driver.find_element(class_name: 'menuItemSelected').attribute('id') == tab_id
           end
         rescue Selenium::WebDriver::Error::TimeOutError

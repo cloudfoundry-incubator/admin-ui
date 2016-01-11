@@ -7,10 +7,11 @@ module AdminUI
   class NATS
     NATS_COMMON_KEYS = %w(credentials host index start type uuid uptime)
 
-    def initialize(config, logger, email)
-      @config = config
-      @logger = logger
-      @email  = email
+    def initialize(config, logger, email, testing)
+      @config  = config
+      @logger  = logger
+      @email   = email
+      @testing = testing
 
       @running = true
 
@@ -30,7 +31,7 @@ module AdminUI
 
     def get
       @semaphore.synchronize do
-        @condition.wait(@semaphore) while @running && @cache['items'].nil?
+        @condition.wait(@semaphore) while @testing && @running && @cache['items'].nil?
         return disconnected_result if @cache['items'].nil?
         @cache.clone
       end
@@ -38,15 +39,19 @@ module AdminUI
 
     def remove(uris)
       @semaphore.synchronize do
-        @cache = read_or_initialize_cache
+        begin
+          @cache = read_or_initialize_cache
 
-        removed = false
-        uris.each do |uri|
-          removed = true unless @cache['items'].delete(uri).nil?
-          removed = true unless @cache['notified'].delete(uri).nil?
+          removed = false
+          uris.each do |uri|
+            removed = true unless @cache['items'].delete(uri).nil?
+            removed = true unless @cache['notified'].delete(uri).nil?
+          end
+
+          write_cache if removed
+        ensure
+          @condition.broadcast
         end
-
-        write_cache if removed
       end
     end
 
@@ -80,18 +85,21 @@ module AdminUI
       disconnected = []
 
       @semaphore.synchronize do
-        save_data(nats_discovery_results, disconnected)
-
-        send_email(disconnected)
-
-        @condition.broadcast
-        @condition.wait(@semaphore, @config.nats_discovery_interval) if @running
+        begin
+          if @running
+            save_data(nats_discovery_results, disconnected)
+            send_email(disconnected)
+          end
+        ensure
+          @condition.broadcast
+          @condition.wait(@semaphore, @config.nats_discovery_interval) if @running
+        end
       end
     end
 
     def nats_discovery
-      result = {}
-      result['items'] = {}
+      result         = { 'connected' => false, 'items' => {} }
+      error_received = false
 
       begin
         @logger.debug("[#{@config.nats_discovery_interval} second interval] Starting NATS discovery...")
@@ -100,24 +108,19 @@ module AdminUI
 
         @last_discovery_time = 0
 
-        thread = Thread.new do
-          while @running && ((@last_discovery_time == 0 && (Time.now.to_f - @start_time < @config.nats_discovery_interval)) || (Time.now.to_f - @last_discovery_time < @config.nats_discovery_timeout))
-            # sleep using the @mutex and @condition so shutdown can interrupt
-            @semaphore.synchronize do
-              @condition.wait(@semaphore, @config.nats_discovery_timeout) if @running
-            end
+        ::NATS.on_error do |error|
+          result['connected'] = false
+          @logger.error("Error during NATS discovery: #{error.inspect}")
+
+          error_received = true
+
+          @semaphore.synchronize do
+            @condition.broadcast
           end
-          ::NATS.stop
         end
 
-        thread.priority = -2
-
         ::NATS.start(uri: @config.mbus, ping_interval: @config.nats_discovery_timeout) do
-          # Set the connected to true to handle case where NATS is back up but no components are.
-          # This gets rid of the disconnected error message on the UI without waiting for the nats_discovery_interval.
-          @semaphore.synchronize do
-            @cache['connected'] = true
-          end
+          result['connected'] = true
 
           ::NATS.request('vcap.component.discover') do |item|
             @last_discovery_time = Time.now.to_f
@@ -126,10 +129,14 @@ module AdminUI
           end
         end
 
-        result['connected'] = true
+        # Wait for discovery to be complete since the NATS.start does not block since EventMachine loop already running
+        @semaphore.synchronize do
+          @condition.wait(@semaphore, @config.nats_discovery_timeout) while !error_received && @running && ((@last_discovery_time == 0 && (Time.now.to_f - @start_time < @config.nats_discovery_interval)) || (Time.now.to_f - @last_discovery_time < @config.nats_discovery_timeout))
+        end
+
+        ::NATS.stop
       rescue => error
         result['connected'] = false
-
         @logger.error("Error during NATS discovery: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
       end
@@ -189,11 +196,11 @@ module AdminUI
         # Special-casing code to handle same component restarting with different ephemeral port.
         # Remove all old references which also have new references prior to merge.
         new_item_keys = {}
-        nats_discovery_results['items'].each do |uri, item|
+        nats_discovery_results['items'].each_pair do |uri, item|
           new_item_keys[item_key(uri, item)] = nil
         end
 
-        @cache['items'].each do |uri, item|
+        @cache['items'].each_pair do |uri, item|
           if new_item_keys.include?(item_key(uri, item))
             @cache['items'].delete(uri)
             @cache['notified'].delete(uri)
@@ -208,7 +215,7 @@ module AdminUI
                                  @cache['connected'],
                                  disconnected)
 
-        @cache['items'].each do |uri, item|
+        @cache['items'].each_pair do |uri, item|
           update_connection_status(item['type'],
                                    uri,
                                    nats_discovery_results['items'][uri],

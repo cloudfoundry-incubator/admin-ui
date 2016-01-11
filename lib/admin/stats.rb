@@ -7,11 +7,12 @@ module AdminUI
   class Stats
     attr_reader :time_last_run
 
-    def initialize(config, logger, cc, varz, testing)
-      @config = config
-      @logger = logger
-      @cc     = cc
-      @varz   = varz
+    def initialize(config, logger, cc, doppler, varz, testing)
+      @config  = config
+      @logger  = logger
+      @cc      = cc
+      @doppler = doppler
+      @varz    = varz
 
       @running = true
 
@@ -62,6 +63,7 @@ module AdminUI
     def current_stats
       {
         apps:              @cc.applications_count,
+        cells:             @doppler.reps_count,
         deas:              @varz.deas_count,
         organizations:     @cc.organizations_count,
         running_instances: @cc.applications_running_instances,

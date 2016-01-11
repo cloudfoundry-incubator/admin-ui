@@ -1,0 +1,11 @@
+In order to generate the current dropsonde ruby binding, do the following:
+
+Ensure you have the latest dropsonde-protocol repository downloaded.
+This can be found at https://github.com/cloudfoundry/dropsonde-protocol.git
+
+Ensure you have the ruby_protobuf gem installed
+
+Change to the directory where you want generated output
+
+Invoke the rprotoc command to generate the ruby bindings.
+Example:  rprotoc -p /home/user/workspace/dropsonde-protocol/events/ /home/user/workspace/dropsonde-protocol/events/envelope.proto

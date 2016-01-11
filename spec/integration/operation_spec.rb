@@ -4,41 +4,50 @@ require_relative '../spec_helper'
 describe AdminUI::Operation, type: :integration do
   include CCHelper
   include ConfigHelper
+  include DopplerHelper
   include NATSHelper
   include VARZHelper
 
-  let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri) { "sqlite://#{ccdb_file}" }
-  let(:data_file) { '/tmp/admin_ui_data.json' }
-  let(:db_file) { '/tmp/admin_ui_store.db' }
-  let(:db_uri) { "sqlite://#{db_file}" }
+  let(:ccdb_file)                      { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri)                       { "sqlite://#{ccdb_file}" }
+  let(:data_file)                      { '/tmp/admin_ui_data.json' }
+  let(:db_file)                        { '/tmp/admin_ui_store.db' }
+  let(:db_uri)                         { "sqlite://#{db_file}" }
+  let(:doppler_data_file)              { '/tmp/admin_ui_doppler_data.json' }
   let(:insert_second_quota_definition) { false }
-  let(:log_file) { '/tmp/admin_ui.log' }
-  let(:logger) { Logger.new(log_file) }
-  let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri) { "sqlite://#{uaadb_file}" }
+  let(:log_file)                       { '/tmp/admin_ui.log' }
+  let(:uaadb_file)                     { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri)                      { "sqlite://#{uaadb_file}" }
+
   let(:config) do
-    AdminUI::Config.load(ccdb_uri:             ccdb_uri,
-                         cloud_controller_uri: 'http://api.cloudfoundry',
-                         data_file:            data_file,
-                         db_uri:               db_uri,
-                         mbus:                 'nats://nats:c1oudc0w@localhost:14222',
-                         monitored_components: [],
-                         uaadb_uri:            uaadb_uri,
-                         uaa_client:           { id: 'id', secret: 'secret' })
+    AdminUI::Config.load(ccdb_uri:                ccdb_uri,
+                         cloud_controller_uri:    'http://api.cloudfoundry',
+                         data_file:               data_file,
+                         db_uri:                  db_uri,
+                         doppler_data_file:       doppler_data_file,
+                         doppler_rollup_interval: 1,
+                         mbus:                    'nats://nats:c1oudc0w@localhost:14222',
+                         monitored_components:    [],
+                         nats_discovery_timeout:  1,
+                         uaadb_uri:               uaadb_uri,
+                         uaa_client:              { id: 'id', secret: 'secret' })
   end
-  let(:client) { AdminUI::CCRestClient.new(config, logger) }
-  let(:cc) { AdminUI::CC.new(config, logger, true) }
-  let(:email) { AdminUI::EMail.new(config, logger) }
-  let(:log_files) { AdminUI::LogFiles.new(config, logger) }
-  let(:nats) { AdminUI::NATS.new(config, logger, email) }
-  let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
-  let(:stats) { AdminUI::Stats.new(config, logger, cc, varz, true) }
-  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, varz, true) }
-  let(:operation) { AdminUI::Operation.new(config, logger, cc, client, varz, view_models) }
+
+  let(:cc)                 { AdminUI::CC.new(config, logger, true) }
+  let(:client)             { AdminUI::CCRestClient.new(config, logger) }
+  let(:doppler)            { AdminUI::Doppler.new(config, logger, client, email, true) }
+  let(:email)              { AdminUI::EMail.new(config, logger) }
+  let(:event_machine_loop) { AdminUI::EventMachineLoop.new(config, logger, true) }
+  let(:logger)             { Logger.new(log_file) }
+  let(:log_files)          { AdminUI::LogFiles.new(config, logger) }
+  let(:nats)               { AdminUI::NATS.new(config, logger, email, true) }
+  let(:operation)          { AdminUI::Operation.new(config, logger, cc, client, doppler, varz, view_models) }
+  let(:stats)              { AdminUI::Stats.new(config, logger, cc, doppler, varz, true) }
+  let(:varz)               { AdminUI::VARZ.new(config, logger, nats, true) }
+  let(:view_models)        { AdminUI::ViewModels.new(config, logger, cc, doppler, log_files, stats, varz, true) }
 
   def cleanup_files
-    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{log_file} #{uaadb_file}"))
+    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{doppler_data_file} #{log_file} #{uaadb_file}"))
   end
 
   before do
@@ -46,8 +55,11 @@ describe AdminUI::Operation, type: :integration do
 
     config_stub
     cc_stub(config, insert_second_quota_definition)
+    doppler_stub
     nats_stub
     varz_stub
+
+    event_machine_loop
   end
 
   after do
@@ -55,13 +67,17 @@ describe AdminUI::Operation, type: :integration do
     stats.shutdown
     varz.shutdown
     nats.shutdown
+    doppler.shutdown
     cc.shutdown
+    event_machine_loop.shutdown
 
     view_models.join
     stats.join
     varz.join
     nats.join
+    doppler.join
     cc.join
+    event_machine_loop.join
 
     cleanup_files
   end
@@ -1195,6 +1211,20 @@ describe AdminUI::Operation, type: :integration do
         it 'failed deleting space manager role due to deleted space' do
           expect { delete_space_manager }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
         end
+      end
+    end
+
+    context 'manage doppler components' do
+      before do
+        expect(doppler.components['items'].length).to eq(1)
+      end
+
+      after do
+        expect(doppler.components['items'].length).to eq(0)
+      end
+
+      it 'removes rep' do
+        expect { operation.remove_doppler_component("#{rep_envelope.origin}:#{rep_envelope.index}:#{rep_envelope.ip}") }.to change { doppler.reps['items'].length }.from(1).to(0)
       end
     end
 

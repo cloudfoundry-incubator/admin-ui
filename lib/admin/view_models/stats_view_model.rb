@@ -20,7 +20,7 @@ module AdminUI
         items.push(to_row(Utils.symbolize_keys(statistic)))
       end
 
-      result(true, items, nil, (0..7).to_a, [0])
+      result(true, items, nil, (0..8).to_a, [0])
     end
 
     private
@@ -36,6 +36,7 @@ module AdminUI
       row.push(statistic[:total_instances])
       row.push(statistic[:running_instances])
       row.push(statistic[:deas])
+      row.push(statistic[:cells])
       row.push(statistic)
 
       row

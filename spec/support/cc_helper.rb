@@ -560,9 +560,10 @@ module CCHelper
   # /v2/info returned from the system is not symbols
   def cc_info
     {
-      'authorization_endpoint' => 'http://authorization_endpoint',
-      'build'                  => '2222',
-      'token_endpoint'         => 'http://token_endpoint'
+      'authorization_endpoint'   => 'http://authorization_endpoint',
+      'build'                    => '2222',
+      'doppler_logging_endpoint' => 'wss://doppler_logging_endpoint',
+      'token_endpoint'           => 'http://token_endpoint'
     }
   end
 

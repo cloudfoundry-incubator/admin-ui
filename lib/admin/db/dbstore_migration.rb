@@ -35,6 +35,7 @@ module AdminUI
         records.each do |record|
           items = connection[:stats]
           items.insert(apps:              record['apps'],
+                       cells:             nil,
                        deas:              record['deas'],
                        organizations:     record['organizations'],
                        running_instances: record['running_instances'],

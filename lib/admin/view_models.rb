@@ -4,6 +4,7 @@ require_relative 'scheduled_thread_pool'
 require_relative 'view_models/application_instances_view_model'
 require_relative 'view_models/applications_view_model'
 require_relative 'view_models/buildpacks_view_model'
+require_relative 'view_models/cells_view_model'
 require_relative 'view_models/clients_view_model'
 require_relative 'view_models/cloud_controllers_view_model'
 require_relative 'view_models/components_view_model'
@@ -39,23 +40,18 @@ require_relative 'view_models/users_view_model'
 
 module AdminUI
   class ViewModels
-    def initialize(config, logger, cc, log_files, stats, varz, testing)
+    def initialize(config, logger, cc, doppler, log_files, stats, varz, testing)
       @logger  = logger
       @testing = testing
 
       @running = true
-
-      # TODO: Need config for number of threads
-      @pool = AdminUI::ScheduledThreadPool.new(logger, 2, -1)
-
-      # Using an interval of half of the cloud_controller_interval.  The value of 1 is there for a test-time boundary
-      @interval = [config.cloud_controller_discovery_interval / 2, 1].max
 
       @caches =
         {
           application_instances:     { clazz: AdminUI::ApplicationInstancesViewModel },
           applications:              { clazz: AdminUI::ApplicationsViewModel },
           buildpacks:                { clazz: AdminUI::BuildpacksViewModel },
+          cells:                     { clazz: AdminUI::CellsViewModel },
           clients:                   { clazz: AdminUI::ClientsViewModel },
           cloud_controllers:         { clazz: AdminUI::CloudControllersViewModel },
           components:                { clazz: AdminUI::ComponentsViewModel },
@@ -90,11 +86,19 @@ module AdminUI
           users:                     { clazz: AdminUI::UsersViewModel }
         }
 
+      number_threads = testing ? @caches.length : 2
+
+      # TODO: Need config for number of threads
+      @pool = AdminUI::ScheduledThreadPool.new(logger, number_threads, -1)
+
+      # Using an interval of half of the cloud_controller_interval.  The value of 1 is there for a test-time boundary
+      @interval = [config.cloud_controller_discovery_interval / 2, 1].max
+
       @caches.each_pair do |key, cache|
         cache.merge!(condition:          ConditionVariable.new,
                      result:             nil,
                      semaphore:          Mutex.new,
-                     view_model_factory: cache[:clazz].new(@logger, cc, log_files, stats, varz, @testing))
+                     view_model_factory: cache[:clazz].new(@logger, cc, doppler, log_files, stats, varz, @testing))
 
         schedule(key)
       end
@@ -110,6 +114,10 @@ module AdminUI
 
     def invalidate_buildpacks
       invalidate_cache(:buildpacks)
+    end
+
+    def invalidate_cells
+      invalidate_cache(:cells)
     end
 
     def invalidate_cloud_controllers
@@ -234,6 +242,14 @@ module AdminUI
 
     def buildpacks
       result_cache(:buildpacks)
+    end
+
+    def cell(key)
+      details(:cells, key)
+    end
+
+    def cells
+      result_cache(:cells)
     end
 
     def client(id)
@@ -445,7 +461,7 @@ module AdminUI
 
       @running = false
 
-      @caches.each do |_key, cache|
+      @caches.values.each do |cache|
         cache[:view_model_factory].shutdown
         cache[:semaphore].synchronize do
           cache[:condition].broadcast
@@ -510,6 +526,7 @@ module AdminUI
         cache = @caches[key]
         cache[:semaphore].synchronize do
           cache[:result] = nil
+          cache[:condition].broadcast
         end
       end
 
@@ -564,7 +581,7 @@ module AdminUI
     def result_cache(key)
       cache = @caches[key]
       cache[:semaphore].synchronize do
-        cache[:condition].wait(cache[:semaphore]) while @running && cache[:result].nil?
+        cache[:condition].wait(cache[:semaphore]) while @testing && @running && cache[:result].nil?
         return disconnected_result if cache[:result].nil?
         cache[:result]
       end

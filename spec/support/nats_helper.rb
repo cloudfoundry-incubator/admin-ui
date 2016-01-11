@@ -1,3 +1,4 @@
+require 'eventmachine'
 require 'nats/client'
 require 'yajl'
 require_relative '../spec_helper'
@@ -5,17 +6,17 @@ require_relative '../spec_helper'
 module NATSHelper
   def nats_stub
     allow(::NATS).to receive(:start) do |_, &blk|
-      blk.call
+      EventMachine.next_tick { blk.call }
     end
 
     allow(::NATS).to receive(:stop)
 
     allow(::NATS).to receive(:request).with('vcap.component.discover') do |_, &blk|
-      blk.call(Yajl::Encoder.encode(nats_cloud_controller))
-      blk.call(Yajl::Encoder.encode(nats_dea))
-      blk.call(Yajl::Encoder.encode(nats_health_manager))
-      blk.call(Yajl::Encoder.encode(nats_provisioner))
-      blk.call(Yajl::Encoder.encode(nats_router))
+      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_cloud_controller)) }
+      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_dea)) }
+      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_health_manager)) }
+      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_provisioner)) }
+      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_router)) }
     end
   end
 

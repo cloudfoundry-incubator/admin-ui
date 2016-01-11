@@ -1,10 +1,12 @@
 source 'http://rubygems.org'
 
+gem 'faye-websocket', '0.10.2'
 gem 'membrane', '1.1.0'
 gem 'nats', '0.5.1'
 gem 'net-sftp', '2.1.2'
 gem 'parse-cron', '0.1.4'
 gem 'rack-ssl', '1.4.1'
+gem 'ruby_protobuf', '0.4.11'
 gem 'sequel', '4.28.0'
 gem 'sequel_pg', '1.6.13'
 gem 'sinatra', '1.4.6'
@@ -21,5 +23,5 @@ end
 
 group :test do
   gem 'rspec', '2.99.0'
-  gem 'selenium-webdriver', '2.47.1'
+  gem 'selenium-webdriver', '2.48.1'
 end

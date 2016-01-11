@@ -10,6 +10,8 @@ module AdminUI
       cloud_controller_discovery_interval:                300,
       cloud_controller_ssl_verify_none:                 false,
       component_connection_retries:                         2,
+      doppler_reconnect_delay:                            300,
+      doppler_rollup_interval:                             30,
       event_days:                                           7,
       log_file_page_size:                              51_200,
       log_file_sftp_keys:                                  [],
@@ -41,6 +43,9 @@ module AdminUI
           optional(:component_connection_retries)        => Integer,
           data_file:                                        /[^\r\n\t]+/,
           db_uri:                                           /[^\r\n\t]+/,
+          doppler_data_file:                                /[^\r\n\t]+/,
+          optional(:doppler_reconnect_delay)             => Integer,
+          optional(:doppler_rollup_interval)             => Integer,
           optional(:event_days)                          => Integer,
           log_file:                                         /[^\r\n\t]+/,
           optional(:log_file_sftp_keys)                  => [String],
@@ -156,6 +161,18 @@ module AdminUI
 
     def db_uri
       @config[:db_uri]
+    end
+
+    def doppler_data_file
+      @config[:doppler_data_file]
+    end
+
+    def doppler_reconnect_delay
+      @config[:doppler_reconnect_delay]
+    end
+
+    def doppler_rollup_interval
+      @config[:doppler_rollup_interval]
     end
 
     def event_days

@@ -16,6 +16,7 @@ describe AdminUI::Admin do
   let(:cloud_controller_uri) { 'http://api.localhost' }
   let(:data_file) { '/tmp/admin_ui_data.json' }
   let(:db_file) { '/tmp/admin_ui_store.db' }
+  let(:doppler_data_file) { '/tmp/admin_ui_doppler_data.json' }
   let(:host) { 'localhost' }
   let(:log_file) { '/tmp/admin_ui.log' }
   let(:openssl_config) { 'spec/ssl/openssl.cnf' }
@@ -26,11 +27,14 @@ describe AdminUI::Admin do
   let(:stats_file) { '/tmp/admin_ui_stats.json' }
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
+
   let(:config) do
     { ccdb_uri:                  ccdb_uri,
       cloud_controller_uri:      cloud_controller_uri,
       data_file:                 data_file,
       db_uri:                    "sqlite://#{db_file}",
+      doppler_data_file:         doppler_data_file,
+      doppler_rollup_interval:   1,
       log_file:                  log_file,
       mbus:                      'nats://nats:c1oudc0w@localhost:14222',
       port:                      port,
@@ -83,7 +87,7 @@ describe AdminUI::Admin do
 
     @admin.shutdown
 
-    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{log_file} #{stats_file} #{uaadb_file}"))
+    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{doppler_data_file} #{log_file} #{stats_file} #{uaadb_file}"))
   end
 
   def generate_certificate
@@ -1010,6 +1014,14 @@ describe AdminUI::Admin do
         verify_not_found('/buildpacks_view_model/buildpack1')
       end
 
+      it '/cells_view_model succeeds' do
+        verify_disconnected_view_model_items('/cells_view_model')
+      end
+
+      it '/cells_view_model/:name returns not found' do
+        verify_not_found('/cells_view_model/name')
+      end
+
       it '/clients_view_model succeeds' do
         verify_disconnected_view_model_items('/clients_view_model')
       end
@@ -1333,6 +1345,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/buildpacks_view_model/buildpack1')
       end
 
+      it '/cells_view_model redirects as expected' do
+        get_redirects_as_expected('/cells_view_model')
+      end
+
+      it '/cells_view_model/:name redirects as expected' do
+        get_redirects_as_expected('/cells_view_model/name')
+      end
+
       it '/clients_view_model redirects as expected' do
         get_redirects_as_expected('/clients_view_model')
       end
@@ -1605,12 +1625,20 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/buildpacks/buildpack1')
       end
 
+      it 'deletes /components/?uri redirects as expected' do
+        delete_redirects_as_expected('/components?uri=uri1')
+      end
+
       it 'deletes /domains/:guid redirects as expected' do
         delete_redirects_as_expected('/domains/domain1')
       end
 
       it 'deletes /domains/:guid?recursive=true redirects as expected' do
         delete_redirects_as_expected('/domains/domain1?recursive=true')
+      end
+
+      it 'deletes /doppler_components/?uri redirects as expected' do
+        delete_redirects_as_expected('/doppler_components?uri=uri1')
       end
 
       it 'deletes /organizations/:guid redirects as expected' do
@@ -1717,8 +1745,8 @@ describe AdminUI::Admin do
         post_redirects_as_expected('/buildpacks_view_model')
       end
 
-      it 'posts /clients_view_model redirects as expected' do
-        post_redirects_as_expected('/clients_view_model')
+      it 'posts /cells_view_model redirects as expected' do
+        post_redirects_as_expected('/cells_view_model')
       end
 
       it 'posts /cloud_controllers_view_model redirects as expected' do
@@ -1967,6 +1995,7 @@ describe AdminUI::Admin do
         json = Yajl::Parser.parse(body)
 
         expect(json).to include('apps'              => nil,
+                                'cells'             => nil,
                                 'deas'              => nil,
                                 'organizations'     => nil,
                                 'running_instances' => nil,
@@ -1995,7 +2024,7 @@ describe AdminUI::Admin do
         let(:timestamp) { Time.now }
 
         it '/statistics post succeeds' do
-          request = Net::HTTP::Post.new('/statistics?apps=1&deas=2&organizations=3&running_instances=4&spaces=5&timestamp=6&total_instances=7&users=8')
+          request = Net::HTTP::Post.new('/statistics?apps=1&cells=2&deas=3&organizations=4&running_instances=5&spaces=6&timestamp=7&total_instances=8&users=9')
           request['Cookie']         = cookie
           request['Content-Length'] = 0
 
@@ -2007,13 +2036,14 @@ describe AdminUI::Admin do
 
           json = Yajl::Parser.parse(body)
           expect(json).to eq('apps'              => 1,
-                             'deas'              => 2,
-                             'organizations'     => 3,
-                             'running_instances' => 4,
-                             'spaces'            => 5,
-                             'timestamp'         => 6,
-                             'total_instances'   => 7,
-                             'users'             => 8)
+                             'cells'             => 2,
+                             'deas'              => 3,
+                             'organizations'     => 4,
+                             'running_instances' => 5,
+                             'spaces'            => 6,
+                             'timestamp'         => 7,
+                             'total_instances'   => 8,
+                             'users'             => 9)
 
           # Second half of the test does not require cookie for request
 
@@ -2027,13 +2057,14 @@ describe AdminUI::Admin do
           json = Yajl::Parser.parse(body)
 
           expect(json).to eq([{ 'apps'              => 1,
-                                'deas'              => 2,
-                                'organizations'     => 3,
-                                'running_instances' => 4,
-                                'spaces'            => 5,
-                                'timestamp'         => 6,
-                                'total_instances'   => 7,
-                                'users'             => 8 }])
+                                'cells'             => 2,
+                                'deas'              => 3,
+                                'organizations'     => 4,
+                                'running_instances' => 5,
+                                'spaces'            => 6,
+                                'timestamp'         => 7,
+                                'total_instances'   => 8,
+                                'users'             => 9 }])
         end
       end
 

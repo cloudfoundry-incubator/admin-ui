@@ -63,23 +63,26 @@ module AdminUI
 
     def remove(uri_parameter)
       @semaphore.synchronize do
-        unless @cache.nil?
-          uris = []
-          if uri_parameter.nil?
-            @cache['items'].each do |uri, item|
-              uris.push(uri) unless item['connected']
+        begin
+          unless @cache.nil?
+            uris = []
+            if uri_parameter.nil?
+              @cache['items'].each_pair do |uri, item|
+                uris.push(uri) unless item['connected']
+              end
+            else
+              uris.push(uri_parameter)
             end
-          else
-            uris.push(uri_parameter)
-          end
 
-          @nats.remove(uris)
+            @nats.remove(uris)
 
-          uris.each do |uri|
-            @cache['items'].delete(uri)
+            uris.each do |uri|
+              @cache['items'].delete(uri)
+            end
           end
+        ensure
+          @condition.broadcast
         end
-        @condition.broadcast
       end
     end
 
@@ -110,7 +113,7 @@ module AdminUI
       result_item_array = []
       result = { 'connected' => cache['connected'], 'items' => result_item_array }
 
-      cache['items'].each do |_, item|
+      cache['items'].values.each do |item|
         type_pattern_index = item['type'] =~ type_pattern
         next if type_pattern_index.nil?
         result_item = item.clone
@@ -133,7 +136,7 @@ module AdminUI
 
         cache['connected'] = nats_result['connected']
 
-        nats_result['items'].each do |uri, item|
+        nats_result['items'].each_pair do |uri, item|
           break unless @running
           Thread.pass
 

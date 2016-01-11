@@ -8,13 +8,14 @@ require_relative 'view_models/download'
 
 module AdminUI
   class Web < Sinatra::Base
-    def initialize(config, logger, cc, client, login, log_files, operation, stats, varz, view_models)
+    def initialize(config, logger, cc, client, doppler, login, log_files, operation, stats, varz, view_models)
       super({})
 
       @config      = config
       @logger      = logger
       @cc          = cc
       @client      = client
+      @doppler     = doppler
       @login       = login
       @log_files   = log_files
       @operation   = operation
@@ -76,6 +77,18 @@ module AdminUI
     get '/buildpacks_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/buildpacks_view_model/#{params[:guid]}")
       result = @view_models.buildpack(params[:guid])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
+    get '/cells_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/cells_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.cells, params).items)
+    end
+
+    get '/cells_view_model/:key', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/cells_view_model/#{params[:key]}")
+      result = @view_models.cell(params[:key])
       return Yajl::Encoder.encode(result) if result
       404
     end
@@ -575,6 +588,14 @@ module AdminUI
                 filename:    'buildpacks.csv')
     end
 
+    post '/cells_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/cells_view_model')
+      file = Download.download(request.body.read, 'cells', @view_models.cells)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'cells.csv')
+    end
+
     post '/clients_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'post', '/clients_view_model')
       file = Download.download(request.body.read, 'clients', @view_models.clients)
@@ -835,6 +856,7 @@ module AdminUI
 
     post '/statistics', auth: [:admin] do
       stats = @stats.create_stats(apps:              params['apps'].empty? ? nil : params['apps'].to_i,
+                                  cells:             params['cells'].empty? ? nil : params['cells'].to_i,
                                   deas:              params['deas'].empty? ? nil : params['deas'].to_i,
                                   organizations:     params['organizations'].empty? ? nil : params['organizations'].to_i,
                                   running_instances: params['running_instances'].empty? ? nil : params['running_instances'].to_i,
@@ -845,6 +867,7 @@ module AdminUI
 
       query = '/statistics?'
       query += "apps=#{params['apps']};" unless params['apps'].empty?
+      query += "cells=#{params['cells']};" unless params['cells'].empty?
       query += "deas=#{params['deas']};" unless params['deas'].empty?
       query += "organizations=#{params['organizations']};" unless params['organizations'].empty?
       query += "running_instances=#{params['running_instances']};" unless params['running_instances'].empty?
@@ -1131,12 +1154,24 @@ module AdminUI
     end
 
     delete '/components', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/components/#{params[:uri]}")
+      @logger.info_user(session[:username], 'delete', "/components?uri=#{params[:uri]}")
       begin
         @operation.remove_component(params[:uri])
         204
       rescue => error
         @logger.error("Error during removing component: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/doppler_components', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/doppler_components?uri=#{params[:uri]}")
+      begin
+        @operation.remove_doppler_component(params[:uri])
+        204
+      rescue => error
+        @logger.error("Error during removing doppler component: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

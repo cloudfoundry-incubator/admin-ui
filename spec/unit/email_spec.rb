@@ -5,11 +5,9 @@ describe AdminUI::EMail do
   include ConfigHelper
   include SMTPHelper
 
-  let(:log_file) { '/tmp/admin_ui.log' }
-  let(:logger) { Logger.new(log_file) }
-  let(:db_file)   { '/tmp/admin_ui_store.db' }
-  let(:db_uri)    { "sqlite://#{db_file}" }
   let(:disconnected_component) { [{ 'type' => 'DEA', 'uri' => 'http://bogus/dea' }] }
+  let(:log_file)               { '/tmp/admin_ui.log' }
+
   let(:disconnected_components) do
     [
       { 'type' => 'CloudController', 'uri' => 'http://bogus/cloud_controller' },
@@ -17,17 +15,19 @@ describe AdminUI::EMail do
     ]
   end
 
+  let(:logger) { Logger.new(log_file) }
+
   before do
     config_stub
   end
 
   after do
-    Process.wait(Process.spawn({}, "rm -fr #{db_file} #{log_file}"))
+    Process.wait(Process.spawn({}, "rm -fr #{log_file}"))
   end
 
   context 'Not configured' do
     let(:config) { AdminUI::Config.load({}) }
-    let(:email) { AdminUI::EMail.new(config, logger) }
+    let(:email)  { AdminUI::EMail.new(config, logger) }
 
     before do
       smtp_stub(config, disconnected_components)
@@ -47,7 +47,6 @@ describe AdminUI::EMail do
   context 'Configured' do
     let(:config) do
       AdminUI::Config.load(cloud_controller_uri: 'http://api.bogus',
-                           db_uri:               db_uri,
                            receiver_emails:      ['receiver1@bogus.com', 'receiver2@foo.com'],
                            sender_email:         { account:  'bogus@bogus.com',
                                                    secret:   'my pwd',

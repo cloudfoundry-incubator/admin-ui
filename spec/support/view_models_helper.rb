@@ -6,6 +6,7 @@ require_relative 'varz_helper'
 
 module ViewModelsHelper
   include CCHelper
+  include DopplerHelper
   include NATSHelper
   include VARZHelper
 
@@ -95,6 +96,43 @@ module ViewModelsHelper
 
   def view_models_buildpacks_detail
     cc_buildpack
+  end
+
+  def view_models_cells
+    [
+      [
+        "#{rep_envelope.ip}:#{rep_envelope.index}",
+        rep_envelope.ip,
+        rep_envelope.index,
+        Time.at(rep_envelope.timestamp / BILLION).to_datetime.rfc3339,
+        'RUNNING',
+        REP_VALUE_METRICS['numCPUS'],
+        AdminUI::Utils.convert_bytes_to_megabytes(REP_VALUE_METRICS['memoryStats.numBytesAllocated']),
+        AdminUI::Utils.convert_bytes_to_megabytes(REP_VALUE_METRICS['memoryStats.numBytesAllocatedHeap']),
+        AdminUI::Utils.convert_bytes_to_megabytes(REP_VALUE_METRICS['memoryStats.numBytesAllocatedStack']),
+        REP_VALUE_METRICS['CapacityTotalContainers'],
+        REP_VALUE_METRICS['CapacityRemainingContainers'],
+        REP_VALUE_METRICS['ContainerCount'],
+        REP_VALUE_METRICS['CapacityTotalMemory'],
+        REP_VALUE_METRICS['CapacityRemainingMemory'],
+        REP_VALUE_METRICS['CapacityTotalDisk'],
+        REP_VALUE_METRICS['CapacityRemainingDisk'],
+        "#{rep_envelope.origin}:#{rep_envelope.index}:#{rep_envelope.ip}"
+      ]
+    ]
+  end
+
+  def view_models_cells_detail
+    hash =
+    {
+      'connected' => true,
+      'index'     => rep_envelope.index,
+      'ip'        => rep_envelope.ip,
+      'origin'    => rep_envelope.origin,
+      'timestamp' => rep_envelope.timestamp
+    }
+
+    hash.merge(REP_VALUE_METRICS)
   end
 
   def view_models_clients
@@ -1074,7 +1112,9 @@ module ViewModelsHelper
         cc_app[:instances],
         cc_app[:state] == 'STARTED' ? 1 : 0,
         1,
+        1,
         { apps:              1,
+          cells:             1,
           deas:              1,
           organizations:     1,
           running_instances: cc_app[:state] == 'STARTED' ? 1 : 0,

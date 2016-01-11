@@ -11,6 +11,7 @@ module AdminUI
           connection.transaction do
             items = connection[:stats]
             items.insert(apps:              record[:apps],
+                         cells:             record[:cells],
                          deas:              record[:deas],
                          organizations:     record[:organizations],
                          running_instances: record[:running_instances],

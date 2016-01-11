@@ -68,8 +68,17 @@ module AdminUI
             row.push(nil, nil, nil, nil, nil)
           end
 
-          row.push(data['available_memory_ratio'] * 100)
-          row.push(data['available_disk_ratio'] * 100)
+          if data['available_memory_ratio']
+            row.push(data['available_memory_ratio'] * 100)
+          else
+            row.push(nil)
+          end
+
+          if data['available_disk_ratio']
+            row.push(data['available_disk_ratio'] * 100)
+          else
+            row.push(nil)
+          end
 
           hash[dea['name']] = dea
         else

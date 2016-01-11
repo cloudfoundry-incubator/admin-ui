@@ -69,6 +69,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('SecurityGroups').displayed?).to be(true)
       expect(scroll_tab_into_view('SecurityGroupsSpaces').displayed?).to be(true)
       expect(scroll_tab_into_view('DEAs').displayed?).to be(true)
+      expect(scroll_tab_into_view('Cells').displayed?).to be(true)
       expect(scroll_tab_into_view('CloudControllers').displayed?).to be(true)
       expect(scroll_tab_into_view('HealthManagers').displayed?).to be(true)
       expect(scroll_tab_into_view('Gateways').displayed?).to be(true)
@@ -206,7 +207,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         # Second select the desired tab via scrolling
         begin
           Selenium::WebDriver::Wait.new(timeout: 5).until do
-            scroll_tab_into_view(tab_id, true).click
+            # TODO: Bug in selenium-webdriver 2.48.1.  Entire item must be displayed for it to click.  Workaround following two lines after commented out code
+            # scroll_tab_into_view(tab_id, true).click
+            element = scroll_tab_into_view(tab_id, true)
+            @driver.execute_script('arguments[0].click();', element)
+
             @driver.find_element(class_name: 'menuItemSelected').attribute('id') == tab_id
           end
         rescue Selenium::WebDriver::Error::TimeOutError
@@ -4023,6 +4028,77 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
       end
 
+      context 'Cells' do
+        let(:tab_id) { 'Cells' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='CellsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                expected_length: 4,
+                                labels:          ['', 'Containers', 'Memory', 'Disk'],
+                                colspans:        %w(9 3 2 2)
+                              },
+                              { columns:         @driver.find_elements(xpath: "//div[@id='CellsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
+                                expected_length: 16,
+                                labels:          ['Name', 'IP', 'Index', 'Metrics Last Gathered', 'Status', 'Cores', 'Memory', 'Memory Heap', 'Memory Stack', 'Total', 'Remaining', 'Used', 'Capacity', 'Remaining', 'Capacity', 'Remaining'],
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='CellsTable']/tbody/tr/td"),
+                           [
+                             "#{rep_envelope.ip}:#{rep_envelope.index}",
+                             rep_envelope.ip,
+                             @driver.execute_script("return Format.formatNumber(#{rep_envelope.index})"),
+                             Time.at(rep_envelope.timestamp / DopplerHelper::BILLION).to_datetime.rfc3339,
+                             @driver.execute_script('return Constants.STATUS__RUNNING'),
+                             @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['numCPUS']})"),
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(DopplerHelper::REP_VALUE_METRICS['memoryStats.numBytesAllocated'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(DopplerHelper::REP_VALUE_METRICS['memoryStats.numBytesAllocatedHeap'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(DopplerHelper::REP_VALUE_METRICS['memoryStats.numBytesAllocatedStack'])})"),
+                             @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['CapacityTotalContainers']})"),
+                             @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['CapacityRemainingContainers']})"),
+                             @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['ContainerCount']})"),
+                             @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['CapacityTotalMemory']})"),
+                             @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['CapacityRemainingMemory']})"),
+                             @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['CapacityTotalDisk']})"),
+                             @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['CapacityRemainingDisk']})")
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_CellsTable_0')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ label: 'Name',                           tag: 'div', value: "#{rep_envelope.ip}:#{rep_envelope.index}" },
+                           { label: 'IP',                             tag:   nil, value: rep_envelope.ip },
+                           { label: 'Index',                          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{rep_envelope.index})") },
+                           { label: 'Metrics Last Gathered',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(rep_envelope.timestamp / DopplerHelper::BILLION).to_datetime.rfc3339}\")") },
+                           { label: 'Cores',                          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['numCPUS']})") },
+                           { label: 'Memory MB',                      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(DopplerHelper::REP_VALUE_METRICS['memoryStats.numBytesAllocated'])})") },
+                           { label: 'Memory Heap MB',                 tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(DopplerHelper::REP_VALUE_METRICS['memoryStats.numBytesAllocatedHeap'])})") },
+                           { label: 'Memory Stack MB',                tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(DopplerHelper::REP_VALUE_METRICS['memoryStats.numBytesAllocatedStack'])})") },
+                           { label: 'Total Containers',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['CapacityTotalContainers']})") },
+                           { label: 'Remaining Containers',           tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['CapacityRemainingContainers']})") },
+                           { label: 'Used Containers',                tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['ContainerCount']})") },
+                           { label: 'Memory Capacity',                tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['CapacityTotalMemory']})") },
+                           { label: 'Memory Remaining',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['CapacityRemainingMemory']})") },
+                           { label: 'Disk Capacity',                  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['CapacityTotalDisk']})") },
+                           { label: 'Disk Remaining',                 tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['CapacityRemainingDisk']})") },
+                           { label: 'Log Sender Total Messages Read', tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['logSenderTotalMessagesRead']})") },
+                           { label: 'Number Go Routines',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['numGoRoutines']})") },
+                           { label: 'Number Mallocs',                 tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['memoryStats.numMallocs']})") },
+                           { label: 'Number Frees',                   tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['memoryStats.numFrees']})") }
+                          ])
+          end
+        end
+      end
+
       context 'Cloud Controllers' do
         let(:tab_id) { 'CloudControllers' }
 
@@ -4387,6 +4463,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              '1',
                              '1',
+                             '1',
                              '1'
                            ])
         end
@@ -4415,7 +4492,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_table_data(Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_elements(xpath: "//table[@id='StatsTable']/tbody/tr/td") }, [nil, '1', '1', '1', '1', '1', '1', '1'])
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError, Timeout::Error
           end
-          check_table_data(@driver.find_elements(xpath: "//table[@id='StatsTable']/tbody/tr/td"), [nil, '1', '1', '1', '1', '1', '1', '1'])
+          check_table_data(@driver.find_elements(xpath: "//table[@id='StatsTable']/tbody/tr/td"), [nil, '1', '1', '1', '1', '1', '1', '1', '1'])
         end
       end
     end

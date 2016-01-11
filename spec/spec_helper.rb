@@ -11,6 +11,9 @@ require_relative '../lib/admin/varz'
 
 Dir[File.expand_path('../support/**/*.rb', __FILE__)].each { |file| require file }
 
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib', 'admin', 'dropsonde_protocol')
+require 'envelope.pb.rb'
+
 RSpec.configure do |rspec|
   rspec.raise_errors_for_deprecations!
 

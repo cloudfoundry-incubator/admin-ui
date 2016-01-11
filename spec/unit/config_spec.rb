@@ -57,6 +57,24 @@ describe AdminUI::Config do
         expect(config.db_uri).to eq(db_uri)
       end
 
+      it 'doppler_data_file' do
+        doppler_data_file = 'doppler_data.json'
+        config = AdminUI::Config.load('doppler_data_file' => doppler_data_file)
+        expect(config.doppler_data_file).to eq(doppler_data_file)
+      end
+
+      it 'doppler_reconnect_delay' do
+        doppler_reconnect_delay = 333
+        config = AdminUI::Config.load('doppler_reconnect_delay' => doppler_reconnect_delay)
+        expect(config.doppler_reconnect_delay).to eq(doppler_reconnect_delay)
+      end
+
+      it 'doppler_rollup_interval' do
+        doppler_rollup_interval = 33
+        config = AdminUI::Config.load('doppler_rollup_interval' => doppler_rollup_interval)
+        expect(config.doppler_rollup_interval).to eq(doppler_rollup_interval)
+      end
+
       it 'event_days' do
         event_days = 35
         config = AdminUI::Config.load('event_days' => event_days)
@@ -357,6 +375,18 @@ describe AdminUI::Config do
         expect(config.db_uri).to be_nil
       end
 
+      it 'doppler_data_file' do
+        expect(config.doppler_data_file).to be_nil
+      end
+
+      it 'doppler_reconnect_delay' do
+        expect(config.doppler_reconnect_delay).to eq(300)
+      end
+
+      it 'doppler_rollup_interval' do
+        expect(config.doppler_rollup_interval).to eq(30)
+      end
+
       it 'event_days' do
         expect(config.event_days).to eq(7)
       end
@@ -508,6 +538,7 @@ describe AdminUI::Config do
         cloud_controller_uri: 'http://api.localhost',
         data_file:            '/tmp/admin_ui_data.json',
         db_uri:               'sqlite:///tmp/admin_ui_store.db',
+        doppler_data_file:    '/tmp/admin_ui_doppler_data.json',
         log_file:             '/tmp/admin_ui.log',
         mbus:                 'nats://nats:c1oudc0w@10.10.10.10:4222',
         port:                 8070,
@@ -554,6 +585,18 @@ describe AdminUI::Config do
 
       it 'db_uri' do
         expect { AdminUI::Config.load(config.merge(db_uri: 5)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'doppler_data_file' do
+        expect { AdminUI::Config.load(config.merge(doppler_data_file: 5)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'doppler_reconnect_delay' do
+        expect { AdminUI::Config.load(config.merge(doppler_reconnect_delay: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'doppler_rollup_interval' do
+        expect { AdminUI::Config.load(config.merge(doppler_rollup_interval: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'event_days' do
@@ -744,6 +787,18 @@ describe AdminUI::Config do
 
       it 'db_uri' do
         expect { AdminUI::Config.load(config.merge(db_uri: nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'doppler_data_file' do
+        expect { AdminUI::Config.load(config.merge(doppler_data_file: nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'doppler_reconnect_delay' do
+        expect { AdminUI::Config.load(config.merge(doppler_reconnect_delay: nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'doppler_rollup_interval' do
+        expect { AdminUI::Config.load(config.merge(doppler_rollup_interval: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'event_days' do

@@ -27,6 +27,7 @@ module AdminUI
 
       deas['items'].each do |dea|
         next unless dea['connected']
+        next unless dea['data']['instance_registry']
         dea['data']['instance_registry'].each_value do |application|
           application.each_value do |instance|
             Thread.pass

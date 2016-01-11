@@ -10,9 +10,9 @@ RSpec.configure do |config|
 end
 
 shared_context :web_context do
-  let(:stat_date) { 1_383_238_113_597 }
   let(:current_date) { (Time.now.to_f * 1000).to_i }
-  let(:stat_count) { 1 }
+  let(:stat_count)   { 1 }
+  let(:stat_date)    { 1_383_238_113_597 }
 
   before do
     @driver = selenium_web_driver
@@ -28,25 +28,31 @@ shared_context :web_context do
   end
 
   def selenium_web_driver
-    return Selenium::WebDriver.for(:firefox) unless ENV['TRAVIS']
+    if ENV['TRAVIS']
+      access_key        = ENV['SAUCE_ACCESS_KEY']
+      build_number      = ENV['TRAVIS_BUILD_NUMBER']
+      tunnel_identifier = ENV['TRAVIS_JOB_NUMBER']
+      username          = ENV['SAUCE_USERNAME']
 
-    access_key        = ENV['SAUCE_ACCESS_KEY']
-    build_number      = ENV['TRAVIS_BUILD_NUMBER']
-    tunnel_identifier = ENV['TRAVIS_JOB_NUMBER']
-    username          = ENV['SAUCE_USERNAME']
+      caps = Selenium::WebDriver::Remote::Capabilities.new(
+        browser_name:          'firefox',
+        build:                 build_number,
+        'tunnel-identifier' => tunnel_identifier)
 
-    caps = Selenium::WebDriver::Remote::Capabilities.new(
-      browser_name:          'firefox',
-      build:                 build_number,
-      'tunnel-identifier' => tunnel_identifier)
-
-    url = "http://#{username}:#{access_key}@localhost:4445/wd/hub"
-    client = Selenium::WebDriver::Remote::Http::Default.new
-    client.timeout = 600
-    Selenium::WebDriver.for(:remote,
-                            http_client:          client,
-                            desired_capabilities: caps,
-                            url:                  url)
+      url = "http://#{username}:#{access_key}@localhost:4445/wd/hub"
+      client = Selenium::WebDriver::Remote::Http::Default.new
+      client.timeout = 600
+      return Selenium::WebDriver.for(:remote,
+                                     http_client:          client,
+                                     desired_capabilities: caps,
+                                     url:                  url)
+    else
+      profile = Selenium::WebDriver::Firefox::Profile.new
+      profile['startup.homepage'] = 'about:blank'
+      profile['startup.homepage_welcome_url'] = 'about:blank'
+      profile['startup.homepage_welcome_url.additional'] = 'about:blank'
+      return Selenium::WebDriver.for(:firefox, profile: profile)
+    end
   rescue => error
     unless url.nil?
       puts "Trying to connect to: #{url.gsub(access_key, '<access_key>')}"
@@ -77,7 +83,11 @@ shared_context :web_context do
   end
 
   def check_filter_link(tab_id, link_index, target_tab_id, expected_filter)
-    Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_elements(xpath: "//div[@id='#{tab_id}PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(tag_name: 'a').click }
+    # TODO: Bug in selenium-webdriver 2.48.1.  Entire item must be displayed for it to click.  Workaround following two lines after commented out code
+    # Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_elements(xpath: "//div[@id='#{tab_id}PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(tag_name: 'a').click }
+    element = @driver.find_elements(xpath: "//div[@id='#{tab_id}PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(tag_name: 'a')
+    @driver.execute_script('arguments[0].click();', element)
+
     expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(class_name: 'menuItemSelected').attribute('id') }).to eq(target_tab_id)
     expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: target_tab_id).displayed? }).to eq(true)
     expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{target_tab_id}Table_filter").find_element(tag_name: 'input').attribute('value') }).to eq(expected_filter)
@@ -105,12 +115,12 @@ shared_context :web_context do
     check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                           expected_length: 3,
                           labels:          ['', 'Instances', ''],
-                          colspans:        %w(5 2 1)
+                          colspans:        %w(5 2 2)
                         },
                         {
                           columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                          expected_length: 8,
-                          labels:          %w(Date Organizations Spaces Users Apps Total Running DEAs),
+                          expected_length: 9,
+                          labels:          %w(Date Organizations Spaces Users Apps Total Running DEAs Cells),
                           colspans:        nil
                         }
                        ])
@@ -118,6 +128,7 @@ shared_context :web_context do
     check_table_data(@driver.find_elements(xpath: "//table[@id='#{id}Table']/tbody/tr/td"),
                      [
                        nil,
+                       stat_count_string,
                        stat_count_string,
                        stat_count_string,
                        stat_count_string,

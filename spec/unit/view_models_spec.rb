@@ -4,33 +4,43 @@ require_relative '../spec_helper'
 describe AdminUI::ViewModels do
   include ConfigHelper
 
-  let(:ccdb_file)  { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri)   { "sqlite://#{ccdb_file}" }
-  let(:data_file)  { '/tmp/admin_ui.data' }
-  let(:db_file)    { '/tmp/admin_ui_store.db' }
-  let(:db_uri)     { "sqlite://#{db_file}" }
-  let(:log_file)   { '/tmp/admin_ui.log' }
-  let(:logger)     { Logger.new(log_file) }
-  let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
+  let(:ccdb_file)         { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri)          { "sqlite://#{ccdb_file}" }
+  let(:data_file)         { '/tmp/admin_ui_data.json' }
+  let(:db_file)           { '/tmp/admin_ui_store.db' }
+  let(:db_uri)            { "sqlite://#{db_file}" }
+  let(:doppler_data_file) { '/tmp/admin_ui_doppler_data.json' }
+  let(:log_file)          { '/tmp/admin_ui.log' }
+  let(:uaadb_file)        { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri)         { "sqlite://#{uaadb_file}" }
+
   let(:config) do
-    AdminUI::Config.load(ccdb_uri:  ccdb_uri,
-                         data_file: data_file,
-                         db_uri:    db_uri,
-                         log_files: [log_file],
-                         mbus:      'nats://nats:c1oudc0w@localhost:14222',
-                         uaadb_uri: uaadb_uri)
+    AdminUI::Config.load(ccdb_uri:                ccdb_uri,
+                         data_file:               data_file,
+                         db_uri:                  db_uri,
+                         doppler_data_file:       doppler_data_file,
+                         doppler_rollup_interval: 1,
+                         log_files:               [log_file],
+                         mbus:                    'nats://nats:c1oudc0w@localhost:14222',
+                         uaadb_uri:               uaadb_uri)
   end
-  let(:cc) { AdminUI::CC.new(config, logger, true) }
-  let(:email) { AdminUI::EMail.new(config, logger) }
-  let(:log_files) { AdminUI::LogFiles.new(config, logger) }
-  let(:nats) { AdminUI::NATS.new(config, logger, email) }
-  let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
-  let(:stats) { AdminUI::Stats.new(config, logger, cc, varz, true) }
-  let(:view_models) { AdminUI::ViewModels.new(config, logger, cc, log_files, stats, varz, true) }
+
+  let(:cc)                 { AdminUI::CC.new(config, logger, true) }
+  let(:client)             { AdminUI::CCRestClient.new(config, logger) }
+  let(:doppler)            { AdminUI::Doppler.new(config, logger, client, email, true) }
+  let(:email)              { AdminUI::EMail.new(config, logger) }
+  let(:event_machine_loop) { AdminUI::EventMachineLoop.new(config, logger, true) }
+  let(:logger)             { Logger.new(log_file) }
+  let(:log_files)          { AdminUI::LogFiles.new(config, logger) }
+  let(:nats)               { AdminUI::NATS.new(config, logger, email, true) }
+  let(:stats)              { AdminUI::Stats.new(config, logger, cc, doppler, varz, true) }
+  let(:varz)               { AdminUI::VARZ.new(config, logger, nats, true) }
+  let(:view_models)        { AdminUI::ViewModels.new(config, logger, cc, doppler, log_files, stats, varz, true) }
 
   before do
     config_stub
+
+    event_machine_loop
   end
 
   after do
@@ -38,15 +48,19 @@ describe AdminUI::ViewModels do
     stats.shutdown
     varz.shutdown
     nats.shutdown
+    doppler.shutdown
     cc.shutdown
+    event_machine_loop.shutdown
 
     view_models.join
     stats.join
     varz.join
     nats.join
+    doppler.join
     cc.join
+    event_machine_loop.join
 
-    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{log_file} #{uaadb_file}"))
+    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{doppler_data_file} #{log_file} #{uaadb_file}"))
   end
 
   context 'No backend connected' do
@@ -76,6 +90,14 @@ describe AdminUI::ViewModels do
 
     it 'returns zero buildpacks as expected' do
       verify_disconnected_items(view_models.buildpacks)
+    end
+
+    it 'returns nil cell as expected' do
+      expect(view_models.cell('bogus')).to be_nil
+    end
+
+    it 'returns zero cells as expected' do
+      verify_disconnected_items(view_models.cells)
     end
 
     it 'returns nil client as expected' do

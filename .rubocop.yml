@@ -3,6 +3,7 @@ AllCops:
     - '.bundle/**/*'
     - 'vendor/**/*'
     # We shouldn't need the above but for now there's a bug in rubocop
+    - 'lib/admin/dropsonde_protocol/*'
     - 'spec/support/ccdb/*'
     - 'spec/support/uaadb/*'
 

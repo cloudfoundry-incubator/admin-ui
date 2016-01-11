@@ -7,7 +7,9 @@ require_relative 'admin/config'
 require_relative 'admin/cc'
 require_relative 'admin/cc_rest_client'
 require_relative 'admin/db/dbstore_migration'
+require_relative 'admin/doppler'
 require_relative 'admin/email'
+require_relative 'admin/event_machine_loop'
 require_relative 'admin/login'
 require_relative 'admin/log_files'
 require_relative 'admin/logger'
@@ -34,6 +36,7 @@ module AdminUI
       setup_config
       setup_logger
       setup_dbstore
+      setup_event_machine_loop
       setup_components
 
       display_files
@@ -50,13 +53,17 @@ module AdminUI
       @stats.shutdown
       @varz.shutdown
       @nats.shutdown
+      @doppler.shutdown
       @cc.shutdown
+      @event_machine_loop.shutdown
 
       @view_models.join
       @stats.join
       @varz.join
       @nats.join
+      @doppler.join
       @cc.join
+      @event_machine_loop.join
 
       Rack::Handler::WEBrick.shutdown
     end
@@ -95,18 +102,23 @@ module AdminUI
       connection.migrate_to_db
     end
 
+    def setup_event_machine_loop
+      @event_machine_loop = EventMachineLoop.new(@config, @logger, @testing)
+    end
+
     def setup_components
       email = EMail.new(@config, @logger)
 
       @client      = CCRestClient.new(@config, @logger)
       @cc          = CC.new(@config, @logger, @testing)
+      @doppler     = Doppler.new(@config, @logger, @client, email, @testing)
       @log_files   = LogFiles.new(@config, @logger)
       @login       = Login.new(@config, @logger, @client)
-      @nats        = NATS.new(@config, @logger, email)
+      @nats        = NATS.new(@config, @logger, email, @testing)
       @varz        = VARZ.new(@config, @logger, @nats, @testing)
-      @stats       = Stats.new(@config, @logger, @cc, @varz, @testing)
-      @view_models = ViewModels.new(@config, @logger, @cc, @log_files, @stats, @varz, @testing)
-      @operation   = Operation.new(@config, @logger, @cc, @client, @varz, @view_models)
+      @stats       = Stats.new(@config, @logger, @cc, @doppler, @varz, @testing)
+      @view_models = ViewModels.new(@config, @logger, @cc, @doppler, @log_files, @stats, @varz, @testing)
+      @operation   = Operation.new(@config, @logger, @cc, @client, @doppler, @varz, @view_models)
     end
 
     def display_files
@@ -115,15 +127,16 @@ module AdminUI
       puts 'AdminUI...'
 
       begin
-        puts "  #{RUBY_ENGINE}   #{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}"
+        puts "  #{RUBY_ENGINE}           #{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}"
         @logger.info("#{RUBY_ENGINE} #{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}")
       rescue => error
         @logger.error("Unable to display RUBY_ENGINE, RUBY_VERSION or RUBY_PATCHLEVEL: #{error.inspect}")
       end
 
-      puts "  data:  #{@config.data_file}"
-      puts "  log:   #{@config.log_file}"
-      puts "  stats: #{@config.db_uri}"
+      puts "  data:          #{@config.data_file}"
+      puts "  doppler data:  #{@config.doppler_data_file}"
+      puts "  log:           #{@config.log_file}"
+      puts "  stats:         #{@config.db_uri}"
       puts "\n"
     end
 
@@ -170,6 +183,7 @@ module AdminUI
                           @logger,
                           @cc,
                           @client,
+                          @doppler,
                           @login,
                           @log_files,
                           @operation,

@@ -1,9 +1,10 @@
 module AdminUI
   class Operation
-    def initialize(config, logger, cc, client, varz, view_models)
+    def initialize(config, logger, cc, client, doppler, varz, view_models)
       @cc          = cc
       @client      = client
       @config      = config
+      @doppler     = doppler
       @logger      = logger
       @varz        = varz
       @view_models = view_models
@@ -394,6 +395,12 @@ module AdminUI
       @view_models.invalidate_gateways
       @view_models.invalidate_health_managers
       @view_models.invalidate_routers
+    end
+
+    def remove_doppler_component(key)
+      @logger.debug("REMOVE doppler component #{key}")
+      @doppler.remove_component(key)
+      @view_models.invalidate_cells
     end
   end
 end

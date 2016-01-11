@@ -4,9 +4,9 @@ require_relative 'web'
 
 module AdminUI
   class SecureWeb < AdminUI::Web
-    def initialize(config, logger, cc, client, login, log_files, operation, stats, varz, view_models)
+    def initialize(config, logger, cc, client, doppler, login, log_files, operation, stats, varz, view_models)
       logger.debug('use AdminUI::SecureWeb')
-      super(config, logger, cc, client, login, log_files, operation, stats, varz, view_models)
+      super(config, logger, cc, client, doppler, login, log_files, operation, stats, varz, view_models)
     end
 
     configure do

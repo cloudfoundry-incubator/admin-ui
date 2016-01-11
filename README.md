@@ -2,7 +2,7 @@
 # Administration Web UI for Cloud Foundry NG 
 
 The Administration Web UI provides metrics and operations data for Cloud Foundry NG.
-It gathers data from the varz providers for the various Cloud Foundry components as well as
+It gathers data from the varz providers and doppler_logging_endpoint for the various Cloud Foundry components as well as
 from the Cloud Controller and UAA REST APIs.
 
 See the [Using the Administration UI](#using) section for more information on using it and for sample screen shots.
@@ -16,6 +16,7 @@ In order to execute, the Administration UI needs to be able to access the follow
 - Cloud Controller DB URI
 - UAA REST API
 - UAA DB URI
+- doppler logging endpoint
 
 Installation of the Administration UI and its prerequisites requires access to the Internet to
 access GitHub.com, RubyGems.org, Ubuntu software repositories, etc. 
@@ -97,7 +98,7 @@ uaac member add admin_ui.admin admin
 
 # Create the new UAA admin_ui_client
 uaac client add admin_ui_client \
- --authorities cloud_controller.admin,cloud_controller.read,cloud_controller.write,openid,scim.read \
+ --authorities cloud_controller.admin,cloud_controller.read,cloud_controller.write,doppler.firehose,openid,scim.read \
  --authorized_grant_types authorization_code,client_credentials,refresh_token \
  --autoapprove true \
  --scope admin_ui.admin,admin_ui.user,openid \
@@ -129,7 +130,7 @@ Example: <code>0.0.0.0</code>
 <code><b>ccdb_uri</b></code>
 </dt>
 <dd>
-The URI used to connect to the Cloud Controller database for retreival.
+The URI used to connect to the Cloud Controller database for retrieval.
 <br>
 URI format: <code>&lt;protocol>://&lt;db-user>:&lt;db-user-password>@&lt;host>:&lt;port>/&lt;db-name></code>
 <br>
@@ -145,7 +146,7 @@ You can try other databases by adding relevant database gems to the <code>Gemfil
 <code>cloud_controller_discovery_interval</code>
 </dt>
 <dd>
-Seconds between cloud controller REST API discoveries
+Seconds between cloud controller REST API discoveries.
 <br>
 Example: <code>300</code>
 </dd>
@@ -153,7 +154,7 @@ Example: <code>300</code>
 <code>cloud_controller_ssl_verify_none</code>
 </dt>
 <dd>
-If connection to cloud_controller is https, true to ignore SSL verification
+If connection to cloud_controller is https, true to ignore SSL verification.
 <br>
 Example: <code>true</code>
 <br>
@@ -195,6 +196,30 @@ In this case, the store.db file is located in the 'data' directory.  Absolute pa
 <code>sqlite:///tmp/store.db</code> indicates the database file 'store.db' is located in the '/tmp' directory.
 </dd>
 <dt>
+<code>doppler_data_file</code>
+</dt>
+<dd>
+Relative path location to store the Administration UI doppler data file.  
+<br>
+Example: <code>data/doppler_data.json</code>
+</dd>
+<dt>
+<code>doppler_reconnect_delay</code>
+</dt>
+<dd>
+The number of seconds to wait until a reconnect to the doppler_logging_endpoint is attempted after a prior failure.
+<br>
+Example: <code>300</code>
+</dd>
+<dt>
+<code>doppler_rollup_interval</code>
+</dt>
+<dd>
+Seconds between rolling up doppler_logging_endpoint data to be made available.  
+<br>
+Example: <code>30</code>
+</dd>
+<dt>
 <code>event_days</code>
 </dt>
 <dd>
@@ -206,7 +231,7 @@ Example: <code>7</code>
 <code>log_file</code>
 </dt>
 <dd>
-Relative path locaton to the Administration UI log file
+Relative path location to the Administration UI log file.
 <br>
 Example: <code>admin_ui.log</code>
 </dd>
@@ -253,22 +278,22 @@ URL to the NATS.
 Example: <code>nats://nats:c1oudc0w@10.10.10.10:4222</code>
 </dd>
 <dt>
-<code>monitored_components<code>
+<code>monitored_components</code>
 </dt>
 <dd>
 Components in a comma-delimited array which when down will result in notification.
 <br>
 Example of multiple components: <code>[NATS, CloudController, DEA, HealthManager, Router]</code>
 <br>
-Example of a wildcard:  <code>[-Provisioner]</code>
+Example of a wild card:  <code>[-Provisioner]</code>
 <br>
 Example for all components:  <code>[ALL]</code>
 </dd>
 <dt>
 <code>nats_discovery_interval</code>
-<dt>
+</dt>
 <dd>
-Seconds between NATS discoveries
+Seconds between NATS discoveries.
 <br>
 Example: <code>30</code>
 </dd>
@@ -289,7 +314,7 @@ Port for the Administration UI web server.
 Example: <code>8070</code>
 </dd>
 <dt>
-<code><b>receiver_emails</b></code>
+<code>receiver_emails</code>
 </dt>
 <dd>
 The receiving email(s) in a comma-delimited array.
@@ -299,7 +324,7 @@ Example: <code>[ ]</code>
 Example: <code>[bar@10.10.10.10, baz@10.10.10.10]</code>
 </dd>
 <dt>
-<code><b>secured_client_connection</b></code>
+<code>secured_client_connection</code>
 </dt>
 <dd>
 A true/false indicator about whether the Admin-UI server process will operate in secure or unprotected 
@@ -315,14 +340,14 @@ Example: <code>true</code>
 </dd>
 </dt>
 <dt>
-<code><b>sender_email</b></code>
+<code>sender_email</code>
 </dt>
 <dd>
 Email server and account used when sending an email notifying receivers of down components.
 <br>
 <dl>
 <dt>
-<code>server</code>
+<code><b>server</b></code>
 </dt>
 <dd>
 The email server.
@@ -346,7 +371,7 @@ HELO domain provided by the client to the server, the SMTP server will judge whe
 Example: <code>localhost</code>
 </dd>
 <dt>
-<code>account</code>
+<code><b>account</b></code>
 </dt>
 <dd>
 The email account.
@@ -370,7 +395,7 @@ Example: <code>login</code>
 </dl>
 </dd>
 <dt>
-<code><b>ssl</b></code>
+<code>ssl</code>
 </dt>
 <dd>
 A set of configuration properties for Admin-UI to work with SSL certificate.  It 
@@ -403,7 +428,7 @@ point, you no longer need to keep the certificate request (dot csr file).
 <br>
 <dl>
 <dt>
-<code>certificate_file_path</code>
+<code><b>certificate_file_path</b></code>
 </dt>
 <dd>
 File path string leading to the certificate file.
@@ -411,16 +436,15 @@ File path string leading to the certificate file.
 Example: <code>certificate/server.cert</code>
 </dd>
 <dt>
-<dt>
-<code>max_session_idle_length</code>
+<code><b>max_session_idle_length</b></code>
 </dt>
 <dd>
-Time duration in seconds in which a https session is allowed to stay idle.
+Time duration in seconds in which an https session is allowed to stay idle.
 <br>
 Example: <code>1800</code> for 30 minutes.
 </dd>
 <dt>
-<code>private_key_file_path</code>
+<code><b>private_key_file_path</b></code>
 </dt>
 <dd>
 File path string leading to the private key file.
@@ -428,7 +452,7 @@ File path string leading to the private key file.
 Example: <code>system@10.10.10.10</code>
 </dd>
 <dt>
-<code>private_key_pass_phrase</code>
+<code><b>private_key_pass_phrase</b></code>
 </dt>
 <dd>
 Password string that is used to encrypt the private key.
@@ -480,27 +504,27 @@ Schedules of automatic stats collection expressed in an array of strings.  Each 
 
 * Fields are separated by spaces.  
 
-* Fields can be expressed by a wildcard * symbol which means every occurance of the fields.
+* Fields can be expressed by a wild card * symbol which means every occurrence of the fields.
 <br>
-Example: <code>['0 * * * *'] means the collection starts once every hour at the beginning of the hour.</code>
+Example: <code>['0 * * * *']</code> means the collection starts once every hour at the beginning of the hour.
 
 * Field value can be expressed in form of a range, which consists of two legal values connected by a hyphen (-).
 <br>
-Example: <code>['0 0 * * 1-5'] means the collection starts at midnight 12:00AM, Monday to Friday. </cdoe> 
+Example: <code>['0 0 * * 1-5']</code> means the collection starts at midnight 12:00AM, Monday to Friday. 
 
-* Field value can also be a sequence of legal values separated by comma.  Sequence doesn't need to be monitonic.
+* Field value can also be a sequence of legal values separated by comma.  Sequence doesn't need to be monotonic.
 <br>
-Example: <code>['0 1,11,12,13 * * *'] means the collection process starts at 1:00AM, 11:00AM, 12:00PM and 1:00PM every day.</code>
+Example: <code>['0 1,11,12,13 * * *']</code> means the collection process starts at 1:00AM, 11:00AM, 12:00PM and 1:00PM every day.
 
 * Mixed uses of sequence and ranges are permitted. <br>
-Example: <code>The example above can expressed this way as well: ['0 1,11-13 * * *']</code>
+Example: The example above can expressed this way as well: <code>['0 1,11-13 * * *']</code>
 <br>
 
 * Step based repeat pattern like /4 is currently not supported.
 
 * stats_refresh_schedules supports multiple schedules.
 <br>
-Example: <code>[ '0 1 * * *', '0 12-13 * * 1-5' ] means the collection starts at 1:00AM everyday; on Monday to Friday, the collection process will also start at 12:00PM and 1:00PM.</code>
+Example: <code>[ '0 1 * * *', '0 12-13 * * 1-5' ]</code> means the collection starts at 1:00AM everyday; on Monday to Friday, the collection process will also start at 12:00PM and 1:00PM.
 
 This property supports the following predefined schedules
 <br>
@@ -517,7 +541,7 @@ This property supports the following predefined schedules
 </pre>
 
 * When stats_refresh_schedules and stats_refresh_time are both present in the default.yml file, admin-ui will error out with an error message which reads 
-<code>Two mutally exclusive properties, stats_refresh_time and stats_refresh_schedules, are present in the configuration file.  Please remove one of the two properties.</code><br>
+Two mutually exclusive properties, stats_refresh_time and stats_refresh_schedules, are present in the configuration file.  Please remove one of the two properties.<br>
 * When neither stats_refresh_schedules supports nor stats_refresh_time is present in the default.yml file, admin-ui disables stats collection.<br>
 * The default value of stats_refresh_schedules in default.yml file is <code>stats_refresh_schedules: ['0 5 * * *']</code>.  This value translates to a schedule that starts daily at 5:00AM. <br>
 </dd>
@@ -539,7 +563,7 @@ Example: <code>300</code>
 </dd>
 <dt>
 <code>table_height</code>
-<dt>
+</dt>
 <dd>
 Maximum height of the data table, will be set to 287px if not configured.  If the records on the page are too large
 to fit in this height then a vertical scroll bar will appear in the table.  Can be set to either a specific pixel size
@@ -549,10 +573,10 @@ Example: <code>100%</code>
 </dd>
 <dt>
 <code>table_page_size</code>
-<dt>
+</dt>
 <dd>
 Default selection for the page size in the table, will be set to 10 if not configured. Valid values are: 5, 10, 25, 50,
-100, 250, 500, 1000
+100, 250, 500, 1000.
 <br>
 Example: <code>25</code>
 </dd>
@@ -565,7 +589,7 @@ and also support Single Sign On (SSO) for UI login.
 <dl>
 <dt>
 <code><b>id</b></code>
-<dt>
+</dt>
 <dd>
 Client ID.
 <br>
@@ -582,14 +606,14 @@ Example: <code>admin_ui_secret</code>
 </dl>
 The UAA client used by the Administration UI must be added to the system via the cf-uaac command-line tool, BOSH deployment or equivalent and is required to consist of the following:
 <ul>
-<li>authorities: cloud_controller.admin,cloud_controller.read,cloud_controller.write,openid,scim.read.
+<li>authorities: cloud_controller.admin,cloud_controller.read,cloud_controller.write,doppler.firehose,openid,scim.read.
 <li>authorized_grant_types:  authorization_code,client_credentials,refresh_token.
 <li>autoapprove: true 
 <li>scopes: openid as well as those defined in the uaa_groups_admin and uaa_groups_user configuration values.
 </ul>
 Example: 
 <pre>uaac client add admin_ui_client \
-     --authorities cloud_controller.admin,cloud_controller.read,cloud_controller.write,openid,scim.read \
+     --authorities cloud_controller.admin,cloud_controller.read,cloud_controller.write,doppler.firehose,openid,scim.read \
      --authorized_grant_types authorization_code,client_credentials,refresh_token \
      --autoapprove true \
      --scope admin_ui.admin,admin_ui.user,openid \
@@ -598,7 +622,7 @@ Example:
 </dd>
 <dt>
 <code><b>uaa_groups_admin</b></code>
-<dt>
+</dt>
 <dd>
 UAA scope(s) in a comma-delimited array to identify qualifying scopes for admin access to the Administration UI.
 If a user has any one scope, that user will be considered authorized to access the Administration UI as an admin.
@@ -617,7 +641,7 @@ Example: <code>uaac member add admin_ui.admin your_user_name</code>
 </dd>
 <dt>
 <code><b>uaa_groups_user</b></code>
-<dt>
+</dt>
 <dd>
 UAA scope(s) in a comma-delimited array to identify qualifying scopes for user access to the Administration UI.
 If a user has any one scope, that user will be considered authorized to access the Administration UI as a user.
@@ -638,7 +662,7 @@ Example: <code>uaac member add admin_ui.user your_user_name</code>
 <code><b>uaadb_uri</b></code>
 </dt>
 <dd>
-The URI used to connect to the UAA database for retreival.
+The URI used to connect to the UAA database for retrieval.
 <br>
 URI format: <code>&lt;protocol>://&lt;db-user>:&lt;db-user-password>@&lt;host>:&lt;port>/&lt;db-name></code>
 <br>
@@ -652,9 +676,9 @@ You can try other databases by adding relevant database gems to the <code>Gemfil
 </dd>
 <dt>
 <code>varz_discovery_interval</code>
-<dt>
+</dt>
 <dd>
-Seconds between VARZ discoveries
+Seconds between VARZ discoveries.
 <br>
 Example: <code>30</code>
 </dd>
@@ -669,7 +693,7 @@ Data migration takes place automatically at the start of admin-UI daemon process
   * stats_file property is present and valid in the default.yml file
   * db_uri property is present and valid in the default.yml file
   * stats file contains data
-  * the database instance either does not exist or has not yet been initialzed with schema.
+  * the database instance either does not exist or has not yet been initialized with schema.
 
 When Admin-UI completes the data migration to database, it will rename the original stats file by appending '.bak' file 
 extension. For example, 'stats.json' becomes 'stats.json.bak'.  
@@ -688,10 +712,10 @@ and hence adhere to its file naming convention. i.e.
 
            <timestamp>_<title>.rb
 
-The schema migration Admin-UI initiated always follows the chronological order as indicated by timestamps embdedded in the 
+The schema migration Admin-UI initiated always follows the chronological order as indicated by time stamps embedded in the 
 migration file names.
 
-More details about Sequal migration framework and ways to perform manual schema migration can be found  at the following URLs:
+More details about Sequel migration framework and ways to perform manual schema migration can be found  at the following URLs:
 
   * http://sequel.jeremyevans.net/rdoc/classes/Sequel/Migration.html
   * http://sequel.jeremyevans.net/rdoc/classes/Sequel/Migrator.html
@@ -699,7 +723,7 @@ More details about Sequal migration framework and ways to perform manual schema 
 
 ## Execute Administration UI
 
-You can provide an option to reference the configuration file when you execute the administration ui or you 
+You can provide an option to reference the configuration file when you execute the administration UI or you 
 can let it default to config/default.yml
 
 ```
@@ -766,6 +790,6 @@ The <code>Stats</code> tab:
 ![Stats Tab](./images/stats-tab.png)
 
 can be used to view basic history data about the environment.  Normally, 
-a snapshot of the statitics are taken once a day, but you can force a new
+a snapshot of the statistics are taken once a day, but you can force a new
 set of data points to be taken by using the <code>Create Stats</code>
 button. 

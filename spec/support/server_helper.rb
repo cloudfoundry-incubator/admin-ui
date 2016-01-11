@@ -9,52 +9,58 @@ require_relative 'view_models_helper'
 
 shared_context :server_context do
   include CCHelper
+  include DopplerHelper
   include LoginHelper
   include NATSHelper
   include VARZHelper
   include ViewModelsHelper
 
-  let(:ccdb_file) { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri) { "sqlite://#{ccdb_file}" }
-  let(:cloud_controller_uri) { 'http://api.localhost' }
-  let(:data_file) { '/tmp/admin_ui_data.json' }
-  let(:db_file) { '/tmp/admin_ui_store.db' }
-  let(:db_uri) { "sqlite://#{db_file}" }
-  let(:event_type) { 'space' }
-  let(:host) { 'localhost' }
-  let(:insert_second_quota_definition) { false }
-  let(:log_file) { '/tmp/admin_ui.log' }
-  let(:log_file_displayed) { '/tmp/admin_ui_displayed.log' }
-  let(:log_file_displayed_contents) { 'These are test log file contents' }
-  let(:log_file_displayed_contents_length) { log_file_displayed_contents.length }
-  let(:log_file_displayed_modified) { Time.new(1976, 7, 4, 12, 34, 56, 0) }
+  let(:ccdb_file)                                { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri)                                 { "sqlite://#{ccdb_file}" }
+  let(:cloud_controller_uri)                     { 'http://api.localhost' }
+  let(:data_file)                                { '/tmp/admin_ui_data.json' }
+  let(:db_file)                                  { '/tmp/admin_ui_store.db' }
+  let(:db_uri)                                   { "sqlite://#{db_file}" }
+  let(:doppler_data_file)                        { '/tmp/admin_ui_doppler_data.json' }
+  let(:event_type)                               { 'space' }
+  let(:host)                                     { 'localhost' }
+  let(:insert_second_quota_definition)           { false }
+  let(:log_file)                                 { '/tmp/admin_ui.log' }
+  let(:log_file_displayed)                       { '/tmp/admin_ui_displayed.log' }
+  let(:log_file_displayed_contents)              { 'These are test log file contents' }
+  let(:log_file_displayed_contents_length)       { log_file_displayed_contents.length }
+  let(:log_file_displayed_modified)              { Time.new(1976, 7, 4, 12, 34, 56, 0) }
   let(:log_file_displayed_modified_milliseconds) { AdminUI::Utils.time_in_milliseconds(log_file_displayed_modified) }
-  let(:log_file_page_size) { 100 }
-  let(:port) { 8071 }
-  let(:table_height) { '300px' }
-  let(:table_page_size) { 10 }
-  let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri) { "sqlite://#{uaadb_file}" }
+  let(:log_file_page_size)                       { 100 }
+  let(:port)                                     { 8071 }
+  let(:table_height)                             { '300px' }
+  let(:table_page_size)                          { 10 }
+  let(:uaadb_file)                               { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri)                                { "sqlite://#{uaadb_file}" }
+
   let(:config) do
     {
-      ccdb_uri:             ccdb_uri,
-      cloud_controller_uri: cloud_controller_uri,
-      data_file:            data_file,
-      db_uri:               db_uri,
-      log_file:             log_file,
-      log_file_page_size:   log_file_page_size,
-      log_files:            [log_file_displayed],
-      mbus:                 'nats://nats:c1oudc0w@localhost:14222',
-      port:                 port,
-      table_height:         table_height,
-      table_page_size:      table_page_size,
-      uaadb_uri:            uaadb_uri,
-      uaa_client:           { id: 'id', secret: 'secret' }
+      ccdb_uri:                ccdb_uri,
+      cloud_controller_uri:    cloud_controller_uri,
+      data_file:               data_file,
+      db_uri:                  db_uri,
+      doppler_data_file:       doppler_data_file,
+      doppler_rollup_interval: 1,
+      log_file:                log_file,
+      log_file_page_size:      log_file_page_size,
+      log_files:               [log_file_displayed],
+      mbus:                    'nats://nats:c1oudc0w@localhost:14222',
+      nats_discovery_timeout:  1,
+      port:                    port,
+      table_height:            table_height,
+      table_page_size:         table_page_size,
+      uaadb_uri:               uaadb_uri,
+      uaa_client:              { id: 'id', secret: 'secret' }
     }
   end
 
   def cleanup_files
-    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{log_file} #{log_file_displayed} #{uaadb_file}"))
+    Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{doppler_data_file} #{log_file} #{log_file_displayed} #{uaadb_file}"))
   end
 
   before do
@@ -66,6 +72,7 @@ shared_context :server_context do
     File.utime(log_file_displayed_modified, log_file_displayed_modified, log_file_displayed)
 
     cc_stub(AdminUI::Config.load(config), insert_second_quota_definition, event_type)
+    doppler_stub
     login_stub_admin
     nats_stub
     varz_stub

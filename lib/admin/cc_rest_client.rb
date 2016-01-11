@@ -1,3 +1,4 @@
+require 'faye/websocket'
 require 'uri'
 require 'yajl'
 require_relative 'utils'
@@ -29,6 +30,45 @@ module AdminUI
         uri = get_cc_url(next_url)
       end
       resources
+    end
+
+    def get_firehose(subscription_id, force_login)
+      begin
+        info
+      rescue => error
+        @logger.error("Error during get_firehose info: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        return [nil, nil]
+      end
+
+      if @doppler_logging_endpoint.nil?
+        @logger.warn('Warning during get_firehose doppler_logging_endpoint does not exist')
+        return [nil, nil]
+      end
+
+      uri_base = "#{@doppler_logging_endpoint}/firehose"
+
+      if @token.nil? || force_login
+        begin
+          login
+        rescue => error
+          @logger.error("Error during get_firehose login: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
+          return [uri_base, nil]
+        end
+      end
+
+      begin
+        websocket = Faye::WebSocket::Client.new("#{uri_base}/#{subscription_id}",
+                                                nil,
+                                                headers: { 'Authorization' => @token },
+                                                ping:    30)
+        return [uri_base, websocket]
+      rescue => error
+        @logger.error("Error during get_firehose websocket instantiation: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        return [uri_base, nil]
+      end
     end
 
     def get_uaa(path)
@@ -164,6 +204,11 @@ module AdminUI
         @authorization_endpoint = body_json['authorization_endpoint']
         if @authorization_endpoint.nil?
           fail "Information retrieved from #{get_cc_url('/v2/info')} does not include authorization_endpoint"
+        end
+
+        @doppler_logging_endpoint = body_json['doppler_logging_endpoint']
+        if @doppler_logging_endpoint.nil?
+          @logger.warn("Information retrieved from #{get_cc_url('/v2/info')} does not include doppler_logging_endpoint")
         end
 
         @token_endpoint = body_json['token_endpoint']

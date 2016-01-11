@@ -542,7 +542,7 @@ module AdminUI
 
       @running = false
 
-      @caches.each_pair do |_key, cache|
+      @caches.values.each do |cache|
         cache[:semaphore].synchronize do
           cache[:condition].broadcast
         end
@@ -627,6 +627,7 @@ module AdminUI
 
       cache[:semaphore].synchronize do
         cache[:result] = nil
+        cache[:condition].broadcast
       end
 
       schedule(key)

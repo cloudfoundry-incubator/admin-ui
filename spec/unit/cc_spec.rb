@@ -9,15 +9,17 @@ describe AdminUI::CC do
   let(:db_file)    { '/tmp/admin_ui_store.db' }
   let(:db_uri)     { "sqlite://#{db_file}" }
   let(:log_file)   { '/tmp/admin_ui.log' }
-  let(:logger)     { Logger.new(log_file) }
   let(:uaadb_file) { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
+
   let(:config) do
     AdminUI::Config.load(ccdb_uri:  ccdb_uri,
                          db_uri:    db_uri,
                          uaadb_uri: uaadb_uri)
   end
-  let(:cc) { AdminUI::CC.new(config, logger, true) }
+
+  let(:cc)     { AdminUI::CC.new(config, logger, true) }
+  let(:logger) { Logger.new(log_file) }
 
   before do
     config_stub

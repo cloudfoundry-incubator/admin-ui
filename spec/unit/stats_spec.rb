@@ -5,26 +5,36 @@ require_relative '../spec_helper'
 describe AdminUI::Stats do
   include ConfigHelper
 
-  let(:data_file) { '/tmp/admin_ui_data.json' }
-  let(:db_file)   { '/tmp/admin_ui_store.db' }
-  let(:db_uri)    { "sqlite://#{db_file}" }
-  let(:log_file) { '/tmp/admin_ui.log' }
-  let(:logger) { Logger.new(log_file) }
-  let(:email) { AdminUI::EMail.new(config, logger) }
-  let(:nats) { AdminUI::NATS.new(config, logger, email) }
-  let(:varz) { AdminUI::VARZ.new(config, logger, nats, true) }
-  let(:cc) { AdminUI::CC.new(config, logger, true) }
-  let(:stats) { AdminUI::Stats.new(config, logger, cc, varz, true) }
+  let(:data_file)         { '/tmp/admin_ui_data.json' }
+  let(:db_file)           { '/tmp/admin_ui_store.db' }
+  let(:db_uri)            { "sqlite://#{db_file}" }
+  let(:doppler_data_file) { '/tmp/admin_ui_doppler_data.json' }
+  let(:log_file)          { '/tmp/admin_ui.log' }
+
   let(:config) do
-    AdminUI::Config.new(stats_refresh_schedules: stats_refresh_schedules,
-                        data_file:               data_file,
+    AdminUI::Config.new(data_file:               data_file,
+                        db_uri:                  db_uri,
+                        doppler_data_file:       doppler_data_file,
+                        doppler_rollup_interval: 1,
                         mbus:                    'nats://nats:c1oudc0w@localhost:14222',
                         monitored_components:    [],
-                        db_uri:                  db_uri)
+                        stats_refresh_schedules: stats_refresh_schedules)
   end
+
+  let(:cc)                 { AdminUI::CC.new(config, logger, true) }
+  let(:client)             { AdminUI::CCRestClient.new(config, logger) }
+  let(:doppler)            { AdminUI::Doppler.new(config, logger, client, email, true) }
+  let(:email)              { AdminUI::EMail.new(config, logger) }
+  let(:event_machine_loop) { AdminUI::EventMachineLoop.new(config, logger, true) }
+  let(:logger)             { Logger.new(log_file) }
+  let(:nats)               { AdminUI::NATS.new(config, logger, email, true) }
+  let(:stats)              { AdminUI::Stats.new(config, logger, cc, doppler, varz, true) }
+  let(:varz)               { AdminUI::VARZ.new(config, logger, nats, true) }
 
   before do
     config_stub
+
+    event_machine_loop
   end
 
   after do
@@ -32,13 +42,17 @@ describe AdminUI::Stats do
     cc.shutdown
     varz.shutdown
     nats.shutdown
+    doppler.shutdown
+    event_machine_loop.shutdown
 
     stats.join
     cc.join
     varz.join
     nats.join
+    doppler.join
+    event_machine_loop.join
 
-    Process.wait(Process.spawn({}, "rm -fr #{data_file} #{db_file} #{log_file}"))
+    Process.wait(Process.spawn({}, "rm -fr #{data_file} #{db_file} #{doppler_data_file} #{log_file}"))
   end
 
   shared_examples 'common_calculate_time_until_generate_stats' do
@@ -159,11 +173,13 @@ describe AdminUI::Stats do
 
   context 'calculate_time_until_generate_stats' do
     let(:config) do
-      AdminUI::Config.load(data_file:              data_file,
-                           mbus:                   'nats://nats:c1oudc0w@localhost:14222',
-                           monitored_components:   [],
-                           db_uri:                 db_uri,
-                           nats_discovery_timeout: 1)
+      AdminUI::Config.load(data_file:               data_file,
+                           db_uri:                  db_uri,
+                           doppler_data_file:       doppler_data_file,
+                           doppler_rollup_interval: 1,
+                           mbus:                    'nats://nats:c1oudc0w@localhost:14222',
+                           monitored_components:    [],
+                           nats_discovery_timeout:  1)
     end
 
     it 'disables stats collection if stats_refresh_time and stats_refresh_schedule are both missing' do
@@ -173,12 +189,14 @@ describe AdminUI::Stats do
 
   context 'calculate_time_until_generate_stats' do
     let(:config) do
-      AdminUI::Config.new(stats_refresh_time:     300,
-                          data_file:              data_file,
-                          mbus:                   'nats://nats:c1oudc0w@localhost:14222',
-                          monitored_components:   [],
-                          db_uri:                 db_uri,
-                          nats_discovery_timeout: 1)
+      AdminUI::Config.new(data_file:               data_file,
+                          db_uri:                  db_uri,
+                          doppler_data_file:       doppler_data_file,
+                          doppler_rollup_interval: 1,
+                          mbus:                    'nats://nats:c1oudc0w@localhost:14222',
+                          monitored_components:    [],
+                          nats_discovery_timeout:  1,
+                          stats_refresh_time:      300)
     end
 
     it 'runs according to stats_refresh_time setting when stats_refresh_time is set and stats_refresh_scheduled is not set' do

@@ -25,6 +25,7 @@ module AdminUI
         next unless dea['connected']
         data = dea['data']
         host = dea['name']
+        next unless data['instance_registry']
         data['instance_registry'].each_value do |application|
           application.each_value do |application_instance|
             return result unless @running

@@ -327,6 +327,75 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage cell' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/cells_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_cell
+      response = delete_request("/doppler_components?uri=#{rep_envelope.origin}:#{rep_envelope.index}:#{rep_envelope.ip}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/doppler_components?uri=#{rep_envelope.origin}:#{rep_envelope.index}:#{rep_envelope.ip}"]], true)
+    end
+
+    it 'has user name and cells request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/cells_view_model']], true)
+    end
+
+    it 'deletes a cell' do
+      expect { delete_cell }.to change { get_json('/cells_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
+  context 'manage cloud controller' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/cloud_controllers_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_cloud_controller
+      response = delete_request("/components?uri=#{nats_cloud_controller_varz}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/components?uri=#{nats_cloud_controller_varz}"]], true)
+    end
+
+    it 'has user name and cloud controllers request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/cloud_controllers_view_model']], true)
+    end
+
+    it 'deletes a cloud controller' do
+      expect { delete_cloud_controller }.to change { get_json('/cloud_controllers_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
+  context 'manage dea' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/deas_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_dea
+      response = delete_request("/components?uri=#{nats_dea_varz}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/components?uri=#{nats_dea_varz}"]], true)
+    end
+
+    it 'has user name and deas request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/deas_view_model']], true)
+    end
+
+    it 'deletes a dea' do
+      expect { delete_dea }.to change { get_json('/deas_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage domain' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -391,6 +460,52 @@ describe AdminUI::Admin, type: :integration do
     it 'enables feature flag' do
       make_feature_flag_disabled
       expect { make_feature_flag_enabled }.to change { get_json('/feature_flags_view_model')['items']['items'][0][5].to_s }.from('false').to('true')
+    end
+  end
+
+  context 'manage gateway' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/gateways_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_gateway
+      response = delete_request("/components?uri=#{nats_provisioner_varz}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/components?uri=#{nats_provisioner_varz}"]], true)
+    end
+
+    it 'has user name and gateways request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/gateways_view_model']], true)
+    end
+
+    it 'deletes a gateway' do
+      expect { delete_gateway }.to change { get_json('/gateways_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
+  context 'manage health manager' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/health_managers_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_health_manager
+      response = delete_request("/components?uri=#{nats_health_manager_varz}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/components?uri=#{nats_health_manager_varz}"]], true)
+    end
+
+    it 'has user name and health managers request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/health_managers_view_model']], true)
+    end
+
+    it 'deletes a health manager' do
+      expect { delete_health_manager }.to change { get_json('/health_managers_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -558,6 +673,29 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a route' do
       expect { delete_route }.to change { get_json('/routes_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
+  context 'manage router' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/routers_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_router
+      response = delete_request("/components?uri=#{nats_router_varz}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/components?uri=#{nats_router_varz}"]], true)
+    end
+
+    it 'has user name and routers request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/routers_view_model']], true)
+    end
+
+    it 'deletes a router' do
+      expect { delete_router }.to change { get_json('/routers_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -1043,6 +1181,18 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
+    context 'cells_view_model' do
+      let(:path)              { '/cells_view_model' }
+      let(:view_model_source) { view_models_cells }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'cells_view_model detail' do
+      let(:path)              { "/cells_view_model/#{rep_envelope.ip}:#{rep_envelope.index}" }
+      let(:view_model_source) { view_models_cells_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'clients_view_model' do
       let(:event_type)        { 'service_dashboard_client' }
       let(:path)              { '/clients_view_model' }
@@ -1084,6 +1234,7 @@ describe AdminUI::Admin, type: :integration do
       let(:retrieved) { get_json('/current_statistics') }
       it 'retrieves' do
         expect(retrieved).to include('apps'              => 1,
+                                     'cells'             => 1,
                                      'deas'              => 1,
                                      'organizations'     => 1,
                                      'running_instances' => cc_app[:instances],
@@ -1452,7 +1603,7 @@ describe AdminUI::Admin, type: :integration do
 
     context 'stats_view_model' do
       let(:path)              { '/stats_view_model' }
-      let(:timestamp)         { retrieved['items']['items'][0][8]['timestamp'] } # We have to copy the timestamp from the result since it is variable
+      let(:timestamp)         { retrieved['items']['items'][0][9]['timestamp'] } # We have to copy the timestamp from the result since it is variable
       let(:view_model_source) { view_models_stats(timestamp) }
       it_behaves_like('retrieves view_model')
     end
