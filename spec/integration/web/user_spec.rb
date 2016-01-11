@@ -76,7 +76,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Routes tab does not have delete button' do
+    context 'Routes tab does not have delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Routes' }
         let(:page_id)   { 'RoutesPage' }

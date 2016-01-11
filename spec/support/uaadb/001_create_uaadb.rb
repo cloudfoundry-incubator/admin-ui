@@ -95,6 +95,7 @@ Sequel.migration do
       String :subdomain, :size=>255, :null=>false
       String :name, :size=>255, :null=>false
       String :description, :text=>true
+      String :config, :text=>true
       
       primary_key [:id]
       

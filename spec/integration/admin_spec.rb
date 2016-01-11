@@ -667,12 +667,22 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/routes/#{cc_route[:guid]}"]])
     end
 
+    def delete_route_recursive
+      response = delete_request("/routes/#{cc_route[:guid]}?recursive=true")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/routes/#{cc_route[:guid]}?recursive=true"]], true)
+    end
+
     it 'has user name and routes request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/routes_view_model']], true)
     end
 
     it 'deletes a route' do
       expect { delete_route }.to change { get_json('/routes_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes a route recursive' do
+      expect { delete_route_recursive }.to change { get_json('/routes_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 

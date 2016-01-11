@@ -112,14 +112,14 @@ module SFTPHelper
     end
 
     allow_any_instance_of(::Net::SFTP::Operations::Dir).to receive(:entries) do
-      # We have to make sure if_file is now true
+      # We have to make sure is_file is now true
       is_file = true
       @sftp_dir_entries = true
       [MockEntry.new("#{file_name}#{file_extension}")]
     end
 
     allow_any_instance_of(::Net::SFTP::Operations::Dir).to receive(:glob) do
-      # We have to make sure if_file is now true
+      # We have to make sure is_file is now true
       is_file = true
       @sftp_dir_glob = true
       [MockEntry.new("#{file_name}#{file_extension}")]

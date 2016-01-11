@@ -27,7 +27,7 @@ module AdminUI
         {
           db_uri:  ccdb_uri,
           table:   :apps,
-          columns: [:allow_ssh, :buildpack, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :droplet_hash, :enable_ssh, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :name, :package_pending_since, :package_state, :package_updated_at, :production, :space_id, :stack_id, :staging_failed_description, :staging_failed_reason, :staging_task_id, :state, :type, :updated_at, :version]
+          columns: [:allow_ssh, :buildpack, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :droplet_hash, :enable_ssh, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :name, :package_pending_since, :package_state, :package_updated_at, :ports, :production, :space_id, :stack_id, :staging_failed_description, :staging_failed_reason, :staging_task_id, :state, :type, :updated_at, :version]
         },
         apps_routes:
         {
@@ -94,7 +94,7 @@ module AdminUI
         {
           db_uri:  uaadb_uri,
           table:   :identity_zone,
-          columns: [:created, :description, :id, :lastmodified, :name, :subdomain, :version]
+          columns: [:config, :created, :description, :id, :lastmodified, :name, :subdomain, :version]
         },
         organizations:
         {
@@ -142,7 +142,7 @@ module AdminUI
         {
           db_uri:  ccdb_uri,
           table:   :routes,
-          columns: [:created_at, :domain_id, :guid, :host, :id, :path, :space_id, :updated_at]
+          columns: [:created_at, :domain_id, :guid, :host, :id, :path, :port, :space_id, :updated_at]
         },
         security_groups:
         {

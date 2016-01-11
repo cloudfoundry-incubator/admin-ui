@@ -223,15 +223,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :image, :text=>true
-      String :encrypted_user, :text=>true
-      String :user_salt, :text=>true
-      String :encrypted_password, :text=>true
-      String :password_salt, :text=>true
       String :encrypted_email, :text=>true
-      String :email_salt, :text=>true
-      String :encrypted_login_server, :text=>true
-      String :login_server_salt, :text=>true
-      TrueClass :store_image, :default=>false
       String :package_guid, :text=>true
       
       index [:created_at]
@@ -388,7 +380,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :state, :text=>true, :null=>false
-      String :buildpack_guid, :text=>true
+      String :buildpack_receipt_buildpack_guid, :text=>true
       String :package_guid, :text=>true
       String :droplet_hash, :text=>true
       foreign_key :app_guid, :apps_v3, :type=>String, :text=>true, :key=>[:guid]
@@ -397,14 +389,15 @@ Sequel.migration do
       String :encrypted_environment_variables, :text=>true
       String :salt, :text=>true
       String :process_types, :text=>true
-      String :buildpack, :text=>true
+      String :buildpack_receipt_buildpack, :text=>true
       String :error, :text=>true
-      String :stack_name, :text=>true
+      String :buildpack_receipt_stack_name, :text=>true
       String :execution_metadata, :text=>true
       Integer :memory_limit
       Integer :disk_limit
+      String :docker_receipt_image, :text=>true
       
-      index [:buildpack_guid], :name=>:bp_guid
+      index [:buildpack_receipt_buildpack_guid], :name=>:bp_guid
       index [:app_guid]
       index [:created_at]
       index [:guid], :unique=>true
@@ -737,7 +730,7 @@ Sequel.migration do
       String :dashboard_url, :text=>true
       TrueClass :is_gateway_service, :default=>true, :null=>false
       String :syslog_drain_url, :text=>true
-      String :tags, :size=>1275
+      String :tags, :text=>true
       String :route_service_url, :text=>true
       
       index [:name]

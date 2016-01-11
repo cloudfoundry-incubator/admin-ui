@@ -455,6 +455,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete route')
     end
 
+    shared_examples 'common delete route recursive' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/routes/route?recursive=true')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete route recursive via http' do
+      it_behaves_like('common delete route recursive')
+    end
+
+    context 'delete route recursive via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete route recursive')
+    end
+
     shared_examples 'common delete security group' do
       it 'returns failure code due to disconnection' do
         response = delete('/security_groups/security_group1')
@@ -1659,6 +1676,10 @@ describe AdminUI::Admin do
 
       it 'deletes /routes/:guid redirects as expected' do
         delete_redirects_as_expected('/routes/route1')
+      end
+
+      it 'deletes /routes/:guid?recursive=true redirects as expected' do
+        delete_redirects_as_expected('/routes/route1?recursive=true')
       end
 
       it 'deletes /security_groups/:guid redirects as expected' do

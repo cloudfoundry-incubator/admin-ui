@@ -626,11 +626,19 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_route
-        operation.delete_route(cc_route[:guid])
+        operation.delete_route(cc_route[:guid], false)
+      end
+
+      def delete_route_recursive
+        operation.delete_route(cc_route[:guid], true)
       end
 
       it 'deletes route' do
         expect { delete_route }.to change { cc.routes['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes route recursive' do
+        expect { delete_route_recursive }.to change { cc.routes['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -647,6 +655,10 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting deleted route' do
           expect { delete_route }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_route_not_found(exception) }
+        end
+
+        it 'fails deleting recursive deleted route' do
+          expect { delete_route_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_route_not_found(exception) }
         end
       end
     end

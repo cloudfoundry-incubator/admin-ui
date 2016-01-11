@@ -534,9 +534,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           def check_organization_status(status)
-            Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text == status }
-          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            expect(Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text }).to eq(status)
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text == status }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text).to eq(status)
           end
 
           it 'activates the selected organization' do
@@ -562,7 +564,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_OrganizationsTable_6' }
-              let(:confirm_message) { 'Are you sure you want to delete the selected organizations and their contained spaces, space quotas, applications, routes, service instances, service bindings and service keys?' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected organizations and their contained spaces, space quotas, applications, routes, private service brokers, service instances, service bindings, service keys and route bindings?' }
             end
           end
         end
@@ -774,7 +776,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_SpacesTable_2' }
-              let(:confirm_message) { 'Are you sure you want to delete the selected spaces and their contained applications, routes, service instances, service bindings and service keys?' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected spaces and their contained applications, routes, private service brokers, service instances, service bindings, service keys and route bindings?' }
             end
           end
         end
@@ -870,12 +872,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 5,
                                 labels:          ['', '', 'Used', 'Reserved', ''],
-                                colspans:        %w(1 13 3 2 1)
+                                colspans:        %w(1 14 3 2 1)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                expected_length: 20,
-                                labels:          ['', 'Name', 'GUID', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'URIs', 'Stack', 'Buildpacks', 'Events', 'Instances', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
+                                expected_length: 21,
+                                labels:          ['', 'Name', 'GUID', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'URIs', 'Diego', 'Stack', 'Buildpacks', 'Events', 'Instances', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
                                 colspans:        nil
                               }
                              ])
@@ -891,6 +893,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_app[:created_at].to_datetime.rfc3339,
                              cc_app[:updated_at].to_datetime.rfc3339,
                              "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}",
+                             @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})"),
                              cc_stack[:name],
                              cc_app[:detected_buildpack],
                              '1',
@@ -921,10 +924,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           def check_app_state(expect_state)
-            # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
-            # error happens.
-            Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text == expect_state }
-          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text == expect_state }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
             expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text).to eq(expect_state)
           end
 
@@ -1046,6 +1049,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Created',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_app[:created_at].to_datetime.rfc3339}\")") },
                            { label: 'Updated',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_app[:updated_at].to_datetime.rfc3339}\")") },
                            { label: 'URI',                        tag:   nil, value: "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}" },
+                           { label: 'Diego',                      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})") },
                            { label: 'Stack',                      tag:   'a', value: cc_stack[:name] },
                            { label: 'Buildpack',                  tag:   nil, value: cc_app[:detected_buildpack] },
                            { label: 'Command',                    tag:   nil, value: cc_app[:command] },
@@ -1065,27 +1069,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has stacks link' do
-            check_filter_link('Applications', 9, 'Stacks', cc_stack[:guid])
+            check_filter_link('Applications', 10, 'Stacks', cc_stack[:guid])
           end
 
           it 'has events link' do
-            check_filter_link('Applications', 14, 'Events', cc_app[:guid])
+            check_filter_link('Applications', 15, 'Events', cc_app[:guid])
           end
 
           it 'has application instances link' do
-            check_filter_link('Applications', 15, 'ApplicationInstances', cc_app[:guid])
+            check_filter_link('Applications', 16, 'ApplicationInstances', cc_app[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('Applications', 16, 'ServiceBindings', cc_app[:guid])
+            check_filter_link('Applications', 17, 'ServiceBindings', cc_app[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('Applications', 22, 'Spaces', cc_space[:guid])
+            check_filter_link('Applications', 23, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Applications', 23, 'Organizations', cc_organization[:guid])
+            check_filter_link('Applications', 24, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -1098,12 +1102,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 5,
                                 labels:          ['', '', 'Used', 'Reserved', ''],
-                                colspans:        %w(1 8 3 2 2)
+                                colspans:        %w(1 9 3 2 2)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                expected_length: 16,
-                                labels:          ['', 'Name', 'Application GUID', 'Index', 'Instance ID', 'State', 'Started', 'URIs', 'Stack', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
+                                expected_length: 17,
+                                labels:          ['', 'Name', 'Application GUID', 'Index', 'Instance ID', 'State', 'Started', 'URIs', 'Diego', 'Stack', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target', 'DEA'],
                                 colspans:        nil
                               }
                              ])
@@ -1118,6 +1122,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
                              Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
                              "http://#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0]}",
+                             @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})"),
                              cc_stack[:name],
                              @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})"),
                              @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})"),
@@ -1169,6 +1174,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'State',            tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] },
                            { label: 'Started',          tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp'] * 1000)})") },
                            { label: 'URI',              tag:   'a', value: "http://#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'][0]}" },
+                           { label: 'Diego',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})") },
                            { label: 'Stack',            tag:   'a', value: cc_stack[:name] },
                            { label: 'Droplet Hash',     tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['droplet_sha1'] },
                            { label: 'Memory Used',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})") },
@@ -1187,19 +1193,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has stacks link' do
-            check_filter_link('ApplicationInstances', 7, 'Stacks', cc_stack[:guid])
+            check_filter_link('ApplicationInstances', 8, 'Stacks', cc_stack[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('ApplicationInstances', 14, 'Spaces', cc_space[:guid])
+            check_filter_link('ApplicationInstances', 15, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ApplicationInstances', 15, 'Organizations', cc_organization[:guid])
+            check_filter_link('ApplicationInstances', 16, 'Organizations', cc_organization[:guid])
           end
 
           it 'has DEAs link' do
-            check_filter_link('ApplicationInstances', 16, 'DEAs', nats_dea['host'])
+            check_filter_link('ApplicationInstances', 17, 'DEAs', nats_dea['host'])
           end
         end
       end
@@ -1231,7 +1237,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_RoutesTable_1')
+          check_allowscriptaccess_attribute('Buttons_RoutesTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -1243,9 +1249,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_RoutesTable_0').text).to eq('Delete')
           end
 
+          it 'has a Delete Recursive button' do
+            expect(@driver.find_element(id: 'Buttons_RoutesTable_1').text).to eq('Delete Recursive')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_RoutesTable_0' }
+            end
+          end
+
+          context 'Delete Recursive button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_RoutesTable_1' }
             end
           end
 
@@ -1253,6 +1269,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_RoutesTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected routes?' }
+            end
+          end
+
+          context 'Delete Recursive button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_RoutesTable_1' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected routes and their associated route bindings?' }
             end
           end
         end
@@ -1419,7 +1442,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_ServiceInstancesTable_2' }
-              let(:confirm_message) { 'Are you sure you want to delete the selected service instances and their associated service bindings and service keys?' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected service instances and their associated service bindings, service keys and route bindings?' }
             end
           end
 
@@ -2183,14 +2206,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           def check_buildpack_enabled(enabled)
-            Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[7]").text == enabled }
-          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[7]").text == enabled }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
             expect(@driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[7]").text).to eq(enabled)
           end
 
           def check_buildpack_locked(locked)
-            Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[8]").text == locked }
-          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[8]").text == locked }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
             expect(@driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[8]").text).to eq(locked)
           end
 
@@ -2378,7 +2405,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_DomainsTable_1' }
-              let(:confirm_message) { 'Are you sure you want to delete the selected domains and their associated routes?' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected domains and their associated routes and route bindings?' }
             end
           end
         end
@@ -2466,8 +2493,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           def check_feature_flag_enabled(enabled)
-            Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='FeatureFlagsTable']/tbody/tr/td[6]").text == enabled }
-          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='FeatureFlagsTable']/tbody/tr/td[6]").text == enabled }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
             expect(@driver.find_element(xpath: "//table[@id='FeatureFlagsTable']/tbody/tr/td[6]").text).to eq(enabled)
           end
 
@@ -3382,8 +3411,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           def check_service_plan_state(expect_state)
-            # As the UI table will be refreshed and recreated, add a try-catch block in case the selenium stale element
-            # error happens.
             begin
               Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[8]").text == expect_state }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
@@ -4487,7 +4514,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           @driver.find_element(id: 'Buttons_StatsTable_0').click
           @driver.find_element(id: 'modalDialogButton0').click
 
-          # As the page refreshes, we need to catch the stale element error and re-find the element on the page
           begin
             check_table_data(Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_elements(xpath: "//table[@id='StatsTable']/tbody/tr/td") }, [nil, '1', '1', '1', '1', '1', '1', '1'])
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError, Timeout::Error

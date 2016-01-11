@@ -1252,9 +1252,12 @@ module AdminUI
     end
 
     delete '/routes/:route_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/routes/#{params[:route_guid]}")
+      recursive = params[:recursive] == 'true'
+      url = "/routes/#{params[:route_guid]}"
+      url += '?recursive=true' if recursive
+      @logger.info_user(session[:username], 'delete', url)
       begin
-        @operation.delete_route(params[:route_guid])
+        @operation.delete_route(params[:route_guid], recursive)
         204
       rescue CCRestClientResponseError => error
         @logger.error("Error during delete route: #{error.to_h}")

@@ -145,6 +145,7 @@ module AdminUI
         end
 
         row.push(fqdns)
+        row.push(application[:diego])
 
         if stack
           row.push(stack[:name])
@@ -209,7 +210,7 @@ module AdminUI
         }
       end
 
-      result(true, items, hash, (1..19).to_a, (1..10).to_a << 19)
+      result(true, items, hash, (1..20).to_a, (1..11).to_a << 20)
     end
   end
 end

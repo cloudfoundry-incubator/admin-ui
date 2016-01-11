@@ -269,6 +269,7 @@ module CCHelper
       package_pending_since:      Time.new('2015-04-23 08:00:01 -0500'),
       package_state:              'STAGED',
       package_updated_at:         Time.new('2015-04-23 08:00:02 -0500'),
+      ports:                      '"[8081]"',
       production:                 true,
       space_id:                   cc_space[:id],
       stack_id:                   cc_stack[:id],
@@ -678,6 +679,7 @@ module CCHelper
       host:       'test_host',
       id:         19,
       path:       '/path1',
+      port:       1025,
       space_id:   cc_space[:id],
       updated_at: Time.new('2015-04-23 08:00:47 -0500')
     }
@@ -1006,6 +1008,7 @@ module CCHelper
 
   def uaa_identity_zone
     {
+      config:       '{"tokenPolicy":{"accessTokenValidity":43200,"refreshTokenValidity":2592000,"keys":{}},"samlConfig":{"requestSigned":false,"wantAssertionSigned":false,"certificate":null,"privateKey":null}}',
       created:      Time.new('2015-04-23 08:01:18 -0500'),
       description:  'Identity zone description',
       id:           'identity_zone1',
@@ -1470,6 +1473,15 @@ module CCHelper
 
   def cc_route_stubs(config)
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/routes/#{cc_route[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_routes_deleted
+        cc_route_not_found
+      else
+        cc_clear_routes_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/routes/#{cc_route[:guid]}?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_routes_deleted
         cc_route_not_found
       else

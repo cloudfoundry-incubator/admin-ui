@@ -94,6 +94,7 @@ module AdminUI
       @cc.invalidate_service_instances
       @cc.invalidate_service_bindings
       @cc.invalidate_service_keys
+      @cc.invalidate_service_brokers
       @cc.invalidate_applications
       @cc.invalidate_routes
       @varz.invalidate
@@ -104,6 +105,7 @@ module AdminUI
       @view_models.invalidate_service_instances
       @view_models.invalidate_service_bindings
       @view_models.invalidate_service_keys
+      @view_models.invalidate_service_brokers
       @view_models.invalidate_applications
       @view_models.invalidate_application_instances
       @view_models.invalidate_routes
@@ -128,8 +130,9 @@ module AdminUI
       @view_models.invalidate_quotas
     end
 
-    def delete_route(route_guid)
+    def delete_route(route_guid, recursive)
       url = "v2/routes/#{route_guid}"
+      url += '?recursive=true' if recursive
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_routes
@@ -257,12 +260,14 @@ module AdminUI
       @cc.invalidate_service_instances
       @cc.invalidate_service_bindings
       @cc.invalidate_service_keys
+      @cc.invalidate_service_brokers
       @cc.invalidate_applications
       @cc.invalidate_routes
       @varz.invalidate
       @view_models.invalidate_service_instances
       @view_models.invalidate_service_bindings
       @view_models.invalidate_service_keys
+      @view_models.invalidate_service_brokers
       @view_models.invalidate_applications
       @view_models.invalidate_application_instances
       @view_models.invalidate_routes

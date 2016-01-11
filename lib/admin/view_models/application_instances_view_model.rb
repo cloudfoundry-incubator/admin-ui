@@ -54,6 +54,7 @@ module AdminUI
             end
 
             row.push(application_instance['application_uris'])
+            row.push(false)
             row.push(stack_name)
             row.push(application_instance['used_memory_in_bytes'] ? Utils.convert_bytes_to_megabytes(application_instance['used_memory_in_bytes']) : nil)
             row.push(application_instance['used_disk_in_bytes'] ? Utils.convert_bytes_to_megabytes(application_instance['used_disk_in_bytes']) : nil)
@@ -95,7 +96,7 @@ module AdminUI
         end
       end
 
-      result(true, items, hash, (1..15).to_a, [1, 2, 4, 5, 6, 7, 8, 14])
+      result(true, items, hash, (1..16).to_a, [1, 2, 4, 5, 6, 7, 8, 9, 15])
     end
   end
 end
