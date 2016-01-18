@@ -265,7 +265,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :name, :text=>true, :null=>false
-      String :rules, :size=>2048
+      String :rules, :text=>true
       TrueClass :staging_default, :default=>false
       TrueClass :running_default, :default=>false
       
@@ -821,6 +821,24 @@ Sequel.migration do
       index [:guid], :name=>:sk_guid_index, :unique=>true
       index [:updated_at], :name=>:sk_updated_at_index
       index [:name, :service_instance_id], :name=>:svc_key_name_instance_id_index, :unique=>true
+    end
+    
+    create_table(:v3_service_bindings, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :credentials, :size=>2048, :null=>false
+      String :salt, :text=>true
+      String :syslog_drain_url, :text=>true
+      String :type, :text=>true, :null=>false
+      foreign_key :app_id, :apps_v3, :null=>false, :key=>[:id]
+      foreign_key :service_instance_id, :service_instances, :null=>false, :key=>[:id]
+      
+      index [:app_id, :service_instance_id], :unique=>true
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
   end
 end
