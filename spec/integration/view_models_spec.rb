@@ -4,21 +4,24 @@ require_relative '../spec_helper'
 describe AdminUI::ViewModels, type: :integration do
   include ConfigHelper
   include DopplerHelper
+  include VARZHelper
   include ViewModelsHelper
 
-  let(:ccdb_file)                   { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri)                    { "sqlite://#{ccdb_file}" }
-  let(:data_file)                   { '/tmp/admin_ui_data.json' }
-  let(:db_file)                     { '/tmp/admin_ui_store.db' }
-  let(:db_uri)                      { "sqlite://#{db_file}" }
-  let(:doppler_data_file)           { '/tmp/admin_ui_doppler_data.json' }
-  let(:event_type)                  { 'space' }
-  let(:log_file)                    { '/tmp/admin_ui.log' }
-  let(:log_file_displayed)          { '/tmp/admin_ui_displayed.log' }
-  let(:log_file_displayed_contents) { 'These are test log file contents' }
-  let(:log_file_displayed_modified) { Time.new(1976, 7, 4, 12, 34, 56, 0) }
-  let(:uaadb_file)                  { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri)                   { "sqlite://#{uaadb_file}" }
+  let(:ccdb_file)                    { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri)                     { "sqlite://#{ccdb_file}" }
+  let(:data_file)                    { '/tmp/admin_ui_data.json' }
+  let(:db_file)                      { '/tmp/admin_ui_store.db' }
+  let(:db_uri)                       { "sqlite://#{db_file}" }
+  let(:doppler_data_file)            { '/tmp/admin_ui_doppler_data.json' }
+  let(:event_type)                   { 'space' }
+  let(:log_file)                     { '/tmp/admin_ui.log' }
+  let(:log_file_displayed)           { '/tmp/admin_ui_displayed.log' }
+  let(:log_file_displayed_contents)  { 'These are test log file contents' }
+  let(:log_file_displayed_modified)  { Time.new(1976, 7, 4, 12, 34, 56, 0) }
+  let(:uaadb_file)                   { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri)                    { "sqlite://#{uaadb_file}" }
+  let(:varz_application_instance)    { true }
+  let(:varz_application_instance_id) { varz_application_instance ? varz_dea_app_instance : '0' }
 
   let(:config) do
     AdminUI::Config.load(ccdb_uri:                ccdb_uri,
@@ -59,9 +62,10 @@ describe AdminUI::ViewModels, type: :integration do
 
     config_stub
     cc_stub(config, false, event_type)
-    doppler_stub
+    doppler_stub(!varz_application_instance)
     nats_stub
-    varz_stub
+    varz_stub(varz_application_instance)
+    view_models_stub(varz_application_instance)
 
     event_machine_loop
   end
@@ -106,34 +110,56 @@ describe AdminUI::ViewModels, type: :integration do
       end
     end
 
-    context 'returns connected application_instances_view_model' do
-      let(:event_type) { 'app' }
-      let(:results)    { view_models.application_instances }
-      let(:expected)   { view_models_application_instances }
+    shared_examples 'application_instances' do
+      context 'returns connected application_instances_view_model' do
+        let(:event_type) { 'app' }
+        let(:results)    { view_models.application_instances }
+        let(:expected)   { view_models_application_instances }
 
-      it_behaves_like('common view model retrieval')
+        it_behaves_like('common view model retrieval')
+      end
+
+      context 'returns connected application_instances_view_model detail' do
+        let(:results)  { view_models.application_instance(cc_app[:guid], cc_app_instance_index, varz_application_instance_id) }
+        let(:expected) { view_models_application_instances_detail }
+
+        it_behaves_like('common view model retrieval detail')
+      end
     end
 
-    context 'returns connected application_instances_view_model detail' do
-      let(:results)  { view_models.application_instance(cc_app[:guid], varz_dea_app_instance) }
-      let(:expected) { view_models_application_instances_detail }
-
-      it_behaves_like('common view model retrieval detail')
+    context 'varz' do
+      it_behaves_like('application_instances')
     end
 
-    context 'returns connected applications_view_model' do
-      let(:event_type) { 'app' }
-      let(:results)    { view_models.applications }
-      let(:expected)   { view_models_applications }
-
-      it_behaves_like('common view model retrieval')
+    context 'doppler' do
+      let(:varz_application_instance) { false }
+      it_behaves_like('application_instances')
     end
 
-    context 'returns connected applications_view_model detail' do
-      let(:results)  { view_models.application(cc_app[:guid]) }
-      let(:expected) { view_models_applications_detail }
+    shared_examples 'applications' do
+      context 'returns connected applications_view_model' do
+        let(:event_type) { 'app' }
+        let(:results)    { view_models.applications }
+        let(:expected)   { view_models_applications }
 
-      it_behaves_like('common view model retrieval detail')
+        it_behaves_like('common view model retrieval')
+      end
+
+      context 'returns connected applications_view_model detail' do
+        let(:results)  { view_models.application(cc_app[:guid]) }
+        let(:expected) { view_models_applications_detail }
+
+        it_behaves_like('common view model retrieval detail')
+      end
+    end
+
+    context 'varz' do
+      it_behaves_like('applications')
+    end
+
+    context 'doppler' do
+      let(:varz_application_instance) { false }
+      it_behaves_like('applications')
     end
 
     context 'returns connected buildpacks_view_model' do
@@ -328,18 +354,29 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval')
     end
 
-    context 'returns connected organizations_view_model' do
-      let(:results)  { view_models.organizations }
-      let(:expected) { view_models_organizations }
+    shared_examples 'organizations' do
+      context 'returns connected organizations_view_model' do
+        let(:results)  { view_models.organizations }
+        let(:expected) { view_models_organizations }
 
-      it_behaves_like('common view model retrieval')
+        it_behaves_like('common view model retrieval')
+      end
+
+      context 'returns connected organizations_view_model detail' do
+        let(:results)  { view_models.organization(cc_organization[:guid]) }
+        let(:expected) { view_models_organizations_detail }
+
+        it_behaves_like('common view model retrieval detail')
+      end
     end
 
-    context 'returns connected organizations_view_model detail' do
-      let(:results)  { view_models.organization(cc_organization[:guid]) }
-      let(:expected) { view_models_organizations_detail }
+    context 'varz' do
+      it_behaves_like('organizations')
+    end
 
-      it_behaves_like('common view model retrieval detail')
+    context 'doppler' do
+      let(:varz_application_instance) { false }
+      it_behaves_like('organizations')
     end
 
     context 'returns connected organization_roles_view_model' do
@@ -559,18 +596,29 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
-    context 'returns connected spaces_view_model' do
-      let(:results)  { view_models.spaces }
-      let(:expected) { view_models_spaces }
+    shared_examples 'spaces' do
+      context 'returns connected spaces_view_model' do
+        let(:results)  { view_models.spaces }
+        let(:expected) { view_models_spaces }
 
-      it_behaves_like('common view model retrieval')
+        it_behaves_like('common view model retrieval')
+      end
+
+      context 'returns connected spaces_view_model detail' do
+        let(:results)  { view_models.space(cc_space[:guid]) }
+        let(:expected) { view_models_spaces_detail }
+
+        it_behaves_like('common view model retrieval detail')
+      end
     end
 
-    context 'returns connected spaces_view_model detail' do
-      let(:results)  { view_models.space(cc_space[:guid]) }
-      let(:expected) { view_models_spaces_detail }
+    context 'varz' do
+      it_behaves_like('spaces')
+    end
 
-      it_behaves_like('common view model retrieval detail')
+    context 'doppler' do
+      let(:varz_application_instance) { false }
+      it_behaves_like('spaces')
     end
 
     context 'returns connected stacks_view_model' do

@@ -10,6 +10,12 @@ module ViewModelsHelper
   include NATSHelper
   include VARZHelper
 
+  BILLION = 1000 * 1000 * 1000
+
+  def view_models_stub(varz_application_instance)
+    @varz_application_instance = varz_application_instance
+  end
+
   def view_models_application_instances
     [
       [
@@ -17,26 +23,46 @@ module ViewModelsHelper
         cc_app[:name],
         cc_app[:guid],
         cc_app_instance_index,
-        varz_dea_app_instance,
-        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
-        Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
-        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['application_uris'],
-        cc_app[:diego],
+        @varz_application_instance ? varz_dea_app_instance : nil,
+        @varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] : nil,
+        @varz_application_instance ? Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339 : nil,
+        @varz_application_instance ? nil : Time.at(rep_envelope.timestamp / BILLION).to_datetime.rfc3339,
+        !@varz_application_instance,
         cc_stack[:name],
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
-        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
+        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] : rep_container_metric_envelope.containerMetric.memoryBytes),
+        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] : rep_container_metric_envelope.containerMetric.diskBytes),
+        @varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 : rep_container_metric_envelope.containerMetric.cpuPercentage * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
         "#{cc_organization[:name]}/#{cc_space[:name]}",
-        nats_dea['host']
+        @varz_application_instance ? nats_dea['host'] : nil,
+        @varz_application_instance ? nil : "#{rep_envelope.ip}:#{rep_envelope.index}",
+        @varz_application_instance ? "#{cc_app[:guid]}/#{cc_app_instance_index}/#{varz_dea_app_instance}" : "#{cc_app[:guid]}/#{cc_app_instance_index}/0"
       ]
     ]
   end
 
   def view_models_application_instances_detail
+    container = nil
+    unless @varz_application_instance
+      container =
+      {
+        application_id: rep_container_metric_envelope.containerMetric.applicationId,
+        cpu_percentage: rep_container_metric_envelope.containerMetric.cpuPercentage,
+        disk_bytes:     rep_container_metric_envelope.containerMetric.diskBytes,
+        index:          rep_envelope.index,
+        instance_index: rep_container_metric_envelope.containerMetric.instanceIndex,
+        ip:             rep_envelope.ip,
+        memory_bytes:   rep_container_metric_envelope.containerMetric.memoryBytes,
+        origin:         rep_envelope.origin,
+        timestamp:      rep_envelope.timestamp
+      }
+    end
+
     {
-      'application_instance' => varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance],
+      'application'          => @varz_application_instance ? nil : cc_app,
+      'application_instance' => @varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance] : nil,
+      'container'            => container,
       'organization'         => cc_organization,
       'space'                => cc_space,
       'stack'                => cc_stack
@@ -61,9 +87,9 @@ module ViewModelsHelper
         1,
         cc_app[:instances],
         1,
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
-        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
+        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] : rep_container_metric_envelope.containerMetric.memoryBytes),
+        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] : rep_container_metric_envelope.containerMetric.diskBytes),
+        @varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 : rep_container_metric_envelope.containerMetric.cpuPercentage * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
         "#{cc_organization[:name]}/#{cc_space[:name]}"
@@ -460,9 +486,9 @@ module ViewModelsHelper
         0,
         cc_app[:instances],
         1,
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
-        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
+        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] : rep_container_metric_envelope.containerMetric.memoryBytes),
+        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] : rep_container_metric_envelope.containerMetric.diskBytes),
+        @varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 : rep_container_metric_envelope.containerMetric.cpuPercentage * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
         1,
@@ -1062,9 +1088,9 @@ module ViewModelsHelper
         0,
         cc_app[:instances],
         1,
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
-        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
+        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] : rep_container_metric_envelope.containerMetric.memoryBytes),
+        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] : rep_container_metric_envelope.containerMetric.diskBytes),
+        @varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 : rep_container_metric_envelope.containerMetric.cpuPercentage * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
         1,

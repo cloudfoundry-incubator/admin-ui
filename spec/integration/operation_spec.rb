@@ -7,6 +7,7 @@ describe AdminUI::Operation, type: :integration do
   include DopplerHelper
   include NATSHelper
   include VARZHelper
+  include ViewModelsHelper
 
   let(:ccdb_file)                      { '/tmp/admin_ui_ccdb.db' }
   let(:ccdb_uri)                       { "sqlite://#{ccdb_file}" }
@@ -18,6 +19,7 @@ describe AdminUI::Operation, type: :integration do
   let(:log_file)                       { '/tmp/admin_ui.log' }
   let(:uaadb_file)                     { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)                      { "sqlite://#{uaadb_file}" }
+  let(:varz_application_instance)      { true }
 
   let(:config) do
     AdminUI::Config.load(ccdb_uri:                ccdb_uri,
@@ -55,9 +57,10 @@ describe AdminUI::Operation, type: :integration do
 
     config_stub
     cc_stub(config, insert_second_quota_definition)
-    doppler_stub
+    doppler_stub(!varz_application_instance)
     nats_stub
-    varz_stub
+    varz_stub(varz_application_instance)
+    view_models_stub(varz_application_instance)
 
     event_machine_loop
   end

@@ -220,8 +220,8 @@ module AdminUI
       invalidate_cache(:stats)
     end
 
-    def application_instance(app_guid, instance_id)
-      details(:application_instances, "#{app_guid}/#{instance_id}")
+    def application_instance(app_guid, instance_index, instance_id)
+      details(:application_instances, "#{app_guid}/#{instance_index}/#{instance_id}")
     end
 
     def application_instances
@@ -461,7 +461,7 @@ module AdminUI
 
       @running = false
 
-      @caches.values.each do |cache|
+      @caches.each_value do |cache|
         cache[:view_model_factory].shutdown
         cache[:semaphore].synchronize do
           cache[:condition].broadcast

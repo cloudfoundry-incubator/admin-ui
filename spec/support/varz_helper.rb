@@ -20,7 +20,9 @@ module VARZHelper
     end
   end
 
-  def varz_stub
+  def varz_stub(include_application_instance)
+    @include_application_instance = include_application_instance
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, nats_cloud_controller_varz, AdminUI::Utils::HTTP_GET, anything) do
       OK.new(varz_cloud_controller)
     end
@@ -71,7 +73,7 @@ module VARZHelper
       'start'                  => '2015-04-23T08:00:01-05:00',
       'type'                   => nats_dea['type'],
       'uptime'                 => '7d:8h:9m:10s',
-      'instance_registry'      => cc_apps_deleted ? {} : varz_dea_instance_registry
+      'instance_registry'      => cc_apps_deleted || !@include_application_instance ? {} : varz_dea_instance_registry
     }
   end
 

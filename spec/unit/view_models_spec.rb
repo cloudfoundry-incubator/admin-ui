@@ -72,16 +72,16 @@ describe AdminUI::ViewModels do
       expect(view_models.application('bogus')).to be_nil
     end
 
+    it 'returns zero applications as expected' do
+      verify_disconnected_items(view_models.applications)
+    end
+
     it 'returns nil application_instance as expected' do
-      expect(view_models.application_instance('bogus', 'bogus')).to be_nil
+      expect(view_models.application_instance('bogus', 0, 'bogus')).to be_nil
     end
 
     it 'returns zero application_instances as expected' do
       verify_disconnected_items(view_models.application_instances)
-    end
-
-    it 'returns zero applications as expected' do
-      verify_disconnected_items(view_models.applications)
     end
 
     it 'returns nil buildpack as expected' do

@@ -14,6 +14,7 @@ module AdminUI
 
       applications           = @cc.applications
       apps_routes            = @cc.apps_routes
+      containers             = @doppler.containers
       deas                   = @varz.deas
       events                 = @cc.events
       organizations          = @cc.organizations
@@ -28,6 +29,7 @@ module AdminUI
 
       applications_connected           = applications['connected']
       apps_routes_connected            = apps_routes['connected']
+      containers_connected             = containers['connected']
       deas_connected                   = deas['connected']
       events_connected                 = events['connected']
       routes_connected                 = routes['connected']
@@ -116,7 +118,7 @@ module AdminUI
         space_route_counters['total_routes'] += 1
       end
 
-      instance_hash = create_instance_hash(deas)
+      containers_hash, deas_instance_hash = create_instance_hashes(containers, deas)
 
       applications['items'].each do |application|
         return result unless @running
@@ -139,7 +141,7 @@ module AdminUI
         space_app_counters[application[:state]] = 0 if space_app_counters[application[:state]].nil?
         space_app_counters[application[:package_state]] = 0 if space_app_counters[application[:package_state]].nil?
 
-        add_instance_metrics(space_app_counters, application, instance_hash)
+        add_instance_metrics(space_app_counters, application, containers_hash, deas_instance_hash)
 
         space_app_counters['total'] += 1
         space_app_counters[application[:state]] += 1
@@ -244,9 +246,9 @@ module AdminUI
           row.push(nil, nil, nil)
         end
 
-        if deas_connected && space_app_counters
+        if (containers_connected || deas_connected) && space_app_counters
           row.push(space_app_counters['instances'])
-        elsif deas_connected && applications_connected
+        elsif (containers_connected || deas_connected) && applications_connected
           row.push(0)
         else
           row.push(nil)
@@ -261,7 +263,7 @@ module AdminUI
         end
 
         if space_app_counters
-          if deas_connected
+          if containers_connected || deas_connected
             row.push(Utils.convert_bytes_to_megabytes(space_app_counters['used_memory']))
             row.push(Utils.convert_bytes_to_megabytes(space_app_counters['used_disk']))
             row.push(space_app_counters['used_cpu'] * 100)
@@ -277,7 +279,7 @@ module AdminUI
           row.push(space_app_counters['STAGED'] || 0)
           row.push(space_app_counters['FAILED'] || 0)
         elsif applications_connected
-          if deas_connected
+          if containers_connected || deas_connected
             row.push(0, 0, 0)
           else
             row.push(nil, nil, nil)

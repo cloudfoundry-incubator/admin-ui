@@ -11,6 +11,7 @@ module AdminUI
       return result unless applications['connected']
 
       apps_routes      = @cc.apps_routes
+      containers       = @doppler.containers
       deas             = @varz.deas
       domains          = @cc.domains
       droplets         = @cc.droplets
@@ -105,6 +106,25 @@ module AdminUI
             application_usage_counters['used_cpu'] += instance['computed_pcpu'] unless instance['computed_pcpu'].nil?
           end
         end
+      end
+
+      containers['items'].each_value do |container|
+        return result unless @running
+        Thread.pass
+
+        application_id = container[:application_id]
+        application_usage_counters = application_usage_counters_hash[application_id]
+        if application_usage_counters.nil?
+          application_usage_counters = { 'used_memory' => 0,
+                                         'used_disk'   => 0,
+                                         'used_cpu'    => 0
+                                       }
+          application_usage_counters_hash[application_id] = application_usage_counters
+        end
+
+        application_usage_counters['used_memory'] += container[:memory_bytes]
+        application_usage_counters['used_disk'] += container[:disk_bytes]
+        application_usage_counters['used_cpu'] += container[:cpu_percentage]
       end
 
       items = []

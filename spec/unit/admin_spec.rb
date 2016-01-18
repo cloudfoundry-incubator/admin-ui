@@ -1011,8 +1011,8 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/application_instances_view_model')
       end
 
-      it '/application_instances_view_model/:app_guid/:instance_id returns not found' do
-        verify_not_found('/application_instances_view_model/application1/instance1')
+      it '/application_instances_view_model/:app_guid/:instance_index/:instance_id returns not found' do
+        verify_not_found('/application_instances_view_model/application1/0/instance1')
       end
 
       it '/applications_view_model succeeds' do
@@ -1342,8 +1342,8 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/application_instances_view_model')
       end
 
-      it '/application_instances_view_model/:app_guid/:instance_id redirects as expected' do
-        get_redirects_as_expected('/application_instances_view_model/application1/instance1')
+      it '/application_instances_view_model/:app_guid/:instance_index/:instance_id redirects as expected' do
+        get_redirects_as_expected('/application_instances_view_model/application1/0/instance1')
       end
 
       it '/applications_view_model redirects as expected' do

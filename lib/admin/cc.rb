@@ -542,7 +542,7 @@ module AdminUI
 
       @running = false
 
-      @caches.values.each do |cache|
+      @caches.each_value do |cache|
         cache[:semaphore].synchronize do
           cache[:condition].broadcast
         end

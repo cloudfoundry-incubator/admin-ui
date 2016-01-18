@@ -2,8 +2,11 @@ require 'eventmachine'
 require 'faye/websocket'
 require 'time'
 require_relative '../spec_helper'
+require_relative 'cc_helper'
 
 module DopplerHelper
+  include CCHelper
+
   BILLION = 1000 * 1000 * 1000
 
   REP_VALUE_METRICS =
@@ -33,7 +36,7 @@ module DopplerHelper
     end
   end
 
-  def doppler_stub
+  def doppler_stub(include_application_instance)
     @close_blk = nil
 
     @time = Time.now
@@ -55,6 +58,10 @@ module DopplerHelper
       REP_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
         EventMachine.next_tick { blk.call(event(rep_value_metric_envelope(value_metric_key, value_metric_value))) }
       end
+
+      if include_application_instance
+        EventMachine.next_tick { blk.call(event(rep_container_metric_envelope)) }
+      end
     end
 
     allow_any_instance_of(MockWebSocketClient).to receive(:on).with(:close) do |_event, &blk|
@@ -68,6 +75,21 @@ module DopplerHelper
     envelope.ip        = '10.10.10.10'
     envelope.origin    = 'rep'
     envelope.timestamp = @time.to_i * BILLION
+
+    envelope
+  end
+
+  def rep_container_metric_envelope
+    container_metric               = Events::ContainerMetric.new
+    container_metric.applicationId = cc_app[:guid]
+    container_metric.instanceIndex = cc_app_instance_index
+    container_metric.cpuPercentage = 0.178232960961232
+    container_metric.memoryBytes   = 75_057_856
+    container_metric.diskBytes     = 34_292_160
+
+    envelope                 = rep_envelope
+    envelope.eventType       = Events::Envelope::EventType::ContainerMetric
+    envelope.containerMetric = container_metric
 
     envelope
   end

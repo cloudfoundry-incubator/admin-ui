@@ -39,7 +39,7 @@ describe AdminUI::Doppler, type: :integration do
 
     config_stub
     cc_stub(config)
-    doppler_stub
+    doppler_stub(true)
 
     event_machine_loop
   end
@@ -52,6 +52,21 @@ describe AdminUI::Doppler, type: :integration do
     event_machine_loop.join
 
     cleanup_files
+  end
+
+  def verify_container(key, value)
+    envelope = rep_container_metric_envelope
+
+    expect(key).to eq("#{envelope.containerMetric.applicationId}:#{envelope.containerMetric.instanceIndex}")
+
+    expect(value[:application_id]).to eq(envelope.containerMetric.applicationId)
+    expect(value[:cpu_percentage]).to eq(envelope.containerMetric.cpuPercentage)
+    expect(value[:disk_bytes]).to eq(envelope.containerMetric.diskBytes)
+    expect(value[:index]).to eq(envelope.index)
+    expect(value[:ip]).to eq(envelope.ip)
+    expect(value[:memory_bytes]).to eq(envelope.containerMetric.memoryBytes)
+    expect(value[:origin]).to eq(envelope.origin)
+    expect(value[:timestamp]).to eq(envelope.timestamp)
   end
 
   def verify_rep(key, value)
@@ -79,6 +94,17 @@ describe AdminUI::Doppler, type: :integration do
     expect(items.length).to be(1)
 
     verify_rep(items.keys[0], items.values[0])
+  end
+
+  it 'returns connected containers' do
+    containers = doppler.containers
+
+    expect(containers['connected']).to eq(true)
+    items = containers['items']
+
+    expect(items.length).to be(1)
+
+    verify_container(items.keys[0], items.values[0])
   end
 
   it 'returns connected reps' do

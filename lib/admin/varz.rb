@@ -113,7 +113,7 @@ module AdminUI
       result_item_array = []
       result = { 'connected' => cache['connected'], 'items' => result_item_array }
 
-      cache['items'].values.each do |item|
+      cache['items'].each_value do |item|
         type_pattern_index = item['type'] =~ type_pattern
         next if type_pattern_index.nil?
         result_item = item.clone

@@ -37,6 +37,11 @@ shared_context :server_context do
   let(:table_page_size)                          { 10 }
   let(:uaadb_file)                               { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)                                { "sqlite://#{uaadb_file}" }
+  let(:used_cpu)                                 { varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] : rep_container_metric_envelope.containerMetric.cpuPercentage }
+  let(:used_disk)                                { varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] : rep_container_metric_envelope.containerMetric.diskBytes }
+  let(:used_memory)                              { varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] : rep_container_metric_envelope.containerMetric.memoryBytes }
+  let(:varz_application_instance)                { true }
+  let(:varz_application_instance_id)             { varz_application_instance ? varz_dea_app_instance : '0' }
 
   let(:config) do
     {
@@ -72,10 +77,11 @@ shared_context :server_context do
     File.utime(log_file_displayed_modified, log_file_displayed_modified, log_file_displayed)
 
     cc_stub(AdminUI::Config.load(config), insert_second_quota_definition, event_type)
-    doppler_stub
+    doppler_stub(!varz_application_instance)
     login_stub_admin
     nats_stub
-    varz_stub
+    varz_stub(varz_application_instance)
+    view_models_stub(varz_application_instance)
 
     allow_any_instance_of(::WEBrick::Log).to receive(:log)
 

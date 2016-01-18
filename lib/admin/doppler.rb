@@ -246,9 +246,11 @@ module AdminUI
       key = "#{container_metric.applicationId}:#{container_metric.instanceIndex}"
       value =
       {
+        application_id: container_metric.applicationId,
         cpu_percentage: container_metric.cpuPercentage,
         disk_bytes:     container_metric.diskBytes,
         index:          parsed_envelope.index,
+        instance_index: container_metric.instanceIndex,
         ip:             parsed_envelope.ip,
         memory_bytes:   container_metric.memoryBytes,
         origin:         parsed_envelope.origin,
@@ -346,7 +348,7 @@ module AdminUI
           @components = read_or_initialize_components
 
           # Remove all old references which also have new references prior to merge.
-          @components['items'].keys.each do |key|
+          @components['items'].each_key do |key|
             if local_value_metrics.key?(key)
               @components['items'].delete(key)
               @components['notified'].delete(key)

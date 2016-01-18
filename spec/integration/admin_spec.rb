@@ -1153,30 +1153,52 @@ describe AdminUI::Admin, type: :integration do
       end
     end
 
-    context 'application_instances_view_model' do
-      let(:event_type)        { 'app' }
-      let(:path)              { '/application_instances_view_model' }
-      let(:view_model_source) { view_models_application_instances }
-      it_behaves_like('retrieves view_model')
+    shared_examples 'application_instances' do
+      context 'application_instances_view_model' do
+        let(:event_type)        { 'app' }
+        let(:path)              { '/application_instances_view_model' }
+        let(:view_model_source) { view_models_application_instances }
+        it_behaves_like('retrieves view_model')
+      end
+
+      context 'application_instances_view_model detail' do
+        let(:path)              { "/application_instances_view_model/#{cc_app[:guid]}/#{cc_app_instance_index}/#{varz_application_instance_id}" }
+        let(:view_model_source) { view_models_application_instances_detail }
+        it_behaves_like('retrieves view_model detail')
+      end
     end
 
-    context 'application_instances_view_model detail' do
-      let(:path)              { "/application_instances_view_model/#{cc_app[:guid]}/#{varz_dea_app_instance}" }
-      let(:view_model_source) { view_models_application_instances_detail }
-      it_behaves_like('retrieves view_model detail')
+    context 'varz' do
+      it_behaves_like('application_instances')
     end
 
-    context 'applications_view_model' do
-      let(:event_type)        { 'app' }
-      let(:path)              { '/applications_view_model' }
-      let(:view_model_source) { view_models_applications }
-      it_behaves_like('retrieves view_model')
+    context 'doppler' do
+      let(:varz_application_instance) { false }
+      it_behaves_like('application_instances')
     end
 
-    context 'applications_view_model detail' do
-      let(:path)              { "/applications_view_model/#{cc_app[:guid]}" }
-      let(:view_model_source) { view_models_applications_detail }
-      it_behaves_like('retrieves view_model detail')
+    shared_examples 'applications' do
+      context 'applications_view_model' do
+        let(:event_type)        { 'app' }
+        let(:path)              { '/applications_view_model' }
+        let(:view_model_source) { view_models_applications }
+        it_behaves_like('retrieves view_model')
+      end
+
+      context 'applications_view_model detail' do
+        let(:path)              { "/applications_view_model/#{cc_app[:guid]}" }
+        let(:view_model_source) { view_models_applications_detail }
+        it_behaves_like('retrieves view_model detail')
+      end
+    end
+
+    context 'varz' do
+      it_behaves_like('applications')
+    end
+
+    context 'doppler' do
+      let(:varz_application_instance) { false }
+      it_behaves_like('applications')
     end
 
     context 'buildpacks_view_model' do
@@ -1376,16 +1398,27 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model')
     end
 
-    context 'organizations_view_model' do
-      let(:path)              { '/organizations_view_model' }
-      let(:view_model_source) { view_models_organizations }
-      it_behaves_like('retrieves view_model')
+    shared_examples 'organizations' do
+      context 'organizations_view_model' do
+        let(:path)              { '/organizations_view_model' }
+        let(:view_model_source) { view_models_organizations }
+        it_behaves_like('retrieves view_model')
+      end
+
+      context 'organizations_view_model detail' do
+        let(:path)              { "/organizations_view_model/#{cc_organization[:guid]}" }
+        let(:view_model_source) { view_models_organizations_detail }
+        it_behaves_like('retrieves view_model detail')
+      end
     end
 
-    context 'organizations_view_model detail' do
-      let(:path)              { "/organizations_view_model/#{cc_organization[:guid]}" }
-      let(:view_model_source) { view_models_organizations_detail }
-      it_behaves_like('retrieves view_model detail')
+    context 'varz' do
+      it_behaves_like('organizations')
+    end
+
+    context 'doppler' do
+      let(:varz_application_instance) { false }
+      it_behaves_like('organizations')
     end
 
     context 'organization_roles_view_model' do
@@ -1587,16 +1620,27 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
-    context 'spaces_view_model' do
-      let(:path)              { '/spaces_view_model' }
-      let(:view_model_source) { view_models_spaces }
-      it_behaves_like('retrieves view_model')
+    shared_examples 'spaces' do
+      context 'spaces_view_model' do
+        let(:path)              { '/spaces_view_model' }
+        let(:view_model_source) { view_models_spaces }
+        it_behaves_like('retrieves view_model')
+      end
+
+      context 'spaces_view_model detail' do
+        let(:path)              { "/spaces_view_model/#{cc_space[:guid]}" }
+        let(:view_model_source) { view_models_spaces_detail }
+        it_behaves_like('retrieves view_model detail')
+      end
     end
 
-    context 'spaces_view_model detail' do
-      let(:path)              { "/spaces_view_model/#{cc_space[:guid]}" }
-      let(:view_model_source) { view_models_spaces_detail }
-      it_behaves_like('retrieves view_model detail')
+    context 'varz' do
+      it_behaves_like('spaces')
+    end
+
+    context 'doppler' do
+      let(:varz_application_instance) { false }
+      it_behaves_like('spaces')
     end
 
     context 'stacks_view_model' do

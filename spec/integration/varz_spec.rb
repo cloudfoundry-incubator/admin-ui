@@ -185,7 +185,7 @@ describe AdminUI::VARZ, type: :integration do
 
   context 'Stubbed NATS and HTTP' do
     before do
-      varz_stub
+      varz_stub(true)
     end
 
     it 'returns connected components' do
