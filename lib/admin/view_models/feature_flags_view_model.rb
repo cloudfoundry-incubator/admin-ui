@@ -15,6 +15,7 @@ module AdminUI
       route_creation:            true,
       service_instance_creation: true,
       set_roles_by_username:     true, # Added in cf_release 218
+      task_creation:             false, # Added in cf_release 228
       unset_roles_by_username:   true, # Added in cf_release 218
       user_org_creation:         false
     }.freeze
