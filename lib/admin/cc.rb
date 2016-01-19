@@ -22,250 +22,250 @@ module AdminUI
       uaadb_uri = @config.uaadb_uri
 
       @caches =
-      {
-        applications:
         {
-          db_uri:  ccdb_uri,
-          table:   :apps,
-          columns: [:allow_ssh, :buildpack, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :droplet_hash, :enable_ssh, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :name, :package_pending_since, :package_state, :package_updated_at, :ports, :production, :space_id, :stack_id, :staging_failed_description, :staging_failed_reason, :staging_task_id, :state, :type, :updated_at, :version]
-        },
-        apps_routes:
-        {
-          db_uri:  ccdb_uri,
-          table:   :apps_routes,
-          columns: [:app_id, :route_id]
-        },
-        buildpacks:
-        {
-          db_uri:  ccdb_uri,
-          table:   :buildpacks,
-          columns: [:created_at, :enabled, :filename, :guid, :id, :key, :locked, :name, :position, :priority, :updated_at]
-        },
-        clients:
-        {
-          db_uri:  uaadb_uri,
-          table:   :oauth_client_details,
-          columns: [:additional_information, :authorities, :authorized_grant_types, :client_id, :identity_zone_id, :scope, :web_server_redirect_uri]
-        },
-        domains:
-        {
-          db_uri:  ccdb_uri,
-          table:   :domains,
-          columns: [:created_at, :guid, :id, :name, :owning_organization_id, :updated_at]
-        },
-        droplets:
-        {
-          db_uri:  ccdb_uri,
-          table:   :droplets,
-          columns: [:app_id, :created_at, :detected_start_command, :droplet_hash, :guid, :id, :updated_at]
-        },
-        events:
-        {
-          db_uri:  ccdb_uri,
-          table:   :events,
-          columns: [:actee, :actee_name, :actee_type, :actor, :actor_name, :actor_type, :created_at, :guid, :id, :metadata, :organization_guid, :space_guid, :space_id, :timestamp, :type, :updated_at],
-          where:   "timestamp >= CURRENT_TIMESTAMP - INTERVAL '#{@config.event_days}' DAY"
-        },
-        feature_flags:
-        {
-          db_uri:  ccdb_uri,
-          table:   :feature_flags,
-          columns: [:created_at, :enabled, :error_message, :guid, :id, :name, :updated_at]
-        },
-        groups:
-        {
-          db_uri:  uaadb_uri,
-          table:   :groups,
-          columns: [:created, :displayname, :id, :identity_zone_id, :lastmodified, :version]
-        },
-        group_membership:
-        {
-          db_uri:  uaadb_uri,
-          table:   :group_membership,
-          columns: [:group_id, :member_id]
-        },
-        identity_providers:
-        {
-          db_uri:  uaadb_uri,
-          table:   :identity_provider,
-          columns: [:active, :config, :created, :id, :identity_zone_id, :lastmodified, :name, :origin_key, :type, :version]
-        },
-        identity_zones:
-        {
-          db_uri:  uaadb_uri,
-          table:   :identity_zone,
-          columns: [:config, :created, :description, :id, :lastmodified, :name, :subdomain, :version]
-        },
-        organizations:
-        {
-          db_uri:  ccdb_uri,
-          table:   :organizations,
-          columns: [:billing_enabled, :created_at, :guid, :id, :name, :quota_definition_id, :status, :updated_at]
-        },
-        organizations_auditors:
-        {
-          db_uri:  ccdb_uri,
-          table:   :organizations_auditors,
-          columns: [:organization_id, :user_id]
-        },
-        organizations_billing_managers:
-        {
-          db_uri:  ccdb_uri,
-          table:   :organizations_billing_managers,
-          columns: [:organization_id, :user_id]
-        },
-        organizations_managers:
-        {
-          db_uri:  ccdb_uri,
-          table:   :organizations_managers,
-          columns: [:organization_id, :user_id]
-        },
-        organizations_private_domains:
-        {
-          db_uri:  ccdb_uri,
-          table:   :organizations_private_domains,
-          columns: [:organization_id, :private_domain_id]
-        },
-        organizations_users:
-        {
-          db_uri:  ccdb_uri,
-          table:   :organizations_users,
-          columns: [:organization_id, :user_id]
-        },
-        quota_definitions:
-        {
-          db_uri:  ccdb_uri,
-          table:   :quota_definitions,
-          columns: [:app_instance_limit, :created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :total_private_domains, :total_routes, :total_services, :updated_at]
-        },
-        routes:
-        {
-          db_uri:  ccdb_uri,
-          table:   :routes,
-          columns: [:created_at, :domain_id, :guid, :host, :id, :path, :port, :space_id, :updated_at]
-        },
-        security_groups:
-        {
-          db_uri:  ccdb_uri,
-          table:   :security_groups,
-          columns: [:created_at, :guid, :id, :name, :rules, :running_default, :staging_default, :updated_at]
-        },
-        security_groups_spaces:
-        {
-          db_uri:  ccdb_uri,
-          table:   :security_groups_spaces,
-          columns: [:security_group_id, :space_id]
-        },
-        service_bindings:
-        {
-          db_uri:  ccdb_uri,
-          table:   :service_bindings,
-          columns: [:app_id, :binding_options, :created_at, :gateway_data, :gateway_name, :guid, :id, :service_instance_id, :syslog_drain_url, :updated_at]
-        },
-        service_brokers:
-        {
-          db_uri:  ccdb_uri,
-          table:   :service_brokers,
-          columns: [:auth_username, :broker_url, :created_at, :guid, :id, :name, :space_id, :updated_at]
-        },
-        service_dashboard_clients:
-        {
-          db_uri:  ccdb_uri,
-          table:   :service_dashboard_clients,
-          columns: [:service_broker_id, :uaa_id]
-        },
-        service_instances:
-        {
-          db_uri:  ccdb_uri,
-          table:   :service_instances,
-          columns: [:created_at, :dashboard_url, :gateway_name, :gateway_data, :guid, :id, :is_gateway_service, :name, :service_plan_id, :space_id, :tags, :updated_at]
-        },
-        service_instance_operations:
-        {
-          db_uri:  ccdb_uri,
-          table:   :service_instance_operations,
-          columns: [:created_at, :description, :guid, :id, :proposed_changes, :service_instance_id, :state, :type, :updated_at]
-        },
-        service_keys:
-        {
-          db_uri:  ccdb_uri,
-          table:   :service_keys,
-          columns: [:created_at, :guid, :id, :name, :service_instance_id, :updated_at]
-        },
-        service_plans:
-        {
-          db_uri:  ccdb_uri,
-          table:   :service_plans,
-          columns: [:active, :created_at, :description, :extra, :free, :guid, :id, :name, :public, :service_id, :unique_id, :updated_at]
-        },
-        service_plan_visibilities:
-        {
-          db_uri:  ccdb_uri,
-          table:   :service_plan_visibilities,
-          columns: [:created_at, :guid, :id, :organization_id, :service_plan_id, :updated_at]
-        },
-        services:
-        {
-          db_uri:  ccdb_uri,
-          table:   :services,
-          columns: [:active, :bindable, :created_at, :description, :documentation_url, :extra, :guid, :id, :info_url, :label, :long_description, :plan_updateable, :purging, :provider, :requires, :service_broker_id, :tags, :unique_id, :updated_at, :url, :version]
-        },
-        space_quota_definitions:
-        {
-          db_uri:  ccdb_uri,
-          table:   :space_quota_definitions,
-          columns: [:app_instance_limit, :created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :organization_id, :total_routes, :total_services, :updated_at]
-        },
-        spaces:
-        {
-          db_uri:  ccdb_uri,
-          table:   :spaces,
-          columns: [:allow_ssh, :created_at, :guid, :id, :name, :organization_id, :space_quota_definition_id, :updated_at]
-        },
-        spaces_auditors:
-        {
-          db_uri:  ccdb_uri,
-          table:   :spaces_auditors,
-          columns: [:space_id, :user_id]
-        },
-        spaces_developers:
-        {
-          db_uri:  ccdb_uri,
-          table:   :spaces_developers,
-          columns: [:space_id, :user_id]
-        },
-        spaces_managers:
-        {
-          db_uri:  ccdb_uri,
-          table:   :spaces_managers,
-          columns: [:space_id, :user_id]
-        },
-        stacks:
-        {
-          db_uri:  ccdb_uri,
-          table:   :stacks,
-          columns: [:created_at, :description, :guid, :id, :name, :updated_at]
-        },
-        users_cc:
-        {
-          db_uri:  ccdb_uri,
-          table:   :users,
-          columns: [:active, :admin, :created_at, :default_space_id, :guid, :id, :updated_at]
-        },
-        users_uaa:
-        {
-          db_uri:  uaadb_uri,
-          table:   :users,
-          columns: [:active, :created, :email, :familyname, :givenname, :id, :identity_zone_id, :lastmodified, :passwd_lastmodified, :username, :verified, :version]
+          applications:
+          {
+            db_uri:  ccdb_uri,
+            table:   :apps,
+            columns: [:allow_ssh, :buildpack, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :droplet_hash, :enable_ssh, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :name, :package_pending_since, :package_state, :package_updated_at, :ports, :production, :space_id, :stack_id, :staging_failed_description, :staging_failed_reason, :staging_task_id, :state, :type, :updated_at, :version]
+          },
+          apps_routes:
+          {
+            db_uri:  ccdb_uri,
+            table:   :apps_routes,
+            columns: [:app_id, :route_id]
+          },
+          buildpacks:
+          {
+            db_uri:  ccdb_uri,
+            table:   :buildpacks,
+            columns: [:created_at, :enabled, :filename, :guid, :id, :key, :locked, :name, :position, :priority, :updated_at]
+          },
+          clients:
+          {
+            db_uri:  uaadb_uri,
+            table:   :oauth_client_details,
+            columns: [:additional_information, :authorities, :authorized_grant_types, :client_id, :identity_zone_id, :scope, :web_server_redirect_uri]
+          },
+          domains:
+          {
+            db_uri:  ccdb_uri,
+            table:   :domains,
+            columns: [:created_at, :guid, :id, :name, :owning_organization_id, :updated_at]
+          },
+          droplets:
+          {
+            db_uri:  ccdb_uri,
+            table:   :droplets,
+            columns: [:app_id, :created_at, :detected_start_command, :droplet_hash, :guid, :id, :updated_at]
+          },
+          events:
+          {
+            db_uri:  ccdb_uri,
+            table:   :events,
+            columns: [:actee, :actee_name, :actee_type, :actor, :actor_name, :actor_type, :created_at, :guid, :id, :metadata, :organization_guid, :space_guid, :space_id, :timestamp, :type, :updated_at],
+            where:   "timestamp >= CURRENT_TIMESTAMP - INTERVAL '#{@config.event_days}' DAY"
+          },
+          feature_flags:
+          {
+            db_uri:  ccdb_uri,
+            table:   :feature_flags,
+            columns: [:created_at, :enabled, :error_message, :guid, :id, :name, :updated_at]
+          },
+          groups:
+          {
+            db_uri:  uaadb_uri,
+            table:   :groups,
+            columns: [:created, :displayname, :id, :identity_zone_id, :lastmodified, :version]
+          },
+          group_membership:
+          {
+            db_uri:  uaadb_uri,
+            table:   :group_membership,
+            columns: [:group_id, :member_id]
+          },
+          identity_providers:
+          {
+            db_uri:  uaadb_uri,
+            table:   :identity_provider,
+            columns: [:active, :config, :created, :id, :identity_zone_id, :lastmodified, :name, :origin_key, :type, :version]
+          },
+          identity_zones:
+          {
+            db_uri:  uaadb_uri,
+            table:   :identity_zone,
+            columns: [:config, :created, :description, :id, :lastmodified, :name, :subdomain, :version]
+          },
+          organizations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :organizations,
+            columns: [:billing_enabled, :created_at, :guid, :id, :name, :quota_definition_id, :status, :updated_at]
+          },
+          organizations_auditors:
+          {
+            db_uri:  ccdb_uri,
+            table:   :organizations_auditors,
+            columns: [:organization_id, :user_id]
+          },
+          organizations_billing_managers:
+          {
+            db_uri:  ccdb_uri,
+            table:   :organizations_billing_managers,
+            columns: [:organization_id, :user_id]
+          },
+          organizations_managers:
+          {
+            db_uri:  ccdb_uri,
+            table:   :organizations_managers,
+            columns: [:organization_id, :user_id]
+          },
+          organizations_private_domains:
+          {
+            db_uri:  ccdb_uri,
+            table:   :organizations_private_domains,
+            columns: [:organization_id, :private_domain_id]
+          },
+          organizations_users:
+          {
+            db_uri:  ccdb_uri,
+            table:   :organizations_users,
+            columns: [:organization_id, :user_id]
+          },
+          quota_definitions:
+          {
+            db_uri:  ccdb_uri,
+            table:   :quota_definitions,
+            columns: [:app_instance_limit, :created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :total_private_domains, :total_routes, :total_services, :updated_at]
+          },
+          routes:
+          {
+            db_uri:  ccdb_uri,
+            table:   :routes,
+            columns: [:created_at, :domain_id, :guid, :host, :id, :path, :port, :space_id, :updated_at]
+          },
+          security_groups:
+          {
+            db_uri:  ccdb_uri,
+            table:   :security_groups,
+            columns: [:created_at, :guid, :id, :name, :rules, :running_default, :staging_default, :updated_at]
+          },
+          security_groups_spaces:
+          {
+            db_uri:  ccdb_uri,
+            table:   :security_groups_spaces,
+            columns: [:security_group_id, :space_id]
+          },
+          service_bindings:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_bindings,
+            columns: [:app_id, :binding_options, :created_at, :gateway_data, :gateway_name, :guid, :id, :service_instance_id, :syslog_drain_url, :updated_at]
+          },
+          service_brokers:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_brokers,
+            columns: [:auth_username, :broker_url, :created_at, :guid, :id, :name, :space_id, :updated_at]
+          },
+          service_dashboard_clients:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_dashboard_clients,
+            columns: [:service_broker_id, :uaa_id]
+          },
+          service_instances:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_instances,
+            columns: [:created_at, :dashboard_url, :gateway_name, :gateway_data, :guid, :id, :is_gateway_service, :name, :service_plan_id, :space_id, :tags, :updated_at]
+          },
+          service_instance_operations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_instance_operations,
+            columns: [:created_at, :description, :guid, :id, :proposed_changes, :service_instance_id, :state, :type, :updated_at]
+          },
+          service_keys:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_keys,
+            columns: [:created_at, :guid, :id, :name, :service_instance_id, :updated_at]
+          },
+          service_plans:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_plans,
+            columns: [:active, :created_at, :description, :extra, :free, :guid, :id, :name, :public, :service_id, :unique_id, :updated_at]
+          },
+          service_plan_visibilities:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_plan_visibilities,
+            columns: [:created_at, :guid, :id, :organization_id, :service_plan_id, :updated_at]
+          },
+          services:
+          {
+            db_uri:  ccdb_uri,
+            table:   :services,
+            columns: [:active, :bindable, :created_at, :description, :documentation_url, :extra, :guid, :id, :info_url, :label, :long_description, :plan_updateable, :purging, :provider, :requires, :service_broker_id, :tags, :unique_id, :updated_at, :url, :version]
+          },
+          space_quota_definitions:
+          {
+            db_uri:  ccdb_uri,
+            table:   :space_quota_definitions,
+            columns: [:app_instance_limit, :created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :organization_id, :total_routes, :total_services, :updated_at]
+          },
+          spaces:
+          {
+            db_uri:  ccdb_uri,
+            table:   :spaces,
+            columns: [:allow_ssh, :created_at, :guid, :id, :name, :organization_id, :space_quota_definition_id, :updated_at]
+          },
+          spaces_auditors:
+          {
+            db_uri:  ccdb_uri,
+            table:   :spaces_auditors,
+            columns: [:space_id, :user_id]
+          },
+          spaces_developers:
+          {
+            db_uri:  ccdb_uri,
+            table:   :spaces_developers,
+            columns: [:space_id, :user_id]
+          },
+          spaces_managers:
+          {
+            db_uri:  ccdb_uri,
+            table:   :spaces_managers,
+            columns: [:space_id, :user_id]
+          },
+          stacks:
+          {
+            db_uri:  ccdb_uri,
+            table:   :stacks,
+            columns: [:created_at, :description, :guid, :id, :name, :updated_at]
+          },
+          users_cc:
+          {
+            db_uri:  ccdb_uri,
+            table:   :users,
+            columns: [:active, :admin, :created_at, :default_space_id, :guid, :id, :updated_at]
+          },
+          users_uaa:
+          {
+            db_uri:  uaadb_uri,
+            table:   :users,
+            columns: [:active, :created, :email, :familyname, :givenname, :id, :identity_zone_id, :lastmodified, :passwd_lastmodified, :username, :verified, :version]
+          }
         }
-      }
 
       @caches.each_pair do |key, cache|
-        cache.merge!(condition: ConditionVariable.new,
-                     exists:    nil,
-                     result:    nil,
-                     select:    nil,
-                     semaphore: Mutex.new)
+        cache[:condition] = ConditionVariable.new
+        cache[:exists]    = nil
+        cache[:result]    = nil
+        cache[:select]    = nil
+        cache[:semaphore] = Mutex.new
 
         schedule(key)
       end

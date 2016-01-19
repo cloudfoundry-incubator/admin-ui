@@ -69,10 +69,10 @@ module AdminUI
           end
 
           hash[router['name']] =
-          {
-            'router'    => router,
-            'top10Apps' => top10_app_rows
-          }
+            {
+              'router'    => router,
+              'top10Apps' => top10_app_rows
+            }
         else
           row.push('OFFLINE')
 

@@ -1,8 +1,8 @@
 require_relative '../spec_helper'
 
 module LoginHelper
-  LOGIN_ADMIN = 'admin'
-  LOGIN_USER  = 'user'
+  LOGIN_ADMIN = 'admin'.freeze
+  LOGIN_USER  = 'user'.freeze
 
   def login_stub_admin
     login_stub_common

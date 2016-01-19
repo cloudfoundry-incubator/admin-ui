@@ -231,10 +231,10 @@ module AdminUI
         items.push(row)
 
         hash[guid] =
-        {
-          'service'        => service,
-          'service_broker' => service_broker
-        }
+          {
+            'service'        => service,
+            'service_broker' => service_broker
+          }
       end
 
       result(true, items, hash, (1..21).to_a, (1..21).to_a - [11, 12, 13, 14, 15, 16, 17])

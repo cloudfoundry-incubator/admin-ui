@@ -10,25 +10,25 @@ module DopplerHelper
   BILLION = 1000 * 1000 * 1000
 
   REP_VALUE_METRICS =
-  {
-    'CapacityRemainingContainers'        => 252.0,
-    'CapacityRemainingDisk'              => 298_155.0,
-    'CapacityRemainingMemory'            => 31_152.0,
-    'CapacityTotalContainers'            => 256.0,
-    'CapacityTotalDisk'                  => 302_251.0,
-    'CapacityTotalMemory'                => 32_112.0,
-    'ContainerCount'                     => 4.0,
-    'logSenderTotalMessagesRead'         => 681_827.0,
-    'memoryStats.lastGCPauseTimeNS'      => 1_998_215.0,
-    'memoryStats.numBytesAllocated'      => 1_828_904.0,
-    'memoryStats.numBytesAllocatedHeap'  => 1_828_904.0,
-    'memoryStats.numBytesAllocatedStack' => 2_113_536.0,
-    'memoryStats.numFrees'               => 1_027_475_681.0,
-    'memoryStats.numMallocs'             => 1_027_488_288.0,
-    'numCPUS'                            => 4.0,
-    'numGoRoutines'                      => 345.0,
-    'RepBulkSyncDuration'                => 4_595_018.0
-  }
+    {
+      'CapacityRemainingContainers'        => 252.0,
+      'CapacityRemainingDisk'              => 298_155.0,
+      'CapacityRemainingMemory'            => 31_152.0,
+      'CapacityTotalContainers'            => 256.0,
+      'CapacityTotalDisk'                  => 302_251.0,
+      'CapacityTotalMemory'                => 32_112.0,
+      'ContainerCount'                     => 4.0,
+      'logSenderTotalMessagesRead'         => 681_827.0,
+      'memoryStats.lastGCPauseTimeNS'      => 1_998_215.0,
+      'memoryStats.numBytesAllocated'      => 1_828_904.0,
+      'memoryStats.numBytesAllocatedHeap'  => 1_828_904.0,
+      'memoryStats.numBytesAllocatedStack' => 2_113_536.0,
+      'memoryStats.numFrees'               => 1_027_475_681.0,
+      'memoryStats.numMallocs'             => 1_027_488_288.0,
+      'numCPUS'                            => 4.0,
+      'numGoRoutines'                      => 345.0,
+      'RepBulkSyncDuration'                => 4_595_018.0
+    }.freeze
 
   class MockWebSocketClient < Faye::WebSocket::Client
     def initialize

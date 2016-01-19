@@ -50,10 +50,10 @@ module AdminUI
         items.push(row)
 
         hash[id] =
-        {
-          'identity_provider' => identity_provider,
-          'identity_zone'     => identity_zone
-        }
+          {
+            'identity_provider' => identity_provider,
+            'identity_zone'     => identity_zone
+          }
       end
 
       result(true, items, hash, (0..8).to_a, (0..7).to_a)

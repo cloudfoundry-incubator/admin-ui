@@ -55,11 +55,11 @@ module AdminUI
         items.push(row)
 
         hash[event[:guid]] =
-        {
-          'event'        => event,
-          'organization' => organization,
-          'space'        => space
-        }
+          {
+            'event'        => event,
+            'organization' => organization,
+            'space'        => space
+          }
       end
 
       result(true, items, hash, (0..9).to_a, (0..9).to_a)

@@ -45,11 +45,11 @@ module AdminUI
     def email_title(disconnected)
       title = "[#{@config.cloud_controller_uri}] "
 
-      if disconnected.length == 1
-        title += "#{disconnected.first['type']} is down"
-      else
-        title += 'Multiple Cloud Foundry components are down'
-      end
+      title += if disconnected.length == 1
+                 "#{disconnected.first['type']} is down"
+               else
+                 'Multiple Cloud Foundry components are down'
+               end
 
       title
     end

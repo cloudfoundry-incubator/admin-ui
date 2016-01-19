@@ -78,10 +78,10 @@ module AdminUI
         items.push(row)
 
         hash[guid] =
-        {
-          'organization'           => organization,
-          'space_quota_definition' => space_quota_definition
-        }
+          {
+            'organization'           => organization,
+            'space_quota_definition' => space_quota_definition
+          }
       end
 
       result(true, items, hash, (1..13).to_a, [1, 2, 3, 4, 10, 12, 13])

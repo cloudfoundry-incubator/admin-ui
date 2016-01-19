@@ -48,9 +48,12 @@ describe AdminUI::DBStoreMigration do
       file.write(Yajl::Encoder.encode(config, pretty: true))
     end
     project_path = File.join(File.dirname(__FILE__), '../..')
-    spawn_opts = { chdir: project_path,
-                   out:   '/dev/null',
-                   err:   '/dev/null' }
+    spawn_opts =
+      {
+        chdir: project_path,
+        out:   '/dev/null',
+        err:   '/dev/null'
+      }
 
     @pid = Process.spawn({}, "ruby bin/admin -c #{config_file}", spawn_opts)
 
@@ -61,16 +64,23 @@ describe AdminUI::DBStoreMigration do
     Process.kill('TERM', @pid)
     Process.wait(@pid)
     project_path = File.join(File.dirname(__FILE__), '../..')
-    spawn_opts = { chdir: project_path,
-                   out:   '/dev/null',
-                   err:   '/dev/null' }
+    spawn_opts =
+      {
+        chdir: project_path,
+        out:   '/dev/null',
+        err:   '/dev/null'
+      }
     @pid = Process.spawn({}, "rm -rf #{ccdb_file} #{config_file} #{data_file} #{doppler_data_file} #{log_file} #{db_file} #{uaadb_file} #{backup_stats_file} #{db_migration_dir}/#{plan_test} ", spawn_opts)
     Process.wait(@pid)
     FileUtils.rm_f stats_file if File.exist?(stats_file)
   end
 
   def migrate_database
-    spawn_opts = { out: '/dev/null', err: '/dev/null' }
+    spawn_opts =
+      {
+        out: '/dev/null',
+        err: '/dev/null'
+      }
 
     pid = Process.spawn({}, "sequel -m #{db_migration_dir} sqlite://#{db_file}", spawn_opts)
     Process.wait(pid)
@@ -99,7 +109,7 @@ describe AdminUI::DBStoreMigration do
   context 'when stats file exists and database instance does not' do
     it 'migrates stats persistence from file stats to database' do
       merged_config = config.merge(stats_file: stats_file)
-      FileUtils.cp("#{db_migration_spec_dir}/#{stats_file_spec}", "#{stats_file}")
+      FileUtils.cp("#{db_migration_spec_dir}/#{stats_file_spec}", stats_file)
       launch_admin_daemon(merged_config)
       expect(File.file?(db_file)).to be(true)
       expect(File.file?(backup_stats_file)).to be(true)

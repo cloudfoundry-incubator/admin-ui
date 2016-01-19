@@ -153,13 +153,15 @@ module AdminUI
       error_logger = Logger.new(STDERR)
       error_logger.level = Logger::ERROR
 
-      web_hash = { AccessLog:          [],
-                   BindAddress:        @config.bind_address,
-                   Host:               @config.bind_address, # Newer Rack::Handler::WEBrick requires Host
-                   DoNotReverseLookup: true,
-                   Logger:             error_logger,
-                   Port:               @config.port
-                 }
+      web_hash =
+        {
+          AccessLog:          [],
+          BindAddress:        @config.bind_address,
+          Host:               @config.bind_address, # Newer Rack::Handler::WEBrick requires Host
+          DoNotReverseLookup: true,
+          Logger:             error_logger,
+          Port:               @config.port
+        }
 
       web_hash[:StartCallback] = @start_callback if @start_callback
 
@@ -168,11 +170,11 @@ module AdminUI
         cert  = OpenSSL::X509::Certificate.new(File.open(@config.ssl_certificate_file_path).read)
         names = OpenSSL::X509::Name.parse cert.subject.to_s
 
-        web_hash.merge!(SSLCertificate:  cert,
-                        SSLCertName:     names,
-                        SSLEnable:       true,
-                        SSLPrivateKey:   pkey,
-                        SSLVerifyClient: OpenSSL::SSL::VERIFY_NONE)
+        web_hash[:SSLCertificate]  = cert
+        web_hash[:SSLCertName]     = names
+        web_hash[:SSLEnable]       = true
+        web_hash[:SSLPrivateKey]   = pkey
+        web_hash[:SSLVerifyClient] = OpenSSL::SSL::VERIFY_NONE
 
         web_class = AdminUI::SecureWeb
       else

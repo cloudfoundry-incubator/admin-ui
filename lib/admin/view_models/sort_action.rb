@@ -18,19 +18,21 @@ module AdminUI
           a_column = a_row[column]
           b_column = b_row[column]
 
-          if a_column
-            if b_column
-              if sort_column.case_insensitive
-                compare = a_column.to_s.casecmp(b_column.to_s)
-              else
-                compare = a_column <=> b_column
-              end
-            else
-              compare = 1
-            end
-          elsif b_column
-            compare = -1
-          end
+          compare = if a_column
+                      if b_column
+                        if sort_column.case_insensitive
+                          a_column.to_s.casecmp(b_column.to_s)
+                        else
+                          a_column <=> b_column
+                        end
+                      else
+                        1
+                      end
+                    elsif b_column
+                      -1
+                    else
+                      0
+                    end
 
           compare = -compare unless sort_column.ascending
 

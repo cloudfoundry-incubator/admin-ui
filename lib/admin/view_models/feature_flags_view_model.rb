@@ -7,18 +7,18 @@ module AdminUI
   class FeatureFlagsViewModel < AdminUI::BaseViewModel
     # DEFAULT_FLAGS from https://github.com/cloudfoundry/cloud_controller_ng/blob/master/app/models/runtime/feature_flag.rb
     DEFAULT_FLAGS =
-    {
-      app_bits_upload:           true,
-      app_scaling:               true,
-      diego_docker:              false, # Added in cf_release 213
-      private_domain_creation:   true,
-      route_creation:            true,
-      service_instance_creation: true,
-      set_roles_by_username:     true, # Added in cf_release 218
-      task_creation:             false, # Added in cf_release 228
-      unset_roles_by_username:   true, # Added in cf_release 218
-      user_org_creation:         false
-    }.freeze
+      {
+        app_bits_upload:           true,
+        app_scaling:               true,
+        diego_docker:              false, # Added in cf_release 213
+        private_domain_creation:   true,
+        route_creation:            true,
+        service_instance_creation: true,
+        set_roles_by_username:     true, # Added in cf_release 218
+        task_creation:             false, # Added in cf_release 228
+        unset_roles_by_username:   true, # Added in cf_release 218
+        user_org_creation:         false
+      }.freeze
 
     def do_items
       feature_flags = @cc.feature_flags

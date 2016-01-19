@@ -16,7 +16,7 @@ file ../config/default.yml or uses the path indicated by -c
 
 Ctrl-C to cleanly terminate
 
-"
+".freeze
 
 # default configuration file
 config_file = File.join(File.dirname(__FILE__), '..', 'config', 'default.yml')

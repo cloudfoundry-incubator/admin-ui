@@ -69,12 +69,12 @@ module AdminUI
         items.push(row)
 
         hash[key] =
-        {
-          'organization'         => organization,
-          'security_group'       => security_group,
-          'security_group_space' => security_group_space,
-          'space'                => space
-        }
+          {
+            'organization'         => organization,
+            'security_group'       => security_group,
+            'security_group_space' => security_group_space,
+            'space'                => space
+          }
       end
 
       result(true, items, hash, (1..9).to_a, (1..9).to_a)

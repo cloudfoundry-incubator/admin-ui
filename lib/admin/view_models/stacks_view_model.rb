@@ -24,9 +24,11 @@ module AdminUI
         next if stack_id.nil?
         application_counter = application_counters[stack_id]
         if application_counter.nil?
-          application_counter = { 'applications' => 0,
-                                  'instances'    => 0
-                                }
+          application_counter =
+            {
+              'applications' => 0,
+              'instances'    => 0
+            }
           application_counters[stack_id] = application_counter
         end
         application_counter['applications'] += 1

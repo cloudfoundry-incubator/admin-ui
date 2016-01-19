@@ -1,5 +1,8 @@
 inherit_from:
   - ../.rubocop.yml
 
+AlignHash:
+  Enabled: false
+
 ModuleLength:
   Enabled: false  

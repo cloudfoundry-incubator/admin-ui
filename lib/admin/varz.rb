@@ -163,18 +163,20 @@ module AdminUI
         response = Utils.http_request(@config, uri, 'GET', (item.nil? ? nil : item['credentials']))
 
         if response.is_a?(Net::HTTPOK)
-          result.merge!('connected' => true,
-                        'data'      => Yajl::Parser.parse(response.body))
+          result['connected'] = true
+          result['data']      = Yajl::Parser.parse(response.body)
         else
-          result.merge!('connected' => false,
-                        'data'      => (item.nil? ? {} : item),
-                        'error'     => "#{response.code}<br/><br/>#{response.body}")
+          result['connected'] = false
+          result['data']      = item.nil? ? {} : item
+          result['error']     = "#{response.code}<br/><br/>#{response.body}"
+
           @logger.warn("item_result(#{uri}): [#{response.code} - #{response.body}]")
         end
       rescue => error
-        result.merge!('connected' => false,
-                      'data'      => (item.nil? ? {} : item),
-                      'error'     => "#{error.inspect}")
+        result['connected'] = false
+        result['data']      = item.nil? ? {} : item
+        result['error']     = error.inspect
+
         @logger.warn("item_result(#{uri}): [#{error.inspect}]")
       end
 

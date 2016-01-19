@@ -65,26 +65,28 @@ module AdminUI
       end
 
       def create_content_result(file_size, start, read_size, contents)
-        result = { data:      contents.nil? ? '' : contents,
-                   file_size: file_size,
-                   page_size: @config.log_file_page_size,
-                   path:      @path,
-                   read_size: read_size,
-                   start:     start
-                 }
+        result =
+          {
+            data:      contents.nil? ? '' : contents,
+            file_size: file_size,
+            page_size: @config.log_file_page_size,
+            path:      @path,
+            read_size: read_size,
+            start:     start
+          }
 
         if read_size < file_size
           if start > 0
-            back = [start - @config.log_file_page_size, 0].max
-            result.merge!(first: 0, back: back)
+            result[:first] = 0
+            result[:back]  = [start - @config.log_file_page_size, 0].max
           end
 
           if start + read_size < file_size
-            forward = [start + @config.log_file_page_size,
-                       file_size - @config.log_file_page_size].min
-            result.merge!(forward: forward, last: -1)
+            result[:forward] = [start + @config.log_file_page_size, file_size - @config.log_file_page_size].min
+            result[:last]    = -1
           end
         end
+
         result
       end
     end
@@ -253,7 +255,7 @@ module AdminUI
         uri_string += ":#{uri.password}" unless uri.password.nil?
         uri_string += "@#{uri.host}"
         uri_string += ":#{uri.port}" unless uri.port.nil?
-        uri_string += "#{path}"
+        uri_string += path
 
         {
           path: uri_string,

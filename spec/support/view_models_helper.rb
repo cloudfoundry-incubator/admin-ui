@@ -46,17 +46,17 @@ module ViewModelsHelper
     container = nil
     unless @varz_application_instance
       container =
-      {
-        application_id: rep_container_metric_envelope.containerMetric.applicationId,
-        cpu_percentage: rep_container_metric_envelope.containerMetric.cpuPercentage,
-        disk_bytes:     rep_container_metric_envelope.containerMetric.diskBytes,
-        index:          rep_envelope.index,
-        instance_index: rep_container_metric_envelope.containerMetric.instanceIndex,
-        ip:             rep_envelope.ip,
-        memory_bytes:   rep_container_metric_envelope.containerMetric.memoryBytes,
-        origin:         rep_envelope.origin,
-        timestamp:      rep_envelope.timestamp
-      }
+        {
+          application_id: rep_container_metric_envelope.containerMetric.applicationId,
+          cpu_percentage: rep_container_metric_envelope.containerMetric.cpuPercentage,
+          disk_bytes:     rep_container_metric_envelope.containerMetric.diskBytes,
+          index:          rep_envelope.index,
+          instance_index: rep_container_metric_envelope.containerMetric.instanceIndex,
+          ip:             rep_envelope.ip,
+          memory_bytes:   rep_container_metric_envelope.containerMetric.memoryBytes,
+          origin:         rep_envelope.origin,
+          timestamp:      rep_envelope.timestamp
+        }
     end
 
     {
@@ -152,13 +152,13 @@ module ViewModelsHelper
 
   def view_models_cells_detail
     hash =
-    {
-      'connected' => true,
-      'index'     => rep_envelope.index,
-      'ip'        => rep_envelope.ip,
-      'origin'    => rep_envelope.origin,
-      'timestamp' => rep_envelope.timestamp
-    }
+      {
+        'connected' => true,
+        'index'     => rep_envelope.index,
+        'ip'        => rep_envelope.ip,
+        'origin'    => rep_envelope.origin,
+        'timestamp' => rep_envelope.timestamp
+      }
 
     hash.merge(REP_VALUE_METRICS)
   end
@@ -454,7 +454,8 @@ module ViewModelsHelper
         log_file_displayed,
         log_file_displayed_contents_length,
         Time.at(log_file_displayed_modified_milliseconds / 1000.0).to_datetime.rfc3339,
-        { path: log_file_displayed,
+        {
+          path: log_file_displayed,
           size: log_file_displayed_contents_length,
           time: log_file_displayed_modified_milliseconds
         }
@@ -598,7 +599,8 @@ module ViewModelsHelper
   def view_models_routers_detail
     {
       'router' =>
-      { 'connected' => true,
+      {
+        'connected' => true,
         'data'      => varz_router,
         'index'     => nats_router['index'],
         'name'      => nats_router['host'],
@@ -607,7 +609,8 @@ module ViewModelsHelper
       },
       'top10Apps' =>
       [
-        { 'guid'   => cc_app[:guid],
+        {
+          'guid'   => cc_app[:guid],
           'name'   => cc_app[:name],
           'rpm'    => varz_router['top10_app_requests'][0]['rpm'],
           'rps'    => varz_router['top10_app_requests'][0]['rps'],
@@ -1141,7 +1144,8 @@ module ViewModelsHelper
         cc_app[:state] == 'STARTED' ? 1 : 0,
         1,
         1,
-        { apps:              1,
+        {
+          apps:              1,
           cells:             1,
           deas:              1,
           organizations:     1,

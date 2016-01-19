@@ -152,15 +152,15 @@ module AdminUI
         items.push(row)
 
         hash[guid] =
-        {
-          'organization'     => organization,
-          'service'          => service,
-          'service_broker'   => service_broker,
-          'service_instance' => service_instance,
-          'service_key'      => service_key,
-          'service_plan'     => service_plan,
-          'space'            => space
-        }
+          {
+            'organization'     => organization,
+            'service'          => service,
+            'service_broker'   => service_broker,
+            'service_instance' => service_instance,
+            'service_key'      => service_key,
+            'service_plan'     => service_plan,
+            'space'            => space
+          }
       end
 
       result(true, items, hash, (1..30).to_a, (1..30).to_a - [5])

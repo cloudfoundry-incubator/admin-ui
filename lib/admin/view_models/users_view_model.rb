@@ -179,12 +179,12 @@ module AdminUI
         items.push(row)
 
         hash[guid] =
-        {
-          'groups'        => authorities,
-          'identity_zone' => identity_zone,
-          'user_cc'       => user_cc,
-          'user_uaa'      => user_uaa
-        }
+          {
+            'groups'        => authorities,
+            'identity_zone' => identity_zone,
+            'user_cc'       => user_cc,
+            'user_uaa'      => user_uaa
+          }
       end
 
       result(true, items, hash, (0..21).to_a, (0..11).to_a)

@@ -4,7 +4,7 @@ require_relative 'config'
 
 module AdminUI
   class AdminUILogger < Logger
-    alias_method :super_info, :info
+    alias super_info info
 
     def initialize(file_name, level)
       super(file_name, level)

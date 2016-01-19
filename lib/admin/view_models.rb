@@ -95,10 +95,10 @@ module AdminUI
       @interval = [config.cloud_controller_discovery_interval / 2, 1].max
 
       @caches.each_pair do |key, cache|
-        cache.merge!(condition:          ConditionVariable.new,
-                     result:             nil,
-                     semaphore:          Mutex.new,
-                     view_model_factory: cache[:clazz].new(@logger, cc, doppler, log_files, stats, varz, @testing))
+        cache[:condition]          = ConditionVariable.new
+        cache[:result]             = nil
+        cache[:semaphore]          = Mutex.new
+        cache[:view_model_factory] = cache[:clazz].new(@logger, cc, doppler, log_files, stats, varz, @testing)
 
         schedule(key)
       end

@@ -5,92 +5,93 @@ require_relative 'utils'
 module AdminUI
   class Config
     DEFAULTS_CONFIG =
-    {
-      bind_address:                                 '0.0.0.0',
-      cloud_controller_discovery_interval:                300,
-      cloud_controller_ssl_verify_none:                 false,
-      component_connection_retries:                         2,
-      doppler_reconnect_delay:                            300,
-      doppler_rollup_interval:                             30,
-      event_days:                                           7,
-      log_file_page_size:                              51_200,
-      log_file_sftp_keys:                                  [],
-      log_files:                                           [],
-      monitored_components:                                [],
-      nats_discovery_interval:                             30,
-      nats_discovery_timeout:                              10,
-      receiver_emails:                                     [],
-      secured_client_connection:                        false,
-      stats_refresh_schedules:                  ['0 5 * * *'],
-      stats_retries:                                        5,
-      stats_retry_interval:                               300,
-      table_height:                                   '287px',
-      table_page_size:                                     10,
-      uaa_groups_admin:                    ['admin_ui.admin'],
-      uaa_groups_user:                      ['admin_ui.user'],
-      varz_discovery_interval:                             30
-    }
+      {
+        bind_address:                                 '0.0.0.0',
+        cloud_controller_discovery_interval:                300,
+        cloud_controller_ssl_verify_none:                 false,
+        component_connection_retries:                         2,
+        doppler_reconnect_delay:                            300,
+        doppler_rollup_interval:                             30,
+        event_days:                                           7,
+        log_file_page_size:                              51_200,
+        log_file_sftp_keys:                                  [],
+        log_files:                                           [],
+        monitored_components:                                [],
+        nats_discovery_interval:                             30,
+        nats_discovery_timeout:                              10,
+        receiver_emails:                                     [],
+        secured_client_connection:                        false,
+        stats_refresh_schedules:                  ['0 5 * * *'],
+        stats_retries:                                        5,
+        stats_retry_interval:                               300,
+        table_height:                                   '287px',
+        table_page_size:                                     10,
+        uaa_groups_admin:                    ['admin_ui.admin'],
+        uaa_groups_user:                      ['admin_ui.user'],
+        varz_discovery_interval:                             30
+      }.freeze
 
     def self.schema
       ::Membrane::SchemaParser.parse do
         schema =
-        {
-          optional(:bind_address)                        => /[^\r\n\t]+/,
-          ccdb_uri:                                         /[^\r\n\t]+/,
-          optional(:cloud_controller_discovery_interval) => Integer,
-          optional(:cloud_controller_ssl_verify_none)    => bool,
-          cloud_controller_uri:                             %r{(http[s]?://[^\r\n\t]+)},
-          optional(:component_connection_retries)        => Integer,
-          data_file:                                        /[^\r\n\t]+/,
-          db_uri:                                           /[^\r\n\t]+/,
-          doppler_data_file:                                /[^\r\n\t]+/,
-          optional(:doppler_reconnect_delay)             => Integer,
-          optional(:doppler_rollup_interval)             => Integer,
-          optional(:event_days)                          => Integer,
-          log_file:                                         /[^\r\n\t]+/,
-          optional(:log_file_sftp_keys)                  => [String],
-          optional(:log_file_page_size)                  => Integer,
-          optional(:log_files)                           => [String],
-          mbus:                                             %r{(nats://[^\r\n\t]+)},
-          optional(:monitored_components)                => [/[^\r\n\t]+/],
-          optional(:nats_discovery_interval)             => Integer,
-          optional(:nats_discovery_timeout)              => Integer,
-          port:                                             Integer,
-          optional(:receiver_emails)                     => [/[^\r\n\t]+/],
-          optional(:sender_email)                        =>
           {
-            server:                /[^\r\n\t]+/,
-            optional(:port)     => Integer,
-            optional(:domain)   => /[^\r\n\t]+/,
-            account:               /[^\r\n\t]+/,
-            optional(:secret)   => String,
-            optional(:authtype) => enum('plain', 'login', 'cram_md5')
-          },
-          secured_client_connection:                        bool,
-          optional(:ssl)                                 =>
-          {
-            certificate_file_path:   String,
-            private_key_file_path:   String,
-            private_key_pass_phrase: String,
-            max_session_idle_length: Integer
-          },
-          optional(:stats_file)                          => /[^\r\n\t]+/,
-          optional(:stats_refresh_time)                  => Integer,
-          optional(:stats_refresh_schedules)             => [/@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/],
-          optional(:stats_retries)                       => Integer,
-          optional(:stats_retry_interval)                => Integer,
-          optional(:table_height)                        => /[^\r\n\t]+/,
-          optional(:table_page_size)                     => enum(5, 10, 25, 50, 100, 250, 500, 1000),
-          uaa_client:
-          {
-            id:     /[^\r\n\t]+/,
-            secret: /[^\r\n\t]+/
-          },
-          uaadb_uri:                            /[^\r\n\t]+/,
-          uaa_groups_admin:                     [/[^\r\n\t]+/],
-          uaa_groups_user:                      [/[^\r\n\t]+/],
-          optional(:varz_discovery_interval) => Integer
-        }
+            optional(:bind_address)                        => /[^\r\n\t]+/,
+            ccdb_uri:                                         /[^\r\n\t]+/,
+            optional(:cloud_controller_discovery_interval) => Integer,
+            optional(:cloud_controller_ssl_verify_none)    => bool,
+            cloud_controller_uri:                             %r{(http[s]?://[^\r\n\t]+)},
+            optional(:component_connection_retries)        => Integer,
+            data_file:                                        /[^\r\n\t]+/,
+            db_uri:                                           /[^\r\n\t]+/,
+            doppler_data_file:                                /[^\r\n\t]+/,
+            optional(:doppler_reconnect_delay)             => Integer,
+            optional(:doppler_rollup_interval)             => Integer,
+            optional(:event_days)                          => Integer,
+            log_file:                                         /[^\r\n\t]+/,
+            optional(:log_file_sftp_keys)                  => [String],
+            optional(:log_file_page_size)                  => Integer,
+            optional(:log_files)                           => [String],
+            mbus:                                             %r{(nats://[^\r\n\t]+)},
+            optional(:monitored_components)                => [/[^\r\n\t]+/],
+            optional(:nats_discovery_interval)             => Integer,
+            optional(:nats_discovery_timeout)              => Integer,
+            port:                                             Integer,
+            optional(:receiver_emails)                     => [/[^\r\n\t]+/],
+            optional(:sender_email)                        =>
+            {
+              server:                /[^\r\n\t]+/,
+              optional(:port)     => Integer,
+              optional(:domain)   => /[^\r\n\t]+/,
+              account:               /[^\r\n\t]+/,
+              optional(:secret)   => String,
+              optional(:authtype) => enum('plain', 'login', 'cram_md5')
+            },
+            secured_client_connection:                        bool,
+            optional(:ssl)                                 =>
+            {
+              certificate_file_path:   String,
+              private_key_file_path:   String,
+              private_key_pass_phrase: String,
+              max_session_idle_length: Integer
+            },
+            optional(:stats_file)                          => /[^\r\n\t]+/,
+            optional(:stats_refresh_time)                  => Integer,
+            optional(:stats_refresh_schedules)             => [/@yearly|@annually|@monthly|@weekly|@daily|@midnight|@hourly|(((((\d+)((\,|-)(\d+))*)|(\*))([\s]+)){4}+)(((\d+)((\,|-)(\d+))*)|(\*))/],
+            optional(:stats_retries)                       => Integer,
+            optional(:stats_retry_interval)                => Integer,
+            optional(:table_height)                        => /[^\r\n\t]+/,
+            optional(:table_page_size)                     => enum(5, 10, 25, 50, 100, 250, 500, 1000),
+            uaa_client:
+            {
+              id:     /[^\r\n\t]+/,
+              secret: /[^\r\n\t]+/
+            },
+            uaadb_uri:                            /[^\r\n\t]+/,
+            uaa_groups_admin:                     [/[^\r\n\t]+/],
+            uaa_groups_user:                      [/[^\r\n\t]+/],
+            optional(:varz_discovery_interval) => Integer
+          }
+
         unless schema[:stats_refresh_schedules].nil?
           schema[:stats_refresh_schedules].each do |spec|
             begin

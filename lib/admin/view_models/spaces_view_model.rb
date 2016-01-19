@@ -106,9 +106,11 @@ module AdminUI
         space_id = route[:space_id]
         space_route_counters = space_route_counters_hash[space_id]
         if space_route_counters.nil?
-          space_route_counters = { 'total_routes'  => 0,
-                                   'unused_routes' => 0
-                                 }
+          space_route_counters =
+            {
+              'total_routes'  => 0,
+              'unused_routes' => 0
+            }
           space_route_counters_hash[space_id] = space_route_counters
         end
 
@@ -127,14 +129,16 @@ module AdminUI
         space_id = application[:space_id]
         space_app_counters = space_app_counters_hash[space_id]
         if space_app_counters.nil?
-          space_app_counters = { 'total'           => 0,
-                                 'reserved_memory' => 0,
-                                 'reserved_disk'   => 0,
-                                 'used_memory'     => 0,
-                                 'used_disk'       => 0,
-                                 'used_cpu'        => 0,
-                                 'instances'       => 0
-                               }
+          space_app_counters =
+            {
+              'total'           => 0,
+              'reserved_memory' => 0,
+              'reserved_disk'   => 0,
+              'used_memory'     => 0,
+              'used_disk'       => 0,
+              'used_cpu'        => 0,
+              'instances'       => 0
+            }
           space_app_counters_hash[space_id] = space_app_counters
         end
 
@@ -292,11 +296,11 @@ module AdminUI
         items.push(row)
 
         hash[space_guid] =
-        {
-          'organization'           => organization,
-          'space'                  => space,
-          'space_quota_definition' => space_quota
-        }
+          {
+            'organization'           => organization,
+            'space'                  => space,
+            'space_quota_definition' => space_quota
+          }
       end
 
       result(true, items, hash, (1..27).to_a, (1..5).to_a << 9)

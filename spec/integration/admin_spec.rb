@@ -81,7 +81,7 @@ describe AdminUI::Admin, type: :integration do
 
     body = response.body
     expect(body).to_not be_nil
-    verify_sys_log_entries([['get', "#{path}"]], escapes)
+    verify_sys_log_entries([['get', path]], escapes)
     Yajl::Parser.parse(body)
   end
 
@@ -1587,12 +1587,12 @@ describe AdminUI::Admin, type: :integration do
     context 'settings' do
       let(:retrieved) { get_json('/settings') }
       it 'retrieves' do
-        expect(retrieved).to eq('admin'                  => true,
-                                'build'                  => '2222',
-                                'cloud_controller_uri'   => cloud_controller_uri,
-                                'table_height'           => table_height,
-                                'table_page_size'        => table_page_size,
-                                'user'                   => LoginHelper::LOGIN_ADMIN)
+        expect(retrieved).to eq('admin'                => true,
+                                'build'                => '2222',
+                                'cloud_controller_uri' => cloud_controller_uri,
+                                'table_height'         => table_height,
+                                'table_page_size'      => table_page_size,
+                                'user'                 => LoginHelper::LOGIN_ADMIN)
       end
     end
 

@@ -94,10 +94,12 @@ module AdminUI
             application_id = instance['application_id']
             application_usage_counters = application_usage_counters_hash[application_id]
             if application_usage_counters.nil?
-              application_usage_counters = { 'used_memory' => 0,
-                                             'used_disk'   => 0,
-                                             'used_cpu'    => 0
-                                           }
+              application_usage_counters =
+                {
+                  'used_memory' => 0,
+                  'used_disk'   => 0,
+                  'used_cpu'    => 0
+                }
               application_usage_counters_hash[application_id] = application_usage_counters
             end
 
@@ -115,10 +117,12 @@ module AdminUI
         application_id = container[:application_id]
         application_usage_counters = application_usage_counters_hash[application_id]
         if application_usage_counters.nil?
-          application_usage_counters = { 'used_memory' => 0,
-                                         'used_disk'   => 0,
-                                         'used_cpu'    => 0
-                                       }
+          application_usage_counters =
+            {
+              'used_memory' => 0,
+              'used_disk'   => 0,
+              'used_cpu'    => 0
+            }
           application_usage_counters_hash[application_id] = application_usage_counters
         end
 
@@ -221,13 +225,13 @@ module AdminUI
         items.push(row)
 
         hash[guid] =
-        {
-          'application'  => application,
-          'droplet'      => droplet,
-          'organization' => organization,
-          'space'        => space,
-          'stack'        => stack
-        }
+          {
+            'application'  => application,
+            'droplet'      => droplet,
+            'organization' => organization,
+            'space'        => space,
+            'stack'        => stack
+          }
       end
 
       result(true, items, hash, (1..20).to_a, (1..11).to_a << 20)

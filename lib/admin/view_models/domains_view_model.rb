@@ -100,11 +100,11 @@ module AdminUI
         items.push(row)
 
         hash[domain[:guid]] =
-        {
-          'domain'                       => domain,
-          'owning_organization'          => organization,
-          'private_shared_organizations' => domain_organizations_array
-        }
+          {
+            'domain'                       => domain,
+            'owning_organization'          => organization,
+            'private_shared_organizations' => domain_organizations_array
+          }
       end
 
       result(true, items, hash, (1..7).to_a, (1..5).to_a)

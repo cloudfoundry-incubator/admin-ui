@@ -32,7 +32,9 @@ describe AdminUI::Operation, type: :integration do
                          monitored_components:    [],
                          nats_discovery_timeout:  1,
                          uaadb_uri:               uaadb_uri,
-                         uaa_client:              { id: 'id', secret: 'secret' })
+                         uaa_client:              { id: 'id',
+                                                    secret: 'secret'
+                                                  })
   end
 
   let(:cc)                 { AdminUI::CC.new(config, logger, true) }

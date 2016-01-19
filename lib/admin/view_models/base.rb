@@ -33,10 +33,10 @@ module AdminUI
                case_insensitive_sort_columns = nil)
       if connected
         answer =
-        {
-          connected: true,
-          items:     items
-        }
+          {
+            connected: true,
+            items:     items
+          }
 
         answer[:detail_hash]                   = detail_hash if detail_hash
         answer[:searchable_columns]            = searchable_columns if searchable_columns

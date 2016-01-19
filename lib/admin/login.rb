@@ -3,8 +3,8 @@ require 'yajl'
 
 module AdminUI
   class Login
-    LOGIN_ADMIN = 'ADMIN'
-    LOGIN_USER  = 'USER'
+    LOGIN_ADMIN = 'ADMIN'.freeze
+    LOGIN_USER  = 'USER'.freeze
 
     def initialize(config, logger, client)
       @client = client

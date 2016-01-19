@@ -8,7 +8,7 @@ require 'envelope.pb.rb'
 module AdminUI
   class Doppler
     BILLION              = 1000.0 * 1000.0 * 1000.0
-    DOPPLER_PERSIST_KEYS = %w(connected index ip origin timestamp)
+    DOPPLER_PERSIST_KEYS = %w(connected index ip origin timestamp).freeze
 
     def initialize(config, logger, client, email, testing)
       @config  = config
@@ -245,17 +245,17 @@ module AdminUI
       container_metric = parsed_envelope.containerMetric
       key = "#{container_metric.applicationId}:#{container_metric.instanceIndex}"
       value =
-      {
-        application_id: container_metric.applicationId,
-        cpu_percentage: container_metric.cpuPercentage,
-        disk_bytes:     container_metric.diskBytes,
-        index:          parsed_envelope.index,
-        instance_index: container_metric.instanceIndex,
-        ip:             parsed_envelope.ip,
-        memory_bytes:   container_metric.memoryBytes,
-        origin:         parsed_envelope.origin,
-        timestamp:      parsed_envelope.timestamp
-      }
+        {
+          application_id: container_metric.applicationId,
+          cpu_percentage: container_metric.cpuPercentage,
+          disk_bytes:     container_metric.diskBytes,
+          index:          parsed_envelope.index,
+          instance_index: container_metric.instanceIndex,
+          ip:             parsed_envelope.ip,
+          memory_bytes:   container_metric.memoryBytes,
+          origin:         parsed_envelope.origin,
+          timestamp:      parsed_envelope.timestamp
+        }
 
       @container_metrics_semaphore.synchronize do
         @container_metrics[key] = value
@@ -270,13 +270,13 @@ module AdminUI
         hash = @value_metrics[key]
         if hash.nil?
           hash =
-          {
-            'connected' => true,
-            'index'     => parsed_envelope.index,
-            'ip'        => parsed_envelope.ip,
-            'origin'    => parsed_envelope.origin,
-            'timestamp' => parsed_envelope.timestamp
-          }
+            {
+              'connected' => true,
+              'index'     => parsed_envelope.index,
+              'ip'        => parsed_envelope.ip,
+              'origin'    => parsed_envelope.origin,
+              'timestamp' => parsed_envelope.timestamp
+            }
           @value_metrics[key] = hash
         else
           hash['timestamp'] = parsed_envelope.timestamp
@@ -445,11 +445,11 @@ module AdminUI
       end
 
       local_components =
-      {
-        'connected' => param_components['connected'],
-        'items'     => items,
-        'notified'  => param_components['notified']
-      }
+        {
+          'connected' => param_components['connected'],
+          'items'     => items,
+          'notified'  => param_components['notified']
+        }
 
       File.open(@config.doppler_data_file, 'w') do |file|
         file.write(Yajl::Encoder.encode(local_components, pretty: true))

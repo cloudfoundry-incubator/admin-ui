@@ -83,12 +83,12 @@ module AdminUI
         items.push(row)
 
         hash[route[:guid]] =
-        {
-          'domain'       => domain,
-          'organization' => organization,
-          'route'        => route,
-          'space'        => space
-        }
+          {
+            'domain'       => domain,
+            'organization' => organization,
+            'route'        => route,
+            'space'        => space
+          }
       end
 
       result(true, items, hash, (1..8).to_a, (1..6).to_a << 8)

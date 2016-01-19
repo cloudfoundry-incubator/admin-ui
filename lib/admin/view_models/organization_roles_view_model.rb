@@ -68,12 +68,12 @@ module AdminUI
         items.push(row)
 
         hash[key] =
-        {
-          'organization' => organization,
-          'role'         => organization_role,
-          'user_cc'      => user_cc,
-          'user_uaa'     => user_uaa
-        }
+          {
+            'organization' => organization,
+            'role'         => organization_role,
+            'user_cc'      => user_cc,
+            'user_uaa'     => user_uaa
+          }
       end
     end
   end

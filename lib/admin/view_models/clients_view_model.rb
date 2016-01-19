@@ -117,11 +117,11 @@ module AdminUI
         items.push(row)
 
         hash[client_id] =
-        {
-          'client'         => client,
-          'identity_zone'  => identity_zone,
-          'service_broker' => service_broker
-        }
+          {
+            'client'         => client,
+            'identity_zone'  => identity_zone,
+            'service_broker' => service_broker
+          }
       end
 
       result(true, items, hash, (0..8).to_a, (0..6).to_a << 8)

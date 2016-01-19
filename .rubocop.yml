@@ -10,6 +10,9 @@ AllCops:
 AbcSize:
   Enabled: false
 
+AlignHash:
+  EnforcedHashRocketStyle: table
+
 BlockNesting:
   Enabled: false
 

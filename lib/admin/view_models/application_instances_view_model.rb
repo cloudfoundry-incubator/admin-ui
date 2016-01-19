@@ -104,14 +104,14 @@ module AdminUI
               items.push(row)
 
               hash[key] =
-              {
-                'application'          => nil,
-                'application_instance' => application_instance,
-                'container'            => nil,
-                'organization'         => organization,
-                'space'                => space,
-                'stack'                => stack
-              }
+                {
+                  'application'          => nil,
+                  'application_instance' => application_instance,
+                  'container'            => nil,
+                  'organization'         => organization,
+                  'space'                => space,
+                  'stack'                => stack
+                }
             end
           end
         end
@@ -185,14 +185,14 @@ module AdminUI
           items.push(row)
 
           hash[key] =
-          {
-            'application'          => application,
-            'application_instance' => nil,
-            'container'            => container,
-            'organization'         => organization,
-            'space'                => space,
-            'stack'                => stack
-          }
+            {
+              'application'          => application,
+              'application_instance' => nil,
+              'container'            => container,
+              'organization'         => organization,
+              'space'                => space,
+              'stack'                => stack
+            }
         end
       end
 

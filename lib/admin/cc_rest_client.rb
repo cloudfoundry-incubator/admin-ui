@@ -155,11 +155,8 @@ module AdminUI
     end
 
     def get_cc_url(path)
-      if path && path[0] == '/'
-        return "#{@config.cloud_controller_uri}#{path}"
-      else
-        return "#{@config.cloud_controller_uri}/#{path}"
-      end
+      return "#{@config.cloud_controller_uri}#{path}" if path && path[0] == '/'
+      "#{@config.cloud_controller_uri}/#{path}"
     end
 
     def login

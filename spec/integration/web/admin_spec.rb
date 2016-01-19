@@ -101,19 +101,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
     context 'formatStringCleansed' do
       it 'removes html tags for iframe' do
-        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<iframe src=javascript:alert(1208)></iframe>\")")).to eq('hello')
+        expect(@driver.execute_script('return Format.formatStringCleansed("hello<iframe src=javascript:alert(1208)></iframe>")')).to eq('hello')
       end
 
       it 'removes html tags for iframe short form' do
-        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<iframe src=javascript:alert(1208)/>\")")).to eq('hello')
+        expect(@driver.execute_script('return Format.formatStringCleansed("hello<iframe src=javascript:alert(1208)/>")')).to eq('hello')
       end
 
       it 'removes html tags for img' do
-        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<img src=javascript:alert(1208)></img>\")")).to eq('hello')
+        expect(@driver.execute_script('return Format.formatStringCleansed("hello<img src=javascript:alert(1208)></img>")')).to eq('hello')
       end
 
       it 'removes html tags for img short form' do
-        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<img src=javascript:alert(1208)>\")")).to eq('hello')
+        expect(@driver.execute_script('return Format.formatStringCleansed("hello<img src=javascript:alert(1208)>")')).to eq('hello')
       end
 
       it 'removes html tags for img forward slash' do
@@ -133,7 +133,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       it 'removes html tags for unquoted' do
-        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<input type=text name=foo value=a%20onchange=alert(9)>\")")).to eq('hello')
+        expect(@driver.execute_script('return Format.formatStringCleansed("hello<input type=text name=foo value=a%20onchange=alert(9)>")')).to eq('hello')
       end
 
       it 'removes html tags for double-quoted' do
@@ -177,7 +177,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       it 'removes html tags for missing greater-than sign' do
-        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<script%0d%0aalert(9)</script>\")")).to eq('hello')
+        expect(@driver.execute_script('return Format.formatStringCleansed("hello<script%0d%0aalert(9)</script>")')).to eq('hello')
       end
 
       it 'removes html tags for uncommon syntax' do
@@ -189,15 +189,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       it 'removes any html tags' do
-        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<xyz src=javascript:alert(1208)></xzy>\")")).to eq('hello')
+        expect(@driver.execute_script('return Format.formatStringCleansed("hello<xyz src=javascript:alert(1208)></xzy>")')).to eq('hello')
       end
 
       it 'removes any html tags shorm form 1' do
-        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<xyz src=javascript:alert(1208) />\")")).to eq('hello')
+        expect(@driver.execute_script('return Format.formatStringCleansed("hello<xyz src=javascript:alert(1208) />")')).to eq('hello')
       end
 
       it 'removes any html tags shorm form 2' do
-        expect(@driver.execute_script("return Format.formatStringCleansed(\"hello<xyz src=javascript:alert(1208) >\")")).to eq('hello')
+        expect(@driver.execute_script('return Format.formatStringCleansed("hello<xyz src=javascript:alert(1208) >")')).to eq('hello')
       end
     end
 

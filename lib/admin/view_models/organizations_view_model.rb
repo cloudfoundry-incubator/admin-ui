@@ -148,9 +148,11 @@ module AdminUI
         organization_id = space[:organization_id]
         organization_route_counters = organization_route_counters_hash[organization_id]
         if organization_route_counters.nil?
-          organization_route_counters = { 'total_routes'  => 0,
-                                          'unused_routes' => 0
-                                        }
+          organization_route_counters =
+            {
+              'total_routes'  => 0,
+              'unused_routes' => 0
+            }
           organization_route_counters_hash[organization_id] = organization_route_counters
         end
 
@@ -192,14 +194,16 @@ module AdminUI
         organization_id = space[:organization_id]
         organization_app_counters = organization_app_counters_hash[organization_id]
         if organization_app_counters.nil?
-          organization_app_counters = { 'total'           => 0,
-                                        'reserved_memory' => 0,
-                                        'reserved_disk'   => 0,
-                                        'used_memory'     => 0,
-                                        'used_disk'       => 0,
-                                        'used_cpu'        => 0,
-                                        'instances'       => 0
-                                      }
+          organization_app_counters =
+            {
+              'total'           => 0,
+              'reserved_memory' => 0,
+              'reserved_disk'   => 0,
+              'used_memory'     => 0,
+              'used_disk'       => 0,
+              'used_cpu'        => 0,
+              'instances'       => 0
+            }
           organization_app_counters_hash[organization_id] = organization_app_counters
         end
 
@@ -386,10 +390,10 @@ module AdminUI
         items.push(row)
 
         hash[organization_guid] =
-        {
-          'organization'     => organization,
-          'quota_definition' => quota
-        }
+          {
+            'organization'     => organization,
+            'quota_definition' => quota
+          }
       end
 
       result(true, items, hash, (1..31).to_a, (1..5).to_a << 10)

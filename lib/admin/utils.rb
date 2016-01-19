@@ -4,19 +4,20 @@ require 'uri'
 
 module AdminUI
   class Utils
-    HTTP_DELETE = 'DELETE'
-    HTTP_GET    = 'GET'
-    HTTP_HEAD   = 'HEAD'
-    HTTP_PUT    = 'PUT'
-    HTTP_POST   = 'POST'
+    HTTP_DELETE = 'DELETE'.freeze
+    HTTP_GET    = 'GET'.freeze
+    HTTP_HEAD   = 'HEAD'.freeze
+    HTTP_PUT    = 'PUT'.freeze
+    HTTP_POST   = 'POST'.freeze
 
-    HTTP_METHODS_MAP = {
-      HTTP_DELETE => Net::HTTP::Delete,
-      HTTP_GET    => Net::HTTP::Get,
-      HTTP_HEAD   => Net::HTTP::Head,
-      HTTP_PUT    => Net::HTTP::Put,
-      HTTP_POST   => Net::HTTP::Post
-    }
+    HTTP_METHODS_MAP =
+      {
+        HTTP_DELETE => Net::HTTP::Delete,
+        HTTP_GET    => Net::HTTP::Get,
+        HTTP_HEAD   => Net::HTTP::Head,
+        HTTP_PUT    => Net::HTTP::Put,
+        HTTP_POST   => Net::HTTP::Post
+      }.freeze
 
     def self.time_in_milliseconds(time = Time.now)
       (time.to_f * 1000).to_i
@@ -33,7 +34,7 @@ module AdminUI
       path += "?#{uri.query}" unless uri.query.nil?
 
       http             = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl     = uri.scheme.to_s.downcase == 'https'
+      http.use_ssl     = uri.scheme.to_s.casecmp('https') == 0
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE if config.cloud_controller_ssl_verify_none
       request          = get_method_class(method).new(path)
 

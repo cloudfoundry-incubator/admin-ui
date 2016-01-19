@@ -272,11 +272,11 @@ module AdminUI
         items.push(row)
 
         hash[guid] =
-        {
-          'organization'   => organization,
-          'service_broker' => service_broker,
-          'space'          => space
-        }
+          {
+            'organization'   => organization,
+            'service_broker' => service_broker,
+            'space'          => space
+          }
       end
 
       result(true, items, hash, (1..14).to_a, [1, 2, 3, 4, 6, 14])

@@ -29,7 +29,8 @@ describe AdminUI::Admin do
   let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
 
   let(:config) do
-    { ccdb_uri:                  ccdb_uri,
+    {
+      ccdb_uri:                  ccdb_uri,
       cloud_controller_uri:      cloud_controller_uri,
       data_file:                 data_file,
       db_uri:                    "sqlite://#{db_file}",
