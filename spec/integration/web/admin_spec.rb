@@ -30,7 +30,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     end
 
     def refresh_button
-      @driver.find_element(id: 'MenuButtonRefresh').click
+      # TODO: Bug in selenium-webdriver 2.49.0.  Entire item must be displayed for it to click.  Workaround following two lines after commented out code
+      # @driver.find_element(id: 'MenuButtonRefresh').click
+      element = @driver.find_element(id: 'MenuButtonRefresh')
+      @driver.execute_script('arguments[0].click();', element)
+
       true
     end
 
