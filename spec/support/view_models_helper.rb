@@ -172,7 +172,7 @@ module ViewModelsHelper
         uaa_client[:authorized_grant_types].split(',').sort,
         uaa_client[:web_server_redirect_uri].split(',').sort,
         uaa_client[:authorities].split(',').sort,
-        uaa_client_autoapprove,
+        [uaa_client_autoapprove.to_s],
         1,
         cc_service_broker[:name]
       ]

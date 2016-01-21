@@ -2169,7 +2169,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_client[:authorized_grant_types],
                              uaa_client[:web_server_redirect_uri],
                              uaa_client[:authorities],
-                             @driver.execute_script("return Format.formatBoolean(#{uaa_client_autoapprove})"),
+                             uaa_client_autoapprove.to_s,
                              '1',
                              cc_service_broker[:name]
                            ])
@@ -2191,7 +2191,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Authorized Grant Type',  tag:   nil, value: uaa_client[:authorized_grant_types] },
                            { label: 'Redirect URI',           tag:   nil, value: uaa_client[:web_server_redirect_uri] },
                            { label: 'Authority',              tag:   nil, value: uaa_client[:authorities] },
-                           { label: 'Auto Approve',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_client_autoapprove})") },
+                           { label: 'Auto Approve',           tag:   nil, value: uaa_client_autoapprove.to_s },
                            { label: 'Events',                 tag:   'a', value: '1' },
                            { label: 'Additional Information', tag:   nil, value: uaa_client[:additional_information] },
                            { label: 'Service Broker',         tag:   'a', value: cc_service_broker[:name] }

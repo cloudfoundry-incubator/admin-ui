@@ -45,7 +45,7 @@ module AdminUI
           {
             db_uri:  uaadb_uri,
             table:   :oauth_client_details,
-            columns: [:additional_information, :authorities, :authorized_grant_types, :client_id, :identity_zone_id, :scope, :web_server_redirect_uri]
+            columns: [:additional_information, :authorities, :authorized_grant_types, :autoapprove, :client_id, :identity_zone_id, :scope, :web_server_redirect_uri]
           },
           domains:
           {

@@ -89,16 +89,20 @@ module AdminUI
           row.push(nil)
         end
 
-        if client[:additional_information]
+        # Have to deal with both the old additional_information and the new autoapprove fields
+        autoapprove = nil
+        if client[:autoapprove] && client[:autoapprove].length > 0
+          autoapprove = client[:autoapprove].split(',').sort
+        elsif client[:additional_information]
           begin
             json = Yajl::Parser.parse(client[:additional_information])
-            row.push(json['autoapprove'])
+            json_autoapprove = json['autoapprove']
+            autoapprove = [json_autoapprove.to_s] unless json_autoapprove.nil?
           rescue
-            row.push(nil)
+            autoapprove = nil
           end
-        else
-          row.push(nil)
         end
+        row.push(autoapprove)
 
         if event_counter
           row.push(event_counter)

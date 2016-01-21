@@ -966,6 +966,7 @@ module CCHelper
       additional_information:  "{\"autoapprove\":#{uaa_client_autoapprove}}",
       authorities:             'auth1',
       authorized_grant_types:  'grant1',
+      autoapprove:             uaa_client_autoapprove.to_s,
       client_id:               'client1',
       identity_zone_id:        uaa_identity_zone[:id],
       scope:                   'scope1',
