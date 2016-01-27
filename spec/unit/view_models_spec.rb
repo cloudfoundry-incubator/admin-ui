@@ -164,6 +164,14 @@ describe AdminUI::ViewModels do
       verify_disconnected_items(view_models.gateways)
     end
 
+    it 'returns nil group as expected' do
+      expect(view_models.group('bogus')).to be_nil
+    end
+
+    it 'returns zero groups as expected' do
+      verify_disconnected_items(view_models.groups)
+    end
+
     it 'returns nil health_manager as expected' do
       expect(view_models.health_manager('bogus')).to be_nil
     end

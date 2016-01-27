@@ -209,6 +209,18 @@ module AdminUI
       404
     end
 
+    get '/groups_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/groups_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.groups, params).items)
+    end
+
+    get '/groups_view_model/:guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/groups_view_model/#{params[:guid]}")
+      result = @view_models.group(params[:guid])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/health_managers_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/health_managers_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.health_managers, params).items)
@@ -658,6 +670,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'gateways.csv')
+    end
+
+    post '/groups_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/groups_view_model')
+      file = Download.download(request.body.read, 'groups', @view_models.groups)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'groups.csv')
     end
 
     post '/health_managers_view_model', auth: [:user] do

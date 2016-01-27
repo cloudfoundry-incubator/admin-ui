@@ -303,6 +303,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected groups_view_model' do
+      let(:results)  { view_models.groups }
+      let(:expected) { view_models_groups }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected groups_view_model detail' do
+      let(:results)  { view_models.group(uaa_group[:id]) }
+      let(:expected) { view_models_groups_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected health_managers_view_model' do
       let(:results)  { view_models.health_managers }
       let(:expected) { view_models_health_managers }

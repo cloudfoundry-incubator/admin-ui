@@ -13,6 +13,7 @@ require_relative 'view_models/domains_view_model'
 require_relative 'view_models/events_view_model'
 require_relative 'view_models/feature_flags_view_model'
 require_relative 'view_models/gateways_view_model'
+require_relative 'view_models/groups_view_model'
 require_relative 'view_models/health_managers_view_model'
 require_relative 'view_models/identity_providers_view_model'
 require_relative 'view_models/identity_zones_view_model'
@@ -60,6 +61,7 @@ module AdminUI
           events:                    { clazz: AdminUI::EventsViewModel },
           feature_flags:             { clazz: AdminUI::FeatureFlagsViewModel },
           gateways:                  { clazz: AdminUI::GatewaysViewModel },
+          groups:                    { clazz: AdminUI::GroupsViewModel },
           health_managers:           { clazz: AdminUI::HealthManagersViewModel },
           identity_providers:        { clazz: AdminUI::IdentityProvidersViewModel },
           identity_zones:            { clazz: AdminUI::IdentityZonesViewModel },
@@ -314,6 +316,14 @@ module AdminUI
 
     def gateways
       result_cache(:gateways)
+    end
+
+    def group(guid)
+      details(:groups, guid)
+    end
+
+    def groups
+      result_cache(:groups)
     end
 
     def health_manager(name)

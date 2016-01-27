@@ -60,6 +60,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('SpaceRoles').displayed?).to be(true)
       expect(scroll_tab_into_view('Clients').displayed?).to be(true)
       expect(scroll_tab_into_view('Users').displayed?).to be(true)
+      expect(scroll_tab_into_view('Groups').displayed?).to be(true)
       expect(scroll_tab_into_view('Buildpacks').displayed?).to be(true)
       expect(scroll_tab_into_view('Domains').displayed?).to be(true)
       expect(scroll_tab_into_view('FeatureFlags').displayed?).to be(true)
@@ -2277,7 +2278,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Given Name',                         tag:   nil, value: uaa_user[:givenname] },
                            { label: 'Active',                             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_user[:active]})") },
                            { label: 'Version',                            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_user[:version]})") },
-                           { label: 'Group',                              tag:   nil, value: uaa_group[:displayname] },
+                           { label: 'Group',                              tag:   'a', value: uaa_group[:displayname] },
                            { label: 'Events',                             tag:   'a', value: '1' },
                            { label: 'Organization Total Roles',           tag:   'a', value: '4' },
                            { label: 'Organization Auditor Roles',         tag:   nil, value: '1' },
@@ -2295,6 +2296,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Users', 0, 'IdentityZones', uaa_identity_zone[:id])
           end
 
+          it 'has groups link' do
+            check_filter_link('Users', 11, 'Groups', uaa_group[:displayname])
+          end
+
           it 'has events link' do
             check_filter_link('Users', 12, 'Events', uaa_user[:id])
           end
@@ -2305,6 +2310,59 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has space roles link' do
             check_filter_link('Users', 18, 'SpaceRoles', uaa_user[:id])
+          end
+        end
+      end
+
+      context 'Groups' do
+        let(:tab_id) { 'Groups' }
+
+        it 'has a table' do
+          check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='GroupsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                expected_length: 7,
+                                labels:          ['Identity Zone', 'Name', 'GUID', 'Created', 'Updated', 'Version', 'Members'],
+                                colspans:        nil
+                              }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='GroupsTable']/tbody/tr/td"),
+                           [
+                             uaa_identity_zone[:name],
+                             uaa_group[:name],
+                             uaa_group[:id],
+                             uaa_group[:created].to_datetime.rfc3339,
+                             uaa_group[:lastmodified].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatNumber(#{uaa_group[:version]})"),
+                             '1'
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_GroupsTable_0')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([{ label: 'Identity Zone', tag:   'a', value: uaa_identity_zone[:name] },
+                           { label: 'Name',          tag: 'div', value: uaa_group[:displayname] },
+                           { label: 'GUID',          tag:   nil, value: uaa_group[:id] },
+                           { label: 'Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_group[:created].to_datetime.rfc3339}\")") },
+                           { label: 'Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_group[:lastmodified].to_datetime.rfc3339}\")") },
+                           { label: 'Version',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_group[:version]})") },
+                           { label: 'Members',       tag:   'a', value: '1' }
+                          ])
+          end
+
+          it 'has identity zones link' do
+            check_filter_link('Groups', 0, 'IdentityZones', uaa_identity_zone[:id])
+          end
+
+          it 'has userslink' do
+            check_filter_link('Groups', 6, 'Users', uaa_group[:displayname])
           end
         end
       end

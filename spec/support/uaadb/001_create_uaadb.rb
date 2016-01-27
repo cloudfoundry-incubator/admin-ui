@@ -33,6 +33,7 @@ Sequel.migration do
       String :code, :size=>255, :null=>false
       Bignum :expiresat, :null=>false
       String :data, :text=>true, :null=>false
+      String :intent, :text=>true
       
       primary_key [:code]
     end
@@ -181,6 +182,7 @@ Sequel.migration do
       String :identity_zone_id, :default=>"uaa", :size=>36, :null=>false
       String :salt, :size=>36
       DateTime :passwd_lastmodified
+      TrueClass :legacy_verification_behavior, :default=>false, :null=>false
       
       primary_key [:id]
       

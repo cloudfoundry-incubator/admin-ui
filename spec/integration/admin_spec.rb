@@ -1344,6 +1344,18 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
+    context 'groups_view_model' do
+      let(:path)              { '/groups_view_model' }
+      let(:view_model_source) { view_models_groups }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'groups_view_model detail' do
+      let(:path)              { "/groups_view_model/#{uaa_group[:id]}" }
+      let(:view_model_source) { view_models_groups_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'health_managers_view_model' do
       let(:path)              { '/health_managers_view_model' }
       let(:view_model_source) { view_models_health_managers }

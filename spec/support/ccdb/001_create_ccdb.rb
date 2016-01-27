@@ -441,6 +441,22 @@ Sequel.migration do
       index [:updated_at], :name=>:sqd_updated_at_index
     end
     
+    create_table(:tasks, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :name, :null=>false
+      String :command, :text=>true, :null=>false
+      String :state, :text=>true, :null=>false
+      foreign_key :app_id, :apps_v3, :null=>false, :key=>[:id]
+      foreign_key :droplet_id, :v3_droplets, :null=>false, :key=>[:id]
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
     create_table(:organizations_private_domains, :ignore_index_errors=>true) do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :private_domain_id, :domains, :null=>false, :key=>[:id]
@@ -599,8 +615,15 @@ Sequel.migration do
     create_table(:apps_routes, :ignore_index_errors=>true) do
       foreign_key :app_id, :apps, :null=>false, :key=>[:id]
       foreign_key :route_id, :routes, :null=>false, :key=>[:id]
+      primary_key :id, :keep_order=>true
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      Integer :app_port
+      String :guid, :text=>true
       
-      index [:app_id, :route_id], :name=>:ar_app_id_route_id_index, :unique=>true
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
     
     create_table(:apps_v3_routes, :ignore_index_errors=>true) do

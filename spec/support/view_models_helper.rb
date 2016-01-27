@@ -381,6 +381,27 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_groups
+    [
+      [
+        uaa_identity_zone[:name],
+        uaa_group[:displayname],
+        uaa_group[:id],
+        uaa_group[:created].to_datetime.rfc3339,
+        uaa_group[:lastmodified].to_datetime.rfc3339,
+        uaa_group[:version],
+        1
+      ]
+    ]
+  end
+
+  def view_models_groups_detail
+    {
+      'group'         => uaa_group,
+      'identity_zone' => uaa_identity_zone
+    }
+  end
+
   def view_models_health_managers
     [
       [
