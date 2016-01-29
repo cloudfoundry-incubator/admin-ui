@@ -77,6 +77,20 @@ describe AdminUI::CC, type: :integration do
       expect(cc.feature_flags['items'].length).to eq(0)
     end
 
+    it 'clears the group_membership cache' do
+      expect(cc.group_membership['items'].length).to eq(1)
+      uaa_clear_group_membership_cache_stub(config)
+      cc.invalidate_group_membership
+      expect(cc.group_membership['items'].length).to eq(0)
+    end
+
+    it 'clears the groups cache' do
+      expect(cc.groups['items'].length).to eq(1)
+      uaa_clear_groups_cache_stub(config)
+      cc.invalidate_groups
+      expect(cc.groups['items'].length).to eq(0)
+    end
+
     it 'clears the organizations cache' do
       expect(cc.organizations['items'].length).to eq(1)
       cc_clear_organizations_cache_stub(config)
@@ -222,6 +236,20 @@ describe AdminUI::CC, type: :integration do
       cc_clear_spaces_cache_stub(config)
       cc.invalidate_spaces_managers
       expect(cc.spaces_managers['items'].length).to eq(0)
+    end
+
+    it 'clears the users_cc cache' do
+      expect(cc.users_cc['items'].length).to eq(1)
+      cc_clear_users_cache_stub(config)
+      cc.invalidate_users_cc
+      expect(cc.users_cc['items'].length).to eq(0)
+    end
+
+    it 'clears the users_uaa cache' do
+      expect(cc.users_uaa['items'].length).to eq(1)
+      uaa_clear_users_cache_stub(config)
+      cc.invalidate_users_uaa
+      expect(cc.users_uaa['items'].length).to eq(0)
     end
 
     shared_examples 'common cc retrieval' do

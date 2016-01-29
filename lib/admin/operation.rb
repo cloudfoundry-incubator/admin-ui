@@ -58,6 +58,14 @@ module AdminUI
       @view_models.invalidate_buildpacks
     end
 
+    def delete_client(client_id)
+      url = "oauth/clients/#{client_id}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_uaa(url)
+      @cc.invalidate_clients
+      @view_models.invalidate_clients
+    end
+
     def delete_domain(domain_guid, recursive)
       url = "v2/domains/#{domain_guid}"
       url += '?recursive=true' if recursive
@@ -68,6 +76,15 @@ module AdminUI
       return unless recursive
       @cc.invalidate_routes
       @view_models.invalidate_routes
+    end
+
+    def delete_group(group_guid)
+      url = "Groups/#{group_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_uaa(url)
+      @cc.invalidate_groups
+      @cc.invalidate_group_membership
+      @view_models.invalidate_groups
     end
 
     def delete_organization(organization_guid, recursive)
@@ -297,6 +314,33 @@ module AdminUI
       @cc.invalidate_spaces_developers if role == 'developers'
       @cc.invalidate_spaces_managers if role == 'managers'
       @view_models.invalidate_space_roles
+    end
+
+    def delete_user(user_guid)
+      url = "v2/users/#{user_guid}"
+      @logger.debug("DELETE #{url}")
+
+      cc_error = nil
+      begin
+        @client.delete_cc(url)
+        @cc.invalidate_users_cc
+      rescue CCRestClientResponseError => error
+        # If we receive a 404 since the user is not within the CC, it still might be in UAA
+        raise unless error.http_code == '404'
+        cc_error = error
+      end
+
+      url = "Users/#{user_guid}"
+      @logger.debug("DELETE #{url}")
+      begin
+        @client.delete_uaa(url)
+        @cc.invalidate_users_uaa
+        @cc.invalidate_group_membership
+        @view_models.invalidate_users
+      rescue CCRestClientResponseError => error
+        raise cc_error if error.http_code == '404' && cc_error
+        raise error
+      end
     end
 
     def manage_application(app_guid, control_message)

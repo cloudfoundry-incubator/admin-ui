@@ -306,6 +306,37 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage client' do
+      before do
+        expect(cc.clients['items'].length).to eq(1)
+      end
+
+      def delete_client
+        operation.delete_client(uaa_client[:client_id])
+      end
+
+      it 'deletes client' do
+        expect { delete_client }.to change { cc.clients['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_client
+        end
+
+        def verify_client_not_found(exception)
+          expect(exception.cf_code).to eq(nil)
+          expect(exception.cf_error_code).to eq(nil)
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq('Not Found')
+        end
+
+        it 'fails deleting deleted client' do
+          expect { delete_client }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_client_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage domain' do
       before do
         expect(cc.domains['items'].length).to eq(1)
@@ -389,6 +420,37 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails enabling deleted feature_flag' do
           expect { enable_feature_flag }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_feature_flag_not_found(exception) }
+        end
+      end
+    end
+
+    context 'manage group' do
+      before do
+        expect(cc.groups['items'].length).to eq(1)
+      end
+
+      def delete_group
+        operation.delete_group(uaa_group[:id])
+      end
+
+      it 'deletes group' do
+        expect { delete_group }.to change { cc.groups['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_group
+        end
+
+        def verify_group_not_found(exception)
+          expect(exception.cf_code).to eq(nil)
+          expect(exception.cf_error_code).to eq(nil)
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("Group #{uaa_group[:id]} does not exist")
+        end
+
+        it 'fails deleting deleted group' do
+          expect { delete_group }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_group_not_found(exception) }
         end
       end
     end
@@ -1227,6 +1289,39 @@ describe AdminUI::Operation, type: :integration do
 
         it 'failed deleting space manager role due to deleted space' do
           expect { delete_space_manager }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
+        end
+      end
+    end
+
+    context 'manage user' do
+      before do
+        expect(cc.users_cc['items'].length).to eq(1)
+        expect(cc.users_uaa['items'].length).to eq(1)
+      end
+
+      def delete_user
+        operation.delete_user(cc_user[:guid])
+      end
+
+      it 'deletes user' do
+        expect { delete_user }.to change { cc.users_uaa['items'].length }.from(1).to(0)
+        expect(cc.users_uaa['items'].length).to eq(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_user
+        end
+
+        def verify_user_not_found(exception)
+          expect(exception.cf_code).to eq(20_003)
+          expect(exception.cf_error_code).to eq('CF-UserNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The user could not be found: #{cc_user[:guid]}")
+        end
+
+        it 'fails deleting deleted user' do
+          expect { delete_user }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_user_not_found(exception) }
         end
       end
     end

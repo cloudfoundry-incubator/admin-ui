@@ -57,6 +57,8 @@ module AdminUI
 
         row = []
 
+        row.push(client_id)
+
         if identity_zone
           row.push(identity_zone[:name])
         else
@@ -128,7 +130,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (0..8).to_a, (0..6).to_a << 8)
+      result(true, items, hash, (1..9).to_a, (1..7).to_a << 9)
     end
   end
 end

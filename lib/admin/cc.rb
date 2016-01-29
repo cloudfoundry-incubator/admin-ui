@@ -371,6 +371,14 @@ module AdminUI
       invalidate_cache(:feature_flags)
     end
 
+    def invalidate_groups
+      invalidate_cache(:groups)
+    end
+
+    def invalidate_group_membership
+      invalidate_cache(:group_membership)
+    end
+
     def invalidate_organizations
       invalidate_cache(:organizations)
     end
@@ -453,6 +461,14 @@ module AdminUI
 
     def invalidate_spaces_managers
       invalidate_cache(:spaces_managers)
+    end
+
+    def invalidate_users_cc
+      invalidate_cache(:users_cc)
+    end
+
+    def invalidate_users_uaa
+      invalidate_cache(:users_uaa)
     end
 
     def organizations

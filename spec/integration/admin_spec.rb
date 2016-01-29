@@ -350,6 +350,29 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage client' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/clients_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_client
+      response = delete_request("/clients/#{uaa_client[:client_id]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/clients/#{uaa_client[:client_id]}"]])
+    end
+
+    it 'has user name and clients request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/clients_view_model']], true)
+    end
+
+    it 'deletes a client' do
+      expect { delete_client }.to change { get_json('/clients_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage cloud controller' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -483,6 +506,29 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a gateway' do
       expect { delete_gateway }.to change { get_json('/gateways_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
+  context 'manage group' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/groups_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_group
+      response = delete_request("/groups/#{uaa_group[:id]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/groups/#{uaa_group[:id]}"]])
+    end
+
+    it 'has user name and groups request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/groups_view_model']], true)
+    end
+
+    it 'deletes a group' do
+      expect { delete_group }.to change { get_json('/groups_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -1121,6 +1167,29 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a space role' do
       expect { delete_space_role }.to change { get_json('/space_roles_view_model')['items']['items'].length }.from(3).to(2)
+    end
+  end
+
+  context 'manage user' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/users_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_user
+      response = delete_request("/users/#{uaa_user[:id]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/users/#{uaa_user[:id]}"]])
+    end
+
+    it 'has user name and users request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/users_view_model']], true)
+    end
+
+    it 'deletes a user' do
+      expect { delete_user }.to change { get_json('/users_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 

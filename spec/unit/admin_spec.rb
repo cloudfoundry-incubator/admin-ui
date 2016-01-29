@@ -337,6 +337,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete buildpack')
     end
 
+    shared_examples 'common delete client' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/clients/client1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete client via http' do
+      it_behaves_like('common delete client')
+    end
+
+    context 'delete client via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete client')
+    end
+
     shared_examples 'common delete domain' do
       it 'returns failure code due to disconnection' do
         response = delete('/domains/domain1')
@@ -369,6 +386,23 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete domain recursive')
+    end
+
+    shared_examples 'common delete group' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/groups/group1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete group via http' do
+      it_behaves_like('common delete group')
+    end
+
+    context 'delete group via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete group')
     end
 
     shared_examples 'common delete organization' do
@@ -760,6 +794,23 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete space role')
+    end
+
+    shared_examples 'common delete user' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/users/user1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete user via http' do
+      it_behaves_like('common delete user')
+    end
+
+    context 'delete user via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete user')
     end
 
     shared_examples 'common manage application' do
@@ -1659,6 +1710,10 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/buildpacks/buildpack1')
       end
 
+      it 'deletes /clients/:id redirects as expected' do
+        delete_redirects_as_expected('/clients/client1')
+      end
+
       it 'deletes /components/?uri redirects as expected' do
         delete_redirects_as_expected('/components?uri=uri1')
       end
@@ -1673,6 +1728,10 @@ describe AdminUI::Admin do
 
       it 'deletes /doppler_components/?uri redirects as expected' do
         delete_redirects_as_expected('/doppler_components?uri=uri1')
+      end
+
+      it 'deletes /groups/:guid redirects as expected' do
+        delete_redirects_as_expected('/groups/group1')
       end
 
       it 'deletes /organizations/:guid redirects as expected' do
@@ -1765,6 +1824,10 @@ describe AdminUI::Admin do
 
       it 'deletes /spaces/:guid/:role/:guid redirects as expected' do
         delete_redirects_as_expected('/spaces/space1/auditors/user1')
+      end
+
+      it 'deletes /users/:guid redirects as expected' do
+        delete_redirects_as_expected('/users/user1')
       end
 
       it 'posts /application_instances_view_model redirects as expected' do

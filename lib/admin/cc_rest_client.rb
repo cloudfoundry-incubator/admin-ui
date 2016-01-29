@@ -19,6 +19,10 @@ module AdminUI
       cf_request(get_cc_url(path), Utils::HTTP_DELETE)
     end
 
+    def delete_uaa(path)
+      cf_request(get_uaa_token_endpoint_url(path), Utils::HTTP_DELETE)
+    end
+
     def get_cc(path)
       uri = get_cc_url(path)
       resources = []
@@ -72,9 +76,7 @@ module AdminUI
     end
 
     def get_uaa(path)
-      info
-
-      uri = "#{@token_endpoint}/#{path}"
+      uri = get_uaa_token_endpoint_url(path)
 
       resources = []
       loop do
@@ -83,7 +85,7 @@ module AdminUI
         total_results = json['totalResults']
         start_index = resources.length + 1
         return resources unless total_results > start_index
-        uri = "#{@token_endpoint}/#{path}?startIndex=#{start_index}"
+        uri = get_uaa_token_endpoint_url("#{path}?startIndex=#{start_index}")
       end
 
       resources
@@ -157,6 +159,12 @@ module AdminUI
     def get_cc_url(path)
       return "#{@config.cloud_controller_uri}#{path}" if path && path[0] == '/'
       "#{@config.cloud_controller_uri}/#{path}"
+    end
+
+    def get_uaa_token_endpoint_url(path)
+      info
+      return "#{@token_endpoint}#{path}" if path && path[0] == '/'
+      "#{@token_endpoint}/#{path}"
     end
 
     def login

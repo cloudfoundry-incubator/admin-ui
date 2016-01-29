@@ -15,6 +15,7 @@ module AdminUI
 
       if hash.is_a?(Hash)
         message        = hash['description']
+        message        = hash['message'] if message.nil? # This handles UAA cases
         @cf_code       = hash['code']
         @cf_error_code = hash['error_code']
       end

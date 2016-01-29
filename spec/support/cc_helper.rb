@@ -64,6 +64,10 @@ module CCHelper
     @cc_service_plan_visibilities_deleted = false
     @cc_space_quota_definitions_deleted   = false
     @cc_spaces_deleted                    = false
+    @cc_users_deleted                     = false
+    @uaa_groups_deleted                   = false
+    @uaa_users_deleted                    = false
+    @uaa_clients_deleted                  = false
 
     @cc_organization_created = false
 
@@ -89,6 +93,11 @@ module CCHelper
     cc_service_plan_visibility_stubs(config)
     cc_space_stubs(config)
     cc_space_quota_definition_stubs(config)
+    cc_user_stubs(config)
+
+    uaa_client_stubs(config)
+    uaa_group_stubs(config)
+    uaa_user_stubs(config)
   end
 
   def cc_clear_apps_cache_stub(config)
@@ -243,8 +252,42 @@ module CCHelper
     @cc_spaces_deleted = true
   end
 
+  def cc_clear_users_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM spaces_auditors')
+    sql(config.ccdb_uri, 'DELETE FROM spaces_developers')
+    sql(config.ccdb_uri, 'DELETE FROM spaces_managers')
+    sql(config.ccdb_uri, 'DELETE FROM organizations_auditors')
+    sql(config.ccdb_uri, 'DELETE FROM organizations_billing_managers')
+    sql(config.ccdb_uri, 'DELETE FROM organizations_managers')
+    sql(config.ccdb_uri, 'DELETE FROM organizations_users')
+    sql(config.ccdb_uri, 'DELETE FROM users')
+
+    @cc_users_deleted = true
+  end
+
   def uaa_clear_clients_cache_stub(config)
     sql(config.uaadb_uri, 'DELETE FROM oauth_client_details')
+
+    @uaa_clients_deleted = true
+  end
+
+  def uaa_clear_group_membership_cache_stub(config)
+    sql(config.uaadb_uri, 'DELETE FROM group_membership')
+  end
+
+  def uaa_clear_groups_cache_stub(config)
+    uaa_clear_group_membership_cache_stub(config)
+
+    sql(config.uaadb_uri, 'DELETE FROM groups')
+
+    @uaa_groups_deleted = true
+  end
+
+  def uaa_clear_users_cache_stub(config)
+    sql(config.uaadb_uri, 'DELETE FROM group_membership')
+    sql(config.uaadb_uri, 'DELETE FROM users')
+
+    @uaa_users_deleted = true
   end
 
   def cc_app
@@ -1804,6 +1847,68 @@ module CCHelper
       else
         sql(config.ccdb_uri, 'UPDATE spaces SET space_quota_definition_id = null')
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_user_not_found
+    NotFound.new('code'        => 20_003,
+                 'description' => "The user could not be found: #{cc_user[:guid]}",
+                 'error_code'  => 'CF-UserNotFound')
+  end
+
+  def cc_user_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/users/#{cc_user[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_users_deleted
+        cc_user_not_found
+      else
+        cc_clear_users_cache_stub(config)
+        OK.new({})
+      end
+    end
+  end
+
+  def uaa_client_not_found
+    NotFound.new('message' => 'Not Found')
+  end
+
+  def uaa_client_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info['token_endpoint']}/oauth/clients/#{uaa_client[:client_id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @uaa_clients_deleted
+        uaa_client_not_found
+      else
+        uaa_clear_clients_cache_stub(config)
+        OK.new({})
+      end
+    end
+  end
+
+  def uaa_group_not_found
+    NotFound.new('message' => "Group #{uaa_group[:id]} does not exist")
+  end
+
+  def uaa_group_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info['token_endpoint']}/Groups/#{uaa_group[:id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @uaa_groups_deleted
+        uaa_group_not_found
+      else
+        uaa_clear_groups_cache_stub(config)
+        OK.new({})
+      end
+    end
+  end
+
+  def uaa_user_not_found
+    NotFound.new('message' => "User #{uaa_user[:id]} does not exist")
+  end
+
+  def uaa_user_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info['token_endpoint']}/Users/#{uaa_user[:id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @uaa_users_deleted
+        uaa_user_not_found
+      else
+        uaa_clear_users_cache_stub(config)
+        OK.new({})
       end
     end
   end

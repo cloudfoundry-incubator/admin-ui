@@ -122,6 +122,10 @@ module AdminUI
       invalidate_cache(:cells)
     end
 
+    def invalidate_clients
+      invalidate_cache(:clients)
+    end
+
     def invalidate_cloud_controllers
       invalidate_cache(:cloud_controllers)
     end
@@ -144,6 +148,10 @@ module AdminUI
 
     def invalidate_gateways
       invalidate_cache(:gateways)
+    end
+
+    def invalidate_groups
+      invalidate_cache(:groups)
     end
 
     def invalidate_health_managers
@@ -220,6 +228,10 @@ module AdminUI
 
     def invalidate_stats
       invalidate_cache(:stats)
+    end
+
+    def invalidate_users
+      invalidate_cache(:users)
     end
 
     def application_instance(app_guid, instance_index, instance_id)

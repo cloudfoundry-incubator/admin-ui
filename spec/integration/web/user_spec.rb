@@ -124,6 +124,30 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Clients tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Clients' }
+        let(:page_id)   { 'ClientsPage' }
+        let(:button_id) { 'Buttons_ClientsTable_0' }
+      end
+    end
+
+    context 'Users tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Users' }
+        let(:page_id)   { 'UsersPage' }
+        let(:button_id) { 'Buttons_UsersTable_0' }
+      end
+    end
+
+    context 'Groups tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Groups' }
+        let(:page_id)   { 'GroupsPage' }
+        let(:button_id) { 'Buttons_GroupsTable_0' }
+      end
+    end
+
     context 'Buildpacks tab does not have rename, enable, disable, lock, unlock or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Buildpacks' }

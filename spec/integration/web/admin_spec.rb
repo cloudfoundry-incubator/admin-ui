@@ -2152,18 +2152,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
       context 'Clients' do
         let(:tab_id)     { 'Clients' }
+        let(:table_id)   { 'ClientsTable' }
         let(:event_type) { 'service_dashboard_client' }
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                expected_length: 9,
-                                labels:          ['Identity Zone', 'Identifier', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Service Broker'],
+                                expected_length: 10,
+                                labels:          ['', 'Identity Zone', 'Identifier', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Service Broker'],
                                 colspans:        nil
                               }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='ClientsTable']/tbody/tr/td"),
                            [
+                             '',
                              uaa_identity_zone[:name],
                              uaa_client[:client_id],
                              uaa_client[:scope],
@@ -2177,7 +2179,30 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ClientsTable_0')
+          check_allowscriptaccess_attribute('Buttons_ClientsTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('ClientsTable', uaa_client[:client_id])
+        end
+
+        context 'manage clients' do
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_ClientsTable_0').text).to eq('Delete')
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_ClientsTable_0' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_ClientsTable_0' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected clients?' }
+            end
+          end
         end
 
         context 'selectable' do
@@ -2214,24 +2239,26 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       context 'Users' do
-        let(:tab_id) { 'Users' }
+        let(:tab_id)   { 'Users' }
+        let(:table_id) { 'UsersTable' }
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                expected_length: 3,
-                                labels:          ['', 'Organization Roles', 'Space Roles', ''],
-                                colspans:        %w(13 5 4)
+                                expected_length: 4,
+                                labels:          ['', '', 'Organization Roles', 'Space Roles', ''],
+                                colspans:        %w(1 13 5 4)
                               },
                               {
                                 columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                expected_length: 22,
-                                labels:          ['Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
+                                expected_length: 23,
+                                labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
                                 colspans:        nil
                               }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='UsersTable']/tbody/tr/td"),
                            [
+                             '',
                              uaa_identity_zone[:name],
                              uaa_user[:username],
                              uaa_user[:id],
@@ -2258,7 +2285,30 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_UsersTable_0')
+          check_allowscriptaccess_attribute('Buttons_UsersTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('UsersTable', uaa_user[:id])
+        end
+
+        context 'manage users' do
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_UsersTable_0').text).to eq('Delete')
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_UsersTable_0' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_UsersTable_0' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected users?' }
+            end
+          end
         end
 
         context 'selectable' do
@@ -2315,18 +2365,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       context 'Groups' do
-        let(:tab_id) { 'Groups' }
+        let(:tab_id)   { 'Groups' }
+        let(:table_id) { 'GroupsTable' }
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='GroupsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                expected_length: 7,
-                                labels:          ['Identity Zone', 'Name', 'GUID', 'Created', 'Updated', 'Version', 'Members'],
+                                expected_length: 8,
+                                labels:          ['', 'Identity Zone', 'Name', 'GUID', 'Created', 'Updated', 'Version', 'Members'],
                                 colspans:        nil
                               }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='GroupsTable']/tbody/tr/td"),
                            [
+                             '',
                              uaa_identity_zone[:name],
                              uaa_group[:name],
                              uaa_group[:id],
@@ -2338,7 +2390,30 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_GroupsTable_0')
+          check_allowscriptaccess_attribute('Buttons_GroupsTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('GroupsTable', uaa_group[:id])
+        end
+
+        context 'manage groups' do
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_GroupsTable_0').text).to eq('Delete')
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_GroupsTable_0' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_GroupsTable_0' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected groups?' }
+            end
+          end
         end
 
         context 'selectable' do

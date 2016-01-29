@@ -1173,6 +1173,23 @@ module AdminUI
       end
     end
 
+    delete '/clients/:client_id', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/clients/#{params[:client_id]}")
+      begin
+        @operation.delete_client(params[:client_id])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete client: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete client: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/components', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/components?uri=#{params[:uri]}")
       begin
@@ -1212,6 +1229,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete domain: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/groups/:group_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/groups/#{params[:group_guid]}")
+      begin
+        @operation.delete_group(params[:group_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete group: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete group: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end
@@ -1520,6 +1554,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete space role: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/users/:user_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/users/#{params[:user_guid]}")
+      begin
+        @operation.delete_user(params[:user_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete user: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete user: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

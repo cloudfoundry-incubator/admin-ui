@@ -166,6 +166,7 @@ module ViewModelsHelper
   def view_models_clients
     [
       [
+        uaa_client[:client_id],
         uaa_identity_zone[:name],
         uaa_client[:client_id],
         uaa_client[:scope].split(',').sort,
@@ -384,6 +385,7 @@ module ViewModelsHelper
   def view_models_groups
     [
       [
+        uaa_group[:id],
         uaa_identity_zone[:name],
         uaa_group[:displayname],
         uaa_group[:id],
@@ -1183,6 +1185,7 @@ module ViewModelsHelper
   def view_models_users
     [
       [
+        uaa_user[:id],
         uaa_identity_zone[:name],
         uaa_user[:username],
         uaa_user[:id],
