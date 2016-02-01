@@ -65,6 +65,7 @@ Sequel.migration do
       DateTime :lastmodified, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       Bignum :version, :default=>0, :null=>false
       String :identity_zone_id, :default=>"uaa", :size=>36, :null=>false
+      String :description, :size=>255
       
       primary_key [:id]
       
@@ -117,6 +118,9 @@ Sequel.migration do
       String :autoapprove, :size=>1024
       String :identity_zone_id, :default=>"uaa", :size=>36, :null=>false
       DateTime :lastmodified, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      TrueClass :show_on_home_page, :default=>true, :null=>false
+      String :app_launch_url, :size=>1024
+      File :app_icon
       
       primary_key [:client_id, :identity_zone_id]
     end

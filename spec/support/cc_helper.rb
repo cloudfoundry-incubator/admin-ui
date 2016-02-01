@@ -1007,12 +1007,14 @@ module CCHelper
   def uaa_client
     {
       additional_information:  "{\"autoapprove\":#{uaa_client_autoapprove}}",
+      app_launch_url:          'http://bogus_app_launch',
       authorities:             'auth1',
       authorized_grant_types:  'grant1',
       autoapprove:             uaa_client_autoapprove.to_s,
       client_id:               'client1',
       identity_zone_id:        uaa_identity_zone[:id],
       scope:                   'scope1',
+      show_on_home_page:       false,
       web_server_redirect_uri: 'http://redirect1'
     }
   end
@@ -1020,6 +1022,7 @@ module CCHelper
   def uaa_group
     {
       created:          Time.new('2015-04-23 08:01:14 -0500'),
+      description:      'TestGroup description',
       displayname:      'group1',
       id:               'group1',
       identity_zone_id: uaa_identity_zone[:id],

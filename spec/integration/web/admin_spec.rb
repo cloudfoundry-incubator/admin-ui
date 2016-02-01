@@ -2218,6 +2218,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Redirect URI',           tag:   nil, value: uaa_client[:web_server_redirect_uri] },
                            { label: 'Authority',              tag:   nil, value: uaa_client[:authorities] },
                            { label: 'Auto Approve',           tag:   nil, value: uaa_client_autoapprove.to_s },
+                           { label: 'Show on Home Page',      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_client[:show_on_home_page]})") },
+                           { label: 'App Launch URL',         tag:   'a', value: uaa_client[:app_launch_url] },
                            { label: 'Events',                 tag:   'a', value: '1' },
                            { label: 'Additional Information', tag:   nil, value: uaa_client[:additional_information] },
                            { label: 'Service Broker',         tag:   'a', value: cc_service_broker[:name] }
@@ -2229,11 +2231,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('Clients', 7, 'Events', uaa_client[:client_id])
+            check_filter_link('Clients', 9, 'Events', uaa_client[:client_id])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Clients', 9, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Clients', 11, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end
@@ -2428,6 +2430,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_group[:created].to_datetime.rfc3339}\")") },
                            { label: 'Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_group[:lastmodified].to_datetime.rfc3339}\")") },
                            { label: 'Version',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_group[:version]})") },
+                           { label: 'Description',   tag:   nil, value: uaa_group[:description] },
                            { label: 'Members',       tag:   'a', value: '1' }
                           ])
           end
@@ -2437,7 +2440,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has userslink' do
-            check_filter_link('Groups', 6, 'Users', uaa_group[:displayname])
+            check_filter_link('Groups', 7, 'Users', uaa_group[:displayname])
           end
         end
       end

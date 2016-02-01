@@ -45,7 +45,7 @@ module AdminUI
           {
             db_uri:  uaadb_uri,
             table:   :oauth_client_details,
-            columns: [:additional_information, :authorities, :authorized_grant_types, :autoapprove, :client_id, :identity_zone_id, :scope, :web_server_redirect_uri]
+            columns: [:additional_information, :app_launch_url, :authorities, :authorized_grant_types, :autoapprove, :client_id, :identity_zone_id, :scope, :show_on_home_page, :web_server_redirect_uri]
           },
           domains:
           {
@@ -76,7 +76,7 @@ module AdminUI
           {
             db_uri:  uaadb_uri,
             table:   :groups,
-            columns: [:created, :displayname, :id, :identity_zone_id, :lastmodified, :version]
+            columns: [:created, :description, :displayname, :id, :identity_zone_id, :lastmodified, :version]
           },
           group_membership:
           {
