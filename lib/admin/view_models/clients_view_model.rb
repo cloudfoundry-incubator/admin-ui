@@ -93,7 +93,7 @@ module AdminUI
 
         # Have to deal with both the old additional_information and the new autoapprove fields
         autoapprove = nil
-        if client[:autoapprove] && client[:autoapprove].length > 0
+        if client[:autoapprove] && !client[:autoapprove].empty?
           autoapprove = client[:autoapprove].split(',').sort
         elsif client[:additional_information]
           begin

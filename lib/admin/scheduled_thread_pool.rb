@@ -53,7 +53,7 @@ module AdminUI
           @queue.delete_at(index)
         end
 
-        if @queue.length == 0
+        if @queue.empty?
           @queue.push(key: key, time: time, block: block)
         else
           index = insert_index(time)

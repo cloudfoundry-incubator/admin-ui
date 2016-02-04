@@ -6,7 +6,7 @@ module AdminUI
     def do_items
       sort_columns = SortColumn.create_array_from_params(@source, @params)
 
-      return @source if sort_columns.length == 0
+      return @source if sort_columns.empty?
 
       sorted = @source[:items]
       sorted = sorted.sort do |a_row, b_row|

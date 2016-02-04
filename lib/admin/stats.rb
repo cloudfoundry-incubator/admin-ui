@@ -80,7 +80,7 @@ module AdminUI
     end
 
     def calculate_time_until_generate_stats
-      return -1 if @config.stats_refresh_schedules.length == 0
+      return -1 if @config.stats_refresh_schedules.empty?
       target_time = Time.now
       init_time = target_time
       @data_collection_schedulers.each do |scheduler|

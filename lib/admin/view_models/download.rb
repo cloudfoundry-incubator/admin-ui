@@ -13,7 +13,7 @@ module AdminUI
       heading_count = 9999
 
       CSV.open(file.path, 'wb') do |csv|
-        if (decoded.length > 0) && (decoded[0].length == 2) && (decoded[0][0] == 'headings')
+        if !decoded.empty? && (decoded[0].length == 2) && (decoded[0][0] == 'headings')
           headings = decoded[0][1]
           parsed = Yajl::Parser.parse(headings)
           heading_count = parsed.length

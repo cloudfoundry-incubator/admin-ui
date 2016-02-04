@@ -11,11 +11,11 @@ module AdminUI
       @config.sender_email_server &&
         @config.sender_email_account &&
         @config.receiver_emails &&
-        @config.receiver_emails.length > 0
+        !@config.receiver_emails.empty?
     end
 
     def send_email(disconnected)
-      return unless configured? && disconnected.length > 0
+      return unless configured? && !disconnected.empty?
       recipients = @config.receiver_emails.join(', ')
       title      = email_title(disconnected)
       email      = email_content(recipients,

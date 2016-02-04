@@ -151,7 +151,7 @@ module AdminUI
           login
           recent_login = true
         else
-          fail AdminUI::CCRestClientResponseError, response
+          raise AdminUI::CCRestClientResponseError, response
         end
       end
     end
@@ -182,7 +182,7 @@ module AdminUI
         body_json = Yajl::Parser.parse(response.body)
         @token = "#{body_json['token_type']} #{body_json['access_token']}"
       else
-        fail AdminUI::CCRestClientResponseError, response
+        raise AdminUI::CCRestClientResponseError, response
       end
     end
 
@@ -203,12 +203,12 @@ module AdminUI
 
         @build = body_json['build']
         if @build.nil?
-          fail "Information retrieved from #{get_cc_url('/v2/info')} does not include build"
+          raise "Information retrieved from #{get_cc_url('/v2/info')} does not include build"
         end
 
         @authorization_endpoint = body_json['authorization_endpoint']
         if @authorization_endpoint.nil?
-          fail "Information retrieved from #{get_cc_url('/v2/info')} does not include authorization_endpoint"
+          raise "Information retrieved from #{get_cc_url('/v2/info')} does not include authorization_endpoint"
         end
 
         @doppler_logging_endpoint = body_json['doppler_logging_endpoint']
@@ -218,10 +218,10 @@ module AdminUI
 
         @token_endpoint = body_json['token_endpoint']
         if @token_endpoint.nil?
-          fail "Information retrieved from #{get_cc_url('/v2/info')} does not include token_endpoint"
+          raise "Information retrieved from #{get_cc_url('/v2/info')} does not include token_endpoint"
         end
       else
-        fail "Unable to fetch from #{get_cc_url('/v2/info')}"
+        raise "Unable to fetch from #{get_cc_url('/v2/info')}"
       end
     end
   end

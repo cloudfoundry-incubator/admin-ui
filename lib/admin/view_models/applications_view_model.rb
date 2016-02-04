@@ -45,7 +45,7 @@ module AdminUI
         fqdn = domain[:name]
         host = route[:host]
         path = route[:path]
-        fqdn = "#{host}.#{fqdn}" if host.length > 0
+        fqdn = "#{host}.#{fqdn}" unless host.empty?
         fqdn = "#{fqdn}#{path}" if path # Add path check since older versions will have nil path
         app_id = app_route[:app_id]
         app_fqdns = fqdns_hash[app_id]

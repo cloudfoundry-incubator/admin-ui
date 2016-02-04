@@ -385,7 +385,7 @@ module AdminUI
     end
 
     def send_email(disconnected)
-      return unless @email.configured? && disconnected.length > 0
+      return unless @email.configured? && !disconnected.empty?
       thread = Thread.new do
         begin
           @email.send_email(disconnected)
