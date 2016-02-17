@@ -257,17 +257,17 @@ Example: <code>[/some_directory/some_key.pem]</code>
 <dd>
 Log files in a comma-delimited array being exposed through the Administration UI. Note that these files must be accessible by the user that started the Administration UI.  These files can either be found on a file system accessible by the local system or as an SFTP URI.  In the case of SFTP, both
 user:password and user with pem files are supported.  If the SFTP password is not specified, the key files specified in log_file_sftp_keys will be used. <br>
-Example <code>[/var/vcap/sys/log/cloud_controller_ng/cloud_controller_ng.log]</code>
+Example <code>['/var/vcap/sys/log/cloud_controller_ng/cloud_controller_ng.log']</code>
 <br>
-Example <code>[/var/vcap/sys/log/cloud_controller_ng/*.log]</code>
+Example <code>['/var/vcap/sys/log/cloud_controller_ng/*.log']</code>
 <br>
-Example <code>[/var/vcap/sys/log/**/*.log]</code>
+Example <code>['/var/vcap/sys/log/**/*.log']</code>
 <br>
-Example <code>[sftp://someuser:somepassword@10.10.10.10/path/file.log]</code>
+Example <code>['sftp://someuser:somepassword@10.10.10.10/path/file.log']</code>
 <br>
-Example <code>[sftp://someuser@10.10.10.10/path/*.log]</code>
+Example <code>['sftp://someuser@10.10.10.10/path/*.log']</code>
 <br>
-Example <code>[sftp://someuser:somepassword@10.10.10.10/path/**/*.log]</code>
+Example <code>['sftp://someuser:somepassword@10.10.10.10/path/**/*.log']</code>
 </dd>
 <dt>
 <code><b>mbus</b></code>

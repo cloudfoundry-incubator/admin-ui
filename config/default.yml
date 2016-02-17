@@ -14,7 +14,7 @@ event_days: 7
 log_file: admin_ui.log
 log_file_page_size: 51200
 log_file_sftp_keys: [ ]
-log_files: [/var/vcap/sys/log/cloud_controller_ng/*.log, admin_ui.log]
+log_files: ['/var/vcap/sys/log/cloud_controller_ng/*.log', 'admin_ui.log']
 mbus: nats://nats:nats@10.244.0.6:4222
 monitored_components: [NATS, CloudController, DEA, HealthManager, Router, -Provisioner, ALL]
 nats_discovery_interval: 30
