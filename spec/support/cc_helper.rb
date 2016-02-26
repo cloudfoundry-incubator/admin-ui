@@ -679,6 +679,7 @@ module CCHelper
   def cc_quota_definition
     {
       app_instance_limit:         10,
+      app_task_limit:             10,
       created_at:                 Time.new('2015-04-23 08:00:44 -0500'),
       guid:                       'quota1',
       id:                         17,
@@ -700,6 +701,7 @@ module CCHelper
   def cc_quota_definition2
     {
       app_instance_limit:         10,
+      app_task_limit:             10,
       created_at:                 Time.new,
       guid:                       'quota2',
       id:                         18,
@@ -943,6 +945,7 @@ module CCHelper
   def cc_space_quota_definition
     {
       app_instance_limit:         5,
+      app_task_limit:             5,
       created_at:                 Time.new('2015-04-23 08:01:08 -0500'),
       guid:                       'space_quota1',
       id:                         30,
@@ -963,6 +966,8 @@ module CCHelper
 
   def cc_space_quota_definition2
     {
+      app_instance_limit:         5,
+      app_task_limit:             5,
       created_at:                 Time.new,
       guid:                       'space_quota2',
       id:                         31,

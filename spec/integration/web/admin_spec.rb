@@ -2836,8 +2836,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='QuotasTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                expected_length: 13,
-                                labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Total Private Domains', 'Total Services', 'Total Routes', 'Application Instance Limit', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Organizations'],
+                                expected_length: 14,
+                                labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Total Private Domains', 'Total Services', 'Total Routes', 'Application Instance Limit', 'Application Task Limit', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Organizations'],
                                 colspans:        nil
                               }
                              ])
@@ -2853,6 +2853,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_services]})"),
                              @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_routes]})"),
                              @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:app_instance_limit]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:app_task_limit]})"),
                              @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:memory_limit]})"),
                              @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:instance_memory_limit]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_quota_definition[:non_basic_services_allowed]})"),
@@ -2919,6 +2920,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Total Services',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_services]})") },
                            { label: 'Total Routes',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:total_routes]})") },
                            { label: 'Application Instance Limit', tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:app_instance_limit]})") },
+                           { label: 'Application Task Limit',     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:app_task_limit]})") },
                            { label: 'Memory Limit',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:memory_limit]})") },
                            { label: 'Instance Memory Limit',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_quota_definition[:instance_memory_limit]})") },
                            { label: 'Non-Basic Services Allowed', tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_quota_definition[:non_basic_services_allowed]})") },
@@ -2927,7 +2929,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has organizations link' do
-            check_filter_link('Quotas', 11, 'Organizations', cc_quota_definition[:name])
+            check_filter_link('Quotas', 12, 'Organizations', cc_quota_definition[:name])
           end
         end
       end
@@ -2940,11 +2942,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='SpaceQuotasTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                 expected_length: 3,
                                 labels:          ['', '', 'Organization'],
-                                colspans:        %w(1 11 2)
+                                colspans:        %w(1 12 2)
                               },
                               { columns:         @driver.find_elements(xpath: "//div[@id='SpaceQuotasTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                expected_length: 14,
-                                labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Application Instance Limit', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Spaces', 'Name', 'GUID'],
+                                expected_length: 15,
+                                labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Total Services', 'Total Routes', 'Application Instance Limit', 'Application Task Limit', 'Memory Limit', 'Instance Memory Limit', 'Non-Basic Services Allowed', 'Spaces', 'Name', 'GUID'],
                                 colspans:        nil
                               }
                              ])
@@ -2959,6 +2961,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:total_services]})"),
                              @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:total_routes]})"),
                              @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:app_instance_limit]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:app_task_limit]})"),
                              @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:memory_limit]})"),
                              @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:instance_memory_limit]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_space_quota_definition[:non_basic_services_allowed]})"),
@@ -3026,6 +3029,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Total Services',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:total_services]})") },
                            { label: 'Total Routes',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:total_routes]})") },
                            { label: 'Application Instance Limit', tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:app_instance_limit]})") },
+                           { label: 'Application Task Limit',     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:app_task_limit]})") },
                            { label: 'Memory Limit',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:memory_limit]})") },
                            { label: 'Instance Memory Limit',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:instance_memory_limit]})") },
                            { label: 'Non-Basic Services Allowed', tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_space_quota_definition[:non_basic_services_allowed]})") },
@@ -3035,11 +3039,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has spaces link' do
-            check_filter_link('SpaceQuotas', 10, 'Spaces', cc_space_quota_definition[:name])
+            check_filter_link('SpaceQuotas', 11, 'Spaces', cc_space_quota_definition[:name])
           end
 
           it 'has organizations link' do
-            check_filter_link('SpaceQuotas', 11, 'Organizations', cc_organization[:guid])
+            check_filter_link('SpaceQuotas', 12, 'Organizations', cc_organization[:guid])
           end
         end
       end

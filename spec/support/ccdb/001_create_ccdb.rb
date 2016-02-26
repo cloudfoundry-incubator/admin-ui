@@ -18,6 +18,8 @@ Sequel.migration do
       String :parent_app_name, :text=>true
       String :parent_app_guid, :text=>true
       String :process_type, :text=>true
+      String :task_guid, :text=>true
+      String :task_name, :text=>true
       
       index [:guid], :unique=>true
       index [:created_at], :name=>:usage_events_created_at_index
@@ -245,6 +247,7 @@ Sequel.migration do
       Integer :instance_memory_limit, :default=>-1, :null=>false
       Integer :total_private_domains, :default=>-1, :null=>false
       Integer :app_instance_limit, :default=>-1
+      Integer :app_task_limit, :default=>-1
       
       index [:created_at], :name=>:qd_created_at_index
       index [:guid], :name=>:qd_guid_index, :unique=>true
@@ -434,6 +437,7 @@ Sequel.migration do
       Integer :instance_memory_limit, :default=>-1, :null=>false
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       Integer :app_instance_limit, :default=>-1
+      Integer :app_task_limit, :default=>5
       
       index [:created_at], :name=>:sqd_created_at_index
       index [:guid], :name=>:sqd_guid_index, :unique=>true
@@ -451,6 +455,10 @@ Sequel.migration do
       String :state, :text=>true, :null=>false
       foreign_key :app_id, :apps_v3, :null=>false, :key=>[:id]
       foreign_key :droplet_id, :v3_droplets, :null=>false, :key=>[:id]
+      String :failure_reason, :size=>4096
+      String :encrypted_environment_variables, :text=>true
+      Integer :memory_in_mb
+      String :salt, :text=>true
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -626,15 +634,6 @@ Sequel.migration do
       index [:updated_at]
     end
     
-    create_table(:apps_v3_routes, :ignore_index_errors=>true) do
-      primary_key :id
-      foreign_key :route_id, :routes, :key=>[:id]
-      String :type, :text=>true
-      foreign_key :app_v3_id, :apps_v3, :key=>[:id]
-      
-      index [:type]
-    end
-    
     create_table(:organizations_auditors, :ignore_index_errors=>true) do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
@@ -661,6 +660,24 @@ Sequel.migration do
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
       
       index [:organization_id, :user_id], :name=>:org_users_idx, :unique=>true
+    end
+    
+    create_table(:route_mappings, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :app_guid, :apps_v3, :type=>String, :text=>true, :key=>[:guid]
+      foreign_key :route_guid, :routes, :type=>String, :text=>true, :key=>[:guid]
+      String :process_type, :text=>true
+      
+      index [:app_guid]
+      index [:app_guid, :route_guid, :process_type], :name=>:route_mappings_app_guid_route_guid_process_type_key, :unique=>true
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:process_type]
+      index [:route_guid]
+      index [:updated_at]
     end
     
     create_table(:services, :ignore_index_errors=>true) do
