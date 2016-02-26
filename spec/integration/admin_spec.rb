@@ -1539,6 +1539,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'routes_view_model' do
+      let(:event_type)        { 'route' }
       let(:path)              { '/routes_view_model' }
       let(:view_model_source) { view_models_routes }
       it_behaves_like('retrieves view_model')

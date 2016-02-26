@@ -436,8 +436,9 @@ describe AdminUI::ViewModels, type: :integration do
     end
 
     context 'returns connected routes_view_model' do
-      let(:results)  { view_models.routes }
-      let(:expected) { view_models_routes }
+      let(:event_type) { 'route' }
+      let(:results)    { view_models.routes }
+      let(:expected)   { view_models_routes }
 
       it_behaves_like('common view model retrieval')
     end

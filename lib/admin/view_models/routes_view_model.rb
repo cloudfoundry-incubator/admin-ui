@@ -12,17 +12,29 @@ module AdminUI
 
       apps_routes   = @cc.apps_routes
       domains       = @cc.domains
+      events        = @cc.events
       organizations = @cc.organizations
       spaces        = @cc.spaces
 
       apps_routes_connected = apps_routes['connected']
+      events_connected      = events['connected']
 
       domain_hash       = Hash[domains['items'].map { |item| [item[:id], item] }]
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
       space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
-      app_counters = {}
+      event_counters = {}
+      events['items'].each do |event|
+        return result unless @running
+        Thread.pass
 
+        next unless event[:actee_type] == 'route'
+        actee = event[:actee]
+        event_counters[actee] = 0 if event_counters[actee].nil?
+        event_counters[actee] += 1
+      end
+
+      app_counters = {}
       apps_routes['items'].each do |app_route|
         return result unless @running
         Thread.pass
@@ -39,18 +51,20 @@ module AdminUI
         return result unless @running
         Thread.pass
 
+        guid         = route[:guid]
         domain       = domain_hash[route[:domain_id]]
         space        = space_hash[route[:space_id]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]
 
-        app_counter = app_counters[route[:id]]
+        app_counter   = app_counters[route[:id]]
+        event_counter = event_counters[guid]
 
         row = []
 
-        row.push(route[:guid])
+        row.push(guid)
         row.push(route[:host])
         row.push(route[:path])
-        row.push(route[:guid])
+        row.push(guid)
 
         if domain
           row.push(domain[:name])
@@ -62,6 +76,14 @@ module AdminUI
 
         if route[:updated_at]
           row.push(route[:updated_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
+        if event_counter
+          row.push(event_counter)
+        elsif events_connected
+          row.push(0)
         else
           row.push(nil)
         end
@@ -82,7 +104,7 @@ module AdminUI
 
         items.push(row)
 
-        hash[route[:guid]] =
+        hash[guid] =
           {
             'domain'       => domain,
             'organization' => organization,
@@ -91,7 +113,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..8).to_a, (1..6).to_a << 8)
+      result(true, items, hash, (1..9).to_a, (1..6).to_a << 9)
     end
   end
 end

@@ -655,6 +655,7 @@ module ViewModelsHelper
         cc_route[:created_at].to_datetime.rfc3339,
         cc_route[:updated_at].to_datetime.rfc3339,
         1,
+        1,
         "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]

@@ -1356,13 +1356,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       context 'Routes' do
-        let(:tab_id)   { 'Routes' }
-        let(:table_id) { 'RoutesTable' }
+        let(:tab_id)     { 'Routes' }
+        let(:table_id)   { 'RoutesTable' }
+        let(:event_type) { 'route' }
 
         it 'has a table' do
           check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='RoutesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                expected_length: 9,
-                                labels:          ['', 'Host', 'Path', 'GUID', 'Domain', 'Created', 'Updated', 'Applications', 'Target'],
+                                expected_length: 10,
+                                labels:          ['', 'Host', 'Path', 'GUID', 'Domain', 'Created', 'Updated', 'Events', 'Applications', 'Target'],
                                 colspans:        nil
                               }
                              ])
@@ -1376,6 +1377,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_domain[:name],
                              cc_route[:created_at].to_datetime.rfc3339,
                              cc_route[:updated_at].to_datetime.rfc3339,
+                             '1',
                              '1',
                              "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
@@ -1437,6 +1439,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Domain',       tag:   'a', value: cc_domain[:name] },
                            { label: 'Created',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route[:created_at].to_datetime.rfc3339}\")") } },
                            { label: 'Updated',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route[:updated_at].to_datetime.rfc3339}\")") } },
+                           { label: 'Events',       tag:   'a', value: '1' },
                            { label: 'Applications', tag:   'a', value: '1' },
                            { label: 'Space',        tag:   'a', value: cc_space[:name] },
                            { label: 'Organization', tag:   'a', value: cc_organization[:name] }
@@ -1447,16 +1450,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Routes', 3, 'Domains', cc_domain[:guid])
           end
 
+          it 'has events link' do
+            check_filter_link('Routes', 6, 'Events', cc_route[:guid])
+          end
+
           it 'has applications link' do
-            check_filter_link('Routes', 6, 'Applications', "#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}")
+            check_filter_link('Routes', 7, 'Applications', "#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}")
           end
 
           it 'has spaces link' do
-            check_filter_link('Routes', 7, 'Spaces', cc_space[:guid])
+            check_filter_link('Routes', 8, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Routes', 8, 'Organizations', cc_organization[:guid])
+            check_filter_link('Routes', 9, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -3202,6 +3209,26 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             it 'has service brokers actor link' do
               check_filter_link('Events', 8, 'ServiceBrokers', cc_event_service_dashboard_client[:actor])
+            end
+          end
+
+          context 'route event' do
+            let(:event_type) { 'route' }
+
+            it 'has route link' do
+              check_filter_link('Events', 5, 'Routes', cc_event_route[:actee])
+            end
+
+            it 'has users actor link' do
+              check_filter_link('Events', 8, 'Users', cc_event_route[:actor])
+            end
+
+            it 'has spaces link' do
+              check_filter_link('Events', 9, 'Spaces', cc_space[:guid])
+            end
+
+            it 'has organizations link' do
+              check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
             end
           end
 
