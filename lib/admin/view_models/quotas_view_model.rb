@@ -47,6 +47,7 @@ module AdminUI
 
         row.push(quota_definition[:total_private_domains])
         row.push(quota_definition[:total_services])
+        row.push(quota_definition[:total_service_keys])
         row.push(quota_definition[:total_routes])
         row.push(quota_definition[:app_instance_limit])
         row.push(quota_definition[:app_task_limit])
@@ -67,7 +68,7 @@ module AdminUI
         hash[quota_definition[:guid]] = quota_definition
       end
 
-      result(true, items, hash, (1..13).to_a, [1, 2, 3, 4, 12])
+      result(true, items, hash, (1..14).to_a, [1, 2, 3, 4, 13])
     end
   end
 end

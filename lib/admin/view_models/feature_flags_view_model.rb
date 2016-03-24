@@ -15,6 +15,7 @@ module AdminUI
         route_creation:                       true,
         service_instance_creation:            true,
         set_roles_by_username:                true, # Added in cf_release 218
+        space_developer_env_var_visibility:   true, # Added in cf_release 232
         space_scoped_private_broker_creation: true, # Added in cf release 231
         task_creation:                        false, # Added in cf_release 228
         unset_roles_by_username:              true, # Added in cf_release 218

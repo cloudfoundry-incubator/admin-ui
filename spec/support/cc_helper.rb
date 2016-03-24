@@ -711,6 +711,7 @@ module CCHelper
       total_private_domains:      10,
       total_routes:               100,
       total_services:             100,
+      total_service_keys:         100,
       updated_at:                 Time.new('2015-04-23 08:00:48 -0500')
     }
   end
@@ -733,6 +734,7 @@ module CCHelper
       total_private_domains:      10,
       total_routes:               100,
       total_services:             100,
+      total_service_keys:         100,
       updated_at:                 nil
     }
   end
@@ -977,6 +979,7 @@ module CCHelper
       non_basic_services_allowed: true,
       total_routes:               100,
       total_services:             100,
+      total_service_keys:         100,
       updated_at:                 Time.new('2015-04-23 08:01:12 -0500')
     }
   end
@@ -999,6 +1002,7 @@ module CCHelper
       organization_id:            cc_organization[:id],
       total_routes:               100,
       total_services:             100,
+      total_service_keys:         100,
       updated_at:                 nil
     }
   end

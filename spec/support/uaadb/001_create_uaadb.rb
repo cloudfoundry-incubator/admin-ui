@@ -134,6 +134,24 @@ Sequel.migration do
       String :client_id, :size=>255
     end
     
+    create_table(:revocable_tokens, :ignore_index_errors=>true) do
+      String :token_id, :size=>36, :null=>false
+      String :client_id, :size=>255, :null=>false
+      String :user_id, :size=>36
+      String :format, :size=>255
+      String :response_type, :size=>25, :null=>false
+      Bignum :issued_at, :null=>false
+      Bignum :expires_at, :null=>false
+      String :scope, :size=>1000
+      String :data, :text=>true, :null=>false
+      
+      primary_key [:token_id]
+      
+      index [:client_id], :name=>:idx_revocable_token_client_id
+      index [:expires_at], :name=>:idx_revocable_token_expires_at
+      index [:user_id], :name=>:idx_revocable_token_user_id
+    end
+    
     create_table(:schema_version, :ignore_index_errors=>true) do
       Integer :version_rank, :null=>false
       Integer :installed_rank, :null=>false
@@ -164,6 +182,22 @@ Sequel.migration do
       
       index [:created], :name=>:audit_created
       index [:principal_id], :name=>:audit_principal
+    end
+    
+    create_table(:service_provider, :ignore_index_errors=>true) do
+      String :id, :size=>36, :null=>false
+      DateTime :created, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :lastmodified, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      Bignum :version, :default=>0
+      String :identity_zone_id, :size=>36, :null=>false
+      String :name, :size=>255, :null=>false
+      String :entity_id, :size=>255, :null=>false
+      String :config, :text=>true
+      TrueClass :active, :default=>true, :null=>false
+      
+      primary_key [:id]
+      
+      index [:identity_zone_id, :entity_id], :name=>:entity_in_zone, :unique=>true
     end
     
     create_table(:users, :ignore_index_errors=>true) do

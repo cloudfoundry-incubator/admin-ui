@@ -20,6 +20,7 @@ Sequel.migration do
       String :process_type, :text=>true
       String :task_guid, :text=>true
       String :task_name, :text=>true
+      String :package_guid, :text=>true
       
       index [:guid], :unique=>true
       index [:created_at], :name=>:usage_events_created_at_index
@@ -248,6 +249,7 @@ Sequel.migration do
       Integer :total_private_domains, :default=>-1, :null=>false
       Integer :app_instance_limit, :default=>-1
       Integer :app_task_limit, :default=>-1
+      Integer :total_service_keys, :default=>-1
       
       index [:created_at], :name=>:qd_created_at_index
       index [:guid], :name=>:qd_guid_index, :unique=>true
@@ -438,6 +440,7 @@ Sequel.migration do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       Integer :app_instance_limit, :default=>-1
       Integer :app_task_limit, :default=>5
+      Integer :total_service_keys, :null=>false
       
       index [:created_at], :name=>:sqd_created_at_index
       index [:guid], :name=>:sqd_guid_index, :unique=>true
@@ -462,6 +465,8 @@ Sequel.migration do
       
       index [:created_at]
       index [:guid], :unique=>true
+      index [:name]
+      index [:state]
       index [:updated_at]
     end
     
@@ -629,6 +634,7 @@ Sequel.migration do
       Integer :app_port
       String :guid, :text=>true
       
+      index [:app_id, :route_id, :app_port], :name=>:apps_routes_app_id_route_id_app_port_key, :unique=>true
       index [:created_at]
       index [:guid], :unique=>true
       index [:updated_at]
