@@ -21,6 +21,10 @@ Sequel.migration do
       String :task_guid, :text=>true
       String :task_name, :text=>true
       String :package_guid, :text=>true
+      String :previous_state, :text=>true
+      String :previous_package_state, :text=>true
+      Integer :previous_memory_in_mb_per_instance
+      Integer :previous_instance_count
       
       index [:guid], :unique=>true
       index [:created_at], :name=>:usage_events_created_at_index
@@ -440,7 +444,7 @@ Sequel.migration do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       Integer :app_instance_limit, :default=>-1
       Integer :app_task_limit, :default=>5
-      Integer :total_service_keys, :null=>false
+      Integer :total_service_keys, :default=>-1, :null=>false
       
       index [:created_at], :name=>:sqd_created_at_index
       index [:guid], :name=>:sqd_guid_index, :unique=>true
