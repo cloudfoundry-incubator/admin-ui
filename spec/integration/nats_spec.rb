@@ -25,7 +25,7 @@ describe AdminUI::NATS, type: :integration do
 
   before do
     config_stub
-    nats_stub
+    nats_stub(:varz_dea)
 
     event_machine_loop
   end

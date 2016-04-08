@@ -129,6 +129,9 @@ module AdminUI
           organization   = space.nil? ? nil : organization_hash[space[:organization_id]]
           stack          = application.nil? ? nil : stack_hash[application[:stack_id]]
 
+          # ContainerMetrics can come from either a Cell (rep) or a DEA as of cf-release 233
+          diego = container[:origin] == 'rep'
+
           row = []
 
           row.push("#{application_id}/#{instance_index}")
@@ -147,8 +150,7 @@ module AdminUI
 
           row.push(Time.at(container[:timestamp] / BILLION).to_datetime.rfc3339)
 
-          # This is a Diego app
-          row.push(true)
+          row.push(diego)
 
           if stack
             row.push(stack[:name])
@@ -173,10 +175,15 @@ module AdminUI
             row.push(nil, nil, nil)
           end
 
-          # DEA is always nil when dealing with Cell-based application instances
-          row.push(nil)
+          container_key = "#{container[:ip]}:#{container[:index]}"
 
-          row.push("#{container[:ip]}:#{container[:index]}")
+          if diego
+            row.push(nil)
+            row.push(container_key)
+          else
+            row.push(container_key)
+            row.push(nil)
+          end
 
           # We need another item to be the key when getting details since DEA-based and Cell-based application instances are different
           key = "#{application_id}/#{instance_index}/0"

@@ -7,6 +7,7 @@ describe AdminUI::ViewModels, type: :integration do
   include VARZHelper
   include ViewModelsHelper
 
+  let(:application_instance_source)  { :varz_dea }
   let(:ccdb_file)                    { '/tmp/admin_ui_ccdb.db' }
   let(:ccdb_uri)                     { "sqlite://#{ccdb_file}" }
   let(:data_file)                    { '/tmp/admin_ui_data.json' }
@@ -20,8 +21,7 @@ describe AdminUI::ViewModels, type: :integration do
   let(:log_file_displayed_modified)  { Time.new(1976, 7, 4, 12, 34, 56, 0) }
   let(:uaadb_file)                   { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)                    { "sqlite://#{uaadb_file}" }
-  let(:varz_application_instance)    { true }
-  let(:varz_application_instance_id) { varz_application_instance ? varz_dea_app_instance : '0' }
+  let(:varz_application_instance_id) { application_instance_source == :varz_dea ? varz_dea_app_instance : '0' }
 
   let(:config) do
     AdminUI::Config.load(ccdb_uri:                ccdb_uri,
@@ -62,10 +62,10 @@ describe AdminUI::ViewModels, type: :integration do
 
     config_stub
     cc_stub(config, false, event_type)
-    doppler_stub(!varz_application_instance)
-    nats_stub
-    varz_stub(varz_application_instance)
-    view_models_stub(varz_application_instance)
+    doppler_stub(application_instance_source)
+    nats_stub(application_instance_source)
+    varz_stub(application_instance_source)
+    view_models_stub(application_instance_source)
 
     event_machine_loop
   end
@@ -127,12 +127,17 @@ describe AdminUI::ViewModels, type: :integration do
       end
     end
 
-    context 'varz' do
+    context 'varz dea' do
       it_behaves_like('application_instances')
     end
 
-    context 'doppler' do
-      let(:varz_application_instance) { false }
+    context 'doppler cell' do
+      let(:application_instance_source) { :doppler_cell }
+      it_behaves_like('application_instances')
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('application_instances')
     end
 
@@ -153,12 +158,17 @@ describe AdminUI::ViewModels, type: :integration do
       end
     end
 
-    context 'varz' do
+    context 'varz dea' do
       it_behaves_like('applications')
     end
 
-    context 'doppler' do
-      let(:varz_application_instance) { false }
+    context 'doppler cell' do
+      let(:application_instance_source) { :doppler_cell }
+      it_behaves_like('applications')
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('applications')
     end
 
@@ -177,15 +187,17 @@ describe AdminUI::ViewModels, type: :integration do
     end
 
     context 'returns connected cells_view_model' do
-      let(:results)  { view_models.cells }
-      let(:expected) { view_models_cells }
+      let(:application_instance_source) { :doppler_cell }
+      let(:results)                     { view_models.cells }
+      let(:expected)                    { view_models_cells }
 
       it_behaves_like('common view model retrieval')
     end
 
     context 'returns connected cells_view_model detail' do
-      let(:results)  { view_models.cell("#{rep_envelope.ip}:#{rep_envelope.index}") }
-      let(:expected) { view_models_cells_detail }
+      let(:application_instance_source) { :doppler_cell }
+      let(:results)                     { view_models.cell("#{rep_envelope.ip}:#{rep_envelope.index}") }
+      let(:expected)                    { view_models_cells_detail }
 
       it_behaves_like('common view model retrieval detail')
     end
@@ -233,18 +245,36 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
-    context 'returns connected deas_view_model' do
+    shared_examples 'deas_view_model' do
       let(:results)  { view_models.deas }
       let(:expected) { view_models_deas }
 
       it_behaves_like('common view model retrieval')
     end
 
-    context 'returns connected deas_view_model detail' do
-      let(:results)  { view_models.dea(nats_dea['host']) }
+    shared_examples 'deas_view_model detail' do
       let(:expected) { view_models_deas_detail }
-
       it_behaves_like('common view model retrieval detail')
+    end
+
+    context 'varz deas_view_model' do
+      it_behaves_like('deas_view_model')
+    end
+
+    context 'varz deas_view_model detail' do
+      let(:results) { view_models.dea(nats_dea['host']) }
+      it_behaves_like('deas_view_model detail')
+    end
+
+    context 'doppler deas_view_model' do
+      let(:application_instance_source) { :doppler_dea }
+      it_behaves_like('deas_view_model')
+    end
+
+    context 'doppler deas_view_model detail' do
+      let(:application_instance_source) { :doppler_dea }
+      let(:results) { view_models.dea("#{dea_envelope.ip}:#{dea_envelope.index}") }
+      it_behaves_like('deas_view_model detail')
     end
 
     context 'returns connected domains_view_model' do
@@ -317,18 +347,36 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
-    context 'returns connected health_managers_view_model' do
+    shared_examples 'health_managers_view_model' do
       let(:results)  { view_models.health_managers }
       let(:expected) { view_models_health_managers }
 
       it_behaves_like('common view model retrieval')
     end
 
-    context 'returns connected health_managers_view_model detail' do
-      let(:results)  { view_models.health_manager(nats_health_manager['host']) }
+    shared_examples 'health_managers_view_model detail' do
       let(:expected) { view_models_health_managers_detail }
-
       it_behaves_like('common view model retrieval detail')
+    end
+
+    context 'varz health_managers_view_model' do
+      it_behaves_like('health_managers_view_model')
+    end
+
+    context 'varz health_managers_view_model detail' do
+      let(:results) { view_models.health_manager(nats_health_manager['host']) }
+      it_behaves_like('health_managers_view_model detail')
+    end
+
+    context 'doppler health_managers_view_model' do
+      let(:application_instance_source) { :doppler_dea }
+      it_behaves_like('health_managers_view_model')
+    end
+
+    context 'doppler health_managers_view_model detail' do
+      let(:application_instance_source) { :doppler_dea }
+      let(:results) { view_models.health_manager("#{analyzer_envelope.ip}:#{analyzer_envelope.index}") }
+      it_behaves_like('health_managers_view_model detail')
     end
 
     context 'returns connected identity_providers_view_model' do
@@ -384,12 +432,17 @@ describe AdminUI::ViewModels, type: :integration do
       end
     end
 
-    context 'varz' do
+    context 'varz dea' do
       it_behaves_like('organizations')
     end
 
-    context 'doppler' do
-      let(:varz_application_instance) { false }
+    context 'doppler cell' do
+      let(:application_instance_source) { :doppler_cell }
+      it_behaves_like('organizations')
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('organizations')
     end
 
@@ -627,12 +680,17 @@ describe AdminUI::ViewModels, type: :integration do
       end
     end
 
-    context 'varz' do
+    context 'varz dea' do
       it_behaves_like('spaces')
     end
 
-    context 'doppler' do
-      let(:varz_application_instance) { false }
+    context 'doppler cell' do
+      let(:application_instance_source) { :doppler_cell }
+      it_behaves_like('spaces')
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('spaces')
     end
 
@@ -650,12 +708,26 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
-    context 'returns connected stats_view_model' do
+    shared_examples 'stats_view_model' do
       let(:results)   { view_models.stats }
       let(:timestamp) { results[:items][0][9][:timestamp] } # We have to copy the timestamp from the result since it is variable
       let(:expected)  { view_models_stats(timestamp) }
 
       it_behaves_like('common view model retrieval')
+    end
+
+    context 'varz dea' do
+      it_behaves_like('stats_view_model')
+    end
+
+    context 'doppler cell' do
+      let(:application_instance_source) { :doppler_cell }
+      it_behaves_like('stats_view_model')
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
+      it_behaves_like('stats_view_model')
     end
 
     context 'returns connected users_view_model' do

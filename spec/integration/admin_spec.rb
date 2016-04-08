@@ -328,8 +328,9 @@ describe AdminUI::Admin, type: :integration do
   end
 
   context 'manage cell' do
-    let(:http)   { create_http }
-    let(:cookie) { login_and_return_cookie(http) }
+    let(:application_instance_source) { :doppler_cell }
+    let(:http)                        { create_http }
+    let(:cookie)                      { login_and_return_cookie(http) }
 
     before do
       expect(get_json('/cells_view_model')['items']['items'].length).to eq(1)
@@ -404,18 +405,27 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/deas_view_model')['items']['items'].length).to eq(1)
     end
 
-    def delete_dea
-      response = delete_request("/components?uri=#{nats_dea_varz}")
+    def delete_dea(uri)
+      response = delete_request(uri)
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/components?uri=#{nats_dea_varz}"]], true)
+      verify_sys_log_entries([['delete', uri]], true)
     end
 
     it 'has user name and deas request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/deas_view_model']], true)
     end
 
-    it 'deletes a dea' do
-      expect { delete_dea }.to change { get_json('/deas_view_model')['items']['items'].length }.from(1).to(0)
+    context 'varz dea' do
+      it 'deletes a dea' do
+        expect { delete_dea("/components?uri=#{nats_dea_varz}") }.to change { get_json('/deas_view_model')['items']['items'].length }.from(1).to(0)
+      end
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
+      it 'deletes a dea' do
+        expect { delete_dea("/doppler_components?uri=#{dea_envelope.origin}:#{dea_envelope.index}:#{dea_envelope.ip}") }.to change { get_json('/deas_view_model')['items']['items'].length }.from(1).to(0)
+      end
     end
   end
 
@@ -540,18 +550,27 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/health_managers_view_model')['items']['items'].length).to eq(1)
     end
 
-    def delete_health_manager
-      response = delete_request("/components?uri=#{nats_health_manager_varz}")
+    def delete_health_manager(uri)
+      response = delete_request(uri)
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/components?uri=#{nats_health_manager_varz}"]], true)
+      verify_sys_log_entries([['delete', uri]], true)
     end
 
     it 'has user name and health managers request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/health_managers_view_model']], true)
     end
 
-    it 'deletes a health manager' do
-      expect { delete_health_manager }.to change { get_json('/health_managers_view_model')['items']['items'].length }.from(1).to(0)
+    context 'varz dea' do
+      it 'deletes a health manager' do
+        expect { delete_health_manager("/components?uri=#{nats_health_manager_varz}") }.to change { get_json('/health_managers_view_model')['items']['items'].length }.from(1).to(0)
+      end
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
+      it 'deletes a health manager' do
+        expect { delete_health_manager("/doppler_components?uri=#{analyzer_envelope.origin}:#{analyzer_envelope.index}:#{analyzer_envelope.ip}") }.to change { get_json('/health_managers_view_model')['items']['items'].length }.from(1).to(0)
+      end
     end
   end
 
@@ -1237,12 +1256,17 @@ describe AdminUI::Admin, type: :integration do
       end
     end
 
-    context 'varz' do
+    context 'varz dea' do
       it_behaves_like('application_instances')
     end
 
-    context 'doppler' do
-      let(:varz_application_instance) { false }
+    context 'doppler cell' do
+      let(:application_instance_source) { :doppler_cell }
+      it_behaves_like('application_instances')
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('application_instances')
     end
 
@@ -1261,12 +1285,17 @@ describe AdminUI::Admin, type: :integration do
       end
     end
 
-    context 'varz' do
+    context 'varz dea' do
       it_behaves_like('applications')
     end
 
-    context 'doppler' do
-      let(:varz_application_instance) { false }
+    context 'doppler cell' do
+      let(:application_instance_source) { :doppler_cell }
+      it_behaves_like('applications')
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('applications')
     end
 
@@ -1283,14 +1312,16 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'cells_view_model' do
-      let(:path)              { '/cells_view_model' }
-      let(:view_model_source) { view_models_cells }
+      let(:application_instance_source) { :doppler_cell }
+      let(:path)                        { '/cells_view_model' }
+      let(:view_model_source)           { view_models_cells }
       it_behaves_like('retrieves view_model')
     end
 
     context 'cells_view_model detail' do
-      let(:path)              { "/cells_view_model/#{rep_envelope.ip}:#{rep_envelope.index}" }
-      let(:view_model_source) { view_models_cells_detail }
+      let(:application_instance_source) { :doppler_cell }
+      let(:path)                        { "/cells_view_model/#{rep_envelope.ip}:#{rep_envelope.index}" }
+      let(:view_model_source)           { view_models_cells_detail }
       it_behaves_like('retrieves view_model detail')
     end
 
@@ -1333,28 +1364,78 @@ describe AdminUI::Admin, type: :integration do
 
     context 'current_statistics' do
       let(:retrieved) { get_json('/current_statistics') }
-      it 'retrieves' do
-        expect(retrieved).to include('apps'              => 1,
-                                     'cells'             => 1,
-                                     'deas'              => 1,
-                                     'organizations'     => 1,
-                                     'running_instances' => cc_app[:instances],
-                                     'spaces'            => 1,
-                                     'total_instances'   => cc_app[:instances],
-                                     'users'             => 1)
+
+      context 'varz dea' do
+        it 'retrieves' do
+          expect(retrieved).to include('apps'              => 1,
+                                       'cells'             => 0,
+                                       'deas'              => 1,
+                                       'organizations'     => 1,
+                                       'running_instances' => cc_app[:instances],
+                                       'spaces'            => 1,
+                                       'total_instances'   => cc_app[:instances],
+                                       'users'             => 1)
+        end
+      end
+
+      context 'doppler cell' do
+        let(:application_instance_source) { :doppler_cell }
+        it 'retrieves' do
+          expect(retrieved).to include('apps'              => 1,
+                                       'cells'             => 1,
+                                       'deas'              => 0,
+                                       'organizations'     => 1,
+                                       'running_instances' => cc_app[:instances],
+                                       'spaces'            => 1,
+                                       'total_instances'   => cc_app[:instances],
+                                       'users'             => 1)
+        end
+      end
+
+      context 'doppler dea' do
+        let(:application_instance_source) { :doppler_dea }
+        it 'retrieves' do
+          expect(retrieved).to include('apps'              => 1,
+                                       'cells'             => 0,
+                                       'deas'              => 1,
+                                       'organizations'     => 1,
+                                       'running_instances' => cc_app[:instances],
+                                       'spaces'            => 1,
+                                       'total_instances'   => cc_app[:instances],
+                                       'users'             => 1)
+        end
       end
     end
 
-    context 'deas_view_model' do
+    shared_examples 'deas_view_model' do
       let(:path)              { '/deas_view_model' }
       let(:view_model_source) { view_models_deas }
       it_behaves_like('retrieves view_model')
     end
 
-    context 'deas_view_model detail' do
-      let(:path)              { "/deas_view_model/#{nats_dea['host']}" }
+    shared_examples 'deas_view_model_detail' do
       let(:view_model_source) { view_models_deas_detail }
       it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'varz deas_view_model' do
+      it_behaves_like('deas_view_model')
+    end
+
+    context 'varz deas_view_model_detail' do
+      let(:path) { "/deas_view_model/#{nats_dea['host']}" }
+      it_behaves_like('deas_view_model_detail')
+    end
+
+    context 'doppler deas_view_model' do
+      let(:application_instance_source) { :doppler_dea }
+      it_behaves_like('deas_view_model')
+    end
+
+    context 'doppler deas_view_model_detail' do
+      let(:application_instance_source) { :doppler_dea }
+      let(:path)                        { "/deas_view_model/#{dea_envelope.ip}:#{dea_envelope.index}" }
+      it_behaves_like('deas_view_model_detail')
     end
 
     context 'domains_view_model' do
@@ -1425,16 +1506,35 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
-    context 'health_managers_view_model' do
+    shared_examples 'health_managers_view_model' do
       let(:path)              { '/health_managers_view_model' }
       let(:view_model_source) { view_models_health_managers }
       it_behaves_like('retrieves view_model')
     end
 
-    context 'health_managers_view_model detail' do
-      let(:path)              { "/health_managers_view_model/#{nats_health_manager['host']}" }
+    shared_examples 'health_managers_view_model detail' do
       let(:view_model_source) { view_models_health_managers_detail }
       it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'varz health_managers_view_model' do
+      it_behaves_like('health_managers_view_model')
+    end
+
+    context 'varz health_managers_view_model detail' do
+      let(:path) { "/health_managers_view_model/#{nats_health_manager['host']}" }
+      it_behaves_like('health_managers_view_model detail')
+    end
+
+    context 'doppler health_managers_view_model' do
+      let(:application_instance_source) { :doppler_dea }
+      it_behaves_like('health_managers_view_model')
+    end
+
+    context 'doppler health_managers_view_model detail' do
+      let(:application_instance_source) { :doppler_dea }
+      let(:path)                        { "/health_managers_view_model/#{analyzer_envelope.ip}:#{analyzer_envelope.index}" }
+      it_behaves_like('health_managers_view_model detail')
     end
 
     context 'identity_providers_view_model' do
@@ -1493,12 +1593,17 @@ describe AdminUI::Admin, type: :integration do
       end
     end
 
-    context 'varz' do
+    context 'varz dea' do
       it_behaves_like('organizations')
     end
 
-    context 'doppler' do
-      let(:varz_application_instance) { false }
+    context 'doppler cell' do
+      let(:application_instance_source) { :doppler_cell }
+      it_behaves_like('organizations')
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('organizations')
     end
 
@@ -1716,12 +1821,17 @@ describe AdminUI::Admin, type: :integration do
       end
     end
 
-    context 'varz' do
+    context 'varz dea' do
       it_behaves_like('spaces')
     end
 
-    context 'doppler' do
-      let(:varz_application_instance) { false }
+    context 'doppler cell' do
+      let(:application_instance_source) { :doppler_cell }
+      it_behaves_like('spaces')
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('spaces')
     end
 
@@ -1737,11 +1847,25 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
-    context 'stats_view_model' do
-      let(:path)              { '/stats_view_model' }
-      let(:timestamp)         { retrieved['items']['items'][0][9]['timestamp'] } # We have to copy the timestamp from the result since it is variable
-      let(:view_model_source) { view_models_stats(timestamp) }
+    shared_examples 'stats_view_model' do
+      let(:path)                        { '/stats_view_model' }
+      let(:timestamp)                   { retrieved['items']['items'][0][9]['timestamp'] } # We have to copy the timestamp from the result since it is variable
+      let(:view_model_source)           { view_models_stats(timestamp) }
       it_behaves_like('retrieves view_model')
+    end
+
+    context 'varz dea' do
+      it_behaves_like('stats_view_model')
+    end
+
+    context 'doppler cell' do
+      let(:application_instance_source) { :doppler_cell }
+      it_behaves_like('stats_view_model')
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
+      it_behaves_like('stats_view_model')
     end
 
     context 'users_view_model' do

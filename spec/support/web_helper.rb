@@ -110,7 +110,7 @@ shared_context :web_context do
     expect(chart.find_elements(class_name: 'jqplot-series-canvas').length).to eq(6)
   end
 
-  def check_stats_table(id)
+  def check_stats_table(id, application_instance_source)
     check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                           expected_length: 3,
                           labels:          ['', 'Instances', ''],
@@ -133,8 +133,8 @@ shared_context :web_context do
                        stat_count_string,
                        stat_count_string,
                        stat_count_string,
-                       stat_count_string,
-                       stat_count_string
+                       application_instance_source != :doppler_cell ? stat_count_string : nil,
+                       application_instance_source == :doppler_cell ? stat_count_string : nil
                      ])
   end
 

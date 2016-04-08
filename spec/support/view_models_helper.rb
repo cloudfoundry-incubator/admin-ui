@@ -12,8 +12,48 @@ module ViewModelsHelper
 
   BILLION = 1000 * 1000 * 1000
 
-  def view_models_stub(varz_application_instance)
-    @varz_application_instance = varz_application_instance
+  def view_models_stub(application_instance_source)
+    @application_instance_source = application_instance_source
+
+    @used_memory_in_bytes = determine_used_memory(application_instance_source)
+    @used_disk_in_bytes = determine_used_disk(application_instance_source)
+    @computed_pcpu = determine_used_cpu(application_instance_source)
+
+    @dea_identity = if application_instance_source == :varz_dea
+                      nats_dea['host']
+                    elsif application_instance_source == :doppler_dea
+                      "#{dea_envelope.ip}:#{dea_envelope.index}"
+                    end
+  end
+
+  def determine_used_cpu(application_instance_source)
+    if application_instance_source == :varz_dea
+      varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu']
+    elsif application_instance_source == :doppler_cell
+      rep_container_metric_envelope.containerMetric.cpuPercentage
+    else
+      dea_container_metric_envelope.containerMetric.cpuPercentage
+    end
+  end
+
+  def determine_used_disk(application_instance_source)
+    if application_instance_source == :varz_dea
+      varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']
+    elsif application_instance_source == :doppler_cell
+      rep_container_metric_envelope.containerMetric.diskBytes
+    else
+      dea_container_metric_envelope.containerMetric.diskBytes
+    end
+  end
+
+  def determine_used_memory(application_instance_source)
+    if application_instance_source == :varz_dea
+      varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']
+    elsif application_instance_source == :doppler_cell
+      rep_container_metric_envelope.containerMetric.memoryBytes
+    else
+      dea_container_metric_envelope.containerMetric.memoryBytes
+    end
   end
 
   def view_models_application_instances
@@ -23,28 +63,28 @@ module ViewModelsHelper
         cc_app[:name],
         cc_app[:guid],
         cc_app_instance_index,
-        @varz_application_instance ? varz_dea_app_instance : nil,
-        @varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] : nil,
-        @varz_application_instance ? Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339 : nil,
-        @varz_application_instance ? nil : Time.at(rep_envelope.timestamp / BILLION).to_datetime.rfc3339,
-        !@varz_application_instance,
+        @application_instance_source == :varz_dea ? varz_dea_app_instance : nil,
+        @application_instance_source == :varz_dea ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] : nil,
+        @application_instance_source == :varz_dea ? Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339 : nil,
+        @application_instance_source == :varz_dea ? nil : Time.at(rep_envelope.timestamp / BILLION).to_datetime.rfc3339,
+        @application_instance_source == :doppler_cell,
         cc_stack[:name],
-        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] : rep_container_metric_envelope.containerMetric.memoryBytes),
-        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] : rep_container_metric_envelope.containerMetric.diskBytes),
-        @varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 : rep_container_metric_envelope.containerMetric.cpuPercentage * 100,
+        AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
+        AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
+        @computed_pcpu * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
         "#{cc_organization[:name]}/#{cc_space[:name]}",
-        @varz_application_instance ? nats_dea['host'] : nil,
-        @varz_application_instance ? nil : "#{rep_envelope.ip}:#{rep_envelope.index}",
-        @varz_application_instance ? "#{cc_app[:guid]}/#{cc_app_instance_index}/#{varz_dea_app_instance}" : "#{cc_app[:guid]}/#{cc_app_instance_index}/0"
+        @dea_identity,
+        @application_instance_source == :doppler_cell ? "#{rep_envelope.ip}:#{rep_envelope.index}" : nil,
+        @application_instance_source == :varz_dea ? "#{cc_app[:guid]}/#{cc_app_instance_index}/#{varz_dea_app_instance}" : "#{cc_app[:guid]}/#{cc_app_instance_index}/0"
       ]
     ]
   end
 
   def view_models_application_instances_detail
     container = nil
-    unless @varz_application_instance
+    if @application_instance_source == :doppler_cell
       container =
         {
           application_id: rep_container_metric_envelope.containerMetric.applicationId,
@@ -57,11 +97,24 @@ module ViewModelsHelper
           origin:         rep_envelope.origin,
           timestamp:      rep_envelope.timestamp
         }
+    elsif @application_instance_source == :doppler_dea
+      container =
+        {
+          application_id: dea_container_metric_envelope.containerMetric.applicationId,
+          cpu_percentage: dea_container_metric_envelope.containerMetric.cpuPercentage,
+          disk_bytes:     dea_container_metric_envelope.containerMetric.diskBytes,
+          index:          dea_envelope.index,
+          instance_index: dea_container_metric_envelope.containerMetric.instanceIndex,
+          ip:             dea_envelope.ip,
+          memory_bytes:   dea_container_metric_envelope.containerMetric.memoryBytes,
+          origin:         dea_envelope.origin,
+          timestamp:      dea_envelope.timestamp
+        }
     end
 
     {
-      'application'          => @varz_application_instance ? nil : cc_app,
-      'application_instance' => @varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance] : nil,
+      'application'          => @application_instance_source == :varz_dea ? nil : cc_app,
+      'application_instance' => @application_instance_source == :varz_dea ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance] : nil,
       'container'            => container,
       'organization'         => cc_organization,
       'space'                => cc_space,
@@ -87,9 +140,9 @@ module ViewModelsHelper
         1,
         cc_app[:instances],
         1,
-        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] : rep_container_metric_envelope.containerMetric.memoryBytes),
-        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] : rep_container_metric_envelope.containerMetric.diskBytes),
-        @varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 : rep_container_metric_envelope.containerMetric.cpuPercentage * 100,
+        AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
+        AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
+        @computed_pcpu * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
         "#{cc_organization[:name]}/#{cc_space[:name]}"
@@ -132,6 +185,7 @@ module ViewModelsHelper
         "#{rep_envelope.ip}:#{rep_envelope.index}",
         rep_envelope.ip,
         rep_envelope.index,
+        'doppler',
         Time.at(rep_envelope.timestamp / BILLION).to_datetime.rfc3339,
         'RUNNING',
         REP_VALUE_METRICS['numCPUS'],
@@ -144,23 +198,19 @@ module ViewModelsHelper
         REP_VALUE_METRICS['CapacityTotalMemory'],
         REP_VALUE_METRICS['CapacityRemainingMemory'],
         REP_VALUE_METRICS['CapacityTotalDisk'],
-        REP_VALUE_METRICS['CapacityRemainingDisk'],
-        "#{rep_envelope.origin}:#{rep_envelope.index}:#{rep_envelope.ip}"
+        REP_VALUE_METRICS['CapacityRemainingDisk']
       ]
     ]
   end
 
   def view_models_cells_detail
-    hash =
-      {
-        'connected' => true,
-        'index'     => rep_envelope.index,
-        'ip'        => rep_envelope.ip,
-        'origin'    => rep_envelope.origin,
-        'timestamp' => rep_envelope.timestamp
-      }
-
-    hash.merge(REP_VALUE_METRICS)
+    {
+      'connected' => true,
+      'index'     => rep_envelope.index,
+      'ip'        => rep_envelope.ip,
+      'origin'    => rep_envelope.origin,
+      'timestamp' => rep_envelope.timestamp
+    }.merge(REP_VALUE_METRICS)
   end
 
   def view_models_clients
@@ -193,6 +243,7 @@ module ViewModelsHelper
       [
         nats_cloud_controller['host'],
         nats_cloud_controller['index'],
+        'varz',
         'RUNNING',
         DateTime.parse(varz_cloud_controller['start']).rfc3339,
         varz_cloud_controller['num_cores'],
@@ -219,6 +270,7 @@ module ViewModelsHelper
         nats_cloud_controller['host'],
         nats_cloud_controller['type'],
         nats_cloud_controller['index'],
+        'varz',
         'RUNNING',
         DateTime.parse(varz_cloud_controller['start']).rfc3339,
         nats_cloud_controller_varz
@@ -227,6 +279,7 @@ module ViewModelsHelper
         nats_dea['host'],
         nats_dea['type'],
         nats_dea['index'],
+        'varz',
         'RUNNING',
         DateTime.parse(varz_dea['start']).rfc3339,
         nats_dea_varz
@@ -235,6 +288,7 @@ module ViewModelsHelper
         nats_health_manager['host'],
         nats_health_manager['type'],
         nats_health_manager['index'],
+        'varz',
         'RUNNING',
         nil,
         nats_health_manager_varz
@@ -243,6 +297,7 @@ module ViewModelsHelper
         nats_provisioner['host'],
         nats_provisioner['type'],
         nats_provisioner['index'],
+        'varz',
         'RUNNING',
         DateTime.parse(varz_provisioner['start']).rfc3339,
         nats_provisioner_varz
@@ -251,6 +306,7 @@ module ViewModelsHelper
         nats_router['host'],
         nats_router['type'],
         nats_router['index'],
+        'varz',
         'RUNNING',
         DateTime.parse(varz_router['start']).rfc3339,
         nats_router_varz
@@ -261,32 +317,58 @@ module ViewModelsHelper
   def view_models_deas
     [
       [
-        nats_dea['host'],
-        nats_dea['index'],
+        application_instance_source == :varz_dea ? nats_dea['host'] : "#{dea_envelope.ip}:#{dea_envelope.index}",
+        application_instance_source == :varz_dea ? nats_dea['index'] : dea_envelope.index,
+        application_instance_source == :varz_dea ? 'varz' : 'doppler',
         'RUNNING',
-        DateTime.parse(varz_dea['start']).rfc3339,
-        varz_dea['stacks'],
-        varz_dea['cpu'],
-        varz_dea['mem'],
-        varz_dea['instance_registry'].length,
-        varz_dea['instance_registry'][cc_app[:guid]].length,
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']),
-        AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']),
-        varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100,
-        varz_dea['available_memory_ratio'] * 100,
-        varz_dea['available_disk_ratio'] * 100
+        application_instance_source == :varz_dea ? DateTime.parse(varz_dea['start']).rfc3339 : nil,
+        @application_instance_source == :doppler_dea ? Time.at(dea_envelope.timestamp / BILLION).to_datetime.rfc3339 : nil,
+        application_instance_source == :varz_dea ? varz_dea['stacks'] : nil,
+        application_instance_source == :varz_dea ? varz_dea['cpu'] : nil,
+        application_instance_source == :varz_dea ? varz_dea['mem'] : nil,
+        application_instance_source == :varz_dea ? varz_dea['instance_registry'].length : DEA_VALUE_METRICS['instances'],
+        application_instance_source == :varz_dea ? varz_dea['instance_registry'][cc_app[:guid]].length : cc_app[:instances],
+        AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
+        AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
+        @computed_pcpu * 100,
+        application_instance_source == :varz_dea ? varz_dea['available_memory_ratio'] * 100 : nil,
+        application_instance_source == :varz_dea ? varz_dea['available_disk_ratio'] * 100 : nil,
+        application_instance_source == :doppler_dea ? DEA_VALUE_METRICS['remaining_memory'] : nil,
+        application_instance_source == :doppler_dea ? DEA_VALUE_METRICS['remaining_disk'] : nil
       ]
     ]
   end
 
   def view_models_deas_detail
+    doppler_dea_hash = nil
+    varz_dea_hash    = nil
+
+    if application_instance_source == :doppler_dea
+      doppler_dea_hash =
+        {
+          'connected' => true,
+          'index'     => dea_envelope.index,
+          'ip'        => dea_envelope.ip,
+          'origin'    => dea_envelope.origin,
+          'timestamp' => dea_envelope.timestamp
+        }.merge(DEA_VALUE_METRICS)
+    end
+
+    if application_instance_source == :varz_dea
+      varz_dea_hash =
+        {
+          'connected' => true,
+          'data'      => varz_dea,
+          'index'     => nats_dea['index'],
+          'name'      => nats_dea['host'],
+          'type'      => nats_dea['type'],
+          'uri'       => nats_dea_varz
+        }
+    end
+
     {
-      'connected' => true,
-      'data'      => varz_dea,
-      'index'     => nats_dea['index'],
-      'name'      => nats_dea['host'],
-      'type'      => nats_dea['type'],
-      'uri'       => nats_dea_varz
+      'doppler_dea' => doppler_dea_hash,
+      'varz_dea'    => varz_dea_hash
     }
   end
 
@@ -360,6 +442,7 @@ module ViewModelsHelper
       [
         nats_provisioner['type'].sub('-Provisioner', ''),
         nats_provisioner['index'],
+        'varz',
         'RUNNING',
         DateTime.parse(varz_provisioner['start']).rfc3339,
         varz_provisioner['config']['service']['description'],
@@ -407,23 +490,45 @@ module ViewModelsHelper
   def view_models_health_managers
     [
       [
-        nats_health_manager['host'],
-        nats_health_manager['index'],
+        @application_instance_source == :doppler_dea ? "#{analyzer_envelope.ip}:#{analyzer_envelope.index}" : nats_health_manager['host'],
+        @application_instance_source == :doppler_dea ? analyzer_envelope.index : nats_health_manager['index'],
+        @application_instance_source == :doppler_dea ? 'doppler' : 'varz',
         'RUNNING',
-        varz_health_manager['numCPUS'],
-        varz_health_manager['memoryStats']['numBytesAllocated']
+        @application_instance_source == :doppler_dea ? Time.at(analyzer_envelope.timestamp / BILLION).to_datetime.rfc3339 : nil,
+        @application_instance_source == :doppler_dea ? nil : varz_health_manager['numCPUS'],
+        @application_instance_source == :doppler_dea ? nil : varz_health_manager['memoryStats']['numBytesAllocated']
       ]
     ]
   end
 
   def view_models_health_managers_detail
+    doppler_analyzer_hash    = nil
+    varz_health_manager_hash = nil
+
+    if application_instance_source == :doppler_dea
+      doppler_analyzer_hash =
+        {
+          'connected' => true,
+          'index'     => analyzer_envelope.index,
+          'ip'        => analyzer_envelope.ip,
+          'origin'    => analyzer_envelope.origin,
+          'timestamp' => analyzer_envelope.timestamp
+        }.merge(ANALYZER_VALUE_METRICS)
+    else
+      varz_health_manager_hash =
+        {
+          'connected' => true,
+          'data'      => varz_health_manager,
+          'index'     => nats_health_manager['index'],
+          'name'      => nats_health_manager['host'],
+          'type'      => nats_health_manager['type'],
+          'uri'       => nats_health_manager_varz
+        }
+    end
+
     {
-      'connected' => true,
-      'data'      => varz_health_manager,
-      'index'     => nats_health_manager['index'],
-      'name'      => nats_health_manager['host'],
-      'type'      => nats_health_manager['type'],
-      'uri'       => nats_health_manager_varz
+      'doppler_analyzer'    => doppler_analyzer_hash,
+      'varz_health_manager' => varz_health_manager_hash
     }
   end
 
@@ -510,9 +615,9 @@ module ViewModelsHelper
         0,
         cc_app[:instances],
         1,
-        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] : rep_container_metric_envelope.containerMetric.memoryBytes),
-        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] : rep_container_metric_envelope.containerMetric.diskBytes),
-        @varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 : rep_container_metric_envelope.containerMetric.cpuPercentage * 100,
+        AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
+        AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
+        @computed_pcpu * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
         1,
@@ -609,6 +714,7 @@ module ViewModelsHelper
       [
         nats_router['host'],
         nats_router['index'],
+        'varz',
         'RUNNING',
         DateTime.parse(varz_router['start']).rfc3339,
         varz_router['num_cores'],
@@ -1119,9 +1225,9 @@ module ViewModelsHelper
         0,
         cc_app[:instances],
         1,
-        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'] : rep_container_metric_envelope.containerMetric.memoryBytes),
-        AdminUI::Utils.convert_bytes_to_megabytes(@varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'] : rep_container_metric_envelope.containerMetric.diskBytes),
-        @varz_application_instance ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100 : rep_container_metric_envelope.containerMetric.cpuPercentage * 100,
+        AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
+        AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
+        @computed_pcpu * 100,
         cc_app[:memory],
         cc_app[:disk_quota],
         1,
@@ -1170,12 +1276,12 @@ module ViewModelsHelper
         1,
         cc_app[:instances],
         cc_app[:state] == 'STARTED' ? 1 : 0,
-        1,
-        1,
+        @application_instance_source == :varz_dea || @application_instance_source == :doppler_dea ? 1 : 0,
+        @application_instance_source == :doppler_cell ? 1 : 0,
         {
           apps:              1,
-          cells:             1,
-          deas:              1,
+          cells:             @application_instance_source == :doppler_cell ? 1 : 0,
+          deas:              @application_instance_source == :varz_dea || @application_instance_source == :doppler_dea ? 1 : 0,
           organizations:     1,
           running_instances: cc_app[:state] == 'STARTED' ? 1 : 0,
           spaces:            1,

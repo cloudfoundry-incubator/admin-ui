@@ -9,6 +9,7 @@ describe AdminUI::Operation, type: :integration do
   include VARZHelper
   include ViewModelsHelper
 
+  let(:application_instance_source)    { :varz_dea }
   let(:ccdb_file)                      { '/tmp/admin_ui_ccdb.db' }
   let(:ccdb_uri)                       { "sqlite://#{ccdb_file}" }
   let(:data_file)                      { '/tmp/admin_ui_data.json' }
@@ -19,7 +20,6 @@ describe AdminUI::Operation, type: :integration do
   let(:log_file)                       { '/tmp/admin_ui.log' }
   let(:uaadb_file)                     { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)                      { "sqlite://#{uaadb_file}" }
-  let(:varz_application_instance)      { true }
 
   let(:config) do
     AdminUI::Config.load(ccdb_uri:                ccdb_uri,
@@ -59,10 +59,10 @@ describe AdminUI::Operation, type: :integration do
 
     config_stub
     cc_stub(config, insert_second_quota_definition)
-    doppler_stub(!varz_application_instance)
-    nats_stub
-    varz_stub(varz_application_instance)
-    view_models_stub(varz_application_instance)
+    doppler_stub(application_instance_source)
+    nats_stub(application_instance_source)
+    varz_stub(application_instance_source)
+    view_models_stub(application_instance_source)
 
     event_machine_loop
   end
@@ -1327,16 +1327,38 @@ describe AdminUI::Operation, type: :integration do
     end
 
     context 'manage doppler components' do
-      before do
-        expect(doppler.components['items'].length).to eq(1)
+      context 'doppler cell' do
+        let(:application_instance_source) { :doppler_cell }
+        before do
+          expect(doppler.components['items'].length).to eq(2)
+        end
+
+        after do
+          expect(doppler.components['items'].length).to eq(1)
+        end
+
+        it 'removes rep' do
+          expect { operation.remove_doppler_component("#{rep_envelope.origin}:#{rep_envelope.index}:#{rep_envelope.ip}") }.to change { doppler.reps['items'].length }.from(1).to(0)
+        end
       end
 
-      after do
-        expect(doppler.components['items'].length).to eq(0)
-      end
+      context 'doppler dea' do
+        let(:application_instance_source) { :doppler_dea }
+        before do
+          expect(doppler.components['items'].length).to eq(3)
+        end
 
-      it 'removes rep' do
-        expect { operation.remove_doppler_component("#{rep_envelope.origin}:#{rep_envelope.index}:#{rep_envelope.ip}") }.to change { doppler.reps['items'].length }.from(1).to(0)
+        after do
+          expect(doppler.components['items'].length).to eq(2)
+        end
+
+        it 'removes analyzer' do
+          expect { operation.remove_doppler_component("#{analyzer_envelope.origin}:#{analyzer_envelope.index}:#{analyzer_envelope.ip}") }.to change { doppler.analyzers['items'].length }.from(1).to(0)
+        end
+
+        it 'removes dea' do
+          expect { operation.remove_doppler_component("#{dea_envelope.origin}:#{dea_envelope.index}:#{dea_envelope.ip}") }.to change { doppler.deas['items'].length }.from(1).to(0)
+        end
       end
     end
 

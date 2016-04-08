@@ -61,6 +61,20 @@ module AdminUI
       end
     end
 
+    def analyzers
+      filter_components('analyzer')
+    end
+
+    def deas
+      filter_components('DEA')
+    end
+
+    def deas_count
+      hash = filter_components('DEA')
+      return nil unless hash['connected']
+      hash['items'].length
+    end
+
     def reps
       filter_components('rep')
     end

@@ -450,6 +450,8 @@ module AdminUI
       @logger.debug("REMOVE doppler component #{key}")
       @doppler.remove_component(key)
       @view_models.invalidate_cells
+      @view_models.invalidate_deas
+      @view_models.invalidate_health_managers
     end
   end
 end

@@ -21,6 +21,7 @@ module AdminUI
 
         row.push(cloud_controller['name'])
         row.push(cloud_controller['index'])
+        row.push('varz')
 
         data = cloud_controller['data']
 
@@ -57,7 +58,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(true, items, hash, (0..6).to_a, [0, 2, 3])
+      result(true, items, hash, (0..7).to_a, [0, 2, 3, 4])
     end
   end
 end

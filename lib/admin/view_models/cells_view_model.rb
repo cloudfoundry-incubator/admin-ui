@@ -25,6 +25,7 @@ module AdminUI
         row.push(name)
         row.push(rep['ip'])
         row.push(rep['index'])
+        row.push('doppler')
         row.push(Time.at(rep['timestamp'] / BILLION).to_datetime.rfc3339)
 
         if rep['connected']
@@ -59,16 +60,16 @@ module AdminUI
         else
           row.push('OFFLINE')
           row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
-        end
 
-        # This last column is used to enable deletion of OFFLINE components
-        row.push(key)
+          # This last non-visible column is used to enable deletion of OFFLINE components
+          row.push(key)
+        end
 
         hash[name] = rep
         items.push(row)
       end
 
-      result(true, items, hash, (0..15).to_a, [3, 4])
+      result(true, items, hash, (0..16).to_a, [3, 4, 5])
     end
   end
 end

@@ -4,7 +4,7 @@ require 'yajl'
 require_relative '../spec_helper'
 
 module NATSHelper
-  def nats_stub
+  def nats_stub(application_instance_source)
     allow(::NATS).to receive(:start) do |_, &blk|
       EventMachine.next_tick { blk.call }
     end
@@ -13,8 +13,8 @@ module NATSHelper
 
     allow(::NATS).to receive(:request).with('vcap.component.discover') do |_, &blk|
       EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_cloud_controller)) }
-      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_dea)) }
-      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_health_manager)) }
+      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_dea)) } if application_instance_source == :varz_dea
+      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_health_manager)) } unless application_instance_source == :doppler_dea
       EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_provisioner)) }
       EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_router)) }
     end

@@ -9,6 +9,49 @@ module DopplerHelper
 
   BILLION = 1000 * 1000 * 1000
 
+  ANALYZER_VALUE_METRICS =
+    {
+      'memoryStats.lastGCPauseTimeNS'         => 2_189_668.0,
+      'memoryStats.numBytesAllocated'         => 548_968.0,
+      'memoryStats.numBytesAllocatedHeap'     => 548_968.0,
+      'memoryStats.numBytesAllocatedStack'    => 655_360.0,
+      'memoryStats.numFrees'                  => 131_746.0,
+      'memoryStats.numMallocs'                => 134_926.0,
+      'NumberOfAppsWithAllInstancesReporting' => 1.0,
+      'NumberOfAppsWithMissingInstances'      => 0.0,
+      'NumberOfCrashedIndices'                => 0.0,
+      'NumberOfCrashedInstances'              => 0.0,
+      'NumberOfDesiredApps'                   => 1.0,
+      'NumberOfDesiredAppsPendingStaging'     => 0.0,
+      'NumberOfDesiredInstances'              => 1.0,
+      'NumberOfMissingIndices'                => 0.0,
+      'NumberOfRunningInstances'              => 1.0,
+      'NumberOfUndesiredRunningApps'          => 0.0,
+      'numCPUS'                               => 4.0,
+      'numGoRoutines'                         => 56.0
+    }.freeze
+
+  DEA_VALUE_METRICS =
+    {
+      'instances'        => 1.0,
+      'remaining_disk'   => 30_904.0,
+      'remaining_memory' => 7_208.0
+    }.freeze
+
+  DOPPLER_SERVER_VALUE_METRICS =
+    {
+      'memoryStats.lastGCPauseTimeNS'       => 3_553_637.0,
+      'memoryStats.numBytesAllocated'       => 2_052_480.0,
+      'memoryStats.numBytesAllocatedHeap'   => 2_052_480.0,
+      'memoryStats.numBytesAllocatedStack'  => 720_896.0,
+      'memoryStats.numFrees'                => 1_225_251.0,
+      'memoryStats.numMallocs'              => 1_268_441.0,
+      'messageRouter.numberOfFirehoseSinks' => 1.0,
+      'numCPUS'                             => 4.0,
+      'numGoRoutines'                       => 58.0,
+      'Uptime'                              => 1_080.0
+    }.freeze
+
   REP_VALUE_METRICS =
     {
       'CapacityRemainingContainers'        => 252.0,
@@ -36,7 +79,7 @@ module DopplerHelper
     end
   end
 
-  def doppler_stub(include_application_instance)
+  def doppler_stub(application_instance_source)
     @close_blk = nil
 
     @time = Time.now
@@ -55,12 +98,27 @@ module DopplerHelper
     allow_any_instance_of(MockWebSocketClient).to receive(:on).with(:error)
 
     allow_any_instance_of(MockWebSocketClient).to receive(:on).with(:message) do |_event, &blk|
-      REP_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
-        EventMachine.next_tick { blk.call(event(rep_value_metric_envelope(value_metric_key, value_metric_value))) }
+      if application_instance_source == :doppler_cell
+        REP_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
+          EventMachine.next_tick { blk.call(event(rep_value_metric_envelope(value_metric_key, value_metric_value))) }
+        end
+
+        EventMachine.next_tick { blk.call(event(rep_container_metric_envelope)) }
+      elsif application_instance_source == :doppler_dea
+        ANALYZER_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
+          EventMachine.next_tick { blk.call(event(analyzer_value_metric_envelope(value_metric_key, value_metric_value))) }
+        end
+
+        DEA_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
+          EventMachine.next_tick { blk.call(event(dea_value_metric_envelope(value_metric_key, value_metric_value))) }
+        end
+
+        EventMachine.next_tick { blk.call(event(dea_container_metric_envelope)) }
       end
 
-      if include_application_instance
-        EventMachine.next_tick { blk.call(event(rep_container_metric_envelope)) }
+      # We need at least one value metric for the doppler-retrieving code to be considered working
+      DOPPLER_SERVER_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
+        EventMachine.next_tick { blk.call(event(doppler_server_value_metric_envelope(value_metric_key, value_metric_value))) }
       end
     end
 
@@ -69,42 +127,112 @@ module DopplerHelper
     end
   end
 
+  def analyzer_envelope
+    envelope           = Events::Envelope.new
+    envelope.index     = '3'
+    envelope.ip        = '10.10.10.12'
+    envelope.origin    = 'analyzer'
+    envelope.timestamp = @time.to_i * BILLION
+
+    envelope
+  end
+
+  def dea_envelope
+    envelope           = Events::Envelope.new
+    envelope.index     = '1'
+    envelope.ip        = '10.10.10.10'
+    envelope.origin    = 'DEA'
+    envelope.timestamp = @time.to_i * BILLION
+
+    envelope
+  end
+
+  def doppler_server_envelope
+    envelope           = Events::Envelope.new
+    envelope.index     = '2'
+    envelope.ip        = '10.10.10.11'
+    envelope.origin    = 'DopplerServer'
+    envelope.timestamp = @time.to_i * BILLION
+
+    envelope
+  end
+
   def rep_envelope
     envelope           = Events::Envelope.new
     envelope.index     = '4'
-    envelope.ip        = '10.10.10.10'
+    envelope.ip        = '10.10.10.13'
     envelope.origin    = 'rep'
     envelope.timestamp = @time.to_i * BILLION
 
     envelope
   end
 
-  def rep_container_metric_envelope
-    container_metric               = Events::ContainerMetric.new
-    container_metric.applicationId = cc_app[:guid]
-    container_metric.instanceIndex = cc_app_instance_index
-    container_metric.cpuPercentage = 0.178232960961232
-    container_metric.memoryBytes   = 75_057_856
-    container_metric.diskBytes     = 34_292_160
+  def dea_container_metric_envelope
+    envelope                 = dea_envelope
+    envelope.eventType       = Events::Envelope::EventType::ContainerMetric
+    envelope.containerMetric = container_metric(0.0018560986278165663, 178_135_040, 134_434_816)
 
+    envelope
+  end
+
+  def rep_container_metric_envelope
     envelope                 = rep_envelope
     envelope.eventType       = Events::Envelope::EventType::ContainerMetric
-    envelope.containerMetric = container_metric
+    envelope.containerMetric = container_metric(0.178232960961232, 75_057_856, 34_292_160)
+
+    envelope
+  end
+
+  def analyzer_value_metric_envelope(key, value)
+    envelope             = analyzer_envelope
+    envelope.eventType   = Events::Envelope::EventType::ValueMetric
+    envelope.valueMetric = value_metric(key, value)
+
+    envelope
+  end
+
+  def dea_value_metric_envelope(key, value)
+    envelope             = dea_envelope
+    envelope.eventType   = Events::Envelope::EventType::ValueMetric
+    envelope.valueMetric = value_metric(key, value)
+
+    envelope
+  end
+
+  def doppler_server_value_metric_envelope(key, value)
+    envelope             = doppler_server_envelope
+    envelope.eventType   = Events::Envelope::EventType::ValueMetric
+    envelope.valueMetric = value_metric(key, value)
 
     envelope
   end
 
   def rep_value_metric_envelope(key, value)
+    envelope             = rep_envelope
+    envelope.eventType   = Events::Envelope::EventType::ValueMetric
+    envelope.valueMetric = value_metric(key, value)
+
+    envelope
+  end
+
+  def container_metric(cpu_percentage, memory_bytes, disk_bytes)
+    container_metric               = Events::ContainerMetric.new
+    container_metric.applicationId = cc_app[:guid]
+    container_metric.instanceIndex = cc_app_instance_index
+    container_metric.cpuPercentage = cpu_percentage
+    container_metric.memoryBytes   = memory_bytes
+    container_metric.diskBytes     = disk_bytes
+
+    container_metric
+  end
+
+  def value_metric(key, value)
     value_metric       = Events::ValueMetric.new
     value_metric.name  = key
     value_metric.unit  = 'unit'
     value_metric.value = value
 
-    envelope             = rep_envelope
-    envelope.eventType   = Events::Envelope::EventType::ValueMetric
-    envelope.valueMetric = value_metric
-
-    envelope
+    value_metric
   end
 
   def event(envelope)

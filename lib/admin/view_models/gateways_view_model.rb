@@ -21,6 +21,7 @@ module AdminUI
 
         row.push(gateway['name'])
         row.push(gateway['index'])
+        row.push('varz')
 
         data = gateway['data']
 
@@ -69,7 +70,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(true, items, hash, (0..8).to_a, [0, 2, 3, 4])
+      result(true, items, hash, (0..9).to_a, [0, 2, 3, 4, 5])
     end
   end
 end

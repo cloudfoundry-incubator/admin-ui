@@ -13,8 +13,24 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.title == 'Statistics' }
   end
 
-  it 'has a table' do
-    check_stats_table('Statistics')
+  shared_examples 'it has a table' do
+    it 'has a table' do
+      check_stats_table('Statistics', application_instance_source)
+    end
+  end
+
+  context 'varz dea' do
+    it_behaves_like('it has a table')
+  end
+
+  context 'doppler cell' do
+    let(:application_instance_source) { :doppler_cell }
+    it_behaves_like('it has a table')
+  end
+
+  context 'doppler dea' do
+    let(:application_instance_source) { :doppler_dea }
+    it_behaves_like('it has a table')
   end
 
   it 'has a chart' do

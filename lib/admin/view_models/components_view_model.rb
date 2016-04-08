@@ -23,6 +23,7 @@ module AdminUI
 
         row.push(component['type'])
         row.push(component['index'])
+        row.push('varz')
         row.push(component['connected'] ? 'RUNNING' : 'OFFLINE')
 
         data = component['data']
@@ -40,7 +41,7 @@ module AdminUI
         hash[component['name']] = component
       end
 
-      result(true, items, hash, (0..4).to_a, [0, 1, 3, 4])
+      result(true, items, hash, (0..5).to_a, [0, 1, 3, 4, 5])
     end
   end
 end

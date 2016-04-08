@@ -29,6 +29,7 @@ module AdminUI
 
         row.push(router['name'])
         row.push(router['index'])
+        row.push('varz')
 
         data = router['data']
 
@@ -90,7 +91,7 @@ module AdminUI
         items.push(row)
       end
 
-      result(true, items, hash, (0..9).to_a, [0, 2, 3])
+      result(true, items, hash, (0..10).to_a, [0, 2, 3, 4])
     end
   end
 end

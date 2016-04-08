@@ -26,7 +26,7 @@ describe AdminUI::VARZ, type: :integration do
 
   before do
     config_stub
-    nats_stub
+    nats_stub(:varz_dea)
 
     event_machine_loop
   end
@@ -185,7 +185,7 @@ describe AdminUI::VARZ, type: :integration do
 
   context 'Stubbed NATS and HTTP' do
     before do
-      varz_stub(true)
+      varz_stub(:varz_dea)
     end
 
     it 'returns connected components' do

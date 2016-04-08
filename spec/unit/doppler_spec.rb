@@ -35,12 +35,24 @@ describe AdminUI::Doppler do
   end
 
   context 'No backend connected' do
+    it 'returns zero analyzers as expected' do
+      expect(doppler.analyzers).to eq('connected' => false, 'items' => {})
+    end
+
     it 'returns zero components as expected' do
       expect(doppler.components).to eq('connected' => false, 'items' => {})
     end
 
     it 'returns zero containers as expected' do
       expect(doppler.containers).to eq('connected' => false, 'items' => {})
+    end
+
+    it 'returns zero deas as expected' do
+      expect(doppler.deas).to eq('connected' => false, 'items' => {})
+    end
+
+    it 'returns nil deas_count as expected' do
+      expect(doppler.deas_count).to be_nil
     end
 
     it 'returns zero reps as expected' do
