@@ -55,6 +55,10 @@ describe AdminUI::Doppler do
       expect(doppler.deas_count).to be_nil
     end
 
+    it 'returns zero gorouters as expected' do
+      expect(doppler.gorouters).to eq('connected' => false, 'items' => {})
+    end
+
     it 'returns zero reps as expected' do
       expect(doppler.reps).to eq('connected' => false, 'items' => {})
     end

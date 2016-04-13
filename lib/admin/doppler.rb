@@ -75,6 +75,10 @@ module AdminUI
       hash['items'].length
     end
 
+    def gorouters
+      filter_components('gorouter')
+    end
+
     def reps
       filter_components('rep')
     end
@@ -357,13 +361,19 @@ module AdminUI
     def save_data(local_value_metrics, disconnected)
       @logger.debug('Saving doppler component data...')
 
+      # Sort the local value metrics.  Nice for the UI when displaying JSON block.
+      sorted_local_value_metrics = {}
+      local_value_metrics.each_pair do |key, value|
+        sorted_local_value_metrics[key] = value.sort_by { |k, _v| k.downcase }.to_h
+      end
+
       @components_semaphore.synchronize do
         begin
           @components = read_or_initialize_components
 
           # Remove all old references which also have new references prior to merge.
           @components['items'].each_key do |key|
-            if local_value_metrics.key?(key)
+            if sorted_local_value_metrics.key?(key)
               @components['items'].delete(key)
               @components['notified'].delete(key)
             else
@@ -371,8 +381,8 @@ module AdminUI
             end
           end
 
-          @components['connected'] = !local_value_metrics.empty?
-          @components['items'].merge!(local_value_metrics)
+          @components['connected'] = !sorted_local_value_metrics.empty?
+          @components['items'].merge!(sorted_local_value_metrics)
 
           update_connection_status('doppler_logging_endpoint',
                                    'doppler_logging_endpoint',
@@ -492,9 +502,6 @@ module AdminUI
     end
 
     def monitored?(component)
-      # TODO: Currently only using doppler to monitor reps
-      return false unless component == 'rep'
-
       @config.monitored_components.each do |type|
         return true if component =~ /#{type}/ || type.casecmp('ALL') == 0
       end

@@ -240,7 +240,7 @@ describe AdminUI::ViewModels, type: :integration do
 
     context 'returns connected components_view_model detail' do
       let(:results)  { view_models.component(nats_cloud_controller['host']) }
-      let(:expected) { view_models_cloud_controllers_detail }
+      let(:expected) { view_models_components_detail }
 
       it_behaves_like('common view model retrieval detail')
     end
@@ -474,18 +474,36 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
-    context 'returns connected routers_view_model' do
+    shared_examples 'routers_view_model' do
       let(:results)  { view_models.routers }
       let(:expected) { view_models_routers }
 
       it_behaves_like('common view model retrieval')
     end
 
-    context 'returns connected routers_view_model detail' do
-      let(:results)  { view_models.router(nats_router['host']) }
+    shared_examples 'routers_view_model detail' do
       let(:expected) { view_models_routers_detail }
-
       it_behaves_like('common view model retrieval detail')
+    end
+
+    context 'varz routers_view_model' do
+      it_behaves_like('routers_view_model')
+    end
+
+    context 'varz routers_view_model detail' do
+      let(:results) { view_models.router(nats_router['host']) }
+      it_behaves_like('routers_view_model detail')
+    end
+
+    context 'doppler routers_view_model' do
+      let(:application_instance_source) { :doppler_dea }
+      it_behaves_like('routers_view_model')
+    end
+
+    context 'doppler routers_view_model detail' do
+      let(:application_instance_source) { :doppler_dea }
+      let(:results) { view_models.router("#{gorouter_envelope.ip}:#{gorouter_envelope.index}") }
+      it_behaves_like('routers_view_model detail')
     end
 
     context 'returns connected routes_view_model' do

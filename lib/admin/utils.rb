@@ -81,5 +81,9 @@ module AdminUI
     def self.convert_bytes_to_megabytes(bytes)
       (bytes / 1_048_576.0).round
     end
+
+    def self.convert_kilobytes_to_megabytes(kilobytes)
+      (kilobytes / 1_024.0).round
+    end
   end
 end

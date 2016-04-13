@@ -4413,7 +4413,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                nil,
                                varz_dea['stacks'][0],
                                @driver.execute_script("return Format.formatNumber(#{varz_dea['cpu']})"),
-                               @driver.execute_script("return Format.formatNumber(#{varz_dea['mem']})"),
+                               @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_kilobytes_to_megabytes(varz_dea['mem'])})"),
                                @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]].length})"),
                                @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]].length})"),
                                @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})"),
@@ -4475,7 +4475,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              { label: 'Cores',                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['num_cores']})") },
                              { label: 'CPU',                   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['cpu']})") },
                              { label: 'CPU Load Avg',          tag: nil, value: "#{@driver.execute_script("return Format.formatNumber(#{varz_dea['cpu_load_avg'].to_f} * 100)")}%" },
-                             { label: 'Memory',                tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['mem']})") },
+                             { label: 'Memory',                tag: nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_kilobytes_to_megabytes(varz_dea['mem'])})") },
                              { label: 'Total Instances',       tag: 'a', value: @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'].length})") },
                              { label: 'Running Instances',     tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'].length})") },
                              { label: 'Instances Memory Used', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})") },
@@ -4618,7 +4618,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              varz_cloud_controller['start'],
                              @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['num_cores']})"),
                              @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['cpu']})"),
-                             @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['mem']})")
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_kilobytes_to_megabytes(varz_cloud_controller['mem'])})")
                            ])
         end
 
@@ -4637,7 +4637,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Uptime',           tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{varz_cloud_controller['uptime']}\")") },
                            { label: 'Cores',            tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['num_cores']})") },
                            { label: 'CPU',              tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['cpu']})") },
-                           { label: 'Memory',           tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['mem']})") },
+                           { label: 'Memory',           tag: nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_kilobytes_to_megabytes(varz_cloud_controller['mem'])})") },
                            { label: 'Requests',         tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['vcap_sinatra']['requests']['completed']})") },
                            { label: 'Pending Requests', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_cloud_controller['vcap_sinatra']['requests']['outstanding']})") }
                           ])
@@ -4667,7 +4667,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                @driver.execute_script('return Constants.STATUS__RUNNING'),
                                nil,
                                @driver.execute_script("return Format.formatNumber(#{varz_health_manager['numCPUS']})"),
-                               @driver.execute_script("return Format.formatNumber(#{varz_health_manager['memoryStats']['numBytesAllocated']})")
+                               @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_health_manager['memoryStats']['numBytesAllocated'])})")
                              ])
           end
         end
@@ -4682,8 +4682,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                'doppler',
                                @driver.execute_script('return Constants.STATUS__RUNNING'),
                                Time.at(analyzer_envelope.timestamp / BILLION).to_datetime.rfc3339,
-                               nil,
-                               nil
+                               @driver.execute_script("return Format.formatNumber(#{DopplerHelper::ANALYZER_VALUE_METRICS['numCPUS']})"),
+                               @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(DopplerHelper::ANALYZER_VALUE_METRICS['memoryStats.numBytesAllocated'])})")
                              ])
           end
         end
@@ -4704,7 +4704,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              { label: 'Source',                                       tag: nil, value: 'varz' },
                              { label: 'URI',                                          tag: 'a', value: nats_health_manager_varz },
                              { label: 'Cores',                                        tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager['numCPUS']})") },
-                             { label: 'Memory',                                       tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager['memoryStats']['numBytesAllocated']})") },
+                             { label: 'Memory',                                       tag: nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_health_manager['memoryStats']['numBytesAllocated'])})") },
                              { label: 'Actual State Listener Store Usage Percentage', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('ActualStateListenerStoreUsagePercentage')})") },
                              { label: 'Desired Apps',                                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('NumberOfDesiredApps')})") },
                              { label: 'Desired Apps Pending Staging',                 tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_health_manager_metric('NumberOfDesiredAppsPendingStaging')})") },
@@ -4735,6 +4735,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              { label: 'Index',                             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{analyzer_envelope.index})") },
                              { label: 'Source',                            tag:   nil, value: 'doppler' },
                              { label: 'Metrics Last Gathered',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(analyzer_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
+                             { label: 'Cores',                                        tag: nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::ANALYZER_VALUE_METRICS['numCPUS']})") },
+                             { label: 'Memory',                                       tag: nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(DopplerHelper::ANALYZER_VALUE_METRICS['memoryStats.numBytesAllocated'])})") },
                              { label: 'Desired Apps',                      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::ANALYZER_VALUE_METRICS['NumberOfDesiredApps']})") },
                              { label: 'Desired Apps Pending Staging',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::ANALYZER_VALUE_METRICS['NumberOfDesiredAppsPendingStaging']})") },
                              { label: 'Undesired Running Apps',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::ANALYZER_VALUE_METRICS['NumberOfUndesiredRunningApps']})") },
@@ -4778,7 +4780,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              varz_provisioner['start'],
                              varz_provisioner['config']['service'][:description],
                              @driver.execute_script("return Format.formatNumber(#{varz_provisioner['cpu']})"),
-                             @driver.execute_script("return Format.formatNumber(#{varz_provisioner['mem']})"),
+                             @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_kilobytes_to_megabytes(varz_provisioner['mem'])})"),
                              @driver.execute_script("return Format.formatNumber(#{varz_provisioner['nodes'].length})"),
                              @driver.execute_script("return Format.formatNumber(#{@capacity})")
                            ])
@@ -4804,7 +4806,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            { label: 'Uptime',             tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{varz_provisioner['uptime']}\")") },
                            { label: 'Cores',              tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_provisioner['num_cores']})") },
                            { label: 'CPU',                tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_provisioner['cpu']})") },
-                           { label: 'Memory',             tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_provisioner['mem']})") },
+                           { label: 'Memory',             tag: nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_kilobytes_to_megabytes(varz_provisioner['mem'])})") },
                            { label: 'Available Capacity', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{@capacity})") }
                           ])
           end
@@ -4835,26 +4837,52 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='RoutersTableContainer']/div/div[4]/div/div/table/thead/tr/th"),
-                                 expected_length: 11,
-                                 labels:          ['Name', 'Index', 'Source', 'State', 'Started', 'Cores', 'CPU', 'Memory', 'Droplets', 'Requests', 'Bad Requests'],
+                                 expected_length: 12,
+                                 labels:          ['Name', 'Index', 'Source', 'State', 'Started', 'Metrics Last Gathered', 'Cores', 'CPU', 'Memory', 'Droplets', 'Requests', 'Bad Requests'],
                                  colspans:        nil
                                }
                              ])
+        end
 
-          check_table_data(@driver.find_elements(xpath: "//table[@id='RoutersTable']/tbody/tr/td"),
-                           [
-                             nats_router['host'],
-                             @driver.execute_script("return Format.formatNumber(#{nats_router['index']})"),
-                             'varz',
-                             @driver.execute_script('return Constants.STATUS__RUNNING'),
-                             varz_router['start'],
-                             @driver.execute_script("return Format.formatNumber(#{varz_router['num_cores']})"),
-                             @driver.execute_script("return Format.formatNumber(#{varz_router['cpu']})"),
-                             @driver.execute_script("return Format.formatNumber(#{varz_router['mem']})"),
-                             @driver.execute_script("return Format.formatNumber(#{varz_router['droplets']})"),
-                             @driver.execute_script("return Format.formatNumber(#{varz_router['requests']})"),
-                             @driver.execute_script("return Format.formatNumber(#{varz_router['bad_requests']})")
-                           ])
+        context 'varz dea' do
+          it 'has table data' do
+            check_table_data(@driver.find_elements(xpath: "//table[@id='RoutersTable']/tbody/tr/td"),
+                             [
+                               nats_router['host'],
+                               @driver.execute_script("return Format.formatNumber(#{nats_router['index']})"),
+                               'varz',
+                               @driver.execute_script('return Constants.STATUS__RUNNING'),
+                               varz_router['start'],
+                               nil,
+                               @driver.execute_script("return Format.formatNumber(#{varz_router['num_cores']})"),
+                               @driver.execute_script("return Format.formatNumber(#{varz_router['cpu']})"),
+                               @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_kilobytes_to_megabytes(varz_router['mem'])})"),
+                               @driver.execute_script("return Format.formatNumber(#{varz_router['droplets']})"),
+                               @driver.execute_script("return Format.formatNumber(#{varz_router['requests']})"),
+                               @driver.execute_script("return Format.formatNumber(#{varz_router['bad_requests']})")
+                             ])
+          end
+        end
+
+        context 'doppler dea' do
+          let(:application_instance_source) { :doppler_dea }
+          it 'has table data' do
+            check_table_data(@driver.find_elements(xpath: "//table[@id='RoutersTable']/tbody/tr/td"),
+                             [
+                               "#{gorouter_envelope.ip}:#{gorouter_envelope.index}",
+                               @driver.execute_script("return Format.formatNumber(#{gorouter_envelope.index})"),
+                               'doppler',
+                               @driver.execute_script('return Constants.STATUS__RUNNING'),
+                               nil,
+                               Time.at(gorouter_envelope.timestamp / BILLION).to_datetime.rfc3339,
+                               @driver.execute_script("return Format.formatNumber(#{DopplerHelper::GOROUTER_VALUE_METRICS['numCPUS']})"),
+                               nil,
+                               @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(DopplerHelper::GOROUTER_VALUE_METRICS['memoryStats.numBytesAllocated'])})"),
+                               nil,
+                               nil,
+                               nil
+                             ])
+          end
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
@@ -4866,47 +4894,63 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             select_first_row
           end
 
-          it 'has details' do
-            check_details([{ label: 'Name',          tag: nil, value: nats_router['host'] },
-                           { label: 'Index',         tag: nil, value: @driver.execute_script("return Format.formatNumber(#{nats_router['index']})") },
-                           { label: 'Source',        tag: nil, value: 'varz' },
-                           { label: 'URI',           tag: 'a', value: nats_router_varz },
-                           { label: 'Started',       tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{varz_router['start']}\")") },
-                           { label: 'Uptime',        tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{varz_router['uptime']}\")") },
-                           { label: 'Cores',         tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['num_cores']})") },
-                           { label: 'CPU',           tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['cpu']})") },
-                           { label: 'Memory',        tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['mem']})") },
-                           { label: 'Droplets',      tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['droplets']})") },
-                           { label: 'Requests',      tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['requests']})") },
-                           { label: 'Bad Requests',  tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['bad_requests']})") },
-                           { label: '2XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_2xx']})") },
-                           { label: '3XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_3xx']})") },
-                           { label: '4XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_4xx']})") },
-                           { label: '5XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_5xx']})") },
-                           { label: 'XXX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_xxx']})") }
-                          ])
+          context 'varz dea' do
+            it 'has details' do
+              check_details([{ label: 'Name',          tag: nil, value: nats_router['host'] },
+                             { label: 'Index',         tag: nil, value: @driver.execute_script("return Format.formatNumber(#{nats_router['index']})") },
+                             { label: 'Source',        tag: nil, value: 'varz' },
+                             { label: 'URI',           tag: 'a', value: nats_router_varz },
+                             { label: 'Started',       tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{varz_router['start']}\")") },
+                             { label: 'Uptime',        tag: nil, value: @driver.execute_script("return Format.formatUptime(\"#{varz_router['uptime']}\")") },
+                             { label: 'Cores',         tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['num_cores']})") },
+                             { label: 'CPU',           tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['cpu']})") },
+                             { label: 'Memory',        tag: nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_kilobytes_to_megabytes(varz_router['mem'])})") },
+                             { label: 'Droplets',      tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['droplets']})") },
+                             { label: 'Requests',      tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['requests']})") },
+                             { label: 'Bad Requests',  tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['bad_requests']})") },
+                             { label: '2XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_2xx']})") },
+                             { label: '3XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_3xx']})") },
+                             { label: '4XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_4xx']})") },
+                             { label: '5XX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_5xx']})") },
+                             { label: 'XXX Responses', tag: nil, value: @driver.execute_script("return Format.formatNumber(#{varz_router['responses_xxx']})") }
+                            ])
+            end
+
+            it 'has top10 applications' do
+              expect(@driver.find_element(id: 'RoutersTop10ApplicationsDetailsLabel').displayed?).to be(true)
+
+              check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='RoutersTop10ApplicationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                  expected_length: 5,
+                                  labels:          %w(Name GUID RPM RPS Target),
+                                  colspans:        nil)
+
+              check_table_data(@driver.find_elements(xpath: "//table[@id='RoutersTop10ApplicationsTable']/tbody/tr/td"),
+                               [
+                                 cc_app[:name],
+                                 cc_app[:guid],
+                                 @driver.execute_script("return Format.formatNumber(#{varz_router['top10_app_requests'][0]['rpm']})"),
+                                 @driver.execute_script("return Format.formatNumber(#{varz_router['top10_app_requests'][0]['rps']})"),
+                                 "#{cc_organization[:name]}/#{cc_space[:name]}"
+                               ])
+            end
+
+            it 'top10 subtable has allowscriptaccess property set to sameDomain' do
+              check_allowscriptaccess_attribute('Buttons_RoutersTop10ApplicationsTable_0')
+            end
           end
 
-          it 'has top10 applications' do
-            expect(@driver.find_element(id: 'RoutersTop10ApplicationsDetailsLabel').displayed?).to be(true)
-
-            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='RoutersTop10ApplicationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
-                                expected_length: 5,
-                                labels:          %w(Name GUID RPM RPS Target),
-                                colspans:        nil)
-
-            check_table_data(@driver.find_elements(xpath: "//table[@id='RoutersTop10ApplicationsTable']/tbody/tr/td"),
-                             [
-                               cc_app[:name],
-                               cc_app[:guid],
-                               @driver.execute_script("return Format.formatNumber(#{varz_router['top10_app_requests'][0]['rpm']})"),
-                               @driver.execute_script("return Format.formatNumber(#{varz_router['top10_app_requests'][0]['rps']})"),
-                               "#{cc_organization[:name]}/#{cc_space[:name]}"
-                             ])
-          end
-
-          it 'top10 subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_RoutersTop10ApplicationsTable_0')
+          context 'doppler dea' do
+            let(:application_instance_source) { :doppler_dea }
+            it 'has details' do
+              check_details([{ label: 'Name',                  tag: 'div', value: "#{gorouter_envelope.ip}:#{gorouter_envelope.index}" },
+                             { label: 'IP',                    tag:   nil, value: gorouter_envelope.ip },
+                             { label: 'Index',                 tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{gorouter_envelope.index})") },
+                             { label: 'Source',                tag:   nil, value: 'doppler' },
+                             { label: 'Metrics Last Gathered', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(gorouter_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
+                             { label: 'Cores',                 tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::GOROUTER_VALUE_METRICS['numCPUS']})") },
+                             { label: 'Memory',                tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(DopplerHelper::GOROUTER_VALUE_METRICS['memoryStats.numBytesAllocated'])})") }
+                            ])
+            end
           end
         end
       end
@@ -4916,8 +4960,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has a table' do
           check_table_layout([{  columns:         @driver.find_elements(xpath: "//div[@id='ComponentsTableContainer']/div/div[4]/div/div/table/thead/tr/th"),
-                                 expected_length: 6,
-                                 labels:          %w(Name Type Index Source State Started),
+                                 expected_length: 7,
+                                 labels:          ['Name', 'Type', 'Index', 'Source', 'State', 'Started', 'Metrics Last Gathered'],
                                  colspans:        nil
                                }
                              ])
@@ -4929,16 +4973,33 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatNumber(#{nats_cloud_controller['index']})"),
                              'varz',
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
-                             varz_cloud_controller['start']
+                             varz_cloud_controller['start'],
+                             nil
                            ])
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ComponentsTable_1')
+          check_allowscriptaccess_attribute('Buttons_ComponentsTable_2')
         end
 
-        it 'has a Remove OFFLINE components button' do
-          expect(@driver.find_element(id: 'Buttons_ComponentsTable_0').text).to eq('Remove OFFLINE')
+        it 'has a Remove OFFLINE Doppler button' do
+          expect(@driver.find_element(id: 'Buttons_ComponentsTable_0').text).to eq('Remove OFFLINE Doppler')
+        end
+
+        it 'has a Remove OFFLINE Varz button' do
+          expect(@driver.find_element(id: 'Buttons_ComponentsTable_1').text).to eq('Remove OFFLINE Varz')
+        end
+
+        it 'removes the OFFLINE Doppler components' do
+          @driver.find_element(id: 'Buttons_ComponentsTable_0').click
+          confirm('Are you sure you want to remove all OFFLINE doppler components?')
+          check_operation_result
+        end
+
+        it 'removes the OFFLINE Varz components' do
+          @driver.find_element(id: 'Buttons_ComponentsTable_1').click
+          confirm('Are you sure you want to remove all OFFLINE varz components?')
+          check_operation_result
         end
 
         context 'selectable' do

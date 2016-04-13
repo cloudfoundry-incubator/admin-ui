@@ -37,9 +37,9 @@ module AdminUI
 
             # Conditional logic since mem becomes mem_bytes in 157
             if data['mem']
-              row.push(data['mem'])
+              row.push(Utils.convert_kilobytes_to_megabytes(data['mem']))
             elsif data['mem_bytes']
-              row.push(data['mem_bytes'])
+              row.push(Utils.convert_bytes_to_megabytes(data['mem_bytes']))
             else
               row.push(nil)
             end

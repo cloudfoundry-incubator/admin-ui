@@ -248,7 +248,7 @@ module ViewModelsHelper
         DateTime.parse(varz_cloud_controller['start']).rfc3339,
         varz_cloud_controller['num_cores'],
         varz_cloud_controller['cpu'],
-        varz_cloud_controller['mem']
+        AdminUI::Utils.convert_kilobytes_to_megabytes(varz_cloud_controller['mem'])
       ]
     ]
   end
@@ -273,6 +273,8 @@ module ViewModelsHelper
         'varz',
         'RUNNING',
         DateTime.parse(varz_cloud_controller['start']).rfc3339,
+        nil,
+        nats_cloud_controller['host'],
         nats_cloud_controller_varz
       ],
       [
@@ -282,7 +284,20 @@ module ViewModelsHelper
         'varz',
         'RUNNING',
         DateTime.parse(varz_dea['start']).rfc3339,
+        nil,
+        nats_dea['host'],
         nats_dea_varz
+      ],
+      [
+        "#{doppler_server_envelope.ip}:#{doppler_server_envelope.index}",
+        doppler_server_envelope.origin,
+        doppler_server_envelope.index,
+        'doppler',
+        'RUNNING',
+        nil,
+        Time.at(doppler_server_envelope.timestamp / BILLION).to_datetime.rfc3339,
+        "#{doppler_server_envelope.origin}:#{doppler_server_envelope.index}:#{doppler_server_envelope.ip}",
+        "#{doppler_server_envelope.origin}:#{doppler_server_envelope.index}:#{doppler_server_envelope.ip}"
       ],
       [
         nats_health_manager['host'],
@@ -291,6 +306,8 @@ module ViewModelsHelper
         'varz',
         'RUNNING',
         nil,
+        nil,
+        nats_health_manager['host'],
         nats_health_manager_varz
       ],
       [
@@ -300,6 +317,8 @@ module ViewModelsHelper
         'varz',
         'RUNNING',
         DateTime.parse(varz_provisioner['start']).rfc3339,
+        nil,
+        nats_provisioner['host'],
         nats_provisioner_varz
       ],
       [
@@ -309,9 +328,18 @@ module ViewModelsHelper
         'varz',
         'RUNNING',
         DateTime.parse(varz_router['start']).rfc3339,
+        nil,
+        nats_router['host'],
         nats_router_varz
       ]
     ]
+  end
+
+  def view_models_components_detail
+    {
+      'doppler_component' => nil,
+      'varz_component'    => view_models_cloud_controllers_detail
+    }
   end
 
   def view_models_deas
@@ -325,7 +353,7 @@ module ViewModelsHelper
         @application_instance_source == :doppler_dea ? Time.at(dea_envelope.timestamp / BILLION).to_datetime.rfc3339 : nil,
         application_instance_source == :varz_dea ? varz_dea['stacks'] : nil,
         application_instance_source == :varz_dea ? varz_dea['cpu'] : nil,
-        application_instance_source == :varz_dea ? varz_dea['mem'] : nil,
+        application_instance_source == :varz_dea ? AdminUI::Utils.convert_kilobytes_to_megabytes(varz_dea['mem']) : nil,
         application_instance_source == :varz_dea ? varz_dea['instance_registry'].length : DEA_VALUE_METRICS['instances'],
         application_instance_source == :varz_dea ? varz_dea['instance_registry'][cc_app[:guid]].length : cc_app[:instances],
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
@@ -447,7 +475,7 @@ module ViewModelsHelper
         DateTime.parse(varz_provisioner['start']).rfc3339,
         varz_provisioner['config']['service']['description'],
         varz_provisioner['cpu'],
-        varz_provisioner['mem'],
+        AdminUI::Utils.convert_kilobytes_to_megabytes(varz_provisioner['mem']),
         varz_provisioner['nodes'].length,
         10
       ]
@@ -495,8 +523,8 @@ module ViewModelsHelper
         @application_instance_source == :doppler_dea ? 'doppler' : 'varz',
         'RUNNING',
         @application_instance_source == :doppler_dea ? Time.at(analyzer_envelope.timestamp / BILLION).to_datetime.rfc3339 : nil,
-        @application_instance_source == :doppler_dea ? nil : varz_health_manager['numCPUS'],
-        @application_instance_source == :doppler_dea ? nil : varz_health_manager['memoryStats']['numBytesAllocated']
+        @application_instance_source == :doppler_dea ? ANALYZER_VALUE_METRICS['numCPUS'] : varz_health_manager['numCPUS'],
+        @application_instance_source == :doppler_dea ? AdminUI::Utils.convert_bytes_to_megabytes(ANALYZER_VALUE_METRICS['memoryStats.numBytesAllocated']) : AdminUI::Utils.convert_bytes_to_megabytes(varz_health_manager['memoryStats']['numBytesAllocated'])
       ]
     ]
   end
@@ -712,42 +740,64 @@ module ViewModelsHelper
   def view_models_routers
     [
       [
-        nats_router['host'],
-        nats_router['index'],
-        'varz',
+        @application_instance_source == :doppler_dea ? "#{gorouter_envelope.ip}:#{gorouter_envelope.index}" : nats_router['host'],
+        @application_instance_source == :doppler_dea ? gorouter_envelope.index : nats_router['index'],
+        @application_instance_source == :doppler_dea ? 'doppler' : 'varz',
         'RUNNING',
-        DateTime.parse(varz_router['start']).rfc3339,
-        varz_router['num_cores'],
-        varz_router['cpu'],
-        varz_router['mem'],
-        varz_router['droplets'],
-        varz_router['requests'],
-        varz_router['bad_requests']
+        @application_instance_source == :doppler_dea ? nil : DateTime.parse(varz_router['start']).rfc3339,
+        @application_instance_source == :doppler_dea ? Time.at(gorouter_envelope.timestamp / BILLION).to_datetime.rfc3339 : nil,
+        @application_instance_source == :doppler_dea ? GOROUTER_VALUE_METRICS['numCPUS'] : varz_router['num_cores'],
+        @application_instance_source == :doppler_dea ? nil : varz_router['cpu'],
+        @application_instance_source == :doppler_dea ? AdminUI::Utils.convert_bytes_to_megabytes(GOROUTER_VALUE_METRICS['memoryStats.numBytesAllocated']) : AdminUI::Utils.convert_kilobytes_to_megabytes(varz_router['mem']),
+        @application_instance_source == :doppler_dea ? nil : varz_router['droplets'],
+        @application_instance_source == :doppler_dea ? nil : varz_router['requests'],
+        @application_instance_source == :doppler_dea ? nil : varz_router['bad_requests']
       ]
     ]
   end
 
   def view_models_routers_detail
-    {
-      'router' =>
-      {
-        'connected' => true,
-        'data'      => varz_router,
-        'index'     => nats_router['index'],
-        'name'      => nats_router['host'],
-        'type'      => nats_router['type'],
-        'uri'       => nats_router_varz
-      },
-      'top10Apps' =>
-      [
+    doppler_gorouter_hash = nil
+    varz_router_hash      = nil
+    top_10_apps_array     = nil
+
+    if application_instance_source == :doppler_dea
+      doppler_gorouter_hash =
         {
-          'guid'   => cc_app[:guid],
-          'name'   => cc_app[:name],
-          'rpm'    => varz_router['top10_app_requests'][0]['rpm'],
-          'rps'    => varz_router['top10_app_requests'][0]['rps'],
-          'target' => "#{cc_organization[:name]}/#{cc_space[:name]}"
+          'connected' => true,
+          'index'     => gorouter_envelope.index,
+          'ip'        => gorouter_envelope.ip,
+          'origin'    => gorouter_envelope.origin,
+          'timestamp' => gorouter_envelope.timestamp
+        }.merge(GOROUTER_VALUE_METRICS)
+    else
+      varz_router_hash =
+        {
+          'connected' => true,
+          'data'      => varz_router,
+          'index'     => nats_router['index'],
+          'name'      => nats_router['host'],
+          'type'      => nats_router['type'],
+          'uri'       => nats_router_varz
         }
-      ]
+
+      top_10_apps_array =
+        [
+          {
+            'guid'   => cc_app[:guid],
+            'name'   => cc_app[:name],
+            'rpm'    => varz_router['top10_app_requests'][0]['rpm'],
+            'rps'    => varz_router['top10_app_requests'][0]['rps'],
+            'target' => "#{cc_organization[:name]}/#{cc_space[:name]}"
+          }
+        ]
+
+    end
+
+    {
+      'doppler_gorouter' => doppler_gorouter_hash,
+      'varz_router'      => varz_router_hash,
+      'top_10_apps'      => top_10_apps_array
     }
   end
 

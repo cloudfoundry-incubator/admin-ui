@@ -236,7 +236,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Components tab does not have a remove all components button' do
+    context 'Components tab does not have a remove all components buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Components' }
         let(:page_id)   { 'ComponentsPage' }

@@ -1345,11 +1345,11 @@ describe AdminUI::Operation, type: :integration do
       context 'doppler dea' do
         let(:application_instance_source) { :doppler_dea }
         before do
-          expect(doppler.components['items'].length).to eq(3)
+          expect(doppler.components['items'].length).to eq(4)
         end
 
         after do
-          expect(doppler.components['items'].length).to eq(2)
+          expect(doppler.components['items'].length).to eq(3)
         end
 
         it 'removes analyzer' do
@@ -1358,6 +1358,10 @@ describe AdminUI::Operation, type: :integration do
 
         it 'removes dea' do
           expect { operation.remove_doppler_component("#{dea_envelope.origin}:#{dea_envelope.index}:#{dea_envelope.ip}") }.to change { doppler.deas['items'].length }.from(1).to(0)
+        end
+
+        it 'removes gorouter' do
+          expect { operation.remove_doppler_component("#{gorouter_envelope.origin}:#{gorouter_envelope.index}:#{gorouter_envelope.ip}") }.to change { doppler.gorouters['items'].length }.from(1).to(0)
         end
       end
     end

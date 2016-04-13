@@ -4,11 +4,13 @@ require_relative 'base_view_model'
 
 module AdminUI
   class RoutersViewModel < AdminUI::BaseViewModel
+    BILLION = 1000.0 * 1000.0 * 1000.0
     def do_items
-      routers = @varz.routers
+      doppler_gorouters = @doppler.gorouters
+      varz_routers      = @varz.routers
 
-      # routers have to exist.  Other record types are optional
-      return result unless routers['connected']
+      # doppler_gorouters or varz_routers have to exist.  Other record types are optional
+      return result unless doppler_gorouters['connected'] || varz_routers['connected']
 
       applications  = @cc.applications
       organizations = @cc.organizations
@@ -21,77 +23,130 @@ module AdminUI
       items = []
       hash  = {}
 
-      routers['items'].each do |router|
-        return result unless @running
-        Thread.pass
+      if varz_routers['connected']
+        varz_routers['items'].each do |router|
+          return result unless @running
+          Thread.pass
 
-        row = []
+          row = []
 
-        row.push(router['name'])
-        row.push(router['index'])
-        row.push('varz')
+          row.push(router['name'])
+          row.push(router['index'])
+          row.push('varz')
 
-        data = router['data']
+          data = router['data']
 
-        if router['connected']
-          row.push('RUNNING')
-          row.push(DateTime.parse(data['start']).rfc3339)
-          row.push(data['num_cores'])
-          row.push(data['cpu'])
-
-          # Conditional logic since mem becomes mem_bytes in 157
-          if data['mem']
-            row.push(data['mem'])
-          elsif data['mem_bytes']
-            row.push(data['mem_bytes'])
-          else
-            row.push(nil)
-          end
-
-          row.push(data['droplets'])
-          row.push(data['requests'])
-          row.push(data['bad_requests'])
-
-          top10_app_rows = []
-          top10_app_requests = data['top10_app_requests']
-          top10_app_requests.each do |top10_app|
-            application = application_hash[top10_app['application_id']]
-            next if application.nil?
-
-            space        = space_hash[application[:space_id]]
-            organization = space.nil? ? nil : organization_hash[space[:organization_id]]
-            target       = organization.nil? ? nil : "#{organization[:name]}/#{space[:name]}"
-
-            top10_app_rows.push('guid'   => application[:guid],
-                                'name'   => application[:name],
-                                'rpm'    => top10_app['rpm'],
-                                'rps'    => top10_app['rps'],
-                                'target' => target)
-          end
-
-          hash[router['name']] =
-            {
-              'router'    => router,
-              'top10Apps' => top10_app_rows
-            }
-        else
-          row.push('OFFLINE')
-
-          if data['start']
+          if router['connected']
+            row.push('RUNNING')
             row.push(DateTime.parse(data['start']).rfc3339)
+            row.push(nil) # Metrics Last Gathered
+            row.push(data['num_cores'])
+            row.push(data['cpu'])
+
+            # Conditional logic since mem becomes mem_bytes in 157
+            if data['mem']
+              row.push(Utils.convert_kilobytes_to_megabytes(data['mem']))
+            elsif data['mem_bytes']
+              row.push(Utils.convert_bytes_to_megabytes(data['mem_bytes']))
+            else
+              row.push(nil)
+            end
+
+            row.push(data['droplets'])
+            row.push(data['requests'])
+            row.push(data['bad_requests'])
+
+            top10_app_rows = []
+            top10_app_requests = data['top10_app_requests']
+            top10_app_requests.each do |top10_app|
+              application = application_hash[top10_app['application_id']]
+              next if application.nil?
+
+              space        = space_hash[application[:space_id]]
+              organization = space.nil? ? nil : organization_hash[space[:organization_id]]
+              target       = organization.nil? ? nil : "#{organization[:name]}/#{space[:name]}"
+
+              top10_app_rows.push('guid'   => application[:guid],
+                                  'name'   => application[:name],
+                                  'rpm'    => top10_app['rpm'],
+                                  'rps'    => top10_app['rps'],
+                                  'target' => target)
+            end
+
+            hash[router['name']] =
+              {
+                'doppler_gorouter' => nil,
+                'top_10_apps'      => top10_app_rows,
+                'varz_router'      => router
+              }
           else
-            row.push(nil)
+            row.push('OFFLINE')
+
+            if data['start']
+              row.push(DateTime.parse(data['start']).rfc3339)
+            else
+              row.push(nil)
+            end
+
+            row.push(nil, nil, nil, nil, nil, nil, nil)
+
+            row.push(router['uri'])
           end
 
-          row.push(nil, nil, nil, nil, nil, nil, nil)
-
-          row.push(router['uri'])
+          items.push(row)
         end
-
-        items.push(row)
       end
 
-      result(true, items, hash, (0..10).to_a, [0, 2, 3, 4])
+      if doppler_gorouters['connected']
+        doppler_gorouters['items'].each_pair do |key, router|
+          return result unless @running
+          Thread.pass
+
+          name = "#{router['ip']}:#{router['index']}"
+
+          row = []
+
+          row.push(name)
+          row.push(router['index'])
+          row.push('doppler')
+
+          if router['connected']
+            row.push('RUNNING')
+            row.push(nil) # start
+            row.push(Time.at(router['timestamp'] / BILLION).to_datetime.rfc3339)
+            row.push(router['numCPUS'])
+            row.push(nil) # CPU
+
+            if router['memoryStats.numBytesAllocated']
+              row.push(Utils.convert_bytes_to_megabytes(router['memoryStats.numBytesAllocated']))
+            else
+              row.push(nil)
+            end
+
+            row.push(nil) # droplets
+            row.push(nil) # requests
+            row.push(nil) # bad_requests
+
+            hash[name] =
+              {
+                'doppler_gorouter' => router,
+                'top_10_apps'      => nil,
+                'varz_router'      => nil
+              }
+          else
+            row.push('OFFLINE')
+
+            row.push(nil, nil, nil, nil, nil, nil, nil, nil)
+
+            # This last non-visible column is used to enable deletion of OFFLINE components
+            row.push(key)
+          end
+
+          items.push(row)
+        end
+      end
+
+      result(true, items, hash, (0..11).to_a, [0, 2, 3, 4, 5])
     end
   end
 end

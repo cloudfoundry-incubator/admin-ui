@@ -16,7 +16,7 @@ module NATSHelper
       EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_dea)) } if application_instance_source == :varz_dea
       EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_health_manager)) } unless application_instance_source == :doppler_dea
       EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_provisioner)) }
-      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_router)) }
+      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_router)) } unless application_instance_source == :doppler_dea
     end
   end
 

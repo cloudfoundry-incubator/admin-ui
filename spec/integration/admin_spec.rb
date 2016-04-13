@@ -759,18 +759,27 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/routers_view_model')['items']['items'].length).to eq(1)
     end
 
-    def delete_router
-      response = delete_request("/components?uri=#{nats_router_varz}")
+    def delete_router(uri)
+      response = delete_request(uri)
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/components?uri=#{nats_router_varz}"]], true)
+      verify_sys_log_entries([['delete', uri]], true)
     end
 
     it 'has user name and routers request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/routers_view_model']], true)
     end
 
-    it 'deletes a router' do
-      expect { delete_router }.to change { get_json('/routers_view_model')['items']['items'].length }.from(1).to(0)
+    context 'varz dea' do
+      it 'deletes a router' do
+        expect { delete_router("/components?uri=#{nats_router_varz}") }.to change { get_json('/routers_view_model')['items']['items'].length }.from(1).to(0)
+      end
+    end
+
+    context 'doppler dea' do
+      let(:application_instance_source) { :doppler_dea }
+      it 'deletes a router' do
+        expect { delete_router("/doppler_components?uri=#{gorouter_envelope.origin}:#{gorouter_envelope.index}:#{gorouter_envelope.ip}") }.to change { get_json('/routers_view_model')['items']['items'].length }.from(1).to(0)
+      end
     end
   end
 
@@ -1358,7 +1367,7 @@ describe AdminUI::Admin, type: :integration do
 
     context 'components_view_model detail' do
       let(:path)              { "/components_view_model/#{nats_cloud_controller['host']}" }
-      let(:view_model_source) { view_models_cloud_controllers_detail }
+      let(:view_model_source) { view_models_components_detail }
       it_behaves_like('retrieves view_model detail')
     end
 
@@ -1631,16 +1640,35 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
-    context 'routers_view_model' do
+    shared_examples 'routers_view_model' do
       let(:path)              { '/routers_view_model' }
       let(:view_model_source) { view_models_routers }
       it_behaves_like('retrieves view_model')
     end
 
-    context 'routers_view_model detail' do
-      let(:path)              { "/routers_view_model/#{nats_router['host']}" }
+    shared_examples 'routers_view_model detail' do
       let(:view_model_source) { view_models_routers_detail }
       it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'varz routers_view_model' do
+      it_behaves_like('routers_view_model')
+    end
+
+    context 'varz routers_view_model detail' do
+      let(:path) { "/routers_view_model/#{nats_router['host']}" }
+      it_behaves_like('routers_view_model detail')
+    end
+
+    context 'doppler routers_view_model' do
+      let(:application_instance_source) { :doppler_dea }
+      it_behaves_like('routers_view_model')
+    end
+
+    context 'doppler routers_view_model detail' do
+      let(:application_instance_source) { :doppler_dea }
+      let(:path)                        { "/routers_view_model/#{gorouter_envelope.ip}:#{gorouter_envelope.index}" }
+      it_behaves_like('routers_view_model detail')
     end
 
     context 'routes_view_model' do

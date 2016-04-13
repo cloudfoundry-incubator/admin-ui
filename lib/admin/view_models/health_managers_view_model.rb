@@ -36,7 +36,7 @@ module AdminUI
             memory_stats = data['memoryStats']
 
             if memory_stats
-              row.push(memory_stats['numBytesAllocated'])
+              row.push(Utils.convert_bytes_to_megabytes(memory_stats['numBytesAllocated']))
             else
               row.push(nil)
             end
@@ -74,7 +74,13 @@ module AdminUI
           if doppler_analyzer['connected']
             row.push('RUNNING')
             row.push(Time.at(doppler_analyzer['timestamp'] / BILLION).to_datetime.rfc3339)
-            row.push(nil, nil)
+            row.push(doppler_analyzer['numCPUS'])
+
+            if doppler_analyzer['memoryStats.numBytesAllocated']
+              row.push(Utils.convert_bytes_to_megabytes(doppler_analyzer['memoryStats.numBytesAllocated']))
+            else
+              row.push(nil)
+            end
 
             hash[name] =
               {

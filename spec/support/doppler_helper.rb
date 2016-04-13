@@ -52,6 +52,21 @@ module DopplerHelper
       'Uptime'                              => 1_080.0
     }.freeze
 
+  GOROUTER_VALUE_METRICS =
+    {
+      'latency'                            => 15.0,
+      'memoryStats.lastGCPauseTimeNS'      => 2_446_180.0,
+      'memoryStats.numBytesAllocated'      => 2_779_272.0,
+      'memoryStats.numBytesAllocatedHeap'  => 2_779_272.0,
+      'memoryStats.numBytesAllocatedStack' => 589_824.0,
+      'memoryStats.numFrees'               => 58_275.0,
+      'memoryStats.numMallocs'             => 61_227.0,
+      'ms_since_last_registry_update'      => 14_011.0,
+      'numCPUS'                            => 4.0,
+      'numGoRoutines'                      => 44.0,
+      'total_routes'                       => 11.0
+    }.freeze
+
   REP_VALUE_METRICS =
     {
       'CapacityRemainingContainers'        => 252.0,
@@ -113,6 +128,10 @@ module DopplerHelper
           EventMachine.next_tick { blk.call(event(dea_value_metric_envelope(value_metric_key, value_metric_value))) }
         end
 
+        GOROUTER_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
+          EventMachine.next_tick { blk.call(event(gorouter_value_metric_envelope(value_metric_key, value_metric_value))) }
+        end
+
         EventMachine.next_tick { blk.call(event(dea_container_metric_envelope)) }
       end
 
@@ -129,8 +148,8 @@ module DopplerHelper
 
   def analyzer_envelope
     envelope           = Events::Envelope.new
-    envelope.index     = '3'
-    envelope.ip        = '10.10.10.12'
+    envelope.index     = '1'
+    envelope.ip        = '10.10.10.10'
     envelope.origin    = 'analyzer'
     envelope.timestamp = @time.to_i * BILLION
 
@@ -139,8 +158,8 @@ module DopplerHelper
 
   def dea_envelope
     envelope           = Events::Envelope.new
-    envelope.index     = '1'
-    envelope.ip        = '10.10.10.10'
+    envelope.index     = '2'
+    envelope.ip        = '10.10.10.11'
     envelope.origin    = 'DEA'
     envelope.timestamp = @time.to_i * BILLION
 
@@ -149,9 +168,19 @@ module DopplerHelper
 
   def doppler_server_envelope
     envelope           = Events::Envelope.new
-    envelope.index     = '2'
-    envelope.ip        = '10.10.10.11'
+    envelope.index     = '3'
+    envelope.ip        = '10.10.10.12'
     envelope.origin    = 'DopplerServer'
+    envelope.timestamp = @time.to_i * BILLION
+
+    envelope
+  end
+
+  def gorouter_envelope
+    envelope           = Events::Envelope.new
+    envelope.index     = '4'
+    envelope.ip        = '10.10.10.13'
+    envelope.origin    = 'gorouter'
     envelope.timestamp = @time.to_i * BILLION
 
     envelope
@@ -159,8 +188,8 @@ module DopplerHelper
 
   def rep_envelope
     envelope           = Events::Envelope.new
-    envelope.index     = '4'
-    envelope.ip        = '10.10.10.13'
+    envelope.index     = '5'
+    envelope.ip        = '10.10.10.14'
     envelope.origin    = 'rep'
     envelope.timestamp = @time.to_i * BILLION
 
@@ -201,6 +230,14 @@ module DopplerHelper
 
   def doppler_server_value_metric_envelope(key, value)
     envelope             = doppler_server_envelope
+    envelope.eventType   = Events::Envelope::EventType::ValueMetric
+    envelope.valueMetric = value_metric(key, value)
+
+    envelope
+  end
+
+  def gorouter_value_metric_envelope(key, value)
+    envelope             = gorouter_envelope
     envelope.eventType   = Events::Envelope::EventType::ValueMetric
     envelope.valueMetric = value_metric(key, value)
 
