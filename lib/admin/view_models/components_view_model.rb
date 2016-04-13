@@ -26,6 +26,7 @@ module AdminUI
           row.push(component['type'])
           row.push(component['index'])
           row.push('varz')
+          row.push(nil) # Metrics date
           row.push(component['connected'] ? 'RUNNING' : 'OFFLINE')
 
           data = component['data']
@@ -35,8 +36,6 @@ module AdminUI
           else
             row.push(nil)
           end
-
-          row.push(nil) # Metrics Last Gathered
 
           # This non-visible column is used to provide a key for the component
           row.push(component['name'])
@@ -67,9 +66,9 @@ module AdminUI
           row.push(component['origin'])
           row.push(component['index'])
           row.push('doppler')
+          row.push(Time.at(component['timestamp'] / BILLION).to_datetime.rfc3339)
           row.push(component['connected'] ? 'RUNNING' : 'OFFLINE')
           row.push(nil) # start
-          row.push(Time.at(component['timestamp'] / BILLION).to_datetime.rfc3339)
 
           # This non-visible column is used to provide a key for the component
           row.push(key)

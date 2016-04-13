@@ -60,7 +60,7 @@ module AdminUI
                 row.push(nil)
               end
 
-              # Metrics last gathered not provided in the DEA case
+              # Metrics date
               row.push(nil)
 
               # This is not a Diego app

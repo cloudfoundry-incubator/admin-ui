@@ -25,13 +25,13 @@ module AdminUI
           row.push(dea['name'])
           row.push(dea['index'])
           row.push('varz')
+          row.push(nil) # Metrics date
 
           data = dea['data']
 
           if dea['connected']
             row.push('RUNNING')
             row.push(DateTime.parse(data['start']).rfc3339)
-            row.push(nil) # metrics last gathered
             row.push(data['stacks'])
             row.push(data['cpu'])
 
@@ -101,7 +101,7 @@ module AdminUI
               row.push(nil)
             end
 
-            row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+            row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
             # This last non-visible column is used to enable deletion of OFFLINE components
             row.push(dea['uri'])
@@ -160,13 +160,11 @@ module AdminUI
           row.push(name)
           row.push(dea['index'])
           row.push('doppler')
+          row.push(Time.at(dea['timestamp'] / BILLION).to_datetime.rfc3339)
 
           if dea['connected']
             row.push('RUNNING')
             row.push(nil) # start
-
-            row.push(Time.at(dea['timestamp'] / BILLION).to_datetime.rfc3339)
-
             row.push(nil) # stacks
             row.push(nil) # cpu
             row.push(nil) # mem
@@ -199,7 +197,7 @@ module AdminUI
           else
             row.push('OFFLINE')
 
-            row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+            row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
             # This last non-visible column is used to enable deletion of OFFLINE components
             row.push(key)

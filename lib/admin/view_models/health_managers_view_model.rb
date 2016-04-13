@@ -25,16 +25,15 @@ module AdminUI
           row.push(health_manager['name'])
           row.push(health_manager['index'])
           row.push('varz')
+          row.push(nil) # Metrics date
 
           data = health_manager['data']
 
           if health_manager['connected']
             row.push('RUNNING')
-            row.push(nil)
             row.push(data['numCPUS'])
 
             memory_stats = data['memoryStats']
-
             if memory_stats
               row.push(Utils.convert_bytes_to_megabytes(memory_stats['numBytesAllocated']))
             else
@@ -49,8 +48,9 @@ module AdminUI
           else
             row.push('OFFLINE')
 
-            row.push(nil, nil, nil)
+            row.push(nil, nil)
 
+            # This last non-visible column is used to enable deletion of OFFLINE components
             row.push(health_manager['uri'])
           end
 
@@ -70,10 +70,10 @@ module AdminUI
           row.push(name)
           row.push(doppler_analyzer['index'])
           row.push('doppler')
+          row.push(Time.at(doppler_analyzer['timestamp'] / BILLION).to_datetime.rfc3339)
 
           if doppler_analyzer['connected']
             row.push('RUNNING')
-            row.push(Time.at(doppler_analyzer['timestamp'] / BILLION).to_datetime.rfc3339)
             row.push(doppler_analyzer['numCPUS'])
 
             if doppler_analyzer['memoryStats.numBytesAllocated']
@@ -90,8 +90,9 @@ module AdminUI
           else
             row.push('OFFLINE')
 
-            row.push(nil, nil, nil)
+            row.push(nil, nil)
 
+            # This last non-visible column is used to enable deletion of OFFLINE components
             row.push(key)
           end
 

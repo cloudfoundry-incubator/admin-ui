@@ -33,13 +33,13 @@ module AdminUI
           row.push(router['name'])
           row.push(router['index'])
           row.push('varz')
+          row.push(nil) # Metrics date
 
           data = router['data']
 
           if router['connected']
             row.push('RUNNING')
             row.push(DateTime.parse(data['start']).rfc3339)
-            row.push(nil) # Metrics Last Gathered
             row.push(data['num_cores'])
             row.push(data['cpu'])
 
@@ -88,8 +88,9 @@ module AdminUI
               row.push(nil)
             end
 
-            row.push(nil, nil, nil, nil, nil, nil, nil)
+            row.push(nil, nil, nil, nil, nil, nil)
 
+            # This last non-visible column is used to enable deletion of OFFLINE components
             row.push(router['uri'])
           end
 
@@ -109,11 +110,11 @@ module AdminUI
           row.push(name)
           row.push(router['index'])
           row.push('doppler')
+          row.push(Time.at(router['timestamp'] / BILLION).to_datetime.rfc3339)
 
           if router['connected']
             row.push('RUNNING')
             row.push(nil) # start
-            row.push(Time.at(router['timestamp'] / BILLION).to_datetime.rfc3339)
             row.push(router['numCPUS'])
             row.push(nil) # CPU
 
@@ -136,7 +137,7 @@ module AdminUI
           else
             row.push('OFFLINE')
 
-            row.push(nil, nil, nil, nil, nil, nil, nil, nil)
+            row.push(nil, nil, nil, nil, nil, nil, nil)
 
             # This last non-visible column is used to enable deletion of OFFLINE components
             row.push(key)

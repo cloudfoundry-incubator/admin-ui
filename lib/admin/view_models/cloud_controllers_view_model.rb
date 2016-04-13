@@ -52,6 +52,7 @@ module AdminUI
 
           row.push(nil, nil, nil, nil)
 
+          # This last non-visible column is used to enable deletion of OFFLINE components
           row.push(cloud_controller['uri'])
         end
 
