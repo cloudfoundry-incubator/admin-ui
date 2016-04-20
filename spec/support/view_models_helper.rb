@@ -723,6 +723,7 @@ module ViewModelsHelper
         cc_quota_definition[:total_services],
         cc_quota_definition[:total_service_keys],
         cc_quota_definition[:total_routes],
+        cc_quota_definition[:total_reserved_route_ports],
         cc_quota_definition[:app_instance_limit],
         cc_quota_definition[:app_task_limit],
         cc_quota_definition[:memory_limit],

@@ -136,7 +136,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :quota_definitions,
-            columns: [:app_instance_limit, :app_task_limit, :created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :total_private_domains, :total_routes, :total_services, :total_service_keys, :updated_at]
+            columns: [:app_instance_limit, :app_task_limit, :created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :total_private_domains, :total_reserved_route_ports, :total_routes, :total_services, :total_service_keys, :updated_at]
           },
           routes:
           {

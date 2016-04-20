@@ -254,6 +254,7 @@ Sequel.migration do
       Integer :app_instance_limit, :default=>-1
       Integer :app_task_limit, :default=>-1
       Integer :total_service_keys, :default=>-1
+      Integer :total_reserved_route_ports, :default=>0
       
       index [:created_at], :name=>:qd_created_at_index
       index [:guid], :name=>:qd_guid_index, :unique=>true
