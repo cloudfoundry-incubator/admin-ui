@@ -33,9 +33,13 @@ module DopplerHelper
 
   DEA_VALUE_METRICS =
     {
-      'instances'        => 1.0,
-      'remaining_disk'   => 30_904.0,
-      'remaining_memory' => 7_208.0
+      'available_disk_ratio'   => 0.872,
+      'available_memory_ratio' => 0.873,
+      'avg_cpu_load'           => 0.19,
+      'instances'              => 1.0,
+      'remaining_disk'         => 27_904.0,
+      'remaining_memory'       => 6_976.0,
+      'reservable_stagers'     => 4
     }.freeze
 
   DOPPLER_SERVER_VALUE_METRICS =

@@ -359,8 +359,8 @@ module ViewModelsHelper
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
         @computed_pcpu * 100,
-        application_instance_source == :varz_dea ? varz_dea['available_memory_ratio'] * 100 : nil,
-        application_instance_source == :varz_dea ? varz_dea['available_disk_ratio'] * 100 : nil,
+        application_instance_source == :varz_dea ? varz_dea['available_memory_ratio'] * 100 : DEA_VALUE_METRICS['available_memory_ratio'] * 100,
+        application_instance_source == :varz_dea ? varz_dea['available_disk_ratio'] * 100 : DEA_VALUE_METRICS['available_disk_ratio'] * 100,
         application_instance_source == :doppler_dea ? DEA_VALUE_METRICS['remaining_memory'] : nil,
         application_instance_source == :doppler_dea ? DEA_VALUE_METRICS['remaining_disk'] : nil
       ]

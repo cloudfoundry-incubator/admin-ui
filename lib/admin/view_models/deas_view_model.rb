@@ -183,8 +183,17 @@ module AdminUI
               row.push(nil, nil, nil, nil)
             end
 
-            row.push(nil) # available_memory_ratio
-            row.push(nil) # available_disk_ratio
+            if dea['available_memory_ratio'] # Added in 235
+              row.push(dea['available_memory_ratio'] * 100)
+            else
+              row.push(nil)
+            end
+
+            if dea['available_disk_ratio'] # Added in 235
+              row.push(dea['available_disk_ratio'] * 100)
+            else
+              row.push(nil)
+            end
 
             row.push(dea['remaining_memory'])
             row.push(dea['remaining_disk'])
