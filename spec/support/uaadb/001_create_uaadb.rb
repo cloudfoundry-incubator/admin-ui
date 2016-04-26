@@ -144,6 +144,7 @@ Sequel.migration do
       Bignum :expires_at, :null=>false
       String :scope, :size=>1000
       String :data, :text=>true, :null=>false
+      String :identity_zone_id, :default=>"uaa", :size=>36, :null=>false
       
       primary_key [:token_id]
       

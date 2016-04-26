@@ -56,6 +56,7 @@ module AdminUI
         row.push(space_quota_definition[:total_services])
         row.push(space_quota_definition[:total_service_keys])
         row.push(space_quota_definition[:total_routes])
+        row.push(space_quota_definition[:total_reserved_route_ports])
         row.push(space_quota_definition[:app_instance_limit])
         row.push(space_quota_definition[:app_task_limit])
         row.push(space_quota_definition[:memory_limit])
@@ -86,7 +87,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..15).to_a, [1, 2, 3, 4, 12, 14, 15])
+      result(true, items, hash, (1..16).to_a, [1, 2, 3, 4, 13, 15, 16])
     end
   end
 end

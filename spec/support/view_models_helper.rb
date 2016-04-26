@@ -1195,6 +1195,7 @@ module ViewModelsHelper
         cc_space_quota_definition[:total_services],
         cc_space_quota_definition[:total_service_keys],
         cc_space_quota_definition[:total_routes],
+        cc_space_quota_definition[:total_reserved_route_ports],
         cc_space_quota_definition[:app_instance_limit],
         cc_space_quota_definition[:app_task_limit],
         cc_space_quota_definition[:memory_limit],
