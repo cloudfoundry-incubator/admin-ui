@@ -39,7 +39,7 @@ sudo apt-get install -f -y --no-install-recommends git-core build-essential libr
 
 ### Ruby
 
-Ruby is required to run the Administration UI.  This has been tested with Ruby 2.2.4 with previous testing performed on Ruby 1.9.3-p484, 2.1.7 and 2.2.3.
+Ruby is required to run the Administration UI.  This has been tested with Ruby 2.3.1 with previous testing performed on Ruby 1.9.3-p484, 2.1.7, 2.2.3 and 2.2.4.
 Here is a sample installation of ruby using rbenv:
 
 ```
@@ -48,8 +48,8 @@ git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-bu
 echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.profile
 echo 'eval "$(rbenv init -)"' >> ~/.profile
 . ~/.profile
-rbenv install 2.2.4
-rbenv global 2.2.4
+rbenv install 2.3.1
+rbenv global 2.3.1
 ```
 
 ### Ruby Bundler Gem
