@@ -835,6 +835,8 @@ Sequel.migration do
       foreign_key :service_instance_id, :service_instances, :null=>false, :key=>[:id]
       String :salt, :text=>true
       String :syslog_drain_url, :text=>true
+      String :volume_mounts, :text=>true
+      String :volume_mounts_salt, :text=>true
       
       index [:app_id, :service_instance_id], :name=>:sb_app_id_srv_inst_id_index, :unique=>true
       index [:created_at], :name=>:sb_created_at_index
@@ -886,6 +888,8 @@ Sequel.migration do
       String :type, :text=>true, :null=>false
       foreign_key :app_id, :apps_v3, :null=>false, :key=>[:id]
       foreign_key :service_instance_id, :service_instances, :null=>false, :key=>[:id]
+      String :volume_mounts, :text=>true
+      String :volume_mounts_salt, :text=>true
       
       index [:app_id, :service_instance_id], :unique=>true
       index [:created_at]
