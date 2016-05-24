@@ -1,14 +1,14 @@
 source 'http://rubygems.org'
 
-gem 'faye-websocket', '0.10.3'
+gem 'faye-websocket', '0.10.4'
 gem 'membrane', '1.1.0'
 gem 'nats', '0.6.0'
 gem 'net-sftp', '2.1.2'
 gem 'parse-cron', '0.1.4'
 gem 'rack-ssl', '1.4.1'
 gem 'ruby_protobuf', '0.4.11'
-gem 'sequel', '4.33.0'
-gem 'sequel_pg', '1.6.16'
+gem 'sequel', '4.34.0'
+gem 'sequel_pg', '1.6.17'
 gem 'sinatra', '1.4.7'
 gem 'sqlite3', '1.3.11'
 gem 'yajl-ruby', '1.2.1'
@@ -18,7 +18,7 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '0.39.0'
+  gem 'rubocop', '0.40.0'
 end
 
 group :test do

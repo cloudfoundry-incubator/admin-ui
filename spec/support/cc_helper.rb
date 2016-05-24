@@ -1132,38 +1132,39 @@ module CCHelper
   end
 
   def ccdb_inserts(insert_second_quota_definition, event_type)
-    result = [[:buildpacks,                     cc_buildpack],
-              [:droplets,                       cc_droplet],
-              [:feature_flags,                  cc_feature_flag],
-              [:quota_definitions,              cc_quota_definition],
-              [:security_groups,                cc_security_group],
-              [:service_dashboard_clients,      cc_service_dashboard_client],
-              [:stacks,                         cc_stack],
-              [:organizations,                  cc_organization],
-              [:domains,                        cc_domain],
-              [:space_quota_definitions,        cc_space_quota_definition],
-              [:organizations_private_domains,  cc_organization_private_domain],
-              [:spaces,                         cc_space],
-              [:security_groups_spaces,         cc_security_group_space],
-              [:apps,                           cc_app],
-              [:routes,                         cc_route],
-              [:service_brokers,                cc_service_broker_with_password],
-              [:users,                          cc_user],
-              [:apps_routes,                    cc_app_route],
-              [:organizations_auditors,         cc_organization_auditor],
-              [:organizations_billing_managers, cc_organization_billing_manager],
-              [:organizations_managers,         cc_organization_manager],
-              [:organizations_users,            cc_organization_user],
-              [:services,                       cc_service],
-              [:spaces_auditors,                cc_space_auditor],
-              [:spaces_developers,              cc_space_developer],
-              [:spaces_managers,                cc_space_manager],
-              [:service_plans,                  cc_service_plan],
-              [:service_instances,              cc_service_instance],
-              [:service_plan_visibilities,      cc_service_plan_visibility],
-              [:service_bindings,               cc_service_binding_with_credentials],
-              [:service_instance_operations,    cc_service_instance_operation],
-              [:service_keys,                   cc_service_key_with_credentials]
+    result = [
+               [:buildpacks,                     cc_buildpack],
+               [:droplets,                       cc_droplet],
+               [:feature_flags,                  cc_feature_flag],
+               [:quota_definitions,              cc_quota_definition],
+               [:security_groups,                cc_security_group],
+               [:service_dashboard_clients,      cc_service_dashboard_client],
+               [:stacks,                         cc_stack],
+               [:organizations,                  cc_organization],
+               [:domains,                        cc_domain],
+               [:space_quota_definitions,        cc_space_quota_definition],
+               [:organizations_private_domains,  cc_organization_private_domain],
+               [:spaces,                         cc_space],
+               [:security_groups_spaces,         cc_security_group_space],
+               [:apps,                           cc_app],
+               [:routes,                         cc_route],
+               [:service_brokers,                cc_service_broker_with_password],
+               [:users,                          cc_user],
+               [:apps_routes,                    cc_app_route],
+               [:organizations_auditors,         cc_organization_auditor],
+               [:organizations_billing_managers, cc_organization_billing_manager],
+               [:organizations_managers,         cc_organization_manager],
+               [:organizations_users,            cc_organization_user],
+               [:services,                       cc_service],
+               [:spaces_auditors,                cc_space_auditor],
+               [:spaces_developers,              cc_space_developer],
+               [:spaces_managers,                cc_space_manager],
+               [:service_plans,                  cc_service_plan],
+               [:service_instances,              cc_service_instance],
+               [:service_plan_visibilities,      cc_service_plan_visibility],
+               [:service_bindings,               cc_service_binding_with_credentials],
+               [:service_instance_operations,    cc_service_instance_operation],
+               [:service_keys,                   cc_service_key_with_credentials]
              ]
 
     result << [:quota_definitions, cc_quota_definition2] if insert_second_quota_definition
@@ -1185,12 +1186,13 @@ module CCHelper
   end
 
   def uaadb_inserts
-    [[:identity_zone,        uaa_identity_zone],
-     [:identity_provider,    uaa_identity_provider],
-     [:groups,               uaa_group],
-     [:users,                uaa_user_with_password],
-     [:group_membership,     uaa_group_membership],
-     [:oauth_client_details, uaa_client]
+    [
+      [:identity_zone,        uaa_identity_zone],
+      [:identity_provider,    uaa_identity_provider],
+      [:groups,               uaa_group],
+      [:users,                uaa_user_with_password],
+      [:group_membership,     uaa_group_membership],
+      [:oauth_client_details, uaa_client]
     ]
   end
 

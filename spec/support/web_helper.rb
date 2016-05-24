@@ -34,10 +34,9 @@ shared_context :web_context do
       tunnel_identifier = ENV['TRAVIS_JOB_NUMBER']
       username          = ENV['SAUCE_USERNAME']
 
-      caps = Selenium::WebDriver::Remote::Capabilities.new(
-        browser_name:          'firefox',
-        build:                 build_number,
-        'tunnel-identifier' => tunnel_identifier)
+      caps = Selenium::WebDriver::Remote::Capabilities.new(browser_name:          'firefox',
+                                                           build:                 build_number,
+                                                           'tunnel-identifier' => tunnel_identifier)
 
       url = "http://#{username}:#{access_key}@localhost:4445/wd/hub"
       client = Selenium::WebDriver::Remote::Http::Default.new
@@ -111,17 +110,19 @@ shared_context :web_context do
   end
 
   def check_stats_table(id, application_instance_source)
-    check_table_layout([{ columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                          expected_length: 3,
-                          labels:          ['', 'Instances', ''],
-                          colspans:        %w(5 2 2)
-                        },
-                        {
-                          columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                          expected_length: 9,
-                          labels:          %w(Date Organizations Spaces Users Apps Total Running DEAs Cells),
-                          colspans:        nil
-                        }
+    check_table_layout([
+                         {
+                           columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                           expected_length: 3,
+                           labels:          ['', 'Instances', ''],
+                           colspans:        %w(5 2 2)
+                         },
+                         {
+                           columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
+                           expected_length: 9,
+                           labels:          %w(Date Organizations Spaces Users Apps Total Running DEAs Cells),
+                           colspans:        nil
+                         }
                        ])
     stat_count_string = stat_count.to_s
     check_table_data(@driver.find_elements(xpath: "//table[@id='#{id}Table']/tbody/tr/td"),

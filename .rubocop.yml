@@ -28,6 +28,12 @@ Documentation:
 Encoding:
   Enabled: false
 
+IndentArray:
+  EnforcedStyle: align_brackets
+  
+IndentHash:
+  EnforcedStyle: align_braces
+  
 LineLength:
   Enabled: false
 

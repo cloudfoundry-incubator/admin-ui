@@ -60,7 +60,8 @@ shared_context :server_context do
       table_height:            table_height,
       table_page_size:         table_page_size,
       uaadb_uri:               uaadb_uri,
-      uaa_client:              { id: 'id',
+      uaa_client:              {
+                                 id:     'id',
                                  secret: 'secret'
                                }
     }

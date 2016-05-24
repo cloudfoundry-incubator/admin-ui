@@ -40,14 +40,18 @@ describe AdminUI::Admin do
       mbus:                      'nats://nats:c1oudc0w@localhost:14222',
       port:                      port,
       secured_client_connection: secured_client_connection,
-      ssl:                       { certificate_file_path:   certificate_file_path,
+      ssl:                       {
+                                   certificate_file_path:   certificate_file_path,
                                    max_session_idle_length: 1000,
                                    private_key_file_path:   private_key_file_path,
                                    private_key_pass_phrase: private_key_pass_phrase
                                  },
       stats_file:                stats_file,
       uaadb_uri:                 uaadb_uri,
-      uaa_client:                { id: 'id', secret: 'secret' }
+      uaa_client:                {
+                                   id:     'id',
+                                   secret: 'secret'
+                                 }
     }
   end
 
