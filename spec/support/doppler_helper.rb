@@ -203,7 +203,7 @@ module DopplerHelper
   def dea_container_metric_envelope
     envelope                 = dea_envelope
     envelope.eventType       = Events::Envelope::EventType::ContainerMetric
-    envelope.containerMetric = container_metric(0.0018560986278165663, 178_135_040, 134_434_816)
+    envelope.containerMetric = container_metric(18.560986278165663, 178_135_040, 134_434_816)
 
     envelope
   end
@@ -211,7 +211,7 @@ module DopplerHelper
   def rep_container_metric_envelope
     envelope                 = rep_envelope
     envelope.eventType       = Events::Envelope::EventType::ContainerMetric
-    envelope.containerMetric = container_metric(0.178232960961232, 75_057_856, 34_292_160)
+    envelope.containerMetric = container_metric(17.8232960961232, 75_057_856, 34_292_160)
 
     envelope
   end

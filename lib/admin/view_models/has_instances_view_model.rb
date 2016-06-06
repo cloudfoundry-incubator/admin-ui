@@ -29,7 +29,7 @@ module AdminUI
 
         counters_hash['used_memory'] += dea_instance['used_memory_in_bytes'] unless dea_instance['used_memory_in_bytes'].nil?
         counters_hash['used_disk'] += dea_instance['used_disk_in_bytes'] unless dea_instance['used_disk_in_bytes'].nil?
-        counters_hash['used_cpu'] += dea_instance['computed_pcpu'] unless dea_instance['computed_pcpu'].nil?
+        counters_hash['used_cpu'] += dea_instance['computed_pcpu'] * 100 unless dea_instance['computed_pcpu'].nil?
       end
     end
 

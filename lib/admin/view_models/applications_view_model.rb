@@ -105,7 +105,7 @@ module AdminUI
 
             application_usage_counters['used_memory'] += instance['used_memory_in_bytes'] unless instance['used_memory_in_bytes'].nil?
             application_usage_counters['used_disk'] += instance['used_disk_in_bytes'] unless instance['used_disk_in_bytes'].nil?
-            application_usage_counters['used_cpu'] += instance['computed_pcpu'] unless instance['computed_pcpu'].nil?
+            application_usage_counters['used_cpu'] += instance['computed_pcpu'] * 100 unless instance['computed_pcpu'].nil?
           end
         end
       end
@@ -206,7 +206,7 @@ module AdminUI
         if application_usage_counters
           row.push(Utils.convert_bytes_to_megabytes(application_usage_counters['used_memory']))
           row.push(Utils.convert_bytes_to_megabytes(application_usage_counters['used_disk']))
-          row.push(application_usage_counters['used_cpu'] * 100)
+          row.push(application_usage_counters['used_cpu'])
         elsif deas_connected
           row.push(0, 0, 0)
         else

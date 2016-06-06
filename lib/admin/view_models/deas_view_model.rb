@@ -176,7 +176,7 @@ module AdminUI
               row.push(metrics[:instances],
                        Utils.convert_bytes_to_megabytes(metrics[:memory_bytes]),
                        Utils.convert_bytes_to_megabytes(metrics[:disk_bytes]),
-                       metrics[:cpu] * 100)
+                       metrics[:cpu])
             elsif containers_connected
               row.push(0, 0.0, 0.0, 0.0)
             else

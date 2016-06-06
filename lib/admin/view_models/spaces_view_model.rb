@@ -270,7 +270,7 @@ module AdminUI
           if containers_connected || deas_connected
             row.push(Utils.convert_bytes_to_megabytes(space_app_counters['used_memory']))
             row.push(Utils.convert_bytes_to_megabytes(space_app_counters['used_disk']))
-            row.push(space_app_counters['used_cpu'] * 100)
+            row.push(space_app_counters['used_cpu'])
           else
             row.push(nil, nil, nil)
           end

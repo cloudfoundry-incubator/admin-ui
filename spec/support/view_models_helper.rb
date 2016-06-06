@@ -28,7 +28,7 @@ module ViewModelsHelper
 
   def determine_used_cpu(application_instance_source)
     if application_instance_source == :varz_dea
-      varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu']
+      varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100
     elsif application_instance_source == :doppler_cell
       rep_container_metric_envelope.containerMetric.cpuPercentage
     else
@@ -71,7 +71,7 @@ module ViewModelsHelper
         cc_stack[:name],
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
-        @computed_pcpu * 100,
+        @computed_pcpu,
         cc_app[:memory],
         cc_app[:disk_quota],
         "#{cc_organization[:name]}/#{cc_space[:name]}",
@@ -142,7 +142,7 @@ module ViewModelsHelper
         1,
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
-        @computed_pcpu * 100,
+        @computed_pcpu,
         cc_app[:memory],
         cc_app[:disk_quota],
         "#{cc_organization[:name]}/#{cc_space[:name]}"
@@ -358,7 +358,7 @@ module ViewModelsHelper
         application_instance_source == :varz_dea ? varz_dea['instance_registry'][cc_app[:guid]].length : cc_app[:instances],
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
-        @computed_pcpu * 100,
+        @computed_pcpu,
         application_instance_source == :varz_dea ? varz_dea['available_memory_ratio'] * 100 : DEA_VALUE_METRICS['available_memory_ratio'] * 100,
         application_instance_source == :varz_dea ? varz_dea['available_disk_ratio'] * 100 : DEA_VALUE_METRICS['available_disk_ratio'] * 100,
         application_instance_source == :doppler_dea ? DEA_VALUE_METRICS['remaining_memory'] : nil,
@@ -645,7 +645,7 @@ module ViewModelsHelper
         1,
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
-        @computed_pcpu * 100,
+        @computed_pcpu,
         cc_app[:memory],
         cc_app[:disk_quota],
         1,
@@ -1279,7 +1279,7 @@ module ViewModelsHelper
         1,
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
-        @computed_pcpu * 100,
+        @computed_pcpu,
         cc_app[:memory],
         cc_app[:disk_quota],
         1,

@@ -160,7 +160,7 @@ module AdminUI
 
           row.push(Utils.convert_bytes_to_megabytes(container[:memory_bytes]))
           row.push(Utils.convert_bytes_to_megabytes(container[:disk_bytes]))
-          row.push(container[:cpu_percentage] * 100)
+          row.push(container[:cpu_percentage])
 
           if application
             row.push(application[:memory])
