@@ -21,11 +21,11 @@
         <script src="js/external/jquery/Select-1.2.0/js/dataTables.select.min.js"></script>
 
         <script src="js/external/jquery/plugins/fnSetFilteringDelay.js"></script>
-        
+
         <script src="js/external/fixes/ZeroClipboard.js"></script>
 
-        <script src="js/app/constants.js"></script>      
-        <script src="js/app/utilities.js"></script>     
+        <script src="js/app/constants.js"></script>
+        <script src="js/app/utilities.js"></script>
         <script src="js/app/format.js"></script>
         <script src="js/app/table.js"></script>
         <script src="js/app/stats.js"></script>
@@ -34,18 +34,18 @@
         <script src="js/app/tabs/applicationsTab.js"></script>
         <script src="js/app/tabs/buildpacksTab.js"></script>
         <script src="js/app/tabs/cellsTab.js"></script>
-        <script src="js/app/tabs/clientsTab.js"></script>              
-        <script src="js/app/tabs/cloudControllersTab.js"></script>        
+        <script src="js/app/tabs/clientsTab.js"></script>
+        <script src="js/app/tabs/cloudControllersTab.js"></script>
         <script src="js/app/tabs/componentsTab.js"></script>
         <script src="js/app/tabs/deasTab.js"></script>
         <script src="js/app/tabs/domainsTab.js"></script>
         <script src="js/app/tabs/eventsTab.js"></script>
         <script src="js/app/tabs/featureFlagsTab.js"></script>
         <script src="js/app/tabs/gatewaysTab.js"></script>
-        <script src="js/app/tabs/groupsTab.js"></script>    
+        <script src="js/app/tabs/groupsTab.js"></script>
         <script src="js/app/tabs/healthManagersTab.js"></script>
-        <script src="js/app/tabs/identityProvidersTab.js"></script>  
-        <script src="js/app/tabs/identityZonesTab.js"></script>  
+        <script src="js/app/tabs/identityProvidersTab.js"></script>
+        <script src="js/app/tabs/identityZonesTab.js"></script>
         <script src="js/app/tabs/logsTab.js"></script>
         <script src="js/app/tabs/organizationRolesTab.js"></script>
         <script src="js/app/tabs/organizationsTab.js"></script>
@@ -69,21 +69,21 @@
         <script src="js/app/tabs/usersTab.js"></script>
         <script src="js/app/adminUI.js"></script>
 
-        <script src="js/external/jqplot/jquery.jqplot.js"></script>          
+        <script src="js/external/jqplot/jquery.jqplot.js"></script>
         <script src="js/external/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
         <script src="js/external/jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
         <script src="js/external/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
         <script src="js/external/jqplot/plugins/jqplot.enhancedLegendRenderer.min.js"></script>
         <script src="js/external/jqplot/plugins/jqplot.highlighter.min.js"></script>
         <script src="js/external/jqplot/plugins/jqplot.dateAxisRenderer.min.js"></script>
-        
+
         <link rel="stylesheet" type="text/css" href="js/external/jqplot/jquery.jqplot.css"/>
     </head>
 
     <body>
         <div id="TitleBar" class="titleBar">
             <span class="titleText">Cloud Foundry</span>
-  
+
             <span class="cloudControllerText"></span>
             <span class="build"></span>
 
@@ -163,11 +163,11 @@
                                 <th colspan="5">Used</th>
                                 <th colspan="2">Reserved</th>
                                 <th colspan="3">App States</th>
-                                <th colspan="3">App Package States</th>     
+                                <th colspan="3">App Package States</th>
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Status</th>
@@ -183,24 +183,24 @@
                                 <th>Private Service Brokers</th>
                                 <th>Service Plan Visibilities</th>
                                 <th>Security Groups</th>
-                                
+
                                 <th>Total</th>
                                 <th>Used</th>
                                 <th>Unused</th>
-                                
+
                                 <th>Instances</th>
                                 <th>Services</th>
                                 <th>Memory</th>
                                 <th>Disk</th>
                                 <th>% CPU</th>
-                                
+
                                 <th>Memory</th>
                                 <th>Disk</th>
-                                
+
                                 <th>Total</th>
                                 <th>Started</th>
                                 <th>Stopped</th>
-                                
+
                                 <th>Pending</th>
                                 <th>Staged</th>
                                 <th>Failed</th>
@@ -231,7 +231,7 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Target</th>
@@ -243,24 +243,24 @@
                                 <th>Space Quota</th>
                                 <th>Private Service Brokers</th>
                                 <th>Security Groups</th>
-                                
+
                                 <th>Total</th>
                                 <th>Used</th>
                                 <th>Unused</th>
-                                
+
                                 <th>Instances</th>
                                 <th>Services</th>
                                 <th>Memory</th>
                                 <th>Disk</th>
                                 <th>% CPU</th>
-                                
+
                                 <th>Memory</th>
                                 <th>Disk</th>
-                                
+
                                 <th>Total</th>
                                 <th>Started</th>
                                 <th>Stopped</th>
-                                
+
                                 <th>Pending</th>
                                 <th>Staged</th>
                                 <th>Failed</th>
@@ -289,7 +289,7 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>State</th>
@@ -304,14 +304,14 @@
                                 <th>Events</th>
                                 <th>Instances</th>
                                 <th>Service Bindings</th>
-                                
+
                                 <th>Memory</th>
                                 <th>Disk</th>
                                 <th>% CPU</th>
-                                
+
                                 <th>Memory</th>
                                 <th>Disk</th>
-                                
+
                                 <th>Target</th>
                             </tr>
                         </thead>
@@ -338,7 +338,7 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>Name</th>
                                 <th>Application GUID</th>
                                 <th>Index</th>
@@ -348,14 +348,14 @@
                                 <th>Metrics</th>
                                 <th>Diego</th>
                                 <th>Stack</th>
-                                
+
                                 <th>Memory</th>
                                 <th>Disk</th>
                                 <th>% CPU</th>
-                                
+
                                 <th>Memory</th>
                                 <th>Disk</th>
-                                
+
                                 <th>Target</th>
                                 <th>DEA</th>
                                 <th>Cell</th>
@@ -370,7 +370,7 @@
                     <div id="ApplicationInstancesPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="RoutesPage" class="page hiddenPage">
                 <div id="RoutesTableContainer" class="pageSection">
                     <table id="RoutesTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
@@ -397,7 +397,7 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Created</th>
@@ -406,12 +406,12 @@
                                 <th>Events</th>
                                 <th>Service Bindings</th>
                                 <th>Service Keys</th>
-                                
+
                                 <th>Type</th>
                                 <th>State</th>
                                 <th>Created</th>
                                 <th>Updated</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Unique ID</th>
@@ -420,7 +420,7 @@
                                 <th>Active</th>
                                 <th>Public</th>
                                 <th>Free</th>
-                                
+
                                 <th>Provider</th>
                                 <th>Label</th>
                                 <th>GUID</th>
@@ -430,12 +430,12 @@
                                 <th>Updated</th>
                                 <th>Active</th>
                                 <th>Bindable</th>
-                            
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
-                                
+
                                 <th>Target</th>
                             </tr>
                         </thead>
@@ -448,7 +448,7 @@
                     <div id="ServiceInstancesPropertiesContainer"></div>
                 </div>
            </div>
-            
+
            <div id="ServiceBindingsPage" class="page hiddenPage">
                 <div id="ServiceBindingsTableContainer" class="pageSection">
                     <table id="ServiceBindingsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
@@ -465,7 +465,7 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
@@ -473,12 +473,12 @@
 
                                 <th>Name</th>
                                 <th>GUID</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Unique ID</th>
@@ -487,7 +487,7 @@
                                 <th>Active</th>
                                 <th>Public</th>
                                 <th>Free</th>
-                                
+
                                 <th>Provider</th>
                                 <th>Label</th>
                                 <th>GUID</th>
@@ -496,12 +496,12 @@
                                 <th>Created</th>
                                 <th>Updated</th>
                                 <th>Active</th>
-                            
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
-                                
+
                                 <th>Target</th>
                             </tr>
                         </thead>
@@ -530,7 +530,7 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Created</th>
@@ -541,7 +541,7 @@
                                 <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Unique ID</th>
@@ -550,7 +550,7 @@
                                 <th>Active</th>
                                 <th>Public</th>
                                 <th>Free</th>
-                                
+
                                 <th>Provider</th>
                                 <th>Label</th>
                                 <th>GUID</th>
@@ -559,12 +559,12 @@
                                 <th>Created</th>
                                 <th>Updated</th>
                                 <th>Active</th>
-                            
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
-                                
+
                                 <th>Target</th>
                             </tr>
                         </thead>
@@ -590,13 +590,13 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
-                                
+
                                 <th>Role</th>
                             </tr>
                         </thead>
@@ -609,7 +609,7 @@
                     <div id="OrganizationRolesPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="SpaceRolesPage" class="page hiddenPage">
                 <div id="SpaceRolesTableContainer" class="pageSection">
                     <table id="SpaceRolesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
@@ -622,14 +622,14 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Target</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
-                                
+
                                 <th>Role</th>
                             </tr>
                         </thead>
@@ -653,7 +653,7 @@
                     <div id="ClientsPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="UsersPage" class="page hiddenPage">
                 <div id="UsersTableContainer" class="pageSection">
                     <table id="UsersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
@@ -680,13 +680,13 @@
                                 <th>Version</th>
                                 <th>Groups</th>
                                 <th>Events</th>
-                                
+
                                 <th>Total</th>
                                 <th>Auditor</th>
                                 <th>Billing Manager</th>
                                 <th>Manager</th>
                                 <th>User</th>
-    
+
                                 <th>Total</th>
                                 <th>Auditor</th>
                                 <th>Developer</th>
@@ -702,7 +702,7 @@
                     <div id="UsersPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="GroupsPage" class="page hiddenPage">
                 <div id="GroupsTableContainer" class="pageSection">
                     <table id="GroupsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
@@ -724,7 +724,7 @@
                     <div id="BuildpacksPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="DomainsPage" class="page hiddenPage">
                 <div id="DomainsTableContainer" class="pageSection">
                     <table id="DomainsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
@@ -735,7 +735,7 @@
                         <div id="DomainsDetailsLabel" class="propertyLabel">Details</div>
                         <div id="DomainsPropertiesContainer"></div>
                     </div>
-                    
+
                     <div id="DomainsOrganizationsTableContainer" class="pageSection">
                         <div id="DomainsOrganizationsDetailsLabel" class="propertyLabel">Private Shared Organizations</div>
                         <table id="DomainsOrganizationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
@@ -753,7 +753,7 @@
                     <div id="FeatureFlagsPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="QuotasPage" class="page hiddenPage">
                 <div id="QuotasTableContainer" class="pageSection">
                     <table id="QuotasTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
@@ -776,7 +776,7 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Created</th>
@@ -791,7 +791,7 @@
                                 <th>Instance Memory Limit</th>
                                 <th>Non-Basic Services Allowed</th>
                                 <th>Spaces</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                             </tr>
@@ -805,7 +805,7 @@
                     <div id="SpaceQuotasPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="StacksPage" class="page hiddenPage">
                 <div id="StacksTableContainer" class="pageSection">
                     <table id="StacksTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
@@ -816,7 +816,7 @@
                     <div id="StacksPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="EventsPage" class="page hiddenPage">
                 <div id="EventsTableContainer" class="pageSection">
                     <table id="EventsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
@@ -831,7 +831,7 @@
                                 <th>Timestamp</th>
                                 <th>GUID</th>
                                 <th>Type</th>
-                                
+
                                 <th>Type</th>
                                 <th>Name</th>
                                 <th>GUID</th>
@@ -839,7 +839,7 @@
                                 <th>Type</th>
                                 <th>Name</th>
                                 <th>GUID</th>
-                                
+
                                 <th>Target</th>
                             </tr>
                         </thead>
@@ -852,7 +852,7 @@
                     <div id="EventsPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="ServiceBrokersPage" class="page hiddenPage">
                 <div id="ServiceBrokersTableContainer" class="pageSection">
                     <table id="ServiceBrokersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
@@ -875,7 +875,7 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>Provider</th>
                                 <th>Label</th>
                                 <th>GUID</th>
@@ -922,7 +922,7 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Unique ID</th>
@@ -977,12 +977,12 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
                                 <th>Events</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Unique ID</th>
@@ -991,7 +991,7 @@
                                 <th>Active</th>
                                 <th>Public</th>
                                 <th>Free</th>
-                                
+
                                 <th>Provider</th>
                                 <th>Label</th>
                                 <th>GUID</th>
@@ -1001,12 +1001,12 @@
                                 <th>Updated</th>
                                 <th>Active</th>
                                 <th>Bindable</th>
-                            
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Created</th>
@@ -1033,7 +1033,7 @@
                     <div id="IdentityZonesPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="IdentityProvidersPage" class="page hiddenPage">
                 <div id="IdentityProvidersTableContainer" class="pageSection">
                     <table id="IdentityProvidersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
@@ -1044,7 +1044,7 @@
                     <div id="IdentityProvidersPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="SecurityGroupsPage" class="page hiddenPage">
                 <div id="SecurityGroupsTableContainer" class="pageSection">
                     <table id="SecurityGroupsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
@@ -1055,14 +1055,14 @@
                         <div id="SecurityGroupsDetailsLabel" class="propertyLabel">Details</div>
                         <div id="SecurityGroupsPropertiesContainer"></div>
                     </div>
-                    
+
                     <div id="SecurityGroupsRulesTableContainer" class="pageSection">
                         <div id="SecurityGroupsRulesDetailsLabel" class="propertyLabel">Rules</div>
                         <table id="SecurityGroupsRulesTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
                     </div>
                 </div>
             </div>
-            
+
             <div id="SecurityGroupsSpacesPage" class="page hiddenPage">
                 <div id="SecurityGroupsSpacesTableContainer" class="pageSection">
                     <table id="SecurityGroupsSpacesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
@@ -1075,12 +1075,12 @@
                             </tr>
                             <tr>
                                 <th>Check</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
-                                
+
                                 <th>Name</th>
                                 <th>GUID</th>
                                 <th>Created</th>
@@ -1098,7 +1098,7 @@
                     <div id="SecurityGroupsSpacesPropertiesContainer"></div>
                 </div>
             </div>
-            
+
             <div id="DEAsPage" class="page hiddenPage">
                 <div id="DEAsTableContainer" class="pageSection">
                     <table id="DEAsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
@@ -1119,16 +1119,16 @@
                                 <th>Stacks</th>
                                 <th>CPU</th>
                                 <th>Memory</th>
-                                
+
                                 <th>Total</th>
                                 <th>Running</th>
                                 <th>Memory</th>
                                 <th>Disk</th>
                                 <th>% CPU</th>
-                                
+
                                 <th>Memory</th>
                                 <th>Disk</th>
-                                                                
+
                                 <th>Memory</th>
                                 <th>Disk</th>
                             </tr>
@@ -1164,14 +1164,14 @@
                                 <th>Memory</th>
                                 <th>Memory Heap</th>
                                 <th>Memory Stack</th>
-                                
+
                                 <th>Total</th>
                                 <th>Remaining</th>
                                 <th>Used</th>
-                                
+
                                 <th>Capacity</th>
                                 <th>Remaining</th>
-                                                                
+
                                 <th>Capacity</th>
                                 <th>Remaining</th>
                             </tr>
@@ -1236,14 +1236,14 @@
                         <div id="RoutersDetailsLabel" class="propertyLabel">Details</div>
                         <div id="RoutersPropertiesContainer"></div>
                     </div>
-                    
+
                     <div id="RoutersTop10ApplicationsTableContainer" class="pageSection">
                         <div id="RoutersTop10ApplicationsDetailsLabel" class="propertyLabel">Top 10 Applications</div>
                         <table id="RoutersTop10ApplicationsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
                     </div>
                 </div>
             </div>
-            
+
             <div id="ComponentsPage" class="page hiddenPage">
                 <div id="ComponentsTableContainer" class="pageSection">
                     <table id="ComponentsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
@@ -1297,10 +1297,10 @@
                                 <th>Spaces</th>
                                 <th>Users</th>
                                 <th>Apps</th>
-                                
+
                                 <th>Total</th>
                                 <th>Running</th>
-                                
+
                                 <th>DEAs</th>
                                 <th>Cells</th>
                             </tr>
@@ -1320,10 +1320,10 @@
         <div id="ModalDialog" class="modalDialog hiddenPage">
             <div id="ModalDialogTitleBarContainer" class="modalDialogTitleBarContainer">
                 <div class="modalDialogTitleBar">
-                    <span id="ModalDialogTitle"></span>  
+                    <span id="ModalDialogTitle"></span>
                 </div>
             </div>
-            
+
             <div class="modalDialogContainer">
                 <div id="ModalDialogContents" class="modalDialogContents">
                     <div id="ModalDialogContentsSimple" class="hiddenPage"></div>

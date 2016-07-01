@@ -19,7 +19,7 @@
                     $("#user").text(Format.removeScriptInjection(user));
                 }
             });
-        
+
             function logout()
             {
                 var deferred = $.ajax({
@@ -27,7 +27,7 @@
                                           dataType: "json",
                                           type: "GET"
                                       });
-    
+
                 deferred.done(function(result, status)
                 {
                     if (result.redirect)
@@ -42,17 +42,17 @@
     <body>
         <div class="scopeErrorContainer">
             <div class="scopeErrorLabel">Scope Error</div>
-            
+
             <br>
-            
+
             <div class="errorMessage">
-                Insufficient scope for user 
+                Insufficient scope for user
                 <br>
                 <span id="user"></span>
             </div>
-            
+
             <br>
-            
+
             <div class="buttonContainer">
                 <button onclick="logout()">Logout and try again</button>
             </div>
