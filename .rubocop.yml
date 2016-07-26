@@ -28,6 +28,9 @@ Documentation:
 Encoding:
   Enabled: false
 
+FrozenStringLiteralComment:
+  Enabled: false
+
 IndentArray:
   EnforcedStyle: align_brackets
   

@@ -535,7 +535,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
               # Select another quota and click the set button
               @driver.find_element(xpath: '//select[@id="quotaSelector"]/option[2]').click
-              @driver.find_element(id: 'modalDialogButton0').click
+
+              # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+              # @driver.find_element(id: 'modalDialogButton0').click
+              @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'modalDialogButton0'))
 
               check_operation_result
 
