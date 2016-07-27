@@ -154,9 +154,8 @@ Sequel.migration do
     end
     
     create_table(:schema_version, :ignore_index_errors=>true) do
-      Integer :version_rank, :null=>false
       Integer :installed_rank, :null=>false
-      String :version, :size=>50, :null=>false
+      String :version, :size=>50
       String :description, :size=>200, :null=>false
       String :type, :size=>20, :null=>false
       String :script, :size=>1000, :null=>false
@@ -166,11 +165,9 @@ Sequel.migration do
       Integer :execution_time, :null=>false
       TrueClass :success, :null=>false
       
-      primary_key [:version]
+      primary_key [:installed_rank]
       
-      index [:installed_rank], :name=>:schema_version_ir_idx
       index [:success], :name=>:schema_version_s_idx
-      index [:version_rank], :name=>:schema_version_vr_idx
     end
     
     create_table(:sec_audit, :ignore_index_errors=>true) do

@@ -11,6 +11,7 @@ module AdminUI
         app_bits_upload:                      true,
         app_scaling:                          true,
         diego_docker:                         false, # Added in cf_release 213
+        env_var_visibility:                   true, # Added in cf-release 238
         private_domain_creation:              true,
         route_creation:                       true,
         service_instance_creation:            true,

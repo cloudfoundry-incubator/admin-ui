@@ -1731,45 +1731,46 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             service_instance_tags_json = Yajl::Parser.parse(cc_service_instance[:tags])
             check_details([
-                            { label: 'Service Instance Name',                       tag: 'div', value: cc_service_instance[:name] },
-                            { label: 'Service Instance GUID',                       tag:   nil, value: cc_service_instance[:guid] },
-                            { label: 'Service Instance Created',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:created_at].to_datetime.rfc3339}\")") },
-                            { label: 'Service Instance Updated',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:updated_at].to_datetime.rfc3339}\")") },
-                            { label: 'Service Instance User Provided',              tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{!cc_service_instance[:is_gateway_service]})") },
-                            { label: 'Service Instance Dashboard URL',              tag:   nil, value: cc_service_instance[:dashboard_url] },
-                            { label: 'Service Instance Events',                     tag:   'a', value: '1' },
-                            { label: 'Service Bindings',                            tag:   'a', value: '1' },
-                            { label: 'Service Keys',                                tag:   'a', value: '1' },
-                            { label: 'Service Instance Last Operation Type',        tag:  nil, value: cc_service_instance_operation[:type] },
-                            { label: 'Service Instance Last Operation State',       tag:  nil, value: cc_service_instance_operation[:state] },
-                            { label: 'Service Instance Last Operation Created',     tag:  nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance_operation[:created_at]}\")") },
-                            { label: 'Service Instance Last Operation Updated',     tag:  nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance_operation[:updated_at]}\")") },
-                            { label: 'Service Instance Last Operation Description', tag:  nil, value: cc_service_instance_operation[:description] },
-                            { label: 'Service Instance Tag',                        tag:   nil, value: service_instance_tags_json[0] },
-                            { label: 'Service Instance Tag',                        tag:   nil, value: service_instance_tags_json[1] },
-                            { label: 'Service Plan Name',                           tag:   'a', value: cc_service_plan[:name] },
-                            { label: 'Service Plan GUID',                           tag:   nil, value: cc_service_plan[:guid] },
-                            { label: 'Service Plan Unique ID',                      tag:   nil, value: cc_service_plan[:unique_id] },
-                            { label: 'Service Plan Created',                        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
-                            { label: 'Service Plan Updated',                        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
-                            { label: 'Service Plan Active',                         tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
-                            { label: 'Service Plan Public',                         tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
-                            { label: 'Service Plan Free',                           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
-                            { label: 'Service Provider',                            tag:   nil, value: cc_service[:provider] },
-                            { label: 'Service Label',                               tag:   'a', value: cc_service[:label] },
-                            { label: 'Service GUID',                                tag:   nil, value: cc_service[:guid] },
-                            { label: 'Service Unique ID',                           tag:   nil, value: cc_service[:unique_id] },
-                            { label: 'Service Version',                             tag:   nil, value: cc_service[:version] },
-                            { label: 'Service Created',                             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
-                            { label: 'Service Updated',                             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
-                            { label: 'Service Active',                              tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
-                            { label: 'Service Bindable',                            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})") },
-                            { label: 'Service Broker Name',                         tag:   'a', value: cc_service_broker[:name] },
-                            { label: 'Service Broker GUID',                         tag:   nil, value: cc_service_broker[:guid] },
-                            { label: 'Service Broker Created',                      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
-                            { label: 'Service Broker Updated',                      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") },
-                            { label: 'Space',                                       tag:   'a', value: cc_space[:name] },
-                            { label: 'Organization',                                tag:   'a', value: cc_organization[:name] }
+                            { label: 'Service Instance Name',                                     tag: 'div', value: cc_service_instance[:name] },
+                            { label: 'Service Instance GUID',                                     tag:   nil, value: cc_service_instance[:guid] },
+                            { label: 'Service Instance Created',                                  tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Instance Updated',                                  tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Instance User Provided',                            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{!cc_service_instance[:is_gateway_service]})") },
+                            { label: 'Service Instance Dashboard URL',                            tag:   nil, value: cc_service_instance[:dashboard_url] },
+                            { label: 'Service Instance Events',                                   tag:   'a', value: '1' },
+                            { label: 'Service Bindings',                                          tag:   'a', value: '1' },
+                            { label: 'Service Keys',                                              tag:   'a', value: '1' },
+                            { label: 'Service Instance Last Operation Type',                      tag:  nil, value: cc_service_instance_operation[:type] },
+                            { label: 'Service Instance Last Operation State',                     tag:  nil, value: cc_service_instance_operation[:state] },
+                            { label: 'Service Instance Last Operation Created',                   tag:  nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance_operation[:created_at]}\")") },
+                            { label: 'Service Instance Last Operation Updated',                   tag:  nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance_operation[:updated_at]}\")") },
+                            { label: 'Service Instance Last Operation Broker-Provided Operation', tag:  nil, value: cc_service_instance_operation[:broker_provided_operation] },
+                            { label: 'Service Instance Last Operation Description',               tag:  nil, value: cc_service_instance_operation[:description] },
+                            { label: 'Service Instance Tag',                                      tag:   nil, value: service_instance_tags_json[0] },
+                            { label: 'Service Instance Tag',                                      tag:   nil, value: service_instance_tags_json[1] },
+                            { label: 'Service Plan Name',                                         tag:   'a', value: cc_service_plan[:name] },
+                            { label: 'Service Plan GUID',                                         tag:   nil, value: cc_service_plan[:guid] },
+                            { label: 'Service Plan Unique ID',                                    tag:   nil, value: cc_service_plan[:unique_id] },
+                            { label: 'Service Plan Created',                                      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Plan Updated',                                      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Plan Active',                                       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
+                            { label: 'Service Plan Public',                                       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
+                            { label: 'Service Plan Free',                                         tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
+                            { label: 'Service Provider',                                          tag:   nil, value: cc_service[:provider] },
+                            { label: 'Service Label',                                             tag:   'a', value: cc_service[:label] },
+                            { label: 'Service GUID',                                              tag:   nil, value: cc_service[:guid] },
+                            { label: 'Service Unique ID',                                         tag:   nil, value: cc_service[:unique_id] },
+                            { label: 'Service Version',                                           tag:   nil, value: cc_service[:version] },
+                            { label: 'Service Created',                                           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Updated',                                           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Active',                                            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
+                            { label: 'Service Bindable',                                          tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})") },
+                            { label: 'Service Broker Name',                                       tag:   'a', value: cc_service_broker[:name] },
+                            { label: 'Service Broker GUID',                                       tag:   nil, value: cc_service_broker[:guid] },
+                            { label: 'Service Broker Created',                                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Broker Updated',                                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Space',                                                     tag:   'a', value: cc_space[:name] },
+                            { label: 'Organization',                                              tag:   'a', value: cc_organization[:name] }
                           ])
           end
 
@@ -1786,23 +1787,23 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has service plans link' do
-            check_filter_link('ServiceInstances', 16, 'ServicePlans', cc_service_plan[:guid])
+            check_filter_link('ServiceInstances', 17, 'ServicePlans', cc_service_plan[:guid])
           end
 
           it 'has services link' do
-            check_filter_link('ServiceInstances', 25, 'Services', cc_service[:guid])
+            check_filter_link('ServiceInstances', 26, 'Services', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('ServiceInstances', 33, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('ServiceInstances', 34, 'ServiceBrokers', cc_service_broker[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('ServiceInstances', 37, 'Spaces', cc_space[:guid])
+            check_filter_link('ServiceInstances', 38, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceInstances', 38, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceInstances', 39, 'Organizations', cc_organization[:guid])
           end
         end
       end

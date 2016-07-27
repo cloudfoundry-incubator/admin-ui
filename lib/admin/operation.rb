@@ -218,9 +218,10 @@ module AdminUI
     end
 
     def delete_service_instance(service_instance_guid, is_gateway_service, recursive, purge)
-      url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}" : "/v2/user_provided_service_instances/#{service_instance_guid}"
+      url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}?accepts_incomplete=true" : "/v2/user_provided_service_instances/#{service_instance_guid}"
       if recursive
-        url += '?recursive=true'
+        url += is_gateway_service ? '&' : '?'
+        url += 'recursive=true'
         url += '&purge=true' if purge
       end
       @logger.debug("DELETE #{url}")

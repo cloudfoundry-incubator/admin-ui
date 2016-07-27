@@ -184,7 +184,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_instance_operations,
-            columns: [:created_at, :description, :guid, :id, :proposed_changes, :service_instance_id, :state, :type, :updated_at]
+            columns: [:broker_provided_operation, :created_at, :description, :guid, :id, :proposed_changes, :service_instance_id, :state, :type, :updated_at]
           },
           service_keys:
           {

@@ -393,7 +393,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:11 -0500'),
       type:              'audit.app.create',
       updated_at:        Time.new('2015-04-23 08:00:12 -0500')
@@ -414,7 +413,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:14 -0500'),
       type:              'audit.route.create',
       updated_at:        Time.new('2015-04-23 08:00:15 -0500')
@@ -435,7 +433,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:17 -0500'),
       type:              'audit.service.create',
       updated_at:        Time.new('2015-04-23 08:00:18 -0500')
@@ -456,7 +453,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:20 -0500'),
       type:              'audit.service_binding.create',
       updated_at:        Time.new('2015-04-23 08:00:21 -0500')
@@ -477,7 +473,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:23 -0500'),
       type:              'audit.service_broker.create',
       updated_at:        Time.new('2015-04-23 08:00:24 -0500')
@@ -498,7 +493,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:26 -0500'),
       type:              'audit.service_dashboard_client.create',
       updated_at:        Time.new('2015-04-23 08:00:27 -0500')
@@ -519,7 +513,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:29 -0500'),
       type:              'audit.service_instance.create',
       updated_at:        Time.new('2015-04-23 08:00:30 -0500')
@@ -540,7 +533,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:32 -0500'),
       type:              'audit.service_key.create',
       updated_at:        Time.new('2015-04-23 08:00:33 -0500')
@@ -561,7 +553,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:35 -0500'),
       type:              'audit.service_plan.create',
       updated_at:        Time.new('2015-04-23 08:00:36 -0500')
@@ -582,7 +573,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        '',
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:38 -0500'),
       type:              'audit.service_plan_visibility.create',
       updated_at:        Time.new('2015-04-23 08:00:39 -0500')
@@ -603,7 +593,6 @@ module CCHelper
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      space_id:          nil,
       timestamp:         Time.new('2015-04-23 08:00:41 -0500'),
       type:              'audit.space.create',
       updated_at:        Time.new('2015-04-23 08:00:42 -0500')
@@ -873,15 +862,16 @@ module CCHelper
 
   def cc_service_instance_operation
     {
-      created_at:          Time.new('2015-04-23 08:01:01 -0500'),
-      description:         'TestServiceInstanceOperation description',
-      guid:                'service_instance_operation1',
-      id:                  26,
-      proposed_changes:    '{}',
-      service_instance_id: cc_service_instance[:id],
-      state:               'succeeded',
-      type:                'create',
-      updated_at:          Time.new('2015-04-23 08:01:02 -0500')
+      broker_provided_operation: 'TestServiceInstanceOperation broker operation',
+      created_at:                Time.new('2015-04-23 08:01:01 -0500'),
+      description:               'TestServiceInstanceOperation description',
+      guid:                      'service_instance_operation1',
+      id:                        26,
+      proposed_changes:          '{}',
+      service_instance_id:       cc_service_instance[:id],
+      state:                     'succeeded',
+      type:                      'create',
+      updated_at:                Time.new('2015-04-23 08:01:02 -0500')
     }
   end
 
@@ -1688,7 +1678,7 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}?accepts_incomplete=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_service_instances_deleted
         cc_service_instance_not_found
       else
@@ -1697,7 +1687,7 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}?accepts_incomplete=true&recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_service_instances_deleted
         cc_service_instance_not_found
       else
@@ -1706,7 +1696,7 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}?recursive=true&purge=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}?accepts_incomplete=true&recursive=true&purge=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_service_instances_deleted
         cc_service_instance_not_found
       else

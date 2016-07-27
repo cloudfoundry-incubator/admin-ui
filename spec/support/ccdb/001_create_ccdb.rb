@@ -185,7 +185,6 @@ Sequel.migration do
       String :actee, :text=>true, :null=>false
       String :actee_type, :text=>true, :null=>false
       String :metadata, :text=>true
-      Integer :space_id
       String :organization_guid, :default=>"", :text=>true, :null=>false
       String :space_guid, :default=>"", :text=>true, :null=>false
       String :actor_name, :text=>true
@@ -403,8 +402,8 @@ Sequel.migration do
       String :error, :text=>true
       String :buildpack_receipt_stack_name, :text=>true
       String :execution_metadata, :text=>true
-      Integer :memory_limit
-      Integer :disk_limit
+      Integer :staging_memory_in_mb
+      Integer :staging_disk_in_mb
       String :docker_receipt_image, :text=>true
       
       index [:buildpack_receipt_buildpack_guid], :name=>:bp_guid
@@ -682,9 +681,10 @@ Sequel.migration do
       foreign_key :app_guid, :apps_v3, :type=>String, :text=>true, :key=>[:guid]
       foreign_key :route_guid, :routes, :type=>String, :text=>true, :key=>[:guid]
       String :process_type, :text=>true
+      Integer :app_port, :default=>8080
       
       index [:app_guid]
-      index [:app_guid, :route_guid, :process_type], :name=>:route_mappings_app_guid_route_guid_process_type_key, :unique=>true
+      index [:app_guid, :route_guid, :process_type, :app_port], :name=>:route_mappings_app_guid_route_guid_process_type_app_port_key, :unique=>true
       index [:created_at]
       index [:guid], :unique=>true
       index [:process_type]
@@ -854,6 +854,7 @@ Sequel.migration do
       String :state, :text=>true
       String :description, :text=>true
       String :proposed_changes, :default=>"{}", :text=>true, :null=>false
+      String :broker_provided_operation, :text=>true
       
       index [:created_at], :name=>:svc_inst_op_created_at_index
       index [:guid], :name=>:svc_inst_op_guid_index, :unique=>true
