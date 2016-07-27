@@ -125,7 +125,7 @@ module AdminUI
 
     def schedule_stats
       target_time = calculate_time_until_generate_stats
-      return -1 if target_time < 0
+      return -1 if target_time.negative?
       while @running && Time.now.to_i < target_time
         wait_time = target_time - Time.now.to_i
         @logger.debug("AdminUI::Stats.schedule_stats(in loop): wait_time #{wait_time} second; now #{Time.now}.")

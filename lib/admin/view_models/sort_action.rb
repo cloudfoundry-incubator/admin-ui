@@ -37,7 +37,7 @@ module AdminUI
           compare = -compare unless sort_column.ascending
 
           # Terminate looping if everything does not compare.  Two nil columns considered as equal.
-          break unless compare == 0
+          break unless compare.zero?
         end
 
         next compare

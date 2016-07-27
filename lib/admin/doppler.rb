@@ -503,7 +503,7 @@ module AdminUI
 
     def monitored?(component)
       @config.monitored_components.each do |type|
-        return true if component =~ /#{type}/ || type.casecmp('ALL') == 0
+        return true if component =~ /#{type}/ || type.casecmp('ALL').zero?
       end
       false
     end

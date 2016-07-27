@@ -117,7 +117,7 @@ module AdminUI
         type_pattern_index = item['type'] =~ type_pattern
         next if type_pattern_index.nil?
         result_item = item.clone
-        item_name = type_pattern_index == 0 ? item['host'] : item['type'].sub(type_pattern, '')
+        item_name = type_pattern_index.zero? ? item['host'] : item['type'].sub(type_pattern, '')
         result_item['name'] = item_name unless item_name.nil?
         result_item_array.push(result_item)
       end

@@ -56,7 +56,7 @@ module AdminUI
 
       def calculate_content_start_and_read_size(start, size)
         start = start.nil? ? -1 : start.to_i
-        start = (size - @config.log_file_page_size) if start < 0
+        start = (size - @config.log_file_page_size) if start.negative?
         start = [start, 0].max
 
         read_size = [size - start, @config.log_file_page_size].min
@@ -76,7 +76,7 @@ module AdminUI
           }
 
         if read_size < file_size
-          if start > 0
+          if start.positive?
             result[:first] = 0
             result[:back]  = [start - @config.log_file_page_size, 0].max
           end

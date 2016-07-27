@@ -47,7 +47,7 @@ module AdminUI
 
           capacity = 0
           data['nodes'].each_value do |node|
-            capacity += node['available_capacity'] if node['available_capacity'] && node['available_capacity'] > 0
+            capacity += node['available_capacity'] if node['available_capacity'] && node['available_capacity'].positive?
           end
 
           row.push(capacity)

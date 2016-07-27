@@ -27,7 +27,7 @@ module AdminUI
       access_token_segments = json['access_token'].split('.')
       access_token_payload = access_token_segments[1]
       pad = access_token_payload.length % 4
-      access_token_payload += '=' * (4 - pad) if pad > 0
+      access_token_payload += '=' * (4 - pad) if pad.positive?
       access_token_payload_decoded = Base64.respond_to?(:urlsafe_decode64) ? Base64.urlsafe_decode64(access_token_payload) : Base64.decode64(access_token_payload.tr('-_', '+/'))
 
       access_token_payload_json = Yajl::Parser.parse(access_token_payload_decoded)

@@ -34,7 +34,7 @@ module AdminUI
       path += "?#{uri.query}" unless uri.query.nil?
 
       http             = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl     = uri.scheme.to_s.casecmp('https') == 0
+      http.use_ssl     = uri.scheme.to_s.casecmp('https').zero?
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE if config.cloud_controller_ssl_verify_none
       request          = get_method_class(method).new(path)
 

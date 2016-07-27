@@ -10,7 +10,7 @@ module AdminUI
       source_items = @source[:items]
       first = start
       last  = first + length - 1
-      last = source_items.length - 1 if last < 0 || last > source_items.length - 1
+      last = source_items.length - 1 if last.negative? || last > source_items.length - 1
 
       displayed = source_items.values_at(first..last)
 

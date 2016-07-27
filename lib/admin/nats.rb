@@ -131,7 +131,7 @@ module AdminUI
 
         # Wait for discovery to be complete since the NATS.start does not block since EventMachine loop already running
         @semaphore.synchronize do
-          @condition.wait(@semaphore, @config.nats_discovery_timeout) while !error_received && @running && ((@last_discovery_time == 0 && (Time.now.to_f - @start_time < @config.nats_discovery_interval)) || (Time.now.to_f - @last_discovery_time < @config.nats_discovery_timeout))
+          @condition.wait(@semaphore, @config.nats_discovery_timeout) while !error_received && @running && ((@last_discovery_time.zero? && (Time.now.to_f - @start_time < @config.nats_discovery_interval)) || (Time.now.to_f - @last_discovery_time < @config.nats_discovery_timeout))
         end
 
         ::NATS.stop
@@ -262,7 +262,7 @@ module AdminUI
 
     def monitored?(component)
       @config.monitored_components.each do |type|
-        return true if component =~ /#{type}/ || type.casecmp('ALL') == 0
+        return true if component =~ /#{type}/ || type.casecmp('ALL').zero?
       end
       false
     end
