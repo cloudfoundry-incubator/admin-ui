@@ -264,15 +264,17 @@ module AdminUI
       key = "#{container_metric.applicationId}:#{container_metric.instanceIndex}"
       value =
         {
-          application_id: container_metric.applicationId,
-          cpu_percentage: container_metric.cpuPercentage,
-          disk_bytes:     container_metric.diskBytes,
-          index:          parsed_envelope.index,
-          instance_index: container_metric.instanceIndex,
-          ip:             parsed_envelope.ip,
-          memory_bytes:   container_metric.memoryBytes,
-          origin:         parsed_envelope.origin,
-          timestamp:      parsed_envelope.timestamp
+          application_id:     container_metric.applicationId,
+          cpu_percentage:     container_metric.cpuPercentage,
+          disk_bytes:         container_metric.diskBytes,
+          disk_bytes_quota:   container_metric.diskBytesQuota,
+          index:              parsed_envelope.index,
+          instance_index:     container_metric.instanceIndex,
+          ip:                 parsed_envelope.ip,
+          memory_bytes:       container_metric.memoryBytes,
+          memory_bytes_quota: container_metric.memoryBytesQuota,
+          origin:             parsed_envelope.origin,
+          timestamp:          parsed_envelope.timestamp
         }
 
       @container_metrics_semaphore.synchronize do

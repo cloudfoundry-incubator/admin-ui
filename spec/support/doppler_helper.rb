@@ -203,7 +203,7 @@ module DopplerHelper
   def dea_container_metric_envelope
     envelope                 = dea_envelope
     envelope.eventType       = Events::Envelope::EventType::ContainerMetric
-    envelope.containerMetric = container_metric(18.560986278165663, 178_135_040, 134_434_816)
+    envelope.containerMetric = container_metric(18.560986278165663, 180_000_000, 140_000_000, 178_135_040, 134_434_816)
 
     envelope
   end
@@ -211,7 +211,7 @@ module DopplerHelper
   def rep_container_metric_envelope
     envelope                 = rep_envelope
     envelope.eventType       = Events::Envelope::EventType::ContainerMetric
-    envelope.containerMetric = container_metric(17.8232960961232, 75_057_856, 34_292_160)
+    envelope.containerMetric = container_metric(17.8232960961232, 80_000_000, 40_000_000, 75_057_856, 34_292_160)
 
     envelope
   end
@@ -256,13 +256,15 @@ module DopplerHelper
     envelope
   end
 
-  def container_metric(cpu_percentage, memory_bytes, disk_bytes)
-    container_metric               = Events::ContainerMetric.new
-    container_metric.applicationId = cc_app[:guid]
-    container_metric.instanceIndex = cc_app_instance_index
-    container_metric.cpuPercentage = cpu_percentage
-    container_metric.memoryBytes   = memory_bytes
-    container_metric.diskBytes     = disk_bytes
+  def container_metric(cpu_percentage, memory_bytes_quota, disk_bytes_quota, memory_bytes, disk_bytes)
+    container_metric                  = Events::ContainerMetric.new
+    container_metric.applicationId    = cc_app[:guid]
+    container_metric.instanceIndex    = cc_app_instance_index
+    container_metric.cpuPercentage    = cpu_percentage
+    container_metric.memoryBytesQuota = memory_bytes_quota
+    container_metric.memoryBytes      = memory_bytes
+    container_metric.diskBytesQuota   = disk_bytes_quota
+    container_metric.diskBytes        = disk_bytes
 
     container_metric
   end

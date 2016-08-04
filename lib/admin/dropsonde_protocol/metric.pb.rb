@@ -26,9 +26,11 @@
 #     required string applicationId = 1; /// ID of the contained application.
 #     required int32 instanceIndex = 2;  /// Instance index of the contained application. (This, with applicationId, should uniquely identify a container.)
 # 
-#     required double cpuPercentage = 3; /// CPU used, on a scale of 0 to 100.
-#     required uint64 memoryBytes = 4;   /// Bytes of memory used.
-#     required uint64 diskBytes = 5;     /// Bytes of disk used.
+#     required double cpuPercentage = 3;    /// CPU used, on a scale of 0 to 100.
+#     required uint64 memoryBytes = 4;      /// Bytes of memory used.
+#     required uint64 diskBytes = 5;        /// Bytes of disk used.
+#     optional uint64 memoryBytesQuota = 6; /// Maximum bytes of memory allocated to container.
+#     optional uint64 diskBytesQuota = 7;   /// Maximum bytes of disk allocated to container.
 #  }
 
 require 'protobuf/message/message'
@@ -59,5 +61,7 @@ module Events
     required :double, :cpuPercentage, 3
     required :uint64, :memoryBytes, 4
     required :uint64, :diskBytes, 5
+    optional :uint64, :memoryBytesQuota, 6
+    optional :uint64, :diskBytesQuota, 7
   end
 end

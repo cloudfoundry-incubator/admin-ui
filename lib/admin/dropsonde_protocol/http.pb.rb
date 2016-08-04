@@ -105,10 +105,12 @@
 #     required int32 statusCode = 9;      /// Status code returned with the response to the request.
 #     required int64 contentLength = 10;  /// Length of response (bytes).
 # 
-#     optional UUID parentRequestId = 11; /// If this request was made in order to service an incoming request, this field should track the ID of the parent.
+#     /// 11 used to be ParentRequestID which has been deprecated.
+# 
 #     optional UUID applicationId = 12;   /// If this request was made in relation to an appliciation, this field should track that application's ID.
 #     optional int32 instanceIndex = 13;  /// Index of the application instance.
 #     optional string instanceId = 14;    /// ID of the application instance.
+#     repeated string forwarded = 15;     /// This contains http forwarded-for [x-forwarded-for] header from the request.
 # }
 
 require 'protobuf/message/message'
@@ -208,9 +210,9 @@ module Events
     required :string, :userAgent, 8
     required :int32, :statusCode, 9
     required :int64, :contentLength, 10
-    optional :UUID, :parentRequestId, 11
     optional :UUID, :applicationId, 12
     optional :int32, :instanceIndex, 13
     optional :string, :instanceId, 14
+    repeated :string, :forwarded, 15
   end
 end

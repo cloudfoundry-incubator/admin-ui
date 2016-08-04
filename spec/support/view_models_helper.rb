@@ -87,28 +87,32 @@ module ViewModelsHelper
     if @application_instance_source == :doppler_cell
       container =
         {
-          application_id: rep_container_metric_envelope.containerMetric.applicationId,
-          cpu_percentage: rep_container_metric_envelope.containerMetric.cpuPercentage,
-          disk_bytes:     rep_container_metric_envelope.containerMetric.diskBytes,
-          index:          rep_envelope.index,
-          instance_index: rep_container_metric_envelope.containerMetric.instanceIndex,
-          ip:             rep_envelope.ip,
-          memory_bytes:   rep_container_metric_envelope.containerMetric.memoryBytes,
-          origin:         rep_envelope.origin,
-          timestamp:      rep_envelope.timestamp
+          application_id:     rep_container_metric_envelope.containerMetric.applicationId,
+          cpu_percentage:     rep_container_metric_envelope.containerMetric.cpuPercentage,
+          disk_bytes:         rep_container_metric_envelope.containerMetric.diskBytes,
+          disk_bytes_quota:   rep_container_metric_envelope.containerMetric.diskBytesQuota,
+          index:              rep_envelope.index,
+          instance_index:     rep_container_metric_envelope.containerMetric.instanceIndex,
+          ip:                 rep_envelope.ip,
+          memory_bytes:       rep_container_metric_envelope.containerMetric.memoryBytes,
+          memory_bytes_quota: rep_container_metric_envelope.containerMetric.memoryBytesQuota,
+          origin:             rep_envelope.origin,
+          timestamp:          rep_envelope.timestamp
         }
     elsif @application_instance_source == :doppler_dea
       container =
         {
-          application_id: dea_container_metric_envelope.containerMetric.applicationId,
-          cpu_percentage: dea_container_metric_envelope.containerMetric.cpuPercentage,
-          disk_bytes:     dea_container_metric_envelope.containerMetric.diskBytes,
-          index:          dea_envelope.index,
-          instance_index: dea_container_metric_envelope.containerMetric.instanceIndex,
-          ip:             dea_envelope.ip,
-          memory_bytes:   dea_container_metric_envelope.containerMetric.memoryBytes,
-          origin:         dea_envelope.origin,
-          timestamp:      dea_envelope.timestamp
+          application_id:     dea_container_metric_envelope.containerMetric.applicationId,
+          cpu_percentage:     dea_container_metric_envelope.containerMetric.cpuPercentage,
+          disk_bytes:         dea_container_metric_envelope.containerMetric.diskBytes,
+          disk_bytes_quota:   dea_container_metric_envelope.containerMetric.diskBytesQuota,
+          index:              dea_envelope.index,
+          instance_index:     dea_container_metric_envelope.containerMetric.instanceIndex,
+          ip:                 dea_envelope.ip,
+          memory_bytes:       dea_container_metric_envelope.containerMetric.memoryBytes,
+          memory_bytes_quota: dea_container_metric_envelope.containerMetric.memoryBytesQuota,
+          origin:             dea_envelope.origin,
+          timestamp:          dea_envelope.timestamp
         }
     end
 
