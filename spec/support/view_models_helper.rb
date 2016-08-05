@@ -223,6 +223,7 @@ module ViewModelsHelper
         uaa_client[:client_id],
         uaa_identity_zone[:name],
         uaa_client[:client_id],
+        uaa_client[:lastmodified].to_datetime.rfc3339,
         uaa_client[:scope].split(',').sort,
         uaa_client[:authorized_grant_types].split(',').sort,
         uaa_client[:web_server_redirect_uri].split(',').sort,

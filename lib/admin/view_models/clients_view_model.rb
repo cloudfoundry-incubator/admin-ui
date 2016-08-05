@@ -67,6 +67,12 @@ module AdminUI
 
         row.push(client_id)
 
+        if client[:lastmodified]
+          row.push(client[:lastmodified].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
         if client[:scope]
           row.push(client[:scope].split(',').sort)
         else
@@ -130,7 +136,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..9).to_a, (1..7).to_a << 9)
+      result(true, items, hash, (1..10).to_a, (1..8).to_a << 10)
     end
   end
 end

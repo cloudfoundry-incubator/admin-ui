@@ -2299,8 +2299,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 10,
-                                 labels:          ['', 'Identity Zone', 'Identifier', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Service Broker'],
+                                 expected_length: 11,
+                                 labels:          ['', 'Identity Zone', 'Identifier', 'Updated', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Service Broker'],
                                  colspans:        nil
                                }
                              ])
@@ -2310,6 +2310,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '',
                              uaa_identity_zone[:name],
                              uaa_client[:client_id],
+                             uaa_client[:lastmodified].to_datetime.rfc3339,
                              uaa_client[:scope],
                              uaa_client[:authorized_grant_types],
                              uaa_client[:web_server_redirect_uri],
@@ -2356,6 +2357,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_details([
                             { label: 'Identity Zone',          tag:   'a', value: uaa_identity_zone[:name] },
                             { label: 'Identifier',             tag: 'div', value: uaa_client[:client_id] },
+                            { label: 'Updated',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_client[:lastmodified].to_datetime.rfc3339}\")") },
                             { label: 'Scope',                  tag:   nil, value: uaa_client[:scope] },
                             { label: 'Authorized Grant Type',  tag:   nil, value: uaa_client[:authorized_grant_types] },
                             { label: 'Redirect URI',           tag:   nil, value: uaa_client[:web_server_redirect_uri] },
@@ -2374,11 +2376,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('Clients', 9, 'Events', uaa_client[:client_id])
+            check_filter_link('Clients', 10, 'Events', uaa_client[:client_id])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Clients', 11, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Clients', 12, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end
