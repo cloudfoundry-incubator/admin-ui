@@ -29,6 +29,12 @@ module AdminUI
             table:   :apps,
             columns: [:allow_ssh, :buildpack, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :docker_image, :droplet_hash, :enable_ssh, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :name, :package_pending_since, :package_state, :package_updated_at, :ports, :production, :space_id, :stack_id, :staging_failed_description, :staging_failed_reason, :staging_task_id, :state, :type, :updated_at, :version]
           },
+          approvals:
+          {
+            db_uri:  uaadb_uri,
+            table:   :authz_approvals,
+            columns: [:client_id, :expiresat, :lastmodifiedat, :scope, :status, :user_id]
+          },
           apps_routes:
           {
             db_uri:  ccdb_uri,
@@ -307,6 +313,10 @@ module AdminUI
       instances
     end
 
+    def approvals
+      result_cache(:approvals)
+    end
+
     def apps_routes
       result_cache(:apps_routes)
     end
@@ -353,6 +363,10 @@ module AdminUI
 
     def invalidate_applications
       invalidate_cache(:applications)
+    end
+
+    def invalidate_approvals
+      invalidate_cache(:approvals)
     end
 
     def invalidate_buildpacks

@@ -84,6 +84,14 @@ describe AdminUI::ViewModels do
       verify_disconnected_items(view_models.application_instances)
     end
 
+    it 'returns nil approval as expected' do
+      expect(view_models.approval('bogus', 'bogus', 'bogus')).to be_nil
+    end
+
+    it 'returns zero approvals as expected' do
+      verify_disconnected_items(view_models.approvals)
+    end
+
     it 'returns nil buildpack as expected' do
       expect(view_models.buildpack('bogus')).to be_nil
     end

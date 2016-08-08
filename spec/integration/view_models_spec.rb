@@ -172,6 +172,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('applications')
     end
 
+    context 'returns connected approvals_view_model' do
+      let(:results)    { view_models.approvals }
+      let(:expected)   { view_models_approvals }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected approvals_view_model detail' do
+      let(:results)  { view_models.approval(uaa_approval[:user_id], uaa_approval[:client_id], uaa_approval[:scope]) }
+      let(:expected) { view_models_approvals_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected buildpacks_view_model' do
       let(:results)    { view_models.buildpacks }
       let(:expected)   { view_models_buildpacks }

@@ -60,6 +60,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('Clients').displayed?).to be(true)
       expect(scroll_tab_into_view('Users').displayed?).to be(true)
       expect(scroll_tab_into_view('Groups').displayed?).to be(true)
+      expect(scroll_tab_into_view('Approvals').displayed?).to be(true)
       expect(scroll_tab_into_view('Buildpacks').displayed?).to be(true)
       expect(scroll_tab_into_view('Domains').displayed?).to be(true)
       expect(scroll_tab_into_view('FeatureFlags').displayed?).to be(true)
@@ -2299,8 +2300,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 11,
-                                 labels:          ['', 'Identity Zone', 'Identifier', 'Updated', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Service Broker'],
+                                 expected_length: 12,
+                                 labels:          ['', 'Identity Zone', 'Identifier', 'Updated', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Approvals', 'Service Broker'],
                                  colspans:        nil
                                }
                              ])
@@ -2316,6 +2317,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_client[:web_server_redirect_uri],
                              uaa_client[:authorities],
                              uaa_client_autoapprove.to_s,
+                             '1',
                              '1',
                              cc_service_broker[:name]
                            ])
@@ -2366,6 +2368,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Show on Home Page',      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_client[:show_on_home_page]})") },
                             { label: 'App Launch URL',         tag:   'a', value: uaa_client[:app_launch_url] },
                             { label: 'Events',                 tag:   'a', value: '1' },
+                            { label: 'Approvals',              tag:   'a', value: '1' },
                             { label: 'Additional Information', tag:   nil, value: uaa_client[:additional_information] },
                             { label: 'Service Broker',         tag:   'a', value: cc_service_broker[:name] }
                           ])
@@ -2379,8 +2382,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Clients', 10, 'Events', uaa_client[:client_id])
           end
 
+          it 'has approvals link' do
+            check_filter_link('Clients', 11, 'Approvals', uaa_client[:client_id])
+          end
+
           it 'has service brokers link' do
-            check_filter_link('Clients', 12, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Clients', 13, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end
@@ -2395,12 +2402,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', '', 'Organization Roles', 'Space Roles', ''],
-                                 colspans:        %w(1 13 5 4)
+                                 colspans:        %w(1 14 5 4)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 23,
-                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
+                                 expected_length: 24,
+                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Approvals', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
                                  colspans:        nil
                                }
                              ])
@@ -2420,6 +2427,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatBoolean(#{uaa_user[:active]})"),
                              @driver.execute_script("return Format.formatNumber(#{uaa_user[:version]})"),
                              uaa_group[:displayname],
+                             '1',
                              '1',
                              '4',
                              '1',
@@ -2480,6 +2488,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Version',                            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_user[:version]})") },
                             { label: 'Group',                              tag:   'a', value: uaa_group[:displayname] },
                             { label: 'Events',                             tag:   'a', value: '1' },
+                            { label: 'Approvals',                          tag:   'a', value: '1' },
                             { label: 'Organization Total Roles',           tag:   'a', value: '4' },
                             { label: 'Organization Auditor Roles',         tag:   nil, value: '1' },
                             { label: 'Organization Billing Manager Roles', tag:   nil, value: '1' },
@@ -2504,12 +2513,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Users', 12, 'Events', uaa_user[:id])
           end
 
+          it 'has approvals link' do
+            check_filter_link('Users', 13, 'Approvals', uaa_user[:id])
+          end
+
           it 'has organization roles link' do
-            check_filter_link('Users', 13, 'OrganizationRoles', uaa_user[:id])
+            check_filter_link('Users', 14, 'OrganizationRoles', uaa_user[:id])
           end
 
           it 'has space roles link' do
-            check_filter_link('Users', 18, 'SpaceRoles', uaa_user[:id])
+            check_filter_link('Users', 19, 'SpaceRoles', uaa_user[:id])
           end
         end
       end
@@ -2592,6 +2605,69 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has userslink' do
             check_filter_link('Groups', 7, 'Users', uaa_group[:displayname])
+          end
+        end
+      end
+
+      context 'Approvals' do
+        let(:tab_id)   { 'Approvals' }
+        let(:table_id) { 'ApprovalsTable' }
+
+        it 'has a table' do
+          check_table_layout([
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='ApprovalsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                 expected_length: 2,
+                                 labels:          ['User', ''],
+                                 colspans:        %w(2 5)
+                               },
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='ApprovalsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
+                                 expected_length: 7,
+                                 labels:          %w(Name GUID Client Scope Status Updated Expires),
+                                 colspans:        nil
+                               }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='ApprovalsTable']/tbody/tr/td"),
+                           [
+                             uaa_user[:username],
+                             uaa_approval[:user_id],
+                             uaa_approval[:client_id],
+                             uaa_approval[:scope],
+                             uaa_approval[:status],
+                             uaa_approval[:lastmodifiedat].to_datetime.rfc3339,
+                             uaa_approval[:expiresat].to_datetime.rfc3339
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_ApprovalsTable_0')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([
+                            { label: 'User',      tag: 'div', value: uaa_user[:username] },
+                            { label: 'User GUID', tag:   nil, value: uaa_approval[:user_id] },
+                            { label: 'Client',    tag:   'a', value: uaa_approval[:client_id] },
+                            { label: 'Scope',     tag:   nil, value: uaa_approval[:scope] },
+                            { label: 'Status',    tag:   nil, value: uaa_approval[:status] },
+                            { label: 'Updated',   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_approval[:lastmodifiedat].to_datetime.rfc3339}\")") },
+                            { label: 'Expires',   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_approval[:expiresat].to_datetime.rfc3339}\")") }
+                          ])
+          end
+
+          it 'has users link' do
+            check_filter_link('Approvals', 0, 'Users', uaa_approval[:user_id])
+          end
+
+          it 'has clients link' do
+            check_filter_link('Approvals', 2, 'Clients', uaa_approval[:client_id])
           end
         end
       end

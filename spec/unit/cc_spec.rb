@@ -53,6 +53,10 @@ describe AdminUI::CC do
       expect(cc.applications_total_instances).to be_nil
     end
 
+    it 'returns zero approvals as expected' do
+      verify_disconnected_items(cc.approvals)
+    end
+
     it 'returns zero apps_routes as expected' do
       verify_disconnected_items(cc.apps_routes)
     end

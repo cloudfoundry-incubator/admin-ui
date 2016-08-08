@@ -63,6 +63,7 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_uaa(url)
       @cc.invalidate_clients
+      @cc.invalidate_approvals
       @view_models.invalidate_clients
     end
 
@@ -84,6 +85,7 @@ module AdminUI
       @client.delete_uaa(url)
       @cc.invalidate_groups
       @cc.invalidate_group_membership
+      @cc.invalidate_approvals
       @view_models.invalidate_groups
     end
 
@@ -337,6 +339,7 @@ module AdminUI
         @client.delete_uaa(url)
         @cc.invalidate_users_uaa
         @cc.invalidate_group_membership
+        @cc.invalidate_approvals
         @view_models.invalidate_users
       rescue CCRestClientResponseError => error
         raise cc_error if error.http_code == '404' && cc_error

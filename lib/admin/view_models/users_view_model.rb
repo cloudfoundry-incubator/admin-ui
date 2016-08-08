@@ -33,10 +33,12 @@ module AdminUI
                            users_cc['connected'] &&
                            users_uaa['connected']
 
+      approvals      = @cc.approvals
       events         = @cc.events
       identity_zones = @cc.identity_zones
 
-      events_connected = events['connected']
+      approvals_connected = approvals['connected']
+      events_connected    = events['connected']
 
       group_hash         = Hash[groups['items'].map { |item| [item[:id], item] }]
       identity_zone_hash = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
@@ -70,6 +72,16 @@ module AdminUI
         event_counters[actor] += 1
       end
 
+      approval_counters = {}
+      approvals['items'].each do |approval|
+        return result unless @running
+        Thread.pass
+
+        user_id = approval[:user_id]
+        approval_counters[user_id] = 0 if approval_counters[user_id].nil?
+        approval_counters[user_id] += 1
+      end
+
       users_organizations_auditors         = {}
       users_organizations_billing_managers = {}
       users_organizations_managers         = {}
@@ -95,8 +107,9 @@ module AdminUI
 
         guid = user_uaa[:id]
 
-        event_counter = event_counters[guid]
-        identity_zone = identity_zone_hash[user_uaa[:identity_zone_id]]
+        approval_counter = approval_counters[guid]
+        event_counter    = event_counters[guid]
+        identity_zone    = identity_zone_hash[user_uaa[:identity_zone_id]]
 
         row = []
 
@@ -151,6 +164,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if approval_counter
+          row.push(approval_counter)
+        elsif approvals_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         user_cc = user_cc_hash[guid]
 
         if user_cc
@@ -189,7 +210,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..22).to_a, (1..12).to_a)
+      result(true, items, hash, (1..23).to_a, (1..12).to_a)
     end
 
     private

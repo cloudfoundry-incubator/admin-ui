@@ -1308,6 +1308,18 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('applications')
     end
 
+    context 'approvals_view_model' do
+      let(:path)              { '/approvals_view_model' }
+      let(:view_model_source) { view_models_approvals }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'approvals_view_model detail' do
+      let(:path)              { "/approvals_view_model/#{uaa_approval[:user_id]}/#{uaa_approval[:client_id]}/#{uaa_approval[:scope]}" }
+      let(:view_model_source) { view_models_approvals_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'buildpacks_view_model' do
       let(:path)              { '/buildpacks_view_model' }
       let(:view_model_source) { view_models_buildpacks }

@@ -164,6 +164,27 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_approvals
+    [
+      [
+        uaa_user[:username],
+        uaa_approval[:user_id],
+        uaa_approval[:client_id],
+        uaa_approval[:scope],
+        uaa_approval[:status],
+        uaa_approval[:lastmodifiedat].to_datetime.rfc3339,
+        uaa_approval[:expiresat].to_datetime.rfc3339
+      ]
+    ]
+  end
+
+  def view_models_approvals_detail
+    {
+      'approval' => uaa_approval,
+      'user_uaa' => uaa_user
+    }
+  end
+
   def view_models_buildpacks
     [
       [
@@ -229,6 +250,7 @@ module ViewModelsHelper
         uaa_client[:web_server_redirect_uri].split(',').sort,
         uaa_client[:authorities].split(',').sort,
         [uaa_client_autoapprove.to_s],
+        1,
         1,
         cc_service_broker[:name]
       ]
@@ -1366,6 +1388,7 @@ module ViewModelsHelper
         uaa_user[:active],
         uaa_user[:version],
         [uaa_group[:displayname]],
+        1,
         1,
         4,
         1,

@@ -49,6 +49,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.applications['items'].length).to eq(0)
     end
 
+    it 'clears the approval cache' do
+      expect(cc.approvals['items'].length).to eq(1)
+      uaa_clear_approvals_cache_stub(config)
+      cc.invalidate_approvals
+      expect(cc.approvals['items'].length).to eq(0)
+    end
+
     it 'clears the buildpack cache' do
       expect(cc.buildpacks['items'].length).to eq(1)
       cc_clear_buildpacks_cache_stub(config)
@@ -278,6 +285,13 @@ describe AdminUI::CC, type: :integration do
 
     it 'returns applications_total_instances' do
       expect(cc.applications_total_instances).to be(1)
+    end
+
+    context 'returns connected approvals' do
+      let(:results)  { cc.approvals }
+      let(:expected) { uaa_approval }
+
+      it_behaves_like('common cc retrieval')
     end
 
     context 'returns connected apps_routes' do

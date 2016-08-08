@@ -265,7 +265,13 @@ module CCHelper
     @cc_users_deleted = true
   end
 
+  def uaa_clear_approvals_cache_stub(config)
+    sql(config.uaadb_uri, 'DELETE FROM authz_approvals')
+  end
+
   def uaa_clear_clients_cache_stub(config)
+    uaa_clear_approvals_cache_stub(config)
+
     sql(config.uaadb_uri, 'DELETE FROM oauth_client_details')
 
     @uaa_clients_deleted = true
@@ -276,6 +282,7 @@ module CCHelper
   end
 
   def uaa_clear_groups_cache_stub(config)
+    uaa_clear_approvals_cache_stub(config)
     uaa_clear_group_membership_cache_stub(config)
 
     sql(config.uaadb_uri, 'DELETE FROM groups')
@@ -284,7 +291,9 @@ module CCHelper
   end
 
   def uaa_clear_users_cache_stub(config)
-    sql(config.uaadb_uri, 'DELETE FROM group_membership')
+    uaa_clear_approvals_cache_stub(config)
+    uaa_clear_group_membership_cache_stub(config)
+
     sql(config.uaadb_uri, 'DELETE FROM users')
 
     @uaa_users_deleted = true
@@ -1024,6 +1033,17 @@ module CCHelper
     }
   end
 
+  def uaa_approval
+    {
+      client_id:      uaa_client[:client_id],
+      expiresat:      Time.new('2015-04-23 08:01:17 -0500'),
+      lastmodifiedat: Time.new('2015-04-23 08:01:18 -0500'),
+      scope:          uaa_client[:scope],
+      status:         'APPROVED',
+      user_id:        uaa_user[:id]
+    }
+  end
+
   def uaa_client_autoapprove
     true
   end
@@ -1037,7 +1057,7 @@ module CCHelper
       autoapprove:             uaa_client_autoapprove.to_s,
       client_id:               'client1',
       identity_zone_id:        uaa_identity_zone[:id],
-      lastmodified:            Time.new('2015-04-23 08:01:17 -0500'),
+      lastmodified:            Time.new('2015-04-23 08:01:19 -0500'),
       scope:                   'scope1',
       show_on_home_page:       false,
       web_server_redirect_uri: 'http://redirect1'
@@ -1046,12 +1066,12 @@ module CCHelper
 
   def uaa_group
     {
-      created:          Time.new('2015-04-23 08:01:18 -0500'),
+      created:          Time.new('2015-04-23 08:01:20 -0500'),
       description:      'TestGroup description',
       displayname:      'group1',
       id:               'group1',
       identity_zone_id: uaa_identity_zone[:id],
-      lastmodified:     Time.new('2015-04-23 08:01:19 -0500'),
+      lastmodified:     Time.new('2015-04-23 08:01:21 -0500'),
       version:          5
     }
   end
@@ -1067,10 +1087,10 @@ module CCHelper
     {
       active:           true,
       config:           '{"key1":"value1","key2":"value2"}',
-      created:          Time.new('2015-04-23 08:01:20 -0500'),
+      created:          Time.new('2015-04-23 08:01:22 -0500'),
       id:               'identity_provider1',
       identity_zone_id: uaa_identity_zone[:id],
-      lastmodified:     Time.new('2015-04-23 08:01:21 -0500'),
+      lastmodified:     Time.new('2015-04-23 08:01:23 -0500'),
       name:             'identity_provider_name',
       origin_key:       'identity_provider_origin_key1',
       type:             'identity_provider_type1',
@@ -1081,10 +1101,10 @@ module CCHelper
   def uaa_identity_zone
     {
       config:       '{"tokenPolicy":{"accessTokenValidity":43200,"refreshTokenValidity":2592000,"keys":{}},"samlConfig":{"requestSigned":false,"wantAssertionSigned":false,"certificate":null,"privateKey":null}}',
-      created:      Time.new('2015-04-23 08:01:22 -0500'),
+      created:      Time.new('2015-04-23 08:01:24 -0500'),
       description:  'Identity zone description',
       id:           'identity_zone1',
-      lastmodified: Time.new('2015-04-23 08:01:23 -0500'),
+      lastmodified: Time.new('2015-04-23 08:01:25 -0500'),
       name:         'identity_zone_name',
       subdomain:    'identity_zone_subdomain',
       version:      5
@@ -1094,14 +1114,14 @@ module CCHelper
   def uaa_user
     {
       active:              true,
-      created:             Time.new('2015-04-23 08:01:24 -0500'),
+      created:             Time.new('2015-04-23 08:01:26 -0500'),
       email:               'admin',
       familyname:          'Flintstone',
       givenname:           'Fred',
       id:                  'user1',
       identity_zone_id:    uaa_identity_zone[:id],
-      lastmodified:        Time.new('2015-04-23 08:01:25 -0500'),
-      passwd_lastmodified: Time.new('2015-04-23 08:01:26 -0500'),
+      lastmodified:        Time.new('2015-04-23 08:01:27 -0500'),
+      passwd_lastmodified: Time.new('2015-04-23 08:01:28 -0500'),
       username:            'admin',
       verified:            true,
       version:             5
@@ -1183,7 +1203,8 @@ module CCHelper
       [:groups,               uaa_group],
       [:users,                uaa_user_with_password],
       [:group_membership,     uaa_group_membership],
-      [:oauth_client_details, uaa_client]
+      [:oauth_client_details, uaa_client],
+      [:authz_approvals,      uaa_approval]
     ]
   end
 

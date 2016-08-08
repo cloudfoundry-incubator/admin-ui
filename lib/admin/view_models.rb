@@ -3,6 +3,7 @@ require 'thread'
 require_relative 'scheduled_thread_pool'
 require_relative 'view_models/application_instances_view_model'
 require_relative 'view_models/applications_view_model'
+require_relative 'view_models/approvals_view_model'
 require_relative 'view_models/buildpacks_view_model'
 require_relative 'view_models/cells_view_model'
 require_relative 'view_models/clients_view_model'
@@ -51,6 +52,7 @@ module AdminUI
         {
           application_instances:     { clazz: AdminUI::ApplicationInstancesViewModel },
           applications:              { clazz: AdminUI::ApplicationsViewModel },
+          approvals:                 { clazz: AdminUI::ApprovalsViewModel },
           buildpacks:                { clazz: AdminUI::BuildpacksViewModel },
           cells:                     { clazz: AdminUI::CellsViewModel },
           clients:                   { clazz: AdminUI::ClientsViewModel },
@@ -248,6 +250,14 @@ module AdminUI
 
     def applications
       result_cache(:applications)
+    end
+
+    def approval(user_id, client_id, scope)
+      details(:approvals, "#{user_id}/#{client_id}/#{scope}")
+    end
+
+    def approvals
+      result_cache(:approvals)
     end
 
     def buildpack(guid)

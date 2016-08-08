@@ -10,12 +10,14 @@ module AdminUI
       # clients have to exist
       return result unless clients['connected']
 
+      approvals                 = @cc.approvals
       events                    = @cc.events
       identity_zones            = @cc.identity_zones
       service_brokers           = @cc.service_brokers
       service_dashboard_clients = @cc.service_dashboard_clients
 
-      events_connected = events['connected']
+      approvals_connected = approvals['connected']
+      events_connected    = events['connected']
 
       identity_zone_hash            = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
       service_broker_hash           = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
@@ -40,6 +42,16 @@ module AdminUI
         end
       end
 
+      approval_counters = {}
+      approvals['items'].each do |approval|
+        return result unless @running
+        Thread.pass
+
+        client_id = approval[:client_id]
+        approval_counters[client_id] = 0 if approval_counters[client_id].nil?
+        approval_counters[client_id] += 1
+      end
+
       items = []
       hash  = {}
 
@@ -53,7 +65,8 @@ module AdminUI
         service_dashboard_client = service_dashboard_client_hash[client_id]
         service_broker           = service_dashboard_client.nil? ? nil : service_broker_hash[service_dashboard_client[:service_broker_id]]
 
-        event_counter = event_counters[client_id]
+        approval_counter = approval_counters[client_id]
+        event_counter    = event_counters[client_id]
 
         row = []
 
@@ -120,6 +133,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if approval_counter
+          row.push(approval_counter)
+        elsif approvals_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if service_broker
           row.push(service_broker[:name])
         else
@@ -136,7 +157,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..10).to_a, (1..8).to_a << 10)
+      result(true, items, hash, (1..11).to_a, (1..8).to_a << 11)
     end
   end
 end

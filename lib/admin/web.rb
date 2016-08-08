@@ -69,6 +69,18 @@ module AdminUI
       404
     end
 
+    get '/approvals_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/approvals_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.approvals, params).items)
+    end
+
+    get '/approvals_view_model/:user_id/:client_id/:scope', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/approvals_view_model/#{params[:user_id]}/#{params[:client_id]}/#{params[:scope]}")
+      result = @view_models.approval(params[:user_id], params[:client_id], params[:scope])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/buildpacks_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/buildpacks_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.buildpacks, params).items)
@@ -590,6 +602,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'applications.csv')
+    end
+
+    post '/approvals_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/approvals_view_model')
+      file = Download.download(request.body.read, 'approvals', @view_models.approvals)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'approvals.csv')
     end
 
     post '/buildpacks_view_model', auth: [:user] do

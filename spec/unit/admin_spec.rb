@@ -1079,6 +1079,14 @@ describe AdminUI::Admin do
         verify_not_found('/applications_view_model/application1')
       end
 
+      it '/approvals_view_model succeeds' do
+        verify_disconnected_view_model_items('/approvals_view_model')
+      end
+
+      it '/approvals_view_model/:user_guid/:client_id/:scope returns not found' do
+        verify_not_found('/approvals_view_model/user1/client1/scope1')
+      end
+
       it '/buildpacks_view_model succeeds' do
         verify_disconnected_view_model_items('/buildpacks_view_model')
       end
@@ -1416,6 +1424,14 @@ describe AdminUI::Admin do
 
       it '/applications_view_model/:guid redirects as expected' do
         get_redirects_as_expected('/applications_view_model/application1')
+      end
+
+      it '/approvals_view_model redirects as expected' do
+        get_redirects_as_expected('/approvals_view_model')
+      end
+
+      it '/approvals_view_model/:user_guid/:client_id/:scope redirects as expected' do
+        get_redirects_as_expected('/approvals_view_model/user1/client1/scope1')
       end
 
       it '/buildpacks_view_model redirects as expected' do
@@ -1844,6 +1860,10 @@ describe AdminUI::Admin do
 
       it 'posts /applications_view_model redirects as expected' do
         post_redirects_as_expected('/applications_view_model')
+      end
+
+      it 'posts /approvals_view_model redirects as expected' do
+        post_redirects_as_expected('/approvals_view_model')
       end
 
       it 'posts /buildpacks_view_model redirects as expected' do
