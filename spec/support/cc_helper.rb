@@ -271,10 +271,15 @@ module CCHelper
 
   def uaa_clear_clients_cache_stub(config)
     uaa_clear_approvals_cache_stub(config)
+    uaa_clear_client_identity_providers_cache_stub(config)
 
     sql(config.uaadb_uri, 'DELETE FROM oauth_client_details')
 
     @uaa_clients_deleted = true
+  end
+
+  def uaa_clear_client_identity_providers_cache_stub(config)
+    sql(config.uaadb_uri, 'DELETE FROM client_idp')
   end
 
   def uaa_clear_group_membership_cache_stub(config)
@@ -1064,6 +1069,13 @@ module CCHelper
     }
   end
 
+  def uaa_client_identity_provider
+    {
+      client_id:            uaa_client[:client_id],
+      identity_provider_id: uaa_identity_provider[:id]
+    }
+  end
+
   def uaa_group
     {
       created:          Time.new('2015-04-23 08:01:20 -0500'),
@@ -1204,7 +1216,8 @@ module CCHelper
       [:users,                uaa_user_with_password],
       [:group_membership,     uaa_group_membership],
       [:oauth_client_details, uaa_client],
-      [:authz_approvals,      uaa_approval]
+      [:authz_approvals,      uaa_approval],
+      [:client_idp,           uaa_client_identity_provider]
     ]
   end
 

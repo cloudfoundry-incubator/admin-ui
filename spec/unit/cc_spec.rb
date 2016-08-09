@@ -69,6 +69,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.clients)
     end
 
+    it 'returns zero client_identity_providers as expected' do
+      verify_disconnected_items(cc.client_identity_providers)
+    end
+
     it 'returns zero domains as expected' do
       verify_disconnected_items(cc.domains)
     end

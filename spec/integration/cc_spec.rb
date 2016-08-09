@@ -70,6 +70,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.clients['items'].length).to eq(0)
     end
 
+    it 'clears the client identity provider cache' do
+      expect(cc.client_identity_providers['items'].length).to eq(1)
+      uaa_clear_client_identity_providers_cache_stub(config)
+      cc.invalidate_client_identity_providers
+      expect(cc.client_identity_providers['items'].length).to eq(0)
+    end
+
     it 'clears the domain cache' do
       expect(cc.domains['items'].length).to eq(1)
       cc_clear_domains_cache_stub(config)
@@ -311,6 +318,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected clients' do
       let(:results)  { cc.clients }
       let(:expected) { uaa_client }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected client identity providers' do
+      let(:results)  { cc.client_identity_providers }
+      let(:expected) { uaa_client_identity_provider }
 
       it_behaves_like('common cc retrieval')
     end
