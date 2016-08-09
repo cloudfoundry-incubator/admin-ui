@@ -778,6 +778,14 @@ module CCHelper
     }
   end
 
+  def cc_service_display_name
+    'TestService display name'
+  end
+
+  def cc_service_provider_display_name
+    'TestService prov display name'
+  end
+
   def cc_service
     {
       active:            true,
@@ -785,7 +793,7 @@ module CCHelper
       created_at:        Time.new('2015-04-23 08:00:53 -0500'),
       description:       'TestService description',
       documentation_url: 'http://documentation_url.com',
-      extra:             '{"displayName":"display name","documentationUrl":"http://documentationUrl.com","imageUrl":"http://docs.cloudfoundry.com/images/favicon.ico","longDescription":"long description","providerDisplayName":"provider display name","supportUrl":"http://supportUrl.com"}',
+      extra:             "{\"displayName\":\"#{cc_service_display_name}\",\"documentationUrl\":\"http://documentationUrl.com\",\"imageUrl\":\"http://docs.cloudfoundry.com/images/favicon.ico\",\"longDescription\":\"long description\",\"providerDisplayName\":\"#{cc_service_provider_display_name}\",\"supportUrl\":\"http://supportUrl.com\"}",
       guid:              'service1',
       id:                22,
       info_url:          'http://info_url.com',
@@ -905,12 +913,16 @@ module CCHelper
     cc_service_key.merge(credentials: '{}')
   end
 
+  def cc_service_plan_display_name
+    'TestServicePlan display name'
+  end
+
   def cc_service_plan
     {
       active:      true,
       created_at:  Time.new('2015-04-23 08:01:05 -0500'),
       description: 'TestServicePlan description',
-      extra:       '{"displayName":"display name","bullets":["bullet1","bullet2"]}',
+      extra:       "{\"displayName\":\"#{cc_service_plan_display_name}\",\"bullets\":[\"bullet1\",\"bullet2\"]}",
       free:        true,
       guid:        'service_plan1',
       id:          28,

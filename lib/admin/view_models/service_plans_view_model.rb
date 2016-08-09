@@ -1,5 +1,6 @@
 require 'date'
 require 'thread'
+require 'yajl'
 require_relative 'base_view_model'
 
 module AdminUI
@@ -127,6 +128,18 @@ module AdminUI
         row.push(service_plan[:public])
         row.push(service_plan[:free])
 
+        display_name = nil
+        if service_plan[:extra]
+          begin
+            json = Yajl::Parser.parse(service_plan[:extra])
+
+            display_name = json['displayName']
+          rescue
+            display_name = nil
+          end
+        end
+        row.push(display_name)
+
         if event_counter
           row.push(event_counter)
         elsif events_connected
@@ -211,7 +224,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..26).to_a, (1..26).to_a - [9, 10, 11, 12, 13])
+      result(true, items, hash, (1..27).to_a, (1..27).to_a - [10, 11, 12, 13, 14])
     end
   end
 end
