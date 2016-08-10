@@ -141,6 +141,7 @@ module ViewModelsHelper
         cc_app[:diego],
         cc_stack[:name],
         cc_app[:detected_buildpack],
+        cc_app[:detected_buildpack_guid],
         1,
         cc_app[:instances],
         1,
@@ -195,7 +196,8 @@ module ViewModelsHelper
         cc_buildpack[:updated_at].to_datetime.rfc3339,
         cc_buildpack[:position],
         cc_buildpack[:enabled],
-        cc_buildpack[:locked]
+        cc_buildpack[:locked],
+        1
       ]
     ]
   end

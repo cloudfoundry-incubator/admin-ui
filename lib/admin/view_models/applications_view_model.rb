@@ -11,6 +11,7 @@ module AdminUI
       return result unless applications['connected']
 
       apps_routes      = @cc.apps_routes
+      buildpacks       = @cc.buildpacks
       containers       = @doppler.containers
       deas             = @varz.deas
       domains          = @cc.domains
@@ -26,6 +27,7 @@ module AdminUI
       events_connected           = events['connected']
       service_bindings_connected = service_bindings['connected']
 
+      buildpack_hash    = Hash[buildpacks['items'].map { |item| [item[:guid], item] }]
       domain_hash       = Hash[domains['items'].map { |item| [item[:id], item] }]
       droplet_hash      = Hash[droplets['items'].map { |item| [item[:droplet_hash], item] }]
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
@@ -185,6 +187,13 @@ module AdminUI
           row.push(nil)
         end
 
+        # Verify buildpack really exists since deletion of buildpack does not clear app's detected_buildpack_guid
+        detected_buildpack_guid = application[:detected_buildpack_guid]
+        if detected_buildpack_guid
+          detected_buildpack_guid = nil if buildpack_hash[detected_buildpack_guid].nil?
+        end
+        row.push(detected_buildpack_guid)
+
         if event_counter
           row.push(event_counter)
         elsif events_connected
@@ -234,7 +243,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..20).to_a, (1..11).to_a << 20)
+      result(true, items, hash, (1..21).to_a, (1..12).to_a << 21)
     end
   end
 end

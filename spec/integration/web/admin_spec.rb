@@ -964,12 +964,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 5,
                                  labels:          ['', '', 'Used', 'Reserved', ''],
-                                 colspans:        %w(1 14 3 2 1)
+                                 colspans:        %w(1 15 3 2 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 21,
-                                 labels:          ['', 'Name', 'GUID', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'URIs', 'Diego', 'Stack', 'Buildpacks', 'Events', 'Instances', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
+                                 expected_length: 22,
+                                 labels:          ['', 'Name', 'GUID', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'URIs', 'Diego', 'Stack', 'Buildpacks', 'Buildpack GUID', 'Events', 'Instances', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -991,6 +991,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})"),
                                cc_stack[:name],
                                cc_app[:detected_buildpack],
+                               cc_buildpack[:guid],
                                '1',
                                '1',
                                '1',
@@ -1168,6 +1169,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Diego',                      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})") },
                               { label: 'Stack',                      tag:   'a', value: cc_stack[:name] },
                               { label: 'Buildpack',                  tag:   nil, value: cc_app[:detected_buildpack] },
+                              { label: 'Buildpack GUID',             tag:   'a', value: cc_buildpack[:guid] },
                               { label: 'Command',                    tag:   nil, value: cc_app[:command] },
                               { label: 'Detected Start Command',     tag:   nil, value: cc_droplet[:detected_start_command] },
                               { label: 'Droplet Hash',               tag:   nil, value: cc_app[:droplet_hash] },
@@ -1203,24 +1205,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Applications', 10, 'Stacks', cc_stack[:guid])
           end
 
+          it 'has buildpacks link' do
+            check_filter_link('Applications', 12, 'Buildpacks', cc_buildpack[:guid])
+          end
+
           it 'has events link' do
-            check_filter_link('Applications', 15, 'Events', cc_app[:guid])
+            check_filter_link('Applications', 16, 'Events', cc_app[:guid])
           end
 
           it 'has application instances link' do
-            check_filter_link('Applications', 16, 'ApplicationInstances', cc_app[:guid])
+            check_filter_link('Applications', 17, 'ApplicationInstances', cc_app[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('Applications', 17, 'ServiceBindings', cc_app[:guid])
+            check_filter_link('Applications', 18, 'ServiceBindings', cc_app[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('Applications', 23, 'Spaces', cc_space[:guid])
+            check_filter_link('Applications', 24, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Applications', 24, 'Organizations', cc_organization[:guid])
+            check_filter_link('Applications', 25, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -2694,8 +2700,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='BuildpacksTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 8,
-                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Position', 'Enabled', 'Locked'],
+                                 expected_length: 9,
+                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Position', 'Enabled', 'Locked', 'Applications'],
                                  colspans:        nil
                                }
                              ])
@@ -2709,7 +2715,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_buildpack[:updated_at].to_datetime.rfc3339,
                              @driver.execute_script("return Format.formatNumber(#{cc_buildpack[:position]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_buildpack[:enabled]})"),
-                             @driver.execute_script("return Format.formatBoolean(#{cc_buildpack[:locked]})")
+                             @driver.execute_script("return Format.formatBoolean(#{cc_buildpack[:locked]})"),
+                             '1'
                            ])
         end
 
@@ -2855,16 +2862,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Name',     tag: 'div', value: cc_buildpack[:name] },
-                            { label: 'GUID',     tag:   nil, value: cc_buildpack[:guid] },
-                            { label: 'Created',  tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_buildpack[:created_at].to_datetime.rfc3339}\")") },
-                            { label: 'Updated',  tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_buildpack[:updated_at].to_datetime.rfc3339}\")") },
-                            { label: 'Position', tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_buildpack[:position]})") },
-                            { label: 'Enabled',  tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_buildpack[:enabled]})") },
-                            { label: 'Locked',   tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_buildpack[:locked]})") },
-                            { label: 'Key',      tag:   nil, value: cc_buildpack[:key] },
-                            { label: 'Filename', tag:   nil, value: cc_buildpack[:filename] }
+                            { label: 'Name',         tag: 'div', value: cc_buildpack[:name] },
+                            { label: 'GUID',         tag:   nil, value: cc_buildpack[:guid] },
+                            { label: 'Created',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_buildpack[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_buildpack[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Position',     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_buildpack[:position]})") },
+                            { label: 'Enabled',      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_buildpack[:enabled]})") },
+                            { label: 'Locked',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_buildpack[:locked]})") },
+                            { label: 'Key',          tag:   nil, value: cc_buildpack[:key] },
+                            { label: 'Filename',     tag:   nil, value: cc_buildpack[:filename] },
+                            { label: 'Applications', tag:   'a', value: '1' }
                           ])
+          end
+
+          it 'has applications link' do
+            check_filter_link('Buildpacks', 9, 'Applications', cc_buildpack[:guid])
           end
         end
       end

@@ -310,6 +310,7 @@ module CCHelper
       command:                    'node test.js',
       created_at:                 Time.new('2015-04-23 08:00:00 -0500'),
       detected_buildpack:         cc_buildpack[:name],
+      detected_buildpack_guid:    cc_buildpack[:guid],
       diego:                      false,
       disk_quota:                 12,
       docker_image:               'docker_image_1',
