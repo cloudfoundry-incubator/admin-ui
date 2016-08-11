@@ -2320,12 +2320,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 3,
                                  labels:          ['', '', 'Identity Provider'],
-                                 colspans:        %w(1 11 2)
+                                 colspans:        %w(1 13 2)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 14,
-                                 labels:          ['', 'Identity Zone', 'Identifier', 'Updated', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Events', 'Approvals', 'Service Broker', 'Name', 'GUID'],
+                                 expected_length: 16,
+                                 labels:          ['', 'Identity Zone', 'Identifier', 'Updated', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Access Token Validity', 'Refresh Token Validity', 'Events', 'Approvals', 'Service Broker', 'Name', 'GUID'],
                                  colspans:        nil
                                }
                              ])
@@ -2341,6 +2341,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_client[:web_server_redirect_uri],
                              uaa_client[:authorities],
                              uaa_client_autoapprove.to_s,
+                             @driver.execute_script("return Format.formatNumber(#{uaa_client[:access_token_validity]})"),
+                             @driver.execute_script("return Format.formatNumber(#{uaa_client[:refresh_token_validity]})"),
                              '1',
                              '1',
                              cc_service_broker[:name],
@@ -2391,6 +2393,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Redirect URI',           tag:   nil, value: uaa_client[:web_server_redirect_uri] },
                             { label: 'Authority',              tag:   nil, value: uaa_client[:authorities] },
                             { label: 'Auto Approve',           tag:   nil, value: uaa_client_autoapprove.to_s },
+                            { label: 'Access Token Validity',  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_client[:access_token_validity]})") },
+                            { label: 'Refresh Token Validity', tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_client[:refresh_token_validity]})") },
                             { label: 'Show on Home Page',      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_client[:show_on_home_page]})") },
                             { label: 'App Launch URL',         tag:   'a', value: uaa_client[:app_launch_url] },
                             { label: 'Events',                 tag:   'a', value: '1' },
@@ -2407,19 +2411,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('Clients', 10, 'Events', uaa_client[:client_id])
+            check_filter_link('Clients', 12, 'Events', uaa_client[:client_id])
           end
 
           it 'has approvals link' do
-            check_filter_link('Clients', 11, 'Approvals', uaa_client[:client_id])
+            check_filter_link('Clients', 13, 'Approvals', uaa_client[:client_id])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Clients', 13, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Clients', 15, 'ServiceBrokers', cc_service_broker[:guid])
           end
 
           it 'has identity providers link' do
-            check_filter_link('Clients', 14, 'IdentityProviders', uaa_identity_provider[:id])
+            check_filter_link('Clients', 16, 'IdentityProviders', uaa_identity_provider[:id])
           end
         end
       end
@@ -2434,12 +2438,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 5,
                                  labels:          ['', '', 'Organization Roles', 'Space Roles', ''],
-                                 colspans:        %w(1 14 5 4 1)
+                                 colspans:        %w(1 15 5 4 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 25,
-                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Approvals', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
+                                 expected_length: 26,
+                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Version', 'Groups', 'Events', 'Approvals', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2456,6 +2460,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_user[:email],
                              uaa_user[:familyname],
                              uaa_user[:givenname],
+                             uaa_user[:phonenumber],
                              @driver.execute_script("return Format.formatBoolean(#{uaa_user[:active]})"),
                              @driver.execute_script("return Format.formatNumber(#{uaa_user[:version]})"),
                              uaa_group[:displayname],
@@ -2517,6 +2522,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Email',                              tag:   'a', value: "mailto:#{uaa_user[:email]}" },
                             { label: 'Family Name',                        tag:   nil, value: uaa_user[:familyname] },
                             { label: 'Given Name',                         tag:   nil, value: uaa_user[:givenname] },
+                            { label: 'Phone Number',                       tag:   nil, value: uaa_user[:phonenumber] },
                             { label: 'Active',                             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_user[:active]})") },
                             { label: 'Version',                            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_user[:version]})") },
                             { label: 'Group',                              tag:   'a', value: uaa_group[:displayname] },
@@ -2541,31 +2547,31 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has groups link' do
-            check_filter_link('Users', 11, 'Groups', uaa_group[:displayname])
+            check_filter_link('Users', 12, 'Groups', uaa_group[:displayname])
           end
 
           it 'has events link' do
-            check_filter_link('Users', 12, 'Events', uaa_user[:id])
+            check_filter_link('Users', 13, 'Events', uaa_user[:id])
           end
 
           it 'has approvals link' do
-            check_filter_link('Users', 13, 'Approvals', uaa_user[:id])
+            check_filter_link('Users', 14, 'Approvals', uaa_user[:id])
           end
 
           it 'has organization roles link' do
-            check_filter_link('Users', 14, 'OrganizationRoles', uaa_user[:id])
+            check_filter_link('Users', 15, 'OrganizationRoles', uaa_user[:id])
           end
 
           it 'has space roles link' do
-            check_filter_link('Users', 19, 'SpaceRoles', uaa_user[:id])
+            check_filter_link('Users', 20, 'SpaceRoles', uaa_user[:id])
           end
 
           it 'has spaces link' do
-            check_filter_link('Users', 23, 'Spaces', cc_space[:guid])
+            check_filter_link('Users', 24, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Users', 24, 'Organizations', cc_organization[:guid])
+            check_filter_link('Users', 25, 'Organizations', cc_organization[:guid])
           end
         end
       end

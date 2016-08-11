@@ -51,7 +51,7 @@ module AdminUI
           {
             db_uri:  uaadb_uri,
             table:   :oauth_client_details,
-            columns: [:additional_information, :app_launch_url, :authorities, :authorized_grant_types, :autoapprove, :client_id, :identity_zone_id, :lastmodified, :scope, :show_on_home_page, :web_server_redirect_uri]
+            columns: [:access_token_validity, :additional_information, :app_launch_url, :authorities, :authorized_grant_types, :autoapprove, :client_id, :identity_zone_id, :lastmodified, :refresh_token_validity, :scope, :show_on_home_page, :web_server_redirect_uri]
           },
           client_identity_providers:
           {
@@ -268,7 +268,7 @@ module AdminUI
           {
             db_uri:  uaadb_uri,
             table:   :users,
-            columns: [:active, :created, :email, :familyname, :givenname, :id, :identity_zone_id, :lastmodified, :passwd_lastmodified, :username, :verified, :version]
+            columns: [:active, :created, :email, :familyname, :givenname, :id, :identity_zone_id, :lastmodified, :passwd_lastmodified, :phonenumber, :username, :verified, :version]
           }
         }
 

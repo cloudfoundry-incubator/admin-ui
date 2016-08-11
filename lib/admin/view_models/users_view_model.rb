@@ -146,6 +146,7 @@ module AdminUI
         row.push(user_uaa[:email])
         row.push(user_uaa[:familyname])
         row.push(user_uaa[:givenname])
+        row.push(user_uaa[:phonenumber])
         row.push(user_uaa[:active])
         row.push(user_uaa[:version])
 
@@ -228,7 +229,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..24).to_a, (1..12).to_a << 24)
+      result(true, items, hash, (1..25).to_a, (1..13).to_a << 25)
     end
 
     private

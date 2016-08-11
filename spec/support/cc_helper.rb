@@ -1066,6 +1066,7 @@ module CCHelper
 
   def uaa_client
     {
+      access_token_validity:   1_209_600,
       additional_information:  "{\"autoapprove\":#{uaa_client_autoapprove}}",
       app_launch_url:          'http://bogus_app_launch',
       authorities:             'auth1',
@@ -1074,6 +1075,7 @@ module CCHelper
       client_id:               'client1',
       identity_zone_id:        uaa_identity_zone[:id],
       lastmodified:            Time.new('2015-04-23 08:01:19 -0500'),
+      refresh_token_validity:  2_592_000,
       scope:                   'scope1',
       show_on_home_page:       false,
       web_server_redirect_uri: 'http://redirect1'
@@ -1145,6 +1147,7 @@ module CCHelper
       identity_zone_id:    uaa_identity_zone[:id],
       lastmodified:        Time.new('2015-04-23 08:01:27 -0500'),
       passwd_lastmodified: Time.new('2015-04-23 08:01:28 -0500'),
+      phonenumber:         '012-345-6789',
       username:            'admin',
       verified:            true,
       version:             5

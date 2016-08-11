@@ -131,6 +131,9 @@ module AdminUI
         end
         row.push(autoapprove)
 
+        row.push(client[:access_token_validity])
+        row.push(client[:refresh_token_validity])
+
         if event_counter
           row.push(event_counter)
         elsif events_connected
@@ -171,7 +174,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..13).to_a, [1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 13])
+      result(true, items, hash, (1..15).to_a, [1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 15])
     end
   end
 end
