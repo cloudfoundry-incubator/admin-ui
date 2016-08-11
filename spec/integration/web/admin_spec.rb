@@ -348,12 +348,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 7,
                                  labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                 colspans:        %w(1 15 3 5 2 3 3)
+                                 colspans:        %w(1 16 3 5 2 3 3)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 32,
-                                 labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Security Groups', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                 expected_length: 33,
+                                 labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Default Users', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Security Groups', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                  colspans:        nil
                                }
                              ])
@@ -373,6 +373,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                '1',
                                '4',
                                '3',
+                               '1',
                                cc_quota_definition[:name],
                                '1',
                                '1',
@@ -544,10 +545,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               check_operation_result
 
               begin
-                Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[11]").text == cc_quota_definition2[:name] }
+                Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[12]").text == cc_quota_definition2[:name] }
               rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
               end
-              expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[11]").text).to eq(cc_quota_definition2[:name])
+              expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[12]").text).to eq(cc_quota_definition2[:name])
             end
           end
 
@@ -623,6 +624,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Spaces',                    tag:   'a', value: '1' },
                               { label: 'Organization Roles',        tag:   'a', value: '4' },
                               { label: 'Space Roles',               tag:   'a', value: '3' },
+                              { label: 'Default Users',             tag:   'a', value: '1' },
                               { label: 'Quota',                     tag:   'a', value: cc_quota_definition[:name] },
                               { label: 'Space Quotas',              tag:   'a', value: '1' },
                               { label: 'Domains',                   tag:   'a', value: '1' },
@@ -679,44 +681,48 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Organizations', 9, 'SpaceRoles', "#{cc_organization[:name]}/")
           end
 
+          it 'has users link' do
+            check_filter_link('Organizations', 10, 'Users', "#{cc_organization[:name]}/")
+          end
+
           it 'has quotas link' do
-            check_filter_link('Organizations', 10, 'Quotas', cc_quota_definition[:guid])
+            check_filter_link('Organizations', 11, 'Quotas', cc_quota_definition[:guid])
           end
 
           it 'has space quotas link' do
-            check_filter_link('Organizations', 11, 'SpaceQuotas', cc_organization[:guid])
+            check_filter_link('Organizations', 12, 'SpaceQuotas', cc_organization[:guid])
           end
 
           it 'has domains link' do
-            check_filter_link('Organizations', 12, 'Domains', cc_organization[:name])
+            check_filter_link('Organizations', 13, 'Domains', cc_organization[:name])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Organizations', 13, 'ServiceBrokers', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 14, 'ServiceBrokers', "#{cc_organization[:name]}/")
           end
 
           it 'has service plan visibilities link' do
-            check_filter_link('Organizations', 14, 'ServicePlanVisibilities', cc_organization[:guid])
+            check_filter_link('Organizations', 15, 'ServicePlanVisibilities', cc_organization[:guid])
           end
 
           it 'has security groups spaces link' do
-            check_filter_link('Organizations', 15, 'SecurityGroupsSpaces', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 16, 'SecurityGroupsSpaces', "#{cc_organization[:name]}/")
           end
 
           it 'has routes link' do
-            check_filter_link('Organizations', 16, 'Routes', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 17, 'Routes', "#{cc_organization[:name]}/")
           end
 
           it 'has application instances link' do
-            check_filter_link('Organizations', 19, 'ApplicationInstances', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 20, 'ApplicationInstances', "#{cc_organization[:name]}/")
           end
 
           it 'has services instances link' do
-            check_filter_link('Organizations', 20, 'ServiceInstances', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 21, 'ServiceInstances', "#{cc_organization[:name]}/")
           end
 
           it 'has applications link' do
-            check_filter_link('Organizations', 26, 'Applications', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 27, 'Applications', "#{cc_organization[:name]}/")
           end
         end
       end
@@ -731,12 +737,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 7,
                                  labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                 colspans:        %w(1 11 3 5 2 3 3)
+                                 colspans:        %w(1 12 3 5 2 3 3)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 28,
-                                 labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Events', 'Events Target', 'Roles', 'Space Quota', 'Private Service Brokers', 'Security Groups', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                 expected_length: 29,
+                                 labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Events', 'Events Target', 'Roles', 'Default Users', 'Space Quota', 'Private Service Brokers', 'Security Groups', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                  colspans:        nil
                                }
                              ])
@@ -755,6 +761,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                '1',
                                '1',
                                '3',
+                               '1',
                                cc_space_quota_definition[:name],
                                '1',
                                '1',
@@ -870,6 +877,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Events',                  tag:   'a', value: '1' },
                               { label: 'Events Target',           tag:   'a', value: '1' },
                               { label: 'Roles',                   tag:   'a', value: '3' },
+                              { label: 'Default Users',           tag:   'a', value: '1' },
                               { label: 'Space Quota',             tag:   'a', value: cc_space_quota_definition[:name] },
                               { label: 'Private Service Brokers', tag:   'a', value: '1' },
                               { label: 'Security Groups',         tag:   'a', value: '1' },
@@ -923,32 +931,36 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Spaces', 7, 'SpaceRoles', cc_space[:guid])
           end
 
+          it 'has users link' do
+            check_filter_link('Spaces', 8, 'Users', "#{cc_organization[:name]}/#{cc_space[:name]}")
+          end
+
           it 'has space quotas link' do
-            check_filter_link('Spaces', 8, 'SpaceQuotas', cc_space_quota_definition[:guid])
+            check_filter_link('Spaces', 9, 'SpaceQuotas', cc_space_quota_definition[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Spaces', 9, 'ServiceBrokers', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 10, 'ServiceBrokers', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has security groups spaces link' do
-            check_filter_link('Spaces', 10, 'SecurityGroupsSpaces', cc_space[:guid])
+            check_filter_link('Spaces', 11, 'SecurityGroupsSpaces', cc_space[:guid])
           end
 
           it 'has routes link' do
-            check_filter_link('Spaces', 11, 'Routes', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 12, 'Routes', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has application instances link' do
-            check_filter_link('Spaces', 14, 'ApplicationInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 15, 'ApplicationInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has services link' do
-            check_filter_link('Spaces', 15, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 16, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has applications link' do
-            check_filter_link('Spaces', 21, 'Applications', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 22, 'Applications', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
         end
       end
@@ -2420,14 +2432,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 4,
+                                 expected_length: 5,
                                  labels:          ['', '', 'Organization Roles', 'Space Roles', ''],
-                                 colspans:        %w(1 14 5 4)
+                                 colspans:        %w(1 14 5 4 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 24,
-                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Approvals', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager'],
+                                 expected_length: 25,
+                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Active', 'Version', 'Groups', 'Events', 'Approvals', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2457,7 +2469,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '3',
                              '1',
                              '1',
-                             '1'
+                             '1',
+                             "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
         end
 
@@ -2517,7 +2530,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Space Total Roles',                  tag:   'a', value: '3' },
                             { label: 'Space Auditor Roles',                tag:   nil, value: '1' },
                             { label: 'Space Developer Roles',              tag:   nil, value: '1' },
-                            { label: 'Space Manager Roles',                tag:   nil, value: '1' }
+                            { label: 'Space Manager Roles',                tag:   nil, value: '1' },
+                            { label: 'Space',                              tag:   'a', value: cc_space[:name] },
+                            { label: 'Organization',                       tag:   'a', value: cc_organization[:name] }
                           ])
           end
 
@@ -2543,6 +2558,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has space roles link' do
             check_filter_link('Users', 19, 'SpaceRoles', uaa_user[:id])
+          end
+
+          it 'has spaces link' do
+            check_filter_link('Users', 23, 'Spaces', cc_space[:guid])
+          end
+
+          it 'has organizations link' do
+            check_filter_link('Users', 24, 'Organizations', cc_organization[:guid])
           end
         end
       end

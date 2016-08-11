@@ -7,10 +7,12 @@ module AdminUI
     def do_items
       groups                         = @cc.groups
       group_membership               = @cc.group_membership
+      organizations                  = @cc.organizations
       organizations_auditors         = @cc.organizations_auditors
       organizations_billing_managers = @cc.organizations_billing_managers
       organizations_managers         = @cc.organizations_managers
       organizations_users            = @cc.organizations_users
+      spaces                         = @cc.spaces
       spaces_auditors                = @cc.spaces_auditors
       spaces_managers                = @cc.spaces_developers
       spaces_developers              = @cc.spaces_managers
@@ -18,15 +20,17 @@ module AdminUI
       users_uaa                      = @cc.users_uaa
 
       # groups, group_membership,
-      # organizations_auditors, organizations_billing_managers, organizations_managers, organizations_users,
-      # spaces_auditors, spaces_developers, spaces_managers,
+      # organizations, organizations_auditors, organizations_billing_managers, organizations_managers, organizations_users,
+      # spaces, spaces_auditors, spaces_developers, spaces_managers,
       # users_cc and users_uaa have to exist.  Other record types are optional
       return result unless groups['connected'] &&
                            group_membership['connected'] &&
+                           organizations['connected'] &&
                            organizations_auditors['connected'] &&
                            organizations_billing_managers['connected'] &&
                            organizations_managers['connected'] &&
                            organizations_users['connected'] &&
+                           spaces['connected'] &&
                            spaces_auditors['connected'] &&
                            spaces_developers['connected'] &&
                            spaces_managers['connected'] &&
@@ -42,6 +46,8 @@ module AdminUI
 
       group_hash         = Hash[groups['items'].map { |item| [item[:id], item] }]
       identity_zone_hash = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
+      organization_hash  = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      space_hash         = Hash[spaces['items'].map { |item| [item[:id], item] }]
       user_cc_hash       = Hash[users_cc['items'].map { |item| [item[:guid], item] }]
 
       member_groups = {}
@@ -195,8 +201,18 @@ module AdminUI
           row.push(spc_auditors)
           row.push(spc_developers)
           row.push(spc_managers)
+
+          default_space_id = user_cc[:default_space_id]
+          space            = default_space_id.nil? ? nil : space_hash[default_space_id]
+          organization     = space.nil? ? nil : organization_hash[space[:organization_id]]
+
+          if organization && space
+            row.push("#{organization[:name]}/#{space[:name]}")
+          else
+            row.push(nil)
+          end
         else
-          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
         end
 
         items.push(row)
@@ -205,12 +221,14 @@ module AdminUI
           {
             'groups'        => authorities,
             'identity_zone' => identity_zone,
+            'organization'  => organization,
+            'space'         => space,
             'user_cc'       => user_cc,
             'user_uaa'      => user_uaa
           }
       end
 
-      result(true, items, hash, (1..23).to_a, (1..12).to_a)
+      result(true, items, hash, (1..24).to_a, (1..12).to_a << 24)
     end
 
     private

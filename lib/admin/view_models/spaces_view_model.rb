@@ -26,6 +26,7 @@ module AdminUI
       spaces_auditors        = @cc.spaces_auditors
       spaces_developers      = @cc.spaces_developers
       spaces_managers        = @cc.spaces_managers
+      users                  = @cc.users_cc
 
       applications_connected           = applications['connected']
       apps_routes_connected            = apps_routes['connected']
@@ -37,6 +38,7 @@ module AdminUI
       service_brokers_connected        = service_brokers['connected']
       service_instances_connected      = service_instances['connected']
       spaces_roles_connected           = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
+      users_connected                  = users['connected']
 
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
       routes_used_set   = apps_routes['items'].to_set { |app_route| app_route[:route_id] }
@@ -61,6 +63,7 @@ module AdminUI
       end
 
       space_role_counters             = {}
+      space_default_user_counters     = {}
       space_security_groups_counters  = {}
       space_service_broker_counters   = {}
       space_service_instance_counters = {}
@@ -70,6 +73,16 @@ module AdminUI
       count_space_roles(spaces_auditors, space_role_counters)
       count_space_roles(spaces_developers, space_role_counters)
       count_space_roles(spaces_managers, space_role_counters)
+
+      users['items'].each do |user|
+        return result unless @running
+        Thread.pass
+
+        default_space_id = user[:default_space_id]
+        next if default_space_id.nil?
+        space_default_user_counters[default_space_id] = 0 if space_default_user_counters[default_space_id].nil?
+        space_default_user_counters[default_space_id] += 1
+      end
 
       service_brokers['items'].each do |service_broker|
         return result unless @running
@@ -172,6 +185,7 @@ module AdminUI
         space_service_broker_counter   = space_service_broker_counters[space_id]
         space_service_instance_counter = space_service_instance_counters[space_id]
         space_app_counters             = space_app_counters_hash[space_id]
+        space_default_user_counter     = space_default_user_counters[space_id]
         space_route_counters           = space_route_counters_hash[space_id]
 
         row = []
@@ -213,6 +227,14 @@ module AdminUI
         if space_role_counter
           row.push(space_role_counter)
         elsif spaces_roles_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if space_default_user_counter
+          row.push(space_default_user_counter)
+        elsif users_connected
           row.push(0)
         else
           row.push(nil)
@@ -303,7 +325,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..27).to_a, (1..5).to_a << 9)
+      result(true, items, hash, (1..28).to_a, (1..5).to_a << 10)
     end
 
     private

@@ -640,7 +640,7 @@ describe AdminUI::Admin, type: :integration do
     context 'sets the quota for organization' do
       let(:insert_second_quota_definition) { true }
       it 'sets the quota for organization' do
-        expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][10] }.from(cc_quota_definition[:name]).to(cc_quota_definition2[:name])
+        expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][11] }.from(cc_quota_definition[:name]).to(cc_quota_definition2[:name])
       end
     end
 
@@ -1159,7 +1159,7 @@ describe AdminUI::Admin, type: :integration do
       end
 
       it 'deletes a space quota space' do
-        expect { delete_space_quota_space }.to change { get_json('/spaces_view_model')['items']['items'][0][9] }.from(cc_space_quota_definition[:name]).to(nil)
+        expect { delete_space_quota_space }.to change { get_json('/spaces_view_model')['items']['items'][0][10] }.from(cc_space_quota_definition[:name]).to(nil)
       end
     end
 
@@ -1170,7 +1170,7 @@ describe AdminUI::Admin, type: :integration do
       end
 
       it 'sets a space quota for space' do
-        expect { create_space_quota_space }.to change { get_json('/spaces_view_model')['items']['items'][0][9] }.from(cc_space_quota_definition[:name]).to(cc_space_quota_definition2[:name])
+        expect { create_space_quota_space }.to change { get_json('/spaces_view_model')['items']['items'][0][10] }.from(cc_space_quota_definition[:name]).to(cc_space_quota_definition2[:name])
       end
     end
   end

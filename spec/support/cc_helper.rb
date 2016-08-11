@@ -241,11 +241,9 @@ module CCHelper
     cc_clear_routes_cache_stub(config)
     cc_clear_security_groups_spaces_cache_stub(config)
     cc_clear_service_brokers_cache_stub(config)
+    cc_clear_users_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM apps')
-    sql(config.ccdb_uri, 'DELETE FROM spaces_auditors')
-    sql(config.ccdb_uri, 'DELETE FROM spaces_developers')
-    sql(config.ccdb_uri, 'DELETE FROM spaces_managers')
     sql(config.ccdb_uri, 'DELETE FROM events')
     sql(config.ccdb_uri, 'DELETE FROM spaces')
 
@@ -1044,7 +1042,7 @@ module CCHelper
       active:           true,
       admin:            false,
       created_at:       Time.new('2015-04-23 08:01:15 -0500'),
-      default_space_id: nil,
+      default_space_id: cc_space[:id],
       guid:             uaa_user[:id],
       id:               34,
       updated_at:       Time.new('2015-04-23 08:01:16 -0500')

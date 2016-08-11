@@ -33,6 +33,7 @@ module AdminUI
       spaces_auditors                = @cc.spaces_auditors
       spaces_developers              = @cc.spaces_developers
       spaces_managers                = @cc.spaces_managers
+      users                          = @cc.users_cc
 
       applications_connected              = applications['connected']
       apps_routes_connected               = apps_routes['connected']
@@ -49,6 +50,7 @@ module AdminUI
       space_quotas_connected              = space_quotas['connected']
       spaces_connected                    = spaces['connected']
       spaces_roles_connected              = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
+      users_connected                     = users['connected']
 
       quota_hash      = Hash[quotas['items'].map { |item| [item[:id], item] }]
       routes_used_set = apps_routes['items'].to_set { |app_route| app_route[:route_id] }
@@ -57,6 +59,7 @@ module AdminUI
       event_target_counters = {}
       organization_space_counters                   = {}
       organization_role_counters                    = {}
+      organization_default_user_counters            = {}
       organization_domain_counters                  = {}
       organization_security_groups_counters         = {}
       organization_service_broker_counters          = {}
@@ -94,6 +97,19 @@ module AdminUI
       count_space_roles(space_hash, spaces_auditors, space_role_counters)
       count_space_roles(space_hash, spaces_developers, space_role_counters)
       count_space_roles(space_hash, spaces_managers, space_role_counters)
+
+      users['items'].each do |user|
+        return result unless @running
+        Thread.pass
+
+        default_space_id = user[:default_space_id]
+        next if default_space_id.nil?
+        space = space_hash[default_space_id]
+        next if space.nil?
+        organization_id = space[:organization_id]
+        organization_default_user_counters[organization_id] = 0 if organization_default_user_counters[organization_id].nil?
+        organization_default_user_counters[organization_id] += 1
+      end
 
       service_brokers['items'].each do |service_broker|
         return result unless @running
@@ -230,6 +246,7 @@ module AdminUI
         quota             = quota_hash[organization[:quota_definition_id]]
 
         event_target_counter                         = event_target_counters[organization_guid]
+        organization_default_user_counter            = organization_default_user_counters[organization_id]
         organization_role_counter                    = organization_role_counters[organization_id]
         organization_space_counter                   = organization_space_counters[organization_id]
         organization_service_broker_counter          = organization_service_broker_counters[organization_id]
@@ -283,6 +300,14 @@ module AdminUI
         if space_role_counter
           row.push(space_role_counter)
         elsif spaces_connected && spaces_roles_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if organization_default_user_counter
+          row.push(organization_default_user_counter)
+        elsif users_connected
           row.push(0)
         else
           row.push(nil)
@@ -396,7 +421,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..31).to_a, (1..5).to_a << 10)
+      result(true, items, hash, (1..32).to_a, (1..5).to_a << 11)
     end
 
     private

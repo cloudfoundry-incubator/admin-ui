@@ -665,6 +665,7 @@ module ViewModelsHelper
         1,
         4,
         3,
+        1,
         cc_quota_definition[:name],
         1,
         1,
@@ -1305,6 +1306,7 @@ module ViewModelsHelper
         1,
         1,
         3,
+        1,
         cc_space_quota_definition[:name],
         1,
         1,
@@ -1407,7 +1409,8 @@ module ViewModelsHelper
         3,
         1,
         1,
-        1
+        1,
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
   end
@@ -1416,6 +1419,8 @@ module ViewModelsHelper
     {
       'groups'        => [uaa_group[:displayname]],
       'identity_zone' => uaa_identity_zone,
+      'organization'  => cc_organization,
+      'space'         => cc_space,
       'user_cc'       => cc_user,
       'user_uaa'      => uaa_user
     }
