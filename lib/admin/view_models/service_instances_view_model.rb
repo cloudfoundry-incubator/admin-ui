@@ -102,6 +102,8 @@ module AdminUI
 
         row.push(!is_gateway_service)
 
+        row.push(!service_instance[:syslog_drain_url].nil? && service_instance[:syslog_drain_url].length.positive?)
+
         if event_counter
           row.push(event_counter)
         elsif events_connected
@@ -213,7 +215,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..34).to_a, (1..34).to_a - [6, 7, 8])
+      result(true, items, hash, (1..35).to_a, (1..35).to_a - [7, 8, 9])
     end
   end
 end

@@ -627,10 +627,10 @@ module CCHelper
   # /v2/info returned from the system is not symbols
   def cc_info
     {
-      'authorization_endpoint'   => 'http://authorization_endpoint',
+      'authorization_endpoint'   => 'http://authorization_endpoint.com',
       'build'                    => '2222',
-      'doppler_logging_endpoint' => 'wss://doppler_logging_endpoint',
-      'token_endpoint'           => 'http://token_endpoint'
+      'doppler_logging_endpoint' => 'wss://doppler_logging_endpoint.com',
+      'token_endpoint'           => 'http://token_endpoint.com'
     }
   end
 
@@ -821,7 +821,7 @@ module CCHelper
       guid:                'service_binding1',
       id:                  23,
       service_instance_id: cc_service_instance[:id],
-      syslog_drain_url:    nil,
+      syslog_drain_url:    'http://service_binding_syslog_drain_url.com',
       updated_at:          Time.new('2015-04-23 08:00:56 -0500')
     }
   end
@@ -834,7 +834,7 @@ module CCHelper
   def cc_service_broker
     {
       auth_username: 'username',
-      broker_url:    'http://bogus',
+      broker_url:    'http://broker_url.com',
       created_at:    Time.new('2015-04-23 08:00:57 -0500'),
       guid:          'service_broker1',
       id:            24,
@@ -865,13 +865,14 @@ module CCHelper
       created_at:         Time.new('2015-04-23 08:00:59 -0500'),
       guid:               'service_instance1',
       id:                 25,
-      dashboard_url:      'http://www.ibm.com',
+      dashboard_url:      'http://dashboard_url.com',
       gateway_data:       nil,
       gateway_name:       nil,
       is_gateway_service: true,
       name:               'TestService-random',
       service_plan_id:    cc_service_plan[:id],
       space_id:           cc_space[:id],
+      syslog_drain_url:   'http://service_instance_syslog_drain_url.com',
       tags:               '["service_instance_tag1", "service_instance_tag2"]',
       updated_at:         Time.new('2015-04-23 08:01:00 -0500')
     }
@@ -1068,7 +1069,7 @@ module CCHelper
     {
       access_token_validity:   1_209_600,
       additional_information:  "{\"autoapprove\":#{uaa_client_autoapprove}}",
-      app_launch_url:          'http://bogus_app_launch',
+      app_launch_url:          'http://app_launch_url.com',
       authorities:             'auth1',
       authorized_grant_types:  'grant1',
       autoapprove:             uaa_client_autoapprove.to_s,
@@ -1078,7 +1079,7 @@ module CCHelper
       refresh_token_validity:  2_592_000,
       scope:                   'scope1',
       show_on_home_page:       false,
-      web_server_redirect_uri: 'http://redirect1'
+      web_server_redirect_uri: 'http://redirect_uri.com'
     }
   end
 

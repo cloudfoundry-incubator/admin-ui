@@ -71,6 +71,8 @@ module AdminUI
           row.push(nil)
         end
 
+        row.push(!service_binding[:syslog_drain_url].nil? && service_binding[:syslog_drain_url].length.positive?)
+
         if event_counter
           row.push(event_counter)
         elsif events_connected
@@ -173,7 +175,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..31).to_a, (1..31).to_a - [4])
+      result(true, items, hash, (1..32).to_a, (1..32).to_a - [5])
     end
   end
 end
