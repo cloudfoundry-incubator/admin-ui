@@ -173,6 +173,12 @@ module AdminUI
         row.push(fqdns)
         row.push(application[:diego])
 
+        if application[:allow_ssh] || application[:enable_ssh] # Originally allow_ssh, changed later to enable_ssh
+          row.push(true)
+        else
+          row.push(false)
+        end
+
         if stack
           row.push(stack[:name])
         else
@@ -243,7 +249,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..21).to_a, (1..12).to_a << 21)
+      result(true, items, hash, (1..22).to_a, (1..13).to_a << 22)
     end
   end
 end

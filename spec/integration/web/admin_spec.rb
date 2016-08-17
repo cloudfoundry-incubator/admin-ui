@@ -552,22 +552,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          def manage_organization(button_id)
+          def manage_organization(button_index)
             check_first_row('OrganizationsTable')
 
             # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
             # @driver.find_element(id: button_id).click
-            @driver.execute_script('arguments[0].click();', @driver.find_element(id: button_id))
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_OrganizationsTable_' + button_index.to_s))
 
             check_operation_result
           end
 
           def activate_organization
-            manage_organization('Buttons_OrganizationsTable_3')
+            manage_organization(3)
           end
 
           def suspend_organization
-            manage_organization('Buttons_OrganizationsTable_4')
+            manage_organization(4)
           end
 
           def check_organization_status(status)
@@ -737,12 +737,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 7,
                                  labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                 colspans:        %w(1 12 3 5 2 3 3)
+                                 colspans:        %w(1 13 3 5 2 3 3)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 29,
-                                 labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'Events', 'Events Target', 'Roles', 'Default Users', 'Space Quota', 'Private Service Brokers', 'Security Groups', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                 expected_length: 30,
+                                 labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'SSH Allowed', 'Events', 'Events Target', 'Roles', 'Default Users', 'Space Quota', 'Private Service Brokers', 'Security Groups', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                  colspans:        nil
                                }
                              ])
@@ -758,6 +758,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                "#{cc_organization[:name]}/#{cc_space[:name]}",
                                cc_space[:created_at].to_datetime.rfc3339,
                                cc_space[:updated_at].to_datetime.rfc3339,
+                               @driver.execute_script("return Format.formatBoolean(#{cc_space[:allow_ssh]})"),
                                '1',
                                '1',
                                '3',
@@ -800,7 +801,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_SpacesTable_3')
+          check_allowscriptaccess_attribute('Buttons_SpacesTable_5')
         end
 
         it 'has a checkbox in the first column' do
@@ -812,12 +813,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SpacesTable_0').text).to eq('Rename')
           end
 
+          it 'has an Allow SSH button' do
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_1').text).to eq('Allow SSH')
+          end
+
+          it 'has a Disallow SSH button' do
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_2').text).to eq('Disallow SSH')
+          end
+
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'Buttons_SpacesTable_1').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_3').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'Buttons_SpacesTable_2').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_4').text).to eq('Delete Recursive')
           end
 
           context 'Rename button' do
@@ -826,15 +835,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Delete button' do
+          context 'Allow SSH button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_SpacesTable_1' }
             end
           end
 
-          context 'Delete Recursive button' do
+          context 'Disallow SSH button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_SpacesTable_2' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_SpacesTable_3' }
+            end
+          end
+
+          context 'Delete Recursive button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_SpacesTable_4' }
             end
           end
 
@@ -846,16 +867,55 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
+          def manage_space(button_index)
+            check_first_row('SpacesTable')
+
+            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # @driver.find_element(id: button_id).click
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_SpacesTable_' + button_index.to_s))
+
+            check_operation_result
+          end
+
+          def allow_ssh_space
+            manage_space(1)
+          end
+
+          def disallow_ssh_space
+            manage_space(2)
+          end
+
+          def check_space_ssh(ssh)
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[7]").text == ssh }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[7]").text).to eq(ssh)
+          end
+
+          it 'SSH allows the selected space' do
+            disallow_ssh_space
+            check_space_ssh('false')
+
+            allow_ssh_space
+            check_space_ssh('true')
+          end
+
+          it 'SSH disallows the selected space' do
+            disallow_ssh_space
+            check_space_ssh('false')
+          end
+
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_SpacesTable_1' }
+              let(:button_id)       { 'Buttons_SpacesTable_3' }
               let(:confirm_message) { 'Are you sure you want to delete the selected spaces?' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_SpacesTable_2' }
+              let(:button_id)       { 'Buttons_SpacesTable_4' }
               let(:confirm_message) { 'Are you sure you want to delete the selected spaces and their contained applications, routes, private service brokers, service instances, service bindings, service keys and route bindings?' }
             end
           end
@@ -874,6 +934,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Organization',            tag:   'a', value: cc_organization[:name] },
                               { label: 'Created',                 tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space[:created_at].to_datetime.rfc3339}\")") },
                               { label: 'Updated',                 tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space[:updated_at].to_datetime.rfc3339}\")") },
+                              { label: 'SSH Allowed',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_space[:allow_ssh]})") },
                               { label: 'Events',                  tag:   'a', value: '1' },
                               { label: 'Events Target',           tag:   'a', value: '1' },
                               { label: 'Roles',                   tag:   'a', value: '3' },
@@ -920,47 +981,47 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('Spaces', 5, 'Events', cc_space[:guid])
+            check_filter_link('Spaces', 6, 'Events', cc_space[:guid])
           end
 
           it 'has events target link' do
-            check_filter_link('Spaces', 6, 'Events', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 7, 'Events', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has space roles link' do
-            check_filter_link('Spaces', 7, 'SpaceRoles', cc_space[:guid])
+            check_filter_link('Spaces', 8, 'SpaceRoles', cc_space[:guid])
           end
 
           it 'has users link' do
-            check_filter_link('Spaces', 8, 'Users', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 9, 'Users', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has space quotas link' do
-            check_filter_link('Spaces', 9, 'SpaceQuotas', cc_space_quota_definition[:guid])
+            check_filter_link('Spaces', 10, 'SpaceQuotas', cc_space_quota_definition[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Spaces', 10, 'ServiceBrokers', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 11, 'ServiceBrokers', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has security groups spaces link' do
-            check_filter_link('Spaces', 11, 'SecurityGroupsSpaces', cc_space[:guid])
+            check_filter_link('Spaces', 12, 'SecurityGroupsSpaces', cc_space[:guid])
           end
 
           it 'has routes link' do
-            check_filter_link('Spaces', 12, 'Routes', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 13, 'Routes', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has application instances link' do
-            check_filter_link('Spaces', 15, 'ApplicationInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 16, 'ApplicationInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has services link' do
-            check_filter_link('Spaces', 16, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 17, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has applications link' do
-            check_filter_link('Spaces', 22, 'Applications', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 23, 'Applications', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
         end
       end
@@ -976,12 +1037,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 5,
                                  labels:          ['', '', 'Used', 'Reserved', ''],
-                                 colspans:        %w(1 15 3 2 1)
+                                 colspans:        %w(1 16 3 2 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 22,
-                                 labels:          ['', 'Name', 'GUID', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'URIs', 'Diego', 'Stack', 'Buildpacks', 'Buildpack GUID', 'Events', 'Instances', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
+                                 expected_length: 23,
+                                 labels:          ['', 'Name', 'GUID', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'URIs', 'Diego', 'SSH Enabled', 'Stack', 'Buildpacks', 'Buildpack GUID', 'Events', 'Instances', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -1001,6 +1062,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_app[:updated_at].to_datetime.rfc3339,
                                "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}",
                                @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})"),
+                               @driver.execute_script("return Format.formatBoolean(#{cc_app[:enable_ssh]})"),
                                cc_stack[:name],
                                cc_app[:detected_buildpack],
                                cc_buildpack[:guid],
@@ -1032,7 +1094,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ApplicationsTable_6')
+          check_allowscriptaccess_attribute('Buttons_ApplicationsTable_10')
         end
 
         it 'has a checkbox in the first column' do
@@ -1058,6 +1120,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text).to eq(expect_state)
           end
 
+          def check_app_diego(diego)
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[10]").text == diego }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[10]").text).to eq(diego)
+          end
+
+          def check_app_ssh(ssh)
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[11]").text == ssh }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[11]").text).to eq(ssh)
+          end
+
           it 'has a Rename button' do
             expect(@driver.find_element(id: 'Buttons_ApplicationsTable_0').text).to eq('Rename')
           end
@@ -1074,12 +1152,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ApplicationsTable_3').text).to eq('Restage')
           end
 
+          it 'has an Enable Diego button' do
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_4').text).to eq('Enable Diego')
+          end
+
+          it 'has a Disable Diego button' do
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_5').text).to eq('Disable Diego')
+          end
+
+          it 'has an Enable SSH button' do
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_6').text).to eq('Enable SSH')
+          end
+
+          it 'has a Disable SSH button' do
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_7').text).to eq('Disable SSH')
+          end
+
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_4').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_8').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_5').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_9').text).to eq('Delete Recursive')
           end
 
           context 'Rename button' do
@@ -1106,15 +1200,39 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Delete button' do
+          context 'Enable Diego button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ApplicationsTable_4' }
             end
           end
 
-          context 'Delete Recursive button' do
+          context 'Disable Diego button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ApplicationsTable_5' }
+            end
+          end
+
+          context 'Enable SSH button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_ApplicationsTable_6' }
+            end
+          end
+
+          context 'Disable SSH button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_ApplicationsTable_7' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_ApplicationsTable_8' }
+            end
+          end
+
+          context 'Delete Recursive button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_ApplicationsTable_9' }
             end
           end
 
@@ -1146,16 +1264,56 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             manage_application(3)
           end
 
+          it 'diego enables the selected application' do
+            # let app with diego disabled first
+            manage_application(5)
+            check_app_diego('false')
+
+            # diego enable the app
+            manage_application(4)
+            check_app_diego('true')
+          end
+
+          it 'diego disables the selected application' do
+            # let app with diego enabled first
+            manage_application(4)
+            check_app_diego('true')
+
+            # diego disable the app
+            manage_application(5)
+            check_app_diego('false')
+          end
+
+          it 'SSH enables the selected application' do
+            # let app with SSH disabled first
+            manage_application(7)
+            check_app_ssh('false')
+
+            # SSH enable the app
+            manage_application(6)
+            check_app_ssh('true')
+          end
+
+          it 'SSH disables the selected application' do
+            # let app with SSH enabled first
+            manage_application(6)
+            check_app_ssh('true')
+
+            # SSH disable the app
+            manage_application(7)
+            check_app_ssh('false')
+          end
+
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_ApplicationsTable_4' }
+              let(:button_id)       { 'Buttons_ApplicationsTable_8' }
               let(:confirm_message) { 'Are you sure you want to delete the selected applications?' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_ApplicationsTable_5' }
+              let(:button_id)       { 'Buttons_ApplicationsTable_9' }
               let(:confirm_message) { 'Are you sure you want to delete the selected applications and their associated service bindings?' }
             end
           end
@@ -1179,6 +1337,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Updated',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_app[:updated_at].to_datetime.rfc3339}\")") },
                               { label: 'URI',                        tag:   nil, value: "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}" },
                               { label: 'Diego',                      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})") },
+                              { label: 'SSH Enabled',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:enable_ssh]})") },
                               { label: 'Stack',                      tag:   'a', value: cc_stack[:name] },
                               { label: 'Buildpack',                  tag:   nil, value: cc_app[:detected_buildpack] },
                               { label: 'Buildpack GUID',             tag:   'a', value: cc_buildpack[:guid] },
@@ -1214,31 +1373,31 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has stacks link' do
-            check_filter_link('Applications', 10, 'Stacks', cc_stack[:guid])
+            check_filter_link('Applications', 11, 'Stacks', cc_stack[:guid])
           end
 
           it 'has buildpacks link' do
-            check_filter_link('Applications', 12, 'Buildpacks', cc_buildpack[:guid])
+            check_filter_link('Applications', 13, 'Buildpacks', cc_buildpack[:guid])
           end
 
           it 'has events link' do
-            check_filter_link('Applications', 16, 'Events', cc_app[:guid])
+            check_filter_link('Applications', 17, 'Events', cc_app[:guid])
           end
 
           it 'has application instances link' do
-            check_filter_link('Applications', 17, 'ApplicationInstances', cc_app[:guid])
+            check_filter_link('Applications', 18, 'ApplicationInstances', cc_app[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('Applications', 18, 'ServiceBindings', cc_app[:guid])
+            check_filter_link('Applications', 19, 'ServiceBindings', cc_app[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('Applications', 24, 'Spaces', cc_space[:guid])
+            check_filter_link('Applications', 25, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Applications', 25, 'Organizations', cc_organization[:guid])
+            check_filter_link('Applications', 26, 'Organizations', cc_organization[:guid])
           end
         end
       end

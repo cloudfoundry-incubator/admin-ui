@@ -1282,6 +1282,42 @@ module CCHelper
       end
     end
 
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"diego":true}', anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE apps SET diego = 'true' WHERE guid = '#{cc_app[:guid]}'")
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"diego":false}', anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE apps SET diego = 'false' WHERE guid = '#{cc_app[:guid]}'")
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"enable_ssh":true,"allow_ssh":true}', anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE apps SET enable_ssh = 'true' WHERE guid = '#{cc_app[:guid]}'")
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"enable_ssh":false,"allow_ssh":false}', anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE apps SET enable_ssh = 'false' WHERE guid = '#{cc_app[:guid]}'")
+        Created.new
+      end
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_apps_deleted
         cc_app_not_found
@@ -1837,6 +1873,24 @@ module CCHelper
         cc_space_not_found
       else
         sql(config.ccdb_uri, "UPDATE spaces SET name = '#{cc_space_rename}' WHERE guid = '#{cc_space[:guid]}'")
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"allow_ssh":true}', anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE spaces SET allow_ssh = 'true' WHERE guid = '#{cc_space[:guid]}'")
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"allow_ssh":false}', anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE spaces SET allow_ssh = 'false' WHERE guid = '#{cc_space[:guid]}'")
         Created.new
       end
     end

@@ -208,6 +208,12 @@ module AdminUI
           row.push(nil)
         end
 
+        if space[:allow_ssh]
+          row.push(true)
+        else
+          row.push(false)
+        end
+
         if event_counter
           row.push(event_counter)
         elsif events_connected
@@ -325,7 +331,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..28).to_a, (1..5).to_a << 10)
+      result(true, items, hash, (1..29).to_a, (1..6).to_a << 11)
     end
 
     private

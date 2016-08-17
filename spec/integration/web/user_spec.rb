@@ -51,7 +51,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Spaces tab does not have rename or delete buttons' do
+    context 'Spaces tab does not have rename, allow ssh, disallow ssh or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Spaces' }
         let(:page_id)   { 'SpacesPage' }
@@ -59,7 +59,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Applications tab does not have rename, start, stop, restage or delete buttons' do
+    context 'Applications tab does not have rename, start, stop, restage, enable diego, disable diego, enable ssh, disable ssh or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Applications' }
         let(:page_id)   { 'ApplicationsPage' }

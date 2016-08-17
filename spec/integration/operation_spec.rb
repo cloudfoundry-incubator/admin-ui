@@ -91,7 +91,7 @@ describe AdminUI::Operation, type: :integration do
   context 'Stubbed HTTP' do
     context 'manage application' do
       before do
-        expect(cc.applications['items'][0][:state]).to eq('STARTED')
+        expect(cc.applications['items'].length).to eq(1)
       end
 
       def rename_application
@@ -118,11 +118,28 @@ describe AdminUI::Operation, type: :integration do
         operation.manage_application(cc_app[:guid], '{"state":"STOPPED"}')
       end
 
+      def enable_diego_application
+        operation.manage_application(cc_app[:guid], '{"diego":true}')
+      end
+
+      def disable_diego_application
+        operation.manage_application(cc_app[:guid], '{"diego":false}')
+      end
+
+      def enable_ssh_application
+        operation.manage_application(cc_app[:guid], '{"enable_ssh":true,"allow_ssh":true}')
+      end
+
+      def disable_ssh_application
+        operation.manage_application(cc_app[:guid], '{"enable_ssh":false,"allow_ssh":false}')
+      end
+
       it 'renames the application' do
         expect { rename_application }.to change { cc.applications['items'][0][:name] }.from(cc_app[:name]).to(cc_app_rename)
       end
 
       it 'stops the running application' do
+        start_application
         expect { stop_application }.to change { cc.applications['items'][0][:state] }.from('STARTED').to('STOPPED')
       end
 
@@ -133,6 +150,26 @@ describe AdminUI::Operation, type: :integration do
 
       it 'restages the application' do
         restage_application
+      end
+
+      it 'enables application diego' do
+        disable_diego_application
+        expect { enable_diego_application }.to change { cc.applications['items'][0][:diego] }.from(false).to(true)
+      end
+
+      it 'disables application diego' do
+        enable_diego_application
+        expect { disable_diego_application }.to change { cc.applications['items'][0][:diego] }.from(true).to(false)
+      end
+
+      it 'enables application ssh' do
+        disable_ssh_application
+        expect { enable_ssh_application }.to change { cc.applications['items'][0][:enable_ssh] }.from(false).to(true)
+      end
+
+      it 'disables application ssh' do
+        enable_ssh_application
+        expect { disable_ssh_application }.to change { cc.applications['items'][0][:enable_ssh] }.from(true).to(false)
       end
 
       it 'deletes the application' do
@@ -169,6 +206,22 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails restaging deleted app' do
           expect { restage_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
+        end
+
+        it 'fails enabling diego on deleted app' do
+          expect { enable_diego_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
+        end
+
+        it 'fails disabling diego on deleted app' do
+          expect { disable_diego_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
+        end
+
+        it 'fails enabling ssh on deleted app' do
+          expect { enable_ssh_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
+        end
+
+        it 'fails disabling ssh on deleted app' do
+          expect { disable_ssh_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
         end
 
         it 'fails deleting deleted app' do
@@ -215,8 +268,7 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage buildpack' do
       before do
-        expect(cc.buildpacks['items'][0][:enabled]).to eq(true)
-        expect(cc.buildpacks['items'][0][:locked]).to eq(false)
+        expect(cc.buildpacks['items'].length).to eq(1)
       end
 
       def rename_buildpack
@@ -248,6 +300,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       it 'disables the buildpack' do
+        enable_buildpack
         expect { disable_buildpack }.to change { cc.buildpacks['items'][0][:enabled] }.from(true).to(false)
       end
 
@@ -257,6 +310,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       it 'locks the buildpack' do
+        unlock_buildpack
         expect { lock_buildpack }.to change { cc.buildpacks['items'][0][:locked] }.from(false).to(true)
       end
 
@@ -383,7 +437,7 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage feature_flag' do
       before do
-        expect(cc.feature_flags['items'][0][:enabled]).to eq(true)
+        expect(cc.feature_flags['items'].length).to eq(1)
       end
 
       def disable_feature_flag
@@ -395,6 +449,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       it 'disables the feature_flag' do
+        enable_feature_flag
         expect { disable_feature_flag }.to change { cc.feature_flags['items'][0][:enabled] }.from(true).to(false)
       end
 
@@ -511,6 +566,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       it 'suspends the organization' do
+        activate_organization
         expect { suspend_organization }.to change { cc.organizations['items'][0][:status] }.from('active').to('suspended')
       end
 
@@ -1011,7 +1067,6 @@ describe AdminUI::Operation, type: :integration do
     context 'manage service plan' do
       before do
         expect(cc.service_plans['items'].length).to eq(1)
-        expect(cc.service_plans['items'][0][:public].to_s).to eq('true')
       end
 
       def make_service_plan_public
@@ -1032,6 +1087,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       it 'makes service plan private' do
+        make_service_plan_public
         expect { make_service_plan_private }.to change { cc.service_plans['items'][0][:public].to_s }.from('true').to('false')
       end
 
@@ -1105,6 +1161,14 @@ describe AdminUI::Operation, type: :integration do
         operation.manage_space(cc_space[:guid], "{\"name\":\"#{cc_space_rename}\"}")
       end
 
+      def allow_ssh_space
+        operation.manage_space(cc_space[:guid], '{"allow_ssh":true}')
+      end
+
+      def disallow_ssh_space
+        operation.manage_space(cc_space[:guid], '{"allow_ssh":false}')
+      end
+
       def delete_space
         operation.delete_space(cc_space[:guid], false)
       end
@@ -1115,6 +1179,16 @@ describe AdminUI::Operation, type: :integration do
 
       it 'renames the space' do
         expect { rename_space }.to change { cc.spaces['items'][0][:name] }.from(cc_space[:name]).to(cc_space_rename)
+      end
+
+      it 'allows space ssh' do
+        disallow_ssh_space
+        expect { allow_ssh_space }.to change { cc.spaces['items'][0][:allow_ssh] }.from(false).to(true)
+      end
+
+      it 'disallows space ssh' do
+        allow_ssh_space
+        expect { disallow_ssh_space }.to change { cc.spaces['items'][0][:allow_ssh] }.from(true).to(false)
       end
 
       it 'deletes space' do
@@ -1139,6 +1213,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails renaming deleted space' do
           expect { rename_space }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
+        end
+
+        it 'fails allowing ssh on deleted space' do
+          expect { allow_ssh_space }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
+        end
+
+        it 'fails disallowing ssh on deleted space' do
+          expect { disallow_ssh_space }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
         end
 
         it 'fails deleting deleted space' do

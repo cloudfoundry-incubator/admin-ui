@@ -160,7 +160,7 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      expect(get_json('/applications_view_model')['items']['items'][0][3]).to eq('STARTED')
+      expect(get_json('/applications_view_model')['items']['items'].length).to eq(1)
     end
 
     def rename_app
@@ -187,6 +187,30 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['post', "/applications/#{cc_app[:guid]}/restage"]], true)
     end
 
+    def disable_app_diego
+      response = put_request("/applications/#{cc_app[:guid]}", '{"diego":false}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"diego\":false}"]], true)
+    end
+
+    def enable_app_diego
+      response = put_request("/applications/#{cc_app[:guid]}", '{"diego":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"diego\":true}"]], true)
+    end
+
+    def disable_app_ssh
+      response = put_request("/applications/#{cc_app[:guid]}", '{"enable_ssh":false,"allow_ssh":false}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"enable_ssh\":false,\"allow_ssh\":false}"]], true)
+    end
+
+    def enable_app_ssh
+      response = put_request("/applications/#{cc_app[:guid]}", '{"enable_ssh":true,"allow_ssh":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"enable_ssh\":true,\"allow_ssh\":true}"]], true)
+    end
+
     def delete_app
       response = delete_request("/applications/#{cc_app[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -208,6 +232,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'stops a running application' do
+      start_app
       expect { stop_app }.to change { get_json('/applications_view_model')['items']['items'][0][3] }.from('STARTED').to('STOPPED')
     end
 
@@ -218,6 +243,26 @@ describe AdminUI::Admin, type: :integration do
 
     it 'restages stopped application' do
       restage_app
+    end
+
+    it 'enables the application diego' do
+      disable_app_diego
+      expect { enable_app_diego }.to change { get_json('/applications_view_model')['items']['items'][0][9] }.from(false).to(true)
+    end
+
+    it 'disables the application diego' do
+      enable_app_diego
+      expect { disable_app_diego }.to change { get_json('/applications_view_model')['items']['items'][0][9] }.from(true).to(false)
+    end
+
+    it 'enables the application ssh' do
+      disable_app_ssh
+      expect { enable_app_ssh }.to change { get_json('/applications_view_model')['items']['items'][0][10] }.from(false).to(true)
+    end
+
+    it 'disables the application ssh' do
+      enable_app_ssh
+      expect { disable_app_ssh }.to change { get_json('/applications_view_model')['items']['items'][0][10] }.from(true).to(false)
     end
 
     it 'deletes an application' do
@@ -305,6 +350,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'disables buildpack' do
+      make_buildpack_enabled
       expect { make_buildpack_disabled }.to change { get_json('/buildpacks_view_model')['items']['items'][0][6].to_s }.from('true').to('false')
     end
 
@@ -314,6 +360,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'locks buildpack' do
+      make_buildpack_unlocked
       expect { make_buildpack_locked }.to change { get_json('/buildpacks_view_model')['items']['items'][0][7].to_s }.from('false').to('true')
     end
 
@@ -487,6 +534,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'disables feature flag' do
+      make_feature_flag_enabled
       expect { make_feature_flag_disabled }.to change { get_json('/feature_flags_view_model')['items']['items'][0][5].to_s }.from('true').to('false')
     end
 
@@ -650,6 +698,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'suspends the organization' do
+      activate_organization
       expect { suspend_organization }.to change { get_json('/organizations_view_model')['items']['items'][0][3] }.from('active').to('suspended')
     end
 
@@ -1025,6 +1074,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'makes service plan private' do
+      make_service_plan_public
       expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][7].to_s }.from('true').to('false')
     end
 
@@ -1075,6 +1125,18 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['put', "/spaces/#{cc_space[:guid]}; body = {\"name\":\"#{cc_space_rename}\"}"]], true)
     end
 
+    def disallow_space_ssh
+      response = put_request("/spaces/#{cc_space[:guid]}", '{"allow_ssh":false}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/spaces/#{cc_space[:guid]}; body = {\"allow_ssh\":false}"]], true)
+    end
+
+    def allow_space_ssh
+      response = put_request("/spaces/#{cc_space[:guid]}", '{"allow_ssh":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/spaces/#{cc_space[:guid]}; body = {\"allow_ssh\":true}"]], true)
+    end
+
     def delete_space
       response = delete_request("/spaces/#{cc_space[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -1093,6 +1155,16 @@ describe AdminUI::Admin, type: :integration do
 
     it 'renames a space' do
       expect { rename_space }.to change { get_json('/spaces_view_model')['items']['items'][0][1] }.from(cc_space[:name]).to(cc_space_rename)
+    end
+
+    it 'allows the space ssh' do
+      disallow_space_ssh
+      expect { allow_space_ssh }.to change { get_json('/spaces_view_model')['items']['items'][0][6] }.from(false).to(true)
+    end
+
+    it 'disallows the space ssh' do
+      allow_space_ssh
+      expect { disallow_space_ssh }.to change { get_json('/spaces_view_model')['items']['items'][0][6] }.from(true).to(false)
     end
 
     it 'deletes a space' do
@@ -1159,7 +1231,7 @@ describe AdminUI::Admin, type: :integration do
       end
 
       it 'deletes a space quota space' do
-        expect { delete_space_quota_space }.to change { get_json('/spaces_view_model')['items']['items'][0][10] }.from(cc_space_quota_definition[:name]).to(nil)
+        expect { delete_space_quota_space }.to change { get_json('/spaces_view_model')['items']['items'][0][11] }.from(cc_space_quota_definition[:name]).to(nil)
       end
     end
 
@@ -1170,7 +1242,7 @@ describe AdminUI::Admin, type: :integration do
       end
 
       it 'sets a space quota for space' do
-        expect { create_space_quota_space }.to change { get_json('/spaces_view_model')['items']['items'][0][10] }.from(cc_space_quota_definition[:name]).to(cc_space_quota_definition2[:name])
+        expect { create_space_quota_space }.to change { get_json('/spaces_view_model')['items']['items'][0][11] }.from(cc_space_quota_definition[:name]).to(cc_space_quota_definition2[:name])
       end
     end
   end
