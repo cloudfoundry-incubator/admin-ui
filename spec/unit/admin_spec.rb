@@ -902,6 +902,23 @@ describe AdminUI::Admin do
       it_behaves_like('common manage quota definition')
     end
 
+    shared_examples 'common manage security group' do
+      it 'returns failure code due to disconnection' do
+        response = put('/security_groups/security_group1', '{"name":"bogus"}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'manage security group via http' do
+      it_behaves_like('common manage security group')
+    end
+
+    context 'manage security group via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common manage security group')
+    end
+
     shared_examples 'common manage service broker' do
       it 'returns failure code due to disconnection' do
         response = put('/service_brokers/service_broker1', '{"name":"bogus"}')
@@ -2024,6 +2041,10 @@ describe AdminUI::Admin do
 
       it 'puts /quota_definitions/:guid redirects as expected' do
         put_redirects_as_expected('/quota_definitions/quota_definition1', '{"name":"bogus"}')
+      end
+
+      it 'puts /security_groups/:guid redirects as expected' do
+        put_redirects_as_expected('/security_groups/security_group1', '{"name":"bogus"}')
       end
 
       it 'puts /service_brokers/:guid redirects as expected' do

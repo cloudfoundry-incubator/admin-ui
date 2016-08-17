@@ -1032,6 +1032,24 @@ module AdminUI
       end
     end
 
+    put '/security_groups/:security_group_guid', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'put', "/security_groups/#{params[:security_group_guid]}; body = #{control_message}")
+        @operation.manage_security_group(params[:security_group_guid], control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during update security group: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during update security group: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     put '/service_brokers/:service_broker_guid', auth: [:admin] do
       begin
         control_message = request.body.read.to_s

@@ -390,6 +390,14 @@ module AdminUI
       @view_models.invalidate_quotas
     end
 
+    def manage_security_group(security_group_guid, control_message)
+      url = "/v2/security_groups/#{security_group_guid}"
+      @logger.debug("PUT #{url}, #{control_message}")
+      @client.put_cc(url, control_message)
+      @cc.invalidate_security_groups
+      @view_models.invalidate_security_groups
+    end
+
     def manage_service_broker(service_broker_guid, control_message)
       url = "/v2/service_brokers/#{service_broker_guid}"
       @logger.debug("PUT #{url}, #{control_message}")

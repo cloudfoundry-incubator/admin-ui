@@ -4631,7 +4631,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_SecurityGroupsTable_1')
+          check_allowscriptaccess_attribute('Buttons_SecurityGroupsTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -4639,19 +4639,37 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage security groups' do
-          it 'has a Delete button' do
-            expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_0').text).to eq('Delete')
+          it 'has a Rename button' do
+            expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_0').text).to eq('Rename')
           end
 
-          context 'Delete button' do
-            it_behaves_like('click button without selecting any rows') do
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_1').text).to eq('Delete')
+          end
+
+          context 'Rename button' do
+            it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_SecurityGroupsTable_0' }
             end
           end
 
           context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_SecurityGroupsTable_1' }
+            end
+          end
+
+          context 'Rename button' do
+            it_behaves_like('rename first row') do
+              let(:button_id)     { 'Buttons_SecurityGroupsTable_0' }
+              let(:title_text)    { 'Rename Security Group' }
+              let(:object_rename) { cc_security_group_rename }
+            end
+          end
+
+          context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_SecurityGroupsTable_0' }
+              let(:button_id)       { 'Buttons_SecurityGroupsTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected security groups?' }
             end
           end

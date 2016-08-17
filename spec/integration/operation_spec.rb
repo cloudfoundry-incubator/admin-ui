@@ -792,8 +792,16 @@ describe AdminUI::Operation, type: :integration do
         expect(cc.security_groups['items'].length).to eq(1)
       end
 
+      def rename_security_group
+        operation.manage_security_group(cc_security_group[:guid], "{\"name\":\"#{cc_security_group_rename}\"}")
+      end
+
       def delete_security_group
         operation.delete_security_group(cc_security_group[:guid])
+      end
+
+      it 'renames the security_group' do
+        expect { rename_security_group }.to change { cc.security_groups['items'][0][:name] }.from(cc_security_group[:name]).to(cc_security_group_rename)
       end
 
       it 'deletes security group' do
@@ -810,6 +818,10 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_error_code).to eq('CF-SecurityGroupNotFound')
           expect(exception.http_code).to eq(404)
           expect(exception.message).to eq("The security group could not be found: #{cc_security_group[:guid]}")
+        end
+
+        it 'fails renaming deleted security_group' do
+          expect { rename_security_group }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_security_group_not_found(exception) }
         end
 
         it 'fails deleting deleted security group' do

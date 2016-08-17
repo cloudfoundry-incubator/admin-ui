@@ -840,6 +840,12 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/security_groups_view_model')['items']['items'].length).to eq(1)
     end
 
+    def rename_security_group
+      response = put_request("/security_groups/#{cc_security_group[:guid]}", "{\"name\":\"#{cc_security_group_rename}\"}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/security_groups/#{cc_security_group[:guid]}; body = {\"name\":\"#{cc_security_group_rename}\"}"]], true)
+    end
+
     def delete_security_group
       response = delete_request("/security_groups/#{cc_security_group[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -848,6 +854,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'has user name and security groups request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/security_groups_view_model']], true)
+    end
+
+    it 'renames a secrity_group' do
+      expect { rename_security_group }.to change { get_json('/security_groups_view_model')['items']['items'][0][1] }.from(cc_security_group[:name]).to(cc_security_group_rename)
     end
 
     it 'deletes a security group' do

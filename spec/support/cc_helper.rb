@@ -770,6 +770,10 @@ module CCHelper
     }
   end
 
+  def cc_security_group_rename
+    'renamed_TestSecurityGroup'
+  end
+
   def cc_security_group_space
     {
       security_group_id: cc_security_group[:id],
@@ -1658,6 +1662,15 @@ module CCHelper
   end
 
   def cc_security_group_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_security_group_rename}\"}", anything) do
+      if @cc_security_groups_deleted
+        cc_security_group_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE security_groups SET name = '#{cc_security_group_rename}' WHERE guid = '#{cc_security_group[:guid]}'")
+        OK.new({})
+      end
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_security_groups_deleted
         cc_security_group_not_found
