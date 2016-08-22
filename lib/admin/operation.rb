@@ -159,6 +159,14 @@ module AdminUI
       @view_models.invalidate_routes
     end
 
+    def delete_route_mapping(route_mapping_guid)
+      url = "v2/route_mappings/#{route_mapping_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_apps_routes
+      @view_models.invalidate_route_mappings
+    end
+
     def delete_security_group(security_group_guid)
       url = "v2/security_groups/#{security_group_guid}"
       @logger.debug("DELETE #{url}")

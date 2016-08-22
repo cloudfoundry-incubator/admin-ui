@@ -47,6 +47,7 @@ module CCHelper
 
   def cc_stub(config, insert_second_quota_definition = false, event_type = 'space')
     @cc_apps_deleted                      = false
+    @cc_apps_routes_deleted               = false
     @cc_buildpacks_deleted                = false
     @cc_domains_deleted                   = false
     @cc_feature_flags_deleted             = false
@@ -82,6 +83,7 @@ module CCHelper
     cc_organization_stubs(config)
     cc_quota_definition_stubs(config)
     cc_route_stubs(config)
+    cc_route_mapping_stubs(config)
     cc_security_group_stubs(config)
     cc_security_group_space_stubs(config)
     cc_service_stubs(config)
@@ -102,11 +104,17 @@ module CCHelper
 
   def cc_clear_apps_cache_stub(config)
     cc_clear_service_bindings_cache_stub(config)
+    cc_clear_apps_routes_cache_stub(config)
 
-    sql(config.ccdb_uri, 'DELETE FROM apps_routes')
     sql(config.ccdb_uri, 'DELETE FROM apps')
 
     @cc_apps_deleted = true
+  end
+
+  def cc_clear_apps_routes_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM apps_routes')
+
+    @cc_apps_routes_deleted = true
   end
 
   def cc_clear_buildpacks_cache_stub(config)
@@ -155,7 +163,8 @@ module CCHelper
   end
 
   def cc_clear_routes_cache_stub(config)
-    sql(config.ccdb_uri, 'DELETE FROM apps_routes')
+    cc_clear_apps_routes_cache_stub(config)
+
     sql(config.ccdb_uri, 'DELETE FROM routes')
 
     @cc_routes_deleted = true
@@ -319,8 +328,8 @@ module CCHelper
       health_check_type:          'port',
       id:                         0,
       instances:                  1,
-      metadata:                   '{}',
       memory:                     11,
+      metadata:                   '{}',
       name:                       'test',
       package_pending_since:      Time.new('2015-04-23 08:00:01 -0500'),
       package_state:              'STAGED',
@@ -345,23 +354,28 @@ module CCHelper
 
   def cc_app_route
     {
-      app_id:   cc_app[:id],
-      route_id: cc_route[:id]
+      app_id:     cc_app[:id],
+      app_port:   nil,
+      created_at: Time.new('2015-04-23 08:00:04 -0500'),
+      guid:       'app_route1',
+      id:         1,
+      route_id:   cc_route[:id],
+      updated_at: Time.new('2015-04-23 08:00:05 -0500')
     }
   end
 
   def cc_buildpack
     {
-      created_at: Time.new('2015-04-23 08:00:04 -0500'),
+      created_at: Time.new('2015-04-23 08:00:06 -0500'),
       enabled:    true,
       filename:   'buildpack1.zip',
       guid:       'buildpack1',
-      id:         1,
+      id:         2,
       key:        'buildpack_key1',
       locked:     false,
       name:       'Node.js',
       position:   1,
-      updated_at: Time.new('2015-04-23 08:00:05 -0500')
+      updated_at: Time.new('2015-04-23 08:00:07 -0500')
     }
   end
 
@@ -371,24 +385,24 @@ module CCHelper
 
   def cc_domain
     {
-      created_at:             Time.new('2015-04-23 08:00:06 -0500'),
+      created_at:             Time.new('2015-04-23 08:00:08 -0500'),
       guid:                   'domain1',
-      id:                     2,
+      id:                     3,
       name:                   'test_domain',
       owning_organization_id: cc_organization[:id],
-      updated_at:             Time.new('2015-04-23 08:00:07 -0500')
+      updated_at:             Time.new('2015-04-23 08:00:09 -0500')
     }
   end
 
   def cc_droplet
     {
       app_id:                 cc_app[:id],
-      created_at:             Time.new('2015-04-23 08:00:08 -0500'),
+      created_at:             Time.new('2015-04-23 08:00:10 -0500'),
       detected_start_command: cc_app[:command],
       droplet_hash:           cc_app[:droplet_hash],
       guid:                   'droplet1',
-      id:                     3,
-      updated_at:             Time.new('2015-04-23 08:00:09 -0500')
+      id:                     4,
+      updated_at:             Time.new('2015-04-23 08:00:11 -0500')
     }
   end
 
@@ -400,15 +414,15 @@ module CCHelper
       actor:             cc_user[:guid],
       actor_name:        uaa_user[:username],
       actor_type:        'user',
-      created_at:        Time.new('2015-04-23 08:00:10 -0500'),
+      created_at:        Time.new('2015-04-23 08:00:12 -0500'),
       guid:              'event1',
-      id:                4,
+      id:                5,
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      timestamp:         Time.new('2015-04-23 08:00:11 -0500'),
+      timestamp:         Time.new('2015-04-23 08:00:13 -0500'),
       type:              'audit.app.create',
-      updated_at:        Time.new('2015-04-23 08:00:12 -0500')
+      updated_at:        Time.new('2015-04-23 08:00:14 -0500')
     }
   end
 
@@ -420,15 +434,15 @@ module CCHelper
       actor:             cc_user[:guid],
       actor_name:        uaa_user[:username],
       actor_type:        'user',
-      created_at:        Time.new('2015-04-23 08:00:13 -0500'),
+      created_at:        Time.new('2015-04-23 08:00:15 -0500'),
       guid:              'event1',
-      id:                5,
+      id:                6,
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      timestamp:         Time.new('2015-04-23 08:00:14 -0500'),
+      timestamp:         Time.new('2015-04-23 08:00:16 -0500'),
       type:              'audit.route.create',
-      updated_at:        Time.new('2015-04-23 08:00:15 -0500')
+      updated_at:        Time.new('2015-04-23 08:00:17 -0500')
     }
   end
 
@@ -440,15 +454,15 @@ module CCHelper
       actor:             cc_service_broker[:guid],
       actor_name:        cc_service_broker[:name],
       actor_type:        'service_broker',
-      created_at:        Time.new('2015-04-23 08:00:16 -0500'),
+      created_at:        Time.new('2015-04-23 08:00:18 -0500'),
       guid:              'event1',
-      id:                6,
+      id:                7,
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
-      timestamp:         Time.new('2015-04-23 08:00:17 -0500'),
+      timestamp:         Time.new('2015-04-23 08:00:19 -0500'),
       type:              'audit.service.create',
-      updated_at:        Time.new('2015-04-23 08:00:18 -0500')
+      updated_at:        Time.new('2015-04-23 08:00:20 -0500')
     }
   end
 
@@ -460,15 +474,15 @@ module CCHelper
       actor:             cc_user[:guid],
       actor_name:        uaa_user[:username],
       actor_type:        'user',
-      created_at:        Time.new('2015-04-23 08:00:19 -0500'),
+      created_at:        Time.new('2015-04-23 08:00:21 -0500'),
       guid:              'event1',
-      id:                7,
+      id:                8,
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      timestamp:         Time.new('2015-04-23 08:00:20 -0500'),
+      timestamp:         Time.new('2015-04-23 08:00:22 -0500'),
       type:              'audit.service_binding.create',
-      updated_at:        Time.new('2015-04-23 08:00:21 -0500')
+      updated_at:        Time.new('2015-04-23 08:00:23 -0500')
     }
   end
 
@@ -480,15 +494,15 @@ module CCHelper
       actor:             cc_user[:guid],
       actor_name:        uaa_user[:username],
       actor_type:        'user',
-      created_at:        Time.new('2015-04-23 08:00:22 -0500'),
+      created_at:        Time.new('2015-04-23 08:00:24 -0500'),
       guid:              'event1',
-      id:                8,
+      id:                9,
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
-      timestamp:         Time.new('2015-04-23 08:00:23 -0500'),
+      timestamp:         Time.new('2015-04-23 08:00:25 -0500'),
       type:              'audit.service_broker.create',
-      updated_at:        Time.new('2015-04-23 08:00:24 -0500')
+      updated_at:        Time.new('2015-04-23 08:00:26 -0500')
     }
   end
 
@@ -500,15 +514,15 @@ module CCHelper
       actor:             cc_service_broker[:guid],
       actor_name:        cc_service_broker[:name],
       actor_type:        'service_broker',
-      created_at:        Time.new('2015-04-23 08:00:25 -0500'),
+      created_at:        Time.new('2015-04-23 08:00:27 -0500'),
       guid:              'event1',
-      id:                9,
+      id:                10,
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
-      timestamp:         Time.new('2015-04-23 08:00:26 -0500'),
+      timestamp:         Time.new('2015-04-23 08:00:28 -0500'),
       type:              'audit.service_dashboard_client.create',
-      updated_at:        Time.new('2015-04-23 08:00:27 -0500')
+      updated_at:        Time.new('2015-04-23 08:00:29 -0500')
     }
   end
 
@@ -520,15 +534,15 @@ module CCHelper
       actor:             cc_user[:guid],
       actor_name:        uaa_user[:username],
       actor_type:        'user',
-      created_at:        Time.new('2015-04-23 08:00:28 -0500'),
+      created_at:        Time.new('2015-04-23 08:00:30 -0500'),
       guid:              'event1',
-      id:                10,
+      id:                11,
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      timestamp:         Time.new('2015-04-23 08:00:29 -0500'),
+      timestamp:         Time.new('2015-04-23 08:00:31 -0500'),
       type:              'audit.service_instance.create',
-      updated_at:        Time.new('2015-04-23 08:00:30 -0500')
+      updated_at:        Time.new('2015-04-23 08:00:32 -0500')
     }
   end
 
@@ -540,15 +554,15 @@ module CCHelper
       actor:             cc_user[:guid],
       actor_name:        uaa_user[:username],
       actor_type:        'user',
-      created_at:        Time.new('2015-04-23 08:00:31 -0500'),
+      created_at:        Time.new('2015-04-23 08:00:33 -0500'),
       guid:              'event1',
-      id:                11,
+      id:                12,
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      timestamp:         Time.new('2015-04-23 08:00:32 -0500'),
+      timestamp:         Time.new('2015-04-23 08:00:34 -0500'),
       type:              'audit.service_key.create',
-      updated_at:        Time.new('2015-04-23 08:00:33 -0500')
+      updated_at:        Time.new('2015-04-23 08:00:35 -0500')
     }
   end
 
@@ -560,15 +574,15 @@ module CCHelper
       actor:             cc_service_broker[:guid],
       actor_name:        cc_service_broker[:name],
       actor_type:        'service_broker',
-      created_at:        Time.new('2015-04-23 08:00:34 -0500'),
+      created_at:        Time.new('2015-04-23 08:00:36 -0500'),
       guid:              'event1',
-      id:                12,
+      id:                13,
       metadata:          '{}',
       organization_guid: '',
       space_guid:        '',
-      timestamp:         Time.new('2015-04-23 08:00:35 -0500'),
+      timestamp:         Time.new('2015-04-23 08:00:37 -0500'),
       type:              'audit.service_plan.create',
-      updated_at:        Time.new('2015-04-23 08:00:36 -0500')
+      updated_at:        Time.new('2015-04-23 08:00:38 -0500')
     }
   end
 
@@ -580,15 +594,15 @@ module CCHelper
       actor:             cc_user[:guid],
       actor_name:        uaa_user[:username],
       actor_type:        'user',
-      created_at:        Time.new('2015-04-23 08:00:37 -0500'),
+      created_at:        Time.new('2015-04-23 08:00:39 -0500'),
       guid:              'event1',
-      id:                13,
+      id:                14,
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        '',
-      timestamp:         Time.new('2015-04-23 08:00:38 -0500'),
+      timestamp:         Time.new('2015-04-23 08:00:40 -0500'),
       type:              'audit.service_plan_visibility.create',
-      updated_at:        Time.new('2015-04-23 08:00:39 -0500')
+      updated_at:        Time.new('2015-04-23 08:00:41 -0500')
     }
   end
 
@@ -600,27 +614,27 @@ module CCHelper
       actor:             cc_user[:guid],
       actor_name:        uaa_user[:username],
       actor_type:        'user',
-      created_at:        Time.new('2015-04-23 08:00:40 -0500'),
+      created_at:        Time.new('2015-04-23 08:00:42 -0500'),
       guid:              'event1',
-      id:                14,
+      id:                15,
       metadata:          '{}',
       organization_guid: cc_organization[:guid],
       space_guid:        cc_space[:guid],
-      timestamp:         Time.new('2015-04-23 08:00:41 -0500'),
+      timestamp:         Time.new('2015-04-23 08:00:43 -0500'),
       type:              'audit.space.create',
-      updated_at:        Time.new('2015-04-23 08:00:42 -0500')
+      updated_at:        Time.new('2015-04-23 08:00:44 -0500')
     }
   end
 
   def cc_feature_flag
     {
-      created_at:    Time.new('2015-04-23 08:00:43 -0500'),
+      created_at:    Time.new('2015-04-23 08:00:45 -0500'),
       enabled:       true,
       error_message: 'feature flag error message',
       guid:          'feature1',
-      id:            15,
+      id:            16,
       name:          'app_scaling',
-      updated_at:    Time.new('2015-04-23 08:00:44 -0500')
+      updated_at:    Time.new('2015-04-23 08:00:46 -0500')
     }
   end
 
@@ -637,13 +651,13 @@ module CCHelper
   def cc_organization
     {
       billing_enabled:     false,
-      created_at:          Time.new('2015-04-23 08:00:45 -0500'),
+      created_at:          Time.new('2015-04-23 08:00:47 -0500'),
       guid:                'organization1',
-      id:                  16,
+      id:                  17,
       name:                'test_org',
       quota_definition_id: cc_quota_definition[:id],
       status:              'active',
-      updated_at:          Time.new('2015-04-23 08:00:46 -0500')
+      updated_at:          Time.new('2015-04-23 08:00:48 -0500')
     }
   end
 
@@ -656,7 +670,7 @@ module CCHelper
       billing_enabled:     false,
       created_at:          Time.new,
       guid:                'organization2',
-      id:                  17,
+      id:                  18,
       name:                'new_org',
       quota_definition_id: cc_quota_definition[:id],
       status:              'active',
@@ -703,9 +717,9 @@ module CCHelper
     {
       app_instance_limit:         10,
       app_task_limit:             10,
-      created_at:                 Time.new('2015-04-23 08:00:47 -0500'),
+      created_at:                 Time.new('2015-04-23 08:00:49 -0500'),
       guid:                       'quota1',
-      id:                         18,
+      id:                         19,
       instance_memory_limit:      512,
       memory_limit:               1024,
       name:                       'test_quota_1',
@@ -715,7 +729,7 @@ module CCHelper
       total_routes:               100,
       total_services:             100,
       total_service_keys:         100,
-      updated_at:                 Time.new('2015-04-23 08:00:48 -0500')
+      updated_at:                 Time.new('2015-04-23 08:00:50 -0500')
     }
   end
 
@@ -729,7 +743,7 @@ module CCHelper
       app_task_limit:             10,
       created_at:                 Time.new,
       guid:                       'quota2',
-      id:                         19,
+      id:                         20,
       instance_memory_limit:      512,
       memory_limit:               1024,
       name:                       'test_quota_2',
@@ -745,28 +759,28 @@ module CCHelper
 
   def cc_route
     {
-      created_at: Time.new('2015-04-23 08:00:49 -0500'),
+      created_at: Time.new('2015-04-23 08:00:51 -0500'),
       domain_id:  cc_domain[:id],
       guid:       'route1',
       host:       'test_host',
-      id:         20,
+      id:         21,
       path:       '/path1',
-      port:       1025,
+      port:       0,
       space_id:   cc_space[:id],
-      updated_at: Time.new('2015-04-23 08:00:50 -0500')
+      updated_at: Time.new('2015-04-23 08:00:52 -0500')
     }
   end
 
   def cc_security_group
     {
-      created_at:          Time.new('2015-04-23 08:00:51 -0500'),
+      created_at:          Time.new('2015-04-23 08:00:53 -0500'),
       guid:                'security_group1',
-      id:                  21,
+      id:                  22,
       name:                'TestSecurityGroup',
       rules:               '[{"destination":"0.0.0.0/0","log":true,"protocol":"tcp","ports":"53","type":1,"code":2}]',
       running_default:     true,
       staging_default:     true,
-      updated_at:          Time.new('2015-04-23 08:00:52 -0500')
+      updated_at:          Time.new('2015-04-23 08:00:54 -0500')
     }
   end
 
@@ -793,12 +807,12 @@ module CCHelper
     {
       active:            true,
       bindable:          true,
-      created_at:        Time.new('2015-04-23 08:00:53 -0500'),
+      created_at:        Time.new('2015-04-23 08:00:55 -0500'),
       description:       'TestService description',
       documentation_url: 'http://documentation_url.com',
       extra:             "{\"displayName\":\"#{cc_service_display_name}\",\"documentationUrl\":\"http://documentationUrl.com\",\"imageUrl\":\"http://docs.cloudfoundry.com/images/favicon.ico\",\"longDescription\":\"long description\",\"providerDisplayName\":\"#{cc_service_provider_display_name}\",\"supportUrl\":\"http://supportUrl.com\"}",
       guid:              'service1',
-      id:                22,
+      id:                23,
       info_url:          'http://info_url.com',
       label:             'TestService',
       long_description:  nil,
@@ -809,7 +823,7 @@ module CCHelper
       service_broker_id: cc_service_broker[:id],
       tags:              '["service_tag1", "service_tag2"]',
       unique_id:         'service_unique_id',
-      updated_at:        Time.new('2015-04-23 08:00:54 -0500'),
+      updated_at:        Time.new('2015-04-23 08:00:56 -0500'),
       url:               nil,
       version:           '1.0'
     }
@@ -819,14 +833,14 @@ module CCHelper
     {
       app_id:              cc_app[:id],
       binding_options:     nil,
-      created_at:          Time.new('2015-04-23 08:00:55 -0500'),
+      created_at:          Time.new('2015-04-23 08:00:57 -0500'),
       gateway_data:        nil,
       gateway_name:        '',
       guid:                'service_binding1',
-      id:                  23,
+      id:                  24,
       service_instance_id: cc_service_instance[:id],
       syslog_drain_url:    'http://service_binding_syslog_drain_url.com',
-      updated_at:          Time.new('2015-04-23 08:00:56 -0500')
+      updated_at:          Time.new('2015-04-23 08:00:58 -0500')
     }
   end
 
@@ -839,12 +853,12 @@ module CCHelper
     {
       auth_username: 'username',
       broker_url:    'http://broker_url.com',
-      created_at:    Time.new('2015-04-23 08:00:57 -0500'),
+      created_at:    Time.new('2015-04-23 08:00:59 -0500'),
       guid:          'service_broker1',
-      id:            24,
+      id:            25,
       name:          'TestServiceBroker',
       space_id:      cc_space[:id],
-      updated_at:    Time.new('2015-04-23 08:00:58 -0500')
+      updated_at:    Time.new('2015-04-23 08:01:00 -0500')
     }
   end
 
@@ -866,9 +880,9 @@ module CCHelper
 
   def cc_service_instance
     {
-      created_at:         Time.new('2015-04-23 08:00:59 -0500'),
+      created_at:         Time.new('2015-04-23 08:01:01 -0500'),
       guid:               'service_instance1',
-      id:                 25,
+      id:                 26,
       dashboard_url:      'http://dashboard_url.com',
       gateway_data:       nil,
       gateway_name:       nil,
@@ -878,7 +892,7 @@ module CCHelper
       space_id:           cc_space[:id],
       syslog_drain_url:   'http://service_instance_syslog_drain_url.com',
       tags:               '["service_instance_tag1", "service_instance_tag2"]',
-      updated_at:         Time.new('2015-04-23 08:01:00 -0500')
+      updated_at:         Time.new('2015-04-23 08:01:02 -0500')
     }
   end
 
@@ -889,26 +903,26 @@ module CCHelper
   def cc_service_instance_operation
     {
       broker_provided_operation: 'TestServiceInstanceOperation broker operation',
-      created_at:                Time.new('2015-04-23 08:01:01 -0500'),
+      created_at:                Time.new('2015-04-23 08:01:03 -0500'),
       description:               'TestServiceInstanceOperation description',
       guid:                      'service_instance_operation1',
-      id:                        26,
+      id:                        27,
       proposed_changes:          '{}',
       service_instance_id:       cc_service_instance[:id],
       state:                     'succeeded',
       type:                      'create',
-      updated_at:                Time.new('2015-04-23 08:01:02 -0500')
+      updated_at:                Time.new('2015-04-23 08:01:04 -0500')
     }
   end
 
   def cc_service_key
     {
-      created_at:          Time.new('2015-04-23 08:01:03 -0500'),
+      created_at:          Time.new('2015-04-23 08:01:05 -0500'),
       guid:                'service_key1',
-      id:                  27,
+      id:                  28,
       name:                'TestServiceKey',
       service_instance_id: cc_service_instance[:id],
-      updated_at:          Time.new('2015-04-23 08:01:04 -0500')
+      updated_at:          Time.new('2015-04-23 08:01:06 -0500')
     }
   end
 
@@ -924,41 +938,41 @@ module CCHelper
   def cc_service_plan
     {
       active:      true,
-      created_at:  Time.new('2015-04-23 08:01:05 -0500'),
+      created_at:  Time.new('2015-04-23 08:01:07 -0500'),
       description: 'TestServicePlan description',
       extra:       "{\"displayName\":\"#{cc_service_plan_display_name}\",\"bullets\":[\"bullet1\",\"bullet2\"]}",
       free:        true,
       guid:        'service_plan1',
-      id:          28,
+      id:          29,
       name:        'TestServicePlan',
       public:      true,
       service_id:  cc_service[:id],
       unique_id:   'service_plan_unique_id1',
-      updated_at:  Time.new('2015-04-23 08:01:06 -0500')
+      updated_at:  Time.new('2015-04-23 08:01:08 -0500')
     }
   end
 
   def cc_service_plan_visibility
     {
-      created_at:      Time.new('2015-04-23 08:01:07 -0500'),
+      created_at:      Time.new('2015-04-23 08:01:09 -0500'),
       guid:            'service_plan_visibility1',
-      id:              29,
+      id:              30,
       organization_id: cc_organization[:id],
       service_plan_id: cc_service_plan[:id],
-      updated_at:      Time.new('2015-04-23 08:01:08 -0500')
+      updated_at:      Time.new('2015-04-23 08:01:10 -0500')
     }
   end
 
   def cc_space
     {
       allow_ssh:                 true,
-      created_at:                Time.new('2015-04-23 08:01:09 -0500'),
+      created_at:                Time.new('2015-04-23 08:01:11 -0500'),
       guid:                      'space1',
-      id:                        30,
+      id:                        31,
       name:                      'test_space',
       organization_id:           cc_organization[:id],
       space_quota_definition_id: cc_space_quota_definition[:id],
-      updated_at:                Time.new('2015-04-23 08:01:10 -0500')
+      updated_at:                Time.new('2015-04-23 08:01:12 -0500')
     }
   end
 
@@ -991,9 +1005,9 @@ module CCHelper
     {
       app_instance_limit:         5,
       app_task_limit:             5,
-      created_at:                 Time.new('2015-04-23 08:01:11 -0500'),
+      created_at:                 Time.new('2015-04-23 08:01:13 -0500'),
       guid:                       'space_quota1',
-      id:                         31,
+      id:                         32,
       instance_memory_limit:      512,
       memory_limit:               1024,
       name:                       'test_space_quota_1',
@@ -1003,7 +1017,7 @@ module CCHelper
       total_routes:               100,
       total_services:             100,
       total_service_keys:         100,
-      updated_at:                 Time.new('2015-04-23 08:01:12 -0500')
+      updated_at:                 Time.new('2015-04-23 08:01:14 -0500')
     }
   end
 
@@ -1017,7 +1031,7 @@ module CCHelper
       app_task_limit:             5,
       created_at:                 Time.new,
       guid:                       'space_quota2',
-      id:                         32,
+      id:                         33,
       instance_memory_limit:      512,
       memory_limit:               1024,
       name:                       'test_space_quota_2',
@@ -1033,12 +1047,12 @@ module CCHelper
 
   def cc_stack
     {
-      created_at:  Time.new('2015-04-23 08:01:13 -0500'),
+      created_at:  Time.new('2015-04-23 08:01:15 -0500'),
       description: 'TestStack description',
       guid:        'stack1',
-      id:          33,
+      id:          34,
       name:        'lucid64',
-      updated_at:  Time.new('2015-04-23 08:01:14 -0500')
+      updated_at:  Time.new('2015-04-23 08:01:16 -0500')
     }
   end
 
@@ -1046,19 +1060,19 @@ module CCHelper
     {
       active:           true,
       admin:            false,
-      created_at:       Time.new('2015-04-23 08:01:15 -0500'),
+      created_at:       Time.new('2015-04-23 08:01:17 -0500'),
       default_space_id: cc_space[:id],
       guid:             uaa_user[:id],
-      id:               34,
-      updated_at:       Time.new('2015-04-23 08:01:16 -0500')
+      id:               35,
+      updated_at:       Time.new('2015-04-23 08:01:18 -0500')
     }
   end
 
   def uaa_approval
     {
       client_id:      uaa_client[:client_id],
-      expiresat:      Time.new('2015-04-23 08:01:17 -0500'),
-      lastmodifiedat: Time.new('2015-04-23 08:01:18 -0500'),
+      expiresat:      Time.new('2015-04-23 08:01:19 -0500'),
+      lastmodifiedat: Time.new('2015-04-23 08:01:20 -0500'),
       scope:          uaa_client[:scope],
       status:         'APPROVED',
       user_id:        uaa_user[:id]
@@ -1079,7 +1093,7 @@ module CCHelper
       autoapprove:             uaa_client_autoapprove.to_s,
       client_id:               'client1',
       identity_zone_id:        uaa_identity_zone[:id],
-      lastmodified:            Time.new('2015-04-23 08:01:19 -0500'),
+      lastmodified:            Time.new('2015-04-23 08:01:21 -0500'),
       refresh_token_validity:  2_592_000,
       scope:                   'scope1',
       show_on_home_page:       false,
@@ -1096,12 +1110,12 @@ module CCHelper
 
   def uaa_group
     {
-      created:          Time.new('2015-04-23 08:01:20 -0500'),
+      created:          Time.new('2015-04-23 08:01:22 -0500'),
       description:      'TestGroup description',
       displayname:      'group1',
       id:               'group1',
       identity_zone_id: uaa_identity_zone[:id],
-      lastmodified:     Time.new('2015-04-23 08:01:21 -0500'),
+      lastmodified:     Time.new('2015-04-23 08:01:23 -0500'),
       version:          5
     }
   end
@@ -1117,10 +1131,10 @@ module CCHelper
     {
       active:           true,
       config:           '{"key1":"value1","key2":"value2"}',
-      created:          Time.new('2015-04-23 08:01:22 -0500'),
+      created:          Time.new('2015-04-23 08:01:24 -0500'),
       id:               'identity_provider1',
       identity_zone_id: uaa_identity_zone[:id],
-      lastmodified:     Time.new('2015-04-23 08:01:23 -0500'),
+      lastmodified:     Time.new('2015-04-23 08:01:25 -0500'),
       name:             'identity_provider_name',
       origin_key:       'identity_provider_origin_key1',
       type:             'identity_provider_type1',
@@ -1131,10 +1145,10 @@ module CCHelper
   def uaa_identity_zone
     {
       config:       '{"tokenPolicy":{"accessTokenValidity":43200,"refreshTokenValidity":2592000,"keys":{}},"samlConfig":{"requestSigned":false,"wantAssertionSigned":false,"certificate":null,"privateKey":null}}',
-      created:      Time.new('2015-04-23 08:01:24 -0500'),
+      created:      Time.new('2015-04-23 08:01:26 -0500'),
       description:  'Identity zone description',
       id:           'identity_zone1',
-      lastmodified: Time.new('2015-04-23 08:01:25 -0500'),
+      lastmodified: Time.new('2015-04-23 08:01:27 -0500'),
       name:         'identity_zone_name',
       subdomain:    'identity_zone_subdomain',
       version:      5
@@ -1144,14 +1158,14 @@ module CCHelper
   def uaa_user
     {
       active:              true,
-      created:             Time.new('2015-04-23 08:01:26 -0500'),
+      created:             Time.new('2015-04-23 08:01:28 -0500'),
       email:               'admin',
       familyname:          'Flintstone',
       givenname:           'Fred',
       id:                  'user1',
       identity_zone_id:    uaa_identity_zone[:id],
-      lastmodified:        Time.new('2015-04-23 08:01:27 -0500'),
-      passwd_lastmodified: Time.new('2015-04-23 08:01:28 -0500'),
+      lastmodified:        Time.new('2015-04-23 08:01:29 -0500'),
+      passwd_lastmodified: Time.new('2015-04-23 08:01:30 -0500'),
       phonenumber:         '012-345-6789',
       username:            'admin',
       verified:            true,
@@ -1650,6 +1664,23 @@ module CCHelper
         cc_route_not_found
       else
         cc_clear_routes_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_route_mapping_not_found
+    NotFound.new('code'        => 210_007,
+                 'description' => "The route mapping could not be found: #{cc_app_route[:guid]}",
+                 'error_code'  => 'CF-RouteMappingNotFound')
+  end
+
+  def cc_route_mapping_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/route_mappings/#{cc_app_route[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_apps_routes_deleted
+        cc_route_mapping_not_found
+      else
+        cc_clear_apps_routes_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end

@@ -52,6 +52,7 @@ module AdminUI
         Thread.pass
 
         guid         = route[:guid]
+        port         = route[:port]
         domain       = domain_hash[route[:domain_id]]
         space        = space_hash[route[:space_id]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]
@@ -62,9 +63,27 @@ module AdminUI
         row = []
 
         row.push(guid)
+
+        if domain
+          fqdn = domain[:name]
+
+          if !port.nil? && port.positive? # Older versions will have nil port
+            fqdn = "tcp://#{fqdn}:#{port}"
+          else
+            host = route[:host]
+            path = route[:path]
+
+            fqdn = "#{host}.#{fqdn}" unless host.empty?
+            fqdn = "#{fqdn}#{path}" if path # Add path check since older versions will have nil path
+            fqdn = "http://#{fqdn}"
+          end
+
+          row.push(fqdn)
+        else
+          row.push(nil)
+        end
+
         row.push(route[:host])
-        row.push(route[:path])
-        row.push(guid)
 
         if domain
           row.push(domain[:name])
@@ -72,6 +91,15 @@ module AdminUI
           row.push(nil)
         end
 
+        if !port.nil? && port.positive?
+          row.push(port)
+        else
+          row.push(nil)
+        end
+
+        row.push(route[:path])
+
+        row.push(guid)
         row.push(route[:created_at].to_datetime.rfc3339)
 
         if route[:updated_at]
@@ -113,7 +141,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..9).to_a, (1..6).to_a << 9)
+      result(true, items, hash, (1..11).to_a, [1, 2, 3, 5, 6, 7, 8, 11])
     end
   end
 end

@@ -137,7 +137,6 @@ module ViewModelsHelper
         cc_app[:staging_failed_reason],
         cc_app[:created_at].to_datetime.rfc3339,
         cc_app[:updated_at].to_datetime.rfc3339,
-        ["#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}"],
         cc_app[:diego],
         cc_app[:enable_ssh],
         cc_stack[:name],
@@ -145,6 +144,7 @@ module ViewModelsHelper
         cc_app[:detected_buildpack_guid],
         1,
         cc_app[:instances],
+        1,
         1,
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
@@ -839,14 +839,43 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_route_mappings
+    [
+      [
+        cc_app_route[:guid],
+        cc_app_route[:guid],
+        cc_app_route[:created_at].to_datetime.rfc3339,
+        cc_app_route[:updated_at].to_datetime.rfc3339,
+        cc_app[:name],
+        cc_app[:guid],
+        "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}",
+        cc_route[:guid],
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
+      ]
+    ]
+  end
+
+  def view_models_route_mappings_detail
+    {
+      'application'  => cc_app,
+      'app_route'    => cc_app_route,
+      'domain'       => cc_domain,
+      'organization' => cc_organization,
+      'route'        => cc_route,
+      'space'        => cc_space
+    }
+  end
+
   def view_models_routes
     [
       [
         cc_route[:guid],
+        "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}",
         cc_route[:host],
+        cc_domain[:name],
+        nil,
         cc_route[:path],
         cc_route[:guid],
-        cc_domain[:name],
         cc_route[:created_at].to_datetime.rfc3339,
         cc_route[:updated_at].to_datetime.rfc3339,
         1,

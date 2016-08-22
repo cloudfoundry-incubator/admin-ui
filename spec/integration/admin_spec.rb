@@ -247,22 +247,22 @@ describe AdminUI::Admin, type: :integration do
 
     it 'enables the application diego' do
       disable_app_diego
-      expect { enable_app_diego }.to change { get_json('/applications_view_model')['items']['items'][0][9] }.from(false).to(true)
+      expect { enable_app_diego }.to change { get_json('/applications_view_model')['items']['items'][0][8] }.from(false).to(true)
     end
 
     it 'disables the application diego' do
       enable_app_diego
-      expect { disable_app_diego }.to change { get_json('/applications_view_model')['items']['items'][0][9] }.from(true).to(false)
+      expect { disable_app_diego }.to change { get_json('/applications_view_model')['items']['items'][0][8] }.from(true).to(false)
     end
 
     it 'enables the application ssh' do
       disable_app_ssh
-      expect { enable_app_ssh }.to change { get_json('/applications_view_model')['items']['items'][0][10] }.from(false).to(true)
+      expect { enable_app_ssh }.to change { get_json('/applications_view_model')['items']['items'][0][9] }.from(false).to(true)
     end
 
     it 'disables the application ssh' do
       enable_app_ssh
-      expect { disable_app_ssh }.to change { get_json('/applications_view_model')['items']['items'][0][10] }.from(true).to(false)
+      expect { disable_app_ssh }.to change { get_json('/applications_view_model')['items']['items'][0][9] }.from(true).to(false)
     end
 
     it 'deletes an application' do
@@ -797,6 +797,29 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a route recursive' do
       expect { delete_route_recursive }.to change { get_json('/routes_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
+  context 'manage route mapping' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/route_mappings_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_route_mapping
+      response = delete_request("/route_mappings/#{cc_app_route[:guid]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/route_mappings/#{cc_app_route[:guid]}"]])
+    end
+
+    it 'has user name and routes request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/route_mappings_view_model']], true)
+    end
+
+    it 'deletes a route mapping' do
+      expect { delete_route_mapping }.to change { get_json('/route_mappings_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -1763,6 +1786,18 @@ describe AdminUI::Admin, type: :integration do
       let(:application_instance_source) { :doppler_dea }
       let(:path)                        { "/routers_view_model/#{gorouter_envelope.ip}:#{gorouter_envelope.index}" }
       it_behaves_like('routers_view_model detail')
+    end
+
+    context 'route_mappings_view_model' do
+      let(:path)              { '/route_mappings_view_model' }
+      let(:view_model_source) { view_models_route_mappings }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'route_mappings_view_model detail' do
+      let(:path)              { "/route_mappings_view_model/#{cc_app_route[:guid]}" }
+      let(:view_model_source) { view_models_route_mappings_detail }
+      it_behaves_like('retrieves view_model detail')
     end
 
     context 'routes_view_model' do

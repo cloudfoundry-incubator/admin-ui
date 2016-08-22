@@ -787,6 +787,37 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage route mapping' do
+      before do
+        expect(cc.apps_routes['items'].length).to eq(1)
+      end
+
+      def delete_route_mapping
+        operation.delete_route_mapping(cc_app_route[:guid])
+      end
+
+      it 'deletes route mapping' do
+        expect { delete_route_mapping }.to change { cc.apps_routes['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_route_mapping
+        end
+
+        def verify_route_mapping_not_found(exception)
+          expect(exception.cf_code).to eq(210_007)
+          expect(exception.cf_error_code).to eq('CF-RouteMappingNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The route mapping could not be found: #{cc_app_route[:guid]}")
+        end
+
+        it 'fails deleting deleted route mapping' do
+          expect { delete_route_mapping }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_route_mapping_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage security group' do
       before do
         expect(cc.security_groups['items'].length).to eq(1)

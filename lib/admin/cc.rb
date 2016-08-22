@@ -39,7 +39,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :apps_routes,
-            columns: [:app_id, :route_id]
+            columns: [:app_id, :app_port, :created_at, :guid, :id, :route_id, :updated_at]
           },
           buildpacks:
           {
@@ -377,6 +377,10 @@ module AdminUI
 
     def invalidate_approvals
       invalidate_cache(:approvals)
+    end
+
+    def invalidate_apps_routes
+      invalidate_cache(:apps_routes)
     end
 
     def invalidate_buildpacks

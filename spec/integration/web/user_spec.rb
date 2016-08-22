@@ -83,6 +83,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Route Mappings tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'RouteMappings' }
+        let(:page_id)   { 'RouteMappingsPage' }
+        let(:button_id) { 'Buttons_RouteMappingsTable_0' }
+      end
+    end
+
     context 'Service Instances tab does not have rename, delete, delete recursive or purge buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceInstances' }

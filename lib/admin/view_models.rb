@@ -24,6 +24,7 @@ require_relative 'view_models/organizations_view_model'
 require_relative 'view_models/quotas_view_model'
 require_relative 'view_models/routers_view_model'
 require_relative 'view_models/routes_view_model'
+require_relative 'view_models/route_mappings_view_model'
 require_relative 'view_models/security_groups_spaces_view_model'
 require_relative 'view_models/security_groups_view_model'
 require_relative 'view_models/service_bindings_view_model'
@@ -73,6 +74,7 @@ module AdminUI
           quotas:                    { clazz: AdminUI::QuotasViewModel },
           routers:                   { clazz: AdminUI::RoutersViewModel },
           routes:                    { clazz: AdminUI::RoutesViewModel },
+          route_mappings:            { clazz: AdminUI::RouteMappingsViewModel },
           services:                  { clazz: AdminUI::ServicesViewModel },
           security_groups:           { clazz: AdminUI::SecurityGroupsViewModel },
           security_groups_spaces:    { clazz: AdminUI::SecurityGroupsSpacesViewModel },
@@ -178,6 +180,10 @@ module AdminUI
 
     def invalidate_routes
       invalidate_cache(:routes)
+    end
+
+    def invalidate_route_mappings
+      invalidate_cache(:route_mappings)
     end
 
     def invalidate_security_groups
@@ -414,6 +420,14 @@ module AdminUI
 
     def routes
       result_cache(:routes)
+    end
+
+    def route_mapping(guid)
+      details(:route_mappings, guid)
+    end
+
+    def route_mappings
+      result_cache(:route_mappings)
     end
 
     def security_group(guid)

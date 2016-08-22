@@ -14,49 +14,23 @@ module AdminUI
       buildpacks       = @cc.buildpacks
       containers       = @doppler.containers
       deas             = @varz.deas
-      domains          = @cc.domains
       droplets         = @cc.droplets
       events           = @cc.events
       organizations    = @cc.organizations
-      routes           = @cc.routes
       service_bindings = @cc.service_bindings
       spaces           = @cc.spaces
       stacks           = @cc.stacks
 
+      apps_routes_connected      = apps_routes['connected']
       deas_connected             = deas['connected']
       events_connected           = events['connected']
       service_bindings_connected = service_bindings['connected']
 
       buildpack_hash    = Hash[buildpacks['items'].map { |item| [item[:guid], item] }]
-      domain_hash       = Hash[domains['items'].map { |item| [item[:id], item] }]
       droplet_hash      = Hash[droplets['items'].map { |item| [item[:droplet_hash], item] }]
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      route_hash        = Hash[routes['items'].map { |item| [item[:id], item] }]
       space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
       stack_hash        = Hash[stacks['items'].map { |item| [item[:id], item] }]
-
-      fqdns_hash = {}
-      apps_routes['items'].each do |app_route|
-        return result unless @running
-        Thread.pass
-
-        route = route_hash[app_route[:route_id]]
-        next if route.nil?
-        domain = domain_hash[route[:domain_id]]
-        next if domain.nil?
-        fqdn = domain[:name]
-        host = route[:host]
-        path = route[:path]
-        fqdn = "#{host}.#{fqdn}" unless host.empty?
-        fqdn = "#{fqdn}#{path}" if path # Add path check since older versions will have nil path
-        app_id = app_route[:app_id]
-        app_fqdns = fqdns_hash[app_id]
-        if app_fqdns.nil?
-          app_fqdns = []
-          fqdns_hash[app_id] = app_fqdns
-        end
-        app_fqdns.push(fqdn)
-      end
 
       event_counters = {}
       events['items'].each do |event|
@@ -72,6 +46,16 @@ module AdminUI
           event_counters[actor] = 0 if event_counters[actor].nil?
           event_counters[actor] += 1
         end
+      end
+
+      app_route_counters = {}
+      apps_routes['items'].each do |app_route|
+        return result unless @running
+        Thread.pass
+
+        app_id = app_route[:app_id]
+        app_route_counters[app_id] = 0 if app_route_counters[app_id].nil?
+        app_route_counters[app_id] += 1
       end
 
       service_binding_counters = {}
@@ -149,8 +133,8 @@ module AdminUI
         stack            = stack_hash[application[:stack_id]]
 
         application_usage_counters = application_usage_counters_hash[guid]
+        app_route_counter          = app_route_counters[id]
         event_counter              = event_counters[guid]
-        fqdns                      = fqdns_hash[id]
         service_binding_counter    = service_binding_counters[id]
 
         row = []
@@ -170,7 +154,6 @@ module AdminUI
           row.push(nil)
         end
 
-        row.push(fqdns)
         row.push(application[:diego])
 
         if application[:allow_ssh] || application[:enable_ssh] # Originally allow_ssh, changed later to enable_ssh
@@ -209,6 +192,14 @@ module AdminUI
         end
 
         row.push(application[:instances])
+
+        if app_route_counter
+          row.push(app_route_counter)
+        elsif apps_routes_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
 
         if service_binding_counter
           row.push(service_binding_counter)
@@ -249,7 +240,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..22).to_a, (1..13).to_a << 22)
+      result(true, items, hash, (1..22).to_a, (1..12).to_a << 22)
     end
   end
 end

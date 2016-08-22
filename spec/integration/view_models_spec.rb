@@ -520,6 +520,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('routers_view_model detail')
     end
 
+    context 'returns connected route_mappings_view_model' do
+      let(:results)    { view_models.route_mappings }
+      let(:expected)   { view_models_route_mappings }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected route_mappings_view_model detail' do
+      let(:results)  { view_models.route_mapping(cc_app_route[:guid]) }
+      let(:expected) { view_models_route_mappings_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected routes_view_model' do
       let(:event_type) { 'route' }
       let(:results)    { view_models.routes }

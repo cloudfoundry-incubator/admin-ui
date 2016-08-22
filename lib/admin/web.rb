@@ -375,6 +375,18 @@ module AdminUI
       404
     end
 
+    get '/route_mappings_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/route_mappings_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.route_mappings, params).items)
+    end
+
+    get '/route_mappings_view_model/:guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/route_mappings_view_model/#{params[:guid]}")
+      result = @view_models.route_mapping(params[:guid])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/security_groups_spaces_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/security_groups_spaces_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.security_groups_spaces, params).items)
@@ -788,6 +800,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'routes.csv')
+    end
+
+    post '/route_mappings_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/route_mappings_view_model')
+      file = Download.download(request.body.read, 'routes', @view_models.route_mappings)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'route_mappings.csv')
     end
 
     post '/security_groups_spaces_view_model', auth: [:user] do
@@ -1358,6 +1378,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete route: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/route_mappings/:route_mapping_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/route_mappings/#{params[:route_mapping_guid]}")
+      begin
+        @operation.delete_route_mapping(params[:route_mapping_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete route mapping: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete route mapping: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

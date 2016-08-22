@@ -49,6 +49,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.applications['items'].length).to eq(0)
     end
 
+    it 'clears the application routes cache' do
+      expect(cc.apps_routes['items'].length).to eq(1)
+      cc_clear_apps_routes_cache_stub(config)
+      cc.invalidate_apps_routes
+      expect(cc.apps_routes['items'].length).to eq(0)
+    end
+
     it 'clears the approval cache' do
       expect(cc.approvals['items'].length).to eq(1)
       uaa_clear_approvals_cache_stub(config)

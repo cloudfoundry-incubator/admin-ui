@@ -52,6 +52,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('Spaces').displayed?).to be(true)
       expect(scroll_tab_into_view('Applications').displayed?).to be(true)
       expect(scroll_tab_into_view('ApplicationInstances').displayed?).to be(true)
+      expect(scroll_tab_into_view('Routes').displayed?).to be(true)
+      expect(scroll_tab_into_view('RouteMappings').displayed?).to be(true)
       expect(scroll_tab_into_view('ServiceInstances').displayed?).to be(true)
       expect(scroll_tab_into_view('ServiceBindings').displayed?).to be(true)
       expect(scroll_tab_into_view('ServiceKeys').displayed?).to be(true)
@@ -1042,7 +1044,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                  expected_length: 23,
-                                 labels:          ['', 'Name', 'GUID', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'URIs', 'Diego', 'SSH Enabled', 'Stack', 'Buildpacks', 'Buildpack GUID', 'Events', 'Instances', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
+                                 labels:          ['', 'Name', 'GUID', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'Diego', 'SSH Enabled', 'Stack', 'Buildpacks', 'Buildpack GUID', 'Events', 'Instances', 'Route Mappings', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -1060,12 +1062,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_app[:staging_failed_reason],
                                cc_app[:created_at].to_datetime.rfc3339,
                                cc_app[:updated_at].to_datetime.rfc3339,
-                               "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}",
                                @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})"),
                                @driver.execute_script("return Format.formatBoolean(#{cc_app[:enable_ssh]})"),
                                cc_stack[:name],
                                cc_app[:detected_buildpack],
                                cc_buildpack[:guid],
+                               '1',
                                '1',
                                '1',
                                '1',
@@ -1122,18 +1124,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           def check_app_diego(diego)
             begin
-              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[10]").text == diego }
+              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[9]").text == diego }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[10]").text).to eq(diego)
+            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[9]").text).to eq(diego)
           end
 
           def check_app_ssh(ssh)
             begin
-              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[11]").text == ssh }
+              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[10]").text == ssh }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[11]").text).to eq(ssh)
+            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[10]").text).to eq(ssh)
           end
 
           it 'has a Rename button' do
@@ -1335,7 +1337,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Staging Failed Description', tag:   nil, value: cc_app[:staging_failed_description] },
                               { label: 'Created',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_app[:created_at].to_datetime.rfc3339}\")") },
                               { label: 'Updated',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_app[:updated_at].to_datetime.rfc3339}\")") },
-                              { label: 'URI',                        tag:   nil, value: "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}" },
                               { label: 'Diego',                      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})") },
                               { label: 'SSH Enabled',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:enable_ssh]})") },
                               { label: 'Stack',                      tag:   'a', value: cc_stack[:name] },
@@ -1346,6 +1347,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Droplet Hash',               tag:   nil, value: cc_app[:droplet_hash] },
                               { label: 'Events',                     tag:   'a', value: '1' },
                               { label: 'Instances',                  tag:   'a', value: '1' },
+                              { label: 'Route Mappings',             tag:   'a', value: '1' },
                               { label: 'Service Bindings',           tag:   'a', value: '1' },
                               { label: 'Memory Used',                tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})") },
                               { label: 'Disk Used',                  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_disk)})") },
@@ -1373,19 +1375,23 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has stacks link' do
-            check_filter_link('Applications', 11, 'Stacks', cc_stack[:guid])
+            check_filter_link('Applications', 10, 'Stacks', cc_stack[:guid])
           end
 
           it 'has buildpacks link' do
-            check_filter_link('Applications', 13, 'Buildpacks', cc_buildpack[:guid])
+            check_filter_link('Applications', 12, 'Buildpacks', cc_buildpack[:guid])
           end
 
           it 'has events link' do
-            check_filter_link('Applications', 17, 'Events', cc_app[:guid])
+            check_filter_link('Applications', 16, 'Events', cc_app[:guid])
           end
 
           it 'has application instances link' do
-            check_filter_link('Applications', 18, 'ApplicationInstances', cc_app[:guid])
+            check_filter_link('Applications', 17, 'ApplicationInstances', cc_app[:guid])
+          end
+
+          it 'has route mappings link' do
+            check_filter_link('Applications', 18, 'RouteMappings', cc_app[:guid])
           end
 
           it 'has service bindings link' do
@@ -1654,8 +1660,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='RoutesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 10,
-                                 labels:          ['', 'Host', 'Path', 'GUID', 'Domain', 'Created', 'Updated', 'Events', 'Applications', 'Target'],
+                                 expected_length: 12,
+                                 labels:          ['', 'URI', 'Host', 'Domain', 'Port', 'Path', 'GUID', 'Created', 'Updated', 'Events', 'Route Mappings', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -1663,10 +1669,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='RoutesTable']/tbody/tr/td"),
                            [
                              '',
+                             "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}",
                              cc_route[:host],
+                             cc_domain[:name],
+                             '',
                              cc_route[:path],
                              cc_route[:guid],
-                             cc_domain[:name],
                              cc_route[:created_at].to_datetime.rfc3339,
                              cc_route[:updated_at].to_datetime.rfc3339,
                              '1',
@@ -1726,37 +1734,140 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Host',         tag:   nil, value: cc_route[:host] },
-                            { label: 'Path',         tag:   nil, value: cc_route[:path] },
-                            { label: 'GUID',         tag: 'div', value: cc_route[:guid] },
+                            { label: 'URI',            tag:   'a', value: "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}" },
+                            { label: 'Host',           tag:   nil, value: cc_route[:host] },
+                            { label: 'Domain',         tag:   'a', value: cc_domain[:name] },
+                            { label: 'Path',           tag:   nil, value: cc_route[:path] },
+                            { label: 'GUID',           tag: 'div', value: cc_route[:guid] },
+                            { label: 'Created',        tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route[:created_at].to_datetime.rfc3339}\")") } },
+                            { label: 'Updated',        tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route[:updated_at].to_datetime.rfc3339}\")") } },
+                            { label: 'Events',         tag:   'a', value: '1' },
+                            { label: 'Route Mappings', tag:   'a', value: '1' },
+                            { label: 'Space',          tag:   'a', value: cc_space[:name] },
+                            { label: 'Organization',   tag:   'a', value: cc_organization[:name] }
+                          ])
+          end
+
+          it 'has domains link' do
+            check_filter_link('Routes', 2, 'Domains', cc_domain[:guid])
+          end
+
+          it 'has events link' do
+            check_filter_link('Routes', 7, 'Events', cc_route[:guid])
+          end
+
+          it 'has route mappings link' do
+            check_filter_link('Routes', 8, 'RouteMappings', cc_route[:guid])
+          end
+
+          it 'has spaces link' do
+            check_filter_link('Routes', 9, 'Spaces', cc_space[:guid])
+          end
+
+          it 'has organizations link' do
+            check_filter_link('Routes', 10, 'Organizations', cc_organization[:guid])
+          end
+        end
+      end
+
+      context 'Routes Mappings' do
+        let(:tab_id)     { 'RouteMappings' }
+        let(:table_id)   { 'RouteMappingsTable' }
+
+        it 'has a table' do
+          check_table_layout([
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='RouteMappingsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                 expected_length: 5,
+                                 labels:          ['', '', 'Application', 'Route', ''],
+                                 colspans:        %w(1 3 2 2 1)
+                               },
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='RouteMappingsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
+                                 expected_length: 9,
+                                 labels:          ['', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'URI', 'GUID', 'Target'],
+                                 colspans:        nil
+                               }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='RouteMappingsTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_app_route[:guid],
+                             cc_app_route[:created_at].to_datetime.rfc3339,
+                             cc_app_route[:updated_at].to_datetime.rfc3339,
+                             cc_app[:name],
+                             cc_app[:guid],
+                             "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}",
+                             cc_route[:guid],
+                             "#{cc_organization[:name]}/#{cc_space[:name]}"
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_RouteMappingsTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('RouteMappingsTable', cc_app_route[:guid])
+        end
+
+        context 'manage route mappings' do
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_RouteMappingsTable_0').text).to eq('Delete')
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_RouteMappingsTable_0' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_RouteMappingsTable_0' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected route mappings?' }
+            end
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([
+                            { label: 'GUID',         tag: 'div', value: cc_app_route[:guid] },
+                            { label: 'Created',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_app_route[:created_at].to_datetime.rfc3339}\")") } },
+                            { label: 'Updated',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_app_route[:updated_at].to_datetime.rfc3339}\")") } },
+                            { label: 'URI',          tag:   'a', value: "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}" },
+                            { label: 'Application',  tag:   'a', value: cc_app[:name] },
+                            { label: 'Route',        tag:   'a', value: cc_route[:guid] },
                             { label: 'Domain',       tag:   'a', value: cc_domain[:name] },
-                            { label: 'Created',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route[:created_at].to_datetime.rfc3339}\")") } },
-                            { label: 'Updated',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route[:updated_at].to_datetime.rfc3339}\")") } },
-                            { label: 'Events',       tag:   'a', value: '1' },
-                            { label: 'Applications', tag:   'a', value: '1' },
                             { label: 'Space',        tag:   'a', value: cc_space[:name] },
                             { label: 'Organization', tag:   'a', value: cc_organization[:name] }
                           ])
           end
 
-          it 'has domains link' do
-            check_filter_link('Routes', 3, 'Domains', cc_domain[:guid])
-          end
-
-          it 'has events link' do
-            check_filter_link('Routes', 6, 'Events', cc_route[:guid])
-          end
-
           it 'has applications link' do
-            check_filter_link('Routes', 7, 'Applications', "#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}")
+            check_filter_link('RouteMappings', 4, 'Applications', cc_app[:guid])
+          end
+
+          it 'has routes link' do
+            check_filter_link('RouteMappings', 5, 'Routes', cc_route[:guid])
+          end
+
+          it 'has domains link' do
+            check_filter_link('RouteMappings', 6, 'Domains', cc_domain[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('Routes', 8, 'Spaces', cc_space[:guid])
+            check_filter_link('RouteMappings', 7, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Routes', 9, 'Organizations', cc_organization[:guid])
+            check_filter_link('RouteMappings', 8, 'Organizations', cc_organization[:guid])
           end
         end
       end
