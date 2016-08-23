@@ -94,7 +94,7 @@ module AdminUI
           {
             db_uri:  uaadb_uri,
             table:   :group_membership,
-            columns: [:group_id, :member_id]
+            columns: [:added, :group_id, :member_id]
           },
           identity_providers:
           {

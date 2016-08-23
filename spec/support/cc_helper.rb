@@ -1122,6 +1122,7 @@ module CCHelper
 
   def uaa_group_membership
     {
+      added:     Time.new('2015-04-23 08:01:24 -0500'),
       group_id:  uaa_group[:id],
       member_id: uaa_user[:id]
     }
@@ -1131,10 +1132,10 @@ module CCHelper
     {
       active:           true,
       config:           '{"key1":"value1","key2":"value2"}',
-      created:          Time.new('2015-04-23 08:01:24 -0500'),
+      created:          Time.new('2015-04-23 08:01:25 -0500'),
       id:               'identity_provider1',
       identity_zone_id: uaa_identity_zone[:id],
-      lastmodified:     Time.new('2015-04-23 08:01:25 -0500'),
+      lastmodified:     Time.new('2015-04-23 08:01:26 -0500'),
       name:             'identity_provider_name',
       origin_key:       'identity_provider_origin_key1',
       type:             'identity_provider_type1',
@@ -1145,10 +1146,10 @@ module CCHelper
   def uaa_identity_zone
     {
       config:       '{"tokenPolicy":{"accessTokenValidity":43200,"refreshTokenValidity":2592000,"keys":{}},"samlConfig":{"requestSigned":false,"wantAssertionSigned":false,"certificate":null,"privateKey":null}}',
-      created:      Time.new('2015-04-23 08:01:26 -0500'),
+      created:      Time.new('2015-04-23 08:01:27 -0500'),
       description:  'Identity zone description',
       id:           'identity_zone1',
-      lastmodified: Time.new('2015-04-23 08:01:27 -0500'),
+      lastmodified: Time.new('2015-04-23 08:01:28 -0500'),
       name:         'identity_zone_name',
       subdomain:    'identity_zone_subdomain',
       version:      5
@@ -1158,14 +1159,14 @@ module CCHelper
   def uaa_user
     {
       active:              true,
-      created:             Time.new('2015-04-23 08:01:28 -0500'),
+      created:             Time.new('2015-04-23 08:01:29 -0500'),
       email:               'admin',
       familyname:          'Flintstone',
       givenname:           'Fred',
       id:                  'user1',
       identity_zone_id:    uaa_identity_zone[:id],
-      lastmodified:        Time.new('2015-04-23 08:01:29 -0500'),
-      passwd_lastmodified: Time.new('2015-04-23 08:01:30 -0500'),
+      lastmodified:        Time.new('2015-04-23 08:01:30 -0500'),
+      passwd_lastmodified: Time.new('2015-04-23 08:01:31 -0500'),
       phonenumber:         '012-345-6789',
       username:            'admin',
       verified:            true,

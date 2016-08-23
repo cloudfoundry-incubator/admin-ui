@@ -528,6 +528,26 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_group_members
+    [
+      [
+        uaa_group[:displayname],
+        uaa_group[:id],
+        uaa_user[:username],
+        uaa_approval[:user_id],
+        uaa_group_membership[:added].to_datetime.rfc3339
+      ]
+    ]
+  end
+
+  def view_models_group_members_detail
+    {
+      'group'            => uaa_group,
+      'group_membership' => uaa_group_membership,
+      'user_uaa'         => uaa_user
+    }
+  end
+
   def view_models_groups
     [
       [
@@ -1434,7 +1454,7 @@ module ViewModelsHelper
         uaa_user[:phonenumber],
         uaa_user[:active],
         uaa_user[:version],
-        [uaa_group[:displayname]],
+        1,
         1,
         1,
         4,
@@ -1453,7 +1473,6 @@ module ViewModelsHelper
 
   def view_models_users_detail
     {
-      'groups'        => [uaa_group[:displayname]],
       'identity_zone' => uaa_identity_zone,
       'organization'  => cc_organization,
       'space'         => cc_space,

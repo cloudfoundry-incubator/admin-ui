@@ -221,6 +221,18 @@ module AdminUI
       404
     end
 
+    get '/group_members_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/group_members_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.group_members, params).items)
+    end
+
+    get '/group_members_view_model/:group_id/:member_id', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/group_members_view_model/#{params[:group_id]}/#{params[:member_id]}")
+      result = @view_models.group_member(params[:group_id], params[:member_id])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/groups_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/groups_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.groups, params).items)
@@ -702,6 +714,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'gateways.csv')
+    end
+
+    post '/group_members_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/group_members_view_model')
+      file = Download.download(request.body.read, 'group_members', @view_models.group_members)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'group_members.csv')
     end
 
     post '/groups_view_model', auth: [:user] do

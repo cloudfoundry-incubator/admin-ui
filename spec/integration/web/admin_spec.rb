@@ -62,6 +62,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('Clients').displayed?).to be(true)
       expect(scroll_tab_into_view('Users').displayed?).to be(true)
       expect(scroll_tab_into_view('Groups').displayed?).to be(true)
+      expect(scroll_tab_into_view('GroupMembers').displayed?).to be(true)
       expect(scroll_tab_into_view('Approvals').displayed?).to be(true)
       expect(scroll_tab_into_view('Buildpacks').displayed?).to be(true)
       expect(scroll_tab_into_view('Domains').displayed?).to be(true)
@@ -628,6 +629,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Space Roles',               tag:   'a', value: '3' },
                               { label: 'Default Users',             tag:   'a', value: '1' },
                               { label: 'Quota',                     tag:   'a', value: cc_quota_definition[:name] },
+                              { label: 'Quota GUID',                tag:   nil, value: cc_quota_definition[:guid] },
                               { label: 'Space Quotas',              tag:   'a', value: '1' },
                               { label: 'Domains',                   tag:   'a', value: '1' },
                               { label: 'Private Service Brokers',   tag:   'a', value: '1' },
@@ -692,39 +694,39 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has space quotas link' do
-            check_filter_link('Organizations', 12, 'SpaceQuotas', cc_organization[:guid])
+            check_filter_link('Organizations', 13, 'SpaceQuotas', cc_organization[:guid])
           end
 
           it 'has domains link' do
-            check_filter_link('Organizations', 13, 'Domains', cc_organization[:name])
+            check_filter_link('Organizations', 14, 'Domains', cc_organization[:name])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Organizations', 14, 'ServiceBrokers', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 15, 'ServiceBrokers', "#{cc_organization[:name]}/")
           end
 
           it 'has service plan visibilities link' do
-            check_filter_link('Organizations', 15, 'ServicePlanVisibilities', cc_organization[:guid])
+            check_filter_link('Organizations', 16, 'ServicePlanVisibilities', cc_organization[:guid])
           end
 
           it 'has security groups spaces link' do
-            check_filter_link('Organizations', 16, 'SecurityGroupsSpaces', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 17, 'SecurityGroupsSpaces', "#{cc_organization[:name]}/")
           end
 
           it 'has routes link' do
-            check_filter_link('Organizations', 17, 'Routes', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 18, 'Routes', "#{cc_organization[:name]}/")
           end
 
           it 'has application instances link' do
-            check_filter_link('Organizations', 20, 'ApplicationInstances', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 21, 'ApplicationInstances', "#{cc_organization[:name]}/")
           end
 
           it 'has services instances link' do
-            check_filter_link('Organizations', 21, 'ServiceInstances', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 22, 'ServiceInstances', "#{cc_organization[:name]}/")
           end
 
           it 'has applications link' do
-            check_filter_link('Organizations', 27, 'Applications', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 28, 'Applications', "#{cc_organization[:name]}/")
           end
         end
       end
@@ -934,6 +936,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Name',                    tag: 'div', value: cc_space[:name] },
                               { label: 'GUID',                    tag:   nil, value: cc_space[:guid] },
                               { label: 'Organization',            tag:   'a', value: cc_organization[:name] },
+                              { label: 'Organization GUID',       tag:   nil, value: cc_organization[:guid] },
                               { label: 'Created',                 tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space[:created_at].to_datetime.rfc3339}\")") },
                               { label: 'Updated',                 tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space[:updated_at].to_datetime.rfc3339}\")") },
                               { label: 'SSH Allowed',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_space[:allow_ssh]})") },
@@ -942,6 +945,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Roles',                   tag:   'a', value: '3' },
                               { label: 'Default Users',           tag:   'a', value: '1' },
                               { label: 'Space Quota',             tag:   'a', value: cc_space_quota_definition[:name] },
+                              { label: 'Space Quota GUID',        tag:   nil, value: cc_space_quota_definition[:guid] },
                               { label: 'Private Service Brokers', tag:   'a', value: '1' },
                               { label: 'Security Groups',         tag:   'a', value: '1' },
                               { label: 'Total Routes',            tag:   'a', value: '1' },
@@ -983,47 +987,47 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('Spaces', 6, 'Events', cc_space[:guid])
+            check_filter_link('Spaces', 7, 'Events', cc_space[:guid])
           end
 
           it 'has events target link' do
-            check_filter_link('Spaces', 7, 'Events', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 8, 'Events', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has space roles link' do
-            check_filter_link('Spaces', 8, 'SpaceRoles', cc_space[:guid])
+            check_filter_link('Spaces', 9, 'SpaceRoles', cc_space[:guid])
           end
 
           it 'has users link' do
-            check_filter_link('Spaces', 9, 'Users', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 10, 'Users', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has space quotas link' do
-            check_filter_link('Spaces', 10, 'SpaceQuotas', cc_space_quota_definition[:guid])
+            check_filter_link('Spaces', 11, 'SpaceQuotas', cc_space_quota_definition[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Spaces', 11, 'ServiceBrokers', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 13, 'ServiceBrokers', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has security groups spaces link' do
-            check_filter_link('Spaces', 12, 'SecurityGroupsSpaces', cc_space[:guid])
+            check_filter_link('Spaces', 14, 'SecurityGroupsSpaces', cc_space[:guid])
           end
 
           it 'has routes link' do
-            check_filter_link('Spaces', 13, 'Routes', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 15, 'Routes', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has application instances link' do
-            check_filter_link('Spaces', 16, 'ApplicationInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 18, 'ApplicationInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has services link' do
-            check_filter_link('Spaces', 17, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 19, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
           it 'has applications link' do
-            check_filter_link('Spaces', 23, 'Applications', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 25, 'Applications', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
         end
       end
@@ -1340,6 +1344,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Diego',                      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})") },
                               { label: 'SSH Enabled',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:enable_ssh]})") },
                               { label: 'Stack',                      tag:   'a', value: cc_stack[:name] },
+                              { label: 'Stack GUID',                 tag:   nil, value: cc_stack[:guid] },
                               { label: 'Buildpack',                  tag:   nil, value: cc_app[:detected_buildpack] },
                               { label: 'Buildpack GUID',             tag:   'a', value: cc_buildpack[:guid] },
                               { label: 'Command',                    tag:   nil, value: cc_app[:command] },
@@ -1355,7 +1360,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Memory Reserved',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})") },
                               { label: 'Disk Reserved',              tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})") },
                               { label: 'Space',                      tag:   'a', value: cc_space[:name] },
-                              { label: 'Organization',               tag:   'a', value: cc_organization[:name] }
+                              { label: 'Space GUID',                 tag:   nil, value: cc_space[:guid] },
+                              { label: 'Organization',               tag:   'a', value: cc_organization[:name] },
+                              { label: 'Organization GUID',          tag:   nil, value: cc_organization[:guid] }
                             ])
             end
           end
@@ -1379,31 +1386,31 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has buildpacks link' do
-            check_filter_link('Applications', 12, 'Buildpacks', cc_buildpack[:guid])
+            check_filter_link('Applications', 13, 'Buildpacks', cc_buildpack[:guid])
           end
 
           it 'has events link' do
-            check_filter_link('Applications', 16, 'Events', cc_app[:guid])
+            check_filter_link('Applications', 17, 'Events', cc_app[:guid])
           end
 
           it 'has application instances link' do
-            check_filter_link('Applications', 17, 'ApplicationInstances', cc_app[:guid])
+            check_filter_link('Applications', 18, 'ApplicationInstances', cc_app[:guid])
           end
 
           it 'has route mappings link' do
-            check_filter_link('Applications', 18, 'RouteMappings', cc_app[:guid])
+            check_filter_link('Applications', 19, 'RouteMappings', cc_app[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('Applications', 19, 'ServiceBindings', cc_app[:guid])
+            check_filter_link('Applications', 20, 'ServiceBindings', cc_app[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('Applications', 25, 'Spaces', cc_space[:guid])
+            check_filter_link('Applications', 26, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Applications', 26, 'Organizations', cc_organization[:guid])
+            check_filter_link('Applications', 28, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -1545,23 +1552,26 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           context 'varz dea' do
             it 'has details' do
               check_details([
-                              { label: 'Name',             tag:   nil, value: cc_app[:name] },
-                              { label: 'Application GUID', tag: 'div', value: cc_app[:guid] },
-                              { label: 'Index',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app_instance_index})") },
-                              { label: 'Instance ID',      tag:   nil, value: varz_dea_app_instance },
-                              { label: 'State',            tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] },
-                              { label: 'Started',          tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']} * 1000)") },
-                              { label: 'Diego',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})") },
-                              { label: 'Stack',            tag:   'a', value: cc_stack[:name] },
-                              { label: 'Droplet Hash',     tag:   nil, value: cc_app[:droplet_hash] },
-                              { label: 'Memory Used',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})") },
-                              { label: 'Disk Used',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})") },
-                              { label: 'CPU Used',         tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu']} * 100)") },
-                              { label: 'Memory Reserved',  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})") },
-                              { label: 'Disk Reserved',    tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})") },
-                              { label: 'Space',            tag:   'a', value: cc_space[:name] },
-                              { label: 'Organization',     tag:   'a', value: cc_organization[:name] },
-                              { label: 'DEA',              tag:   'a', value: nats_dea['host'] }
+                              { label: 'Name',              tag:   nil, value: cc_app[:name] },
+                              { label: 'Application GUID',  tag: 'div', value: cc_app[:guid] },
+                              { label: 'Index',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app_instance_index})") },
+                              { label: 'Instance ID',       tag:   nil, value: varz_dea_app_instance },
+                              { label: 'State',             tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] },
+                              { label: 'Started',           tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']} * 1000)") },
+                              { label: 'Diego',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})") },
+                              { label: 'Stack',             tag:   'a', value: cc_stack[:name] },
+                              { label: 'Stack GUID',        tag:   nil, value: cc_stack[:guid] },
+                              { label: 'Droplet Hash',      tag:   nil, value: cc_app[:droplet_hash] },
+                              { label: 'Memory Used',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})") },
+                              { label: 'Disk Used',         tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})") },
+                              { label: 'CPU Used',          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu']} * 100)") },
+                              { label: 'Memory Reserved',   tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})") },
+                              { label: 'Disk Reserved',     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})") },
+                              { label: 'Space',             tag:   'a', value: cc_space[:name] },
+                              { label: 'Space GUID',        tag:   nil, value: cc_space[:guid] },
+                              { label: 'Organization',      tag:   'a', value: cc_organization[:name] },
+                              { label: 'Organization GUID', tag:   nil, value: cc_organization[:guid] },
+                              { label: 'DEA',               tag:   'a', value: nats_dea['host'] }
                             ])
             end
           end
@@ -1571,20 +1581,23 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             it 'has details' do
               check_details([
-                              { label: 'Name',             tag:   nil, value: cc_app[:name] },
-                              { label: 'Application GUID', tag: 'div', value: cc_app[:guid] },
-                              { label: 'Index',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app_instance_index})") },
-                              { label: 'Metrics',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(rep_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
-                              { label: 'Diego',            tag:   nil, value: @driver.execute_script('return Format.formatBoolean(true)') },
-                              { label: 'Stack',            tag:   'a', value: cc_stack[:name] },
-                              { label: 'Memory Used',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(rep_container_metric_envelope.containerMetric.memoryBytes)})") },
-                              { label: 'Disk Used',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(rep_container_metric_envelope.containerMetric.diskBytes)})") },
-                              { label: 'CPU Used',         tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{rep_container_metric_envelope.containerMetric.cpuPercentage})") },
-                              { label: 'Memory Reserved',  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})") },
-                              { label: 'Disk Reserved',    tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})") },
-                              { label: 'Space',            tag:   'a', value: cc_space[:name] },
-                              { label: 'Organization',     tag:   'a', value: cc_organization[:name] },
-                              { label: 'Cell',             tag:   'a', value: "#{rep_envelope.ip}:#{rep_envelope.index}" }
+                              { label: 'Name',              tag:   nil, value: cc_app[:name] },
+                              { label: 'Application GUID',  tag: 'div', value: cc_app[:guid] },
+                              { label: 'Index',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app_instance_index})") },
+                              { label: 'Metrics',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(rep_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
+                              { label: 'Diego',             tag:   nil, value: @driver.execute_script('return Format.formatBoolean(true)') },
+                              { label: 'Stack',             tag:   'a', value: cc_stack[:name] },
+                              { label: 'Stack GUID',        tag:   nil, value: cc_stack[:guid] },
+                              { label: 'Memory Used',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(rep_container_metric_envelope.containerMetric.memoryBytes)})") },
+                              { label: 'Disk Used',         tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(rep_container_metric_envelope.containerMetric.diskBytes)})") },
+                              { label: 'CPU Used',          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{rep_container_metric_envelope.containerMetric.cpuPercentage})") },
+                              { label: 'Memory Reserved',   tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})") },
+                              { label: 'Disk Reserved',     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})") },
+                              { label: 'Space',             tag:   'a', value: cc_space[:name] },
+                              { label: 'Space GUID',        tag:   nil, value: cc_space[:guid] },
+                              { label: 'Organization',      tag:   'a', value: cc_organization[:name] },
+                              { label: 'Organization GUID', tag:   nil, value: cc_organization[:guid] },
+                              { label: 'Cell',              tag:   'a', value: "#{rep_envelope.ip}:#{rep_envelope.index}" }
                             ])
             end
           end
@@ -1594,20 +1607,23 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             it 'has details' do
               check_details([
-                              { label: 'Name',             tag:   nil, value: cc_app[:name] },
-                              { label: 'Application GUID', tag: 'div', value: cc_app[:guid] },
-                              { label: 'Index',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app_instance_index})") },
-                              { label: 'Metrics',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(dea_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
-                              { label: 'Diego',            tag:   nil, value: @driver.execute_script('return Format.formatBoolean(false)') },
-                              { label: 'Stack',            tag:   'a', value: cc_stack[:name] },
-                              { label: 'Memory Used',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(dea_container_metric_envelope.containerMetric.memoryBytes)})") },
-                              { label: 'Disk Used',        tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(dea_container_metric_envelope.containerMetric.diskBytes)})") },
-                              { label: 'CPU Used',         tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{dea_container_metric_envelope.containerMetric.cpuPercentage})") },
-                              { label: 'Memory Reserved',  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})") },
-                              { label: 'Disk Reserved',    tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})") },
-                              { label: 'Space',            tag:   'a', value: cc_space[:name] },
-                              { label: 'Organization',     tag:   'a', value: cc_organization[:name] },
-                              { label: 'DEA',              tag:   'a', value: "#{dea_envelope.ip}:#{dea_envelope.index}" }
+                              { label: 'Name',              tag:   nil, value: cc_app[:name] },
+                              { label: 'Application GUID',  tag: 'div', value: cc_app[:guid] },
+                              { label: 'Index',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app_instance_index})") },
+                              { label: 'Metrics',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(dea_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
+                              { label: 'Diego',             tag:   nil, value: @driver.execute_script('return Format.formatBoolean(false)') },
+                              { label: 'Stack',             tag:   'a', value: cc_stack[:name] },
+                              { label: 'Stack GUID',        tag:   nil, value: cc_stack[:guid] },
+                              { label: 'Memory Used',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(dea_container_metric_envelope.containerMetric.memoryBytes)})") },
+                              { label: 'Disk Used',         tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(dea_container_metric_envelope.containerMetric.diskBytes)})") },
+                              { label: 'CPU Used',          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{dea_container_metric_envelope.containerMetric.cpuPercentage})") },
+                              { label: 'Memory Reserved',   tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:memory]})") },
+                              { label: 'Disk Reserved',     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:disk_quota]})") },
+                              { label: 'Space',             tag:   'a', value: cc_space[:name] },
+                              { label: 'Space GUID',        tag:   nil, value: cc_space[:guid] },
+                              { label: 'Organization',      tag:   'a', value: cc_organization[:name] },
+                              { label: 'Organization GUID', tag:   nil, value: cc_organization[:guid] },
+                              { label: 'DEA',               tag:   'a', value: "#{dea_envelope.ip}:#{dea_envelope.index}" }
                             ])
             end
           end
@@ -1620,16 +1636,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has spaces link' do
-            check_filter_link('ApplicationInstances', 14, 'Spaces', cc_space[:guid])
+            check_filter_link('ApplicationInstances', 15, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ApplicationInstances', 15, 'Organizations', cc_organization[:guid])
+            check_filter_link('ApplicationInstances', 17, 'Organizations', cc_organization[:guid])
           end
 
           context 'varz dea' do
             it 'has DEAs link' do
-              check_filter_link('ApplicationInstances', 16, 'DEAs', nats_dea['host'])
+              check_filter_link('ApplicationInstances', 19, 'DEAs', nats_dea['host'])
             end
           end
 
@@ -1637,7 +1653,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             let(:application_instance_source) { :doppler_cell }
 
             it 'has Cells link' do
-              check_filter_link('ApplicationInstances', 13, 'Cells', "#{rep_envelope.ip}:#{rep_envelope.index}")
+              check_filter_link('ApplicationInstances', 16, 'Cells', "#{rep_envelope.ip}:#{rep_envelope.index}")
             end
           end
 
@@ -1645,7 +1661,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             let(:application_instance_source) { :doppler_dea }
 
             it 'has DEAs link' do
-              check_filter_link('ApplicationInstances', 13, 'DEAs', "#{dea_envelope.ip}:#{dea_envelope.index}")
+              check_filter_link('ApplicationInstances', 16, 'DEAs', "#{dea_envelope.ip}:#{dea_envelope.index}")
             end
           end
         end
@@ -1734,17 +1750,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'URI',            tag:   'a', value: "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}" },
-                            { label: 'Host',           tag:   nil, value: cc_route[:host] },
-                            { label: 'Domain',         tag:   'a', value: cc_domain[:name] },
-                            { label: 'Path',           tag:   nil, value: cc_route[:path] },
-                            { label: 'GUID',           tag: 'div', value: cc_route[:guid] },
-                            { label: 'Created',        tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route[:created_at].to_datetime.rfc3339}\")") } },
-                            { label: 'Updated',        tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route[:updated_at].to_datetime.rfc3339}\")") } },
-                            { label: 'Events',         tag:   'a', value: '1' },
-                            { label: 'Route Mappings', tag:   'a', value: '1' },
-                            { label: 'Space',          tag:   'a', value: cc_space[:name] },
-                            { label: 'Organization',   tag:   'a', value: cc_organization[:name] }
+                            { label: 'URI',               tag:   'a', value: "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}" },
+                            { label: 'Host',              tag:   nil, value: cc_route[:host] },
+                            { label: 'Domain',            tag:   'a', value: cc_domain[:name] },
+                            { label: 'Domain GUID',       tag:   nil, value: cc_domain[:guid] },
+                            { label: 'Path',              tag:   nil, value: cc_route[:path] },
+                            { label: 'GUID',              tag: 'div', value: cc_route[:guid] },
+                            { label: 'Created',           tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route[:created_at].to_datetime.rfc3339}\")") } },
+                            { label: 'Updated',           tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route[:updated_at].to_datetime.rfc3339}\")") } },
+                            { label: 'Events',            tag:   'a', value: '1' },
+                            { label: 'Route Mappings',    tag:   'a', value: '1' },
+                            { label: 'Space',             tag:   'a', value: cc_space[:name] },
+                            { label: 'Space GUID',        tag:   nil, value: cc_space[:guid] },
+                            { label: 'Organization',      tag:   'a', value: cc_organization[:name] },
+                            { label: 'Organization GUID', tag:   nil, value: cc_organization[:guid] }
                           ])
           end
 
@@ -1753,19 +1772,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('Routes', 7, 'Events', cc_route[:guid])
+            check_filter_link('Routes', 8, 'Events', cc_route[:guid])
           end
 
           it 'has route mappings link' do
-            check_filter_link('Routes', 8, 'RouteMappings', cc_route[:guid])
+            check_filter_link('Routes', 9, 'RouteMappings', cc_route[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('Routes', 9, 'Spaces', cc_space[:guid])
+            check_filter_link('Routes', 10, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Routes', 10, 'Organizations', cc_organization[:guid])
+            check_filter_link('Routes', 12, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -1838,15 +1857,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'GUID',         tag: 'div', value: cc_app_route[:guid] },
-                            { label: 'Created',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_app_route[:created_at].to_datetime.rfc3339}\")") } },
-                            { label: 'Updated',      tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_app_route[:updated_at].to_datetime.rfc3339}\")") } },
-                            { label: 'URI',          tag:   'a', value: "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}" },
-                            { label: 'Application',  tag:   'a', value: cc_app[:name] },
-                            { label: 'Route',        tag:   'a', value: cc_route[:guid] },
-                            { label: 'Domain',       tag:   'a', value: cc_domain[:name] },
-                            { label: 'Space',        tag:   'a', value: cc_space[:name] },
-                            { label: 'Organization', tag:   'a', value: cc_organization[:name] }
+                            { label: 'GUID',              tag: 'div', value: cc_app_route[:guid] },
+                            { label: 'Created',           tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_app_route[:created_at].to_datetime.rfc3339}\")") } },
+                            { label: 'Updated',           tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_app_route[:updated_at].to_datetime.rfc3339}\")") } },
+                            { label: 'URI',               tag:   'a', value: "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}" },
+                            { label: 'Application',       tag:   'a', value: cc_app[:name] },
+                            { label: 'Application GUID',  tag:   nil, value: cc_app[:guid] },
+                            { label: 'Route GUID',        tag:   'a', value: cc_route[:guid] },
+                            { label: 'Domain',            tag:   'a', value: cc_domain[:name] },
+                            { label: 'Domain GUID',       tag:   nil, value: cc_domain[:guid] },
+                            { label: 'Space',             tag:   'a', value: cc_space[:name] },
+                            { label: 'Space GUID',        tag:   nil, value: cc_space[:guid] },
+                            { label: 'Organization',      tag:   'a', value: cc_organization[:name] },
+                            { label: 'Organization GUID', tag:   nil, value: cc_organization[:guid] }
                           ])
           end
 
@@ -1855,19 +1878,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has routes link' do
-            check_filter_link('RouteMappings', 5, 'Routes', cc_route[:guid])
+            check_filter_link('RouteMappings', 6, 'Routes', cc_route[:guid])
           end
 
           it 'has domains link' do
-            check_filter_link('RouteMappings', 6, 'Domains', cc_domain[:guid])
+            check_filter_link('RouteMappings', 7, 'Domains', cc_domain[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('RouteMappings', 7, 'Spaces', cc_space[:guid])
+            check_filter_link('RouteMappings', 9, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('RouteMappings', 8, 'Organizations', cc_organization[:guid])
+            check_filter_link('RouteMappings', 11, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -2061,7 +2084,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Broker Created',                                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Broker Updated',                                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") },
                             { label: 'Space',                                                     tag:   'a', value: cc_space[:name] },
-                            { label: 'Organization',                                              tag:   'a', value: cc_organization[:name] }
+                            { label: 'Space GUID',                                                tag:   nil, value: cc_space[:guid] },
+                            { label: 'Organization',                                              tag:   'a', value: cc_organization[:name] },
+                            { label: 'Organization GUID',                                         tag:   nil, value: cc_organization[:guid] }
                           ])
           end
 
@@ -2094,7 +2119,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceInstances', 40, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceInstances', 41, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -2224,7 +2249,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Broker Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Broker Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") },
                             { label: 'Space',                            tag:   'a', value: cc_space[:name] },
-                            { label: 'Organization',                     tag:   'a', value: cc_organization[:name] }
+                            { label: 'Space GUID',                       tag:   nil, value: cc_space[:guid] },
+                            { label: 'Organization',                     tag:   'a', value: cc_organization[:name] },
+                            { label: 'Organization GUID',                tag:   nil, value: cc_organization[:guid] }
                           ])
           end
 
@@ -2257,7 +2284,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceBindings', 32, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceBindings', 33, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -2383,7 +2410,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Broker Created',   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Broker Updated',   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") },
                             { label: 'Space',                    tag:   'a', value: cc_space[:name] },
-                            { label: 'Organization',             tag:   'a', value: cc_organization[:name] }
+                            { label: 'Space GUID',               tag:   nil, value: cc_space[:guid] },
+                            { label: 'Organization',             tag:   'a', value: cc_organization[:name] },
+                            { label: 'Organization GUID',        tag:   nil, value: cc_organization[:guid] }
                           ])
           end
 
@@ -2412,7 +2441,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceKeys', 30, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceKeys', 31, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -2560,12 +2589,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Space',        tag: 'div', value: cc_space[:name] },
-                            { label: 'Space GUID',   tag:   nil, value: cc_space[:guid] },
-                            { label: 'Organization', tag:   'a', value: cc_organization[:name] },
-                            { label: 'User',         tag:   'a', value: uaa_user[:username] },
-                            { label: 'User GUID',    tag:   nil, value: uaa_user[:id] },
-                            { label: 'Role',         tag:   nil, value: 'Auditor' }
+                            { label: 'Space',             tag: 'div', value: cc_space[:name] },
+                            { label: 'Space GUID',        tag:   nil, value: cc_space[:guid] },
+                            { label: 'Organization',      tag:   'a', value: cc_organization[:name] },
+                            { label: 'Organization GUID', tag:   nil, value: cc_organization[:guid] },
+                            { label: 'User',              tag:   'a', value: uaa_user[:username] },
+                            { label: 'User GUID',         tag:   nil, value: uaa_user[:id] },
+                            { label: 'Role',              tag:   nil, value: 'Auditor' }
                           ])
           end
 
@@ -2578,7 +2608,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has users link' do
-            check_filter_link('SpaceRoles', 3, 'Users', uaa_user[:id])
+            check_filter_link('SpaceRoles', 4, 'Users', uaa_user[:id])
           end
         end
       end
@@ -2660,6 +2690,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([
                             { label: 'Identity Zone',          tag:   'a', value: uaa_identity_zone[:name] },
+                            { label: 'Identity Zone ID',       tag:   nil, value: uaa_identity_zone[:id] },
                             { label: 'Identifier',             tag: 'div', value: uaa_client[:client_id] },
                             { label: 'Updated',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_client[:lastmodified].to_datetime.rfc3339}\")") },
                             { label: 'Scope',                  tag:   nil, value: uaa_client[:scope] },
@@ -2675,6 +2706,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Approvals',              tag:   'a', value: '1' },
                             { label: 'Additional Information', tag:   nil, value: uaa_client[:additional_information] },
                             { label: 'Service Broker',         tag:   'a', value: cc_service_broker[:name] },
+                            { label: 'Service Broker GUID',    tag:   nil, value: cc_service_broker[:guid] },
                             { label: 'Identity Provider',      tag:   'a', value: uaa_identity_provider[:name] },
                             { label: 'Identity Provider GUID', tag:   nil, value: uaa_identity_provider[:id] }
                           ])
@@ -2685,19 +2717,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('Clients', 12, 'Events', uaa_client[:client_id])
+            check_filter_link('Clients', 13, 'Events', uaa_client[:client_id])
           end
 
           it 'has approvals link' do
-            check_filter_link('Clients', 13, 'Approvals', uaa_client[:client_id])
+            check_filter_link('Clients', 14, 'Approvals', uaa_client[:client_id])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Clients', 15, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Clients', 16, 'ServiceBrokers', cc_service_broker[:guid])
           end
 
           it 'has identity providers link' do
-            check_filter_link('Clients', 16, 'IdentityProviders', uaa_identity_provider[:id])
+            check_filter_link('Clients', 18, 'IdentityProviders', uaa_identity_provider[:id])
           end
         end
       end
@@ -2717,7 +2749,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                  expected_length: 26,
-                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Version', 'Groups', 'Events', 'Approvals', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
+                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Version', 'Events', 'Groups', 'Approvals', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2737,7 +2769,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_user[:phonenumber],
                              @driver.execute_script("return Format.formatBoolean(#{uaa_user[:active]})"),
                              @driver.execute_script("return Format.formatNumber(#{uaa_user[:version]})"),
-                             uaa_group[:displayname],
+                             '1',
                              '1',
                              '1',
                              '4',
@@ -2788,6 +2820,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([
                             { label: 'Identity Zone',                      tag:   'a', value: uaa_identity_zone[:name] },
+                            { label: 'Identity Zone ID',                   tag:   nil, value: uaa_identity_zone[:id] },
                             { label: 'Username',                           tag: 'div', value: uaa_user[:username] },
                             { label: 'GUID',                               tag:   nil, value: uaa_user[:id] },
                             { label: 'Created',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_user[:created].to_datetime.rfc3339}\")") },
@@ -2799,8 +2832,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Phone Number',                       tag:   nil, value: uaa_user[:phonenumber] },
                             { label: 'Active',                             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_user[:active]})") },
                             { label: 'Version',                            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_user[:version]})") },
-                            { label: 'Group',                              tag:   'a', value: uaa_group[:displayname] },
                             { label: 'Events',                             tag:   'a', value: '1' },
+                            { label: 'Groups',                             tag:   'a', value: '1' },
                             { label: 'Approvals',                          tag:   'a', value: '1' },
                             { label: 'Organization Total Roles',           tag:   'a', value: '4' },
                             { label: 'Organization Auditor Roles',         tag:   nil, value: '1' },
@@ -2812,7 +2845,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Space Developer Roles',              tag:   nil, value: '1' },
                             { label: 'Space Manager Roles',                tag:   nil, value: '1' },
                             { label: 'Space',                              tag:   'a', value: cc_space[:name] },
-                            { label: 'Organization',                       tag:   'a', value: cc_organization[:name] }
+                            { label: 'Space GUID',                         tag:   nil, value: cc_space[:guid] },
+                            { label: 'Organization',                       tag:   'a', value: cc_organization[:name] },
+                            { label: 'Organization GUID',                  tag:   nil, value: cc_organization[:guid] }
                           ])
           end
 
@@ -2820,32 +2855,32 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Users', 0, 'IdentityZones', uaa_identity_zone[:id])
           end
 
-          it 'has groups link' do
-            check_filter_link('Users', 12, 'Groups', uaa_group[:displayname])
-          end
-
           it 'has events link' do
             check_filter_link('Users', 13, 'Events', uaa_user[:id])
           end
 
+          it 'has group members link' do
+            check_filter_link('Users', 14, 'GroupMembers', uaa_group[:id])
+          end
+
           it 'has approvals link' do
-            check_filter_link('Users', 14, 'Approvals', uaa_user[:id])
+            check_filter_link('Users', 15, 'Approvals', uaa_user[:id])
           end
 
           it 'has organization roles link' do
-            check_filter_link('Users', 15, 'OrganizationRoles', uaa_user[:id])
+            check_filter_link('Users', 16, 'OrganizationRoles', uaa_user[:id])
           end
 
           it 'has space roles link' do
-            check_filter_link('Users', 20, 'SpaceRoles', uaa_user[:id])
+            check_filter_link('Users', 21, 'SpaceRoles', uaa_user[:id])
           end
 
           it 'has spaces link' do
-            check_filter_link('Users', 24, 'Spaces', cc_space[:guid])
+            check_filter_link('Users', 25, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Users', 25, 'Organizations', cc_organization[:guid])
+            check_filter_link('Users', 27, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -2911,14 +2946,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Identity Zone', tag:   'a', value: uaa_identity_zone[:name] },
-                            { label: 'Name',          tag: 'div', value: uaa_group[:displayname] },
-                            { label: 'GUID',          tag:   nil, value: uaa_group[:id] },
-                            { label: 'Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_group[:created].to_datetime.rfc3339}\")") },
-                            { label: 'Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_group[:lastmodified].to_datetime.rfc3339}\")") },
-                            { label: 'Version',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_group[:version]})") },
-                            { label: 'Description',   tag:   nil, value: uaa_group[:description] },
-                            { label: 'Members',       tag:   'a', value: '1' }
+                            { label: 'Identity Zone',    tag:   'a', value: uaa_identity_zone[:name] },
+                            { label: 'Identity Zone ID', tag:   nil, value: uaa_identity_zone[:id] },
+                            { label: 'Name',             tag: 'div', value: uaa_group[:displayname] },
+                            { label: 'GUID',             tag:   nil, value: uaa_group[:id] },
+                            { label: 'Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_group[:created].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_group[:lastmodified].to_datetime.rfc3339}\")") },
+                            { label: 'Version',          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_group[:version]})") },
+                            { label: 'Description',      tag:   nil, value: uaa_group[:description] },
+                            { label: 'Members',          tag:   'a', value: '1' }
                           ])
           end
 
@@ -2926,8 +2962,67 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Groups', 0, 'IdentityZones', uaa_identity_zone[:id])
           end
 
-          it 'has userslink' do
-            check_filter_link('Groups', 7, 'Users', uaa_group[:displayname])
+          it 'has group members link' do
+            check_filter_link('Groups', 8, 'GroupMembers', uaa_group[:id])
+          end
+        end
+      end
+
+      context 'Group Members' do
+        let(:tab_id)   { 'GroupMembers' }
+        let(:table_id) { 'GroupMembersTable' }
+
+        it 'has a table' do
+          check_table_layout([
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='GroupMembersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                 expected_length: 3,
+                                 labels:          ['Group', 'User', ''],
+                                 colspans:        %w(2 2 1)
+                               },
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='GroupMembersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
+                                 expected_length: 5,
+                                 labels:          %w(Name GUID Name GUID Created),
+                                 colspans:        nil
+                               }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='GroupMembersTable']/tbody/tr/td"),
+                           [
+                             uaa_group[:displayname],
+                             uaa_group[:id],
+                             uaa_user[:username],
+                             uaa_user[:id],
+                             uaa_group_membership[:added].to_datetime.rfc3339
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_GroupMembersTable_0')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([
+                            { label: 'Group',      tag: 'div', value: uaa_group[:displayname] },
+                            { label: 'Group GUID', tag:   nil, value: uaa_group[:id] },
+                            { label: 'User',       tag:    'a', value: uaa_user[:username] },
+                            { label: 'User GUID',  tag:   nil, value: uaa_user[:id] },
+                            { label: 'Created',    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_group_membership[:added].to_datetime.rfc3339}\")") }
+                          ])
+          end
+
+          it 'has groups link' do
+            check_filter_link('GroupMembers', 0, 'Groups', uaa_group[:id])
+          end
+
+          it 'has users link' do
+            check_filter_link('GroupMembers', 2, 'Users', uaa_user[:id])
           end
         end
       end
@@ -3262,12 +3357,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Name',                tag: 'div', value: cc_domain[:name] },
-                            { label: 'GUID',                tag:   nil, value: cc_domain[:guid] },
-                            { label: 'Created',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_domain[:created_at].to_datetime.rfc3339}\")") },
-                            { label: 'Updated',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_domain[:updated_at].to_datetime.rfc3339}\")") },
-                            { label: 'Owning Organization', tag:   'a', value: cc_organization[:name] },
-                            { label: 'Routes',              tag:   'a', value: '1' }
+                            { label: 'Name',                     tag: 'div', value: cc_domain[:name] },
+                            { label: 'GUID',                     tag:   nil, value: cc_domain[:guid] },
+                            { label: 'Created',                  tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_domain[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',                  tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_domain[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Owning Organization',      tag:   'a', value: cc_organization[:name] },
+                            { label: 'Owning Organization GUID', tag:   nil, value: cc_organization[:guid] },
+                            { label: 'Routes',                   tag:   'a', value: '1' }
                           ])
           end
 
@@ -3295,7 +3391,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has routes link' do
-            check_filter_link('Domains', 5, 'Routes', cc_domain[:name])
+            check_filter_link('Domains', 6, 'Routes', cc_domain[:name])
           end
         end
       end
@@ -3622,7 +3718,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Instance Memory Limit',      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_space_quota_definition[:instance_memory_limit]})") },
                             { label: 'Non-Basic Services Allowed', tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_space_quota_definition[:non_basic_services_allowed]})") },
                             { label: 'Spaces',                     tag:   'a', value: '1' },
-                            { label: 'Organization',               tag:   'a', value: cc_organization[:name] }
+                            { label: 'Organization',               tag:   'a', value: cc_organization[:name] },
+                            { label: 'Organization GUID',          tag:   nil, value: cc_organization[:guid] }
                           ])
           end
 
@@ -3737,17 +3834,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Event Timestamp', tag: 'div', value: @driver.execute_script("return Format.formatDateString(\"#{cc_event_space[:timestamp].to_datetime.rfc3339}\")") },
-                            { label: 'Event GUID',      tag:   nil, value: cc_event_space[:guid] },
-                            { label: 'Event Type',      tag:   nil, value: cc_event_space[:type] },
-                            { label: 'Actee Type',      tag:   nil, value: cc_event_space[:actee_type] },
-                            { label: 'Actee',           tag:   nil, value: cc_event_space[:actee_name] },
-                            { label: 'Actee GUID',      tag:   'a', value: cc_event_space[:actee] },
-                            { label: 'Actor Type',      tag:   nil, value: cc_event_space[:actor_type] },
-                            { label: 'Actor',           tag:   nil, value: cc_event_space[:actor_name] },
-                            { label: 'Actor GUID',      tag:   'a', value: cc_event_space[:actor] },
-                            { label: 'Space',           tag:   'a', value: cc_space[:name] },
-                            { label: 'Organization',    tag:   'a', value: cc_organization[:name] }
+                            { label: 'Event Timestamp',   tag: 'div', value: @driver.execute_script("return Format.formatDateString(\"#{cc_event_space[:timestamp].to_datetime.rfc3339}\")") },
+                            { label: 'Event GUID',        tag:   nil, value: cc_event_space[:guid] },
+                            { label: 'Event Type',        tag:   nil, value: cc_event_space[:type] },
+                            { label: 'Actee Type',        tag:   nil, value: cc_event_space[:actee_type] },
+                            { label: 'Actee',             tag:   nil, value: cc_event_space[:actee_name] },
+                            { label: 'Actee GUID',        tag:   'a', value: cc_event_space[:actee] },
+                            { label: 'Actor Type',        tag:   nil, value: cc_event_space[:actor_type] },
+                            { label: 'Actor',             tag:   nil, value: cc_event_space[:actor_name] },
+                            { label: 'Actor GUID',        tag:   'a', value: cc_event_space[:actor] },
+                            { label: 'Space',             tag:   'a', value: cc_space[:name] },
+                            { label: 'Space GUID',        tag:   nil, value: cc_space[:guid] },
+                            { label: 'Organization',      tag:   'a', value: cc_organization[:name] },
+                            { label: 'Organization GUID', tag:   nil, value: cc_organization[:guid] }
                           ])
           end
 
@@ -3764,7 +3863,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has organizations link' do
-            check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
+            check_filter_link('Events', 11, 'Organizations', cc_organization[:guid])
           end
 
           context 'app event' do
@@ -3783,7 +3882,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has organizations link' do
-              check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
+              check_filter_link('Events', 11, 'Organizations', cc_organization[:guid])
             end
           end
 
@@ -3815,7 +3914,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has organizations link' do
-              check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
+              check_filter_link('Events', 11, 'Organizations', cc_organization[:guid])
             end
           end
 
@@ -3835,7 +3934,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has organizations link' do
-              check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
+              check_filter_link('Events', 11, 'Organizations', cc_organization[:guid])
             end
           end
 
@@ -3855,7 +3954,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has organizations link' do
-              check_filter_link('Events', 9, 'Organizations', cc_organization[:guid])
+              check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
             end
           end
 
@@ -3899,7 +3998,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has organizations link' do
-              check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
+              check_filter_link('Events', 11, 'Organizations', cc_organization[:guid])
             end
           end
 
@@ -4036,7 +4135,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Bindings',             tag:   'a', value: '1' },
                             { label: 'Service Keys',                 tag:   'a', value: '1' },
                             { label: 'Space',                        tag:   'a', value: cc_space[:name] },
-                            { label: 'Organization',                 tag:   'a', value: cc_organization[:name] }
+                            { label: 'Space GUID',                   tag:   nil, value: cc_space[:guid] },
+                            { label: 'Organization',                 tag:   'a', value: cc_organization[:name] },
+                            { label: 'Organization GUID',            tag:   nil, value: cc_organization[:guid] }
                           ])
           end
 
@@ -4077,7 +4178,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceBrokers', 16, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceBrokers', 17, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -4691,16 +4792,17 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Identity Zone', tag:   'a', value: uaa_identity_zone[:name] },
-                            { label: 'Name',          tag: 'div', value: uaa_identity_provider[:name] },
-                            { label: 'GUID',          tag:   nil, value: uaa_identity_provider[:id] },
-                            { label: 'Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_identity_provider[:created].to_datetime.rfc3339}\")") },
-                            { label: 'Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_identity_provider[:lastmodified].to_datetime.rfc3339}\")") },
-                            { label: 'Origin Key',    tag:   nil, value: uaa_identity_provider[:origin_key] },
-                            { label: 'Type',          tag:   nil, value: uaa_identity_provider[:type] },
-                            { label: 'Active',        tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_identity_provider[:active]})") },
-                            { label: 'Version',       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_identity_provider[:version]})") },
-                            { label: 'Clients',       tag:   'a', value: '1' }
+                            { label: 'Identity Zone',    tag:   'a', value: uaa_identity_zone[:name] },
+                            { label: 'Identity Zone ID', tag:   nil, value: uaa_identity_zone[:id] },
+                            { label: 'Name',             tag: 'div', value: uaa_identity_provider[:name] },
+                            { label: 'GUID',             tag:   nil, value: uaa_identity_provider[:id] },
+                            { label: 'Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_identity_provider[:created].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_identity_provider[:lastmodified].to_datetime.rfc3339}\")") },
+                            { label: 'Origin Key',       tag:   nil, value: uaa_identity_provider[:origin_key] },
+                            { label: 'Type',             tag:   nil, value: uaa_identity_provider[:type] },
+                            { label: 'Active',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_identity_provider[:active]})") },
+                            { label: 'Version',          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_identity_provider[:version]})") },
+                            { label: 'Clients',          tag:   'a', value: '1' }
                           ])
           end
 
@@ -4709,7 +4811,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has clients link' do
-            check_filter_link('IdentityProviders', 9, 'Clients', uaa_identity_provider[:id])
+            check_filter_link('IdentityProviders', 10, 'Clients', uaa_identity_provider[:id])
           end
         end
       end
@@ -4912,7 +5014,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Space GUID',             tag:   nil, value: cc_space[:guid] },
                             { label: 'Space Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Space Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space[:updated_at].to_datetime.rfc3339}\")") },
-                            { label: 'Organization',           tag:   'a', value: cc_organization[:name] }
+                            { label: 'Organization',           tag:   'a', value: cc_organization[:name] },
+                            { label: 'Organization GUID',      tag:   nil, value: cc_organization[:guid] }
                           ])
           end
 

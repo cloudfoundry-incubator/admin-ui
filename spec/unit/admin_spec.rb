@@ -1201,6 +1201,14 @@ describe AdminUI::Admin do
         verify_not_found('/gateways_view_model/name')
       end
 
+      it '/group_members_view_model succeeds' do
+        verify_disconnected_view_model_items('/group_members_view_model')
+      end
+
+      it '/group_members_view_model/:guid/:guid returns not found' do
+        verify_not_found('/group_members_view_model/group1/user1')
+      end
+
       it '/groups_view_model succeeds' do
         verify_disconnected_view_model_items('/groups_view_model')
       end
@@ -1558,6 +1566,14 @@ describe AdminUI::Admin do
 
       it '/gateways_view_model/:name redirects as expected' do
         get_redirects_as_expected('/gateways_view_model/name')
+      end
+
+      it '/group_members_view_model redirects as expected' do
+        get_redirects_as_expected('/group_members_view_model')
+      end
+
+      it '/group_members_view_model/:guid/:guid redirects as expected' do
+        get_redirects_as_expected('/group_members_view_model/group1/user1')
       end
 
       it '/groups_view_model redirects as expected' do
@@ -1954,6 +1970,10 @@ describe AdminUI::Admin do
 
       it 'posts /gateways_view_model redirects as expected' do
         post_redirects_as_expected('/gateways_view_model')
+      end
+
+      it 'posts /group_members_view_model redirects as expected' do
+        post_redirects_as_expected('/group_members_view_model')
       end
 
       it 'posts /groups_view_model redirects as expected' do

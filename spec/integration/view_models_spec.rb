@@ -347,6 +347,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected group_members_view_model' do
+      let(:results)  { view_models.group_members }
+      let(:expected) { view_models_group_members }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected group_members_view_model detail' do
+      let(:results)  { view_models.group_member(uaa_group[:id], uaa_user[:id]) }
+      let(:expected) { view_models_group_members_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected groups_view_model' do
       let(:results)  { view_models.groups }
       let(:expected) { view_models_groups }

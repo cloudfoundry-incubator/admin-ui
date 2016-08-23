@@ -5,8 +5,6 @@ require 'thread'
 module AdminUI
   class UsersViewModel < AdminUI::BaseViewModel
     def do_items
-      groups                         = @cc.groups
-      group_membership               = @cc.group_membership
       organizations                  = @cc.organizations
       organizations_auditors         = @cc.organizations_auditors
       organizations_billing_managers = @cc.organizations_billing_managers
@@ -19,13 +17,10 @@ module AdminUI
       users_cc                       = @cc.users_cc
       users_uaa                      = @cc.users_uaa
 
-      # groups, group_membership,
       # organizations, organizations_auditors, organizations_billing_managers, organizations_managers, organizations_users,
       # spaces, spaces_auditors, spaces_developers, spaces_managers,
       # users_cc and users_uaa have to exist.  Other record types are optional
-      return result unless groups['connected'] &&
-                           group_membership['connected'] &&
-                           organizations['connected'] &&
+      return result unless organizations['connected'] &&
                            organizations_auditors['connected'] &&
                            organizations_billing_managers['connected'] &&
                            organizations_managers['connected'] &&
@@ -37,33 +32,19 @@ module AdminUI
                            users_cc['connected'] &&
                            users_uaa['connected']
 
-      approvals      = @cc.approvals
-      events         = @cc.events
-      identity_zones = @cc.identity_zones
+      approvals        = @cc.approvals
+      events           = @cc.events
+      group_membership = @cc.group_membership
+      identity_zones   = @cc.identity_zones
 
-      approvals_connected = approvals['connected']
-      events_connected    = events['connected']
+      approvals_connected        = approvals['connected']
+      events_connected           = events['connected']
+      group_membership_connected = group_membership['connected']
 
-      group_hash         = Hash[groups['items'].map { |item| [item[:id], item] }]
       identity_zone_hash = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
       organization_hash  = Hash[organizations['items'].map { |item| [item[:id], item] }]
       space_hash         = Hash[spaces['items'].map { |item| [item[:id], item] }]
       user_cc_hash       = Hash[users_cc['items'].map { |item| [item[:guid], item] }]
-
-      member_groups = {}
-      group_membership['items'].each do |group_membership_entry|
-        return result unless @running
-        Thread.pass
-
-        group_id = group_membership_entry[:group_id]
-        member_id = group_membership_entry[:member_id]
-        member_groups_entry = member_groups[member_id]
-        if member_groups_entry
-          member_groups_entry.push(group_id)
-        else
-          member_groups[member_id] = [group_id]
-        end
-      end
 
       event_counters = {}
       events['items'].each do |event|
@@ -76,6 +57,16 @@ module AdminUI
         actor = event[:actor]
         event_counters[actor] = 0 if event_counters[actor].nil?
         event_counters[actor] += 1
+      end
+
+      group_membership_counters = {}
+      group_membership['items'].each do |group_membership_entry|
+        return result unless @running
+        Thread.pass
+
+        user_id = group_membership_entry[:member_id]
+        group_membership_counters[user_id] = 0 if group_membership_counters[user_id].nil?
+        group_membership_counters[user_id] += 1
       end
 
       approval_counters = {}
@@ -113,9 +104,10 @@ module AdminUI
 
         guid = user_uaa[:id]
 
-        approval_counter = approval_counters[guid]
-        event_counter    = event_counters[guid]
-        identity_zone    = identity_zone_hash[user_uaa[:identity_zone_id]]
+        approval_counter         = approval_counters[guid]
+        event_counter            = event_counters[guid]
+        group_membership_counter = group_membership_counters[guid]
+        identity_zone            = identity_zone_hash[user_uaa[:identity_zone_id]]
 
         row = []
 
@@ -150,22 +142,17 @@ module AdminUI
         row.push(user_uaa[:active])
         row.push(user_uaa[:version])
 
-        authorities = []
-        member_groups_entry = member_groups[guid]
-        if member_groups_entry
-          member_groups_entry.each do |group_id|
-            group = group_hash[group_id]
-            authorities.push(group[:displayname]) if group
-          end
-        end
-
-        authorities = authorities.sort
-
-        row.push(authorities)
-
         if event_counter
           row.push(event_counter)
         elsif events_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if group_membership_counter
+          row.push(group_membership_counter)
+        elsif group_membership_connected
           row.push(0)
         else
           row.push(nil)
@@ -220,7 +207,6 @@ module AdminUI
 
         hash[guid] =
           {
-            'groups'        => authorities,
             'identity_zone' => identity_zone,
             'organization'  => organization,
             'space'         => space,
@@ -229,7 +215,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..25).to_a, (1..13).to_a << 25)
+      result(true, items, hash, (1..25).to_a, (1..12).to_a << 25)
     end
 
     private

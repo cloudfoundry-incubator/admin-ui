@@ -43,6 +43,7 @@
         <script src="js/app/tabs/eventsTab.js"></script>
         <script src="js/app/tabs/featureFlagsTab.js"></script>
         <script src="js/app/tabs/gatewaysTab.js"></script>
+        <script src="js/app/tabs/groupMembersTab.js"></script>
         <script src="js/app/tabs/groupsTab.js"></script>
         <script src="js/app/tabs/healthManagersTab.js"></script>
         <script src="js/app/tabs/identityProvidersTab.js"></script>
@@ -119,6 +120,7 @@
                 <span id="Clients" class="menuItem">Clients</span>
                 <span id="Users" class="menuItem">Users</span>
                 <span id="Groups" class="menuItem">Groups</span>
+                <span id="GroupMembers" class="menuItem">Group Members</span>
                 <span id="Approvals" class="menuItem">Approvals</span>
                 <span id="Buildpacks" class="menuItem">Buildpacks</span>
                 <span id="Domains" class="menuItem">Domains</span>
@@ -757,8 +759,8 @@
                                 <th>Phone Number</th>
                                 <th>Active</th>
                                 <th>Version</th>
-                                <th>Groups</th>
                                 <th>Events</th>
+                                <th>Groups</th>
                                 <th>Approvals</th>
 
                                 <th>Total</th>
@@ -793,6 +795,35 @@
                 <div class="verticalPageSection">
                     <div id="GroupsDetailsLabel" class="propertyLabel">Details</div>
                     <div id="GroupsPropertiesContainer"></div>
+                </div>
+            </div>
+
+            <div id="GroupMembersPage" class="page hiddenPage">
+                <div id="GroupMembersTableContainer" class="pageSection">
+                    <table id="GroupMembersTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr class="customTableHeaderGroup">
+                                <th colspan="2">Group</th>
+                                <th colspan="2">User</th>
+                                <th colspan="1"> </th>
+                            </tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>GUID</th>
+
+                                <th>Name</th>
+                                <th>GUID</th>
+
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody/>
+                    </table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="GroupMembersDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="GroupMembersPropertiesContainer"></div>
                 </div>
             </div>
 

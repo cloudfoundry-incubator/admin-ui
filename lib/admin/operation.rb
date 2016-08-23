@@ -88,6 +88,7 @@ module AdminUI
       @cc.invalidate_group_membership
       @cc.invalidate_approvals
       @view_models.invalidate_groups
+      @view_models.invalidate_group_members
     end
 
     def delete_organization(organization_guid, recursive)
@@ -350,6 +351,7 @@ module AdminUI
         @cc.invalidate_group_membership
         @cc.invalidate_approvals
         @view_models.invalidate_users
+        @view_models.invalidate_group_members
       rescue CCRestClientResponseError => error
         raise cc_error if error.http_code == '404' && cc_error
         raise error
