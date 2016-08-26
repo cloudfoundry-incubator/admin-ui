@@ -1,4 +1,5 @@
 require 'time'
+require 'yajl'
 require_relative '../spec_helper'
 require_relative 'cc_helper'
 require_relative 'nats_helper'
@@ -1253,6 +1254,7 @@ module ViewModelsHelper
         cc_service[:plan_updateable],
         cc_service_provider_display_name,
         cc_service_display_name,
+        Yajl::Parser.parse(cc_service[:requires]).sort,
         1,
         1,
         1,

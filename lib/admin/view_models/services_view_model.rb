@@ -174,6 +174,21 @@ module AdminUI
         end
         row.push(provider_display_name, display_name)
 
+        requires = nil
+        if service[:requires]
+          begin
+            requires = Yajl::Parser.parse(service[:requires]).sort
+          rescue
+            requires = nil
+          end
+        end
+
+        if requires && requires.length.positive?
+          row.push(requires)
+        else
+          row.push(nil)
+        end
+
         if event_counter
           row.push(event_counter)
         elsif events_connected
@@ -253,7 +268,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..23).to_a, (1..23).to_a - [13, 14, 15, 16, 17, 18, 19])
+      result(true, items, hash, (1..24).to_a, (1..24).to_a - [14, 15, 16, 17, 18, 19, 20])
     end
   end
 end

@@ -819,7 +819,7 @@ module CCHelper
       plan_updateable:   true,
       provider:          'test',
       purging:           false,
-      requires:          nil,
+      requires:          '["syslog_drain", "route_forwarding", "volume_mount"]',
       service_broker_id: cc_service_broker[:id],
       tags:              '["service_tag1", "service_tag2"]',
       unique_id:         'service_unique_id',
