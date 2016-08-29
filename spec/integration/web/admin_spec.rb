@@ -1043,12 +1043,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 5,
                                  labels:          ['', '', 'Used', 'Reserved', ''],
-                                 colspans:        %w(1 16 3 2 1)
+                                 colspans:        %w(1 17 3 2 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 23,
-                                 labels:          ['', 'Name', 'GUID', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'Diego', 'SSH Enabled', 'Stack', 'Buildpacks', 'Buildpack GUID', 'Events', 'Instances', 'Route Mappings', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
+                                 expected_length: 24,
+                                 labels:          ['', 'Name', 'GUID', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'Diego', 'SSH Enabled', 'Docker Image', 'Stack', 'Buildpacks', 'Buildpack GUID', 'Events', 'Instances', 'Route Mappings', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -1068,6 +1068,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_app[:updated_at].to_datetime.rfc3339,
                                @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})"),
                                @driver.execute_script("return Format.formatBoolean(#{cc_app[:enable_ssh]})"),
+                               @driver.execute_script("return Format.formatBoolean(#{!cc_app[:docker_image].nil?})"),
                                cc_stack[:name],
                                cc_app[:detected_buildpack],
                                cc_buildpack[:guid],
@@ -1343,6 +1344,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Updated',                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_app[:updated_at].to_datetime.rfc3339}\")") },
                               { label: 'Diego',                      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})") },
                               { label: 'SSH Enabled',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:enable_ssh]})") },
+                              { label: 'Docker Image',               tag:   nil, value: cc_app[:docker_image] },
                               { label: 'Stack',                      tag:   'a', value: cc_stack[:name] },
                               { label: 'Stack GUID',                 tag:   nil, value: cc_stack[:guid] },
                               { label: 'Buildpack',                  tag:   nil, value: cc_app[:detected_buildpack] },
@@ -1382,35 +1384,35 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has stacks link' do
-            check_filter_link('Applications', 10, 'Stacks', cc_stack[:guid])
+            check_filter_link('Applications', 11, 'Stacks', cc_stack[:guid])
           end
 
           it 'has buildpacks link' do
-            check_filter_link('Applications', 13, 'Buildpacks', cc_buildpack[:guid])
+            check_filter_link('Applications', 14, 'Buildpacks', cc_buildpack[:guid])
           end
 
           it 'has events link' do
-            check_filter_link('Applications', 17, 'Events', cc_app[:guid])
+            check_filter_link('Applications', 18, 'Events', cc_app[:guid])
           end
 
           it 'has application instances link' do
-            check_filter_link('Applications', 18, 'ApplicationInstances', cc_app[:guid])
+            check_filter_link('Applications', 19, 'ApplicationInstances', cc_app[:guid])
           end
 
           it 'has route mappings link' do
-            check_filter_link('Applications', 19, 'RouteMappings', cc_app[:guid])
+            check_filter_link('Applications', 20, 'RouteMappings', cc_app[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('Applications', 20, 'ServiceBindings', cc_app[:guid])
+            check_filter_link('Applications', 21, 'ServiceBindings', cc_app[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('Applications', 26, 'Spaces', cc_space[:guid])
+            check_filter_link('Applications', 27, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Applications', 28, 'Organizations', cc_organization[:guid])
+            check_filter_link('Applications', 29, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -1448,7 +1450,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'],
                                Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339,
                                '',
-                               @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})"),
+                               @driver.execute_script('return Format.formatBoolean(false)'),
                                cc_stack[:name],
                                @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes'])})"),
                                @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes'])})"),
@@ -1558,7 +1560,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Instance ID',       tag:   nil, value: varz_dea_app_instance },
                               { label: 'State',             tag:   nil, value: varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] },
                               { label: 'Started',           tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']} * 1000)") },
-                              { label: 'Diego',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_app[:diego]})") },
+                              { label: 'Diego',             tag:   nil, value: @driver.execute_script('return Format.formatBoolean(false)') },
                               { label: 'Stack',             tag:   'a', value: cc_stack[:name] },
                               { label: 'Stack GUID',        tag:   nil, value: cc_stack[:guid] },
                               { label: 'Droplet Hash',      tag:   nil, value: cc_app[:droplet_hash] },

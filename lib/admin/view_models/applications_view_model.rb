@@ -162,6 +162,12 @@ module AdminUI
           row.push(false)
         end
 
+        if !application[:docker_image].nil?
+          row.push(true)
+        else
+          row.push(false)
+        end
+
         if stack
           row.push(stack[:name])
         else
@@ -240,7 +246,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..22).to_a, (1..12).to_a << 22)
+      result(true, items, hash, (1..23).to_a, (1..13).to_a << 23)
     end
   end
 end

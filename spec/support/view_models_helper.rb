@@ -140,6 +140,7 @@ module ViewModelsHelper
         cc_app[:updated_at].to_datetime.rfc3339,
         cc_app[:diego],
         cc_app[:enable_ssh],
+        !cc_app[:docker_image].nil?,
         cc_stack[:name],
         cc_app[:detected_buildpack],
         cc_app[:detected_buildpack_guid],
