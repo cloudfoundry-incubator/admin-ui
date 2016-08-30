@@ -5164,6 +5164,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Index',                 tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{dea_envelope.index})") },
                               { label: 'Source',                tag:   nil, value: 'doppler' },
                               { label: 'Metrics',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(dea_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
+                              { label: 'Uptime',                tag:   nil, value: @driver.execute_script("return Format.formatDopplerUptime(#{DopplerHelper::DEA_VALUE_METRICS['uptime']})") },
                               { label: 'CPU Load Avg',          tag:   nil, value: "#{@driver.execute_script("return Format.formatNumber(#{DopplerHelper::DEA_VALUE_METRICS['avg_cpu_load'].to_f} * 100)")}%" },
                               { label: 'Total Instances',       tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::DEA_VALUE_METRICS['instances']})") },
                               { label: 'Running Instances',     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app[:instances]})") },
@@ -5178,7 +5179,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has application instances link' do
-              check_filter_link('DEAs', 6, 'ApplicationInstances', "#{dea_envelope.ip}:#{dea_envelope.index}")
+              check_filter_link('DEAs', 7, 'ApplicationInstances', "#{dea_envelope.ip}:#{dea_envelope.index}")
             end
           end
         end
@@ -5629,6 +5630,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Index',   tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{gorouter_envelope.index})") },
                               { label: 'Source',  tag:   nil, value: 'doppler' },
                               { label: 'Metrics', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(gorouter_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
+                              { label: 'Uptime',  tag:   nil, value: @driver.execute_script("return Format.formatDopplerUptime(#{DopplerHelper::GOROUTER_VALUE_METRICS['uptime']})") },
                               { label: 'Cores',   tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::GOROUTER_VALUE_METRICS['numCPUS']})") },
                               { label: 'Memory',  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(DopplerHelper::GOROUTER_VALUE_METRICS['memoryStats.numBytesAllocated'])})") }
                             ])
