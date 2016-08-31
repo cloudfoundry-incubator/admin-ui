@@ -4851,7 +4851,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_SecurityGroupsTable_2')
+          check_allowscriptaccess_attribute('Buttons_SecurityGroupsTable_6')
         end
 
         it 'has a checkbox in the first column' do
@@ -4859,12 +4859,54 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage security groups' do
+          def manage_security_group(button_index)
+            check_first_row('SecurityGroupsTable')
+
+            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # @driver.find_element(id: 'Buttons_SecurityGroupsTable_' + button_index.to_s).click
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_SecurityGroupsTable_' + button_index.to_s))
+
+            check_operation_result
+          end
+
+          def check_running_default(running)
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='SecurityGroupsTable']/tbody/tr/td[7]").text == running }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='SecurityGroupsTable']/tbody/tr/td[7]").text).to eq(running)
+          end
+
+          def check_staging_default(staging)
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='SecurityGroupsTable']/tbody/tr/td[6]").text == staging }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='SecurityGroupsTable']/tbody/tr/td[6]").text).to eq(staging)
+          end
+
           it 'has a Rename button' do
             expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_0').text).to eq('Rename')
           end
 
+          it 'has an Enable Staging button' do
+            expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_1').text).to eq('Enable Staging')
+          end
+
+          it 'has a Disable Staging button' do
+            expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_2').text).to eq('Disable Staging')
+          end
+
+          it 'has an Enable Running button' do
+            expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_3').text).to eq('Enable Running')
+          end
+
+          it 'has a Disable Running button' do
+            expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_4').text).to eq('Disable Running')
+          end
+
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_1').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_5').text).to eq('Delete')
           end
 
           context 'Rename button' do
@@ -4873,9 +4915,33 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
+          context 'Enable Staging button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_SecurityGroupsTable_5' }
+            end
+          end
+
+          context 'Disable Staging button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_SecurityGroupsTable_5' }
+            end
+          end
+
+          context 'Enable Running button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_SecurityGroupsTable_5' }
+            end
+          end
+
+          context 'Disable Running button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_SecurityGroupsTable_5' }
+            end
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
-              let(:button_id) { 'Buttons_SecurityGroupsTable_1' }
+              let(:button_id) { 'Buttons_SecurityGroupsTable_5' }
             end
           end
 
@@ -4887,9 +4953,49 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
+          it 'enables the selected security group staging default' do
+            # let security group with staging default disabled
+            manage_security_group(2)
+            check_staging_default('false')
+
+            # enable the security group staging default
+            manage_security_group(1)
+            check_staging_default('true')
+          end
+
+          it 'disables the selected security group staging default' do
+            # let security group with staging default enabled
+            manage_security_group(1)
+            check_staging_default('true')
+
+            # disable the security group staging default
+            manage_security_group(2)
+            check_staging_default('false')
+          end
+
+          it 'enables the selected security group running default' do
+            # let security group with running default disabled
+            manage_security_group(4)
+            check_running_default('false')
+
+            # enable the security group running default
+            manage_security_group(3)
+            check_running_default('true')
+          end
+
+          it 'disables the selected security group running default' do
+            # let security group with running default enabled
+            manage_security_group(3)
+            check_running_default('true')
+
+            # disable the security group running default
+            manage_security_group(4)
+            check_running_default('false')
+          end
+
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_SecurityGroupsTable_1' }
+              let(:button_id)       { 'Buttons_SecurityGroupsTable_5' }
               let(:confirm_message) { 'Are you sure you want to delete the selected security groups?' }
             end
           end

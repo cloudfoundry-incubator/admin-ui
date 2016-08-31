@@ -1,3 +1,5 @@
+require 'yajl'
+
 module AdminUI
   class Operation
     def initialize(config, logger, cc, client, doppler, varz, view_models)
@@ -401,9 +403,38 @@ module AdminUI
     end
 
     def manage_security_group(security_group_guid, control_message)
-      url = "/v2/security_groups/#{security_group_guid}"
-      @logger.debug("PUT #{url}, #{control_message}")
-      @client.put_cc(url, control_message)
+      json = Yajl::Parser.parse(control_message)
+      running_default = json['running_default']
+      staging_default = json['staging_default']
+
+      if running_default.nil?
+        if staging_default.nil?
+          url = "/v2/security_groups/#{security_group_guid}"
+          @logger.debug("PUT #{url}, #{control_message}")
+          @client.put_cc(url, control_message)
+        else
+          url = "/v2/config/staging_security_groups/#{security_group_guid}"
+
+          if staging_default
+            @logger.debug("PUT #{url}")
+            @client.put_cc(url, nil)
+          else
+            @logger.debug("DELETE #{url}")
+            @client.delete_cc(url)
+          end
+        end
+      else
+        url = "/v2/config/running_security_groups/#{security_group_guid}"
+
+        if running_default
+          @logger.debug("PUT #{url}")
+          @client.put_cc(url, nil)
+        else
+          @logger.debug("DELETE #{url}")
+          @client.delete_cc(url)
+        end
+      end
+
       @cc.invalidate_security_groups
       @view_models.invalidate_security_groups
     end

@@ -1703,6 +1703,42 @@ module CCHelper
       end
     end
 
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/config/running_security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_PUT, anything, anything, anything) do
+      if @cc_security_groups_deleted
+        cc_security_group_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE security_groups SET running_default = 'true' WHERE guid = '#{cc_security_group[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/config/staging_security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_PUT, anything, anything, anything) do
+      if @cc_security_groups_deleted
+        cc_security_group_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE security_groups SET staging_default = 'true' WHERE guid = '#{cc_security_group[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/config/running_security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_security_groups_deleted
+        cc_security_group_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE security_groups SET running_default = 'false' WHERE guid = '#{cc_security_group[:guid]}'")
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/config/staging_security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      if @cc_security_groups_deleted
+        cc_security_group_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE security_groups SET staging_default = 'false' WHERE guid = '#{cc_security_group[:guid]}'")
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
       if @cc_security_groups_deleted
         cc_security_group_not_found

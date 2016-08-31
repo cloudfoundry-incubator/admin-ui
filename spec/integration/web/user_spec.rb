@@ -227,7 +227,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Security Groups tab does not have rename or delete buttons' do
+    context 'Security Groups tab does not have rename, enable staging, disable staging, enable running, disable running or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'SecurityGroups' }
         let(:page_id)   { 'SecurityGroupsPage' }

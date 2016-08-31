@@ -351,22 +351,22 @@ describe AdminUI::Admin, type: :integration do
 
     it 'disables buildpack' do
       make_buildpack_enabled
-      expect { make_buildpack_disabled }.to change { get_json('/buildpacks_view_model')['items']['items'][0][6].to_s }.from('true').to('false')
+      expect { make_buildpack_disabled }.to change { get_json('/buildpacks_view_model')['items']['items'][0][6] }.from(true).to(false)
     end
 
     it 'enables buildpack' do
       make_buildpack_disabled
-      expect { make_buildpack_enabled }.to change { get_json('/buildpacks_view_model')['items']['items'][0][6].to_s }.from('false').to('true')
+      expect { make_buildpack_enabled }.to change { get_json('/buildpacks_view_model')['items']['items'][0][6] }.from(false).to(true)
     end
 
     it 'locks buildpack' do
       make_buildpack_unlocked
-      expect { make_buildpack_locked }.to change { get_json('/buildpacks_view_model')['items']['items'][0][7].to_s }.from('false').to('true')
+      expect { make_buildpack_locked }.to change { get_json('/buildpacks_view_model')['items']['items'][0][7] }.from(false).to(true)
     end
 
     it 'unlocks buildpack' do
       make_buildpack_locked
-      expect { make_buildpack_unlocked }.to change { get_json('/buildpacks_view_model')['items']['items'][0][7].to_s }.from('true').to('false')
+      expect { make_buildpack_unlocked }.to change { get_json('/buildpacks_view_model')['items']['items'][0][7] }.from(true).to(false)
     end
 
     it 'deletes a buildpack' do
@@ -535,12 +535,12 @@ describe AdminUI::Admin, type: :integration do
 
     it 'disables feature flag' do
       make_feature_flag_enabled
-      expect { make_feature_flag_disabled }.to change { get_json('/feature_flags_view_model')['items']['items'][0][5].to_s }.from('true').to('false')
+      expect { make_feature_flag_disabled }.to change { get_json('/feature_flags_view_model')['items']['items'][0][5] }.from(true).to(false)
     end
 
     it 'enables feature flag' do
       make_feature_flag_disabled
-      expect { make_feature_flag_enabled }.to change { get_json('/feature_flags_view_model')['items']['items'][0][5].to_s }.from('false').to('true')
+      expect { make_feature_flag_enabled }.to change { get_json('/feature_flags_view_model')['items']['items'][0][5] }.from(false).to(true)
     end
   end
 
@@ -869,6 +869,30 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['put', "/security_groups/#{cc_security_group[:guid]}; body = {\"name\":\"#{cc_security_group_rename}\"}"]], true)
     end
 
+    def disable_security_group_running_default
+      response = put_request("/security_groups/#{cc_security_group[:guid]}", '{"running_default":false}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/security_groups/#{cc_security_group[:guid]}; body = {\"running_default\":false}"]], true)
+    end
+
+    def enable_security_group_running_default
+      response = put_request("/security_groups/#{cc_security_group[:guid]}", '{"running_default":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/security_groups/#{cc_security_group[:guid]}; body = {\"running_default\":true}"]], true)
+    end
+
+    def disable_security_group_staging_default
+      response = put_request("/security_groups/#{cc_security_group[:guid]}", '{"staging_default":false}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/security_groups/#{cc_security_group[:guid]}; body = {\"staging_default\":false}"]], true)
+    end
+
+    def enable_security_group_staging_default
+      response = put_request("/security_groups/#{cc_security_group[:guid]}", '{"staging_default":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/security_groups/#{cc_security_group[:guid]}; body = {\"staging_default\":true}"]], true)
+    end
+
     def delete_security_group
       response = delete_request("/security_groups/#{cc_security_group[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -879,8 +903,28 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/security_groups_view_model']], true)
     end
 
-    it 'renames a secrity_group' do
+    it 'renames a security_group' do
       expect { rename_security_group }.to change { get_json('/security_groups_view_model')['items']['items'][0][1] }.from(cc_security_group[:name]).to(cc_security_group_rename)
+    end
+
+    it 'disables a security_group as running default' do
+      enable_security_group_running_default
+      expect { disable_security_group_running_default }.to change { get_json('/security_groups_view_model')['items']['items'][0][6] }.from(true).to(false)
+    end
+
+    it 'enables a security_group as running default' do
+      disable_security_group_running_default
+      expect { enable_security_group_running_default }.to change { get_json('/security_groups_view_model')['items']['items'][0][6] }.from(false).to(true)
+    end
+
+    it 'disables a security_group as staging default' do
+      enable_security_group_staging_default
+      expect { disable_security_group_staging_default }.to change { get_json('/security_groups_view_model')['items']['items'][0][5] }.from(true).to(false)
+    end
+
+    it 'enables a security_group as staging default' do
+      disable_security_group_staging_default
+      expect { enable_security_group_staging_default }.to change { get_json('/security_groups_view_model')['items']['items'][0][5] }.from(false).to(true)
     end
 
     it 'deletes a security group' do
@@ -1108,12 +1152,12 @@ describe AdminUI::Admin, type: :integration do
 
     it 'makes service plan private' do
       make_service_plan_public
-      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][7].to_s }.from('true').to('false')
+      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][7] }.from(true).to(false)
     end
 
     it 'makes service plan public' do
       make_service_plan_private
-      expect { make_service_plan_public }.to change { get_json('/service_plans_view_model')['items']['items'][0][7].to_s }.from('false').to('true')
+      expect { make_service_plan_public }.to change { get_json('/service_plans_view_model')['items']['items'][0][7] }.from(false).to(true)
     end
 
     it 'deletes a service plan' do

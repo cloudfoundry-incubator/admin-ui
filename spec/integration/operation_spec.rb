@@ -827,12 +827,48 @@ describe AdminUI::Operation, type: :integration do
         operation.manage_security_group(cc_security_group[:guid], "{\"name\":\"#{cc_security_group_rename}\"}")
       end
 
+      def disable_security_group_running_default
+        operation.manage_security_group(cc_security_group[:guid], '{"running_default":false}')
+      end
+
+      def enable_security_group_running_default
+        operation.manage_security_group(cc_security_group[:guid], '{"running_default":true}')
+      end
+
+      def disable_security_group_staging_default
+        operation.manage_security_group(cc_security_group[:guid], '{"staging_default":false}')
+      end
+
+      def enable_security_group_staging_default
+        operation.manage_security_group(cc_security_group[:guid], '{"staging_default":true}')
+      end
+
       def delete_security_group
         operation.delete_security_group(cc_security_group[:guid])
       end
 
       it 'renames the security_group' do
         expect { rename_security_group }.to change { cc.security_groups['items'][0][:name] }.from(cc_security_group[:name]).to(cc_security_group_rename)
+      end
+
+      it 'disables the security_group running default' do
+        enable_security_group_running_default
+        expect { disable_security_group_running_default }.to change { cc.security_groups['items'][0][:running_default] }.from(true).to(false)
+      end
+
+      it 'enables the security_group running default' do
+        disable_security_group_running_default
+        expect { enable_security_group_running_default }.to change { cc.security_groups['items'][0][:running_default] }.from(false).to(true)
+      end
+
+      it 'disables the security_group staging default' do
+        enable_security_group_staging_default
+        expect { disable_security_group_staging_default }.to change { cc.security_groups['items'][0][:staging_default] }.from(true).to(false)
+      end
+
+      it 'enables the security_group staging default' do
+        disable_security_group_staging_default
+        expect { enable_security_group_staging_default }.to change { cc.security_groups['items'][0][:staging_default] }.from(false).to(true)
       end
 
       it 'deletes security group' do
@@ -853,6 +889,22 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails renaming deleted security_group' do
           expect { rename_security_group }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_security_group_not_found(exception) }
+        end
+
+        it 'fails disabling running default on deleted security_group' do
+          expect { disable_security_group_running_default }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_security_group_not_found(exception) }
+        end
+
+        it 'fails enabling running default on deleted security_group' do
+          expect { enable_security_group_running_default }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_security_group_not_found(exception) }
+        end
+
+        it 'fails disabling staging default on deleted security_group' do
+          expect { disable_security_group_staging_default }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_security_group_not_found(exception) }
+        end
+
+        it 'fails disabling staging default on deleted security_group' do
+          expect { disable_security_group_staging_default }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_security_group_not_found(exception) }
         end
 
         it 'fails deleting deleted security group' do
@@ -1126,12 +1178,12 @@ describe AdminUI::Operation, type: :integration do
 
       it 'makes service plan public' do
         make_service_plan_private
-        expect { make_service_plan_public }.to change { cc.service_plans['items'][0][:public].to_s }.from('false').to('true')
+        expect { make_service_plan_public }.to change { cc.service_plans['items'][0][:public] }.from(false).to(true)
       end
 
       it 'makes service plan private' do
         make_service_plan_public
-        expect { make_service_plan_private }.to change { cc.service_plans['items'][0][:public].to_s }.from('true').to('false')
+        expect { make_service_plan_private }.to change { cc.service_plans['items'][0][:public] }.from(true).to(false)
       end
 
       it 'deletes service plan' do
