@@ -91,7 +91,8 @@ Sequel.migration do
       String :app_guid, :text=>true
       String :droplet_guid, :text=>true
       String :stack, :text=>true
-      String :buildpack, :text=>true
+      String :salt, :text=>true
+      String :encrypted_buildpack, :text=>true
       
       index [:droplet_guid], :name=>:bp_lifecycle_data_droplet_guid
       index [:app_guid], :name=>:buildpack_lifecycle_data_app_guid
@@ -515,7 +516,6 @@ Sequel.migration do
       String :droplet_hash, :text=>true
       String :version, :text=>true
       String :metadata, :default=>"{}", :size=>4096, :null=>false
-      String :buildpack, :text=>true
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       foreign_key :stack_id, :stacks, :null=>false, :key=>[:id]
       String :detected_buildpack, :text=>true
@@ -542,6 +542,8 @@ Sequel.migration do
       String :docker_salt, :text=>true
       String :staging_failed_description, :text=>true
       String :ports, :text=>true
+      String :buildpack_salt, :text=>true
+      String :encrypted_buildpack, :text=>true
       
       index [:app_guid]
       index [:created_at]

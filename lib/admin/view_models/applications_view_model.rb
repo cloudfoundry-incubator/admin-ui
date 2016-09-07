@@ -174,7 +174,7 @@ module AdminUI
           row.push(nil)
         end
 
-        if application[:buildpack]
+        if application[:buildpack] # Removed in cf-release 241. Replaced with encrypted_buildpack
           row.push(application[:buildpack])
         elsif application[:detected_buildpack]
           row.push(application[:detected_buildpack])
