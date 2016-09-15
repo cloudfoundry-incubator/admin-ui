@@ -217,6 +217,20 @@ Sequel.migration do
       index [:name], :unique=>true
     end
     
+    create_table(:isolation_segments, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :name, :null=>false
+      
+      index [:name], :name=>:isolation_segment_name_unique_constraint, :unique=>true
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:name]
+      index [:updated_at]
+    end
+    
     create_table(:lockings, :ignore_index_errors=>true) do
       primary_key :id
       String :name, :text=>true, :null=>false
@@ -492,6 +506,7 @@ Sequel.migration do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :space_quota_definition_id, :space_quota_definitions, :key=>[:id]
       TrueClass :allow_ssh, :default=>true
+      foreign_key :isolation_segment_guid, :isolation_segments, :type=>String, :text=>true, :key=>[:guid]
       
       index [:created_at]
       index [:guid], :unique=>true

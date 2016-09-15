@@ -53,12 +53,6 @@ module AdminUI
             table:   :oauth_client_details,
             columns: [:access_token_validity, :additional_information, :app_launch_url, :authorities, :authorized_grant_types, :autoapprove, :client_id, :identity_zone_id, :lastmodified, :refresh_token_validity, :scope, :show_on_home_page, :web_server_redirect_uri]
           },
-          client_identity_providers:
-          {
-            db_uri:  uaadb_uri,
-            table:   :client_idp,
-            columns: [:client_id, :identity_provider_id]
-          },
           domains:
           {
             db_uri:  ccdb_uri,
@@ -335,10 +329,6 @@ module AdminUI
       result_cache(:clients)
     end
 
-    def client_identity_providers
-      result_cache(:client_identity_providers)
-    end
-
     def domains
       result_cache(:domains)
     end
@@ -389,10 +379,6 @@ module AdminUI
 
     def invalidate_clients
       invalidate_cache(:clients)
-    end
-
-    def invalidate_client_identity_providers
-      invalidate_cache(:client_identity_providers)
     end
 
     def invalidate_domains

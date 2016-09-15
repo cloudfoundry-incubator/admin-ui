@@ -65,7 +65,6 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_uaa(url)
       @cc.invalidate_clients
-      @cc.invalidate_client_identity_providers
       @cc.invalidate_approvals
       @view_models.invalidate_clients
     end

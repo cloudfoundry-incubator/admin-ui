@@ -11,9 +11,7 @@ module AdminUI
       return result unless clients['connected']
 
       approvals                 = @cc.approvals
-      client_identity_providers = @cc.client_identity_providers
       events                    = @cc.events
-      identity_providers        = @cc.identity_providers
       identity_zones            = @cc.identity_zones
       service_brokers           = @cc.service_brokers
       service_dashboard_clients = @cc.service_dashboard_clients
@@ -21,8 +19,6 @@ module AdminUI
       approvals_connected = approvals['connected']
       events_connected    = events['connected']
 
-      client_identity_provider_hash = Hash[client_identity_providers['items'].map { |item| [item[:client_id], item] }]
-      identity_provider_hash        = Hash[identity_providers['items'].map { |item| [item[:id], item] }]
       identity_zone_hash            = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
       service_broker_hash           = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
       service_dashboard_client_hash = Hash[service_dashboard_clients['items'].map { |item| [item[:uaa_id], item] }]
@@ -65,8 +61,6 @@ module AdminUI
 
         client_id = client[:client_id]
 
-        client_identity_provider = client_identity_provider_hash[client_id]
-        identity_provider        = client_identity_provider.nil? ? nil : identity_provider_hash[client_identity_provider[:identity_provider_id]]
         identity_zone            = identity_zone_hash[client[:identity_zone_id]]
         service_dashboard_client = service_dashboard_client_hash[client_id]
         service_broker           = service_dashboard_client.nil? ? nil : service_broker_hash[service_dashboard_client[:service_broker_id]]
@@ -156,25 +150,17 @@ module AdminUI
           row.push(nil)
         end
 
-        if identity_provider
-          row.push(identity_provider[:name])
-          row.push(identity_provider[:id])
-        else
-          row.push(nil, nil)
-        end
-
         items.push(row)
 
         hash[client_id] =
           {
-            'client'            => client,
-            'identity_provider' => identity_provider,
-            'identity_zone'     => identity_zone,
-            'service_broker'    => service_broker
+            'client'         => client,
+            'identity_zone'  => identity_zone,
+            'service_broker' => service_broker
           }
       end
 
-      result(true, items, hash, (1..15).to_a, [1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 15])
+      result(true, items, hash, (1..13).to_a, [1, 2, 3, 4, 5, 6, 7, 8, 13])
     end
   end
 end

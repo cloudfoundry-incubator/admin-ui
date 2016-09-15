@@ -2624,14 +2624,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 3,
-                                 labels:          ['', '', 'Identity Provider'],
-                                 colspans:        %w(1 13 2)
-                               },
-                               {
-                                 columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 16,
-                                 labels:          ['', 'Identity Zone', 'Identifier', 'Updated', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Access Token Validity', 'Refresh Token Validity', 'Events', 'Approvals', 'Service Broker', 'Name', 'GUID'],
+                                 expected_length: 14,
+                                 labels:          ['', 'Identity Zone', 'Identifier', 'Updated', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Access Token Validity', 'Refresh Token Validity', 'Events', 'Approvals', 'Service Broker'],
                                  colspans:        nil
                                }
                              ])
@@ -2651,9 +2645,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatNumber(#{uaa_client[:refresh_token_validity]})"),
                              '1',
                              '1',
-                             cc_service_broker[:name],
-                             uaa_identity_provider[:name],
-                             uaa_identity_provider[:id]
+                             cc_service_broker[:name]
                            ])
         end
 
@@ -2708,9 +2700,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Approvals',              tag:   'a', value: '1' },
                             { label: 'Additional Information', tag:   nil, value: uaa_client[:additional_information] },
                             { label: 'Service Broker',         tag:   'a', value: cc_service_broker[:name] },
-                            { label: 'Service Broker GUID',    tag:   nil, value: cc_service_broker[:guid] },
-                            { label: 'Identity Provider',      tag:   'a', value: uaa_identity_provider[:name] },
-                            { label: 'Identity Provider GUID', tag:   nil, value: uaa_identity_provider[:id] }
+                            { label: 'Service Broker GUID',    tag:   nil, value: cc_service_broker[:guid] }
                           ])
           end
 
@@ -2728,10 +2718,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has service brokers link' do
             check_filter_link('Clients', 16, 'ServiceBrokers', cc_service_broker[:guid])
-          end
-
-          it 'has identity providers link' do
-            check_filter_link('Clients', 18, 'IdentityProviders', uaa_identity_provider[:id])
           end
         end
       end
@@ -4767,8 +4753,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='IdentityProvidersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 10,
-                                 labels:          ['Identity Zone', 'Name', 'GUID', 'Created', 'Updated', 'Origin Key', 'Type', 'Active', 'Version', 'Clients'],
+                                 expected_length: 9,
+                                 labels:          ['Identity Zone', 'Name', 'GUID', 'Created', 'Updated', 'Origin Key', 'Type', 'Active', 'Version'],
                                  colspans:        nil
                                }
                              ])
@@ -4783,8 +4769,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_identity_provider[:origin_key],
                              uaa_identity_provider[:type],
                              @driver.execute_script("return Format.formatBoolean(#{uaa_identity_provider[:active]})"),
-                             @driver.execute_script("return Format.formatNumber(#{uaa_identity_provider[:version]})"),
-                             '1'
+                             @driver.execute_script("return Format.formatNumber(#{uaa_identity_provider[:version]})")
                            ])
         end
 
@@ -4808,17 +4793,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Origin Key',       tag:   nil, value: uaa_identity_provider[:origin_key] },
                             { label: 'Type',             tag:   nil, value: uaa_identity_provider[:type] },
                             { label: 'Active',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_identity_provider[:active]})") },
-                            { label: 'Version',          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_identity_provider[:version]})") },
-                            { label: 'Clients',          tag:   'a', value: '1' }
+                            { label: 'Version',          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_identity_provider[:version]})") }
                           ])
           end
 
           it 'has identity zones link' do
             check_filter_link('IdentityProviders', 0, 'IdentityZones', uaa_identity_zone[:id])
-          end
-
-          it 'has clients link' do
-            check_filter_link('IdentityProviders', 10, 'Clients', uaa_identity_provider[:id])
           end
         end
       end

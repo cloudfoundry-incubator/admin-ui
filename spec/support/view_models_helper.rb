@@ -259,19 +259,16 @@ module ViewModelsHelper
         uaa_client[:refresh_token_validity],
         1,
         1,
-        cc_service_broker[:name],
-        uaa_identity_provider[:name],
-        uaa_identity_provider[:id]
+        cc_service_broker[:name]
       ]
     ]
   end
 
   def view_models_clients_detail
     {
-      'client'            => uaa_client,
-      'identity_provider' => uaa_identity_provider,
-      'identity_zone'     => uaa_identity_zone,
-      'service_broker'    => cc_service_broker
+      'client'         => uaa_client,
+      'identity_zone'  => uaa_identity_zone,
+      'service_broker' => cc_service_broker
     }
   end
 
@@ -628,8 +625,7 @@ module ViewModelsHelper
         uaa_identity_provider[:origin_key],
         uaa_identity_provider[:type],
         uaa_identity_provider[:active],
-        uaa_identity_provider[:version],
-        1
+        uaa_identity_provider[:version]
       ]
     ]
   end

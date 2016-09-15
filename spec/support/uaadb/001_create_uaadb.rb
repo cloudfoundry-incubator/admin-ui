@@ -22,13 +22,6 @@ Sequel.migration do
       primary_key [:username, :clientid, :scope]
     end
     
-    create_table(:client_idp) do
-      String :client_id, :size=>255, :null=>false
-      String :identity_provider_id, :size=>36, :null=>false
-      
-      primary_key [:client_id, :identity_provider_id]
-    end
-    
     create_table(:expiring_code_store) do
       String :code, :size=>255, :null=>false
       Bignum :expiresat, :null=>false
@@ -206,7 +199,6 @@ Sequel.migration do
       String :username, :size=>255, :null=>false
       String :password, :size=>255, :null=>false
       String :email, :size=>255, :null=>false
-      Bignum :authority, :default=>0, :null=>false
       String :givenname, :size=>255
       String :familyname, :size=>255
       TrueClass :active, :default=>true
