@@ -195,7 +195,7 @@ module AdminUI
       cancel_connect_timer
       cancel_rollup_interval_timer
 
-      @doppler_websocket.close if @doppler_websocket
+      @doppler_websocket&.close
     end
 
     def cancel_connect_timer

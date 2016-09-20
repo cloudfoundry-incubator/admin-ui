@@ -815,7 +815,7 @@ module ViewModelsHelper
   def view_models_routers_detail
     doppler_gorouter_hash = nil
     varz_router_hash      = nil
-    top_10_apps_array     = nil
+    top10_apps_array      = nil
 
     if application_instance_source == :doppler_dea
       doppler_gorouter_hash =
@@ -837,7 +837,7 @@ module ViewModelsHelper
           'uri'       => nats_router_varz
         }
 
-      top_10_apps_array =
+      top10_apps_array =
         [
           {
             'guid'   => cc_app[:guid],
@@ -853,7 +853,7 @@ module ViewModelsHelper
     {
       'doppler_gorouter' => doppler_gorouter_hash,
       'varz_router'      => varz_router_hash,
-      'top_10_apps'      => top_10_apps_array
+      'top_10_apps'      => top10_apps_array
     }
   end
 

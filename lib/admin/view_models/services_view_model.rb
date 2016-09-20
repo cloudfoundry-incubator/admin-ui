@@ -183,7 +183,7 @@ module AdminUI
           end
         end
 
-        if requires && requires.length.positive?
+        if requires&.length.positive?
           row.push(requires)
         else
           row.push(nil)

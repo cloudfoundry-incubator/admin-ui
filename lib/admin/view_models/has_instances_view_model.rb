@@ -12,14 +12,12 @@ module AdminUI
       application_guid = application[:guid]
 
       containers = containers_hash[application_guid]
-      if containers
-        containers.each do |container|
-          Thread.pass
+      containers&.each do |container|
+        Thread.pass
 
-          counters_hash['used_memory'] += container[:memory_bytes]
-          counters_hash['used_disk'] += container[:disk_bytes]
-          counters_hash['used_cpu'] += container[:cpu_percentage]
-        end
+        counters_hash['used_memory'] += container[:memory_bytes]
+        counters_hash['used_disk'] += container[:disk_bytes]
+        counters_hash['used_cpu'] += container[:cpu_percentage]
       end
 
       dea_instances = deas_instance_hash[application_guid]

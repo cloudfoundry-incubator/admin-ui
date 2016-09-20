@@ -92,13 +92,11 @@ module AdminUI
             optional(:varz_discovery_interval) => Integer
           }
 
-        unless schema[:stats_refresh_schedules].nil?
-          schema[:stats_refresh_schedules].each do |spec|
-            begin
-              CronParser.new(spec)
-            rescue => error
-              raise Membrane::SchemaValidationError, error.inspect
-            end
+        schema[:stats_refresh_schedules]&.each do |spec|
+          begin
+            CronParser.new(spec)
+          rescue => error
+            raise Membrane::SchemaValidationError, error.inspect
           end
         end
         schema
@@ -231,7 +229,7 @@ module AdminUI
 
     def sender_email_authtype
       return nil if @config[:sender_email].nil?
-      @config[:sender_email][:authtype].to_sym if @config[:sender_email][:authtype]
+      @config[:sender_email][:authtype]&.to_sym
     end
 
     def sender_email_domain

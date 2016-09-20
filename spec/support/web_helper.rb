@@ -28,26 +28,24 @@ shared_context :web_context do
   end
 
   def selenium_web_driver
-    if ENV['TRAVIS']
-      access_key        = ENV['SAUCE_ACCESS_KEY']
-      build_number      = ENV['TRAVIS_BUILD_NUMBER']
-      tunnel_identifier = ENV['TRAVIS_JOB_NUMBER']
-      username          = ENV['SAUCE_USERNAME']
+    return Selenium::WebDriver.for(:firefox, marionette: true) unless ENV['TRAVIS']
 
-      caps = Selenium::WebDriver::Remote::Capabilities.firefox(marionette: true,
-                                                               build: build_number,
-                                                               'tunnel-identifier' => tunnel_identifier)
+    access_key        = ENV['SAUCE_ACCESS_KEY']
+    build_number      = ENV['TRAVIS_BUILD_NUMBER']
+    tunnel_identifier = ENV['TRAVIS_JOB_NUMBER']
+    username          = ENV['SAUCE_USERNAME']
 
-      url = "http://#{username}:#{access_key}@localhost:4445/wd/hub"
-      client = Selenium::WebDriver::Remote::Http::Default.new
-      client.timeout = 600
-      return Selenium::WebDriver.for(:remote,
-                                     http_client:          client,
-                                     desired_capabilities: caps,
-                                     url:                  url)
-    else
-      return Selenium::WebDriver.for(:firefox, marionette: true)
-    end
+    caps = Selenium::WebDriver::Remote::Capabilities.firefox(marionette: true,
+                                                             build: build_number,
+                                                             'tunnel-identifier' => tunnel_identifier)
+
+    url = "http://#{username}:#{access_key}@localhost:4445/wd/hub"
+    client = Selenium::WebDriver::Remote::Http::Default.new
+    client.timeout = 600
+    return Selenium::WebDriver.for(:remote,
+                                   http_client:          client,
+                                   desired_capabilities: caps,
+                                   url:                  url)
   rescue => error
     unless url.nil?
       puts "Trying to connect to: #{url.gsub(access_key, '<access_key>')}"

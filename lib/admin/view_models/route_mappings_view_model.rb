@@ -62,7 +62,7 @@ module AdminUI
           fqdn = domain[:name]
           port = route[:port]
 
-          if !port.nil? && port.positive? # Older versions will have nil port
+          if port&.positive? # Older versions will have nil port
             fqdn = "tcp://#{fqdn}:#{port}"
           else
             host = route[:host]

@@ -137,22 +137,15 @@ module AdminUI
       loop do
         response = Utils.http_request(@config, url, method, nil, body, @token)
 
-        if method == Utils::HTTP_GET && response.is_a?(Net::HTTPOK)
-          return Yajl::Parser.parse(response.body)
-        elsif method == Utils::HTTP_PUT && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
-          return Yajl::Parser.parse(response.body)
-        elsif method == Utils::HTTP_DELETE && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated) || response.is_a?(Net::HTTPAccepted) || response.is_a?(Net::HTTPNoContent))
-          return
-        elsif method == Utils::HTTP_POST && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
-          return Yajl::Parser.parse(response.body)
-        end
+        return Yajl::Parser.parse(response.body) if method == Utils::HTTP_GET && response.is_a?(Net::HTTPOK)
+        return Yajl::Parser.parse(response.body) if method == Utils::HTTP_PUT && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
+        return if method == Utils::HTTP_DELETE && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated) || response.is_a?(Net::HTTPAccepted) || response.is_a?(Net::HTTPNoContent))
+        return Yajl::Parser.parse(response.body) if method == Utils::HTTP_POST && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
 
-        if !recent_login && response.is_a?(Net::HTTPUnauthorized)
-          login
-          recent_login = true
-        else
-          raise AdminUI::CCRestClientResponseError, response
-        end
+        raise AdminUI::CCRestClientResponseError, response unless !recent_login && response.is_a?(Net::HTTPUnauthorized)
+
+        login
+        recent_login = true
       end
     end
 
@@ -178,12 +171,10 @@ module AdminUI
                                     [@config.uaa_client_id, @config.uaa_client_secret],
                                     'grant_type=client_credentials')
 
-      if response.is_a?(Net::HTTPOK)
-        body_json = Yajl::Parser.parse(response.body)
-        @token = "#{body_json['token_type']} #{body_json['access_token']}"
-      else
-        raise AdminUI::CCRestClientResponseError, response
-      end
+      raise AdminUI::CCRestClientResponseError, response unless response.is_a?(Net::HTTPOK)
+
+      body_json = Yajl::Parser.parse(response.body)
+      @token = "#{body_json['token_type']} #{body_json['access_token']}"
     end
 
     def info
@@ -198,31 +189,21 @@ module AdminUI
         raise "Unable to fetch from #{get_cc_url('/v2/info')}"
       end
 
-      if response.is_a?(Net::HTTPOK)
-        body_json = Yajl::Parser.parse(response.body)
+      raise "Unable to fetch from #{get_cc_url('/v2/info')}" unless response.is_a?(Net::HTTPOK)
 
-        @build = body_json['build']
-        if @build.nil?
-          raise "Information retrieved from #{get_cc_url('/v2/info')} does not include build"
-        end
+      body_json = Yajl::Parser.parse(response.body)
 
-        @authorization_endpoint = body_json['authorization_endpoint']
-        if @authorization_endpoint.nil?
-          raise "Information retrieved from #{get_cc_url('/v2/info')} does not include authorization_endpoint"
-        end
+      @build = body_json['build']
+      raise "Information retrieved from #{get_cc_url('/v2/info')} does not include build" if @build.nil?
 
-        @doppler_logging_endpoint = body_json['doppler_logging_endpoint']
-        if @doppler_logging_endpoint.nil?
-          @logger.warn("Information retrieved from #{get_cc_url('/v2/info')} does not include doppler_logging_endpoint")
-        end
+      @authorization_endpoint = body_json['authorization_endpoint']
+      raise "Information retrieved from #{get_cc_url('/v2/info')} does not include authorization_endpoint" if @authorization_endpoint.nil?
 
-        @token_endpoint = body_json['token_endpoint']
-        if @token_endpoint.nil?
-          raise "Information retrieved from #{get_cc_url('/v2/info')} does not include token_endpoint"
-        end
-      else
-        raise "Unable to fetch from #{get_cc_url('/v2/info')}"
-      end
+      @doppler_logging_endpoint = body_json['doppler_logging_endpoint']
+      @logger.warn("Information retrieved from #{get_cc_url('/v2/info')} does not include doppler_logging_endpoint") if @doppler_logging_endpoint.nil?
+
+      @token_endpoint = body_json['token_endpoint']
+      raise "Information retrieved from #{get_cc_url('/v2/info')} does not include token_endpoint" if @token_endpoint.nil?
     end
   end
 end
