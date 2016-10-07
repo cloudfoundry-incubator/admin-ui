@@ -796,8 +796,16 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_route_mapping(cc_app_route[:guid])
       end
 
+      def delete_route_mapping_old
+        operation.delete_route_mapping_old(cc_app[:guid], cc_route[:guid])
+      end
+
       it 'deletes route mapping' do
         expect { delete_route_mapping }.to change { cc.apps_routes['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes route mapping old' do
+        expect { delete_route_mapping_old }.to change { cc.apps_routes['items'].length }.from(1).to(0)
       end
 
       context 'errors' do

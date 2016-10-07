@@ -32,18 +32,31 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        guid         = app_route[:guid]
-        application  = application_hash[app_route[:app_id]]
-        route        = route_hash[app_route[:route_id]]
+        guid        = app_route[:guid]
+        application = application_hash[app_route[:app_id]]
+        route       = route_hash[app_route[:route_id]]
+
+        # Older versions did not have an app_route[:guid]
+        key = guid
+        key = "#{application[:guid]}/#{route[:guid]}" if key.nil? && application && route
+
+        next if key.nil?
+
         domain       = route.nil? ? nil : domain_hash[route[:domain_id]]
         space        = application.nil? ? nil : space_hash[application[:space_id]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         row = []
 
+        row.push(key)
         row.push(guid)
-        row.push(guid)
-        row.push(app_route[:created_at].to_datetime.rfc3339)
+
+        # Older versions did not have app_route[:created_at]
+        if app_route[:created_at]
+          row.push(app_route[:created_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
 
         if app_route[:updated_at]
           row.push(app_route[:updated_at].to_datetime.rfc3339)
@@ -87,7 +100,7 @@ module AdminUI
 
         items.push(row)
 
-        hash[guid] =
+        hash[key] =
           {
             'application'  => application,
             'app_route'    => app_route,

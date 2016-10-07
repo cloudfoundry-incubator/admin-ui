@@ -1671,6 +1671,11 @@ module CCHelper
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}/routes/#{cc_route[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything) do
+      cc_clear_apps_routes_cache_stub(config)
+      Net::HTTPNoContent.new(1.0, 204, 'OK')
+    end
   end
 
   def cc_security_group_not_found

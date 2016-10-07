@@ -440,6 +440,10 @@ module AdminUI
       details(:route_mappings, guid)
     end
 
+    def route_mapping_old(app_guid, route_guid)
+      details(:route_mappings, "#{app_guid}/#{route_guid}")
+    end
+
     def route_mappings
       result_cache(:route_mappings)
     end

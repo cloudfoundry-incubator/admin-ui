@@ -814,12 +814,22 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/route_mappings/#{cc_app_route[:guid]}"]])
     end
 
+    def delete_route_mapping_old
+      response = delete_request("/route_mappings/#{cc_app[:guid]}/#{cc_route[:guid]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/route_mappings/#{cc_app[:guid]}/#{cc_route[:guid]}"]])
+    end
+
     it 'has user name and routes request in the log file' do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/route_mappings_view_model']], true)
     end
 
     it 'deletes a route mapping' do
       expect { delete_route_mapping }.to change { get_json('/route_mappings_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes a route mapping old' do
+      expect { delete_route_mapping_old }.to change { get_json('/route_mappings_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
