@@ -27,6 +27,11 @@ module AdminUI
       # Ensure the EventMachine is running before we return
       until EventMachine.reactor_running?
       end
+
+      EventMachine.error_handler do |error|
+        @logger.error("Error during EventMachine: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+      end
     end
 
     def shutdown

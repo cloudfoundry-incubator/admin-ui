@@ -189,6 +189,9 @@ module AdminUI
           doppler_close(event, force_login)
         end
       end
+    rescue => error
+      @logger.error("Error during doppler eventmachine_setup callback: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
     end
 
     def eventmachine_close
@@ -230,10 +233,16 @@ module AdminUI
 
     def doppler_open(event)
       @logger.debug("Doppler open: #{event.inspect}")
+    rescue => error
+      @logger.error("Error during doppler open callback: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
     end
 
     def doppler_error(event)
       @logger.error("Doppler error: #{event.inspect}")
+    rescue => error
+      @logger.error("Error during doppler error callback: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
     end
 
     def doppler_message(event)
@@ -255,7 +264,7 @@ module AdminUI
         doppler_message_value_metric(parsed_envelope)
       end
     rescue => error
-      @logger.error("Error during doppler message: #{error.inspect}")
+      @logger.error("Error during doppler message callback: #{error.inspect}")
       @logger.error(error.backtrace.join("\n"))
     end
 
@@ -314,6 +323,9 @@ module AdminUI
         doppler_future_connect(force_login)
       end
       @doppler_websocket = nil
+    rescue => error
+      @logger.error("Error during doppler close callback: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
     end
 
     def handle_rollup
@@ -326,6 +338,9 @@ module AdminUI
 
       handle_components_rollup(old_ns)
       handle_container_metrics_rollup(old_ns)
+    rescue => error
+      @logger.error("Error during doppler handle_rollup: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
     end
 
     def handle_components_rollup(old_ns)
@@ -416,7 +431,7 @@ module AdminUI
         begin
           @email.send_email(disconnected)
         rescue => error
-          @logger.error("Error during send email: #{error.inspect}")
+          @logger.error("Error during doppler send_email: #{error.inspect}")
           @logger.error(error.backtrace.join("\n"))
         end
       end
