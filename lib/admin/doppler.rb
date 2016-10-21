@@ -115,6 +115,18 @@ module AdminUI
       end
     end
 
+    # In order to test deletion of an application instance, need mechanism to force immediate removal
+    def testing_remove_container_metric(application_guid, instance_index)
+      return unless @testing
+
+      key = "#{application_guid}:#{instance_index}"
+      @container_metrics_semaphore.synchronize do
+        @container_metrics.delete(key)
+      end
+
+      handle_rollup
+    end
+
     def shutdown
       return unless @running
 

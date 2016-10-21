@@ -9,7 +9,7 @@ describe AdminUI::Operation, type: :integration do
   include VARZHelper
   include ViewModelsHelper
 
-  let(:application_instance_source)    { :varz_dea }
+  let(:application_instance_source)    { :doppler_dea }
   let(:ccdb_file)                      { '/tmp/admin_ui_ccdb.db' }
   let(:ccdb_uri)                       { "sqlite://#{ccdb_file}" }
   let(:data_file)                      { '/tmp/admin_ui_data.json' }
@@ -46,7 +46,8 @@ describe AdminUI::Operation, type: :integration do
   let(:logger)             { Logger.new(log_file) }
   let(:log_files)          { AdminUI::LogFiles.new(config, logger) }
   let(:nats)               { AdminUI::NATS.new(config, logger, email, true) }
-  let(:operation)          { AdminUI::Operation.new(config, logger, cc, client, doppler, varz, view_models) }
+  let(:operation)          { AdminUI::Operation.new(config, logger, cc, client, doppler, varz, view_models, true) }
+  let(:router_source)      { :varz_router }
   let(:stats)              { AdminUI::Stats.new(config, logger, cc, doppler, varz, true) }
   let(:varz)               { AdminUI::VARZ.new(config, logger, nats, true) }
   let(:view_models)        { AdminUI::ViewModels.new(config, logger, cc, doppler, log_files, stats, varz, true) }
@@ -60,10 +61,10 @@ describe AdminUI::Operation, type: :integration do
 
     config_stub
     cc_stub(config, insert_second_quota_definition)
-    doppler_stub(application_instance_source)
-    nats_stub(application_instance_source)
-    varz_stub(application_instance_source)
-    view_models_stub(application_instance_source)
+    doppler_stub(application_instance_source, router_source)
+    nats_stub(router_source)
+    varz_stub
+    view_models_stub(application_instance_source, router_source)
 
     event_machine_loop
   end
@@ -127,11 +128,11 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def enable_ssh_application
-        operation.manage_application(cc_app[:guid], '{"enable_ssh":true,"allow_ssh":true}')
+        operation.manage_application(cc_app[:guid], '{"enable_ssh":true}')
       end
 
       def disable_ssh_application
-        operation.manage_application(cc_app[:guid], '{"enable_ssh":false,"allow_ssh":false}')
+        operation.manage_application(cc_app[:guid], '{"enable_ssh":false}')
       end
 
       it 'renames the application' do
@@ -140,12 +141,12 @@ describe AdminUI::Operation, type: :integration do
 
       it 'stops the running application' do
         start_application
-        expect { stop_application }.to change { cc.applications['items'][0][:state] }.from('STARTED').to('STOPPED')
+        expect { stop_application }.to change { cc.processes['items'][0][:state] }.from('STARTED').to('STOPPED')
       end
 
       it 'starts the stopped application' do
         stop_application
-        expect { start_application }.to change { cc.applications['items'][0][:state] }.from('STOPPED').to('STARTED')
+        expect { start_application }.to change { cc.processes['items'][0][:state] }.from('STOPPED').to('STARTED')
       end
 
       it 'restages the application' do
@@ -154,22 +155,22 @@ describe AdminUI::Operation, type: :integration do
 
       it 'enables application diego' do
         disable_diego_application
-        expect { enable_diego_application }.to change { cc.applications['items'][0][:diego] }.from(false).to(true)
+        expect { enable_diego_application }.to change { cc.processes['items'][0][:diego] }.from(false).to(true)
       end
 
       it 'disables application diego' do
         enable_diego_application
-        expect { disable_diego_application }.to change { cc.applications['items'][0][:diego] }.from(true).to(false)
+        expect { disable_diego_application }.to change { cc.processes['items'][0][:diego] }.from(true).to(false)
       end
 
       it 'enables application ssh' do
         disable_ssh_application
-        expect { enable_ssh_application }.to change { cc.applications['items'][0][:enable_ssh] }.from(false).to(true)
+        expect { enable_ssh_application }.to change { cc.processes['items'][0][:enable_ssh] }.from(false).to(true)
       end
 
       it 'disables application ssh' do
         enable_ssh_application
-        expect { disable_ssh_application }.to change { cc.applications['items'][0][:enable_ssh] }.from(true).to(false)
+        expect { disable_ssh_application }.to change { cc.processes['items'][0][:enable_ssh] }.from(true).to(false)
       end
 
       it 'deletes the application' do
@@ -236,8 +237,7 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage application instance' do
       before do
-        expect(varz.deas['items'].length).to eq(1)
-        expect(varz.deas['items'][0]['data']['instance_registry'].length).to eq(1)
+        expect(doppler.containers['items'].length).to eq(1)
       end
 
       def delete_application_instance
@@ -245,7 +245,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       it 'deletes the application instance' do
-        expect { delete_application_instance }.to change { varz.deas['items'][0]['data']['instance_registry'].length }.from(1).to(0)
+        expect { delete_application_instance }.to change { doppler.containers['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -789,23 +789,15 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage route mapping' do
       before do
-        expect(cc.apps_routes['items'].length).to eq(1)
+        expect(cc.route_mappings['items'].length).to eq(1)
       end
 
       def delete_route_mapping
-        operation.delete_route_mapping(cc_app_route[:guid])
-      end
-
-      def delete_route_mapping_old
-        operation.delete_route_mapping_old(cc_app[:guid], cc_route[:guid])
+        operation.delete_route_mapping(cc_route_mapping[:guid])
       end
 
       it 'deletes route mapping' do
-        expect { delete_route_mapping }.to change { cc.apps_routes['items'].length }.from(1).to(0)
-      end
-
-      it 'deletes route mapping old' do
-        expect { delete_route_mapping_old }.to change { cc.apps_routes['items'].length }.from(1).to(0)
+        expect { delete_route_mapping }.to change { cc.route_mappings['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -817,7 +809,7 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_code).to eq(210_007)
           expect(exception.cf_error_code).to eq('CF-RouteMappingNotFound')
           expect(exception.http_code).to eq(404)
-          expect(exception.message).to eq("The route mapping could not be found: #{cc_app_route[:guid]}")
+          expect(exception.message).to eq("The route mapping could not be found: #{cc_route_mapping[:guid]}")
         end
 
         it 'fails deleting deleted route mapping' do
@@ -1513,6 +1505,35 @@ describe AdminUI::Operation, type: :integration do
     end
 
     context 'manage doppler components' do
+      context 'doppler analyzer' do
+        before do
+          expect(doppler.components['items'].length).to eq(2)
+        end
+
+        after do
+          expect(doppler.components['items'].length).to eq(1)
+        end
+
+        it 'removes analyzer' do
+          expect { operation.remove_doppler_component("#{analyzer_envelope.origin}:#{analyzer_envelope.index}:#{analyzer_envelope.ip}") }.to change { doppler.analyzers['items'].length }.from(1).to(0)
+        end
+      end
+
+      context 'doppler router' do
+        let(:router_source) { :doppler_router }
+        before do
+          expect(doppler.components['items'].length).to eq(3)
+        end
+
+        after do
+          expect(doppler.components['items'].length).to eq(2)
+        end
+
+        it 'removes gorouter' do
+          expect { operation.remove_doppler_component("#{gorouter_envelope.origin}:#{gorouter_envelope.index}:#{gorouter_envelope.ip}") }.to change { doppler.gorouters['items'].length }.from(1).to(0)
+        end
+      end
+
       context 'doppler cell' do
         let(:application_instance_source) { :doppler_cell }
         before do
@@ -1529,52 +1550,35 @@ describe AdminUI::Operation, type: :integration do
       end
 
       context 'doppler dea' do
-        let(:application_instance_source) { :doppler_dea }
         before do
-          expect(doppler.components['items'].length).to eq(4)
+          expect(doppler.components['items'].length).to eq(2)
         end
 
         after do
-          expect(doppler.components['items'].length).to eq(3)
-        end
-
-        it 'removes analyzer' do
-          expect { operation.remove_doppler_component("#{analyzer_envelope.origin}:#{analyzer_envelope.index}:#{analyzer_envelope.ip}") }.to change { doppler.analyzers['items'].length }.from(1).to(0)
+          expect(doppler.components['items'].length).to eq(1)
         end
 
         it 'removes dea' do
           expect { operation.remove_doppler_component("#{dea_envelope.origin}:#{dea_envelope.index}:#{dea_envelope.ip}") }.to change { doppler.deas['items'].length }.from(1).to(0)
-        end
-
-        it 'removes gorouter' do
-          expect { operation.remove_doppler_component("#{gorouter_envelope.origin}:#{gorouter_envelope.index}:#{gorouter_envelope.ip}") }.to change { doppler.gorouters['items'].length }.from(1).to(0)
         end
       end
     end
 
     context 'manage varz components' do
       before do
-        expect(varz.components['items'].length).to eq(5)
+        expect(varz.components['items'].length).to eq(3)
       end
 
       after do
-        expect(varz.components['items'].length).to eq(4)
+        expect(varz.components['items'].length).to eq(2)
       end
 
       it 'removes cloud_controller' do
         expect { operation.remove_component(nats_cloud_controller_varz) }.to change { varz.cloud_controllers['items'].length }.from(1).to(0)
       end
 
-      it 'removes dea' do
-        expect { operation.remove_component(nats_dea_varz) }.to change { varz.deas['items'].length }.from(1).to(0)
-      end
-
       it 'removes gateway' do
         expect { operation.remove_component(nats_provisioner_varz) }.to change { varz.gateways['items'].length }.from(1).to(0)
-      end
-
-      it 'removes health_manager' do
-        expect { operation.remove_component(nats_health_manager_varz) }.to change { varz.health_managers['items'].length }.from(1).to(0)
       end
 
       it 'removes router' do

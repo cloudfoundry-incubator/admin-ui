@@ -27,7 +27,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :apps,
-            columns: [:allow_ssh, :buildpack, :command, :created_at, :detected_buildpack, :detected_buildpack_guid, :diego, :disk_quota, :docker_image, :droplet_hash, :enable_ssh, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :name, :package_pending_since, :package_state, :package_updated_at, :ports, :production, :space_id, :stack_id, :staging_failed_description, :staging_failed_reason, :staging_task_id, :state, :type, :updated_at, :version]
+            columns: [:created_at, :desired_state, :droplet_guid, :guid, :id, :max_task_sequence_id, :name, :space_guid, :updated_at]
           },
           approvals:
           {
@@ -35,17 +35,11 @@ module AdminUI
             table:   :authz_approvals,
             columns: [:client_id, :expiresat, :lastmodifiedat, :scope, :status, :user_id]
           },
-          apps_routes:
-          {
-            db_uri:  ccdb_uri,
-            table:   :apps_routes,
-            columns: [:app_id, :app_port, :created_at, :guid, :id, :route_id, :updated_at]
-          },
           buildpacks:
           {
             db_uri:  ccdb_uri,
             table:   :buildpacks,
-            columns: [:created_at, :enabled, :filename, :guid, :id, :key, :locked, :name, :position, :priority, :updated_at]
+            columns: [:created_at, :enabled, :filename, :guid, :id, :key, :locked, :name, :position, :updated_at]
           },
           clients:
           {
@@ -63,13 +57,13 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :droplets,
-            columns: [:app_id, :created_at, :detected_start_command, :droplet_hash, :guid, :id, :updated_at]
+            columns: [:app_guid, :buildpack_receipt_detect_output, :buildpack_receipt_buildpack, :buildpack_receipt_buildpack_guid, :buildpack_receipt_stack_name, :created_at, :droplet_hash, :error_description, :error_id, :execution_metadata, :guid, :id, :package_guid, :process_types, :staging_disk_in_mb, :staging_memory_in_mb, :state, :updated_at]
           },
           events:
           {
             db_uri:  ccdb_uri,
             table:   :events,
-            columns: [:actee, :actee_name, :actee_type, :actor, :actor_name, :actor_type, :created_at, :guid, :id, :metadata, :organization_guid, :space_guid, :space_id, :timestamp, :type, :updated_at],
+            columns: [:actee, :actee_name, :actee_type, :actor, :actor_name, :actor_type, :created_at, :guid, :id, :metadata, :organization_guid, :space_guid, :timestamp, :type, :updated_at],
             where:   "timestamp >= CURRENT_TIMESTAMP - INTERVAL '#{@config.event_days}' DAY"
           },
           feature_flags:
@@ -138,11 +132,29 @@ module AdminUI
             table:   :organizations_users,
             columns: [:organization_id, :user_id]
           },
+          packages:
+          {
+            db_uri:  ccdb_uri,
+            table:   :packages,
+            columns: [:app_guid, :created_at, :docker_image, :error, :guid, :id, :package_hash, :state, :type, :updated_at]
+          },
+          processes:
+          {
+            db_uri:  ccdb_uri,
+            table:   :processes,
+            columns: [:app_guid, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :enable_ssh, :file_descriptors, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :package_updated_at, :ports, :production, :state, :type, :updated_at, :version]
+          },
           quota_definitions:
           {
             db_uri:  ccdb_uri,
             table:   :quota_definitions,
             columns: [:app_instance_limit, :app_task_limit, :created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :total_private_domains, :total_reserved_route_ports, :total_routes, :total_services, :total_service_keys, :updated_at]
+          },
+          route_mappings:
+          {
+            db_uri:  ccdb_uri,
+            table:   :route_mappings,
+            columns: [:app_guid, :app_port, :created_at, :guid, :id, :process_type, :route_guid, :updated_at]
           },
           routes:
           {
@@ -166,7 +178,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_bindings,
-            columns: [:app_id, :binding_options, :created_at, :gateway_data, :gateway_name, :guid, :id, :service_instance_id, :syslog_drain_url, :updated_at]
+            columns: [:app_guid, :created_at, :guid, :id, :service_instance_guid, :syslog_drain_url, :updated_at]
           },
           service_brokers:
           {
@@ -214,7 +226,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :services,
-            columns: [:active, :bindable, :created_at, :description, :documentation_url, :extra, :guid, :id, :info_url, :label, :long_description, :plan_updateable, :purging, :provider, :requires, :service_broker_id, :tags, :unique_id, :updated_at, :url, :version]
+            columns: [:active, :bindable, :created_at, :description, :extra, :guid, :id, :label, :plan_updateable, :purging, :requires, :service_broker_id, :tags, :unique_id, :updated_at]
           },
           space_quota_definitions:
           {
@@ -287,38 +299,8 @@ module AdminUI
       hash['items'].length
     end
 
-    def applications_running_instances
-      hash = applications
-      return nil unless hash['connected']
-      instances = 0
-      hash['items'].each do |app|
-        break unless @running
-        Thread.pass
-
-        instances += app[:instances] if app[:state] == 'STARTED'
-      end
-      instances
-    end
-
-    def applications_total_instances
-      hash = applications
-      return nil unless hash['connected']
-      instances = 0
-      hash['items'].each do |app|
-        break unless @running
-        Thread.pass
-
-        instances += app[:instances]
-      end
-      instances
-    end
-
     def approvals
       result_cache(:approvals)
-    end
-
-    def apps_routes
-      result_cache(:apps_routes)
     end
 
     def buildpacks
@@ -369,10 +351,6 @@ module AdminUI
       invalidate_cache(:approvals)
     end
 
-    def invalidate_apps_routes
-      invalidate_cache(:apps_routes)
-    end
-
     def invalidate_buildpacks
       invalidate_cache(:buildpacks)
     end
@@ -383,6 +361,10 @@ module AdminUI
 
     def invalidate_domains
       invalidate_cache(:domains)
+    end
+
+    def invalidate_droplets
+      invalidate_cache(:droplets)
     end
 
     def invalidate_feature_flags
@@ -415,6 +397,18 @@ module AdminUI
 
     def invalidate_organizations_users
       invalidate_cache(:organizations_users)
+    end
+
+    def invalidate_packages
+      invalidate_cache(:packages)
+    end
+
+    def invalidate_processes
+      invalidate_cache(:processes)
+    end
+
+    def invalidate_route_mappings
+      invalidate_cache(:route_mappings)
     end
 
     def invalidate_routes
@@ -519,8 +513,46 @@ module AdminUI
       result_cache(:organizations_users)
     end
 
+    def packages
+      result_cache(:packages)
+    end
+
+    def processes
+      result_cache(:processes)
+    end
+
+    def processes_running_instances
+      hash = processes
+      return nil unless hash['connected']
+      instances = 0
+      hash['items'].each do |process|
+        break unless @running
+        Thread.pass
+
+        instances += process[:instances] if process[:state] == 'STARTED'
+      end
+      instances
+    end
+
+    def processes_total_instances
+      hash = processes
+      return nil unless hash['connected']
+      instances = 0
+      hash['items'].each do |process|
+        break unless @running
+        Thread.pass
+
+        instances += process[:instances]
+      end
+      instances
+    end
+
     def quota_definitions
       result_cache(:quota_definitions)
+    end
+
+    def route_mappings
+      result_cache(:route_mappings)
     end
 
     def routes

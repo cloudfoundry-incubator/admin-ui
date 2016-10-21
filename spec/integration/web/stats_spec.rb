@@ -19,17 +19,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     end
   end
 
-  context 'varz dea' do
-    it_behaves_like('it has a table')
-  end
-
   context 'doppler cell' do
     let(:application_instance_source) { :doppler_cell }
     it_behaves_like('it has a table')
   end
 
   context 'doppler dea' do
-    let(:application_instance_source) { :doppler_dea }
     it_behaves_like('it has a table')
   end
 

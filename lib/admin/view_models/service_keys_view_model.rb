@@ -111,11 +111,9 @@ module AdminUI
         end
 
         if service
-          row.push(service[:provider])
           row.push(service[:label])
           row.push(service[:guid])
           row.push(service[:unique_id])
-          row.push(service[:version])
           row.push(service[:created_at].to_datetime.rfc3339)
 
           if service[:updated_at]
@@ -126,7 +124,7 @@ module AdminUI
 
           row.push(service[:active])
         else
-          row.push(nil, nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil, nil)
         end
 
         if service_broker
@@ -163,7 +161,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..30).to_a, (1..30).to_a - [5])
+      result(true, items, hash, (1..28).to_a, (1..28).to_a - [5])
     end
   end
 end

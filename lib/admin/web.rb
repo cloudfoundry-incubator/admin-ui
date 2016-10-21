@@ -50,9 +50,9 @@ module AdminUI
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.application_instances, params).items)
     end
 
-    get '/application_instances_view_model/:app_guid/:instance_index/:instance_id', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/application_instances_view_model/#{params[:app_guid]}/#{params[:instance_index]}/#{params[:instance_id]}")
-      result = @view_models.application_instance(params[:app_guid], params[:instance_index], params[:instance_id])
+    get '/application_instances_view_model/:app_guid/:instance_index', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/application_instances_view_model/#{params[:app_guid]}/#{params[:instance_index]}")
+      result = @view_models.application_instance(params[:app_guid], params[:instance_index])
       return Yajl::Encoder.encode(result) if result
       404
     end
@@ -390,13 +390,6 @@ module AdminUI
     get '/route_mappings_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/route_mappings_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.route_mappings, params).items)
-    end
-
-    get '/route_mappings_view_model/:app_guid/:route_guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/route_mappings_view_model/#{params[:app_guid]}/#{params[:route_guid]}")
-      result = @view_models.route_mapping_old(params[:app_guid], params[:route_guid])
-      return Yajl::Encoder.encode(result) if result
-      404
     end
 
     get '/route_mappings_view_model/:guid', auth: [:user] do
@@ -1405,23 +1398,6 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete route: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
-    end
-
-    delete '/route_mappings/:app_guid/:route_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/route_mappings/#{params[:app_guid]}/#{params[:route_guid]}")
-      begin
-        @operation.delete_route_mapping_old(params[:app_guid], params[:route_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete route mapping: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete route mapping: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

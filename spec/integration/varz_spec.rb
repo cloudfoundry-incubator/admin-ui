@@ -26,7 +26,7 @@ describe AdminUI::VARZ, type: :integration do
 
   before do
     config_stub
-    nats_stub(:varz_dea)
+    nats_stub(:varz_router)
 
     event_machine_loop
   end
@@ -50,7 +50,7 @@ describe AdminUI::VARZ, type: :integration do
       expect(components['connected']).to eq(true)
       items = components['items']
       items.each { |i| i.delete('error') }
-      expect(items.length).to be(5)
+      expect(items.length).to be(3)
 
       expect(items).to include('connected' => false,
                                'data'      => nats_cloud_controller,
@@ -59,22 +59,6 @@ describe AdminUI::VARZ, type: :integration do
                                'name'      => nats_cloud_controller['host'],
                                'type'      => nats_cloud_controller['type'],
                                'uri'       => nats_cloud_controller_varz)
-
-      expect(items).to include('connected' => false,
-                               'data'      => nats_dea,
-                               # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                               'index'     => nats_dea['index'],
-                               'name'      => nats_dea['host'],
-                               'type'      => nats_dea['type'],
-                               'uri'       => nats_dea_varz)
-
-      expect(items).to include('connected' => false,
-                               'data'      => nats_health_manager,
-                               # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                               'index'     => nats_health_manager['index'],
-                               'name'      => nats_health_manager['host'],
-                               'type'      => nats_health_manager['type'],
-                               'uri'       => nats_health_manager_varz)
 
       expect(items).to include('connected' => false,
                                'data'      => nats_router,
@@ -108,44 +92,6 @@ describe AdminUI::VARZ, type: :integration do
                                'name'      => nats_cloud_controller['host'],
                                'type'      => nats_cloud_controller['type'],
                                'uri'       => nats_cloud_controller_varz)
-    end
-
-    it 'returns disconnected deas as expected' do
-      deas = varz.deas
-
-      expect(deas['connected']).to eq(true)
-      items = deas['items']
-      items.each { |i| i.delete('error') }
-      expect(items.length).to be(1)
-
-      expect(items).to include('connected' => false,
-                               'data'      => nats_dea,
-                               # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                               'index'     => nats_dea['index'],
-                               'name'      => nats_dea['host'],
-                               'type'      => nats_dea['type'],
-                               'uri'       => nats_dea_varz)
-    end
-
-    it 'returns deas_count' do
-      expect(varz.deas_count).to be(1)
-    end
-
-    it 'returns disconnected health_managers as expected' do
-      health_managers = varz.health_managers
-
-      expect(health_managers['connected']).to eq(true)
-      items = health_managers['items']
-      items.each { |i| i.delete('error') }
-      expect(items.length).to be(1)
-
-      expect(items).to include('connected' => false,
-                               'data'      => nats_health_manager,
-                               # 'error'     => '#<SocketError: getaddrinfo: Name or service not known>',
-                               'index'     => nats_health_manager['index'],
-                               'name'      => nats_health_manager['host'],
-                               'type'      => nats_health_manager['type'],
-                               'uri'       => nats_health_manager_varz)
     end
 
     it 'returns disconnected gateways as expected' do
@@ -185,7 +131,7 @@ describe AdminUI::VARZ, type: :integration do
 
   context 'Stubbed NATS and HTTP' do
     before do
-      varz_stub(:varz_dea)
+      varz_stub
     end
 
     it 'returns connected components' do
@@ -194,7 +140,7 @@ describe AdminUI::VARZ, type: :integration do
       expect(components['connected']).to eq(true)
       items = components['items']
 
-      expect(items.length).to be(5)
+      expect(items.length).to be(3)
 
       expect(items).to include('connected' => true,
                                'data'      => varz_cloud_controller,
@@ -202,20 +148,6 @@ describe AdminUI::VARZ, type: :integration do
                                'name'      => nats_cloud_controller['host'],
                                'type'      => nats_cloud_controller['type'],
                                'uri'       => nats_cloud_controller_varz)
-
-      expect(items).to include('connected' => true,
-                               'data'      => varz_dea,
-                               'index'     => nats_dea['index'],
-                               'name'      => nats_dea['host'],
-                               'type'      => nats_dea['type'],
-                               'uri'       => nats_dea_varz)
-
-      expect(items).to include('connected' => true,
-                               'data'      => varz_health_manager,
-                               'index'     => nats_health_manager['index'],
-                               'name'      => nats_health_manager['host'],
-                               'type'      => nats_health_manager['type'],
-                               'uri'       => nats_health_manager_varz)
 
       expect(items).to include('connected' => true,
                                'data'      => varz_router,
@@ -246,42 +178,6 @@ describe AdminUI::VARZ, type: :integration do
                                'name'      => nats_cloud_controller['host'],
                                'type'      => nats_cloud_controller['type'],
                                'uri'       => nats_cloud_controller_varz)
-    end
-
-    it 'returns connected deas' do
-      deas = varz.deas
-
-      expect(deas['connected']).to eq(true)
-      items = deas['items']
-
-      expect(items.length).to be(1)
-
-      expect(items).to include('connected' => true,
-                               'data'      => varz_dea,
-                               'index'     => nats_dea['index'],
-                               'name'      => nats_dea['host'],
-                               'type'      => nats_dea['type'],
-                               'uri'       => nats_dea_varz)
-    end
-
-    it 'returns deas_count' do
-      expect(varz.deas_count).to be(1)
-    end
-
-    it 'returns connected health_managers' do
-      health_managers = varz.health_managers
-
-      expect(health_managers['connected']).to eq(true)
-      items = health_managers['items']
-
-      expect(items.length).to be(1)
-
-      expect(items).to include('connected' => true,
-                               'data'      => varz_health_manager,
-                               'index'     => nats_health_manager['index'],
-                               'name'      => nats_health_manager['host'],
-                               'type'      => nats_health_manager['type'],
-                               'uri'       => nats_health_manager_varz)
     end
 
     it 'returns connected gateways' do

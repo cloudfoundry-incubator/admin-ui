@@ -32,20 +32,6 @@ module AdminUI
       filter(/CloudController/)
     end
 
-    def deas
-      filter(/DEA/)
-    end
-
-    def deas_count
-      hash = filter(/DEA/)
-      return nil unless hash['connected']
-      hash['items'].length
-    end
-
-    def health_managers
-      filter(/HM9000/)
-    end
-
     def gateways
       filter(/-Provisioner/)
     end

@@ -15,7 +15,7 @@ shared_context :server_context do
   include VARZHelper
   include ViewModelsHelper
 
-  let(:application_instance_source)              { :varz_dea }
+  let(:application_instance_source)              { :doppler_dea }
   let(:ccdb_file)                                { '/tmp/admin_ui_ccdb.db' }
   let(:ccdb_uri)                                 { "sqlite://#{ccdb_file}" }
   let(:cloud_controller_uri)                     { 'http://api.localhost' }
@@ -34,6 +34,7 @@ shared_context :server_context do
   let(:log_file_displayed_modified_milliseconds) { AdminUI::Utils.time_in_milliseconds(log_file_displayed_modified) }
   let(:log_file_page_size)                       { 100 }
   let(:port)                                     { 8071 }
+  let(:router_source)                            { :varz_router }
   let(:table_height)                             { '300px' }
   let(:table_page_size)                          { 10 }
   let(:uaadb_file)                               { '/tmp/admin_ui_uaadb.db' }
@@ -41,7 +42,6 @@ shared_context :server_context do
   let(:used_cpu)                                 { determine_used_cpu(application_instance_source) }
   let(:used_disk)                                { determine_used_disk(application_instance_source) }
   let(:used_memory)                              { determine_used_memory(application_instance_source) }
-  let(:varz_application_instance_id)             { application_instance_source == :varz_dea ? varz_dea_app_instance : '0' }
 
   let(:config) do
     {
@@ -80,11 +80,11 @@ shared_context :server_context do
     File.utime(log_file_displayed_modified, log_file_displayed_modified, log_file_displayed)
 
     cc_stub(AdminUI::Config.load(config), insert_second_quota_definition, event_type)
-    doppler_stub(application_instance_source)
+    doppler_stub(application_instance_source, router_source)
     login_stub_admin
-    nats_stub(application_instance_source)
-    varz_stub(application_instance_source)
-    view_models_stub(application_instance_source)
+    nats_stub(router_source)
+    varz_stub
+    view_models_stub(application_instance_source, router_source)
 
     allow_any_instance_of(::WEBrick::Log).to receive(:log)
 

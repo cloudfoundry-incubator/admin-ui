@@ -61,23 +61,15 @@ module AdminUI
     end
 
     def current_stats
-      varz_deas_count = @varz.deas_count
-      total_deas_count = @doppler.deas_count
-      if total_deas_count.nil?
-        total_deas_count = varz_deas_count
-      elsif varz_deas_count
-        total_deas_count += varz_deas_count
-      end
-
       {
         apps:              @cc.applications_count,
         cells:             @doppler.reps_count,
-        deas:              total_deas_count,
+        deas:              @doppler.deas_count,
         organizations:     @cc.organizations_count,
-        running_instances: @cc.applications_running_instances,
+        running_instances: @cc.processes_running_instances,
         spaces:            @cc.spaces_count,
         timestamp:         Utils.time_in_milliseconds,
-        total_instances:   @cc.applications_total_instances,
+        total_instances:   @cc.processes_total_instances,
         users:             @cc.users_count
       }
     end

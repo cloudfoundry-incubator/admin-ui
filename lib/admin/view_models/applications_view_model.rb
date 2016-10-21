@@ -1,36 +1,42 @@
 require 'date'
 require 'thread'
-require_relative 'base_view_model'
+require_relative 'has_applications_view_model'
 
 module AdminUI
-  class ApplicationsViewModel < AdminUI::BaseViewModel
+  class ApplicationsViewModel < AdminUI::HasApplicationsViewModel
     def do_items
       applications = @cc.applications
+      droplets     = @cc.droplets
+      packages     = @cc.packages
 
-      # applications have to exist.  Other record types are optional
-      return result unless applications['connected']
+      # applications, droplets and packages have to exist.  Other record types are optional
+      return result unless applications['connected'] &&
+                           droplets['connected'] &&
+                           packages['connected']
 
-      apps_routes      = @cc.apps_routes
-      buildpacks       = @cc.buildpacks
       containers       = @doppler.containers
-      deas             = @varz.deas
-      droplets         = @cc.droplets
       events           = @cc.events
       organizations    = @cc.organizations
+      processes        = @cc.processes
+      route_mappings   = @cc.route_mappings
       service_bindings = @cc.service_bindings
       spaces           = @cc.spaces
       stacks           = @cc.stacks
 
-      apps_routes_connected      = apps_routes['connected']
-      deas_connected             = deas['connected']
       events_connected           = events['connected']
+      processes_connected        = processes['connected']
+      route_mappings_connected   = route_mappings['connected']
       service_bindings_connected = service_bindings['connected']
 
-      buildpack_hash    = Hash[buildpacks['items'].map { |item| [item[:guid], item] }]
-      droplet_hash      = Hash[droplets['items'].map { |item| [item[:droplet_hash], item] }]
+      droplet_hash      = Hash[droplets['items'].map { |item| [item[:guid], item] }]
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
-      stack_hash        = Hash[stacks['items'].map { |item| [item[:id], item] }]
+      package_hash      = Hash[packages['items'].map { |item| [item[:guid], item] }]
+      process_app_hash  = Hash[processes['items'].map { |item| [item[:app_guid], item] }]
+      space_hash        = Hash[spaces['items'].map { |item| [item[:guid], item] }]
+      stack_hash        = Hash[stacks['items'].map { |item| [item[:name], item] }]
+
+      latest_droplets = latest_app_guid_hash(droplets['items'])
+      latest_packages = latest_app_guid_hash(packages['items'])
 
       event_counters = {}
       events['items'].each do |event|
@@ -48,14 +54,14 @@ module AdminUI
         end
       end
 
-      app_route_counters = {}
-      apps_routes['items'].each do |app_route|
+      route_mapping_counters = {}
+      route_mappings['items'].each do |route_mapping|
         return result unless @running
         Thread.pass
 
-        app_id = app_route[:app_id]
-        app_route_counters[app_id] = 0 if app_route_counters[app_id].nil?
-        app_route_counters[app_id] += 1
+        app_guid = route_mapping[:app_guid]
+        route_mapping_counters[app_guid] = 0 if route_mapping_counters[app_guid].nil?
+        route_mapping_counters[app_guid] += 1
       end
 
       service_binding_counters = {}
@@ -63,45 +69,18 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        app_id = service_binding[:app_id]
-        service_binding_counters[app_id] = 0 if service_binding_counters[app_id].nil?
-        service_binding_counters[app_id] += 1
+        app_guid = service_binding[:app_guid]
+        service_binding_counters[app_guid] = 0 if service_binding_counters[app_guid].nil?
+        service_binding_counters[app_guid] += 1
       end
 
       application_usage_counters_hash = {}
-      deas['items'].each do |dea|
-        next unless dea['connected']
-        next unless dea['data']['instance_registry']
-        dea['data']['instance_registry'].each_value do |application|
-          application.each_value do |instance|
-            return result unless @running
-            Thread.pass
-
-            application_id = instance['application_id']
-            application_usage_counters = application_usage_counters_hash[application_id]
-            if application_usage_counters.nil?
-              application_usage_counters =
-                {
-                  'used_memory' => 0,
-                  'used_disk'   => 0,
-                  'used_cpu'    => 0
-                }
-              application_usage_counters_hash[application_id] = application_usage_counters
-            end
-
-            application_usage_counters['used_memory'] += instance['used_memory_in_bytes'] unless instance['used_memory_in_bytes'].nil?
-            application_usage_counters['used_disk'] += instance['used_disk_in_bytes'] unless instance['used_disk_in_bytes'].nil?
-            application_usage_counters['used_cpu'] += instance['computed_pcpu'] * 100 unless instance['computed_pcpu'].nil?
-          end
-        end
-      end
-
       containers['items'].each_value do |container|
         return result unless @running
         Thread.pass
 
-        application_id = container[:application_id]
-        application_usage_counters = application_usage_counters_hash[application_id]
+        application_guid = container[:application_id]
+        application_usage_counters = application_usage_counters_hash[application_guid]
         if application_usage_counters.nil?
           application_usage_counters =
             {
@@ -109,7 +88,7 @@ module AdminUI
               'used_disk'   => 0,
               'used_cpu'    => 0
             }
-          application_usage_counters_hash[application_id] = application_usage_counters
+          application_usage_counters_hash[application_guid] = application_usage_counters
         end
 
         application_usage_counters['used_memory'] += container[:memory_bytes]
@@ -124,27 +103,48 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        guid             = application[:guid]
-        id               = application[:id]
-        app_droplet_hash = application[:droplet_hash]
-        droplet          = app_droplet_hash.nil? ? nil : droplet_hash[app_droplet_hash]
-        space            = space_hash[application[:space_id]]
-        organization     = space.nil? ? nil : organization_hash[space[:organization_id]]
-        stack            = stack_hash[application[:stack_id]]
+        guid                 = application[:guid]
+        process              = process_app_hash[guid]
+        current_droplet_guid = application[:droplet_guid]
+        current_droplet      = current_droplet_guid.nil? ? nil : droplet_hash[current_droplet_guid]
+        current_package_guid = current_droplet.nil? ? nil : current_droplet[:package_guid]
+        current_package      = current_package_guid.nil? ? nil : package_hash[current_package_guid]
+        latest_droplet       = latest_droplets[guid]
+        latest_package       = latest_packages[guid]
+        space                = space_hash[application[:space_guid]]
+        organization         = space.nil? ? nil : organization_hash[space[:organization_id]]
+        stack                = nil
+
+        droplet = current_droplet
+        droplet = latest_droplet if droplet.nil?
+
+        package = current_package
+        package = latest_package if package.nil?
 
         application_usage_counters = application_usage_counters_hash[guid]
-        app_route_counter          = app_route_counters[id]
         event_counter              = event_counters[guid]
-        service_binding_counter    = service_binding_counters[id]
+        route_mapping_counter      = route_mapping_counters[guid]
+        service_binding_counter    = service_binding_counters[guid]
 
         row = []
 
         row.push(guid)
         row.push(application[:name])
         row.push(guid)
-        row.push(application[:state])
-        row.push(application[:package_state])
-        row.push(application[:staging_failed_reason])
+
+        if process
+          row.push(process[:state])
+        else
+          row.push(nil)
+        end
+
+        row.push(package_state(current_droplet, latest_droplet, latest_package))
+
+        if droplet
+          row.push(droplet[:error_id])
+        else
+          row.push(nil)
+        end
 
         row.push(application[:created_at].to_datetime.rfc3339)
 
@@ -154,40 +154,32 @@ module AdminUI
           row.push(nil)
         end
 
-        row.push(application[:diego])
+        if process
+          row.push(process[:diego])
+          row.push(process[:enable_ssh])
+        else
+          row.push(nil, nil)
+        end
 
-        if application[:allow_ssh] || application[:enable_ssh] # Originally allow_ssh, changed later to enable_ssh
-          row.push(true)
+        if package
+          row.push(!package[:docker_image].nil?)
         else
           row.push(false)
         end
 
-        if !application[:docker_image].nil?
-          row.push(true)
-        else
-          row.push(false)
+        stack_name = nil
+        if droplet
+          stack_name = droplet[:buildpack_receipt_stack_name]
+          stack = stack_hash[stack_name] if stack_name
         end
+        row.push(stack_name)
 
-        if stack
-          row.push(stack[:name])
+        if droplet
+          row.push(droplet[:buildpack_receipt_buildpack])
+          row.push(droplet[:buildpack_receipt_buildpack_guid])
         else
-          row.push(nil)
+          row.push(nil, nil)
         end
-
-        if application[:buildpack] # Removed in cf-release 241. Replaced with encrypted_buildpack
-          row.push(application[:buildpack])
-        elsif application[:detected_buildpack]
-          row.push(application[:detected_buildpack])
-        else
-          row.push(nil)
-        end
-
-        # Verify buildpack really exists since deletion of buildpack does not clear app's detected_buildpack_guid
-        detected_buildpack_guid = application[:detected_buildpack_guid]
-        if detected_buildpack_guid
-          detected_buildpack_guid = nil if buildpack_hash[detected_buildpack_guid].nil?
-        end
-        row.push(detected_buildpack_guid)
 
         if event_counter
           row.push(event_counter)
@@ -197,11 +189,17 @@ module AdminUI
           row.push(nil)
         end
 
-        row.push(application[:instances])
+        if process
+          row.push(process[:instances])
+        elsif processes_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
 
-        if app_route_counter
-          row.push(app_route_counter)
-        elsif apps_routes_connected
+        if route_mapping_counter
+          row.push(route_mapping_counter)
+        elsif route_mappings_connected
           row.push(0)
         else
           row.push(nil)
@@ -219,14 +217,16 @@ module AdminUI
           row.push(Utils.convert_bytes_to_megabytes(application_usage_counters['used_memory']))
           row.push(Utils.convert_bytes_to_megabytes(application_usage_counters['used_disk']))
           row.push(application_usage_counters['used_cpu'])
-        elsif deas_connected
-          row.push(0, 0, 0)
         else
           row.push(nil, nil, nil)
         end
 
-        row.push(application[:memory])
-        row.push(application[:disk_quota])
+        if process
+          row.push(process[:memory])
+          row.push(process[:disk_quota])
+        else
+          row.push(nil, nil)
+        end
 
         if organization && space
           row.push("#{organization[:name]}/#{space[:name]}")
@@ -238,11 +238,15 @@ module AdminUI
 
         hash[guid] =
           {
-            'application'  => application,
-            'droplet'      => droplet,
-            'organization' => organization,
-            'space'        => space,
-            'stack'        => stack
+            'application'     => application,
+            'current_droplet' => current_droplet,
+            'current_package' => current_package,
+            'latest_droplet'  => latest_droplet,
+            'latest_package'  => latest_package,
+            'organization'    => organization,
+            'process'         => process,
+            'space'           => space,
+            'stack'           => stack
           }
       end
 

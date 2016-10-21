@@ -31,10 +31,7 @@ module AdminUI
           row.push(data['num_cores'])
           row.push(data['cpu'])
 
-          # Conditional logic since mem becomes mem_bytes in 157
-          if data['mem']
-            row.push(Utils.convert_kilobytes_to_megabytes(data['mem']))
-          elsif data['mem_bytes']
+          if data['mem_bytes']
             row.push(Utils.convert_bytes_to_megabytes(data['mem_bytes']))
           else
             row.push(nil)

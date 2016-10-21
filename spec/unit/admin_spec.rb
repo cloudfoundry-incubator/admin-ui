@@ -528,23 +528,6 @@ describe AdminUI::Admin do
       it_behaves_like('common delete route mapping')
     end
 
-    shared_examples 'common delete route mapping old' do
-      it 'returns failure code due to disconnection' do
-        response = delete('/route_mappings/app1/route1')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
-      end
-    end
-
-    context 'delete route mapping old via http' do
-      it_behaves_like('common delete route mapping old')
-    end
-
-    context 'delete route mapping old via https' do
-      let(:secured_client_connection) { true }
-
-      it_behaves_like('common delete route mapping old')
-    end
-
     shared_examples 'common delete security group' do
       it 'returns failure code due to disconnection' do
         response = delete('/security_groups/security_group1')
@@ -1118,8 +1101,8 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/application_instances_view_model')
       end
 
-      it '/application_instances_view_model/:app_guid/:instance_index/:instance_id returns not found' do
-        verify_not_found('/application_instances_view_model/application1/0/instance1')
+      it '/application_instances_view_model/:app_guid/:instance_index returns not found' do
+        verify_not_found('/application_instances_view_model/application1/0')
       end
 
       it '/applications_view_model succeeds' do
@@ -1302,10 +1285,6 @@ describe AdminUI::Admin do
         verify_not_found('/route_mappings_view_model/route1')
       end
 
-      it '/route_mappings_view_model/:guid/:guid returns not found' do
-        verify_not_found('/route_mappings_view_model/app1/route1')
-      end
-
       it '/routes_view_model succeeds' do
         verify_disconnected_view_model_items('/routes_view_model')
       end
@@ -1485,8 +1464,8 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/application_instances_view_model')
       end
 
-      it '/application_instances_view_model/:app_guid/:instance_index/:instance_id redirects as expected' do
-        get_redirects_as_expected('/application_instances_view_model/application1/0/instance1')
+      it '/application_instances_view_model/:app_guid/:instance_index redirects as expected' do
+        get_redirects_as_expected('/application_instances_view_model/application1/0')
       end
 
       it '/applications_view_model redirects as expected' do
@@ -1677,10 +1656,6 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/route_mappings_view_model/route1')
       end
 
-      it '/route_mappings_view_model/:guid/:guid redirects as expected' do
-        get_redirects_as_expected('/route_mappings_view_model/app1/route1')
-      end
-
       it '/routes_view_model redirects as expected' do
         get_redirects_as_expected('/routes_view_model')
       end
@@ -1863,10 +1838,6 @@ describe AdminUI::Admin do
 
       it 'deletes /route_mappings/:guid redirects as expected' do
         delete_redirects_as_expected('/route_mappings/route_mapping1')
-      end
-
-      it 'deletes /route_mappings/:guid/:guid redirects as expected' do
-        delete_redirects_as_expected('/route_mappings/app1/route1')
       end
 
       it 'deletes /routes/:guid redirects as expected' do

@@ -48,10 +48,10 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        service_instance_id = service_binding[:service_instance_id]
-        next if service_instance_id.nil?
-        service_binding_counters[service_instance_id] = 0 if service_binding_counters[service_instance_id].nil?
-        service_binding_counters[service_instance_id] += 1
+        service_instance_guid = service_binding[:service_instance_guid]
+        next if service_instance_guid.nil?
+        service_binding_counters[service_instance_guid] = 0 if service_binding_counters[service_instance_guid].nil?
+        service_binding_counters[service_instance_guid] += 1
       end
 
       service_key_counters = {}
@@ -84,7 +84,7 @@ module AdminUI
         organization               = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         event_counter           = event_counters[guid]
-        service_binding_counter = service_binding_counters[id]
+        service_binding_counter = service_binding_counters[guid]
         service_key_counter     = service_key_counters[id]
 
         row = []
@@ -162,11 +162,9 @@ module AdminUI
         end
 
         if service
-          row.push(service[:provider])
           row.push(service[:label])
           row.push(service[:guid])
           row.push(service[:unique_id])
-          row.push(service[:version])
           row.push(service[:created_at].to_datetime.rfc3339)
 
           if service[:updated_at]
@@ -178,7 +176,7 @@ module AdminUI
           row.push(service[:active])
           row.push(service[:bindable])
         else
-          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil, nil, nil)
         end
 
         if service_broker
@@ -215,7 +213,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..35).to_a, (1..35).to_a - [7, 8, 9])
+      result(true, items, hash, (1..33).to_a, (1..33).to_a - [7, 8, 9])
     end
   end
 end

@@ -45,18 +45,6 @@ describe AdminUI::VARZ do
       expect(varz.cloud_controllers).to eq('connected' => false, 'items' => [])
     end
 
-    it 'returns zero deas as expected' do
-      expect(varz.deas).to eq('connected' => false, 'items' => [])
-    end
-
-    it 'returns nil deas_count as expected' do
-      expect(varz.deas_count).to be_nil
-    end
-
-    it 'returns zero health_managers as expected' do
-      expect(varz.health_managers).to eq('connected' => false, 'items' => [])
-    end
-
     it 'returns zero gateways as expected' do
       expect(varz.gateways).to eq('connected' => false, 'items' => [])
     end

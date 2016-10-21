@@ -1,11 +1,11 @@
 require 'date'
 require 'set'
 require 'thread'
-require_relative 'has_instances_view_model'
+require_relative 'has_application_instances_view_model'
 require_relative '../utils'
 
 module AdminUI
-  class OrganizationsViewModel < AdminUI::HasInstancesViewModel
+  class OrganizationsViewModel < AdminUI::HasApplicationInstancesViewModel
     def do_items
       organizations = @cc.organizations
 
@@ -13,16 +13,18 @@ module AdminUI
       return result unless organizations['connected']
 
       applications                   = @cc.applications
-      apps_routes                    = @cc.apps_routes
       containers                     = @doppler.containers
-      deas                           = @varz.deas
       domains                        = @cc.domains
+      droplets                       = @cc.droplets
       events                         = @cc.events
       organizations_auditors         = @cc.organizations_auditors
       organizations_billing_managers = @cc.organizations_billing_managers
       organizations_managers         = @cc.organizations_managers
       organizations_users            = @cc.organizations_users
+      packages                       = @cc.packages
+      processes                      = @cc.processes
       quotas                         = @cc.quota_definitions
+      route_mappings                 = @cc.route_mappings
       routes                         = @cc.routes
       security_groups_spaces         = @cc.security_groups_spaces
       service_brokers                = @cc.service_brokers
@@ -36,12 +38,14 @@ module AdminUI
       users                          = @cc.users_cc
 
       applications_connected              = applications['connected']
-      apps_routes_connected               = apps_routes['connected']
       containers_connected                = containers['connected']
-      deas_connected                      = deas['connected']
       domains_connected                   = domains['connected']
+      droplets_connected                  = droplets['connected']
       events_connected                    = events['connected']
       organizations_roles_connected       = organizations_auditors['connected'] && organizations_billing_managers['connected'] && organizations_managers['connected'] && organizations_users['connected']
+      packages_connected                  = packages['connected']
+      processes_connected                 = processes['connected']
+      route_mappings_connected            = route_mappings['connected']
       routes_connected                    = routes['connected']
       security_groups_spaces_connected    = security_groups_spaces['connected']
       service_brokers_connected           = service_brokers['connected']
@@ -52,9 +56,15 @@ module AdminUI
       spaces_roles_connected              = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
       users_connected                     = users['connected']
 
-      quota_hash      = Hash[quotas['items'].map { |item| [item[:id], item] }]
-      routes_used_set = apps_routes['items'].to_set { |app_route| app_route[:route_id] }
-      space_hash      = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      applications_hash = Hash[applications['items'].map { |item| [item[:guid], item] }]
+      droplets_hash     = Hash[droplets['items'].map { |item| [item[:guid], item] }]
+      quota_hash        = Hash[quotas['items'].map { |item| [item[:id], item] }]
+      routes_used_set   = route_mappings['items'].to_set { |route_mapping| route_mapping[:route_guid] }
+      spaces_guid_hash  = Hash[spaces['items'].map { |item| [item[:guid], item] }]
+      spaces_id_hash    = Hash[spaces['items'].map { |item| [item[:id], item] }]
+
+      latest_droplets = latest_app_guid_hash(droplets['items'])
+      latest_packages = latest_app_guid_hash(packages['items'])
 
       event_target_counters = {}
       organization_space_counters                   = {}
@@ -67,6 +77,7 @@ module AdminUI
       organization_service_plan_visibility_counters = {}
       organization_route_counters_hash              = {}
       organization_app_counters_hash                = {}
+      organization_process_counters_hash            = {}
       space_quota_counters                          = {}
       space_role_counters                           = {}
 
@@ -80,7 +91,7 @@ module AdminUI
         event_target_counters[organization_guid] += 1
       end
 
-      space_hash.each_value do |space|
+      spaces_guid_hash.each_value do |space|
         return result unless @running
         Thread.pass
 
@@ -94,9 +105,9 @@ module AdminUI
       count_organization_roles(organizations_managers, organization_role_counters)
       count_organization_roles(organizations_users, organization_role_counters)
 
-      count_space_roles(space_hash, spaces_auditors, space_role_counters)
-      count_space_roles(space_hash, spaces_developers, space_role_counters)
-      count_space_roles(space_hash, spaces_managers, space_role_counters)
+      count_space_roles(spaces_id_hash, spaces_auditors, space_role_counters)
+      count_space_roles(spaces_id_hash, spaces_developers, space_role_counters)
+      count_space_roles(spaces_id_hash, spaces_managers, space_role_counters)
 
       users['items'].each do |user|
         return result unless @running
@@ -104,7 +115,7 @@ module AdminUI
 
         default_space_id = user[:default_space_id]
         next if default_space_id.nil?
-        space = space_hash[default_space_id]
+        space = spaces_id_hash[default_space_id]
         next if space.nil?
         organization_id = space[:organization_id]
         organization_default_user_counters[organization_id] = 0 if organization_default_user_counters[organization_id].nil?
@@ -117,7 +128,7 @@ module AdminUI
 
         space_id = service_broker[:space_id]
         next if space_id.nil?
-        space = space_hash[space_id]
+        space = spaces_id_hash[space_id]
         next if space.nil?
         organization_id = space[:organization_id]
         organization_service_broker_counters[organization_id] = 0 if organization_service_broker_counters[organization_id].nil?
@@ -128,7 +139,7 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        space = space_hash[service_instance[:space_id]]
+        space = spaces_id_hash[service_instance[:space_id]]
         next if space.nil?
         organization_id = space[:organization_id]
         organization_service_instance_counters[organization_id] = 0 if organization_service_instance_counters[organization_id].nil?
@@ -159,7 +170,7 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        space = space_hash[route[:space_id]]
+        space = spaces_id_hash[route[:space_id]]
         next if space.nil?
         organization_id = space[:organization_id]
         organization_route_counters = organization_route_counters_hash[organization_id]
@@ -172,8 +183,8 @@ module AdminUI
           organization_route_counters_hash[organization_id] = organization_route_counters
         end
 
-        if apps_routes_connected
-          organization_route_counters['unused_routes'] += 1 unless routes_used_set.include?(route[:id])
+        if route_mappings_connected
+          organization_route_counters['unused_routes'] += 1 unless routes_used_set.include?(route[:guid])
         end
         organization_route_counters['total_routes'] += 1
       end
@@ -192,46 +203,60 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        space = space_hash[security_group_space[:space_id]]
+        space = spaces_id_hash[security_group_space[:space_id]]
         next if space.nil?
         organization_id = space[:organization_id]
         organization_security_groups_counters[organization_id] = 0 if organization_security_groups_counters[organization_id].nil?
         organization_security_groups_counters[organization_id] += 1
       end
 
-      containers_hash, deas_instance_hash = create_instance_hashes(containers, deas)
+      containers_hash = create_instance_hash(containers)
 
       applications['items'].each do |application|
         return result unless @running
         Thread.pass
 
-        space = space_hash[application[:space_id]]
+        space = spaces_guid_hash[application[:space_guid]]
         next if space.nil?
         organization_id = space[:organization_id]
         organization_app_counters = organization_app_counters_hash[organization_id]
         if organization_app_counters.nil?
           organization_app_counters =
             {
-              'total'           => 0,
-              'reserved_memory' => 0,
-              'reserved_disk'   => 0,
-              'used_memory'     => 0,
-              'used_disk'       => 0,
-              'used_cpu'        => 0,
-              'instances'       => 0
+              'total'       => 0,
+              'used_memory' => 0,
+              'used_disk'   => 0,
+              'used_cpu'    => 0
             }
           organization_app_counters_hash[organization_id] = organization_app_counters
         end
 
-        organization_app_counters[application[:state]] = 0 if organization_app_counters[application[:state]].nil?
-        organization_app_counters[application[:package_state]] = 0 if organization_app_counters[application[:package_state]].nil?
+        add_instance_metrics(organization_app_counters, application, droplets_hash, latest_droplets, latest_packages, containers_hash)
+      end
 
-        add_instance_metrics(organization_app_counters, application, containers_hash, deas_instance_hash)
+      processes['items'].each do |process|
+        return result unless @running
+        Thread.pass
 
-        organization_app_counters['total'] += 1
-        organization_app_counters[application[:state]] += 1
-        organization_app_counters[application[:package_state]] += 1
-        organization_app_counters['instances'] += application[:instances] unless application[:instances].nil?
+        application_guid = process[:app_guid]
+        application = applications_hash[application_guid]
+        next if application.nil?
+        space = spaces_guid_hash[application[:space_guid]]
+        next if space.nil?
+        organization_id = space[:organization_id]
+        organization_process_counters = organization_process_counters_hash[organization_id]
+
+        if organization_process_counters.nil?
+          organization_process_counters =
+            {
+              'reserved_memory' => 0,
+              'reserved_disk'   => 0,
+              'instances'       => 0
+            }
+          organization_process_counters_hash[organization_id] = organization_process_counters
+        end
+
+        add_process_metrics(organization_process_counters, process)
       end
 
       items = []
@@ -255,6 +280,7 @@ module AdminUI
         organization_security_groups_counter         = organization_security_groups_counters[organization_id]
         organization_app_counters                    = organization_app_counters_hash[organization_id]
         organization_domain_counter                  = organization_domain_counters[organization_id]
+        organization_process_counters                = organization_process_counters_hash[organization_id]
         organization_route_counters                  = organization_route_counters_hash[organization_id]
         space_quota_counter                          = space_quota_counters[organization_id]
         space_role_counter                           = space_role_counters[organization_id]
@@ -369,9 +395,9 @@ module AdminUI
           row.push(nil, nil, nil)
         end
 
-        if (containers_connected || deas_connected) && organization_app_counters
-          row.push(organization_app_counters['instances'])
-        elsif (containers_connected || deas_connected) && spaces_connected && applications_connected
+        if organization_process_counters
+          row.push(organization_process_counters['instances'])
+        elsif spaces_connected && applications_connected && processes_connected
           row.push(0)
         else
           row.push(nil)
@@ -385,31 +411,54 @@ module AdminUI
           row.push(nil)
         end
 
-        if organization_app_counters
-          if containers_connected || deas_connected
+        if containers_connected
+          if organization_app_counters
             row.push(Utils.convert_bytes_to_megabytes(organization_app_counters['used_memory']))
             row.push(Utils.convert_bytes_to_megabytes(organization_app_counters['used_disk']))
             row.push(organization_app_counters['used_cpu'])
-          else
-            row.push(nil, nil, nil)
-          end
-          row.push(organization_app_counters['reserved_memory'])
-          row.push(organization_app_counters['reserved_disk'])
-          row.push(organization_app_counters['total'])
-          row.push(organization_app_counters['STARTED'] || 0)
-          row.push(organization_app_counters['STOPPED'] || 0)
-          row.push(organization_app_counters['PENDING'] || 0)
-          row.push(organization_app_counters['STAGED'] || 0)
-          row.push(organization_app_counters['FAILED'] || 0)
-        elsif spaces_connected && applications_connected
-          if containers_connected || deas_connected
+          elsif spaces_connected && applications_connected
             row.push(0, 0, 0)
           else
             row.push(nil, nil, nil)
           end
-          row.push(0, 0, 0, 0, 0, 0, 0, 0)
         else
-          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil)
+        end
+
+        if organization_process_counters
+          row.push(organization_process_counters['reserved_memory'])
+          row.push(organization_process_counters['reserved_disk'])
+        elsif spaces_connected && applications_connected && processes_connected
+          row.push(0, 0)
+        else
+          row.push(nil, nil)
+        end
+
+        if organization_app_counters
+          row.push(organization_app_counters['total'])
+        elsif spaces_connected && applications_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if organization_process_counters
+          row.push(organization_process_counters['STARTED'] || 0)
+          row.push(organization_process_counters['STOPPED'] || 0)
+        elsif spaces_connected && applications_connected && processes_connected
+          row.push(0, 0)
+        else
+          row.push(nil, nil)
+        end
+
+        if organization_app_counters && droplets_connected && packages_connected
+          row.push(organization_app_counters['PENDING'] || 0)
+          row.push(organization_app_counters['STAGED'] || 0)
+          row.push(organization_app_counters['FAILED'] || 0)
+        elsif spaces_connected && applications_connected && droplets_connected && packages_connected
+          row.push(0, 0, 0)
+        else
+          row.push(nil, nil, nil)
         end
 
         items.push(row)
@@ -435,10 +484,10 @@ module AdminUI
       end
     end
 
-    def count_space_roles(space_hash, input_space_role_array, output_space_role_counter_hash)
+    def count_space_roles(spaces_id_hash, input_space_role_array, output_space_role_counter_hash)
       input_space_role_array['items'].each do |input_space_role_array_entry|
         Thread.pass
-        space = space_hash[input_space_role_array_entry[:space_id]]
+        space = spaces_id_hash[input_space_role_array_entry[:space_id]]
         next if space.nil?
         organization_id = space[:organization_id]
         output_space_role_counter_hash[organization_id] = 0 if output_space_role_counter_hash[organization_id].nil?

@@ -40,7 +40,7 @@ describe AdminUI::Doppler, type: :integration do
 
     config_stub
     cc_stub(config)
-    doppler_stub(application_instance_source)
+    doppler_stub(application_instance_source, :doppler_router)
 
     event_machine_loop
   end
@@ -82,40 +82,86 @@ describe AdminUI::Doppler, type: :integration do
     end
   end
 
-  context 'doppler cell' do
-    it 'returns connected analyzers' do
-      analyzers = doppler.analyzers
+  it 'returns connected analyzers' do
+    analyzers = doppler.analyzers
 
-      expect(analyzers['connected']).to eq(true)
-      expect(analyzers['items'].length).to be(0)
+    expect(analyzers['connected']).to eq(true)
+    items = analyzers['items']
+
+    expect(items.length).to be(1)
+
+    verify_component(analyzer_envelope, DopplerHelper::ANALYZER_VALUE_METRICS, items.keys[0], items.values[0])
+  end
+
+  it 'returns connected components including analyzer' do
+    components = doppler.components
+
+    expect(components['connected']).to eq(true)
+    items = components['items']
+
+    analyzer_index = nil
+
+    index = 0
+    while index < items.length
+      key = items.keys[index]
+      analyzer_index = index if key.include?('analyzer')
+      index += 1
     end
 
-    it 'returns connected components' do
+    expect(analyzer_index).to_not be_nil
+
+    verify_component(analyzer_envelope, DopplerHelper::ANALYZER_VALUE_METRICS, items.keys[analyzer_index], items.values[analyzer_index])
+  end
+
+  it 'returns connected gorouters' do
+    gorouters = doppler.gorouters
+
+    expect(gorouters['connected']).to eq(true)
+    items = gorouters['items']
+
+    expect(items.length).to be(1)
+
+    verify_component(gorouter_envelope, DopplerHelper::GOROUTER_VALUE_METRICS, items.keys[0], items.values[0])
+  end
+
+  it 'returns connected components including gorouter' do
+    components = doppler.components
+
+    expect(components['connected']).to eq(true)
+    items = components['items']
+
+    gorouter_index = nil
+
+    index = 0
+    while index < items.length
+      key = items.keys[index]
+      gorouter_index = index if key.include?('gorouter')
+      index += 1
+    end
+
+    expect(gorouter_index).to_not be_nil
+
+    verify_component(gorouter_envelope, DopplerHelper::GOROUTER_VALUE_METRICS, items.keys[gorouter_index], items.values[gorouter_index])
+  end
+
+  context 'doppler cell' do
+    it 'returns connected components including rep' do
       components = doppler.components
 
       expect(components['connected']).to eq(true)
       items = components['items']
 
-      expect(items.length).to be(2)
-
-      rep_index             = nil
-      doppler_server_index  = nil
+      rep_index = nil
 
       index = 0
       while index < items.length
         key = items.keys[index]
-        if key.include?('DopplerServer')
-          doppler_server_index = index
-        elsif key.include?('rep')
-          rep_index = index
-        end
+        rep_index = index if key.include?('rep')
         index += 1
       end
 
-      expect(doppler_server_index).to_not be_nil
       expect(rep_index).to_not be_nil
 
-      verify_component(doppler_server_envelope, DopplerHelper::DOPPLER_SERVER_VALUE_METRICS, items.keys[doppler_server_index], items.values[doppler_server_index])
       verify_component(rep_envelope, DopplerHelper::REP_VALUE_METRICS, items.keys[rep_index], items.values[rep_index])
     end
 
@@ -135,13 +181,6 @@ describe AdminUI::Doppler, type: :integration do
 
       expect(deas['connected']).to eq(true)
       expect(deas['items'].length).to be(0)
-    end
-
-    it 'returns connected gorouters' do
-      gorouters = doppler.gorouters
-
-      expect(gorouters['connected']).to eq(true)
-      expect(gorouters['items'].length).to be(0)
     end
 
     it 'returns connected reps' do
@@ -166,54 +205,24 @@ describe AdminUI::Doppler, type: :integration do
 
   context 'doppler dea' do
     let(:application_instance_source) { :doppler_dea }
-    it 'returns connected analyzers' do
-      analyzers = doppler.analyzers
-
-      expect(analyzers['connected']).to eq(true)
-      items = analyzers['items']
-
-      expect(items.length).to be(1)
-
-      verify_component(analyzer_envelope, DopplerHelper::ANALYZER_VALUE_METRICS, items.keys[0], items.values[0])
-    end
-
-    it 'returns connected components' do
+    it 'returns connected components including DEA' do
       components = doppler.components
 
       expect(components['connected']).to eq(true)
       items = components['items']
 
-      expect(items.length).to be(4)
-
-      analyzer_index        = nil
-      dea_index             = nil
-      doppler_server_index  = nil
-      gorouter_index        = nil
+      dea_index = nil
 
       index = 0
       while index < items.length
         key = items.keys[index]
-        if key.include?('analyzer')
-          analyzer_index = index
-        elsif key.include?('DEA')
-          dea_index = index
-        elsif key.include?('DopplerServer')
-          doppler_server_index = index
-        elsif key.include?('gorouter')
-          gorouter_index = index
-        end
+        dea_index = index if key.include?('DEA')
         index += 1
       end
 
-      expect(analyzer_index).to_not be_nil
       expect(dea_index).to_not be_nil
-      expect(doppler_server_index).to_not be_nil
-      expect(gorouter_index).to_not be_nil
 
-      verify_component(analyzer_envelope, DopplerHelper::ANALYZER_VALUE_METRICS, items.keys[analyzer_index], items.values[analyzer_index])
       verify_component(dea_envelope, DopplerHelper::DEA_VALUE_METRICS, items.keys[dea_index], items.values[dea_index])
-      verify_component(doppler_server_envelope, DopplerHelper::DOPPLER_SERVER_VALUE_METRICS, items.keys[doppler_server_index], items.values[doppler_server_index])
-      verify_component(gorouter_envelope, DopplerHelper::GOROUTER_VALUE_METRICS, items.keys[gorouter_index], items.values[gorouter_index])
     end
 
     it 'returns connected containers' do
@@ -236,17 +245,6 @@ describe AdminUI::Doppler, type: :integration do
       expect(items.length).to be(1)
 
       verify_component(dea_envelope, DopplerHelper::DEA_VALUE_METRICS, items.keys[0], items.values[0])
-    end
-
-    it 'returns connected gorouters' do
-      gorouters = doppler.gorouters
-
-      expect(gorouters['connected']).to eq(true)
-      items = gorouters['items']
-
-      expect(items.length).to be(1)
-
-      verify_component(gorouter_envelope, DopplerHelper::GOROUTER_VALUE_METRICS, items.keys[0], items.values[0])
     end
 
     it 'returns connected reps' do

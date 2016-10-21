@@ -131,7 +131,7 @@ shared_context :web_context do
                        stat_count_string,
                        stat_count_string,
                        stat_count_string,
-                       application_instance_source != :doppler_cell ? stat_count_string : nil,
+                       application_instance_source == :doppler_dea ? stat_count_string : nil,
                        application_instance_source == :doppler_cell ? stat_count_string : nil
                      ])
   end

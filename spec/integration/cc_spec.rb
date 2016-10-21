@@ -49,13 +49,6 @@ describe AdminUI::CC, type: :integration do
       expect(cc.applications['items'].length).to eq(0)
     end
 
-    it 'clears the application routes cache' do
-      expect(cc.apps_routes['items'].length).to eq(1)
-      cc_clear_apps_routes_cache_stub(config)
-      cc.invalidate_apps_routes
-      expect(cc.apps_routes['items'].length).to eq(0)
-    end
-
     it 'clears the approval cache' do
       expect(cc.approvals['items'].length).to eq(1)
       uaa_clear_approvals_cache_stub(config)
@@ -82,6 +75,13 @@ describe AdminUI::CC, type: :integration do
       cc_clear_domains_cache_stub(config)
       cc.invalidate_domains
       expect(cc.domains['items'].length).to eq(0)
+    end
+
+    it 'clears the droplet cache' do
+      expect(cc.droplets['items'].length).to eq(1)
+      cc_clear_droplets_cache_stub(config)
+      cc.invalidate_droplets
+      expect(cc.droplets['items'].length).to eq(0)
     end
 
     it 'clears the feature_flags cache' do
@@ -140,6 +140,20 @@ describe AdminUI::CC, type: :integration do
       expect(cc.organizations_users['items'].length).to eq(0)
     end
 
+    it 'clears the package cache' do
+      expect(cc.packages['items'].length).to eq(1)
+      cc_clear_packages_cache_stub(config)
+      cc.invalidate_packages
+      expect(cc.packages['items'].length).to eq(0)
+    end
+
+    it 'clears the process cache' do
+      expect(cc.processes['items'].length).to eq(1)
+      cc_clear_processes_cache_stub(config)
+      cc.invalidate_processes
+      expect(cc.processes['items'].length).to eq(0)
+    end
+
     it 'clears the quota definition cache' do
       expect(cc.quota_definitions['items'].length).to eq(1)
       cc_clear_quota_definitions_cache_stub(config)
@@ -152,6 +166,13 @@ describe AdminUI::CC, type: :integration do
       cc_clear_routes_cache_stub(config)
       cc.invalidate_routes
       expect(cc.routes['items'].length).to eq(0)
+    end
+
+    it 'clears the route mappings cache' do
+      expect(cc.route_mappings['items'].length).to eq(1)
+      cc_clear_route_mappings_cache_stub(config)
+      cc.invalidate_route_mappings
+      expect(cc.route_mappings['items'].length).to eq(0)
     end
 
     it 'clears the security group cache' do
@@ -286,24 +307,9 @@ describe AdminUI::CC, type: :integration do
       expect(cc.applications_count).to be(1)
     end
 
-    it 'returns applications_running_instances' do
-      expect(cc.applications_running_instances).to be(1)
-    end
-
-    it 'returns applications_total_instances' do
-      expect(cc.applications_total_instances).to be(1)
-    end
-
     context 'returns connected approvals' do
       let(:results)  { cc.approvals }
       let(:expected) { uaa_approval }
-
-      it_behaves_like('common cc retrieval')
-    end
-
-    context 'returns connected apps_routes' do
-      let(:results)  { cc.apps_routes }
-      let(:expected) { cc_app_route }
 
       it_behaves_like('common cc retrieval')
     end
@@ -424,6 +430,28 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected packages' do
+      let(:results)  { cc.packages }
+      let(:expected) { cc_package }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected processes' do
+      let(:results)  { cc.processes }
+      let(:expected) { cc_process }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    it 'returns processes_running_instances' do
+      expect(cc.processes_running_instances).to be(1)
+    end
+
+    it 'returns processes_total_instances' do
+      expect(cc.processes_total_instances).to be(1)
+    end
+
     context 'returns connected quota_definitions' do
       let(:results)  { cc.quota_definitions }
       let(:expected) { cc_quota_definition }
@@ -434,6 +462,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected routes' do
       let(:results)  { cc.routes }
       let(:expected) { cc_route }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected route_mappings' do
+      let(:results)  { cc.route_mappings }
+      let(:expected) { cc_route_mapping }
 
       it_behaves_like('common cc retrieval')
     end

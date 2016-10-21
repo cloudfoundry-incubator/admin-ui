@@ -18,7 +18,7 @@ module AdminUI
 
       application_hash  = Hash[applications['items'].map { |item| [item[:guid], item] }]
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      space_hash        = Hash[spaces['items'].map { |item| [item[:guid], item] }]
 
       items = []
       hash  = {}
@@ -43,10 +43,7 @@ module AdminUI
             row.push(data['num_cores'])
             row.push(data['cpu'])
 
-            # Conditional logic since mem becomes mem_bytes in 157
-            if data['mem']
-              row.push(Utils.convert_kilobytes_to_megabytes(data['mem']))
-            elsif data['mem_bytes']
+            if data['mem_bytes']
               row.push(Utils.convert_bytes_to_megabytes(data['mem_bytes']))
             else
               row.push(nil)
@@ -62,7 +59,7 @@ module AdminUI
               application = application_hash[top10_app['application_id']]
               next if application.nil?
 
-              space        = space_hash[application[:space_id]]
+              space        = space_hash[application[:space_guid]]
               organization = space.nil? ? nil : organization_hash[space[:organization_id]]
               target       = organization.nil? ? nil : "#{organization[:name]}/#{space[:name]}"
 

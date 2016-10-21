@@ -10,14 +10,14 @@ module AdminUI
       # routes have to exist.  Other record types are optional
       return result unless routes['connected']
 
-      apps_routes   = @cc.apps_routes
-      domains       = @cc.domains
-      events        = @cc.events
-      organizations = @cc.organizations
-      spaces        = @cc.spaces
+      domains        = @cc.domains
+      events         = @cc.events
+      organizations  = @cc.organizations
+      route_mappings = @cc.route_mappings
+      spaces         = @cc.spaces
 
-      apps_routes_connected = apps_routes['connected']
-      events_connected      = events['connected']
+      events_connected         = events['connected']
+      route_mappings_connected = route_mappings['connected']
 
       domain_hash       = Hash[domains['items'].map { |item| [item[:id], item] }]
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
@@ -35,13 +35,13 @@ module AdminUI
       end
 
       app_counters = {}
-      apps_routes['items'].each do |app_route|
+      route_mappings['items'].each do |route_mapping|
         return result unless @running
         Thread.pass
 
-        route_id = app_route[:route_id]
-        app_counters[route_id] = 0 if app_counters[route_id].nil?
-        app_counters[route_id] += 1
+        route_guid = route_mapping[:route_guid]
+        app_counters[route_guid] = 0 if app_counters[route_guid].nil?
+        app_counters[route_guid] += 1
       end
 
       items = []
@@ -57,7 +57,7 @@ module AdminUI
         space        = space_hash[route[:space_id]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]
 
-        app_counter   = app_counters[route[:id]]
+        app_counter   = app_counters[guid]
         event_counter = event_counters[guid]
 
         row = []
@@ -118,7 +118,7 @@ module AdminUI
 
         if app_counter
           row.push(app_counter)
-        elsif apps_routes_connected
+        elsif route_mappings_connected
           row.push(0)
         else
           row.push(nil)

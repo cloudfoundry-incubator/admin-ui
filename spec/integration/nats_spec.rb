@@ -25,7 +25,7 @@ describe AdminUI::NATS, type: :integration do
 
   before do
     config_stub
-    nats_stub(:varz_dea)
+    nats_stub(:varz_router)
 
     event_machine_loop
   end
@@ -46,11 +46,9 @@ describe AdminUI::NATS, type: :integration do
 
       expect(get['connected']).to eq(true)
       items = get['items']
-      expect(items.length).to be(5)
+      expect(items.length).to be(3)
 
       expect(items).to include(nats_cloud_controller_varz => nats_cloud_controller)
-      expect(items).to include(nats_dea_varz => nats_dea)
-      expect(items).to include(nats_health_manager_varz => nats_health_manager)
       expect(items).to include(nats_provisioner_varz => nats_provisioner)
       expect(items).to include(nats_router_varz => nats_router)
     end

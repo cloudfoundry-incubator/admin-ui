@@ -120,6 +120,10 @@ module AdminUI
       invalidate_cache(:applications)
     end
 
+    def invalidate_approvals
+      invalidate_cache(:approvals)
+    end
+
     def invalidate_buildpacks
       invalidate_cache(:buildpacks)
     end
@@ -248,8 +252,8 @@ module AdminUI
       invalidate_cache(:users)
     end
 
-    def application_instance(app_guid, instance_index, instance_id)
-      details(:application_instances, "#{app_guid}/#{instance_index}/#{instance_id}")
+    def application_instance(app_guid, instance_index)
+      details(:application_instances, "#{app_guid}/#{instance_index}")
     end
 
     def application_instances
@@ -438,10 +442,6 @@ module AdminUI
 
     def route_mapping(guid)
       details(:route_mappings, guid)
-    end
-
-    def route_mapping_old(app_guid, route_guid)
-      details(:route_mappings, "#{app_guid}/#{route_guid}")
     end
 
     def route_mappings

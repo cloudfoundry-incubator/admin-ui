@@ -5,61 +5,50 @@ require_relative 'base_view_model'
 module AdminUI
   class RouteMappingsViewModel < AdminUI::BaseViewModel
     def do_items
-      applications = @cc.applications
-      apps_routes  = @cc.apps_routes
-      domains      = @cc.domains
-      routes       = @cc.routes
+      applications   = @cc.applications
+      domains        = @cc.domains
+      route_mappings = @cc.route_mappings
+      routes         = @cc.routes
 
-      # applications, apps_routes, domains and routes have to exist.  Other record types are optional
+      # applications, domains, route_mappings and routes have to exist.  Other record types are optional
       return result unless applications['connected'] &&
-                           apps_routes['connected'] &&
                            domains['connected'] &&
+                           route_mappings['connected'] &&
                            routes['connected']
 
       organizations = @cc.organizations
       spaces        = @cc.spaces
 
-      application_hash  = Hash[applications['items'].map { |item| [item[:id], item] }]
+      application_hash  = Hash[applications['items'].map { |item| [item[:guid], item] }]
       domain_hash       = Hash[domains['items'].map { |item| [item[:id], item] }]
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      route_hash        = Hash[routes['items'].map { |item| [item[:id], item] }]
-      space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      route_hash        = Hash[routes['items'].map { |item| [item[:guid], item] }]
+      space_hash        = Hash[spaces['items'].map { |item| [item[:guid], item] }]
 
       items = []
       hash  = {}
 
-      apps_routes['items'].each do |app_route|
+      route_mappings['items'].each do |route_mapping|
         return result unless @running
         Thread.pass
 
-        guid        = app_route[:guid]
-        application = application_hash[app_route[:app_id]]
-        route       = route_hash[app_route[:route_id]]
-
-        # Older versions did not have an app_route[:guid]
-        key = guid
-        key = "#{application[:guid]}/#{route[:guid]}" if key.nil? && application && route
-
-        next if key.nil?
+        guid        = route_mapping[:guid]
+        application = application_hash[route_mapping[:app_guid]]
+        route       = route_hash[route_mapping[:route_guid]]
 
         domain       = route.nil? ? nil : domain_hash[route[:domain_id]]
-        space        = application.nil? ? nil : space_hash[application[:space_id]]
+        space        = application.nil? ? nil : space_hash[application[:space_guid]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         row = []
 
-        row.push(key)
+        row.push(guid)
         row.push(guid)
 
-        # Older versions did not have app_route[:created_at]
-        if app_route[:created_at]
-          row.push(app_route[:created_at].to_datetime.rfc3339)
-        else
-          row.push(nil)
-        end
+        row.push(route_mapping[:created_at].to_datetime.rfc3339)
 
-        if app_route[:updated_at]
-          row.push(app_route[:updated_at].to_datetime.rfc3339)
+        if route_mapping[:updated_at]
+          row.push(route_mapping[:updated_at].to_datetime.rfc3339)
         else
           row.push(nil)
         end
@@ -100,14 +89,14 @@ module AdminUI
 
         items.push(row)
 
-        hash[key] =
+        hash[guid] =
           {
-            'application'  => application,
-            'app_route'    => app_route,
-            'domain'       => domain,
-            'organization' => organization,
-            'route'        => route,
-            'space'        => space
+            'application'   => application,
+            'domain'        => domain,
+            'organization'  => organization,
+            'route'         => route,
+            'route_mapping' => route_mapping,
+            'space'         => space
           }
       end
 

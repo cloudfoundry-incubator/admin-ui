@@ -77,7 +77,7 @@ describe AdminUI::ViewModels do
     end
 
     it 'returns nil application_instance as expected' do
-      expect(view_models.application_instance('bogus', 0, 'bogus')).to be_nil
+      expect(view_models.application_instance('bogus', 0)).to be_nil
     end
 
     it 'returns zero application_instances as expected' do

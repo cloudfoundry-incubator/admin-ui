@@ -26,9 +26,10 @@ module AdminUI
       service_plans_connected             = service_plans['connected']
       service_plan_visibilities_connected = service_plan_visibilities['connected']
 
-      service_broker_hash   = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
-      service_instance_hash = Hash[service_instances['items'].map { |item| [item[:id], item] }]
-      service_plan_hash     = Hash[service_plans['items'].map { |item| [item[:id], item] }]
+      service_broker_hash        = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
+      service_instance_guid_hash = Hash[service_instances['items'].map { |item| [item[:guid], item] }]
+      service_instance_id_hash   = Hash[service_instances['items'].map { |item| [item[:id], item] }]
+      service_plan_hash          = Hash[service_plans['items'].map { |item| [item[:id], item] }]
 
       event_counters = {}
       events['items'].each do |event|
@@ -89,9 +90,9 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        service_instance_id = service_binding[:service_instance_id]
-        next if service_instance_id.nil?
-        service_instance = service_instance_hash[service_instance_id]
+        service_instance_guid = service_binding[:service_instance_guid]
+        next if service_instance_guid.nil?
+        service_instance = service_instance_guid_hash[service_instance_guid]
         next if service_instance.nil?
         service_plan_id = service_instance[:service_plan_id]
         next if service_plan_id.nil?
@@ -109,7 +110,7 @@ module AdminUI
 
         service_instance_id = service_key[:service_instance_id]
         next if service_instance_id.nil?
-        service_instance = service_instance_hash[service_instance_id]
+        service_instance = service_instance_id_hash[service_instance_id]
         next if service_instance.nil?
         service_plan_id = service_instance[:service_plan_id]
         next if service_plan_id.nil?
@@ -142,11 +143,9 @@ module AdminUI
         row = []
 
         row.push(guid)
-        row.push(service[:provider])
         row.push(service[:label])
         row.push(guid)
         row.push(service[:unique_id])
-        row.push(service[:version])
         row.push(service[:created_at].to_datetime.rfc3339)
 
         if service[:updated_at]
@@ -268,7 +267,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..24).to_a, (1..24).to_a - [14, 15, 16, 17, 18, 19, 20])
+      result(true, items, hash, (1..22).to_a, (1..22).to_a - [12, 13, 14, 15, 16, 17, 18])
     end
   end
 end

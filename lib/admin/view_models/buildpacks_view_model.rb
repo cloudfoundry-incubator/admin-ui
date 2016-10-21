@@ -1,9 +1,9 @@
 require 'date'
 require 'thread'
-require_relative 'base_view_model'
+require_relative 'has_applications_view_model'
 
 module AdminUI
-  class BuildpacksViewModel < AdminUI::BaseViewModel
+  class BuildpacksViewModel < AdminUI::HasApplicationsViewModel
     def do_items
       buildpacks = @cc.buildpacks
 
@@ -11,16 +11,27 @@ module AdminUI
       return result unless buildpacks['connected']
 
       applications = @cc.applications
+      droplets     = @cc.droplets
 
       applications_connected = applications['connected']
+      droplets_connected     = droplets['connected']
+
+      droplet_hash = Hash[droplets['items'].map { |item| [item[:guid], item] }]
+
+      latest_droplets = latest_app_guid_hash(droplets['items'])
 
       application_counters = {}
       applications['items'].each do |application|
-        detected_buildpack_guid = application[:detected_buildpack_guid]
-        next if detected_buildpack_guid.nil?
+        droplet_guid = application[:droplet_guid]
+        droplet      = droplet_guid.nil? ? nil : droplet_hash[droplet_guid]
+        droplet      = latest_droplets[application[:guid]] if droplet.nil?
+        next if droplet.nil?
 
-        application_counters[detected_buildpack_guid] = 0 if application_counters[detected_buildpack_guid].nil?
-        application_counters[detected_buildpack_guid] += 1
+        buildpack_receipt_buildpack_guid = droplet[:buildpack_receipt_buildpack_guid]
+        next if buildpack_receipt_buildpack_guid.nil?
+
+        application_counters[buildpack_receipt_buildpack_guid] = 0 if application_counters[buildpack_receipt_buildpack_guid].nil?
+        application_counters[buildpack_receipt_buildpack_guid] += 1
       end
 
       items = []
@@ -48,19 +59,13 @@ module AdminUI
           row.push(nil)
         end
 
-        # Buildpack priority renamed to position.  Handle both.
-        if buildpack[:position]
-          row.push(buildpack[:position])
-        else
-          row.push(buildpack[:priority])
-        end
-
+        row.push(buildpack[:position])
         row.push(buildpack[:enabled])
         row.push(buildpack[:locked])
 
         if application_counter
           row.push(application_counter)
-        elsif applications_connected
+        elsif applications_connected && droplets_connected
           row.push(0)
         else
           row.push(nil)

@@ -4,7 +4,7 @@ require 'yajl'
 require_relative '../spec_helper'
 
 module NATSHelper
-  def nats_stub(application_instance_source)
+  def nats_stub(router_source)
     allow(::NATS).to receive(:start) do |_, &blk|
       EventMachine.next_tick { blk.call }
     end
@@ -13,10 +13,8 @@ module NATSHelper
 
     allow(::NATS).to receive(:request).with('vcap.component.discover') do |_, &blk|
       EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_cloud_controller)) }
-      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_dea)) } if application_instance_source == :varz_dea
-      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_health_manager)) } unless application_instance_source == :doppler_dea
       EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_provisioner)) }
-      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_router)) } unless application_instance_source == :doppler_dea
+      EventMachine.next_tick { blk.call(Yajl::Encoder.encode(nats_router)) } if router_source == :varz_router
     end
   end
 
@@ -26,24 +24,6 @@ module NATSHelper
       'host'        => 'CloudControllerHost',
       'index'       => 0,
       'type'        => 'CloudController'
-    }
-  end
-
-  def nats_dea
-    {
-      'credentials' => %w(dea_user dea_password),
-      'host'        => 'DEAHost',
-      'index'       => 0,
-      'type'        => 'DEA'
-    }
-  end
-
-  def nats_health_manager
-    {
-      'credentials' => %w(hm_user hm_password),
-      'host'        => 'HealthManagerHost',
-      'index'       => 0,
-      'type'        => 'HM9000'
     }
   end
 
@@ -67,14 +47,6 @@ module NATSHelper
 
   def nats_cloud_controller_varz
     "http://#{nats_cloud_controller['host']}/varz"
-  end
-
-  def nats_dea_varz
-    "http://#{nats_dea['host']}/varz"
-  end
-
-  def nats_health_manager_varz
-    "http://#{nats_health_manager['host']}/varz"
   end
 
   def nats_provisioner_varz

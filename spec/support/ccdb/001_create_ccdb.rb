@@ -30,7 +30,7 @@ Sequel.migration do
       index [:created_at], :name=>:usage_events_created_at_index
     end
     
-    create_table(:apps_v3, :ignore_index_errors=>true) do
+    create_table(:apps, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
@@ -41,14 +41,15 @@ Sequel.migration do
       String :desired_state, :default=>"STOPPED", :text=>true
       String :encrypted_environment_variables, :text=>true
       String :salt, :text=>true
+      Integer :max_task_sequence_id, :default=>1
       
       index [:droplet_guid], :name=>:apps_desired_droplet_guid
-      index [:created_at]
-      index [:guid], :unique=>true
-      index [:name]
-      index [:space_guid]
-      index [:space_guid, :name], :unique=>true
-      index [:updated_at]
+      index [:created_at], :name=>:apps_v3_created_at_index
+      index [:guid], :name=>:apps_v3_guid_index, :unique=>true
+      index [:name], :name=>:apps_v3_name_index
+      index [:space_guid], :name=>:apps_v3_space_guid_index
+      index [:space_guid, :name], :name=>:apps_v3_space_guid_name_index, :unique=>true
+      index [:updated_at], :name=>:apps_v3_updated_at_index
     end
     
     create_table(:billing_events, :ignore_index_errors=>true) do
@@ -91,10 +92,12 @@ Sequel.migration do
       String :app_guid, :text=>true
       String :droplet_guid, :text=>true
       String :stack, :text=>true
-      String :salt, :text=>true
-      String :encrypted_buildpack, :text=>true
+      String :encrypted_buildpack_url, :text=>true
+      String :encrypted_buildpack_url_salt, :text=>true
+      String :admin_buildpack_name, :text=>true
       
       index [:droplet_guid], :name=>:bp_lifecycle_data_droplet_guid
+      index [:admin_buildpack_name]
       index [:app_guid], :name=>:buildpack_lifecycle_data_app_guid
       index [:created_at]
       index [:guid], :unique=>true
@@ -139,24 +142,6 @@ Sequel.migration do
       index [:created_at], :name=>:dj_created_at_index
       index [:guid], :name=>:dj_guid_index, :unique=>true
       index [:updated_at], :name=>:dj_updated_at_index
-    end
-    
-    create_table(:droplets, :ignore_index_errors=>true) do
-      primary_key :id
-      String :guid, :text=>true, :null=>false
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      Integer :app_id, :null=>false
-      String :droplet_hash, :text=>true, :null=>false
-      String :detected_start_command, :text=>true
-      String :execution_metadata, :text=>true
-      String :cached_docker_image, :text=>true
-      
-      index [:app_id]
-      index [:created_at]
-      index [:droplet_hash]
-      index [:guid], :unique=>true
-      index [:updated_at]
     end
     
     create_table(:env_groups, :ignore_index_errors=>true) do
@@ -236,21 +221,6 @@ Sequel.migration do
       String :name, :text=>true, :null=>false
       
       index [:name], :unique=>true
-    end
-    
-    create_table(:package_docker_data, :ignore_index_errors=>true) do
-      primary_key :id
-      String :guid, :text=>true, :null=>false
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      String :image, :text=>true
-      String :encrypted_email, :text=>true
-      String :package_guid, :text=>true
-      
-      index [:created_at]
-      index [:guid], :unique=>true
-      index [:package_guid], :name=>:package_docker_data_package_guid
-      index [:updated_at]
     end
     
     create_table(:quota_definitions, :ignore_index_errors=>true) do
@@ -364,6 +334,37 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:droplets, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :droplet_hash, :text=>true
+      String :execution_metadata, :text=>true
+      String :state, :text=>true, :null=>false
+      String :process_types, :text=>true
+      String :error_id, :text=>true
+      String :error_description, :text=>true
+      String :encrypted_environment_variables, :text=>true
+      String :salt, :text=>true
+      Integer :staging_memory_in_mb
+      Integer :staging_disk_in_mb
+      String :buildpack_receipt_stack_name, :text=>true
+      String :buildpack_receipt_buildpack, :text=>true
+      String :buildpack_receipt_buildpack_guid, :text=>true
+      String :buildpack_receipt_detect_output, :text=>true
+      String :docker_receipt_image, :text=>true
+      String :package_guid, :text=>true
+      foreign_key :app_guid, :apps, :type=>String, :text=>true, :key=>[:guid]
+      
+      index [:created_at]
+      index [:droplet_hash]
+      index [:guid], :unique=>true
+      index [:state]
+      index [:updated_at]
+      index [:package_guid], :name=>:package_guid_index
+    end
+    
     create_table(:organizations, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -389,8 +390,8 @@ Sequel.migration do
       String :package_hash, :text=>true
       String :state, :text=>true, :null=>false
       String :error, :text=>true
-      String :url, :text=>true
-      foreign_key :app_guid, :apps_v3, :type=>String, :text=>true, :key=>[:guid]
+      foreign_key :app_guid, :apps, :type=>String, :text=>true, :key=>[:guid]
+      String :docker_image, :text=>true
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -398,34 +399,79 @@ Sequel.migration do
       index [:updated_at]
     end
     
-    create_table(:v3_droplets, :ignore_index_errors=>true) do
+    create_table(:processes, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
+      TrueClass :production, :default=>false
+      Integer :memory
+      Integer :instances, :default=>1
+      Integer :file_descriptors, :default=>16384
+      Integer :disk_quota, :default=>2048
+      String :state, :default=>"STOPPED", :text=>true, :null=>false
+      String :version, :text=>true
+      String :metadata, :default=>"{}", :size=>4096, :null=>false
+      String :detected_buildpack, :text=>true
+      TrueClass :not_deleted, :default=>true
+      Integer :health_check_timeout
+      TrueClass :diego, :default=>false
+      DateTime :package_updated_at
+      foreign_key :app_guid, :apps, :type=>String, :text=>true, :key=>[:guid]
+      String :type, :default=>"web", :text=>true
+      String :health_check_type, :default=>"port", :text=>true
+      String :command, :size=>4096
+      TrueClass :enable_ssh, :default=>false
+      String :encrypted_docker_credentials_json, :text=>true
+      String :docker_salt, :text=>true
+      String :ports, :text=>true
+      
+      index [:created_at], :name=>:apps_created_at_index
+      index [:diego], :name=>:apps_diego_index
+      index [:guid], :name=>:apps_guid_index, :unique=>true
+      index [:updated_at], :name=>:apps_updated_at_index
+      index [:app_guid]
+    end
+    
+    create_table(:tasks, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :name, :null=>false
+      String :command, :text=>true, :null=>false
       String :state, :text=>true, :null=>false
-      String :buildpack_receipt_buildpack_guid, :text=>true
-      String :package_guid, :text=>true
-      String :droplet_hash, :text=>true
-      foreign_key :app_guid, :apps_v3, :type=>String, :text=>true, :key=>[:guid]
-      String :failure_reason, :size=>4096
-      String :detected_start_command, :size=>4096
+      Integer :memory_in_mb
       String :encrypted_environment_variables, :text=>true
       String :salt, :text=>true
-      String :process_types, :text=>true
-      String :buildpack_receipt_buildpack, :text=>true
-      String :error, :text=>true
-      String :buildpack_receipt_stack_name, :text=>true
-      String :execution_metadata, :text=>true
-      Integer :staging_memory_in_mb
-      Integer :staging_disk_in_mb
-      String :docker_receipt_image, :text=>true
+      String :failure_reason, :size=>4096
+      foreign_key :app_guid, :apps, :type=>String, :text=>true, :null=>false, :key=>[:guid]
+      String :droplet_guid, :text=>true, :null=>false
+      Integer :sequence_id
       
-      index [:buildpack_receipt_buildpack_guid], :name=>:bp_guid
-      index [:app_guid]
       index [:created_at]
       index [:guid], :unique=>true
-      index [:package_guid]
+      index [:name]
+      index [:state]
+      index [:updated_at]
+      index [:app_guid, :sequence_id], :name=>:unique_task_app_guid_sequence_id, :unique=>true
+    end
+    
+    create_table(:app_events, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :app_id, :processes, :null=>false, :key=>[:id]
+      String :instance_guid, :text=>true, :null=>false
+      Integer :instance_index, :null=>false
+      Integer :exit_status, :null=>false
+      DateTime :timestamp, :null=>false
+      String :exit_description, :text=>true
+      
+      index [:app_id]
+      index [:created_at]
+      index [:guid], :unique=>true
       index [:updated_at]
     end
     
@@ -468,28 +514,6 @@ Sequel.migration do
       index [:updated_at], :name=>:sqd_updated_at_index
     end
     
-    create_table(:tasks, :ignore_index_errors=>true) do
-      primary_key :id
-      String :guid, :text=>true, :null=>false
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      String :name, :null=>false
-      String :command, :text=>true, :null=>false
-      String :state, :text=>true, :null=>false
-      foreign_key :app_id, :apps_v3, :null=>false, :key=>[:id]
-      foreign_key :droplet_id, :v3_droplets, :null=>false, :key=>[:id]
-      String :failure_reason, :size=>4096
-      String :encrypted_environment_variables, :text=>true
-      Integer :memory_in_mb
-      String :salt, :text=>true
-      
-      index [:created_at]
-      index [:guid], :unique=>true
-      index [:name]
-      index [:state]
-      index [:updated_at]
-    end
-    
     create_table(:organizations_private_domains, :ignore_index_errors=>true) do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :private_domain_id, :domains, :null=>false, :key=>[:id]
@@ -511,63 +535,6 @@ Sequel.migration do
       index [:created_at]
       index [:guid], :unique=>true
       index [:organization_id, :name], :name=>:spaces_org_id_name_index, :unique=>true
-      index [:updated_at]
-    end
-    
-    create_table(:apps, :ignore_index_errors=>true) do
-      primary_key :id
-      String :guid, :text=>true, :null=>false
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      String :name, :null=>false
-      TrueClass :production, :default=>false
-      Integer :memory
-      Integer :instances, :default=>1
-      Integer :file_descriptors, :default=>16384
-      Integer :disk_quota, :default=>2048
-      String :state, :default=>"STOPPED", :text=>true, :null=>false
-      String :package_state, :default=>"PENDING", :text=>true, :null=>false
-      String :package_hash, :text=>true
-      String :droplet_hash, :text=>true
-      String :version, :text=>true
-      String :metadata, :default=>"{}", :size=>4096, :null=>false
-      foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
-      foreign_key :stack_id, :stacks, :null=>false, :key=>[:id]
-      String :detected_buildpack, :text=>true
-      String :staging_task_id, :text=>true
-      DateTime :deleted_at
-      TrueClass :not_deleted, :default=>true
-      String :salt, :text=>true
-      String :encrypted_environment_json, :text=>true
-      Integer :admin_buildpack_id
-      Integer :health_check_timeout
-      String :detected_buildpack_guid, :text=>true
-      String :detected_buildpack_name, :text=>true
-      String :staging_failed_reason, :text=>true
-      TrueClass :diego, :default=>false
-      String :docker_image, :text=>true
-      DateTime :package_updated_at
-      foreign_key :app_guid, :apps_v3, :type=>String, :text=>true, :key=>[:guid]
-      DateTime :package_pending_since
-      String :type, :default=>"web", :text=>true
-      String :health_check_type, :default=>"port", :text=>true
-      String :command, :size=>4096
-      TrueClass :enable_ssh, :default=>false
-      String :encrypted_docker_credentials_json, :text=>true
-      String :docker_salt, :text=>true
-      String :staging_failed_description, :text=>true
-      String :ports, :text=>true
-      String :buildpack_salt, :text=>true
-      String :encrypted_buildpack, :text=>true
-      
-      index [:app_guid]
-      index [:created_at]
-      index [:diego]
-      index [:guid], :unique=>true
-      index [:name]
-      index [:package_pending_since], :name=>:apps_pkg_pending_since_index
-      index [:space_id, :name, :not_deleted], :name=>:apps_space_id_name_nd_idx, :unique=>true
-      index [:stack_id]
       index [:updated_at]
     end
     
@@ -629,39 +596,6 @@ Sequel.migration do
       index [:updated_at]
     end
     
-    create_table(:app_events, :ignore_index_errors=>true) do
-      primary_key :id
-      String :guid, :text=>true, :null=>false
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      foreign_key :app_id, :apps, :null=>false, :key=>[:id]
-      String :instance_guid, :text=>true, :null=>false
-      Integer :instance_index, :null=>false
-      Integer :exit_status, :null=>false
-      DateTime :timestamp, :null=>false
-      String :exit_description, :text=>true
-      
-      index [:app_id]
-      index [:created_at]
-      index [:guid], :unique=>true
-      index [:updated_at]
-    end
-    
-    create_table(:apps_routes, :ignore_index_errors=>true) do
-      foreign_key :app_id, :apps, :null=>false, :key=>[:id]
-      foreign_key :route_id, :routes, :null=>false, :key=>[:id]
-      primary_key :id, :keep_order=>true
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      Integer :app_port
-      String :guid, :text=>true
-      
-      index [:app_id, :route_id, :app_port], :name=>:apps_routes_app_id_route_id_app_port_key, :unique=>true
-      index [:created_at]
-      index [:guid], :unique=>true
-      index [:updated_at]
-    end
-    
     create_table(:organizations_auditors, :ignore_index_errors=>true) do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
@@ -692,21 +626,19 @@ Sequel.migration do
     
     create_table(:route_mappings, :ignore_index_errors=>true) do
       primary_key :id
-      String :guid, :text=>true, :null=>false
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
-      foreign_key :app_guid, :apps_v3, :type=>String, :text=>true, :key=>[:guid]
-      foreign_key :route_guid, :routes, :type=>String, :text=>true, :key=>[:guid]
+      Integer :app_port
+      String :guid, :text=>true, :null=>false
+      foreign_key :app_guid, :apps, :type=>String, :text=>true, :null=>false, :key=>[:guid]
+      foreign_key :route_guid, :routes, :type=>String, :text=>true, :null=>false, :key=>[:guid]
       String :process_type, :text=>true
-      Integer :app_port, :default=>8080
       
-      index [:app_guid]
+      index [:created_at], :name=>:apps_routes_created_at_index
+      index [:guid], :name=>:apps_routes_guid_index, :unique=>true
+      index [:updated_at], :name=>:apps_routes_updated_at_index
       index [:app_guid, :route_guid, :process_type, :app_port], :name=>:route_mappings_app_guid_route_guid_process_type_app_port_key, :unique=>true
-      index [:created_at]
-      index [:guid], :unique=>true
       index [:process_type]
-      index [:route_guid]
-      index [:updated_at]
     end
     
     create_table(:services, :ignore_index_errors=>true) do
@@ -796,7 +728,7 @@ Sequel.migration do
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       foreign_key :service_plan_id, :service_plans, :key=>[:id]
       String :salt, :text=>true
-      String :dashboard_url, :text=>true
+      String :dashboard_url, :size=>16000
       TrueClass :is_gateway_service, :default=>true, :null=>false
       String :syslog_drain_url, :text=>true
       String :tags, :text=>true
@@ -844,18 +776,14 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :credentials, :text=>true, :null=>false
-      String :binding_options, :text=>true
-      String :gateway_name, :default=>"", :text=>true, :null=>false
-      String :configuration, :text=>true
-      String :gateway_data, :text=>true
-      foreign_key :app_id, :apps, :null=>false, :key=>[:id]
-      foreign_key :service_instance_id, :service_instances, :null=>false, :key=>[:id]
       String :salt, :text=>true
       String :syslog_drain_url, :text=>true
       String :volume_mounts, :text=>true
       String :volume_mounts_salt, :text=>true
+      foreign_key :app_guid, :apps, :type=>String, :text=>true, :null=>false, :key=>[:guid]
+      foreign_key :service_instance_guid, :service_instances, :type=>String, :text=>true, :null=>false, :key=>[:guid]
+      String :type, :text=>true
       
-      index [:app_id, :service_instance_id], :name=>:sb_app_id_srv_inst_id_index, :unique=>true
       index [:created_at], :name=>:sb_created_at_index
       index [:guid], :name=>:sb_guid_index, :unique=>true
       index [:updated_at], :name=>:sb_updated_at_index
@@ -893,26 +821,6 @@ Sequel.migration do
       index [:guid], :name=>:sk_guid_index, :unique=>true
       index [:updated_at], :name=>:sk_updated_at_index
       index [:name, :service_instance_id], :name=>:svc_key_name_instance_id_index, :unique=>true
-    end
-    
-    create_table(:v3_service_bindings, :ignore_index_errors=>true) do
-      primary_key :id
-      String :guid, :text=>true, :null=>false
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      String :credentials, :size=>2048, :null=>false
-      String :salt, :text=>true
-      String :syslog_drain_url, :text=>true
-      String :type, :text=>true, :null=>false
-      foreign_key :app_id, :apps_v3, :null=>false, :key=>[:id]
-      foreign_key :service_instance_id, :service_instances, :null=>false, :key=>[:id]
-      String :volume_mounts, :text=>true
-      String :volume_mounts_salt, :text=>true
-      
-      index [:app_id, :service_instance_id], :unique=>true
-      index [:created_at]
-      index [:guid], :unique=>true
-      index [:updated_at]
     end
   end
 end

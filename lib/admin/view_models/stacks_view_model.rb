@@ -1,9 +1,9 @@
 require 'date'
 require 'thread'
-require_relative 'base_view_model'
+require_relative 'has_applications_view_model'
 
 module AdminUI
-  class StacksViewModel < AdminUI::BaseViewModel
+  class StacksViewModel < AdminUI::HasApplicationsViewModel
     def do_items
       stacks = @cc.stacks
 
@@ -11,8 +11,17 @@ module AdminUI
       return result unless stacks['connected']
 
       applications = @cc.applications
+      droplets     = @cc.droplets
+      processes    = @cc.processes
 
       applications_connected = applications['connected']
+      droplets_connected     = droplets['connected']
+      processes_connected    = processes['connected']
+
+      droplet_hash     = Hash[droplets['items'].map { |item| [item[:guid], item] }]
+      process_app_hash = Hash[processes['items'].map { |item| [item[:app_guid], item] }]
+
+      latest_droplets = latest_app_guid_hash(droplets['items'])
 
       application_counters = {}
 
@@ -20,19 +29,30 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        stack_id = application[:stack_id]
-        next if stack_id.nil?
-        application_counter = application_counters[stack_id]
+        droplet_guid = application[:droplet_guid]
+        droplet      = droplet_guid.nil? ? nil : droplet_hash[droplet_guid]
+        droplet      = latest_droplets[application[:guid]] if droplet.nil?
+        next if droplet.nil?
+
+        stack_name = droplet[:buildpack_receipt_stack_name]
+        next if stack_name.nil?
+
+        application_counter = application_counters[stack_name]
         if application_counter.nil?
           application_counter =
             {
               'applications' => 0,
               'instances'    => 0
             }
-          application_counters[stack_id] = application_counter
+          application_counters[stack_name] = application_counter
         end
+
         application_counter['applications'] += 1
-        application_counter['instances'] += application[:instances] unless application[:instances].nil?
+
+        process = process_app_hash[application[:guid]]
+        next if process.nil?
+
+        application_counter['instances'] += process[:instances] unless process[:instances].nil?
       end
 
       items = []
@@ -43,12 +63,13 @@ module AdminUI
         Thread.pass
 
         guid = stack[:guid]
+        name = stack[:name]
 
-        application_counter = application_counters[stack[:id]]
+        application_counter = application_counters[name]
 
         row = []
 
-        row.push(stack[:name])
+        row.push(name)
         row.push(guid)
 
         row.push(stack[:created_at].to_datetime.rfc3339)
@@ -61,9 +82,18 @@ module AdminUI
 
         if application_counter
           row.push(application_counter['applications'])
-          row.push(application_counter['instances'])
-        elsif applications_connected
-          row.push(0, 0)
+          if processes_connected
+            row.push(application_counter['instances'])
+          else
+            row.push(nil)
+          end
+        elsif applications_connected && droplets_connected
+          row.push(0)
+          if processes_connected
+            row.push(0)
+          else
+            row.push(nil)
+          end
         else
           row.push(nil, nil)
         end

@@ -2,7 +2,7 @@ require 'yajl'
 
 module AdminUI
   class Operation
-    def initialize(config, logger, cc, client, doppler, varz, view_models)
+    def initialize(config, logger, cc, client, doppler, varz, view_models, testing)
       @cc          = cc
       @client      = client
       @config      = config
@@ -10,6 +10,7 @@ module AdminUI
       @logger      = logger
       @varz        = varz
       @view_models = view_models
+      @testing     = testing
     end
 
     def create_organization(control_message)
@@ -34,20 +35,23 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_applications
+      @cc.invalidate_droplets
+      @cc.invalidate_packages
+      @cc.invalidate_processes
       @varz.invalidate
+      if recursive
+        @cc.invalidate_service_bindings
+        @view_models.invalidate_service_bindings
+      end
       @view_models.invalidate_applications
       @view_models.invalidate_application_instances
-      return unless recursive
-      @cc.invalidate_service_bindings
-      @cc.invalidate_service_keys
-      @view_models.invalidate_service_bindings
-      @view_models.invalidate_service_keys
     end
 
     def delete_application_instance(app_guid, instance_index)
       url = "v2/apps/#{app_guid}/instances/#{instance_index}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
+      @doppler.testing_remove_container_metric(app_guid, instance_index) if @testing
       @varz.invalidate
       @view_models.invalidate_application_instances
     end
@@ -64,8 +68,8 @@ module AdminUI
       url = "oauth/clients/#{client_id}"
       @logger.debug("DELETE #{url}")
       @client.delete_uaa(url)
-      @cc.invalidate_clients
       @cc.invalidate_approvals
+      @cc.invalidate_clients
       @view_models.invalidate_clients
     end
 
@@ -75,19 +79,23 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_domains
+      if recursive
+        @cc.invalidate_routes
+        @cc.invalidate_route_mappings
+        @view_models.invalidate_routes
+        @view_models.invalidate_route_mappings
+      end
       @view_models.invalidate_domains
-      return unless recursive
-      @cc.invalidate_routes
-      @view_models.invalidate_routes
     end
 
     def delete_group(group_guid)
       url = "Groups/#{group_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_uaa(url)
+      @cc.invalidate_approvals
       @cc.invalidate_groups
       @cc.invalidate_group_membership
-      @cc.invalidate_approvals
+      @view_models.invalidate_approvals
       @view_models.invalidate_groups
       @view_models.invalidate_group_members
     end
@@ -103,34 +111,40 @@ module AdminUI
       @cc.invalidate_organizations_managers
       @cc.invalidate_organizations_users
       @cc.invalidate_service_plan_visibilities
+      if recursive
+        @cc.invalidate_applications
+        @cc.invalidate_droplets
+        @cc.invalidate_packages
+        @cc.invalidate_processes
+        @cc.invalidate_routes
+        @cc.invalidate_route_mappings
+        @cc.invalidate_security_groups_spaces
+        @cc.invalidate_service_instances
+        @cc.invalidate_service_bindings
+        @cc.invalidate_service_keys
+        @cc.invalidate_service_brokers
+        @cc.invalidate_space_quota_definitions
+        @cc.invalidate_spaces
+        @cc.invalidate_spaces_auditors
+        @cc.invalidate_spaces_developers
+        @cc.invalidate_spaces_managers
+        @varz.invalidate
+        @view_models.invalidate_applications
+        @view_models.invalidate_application_instances
+        @view_models.invalidate_routes
+        @view_models.invalidate_route_mappings
+        @view_models.invalidate_security_groups_spaces
+        @view_models.invalidate_service_instances
+        @view_models.invalidate_service_bindings
+        @view_models.invalidate_service_keys
+        @view_models.invalidate_service_brokers
+        @view_models.invalidate_space_quotas
+        @view_models.invalidate_spaces
+        @view_models.invalidate_space_roles
+      end
       @view_models.invalidate_organizations
       @view_models.invalidate_organization_roles
       @view_models.invalidate_service_plan_visibilities
-      return unless recursive
-      @cc.invalidate_security_groups_spaces
-      @cc.invalidate_space_quota_definitions
-      @cc.invalidate_spaces
-      @cc.invalidate_spaces_auditors
-      @cc.invalidate_spaces_developers
-      @cc.invalidate_spaces_managers
-      @cc.invalidate_service_instances
-      @cc.invalidate_service_bindings
-      @cc.invalidate_service_keys
-      @cc.invalidate_service_brokers
-      @cc.invalidate_applications
-      @cc.invalidate_routes
-      @varz.invalidate
-      @view_models.invalidate_security_groups_spaces
-      @view_models.invalidate_space_quotas
-      @view_models.invalidate_spaces
-      @view_models.invalidate_space_roles
-      @view_models.invalidate_service_instances
-      @view_models.invalidate_service_bindings
-      @view_models.invalidate_service_keys
-      @view_models.invalidate_service_brokers
-      @view_models.invalidate_applications
-      @view_models.invalidate_application_instances
-      @view_models.invalidate_routes
     end
 
     def delete_organization_role(organization_guid, role, user_guid)
@@ -158,22 +172,16 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_routes
+      @cc.invalidate_route_mappings
       @view_models.invalidate_routes
+      @view_models.invalidate_route_mappings
     end
 
     def delete_route_mapping(route_mapping_guid)
       url = "v2/route_mappings/#{route_mapping_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
-      @cc.invalidate_apps_routes
-      @view_models.invalidate_route_mappings
-    end
-
-    def delete_route_mapping_old(app_guid, route_guid)
-      url = "v2/apps/#{app_guid}/routes/#{route_guid}"
-      @logger.debug("DELETE #{url}")
-      @client.delete_cc(url)
-      @cc.invalidate_apps_routes
+      @cc.invalidate_route_mappings
       @view_models.invalidate_route_mappings
     end
 
@@ -203,16 +211,17 @@ module AdminUI
       @cc.invalidate_services
       @cc.invalidate_service_plans
       @cc.invalidate_service_plan_visibilities
+      if purge
+        @cc.invalidate_service_bindings
+        @cc.invalidate_service_instances
+        @cc.invalidate_service_keys
+        @view_models.invalidate_service_bindings
+        @view_models.invalidate_service_instances
+        @view_models.invalidate_service_keys
+      end
       @view_models.invalidate_services
       @view_models.invalidate_service_plans
       @view_models.invalidate_service_plan_visibilities
-      return unless purge
-      @cc.invalidate_service_instances
-      @cc.invalidate_service_bindings
-      @cc.invalidate_service_keys
-      @view_models.invalidate_service_instances
-      @view_models.invalidate_service_bindings
-      @view_models.invalidate_service_keys
     end
 
     def delete_service_binding(service_binding_guid)
@@ -228,12 +237,12 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_clients
-      @cc.invalidate_service_brokers
       @cc.invalidate_services
+      @cc.invalidate_service_brokers
       @cc.invalidate_service_plans
       @cc.invalidate_service_plan_visibilities
-      @view_models.invalidate_service_brokers
       @view_models.invalidate_services
+      @view_models.invalidate_service_brokers
       @view_models.invalidate_service_plans
       @view_models.invalidate_service_plan_visibilities
     end
@@ -248,12 +257,13 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_instances
+      if recursive
+        @cc.invalidate_service_bindings
+        @cc.invalidate_service_keys
+        @view_models.invalidate_service_bindings
+        @view_models.invalidate_service_keys
+      end
       @view_models.invalidate_service_instances
-      return unless recursive
-      @cc.invalidate_service_bindings
-      @cc.invalidate_service_keys
-      @view_models.invalidate_service_bindings
-      @view_models.invalidate_service_keys
     end
 
     def delete_service_key(service_key_guid)
@@ -292,24 +302,30 @@ module AdminUI
       @cc.invalidate_spaces_auditors
       @cc.invalidate_spaces_developers
       @cc.invalidate_spaces_managers
+      if recursive
+        @cc.invalidate_applications
+        @cc.invalidate_droplets
+        @cc.invalidate_packages
+        @cc.invalidate_processes
+        @cc.invalidate_routes
+        @cc.invalidate_route_mappings
+        @cc.invalidate_service_instances
+        @cc.invalidate_service_bindings
+        @cc.invalidate_service_keys
+        @cc.invalidate_service_brokers
+        @varz.invalidate
+        @view_models.invalidate_applications
+        @view_models.invalidate_application_instances
+        @view_models.invalidate_routes
+        @view_models.invalidate_route_mappings
+        @view_models.invalidate_service_instances
+        @view_models.invalidate_service_bindings
+        @view_models.invalidate_service_keys
+        @view_models.invalidate_service_brokers
+      end
       @view_models.invalidate_security_groups_spaces
       @view_models.invalidate_spaces
       @view_models.invalidate_space_roles
-      return unless recursive
-      @cc.invalidate_service_instances
-      @cc.invalidate_service_bindings
-      @cc.invalidate_service_keys
-      @cc.invalidate_service_brokers
-      @cc.invalidate_applications
-      @cc.invalidate_routes
-      @varz.invalidate
-      @view_models.invalidate_service_instances
-      @view_models.invalidate_service_bindings
-      @view_models.invalidate_service_keys
-      @view_models.invalidate_service_brokers
-      @view_models.invalidate_applications
-      @view_models.invalidate_application_instances
-      @view_models.invalidate_routes
     end
 
     def delete_space_quota_definition(space_quota_definition_guid)
@@ -356,11 +372,11 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       begin
         @client.delete_uaa(url)
-        @cc.invalidate_users_uaa
-        @cc.invalidate_group_membership
         @cc.invalidate_approvals
-        @view_models.invalidate_users
+        @cc.invalidate_group_membership
+        @cc.invalidate_users_uaa
         @view_models.invalidate_group_members
+        @view_models.invalidate_users
       rescue CCRestClientResponseError => error
         raise cc_error if error.http_code == '404' && cc_error
         raise error
@@ -372,6 +388,9 @@ module AdminUI
       @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
       @cc.invalidate_applications
+      @cc.invalidate_droplets
+      @cc.invalidate_packages
+      @cc.invalidate_processes
       @varz.invalidate
       @view_models.invalidate_applications
       @view_models.invalidate_application_instances
@@ -491,6 +510,9 @@ module AdminUI
       @logger.debug("POST #{url}")
       @client.post_cc(url, '{}')
       @cc.invalidate_applications
+      @cc.invalidate_droplets
+      @cc.invalidate_packages
+      @cc.invalidate_processes
       @varz.invalidate
       @view_models.invalidate_applications
       @view_models.invalidate_application_instances
@@ -501,9 +523,7 @@ module AdminUI
       @varz.remove(uri)
       @view_models.invalidate_cloud_controllers
       @view_models.invalidate_components
-      @view_models.invalidate_deas
       @view_models.invalidate_gateways
-      @view_models.invalidate_health_managers
       @view_models.invalidate_routers
     end
 

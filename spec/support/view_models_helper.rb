@@ -13,24 +13,21 @@ module ViewModelsHelper
 
   BILLION = 1000 * 1000 * 1000
 
-  def view_models_stub(application_instance_source)
+  def view_models_stub(application_instance_source, router_source)
     @application_instance_source = application_instance_source
+    @router_source = router_source
 
     @used_memory_in_bytes = determine_used_memory(application_instance_source)
     @used_disk_in_bytes = determine_used_disk(application_instance_source)
     @computed_pcpu = determine_used_cpu(application_instance_source)
 
-    @dea_identity = if application_instance_source == :varz_dea
-                      nats_dea['host']
-                    elsif application_instance_source == :doppler_dea
+    @dea_identity = if application_instance_source == :doppler_dea
                       "#{dea_envelope.ip}:#{dea_envelope.index}"
                     end
   end
 
   def determine_used_cpu(application_instance_source)
-    if application_instance_source == :varz_dea
-      varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['computed_pcpu'] * 100
-    elsif application_instance_source == :doppler_cell
+    if application_instance_source == :doppler_cell
       rep_container_metric_envelope.containerMetric.cpuPercentage
     else
       dea_container_metric_envelope.containerMetric.cpuPercentage
@@ -38,9 +35,7 @@ module ViewModelsHelper
   end
 
   def determine_used_disk(application_instance_source)
-    if application_instance_source == :varz_dea
-      varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_disk_in_bytes']
-    elsif application_instance_source == :doppler_cell
+    if application_instance_source == :doppler_cell
       rep_container_metric_envelope.containerMetric.diskBytes
     else
       dea_container_metric_envelope.containerMetric.diskBytes
@@ -48,9 +43,7 @@ module ViewModelsHelper
   end
 
   def determine_used_memory(application_instance_source)
-    if application_instance_source == :varz_dea
-      varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['used_memory_in_bytes']
-    elsif application_instance_source == :doppler_cell
+    if application_instance_source == :doppler_cell
       rep_container_metric_envelope.containerMetric.memoryBytes
     else
       dea_container_metric_envelope.containerMetric.memoryBytes
@@ -64,21 +57,17 @@ module ViewModelsHelper
         cc_app[:name],
         cc_app[:guid],
         cc_app_instance_index,
-        @application_instance_source == :varz_dea ? varz_dea_app_instance : nil,
-        @application_instance_source == :varz_dea ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state'] : nil,
-        @application_instance_source == :varz_dea ? Time.at(varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance]['state_running_timestamp']).to_datetime.rfc3339 : nil,
-        @application_instance_source == :varz_dea ? nil : Time.at(rep_envelope.timestamp / BILLION).to_datetime.rfc3339,
+        Time.at(rep_envelope.timestamp / BILLION).to_datetime.rfc3339,
         @application_instance_source == :doppler_cell,
         cc_stack[:name],
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
         @computed_pcpu,
-        cc_app[:memory],
-        cc_app[:disk_quota],
+        cc_process[:memory],
+        cc_process[:disk_quota],
         "#{cc_organization[:name]}/#{cc_space[:name]}",
         @dea_identity,
-        @application_instance_source == :doppler_cell ? "#{rep_envelope.ip}:#{rep_envelope.index}" : nil,
-        @application_instance_source == :varz_dea ? "#{cc_app[:guid]}/#{cc_app_instance_index}/#{varz_dea_app_instance}" : "#{cc_app[:guid]}/#{cc_app_instance_index}/0"
+        @application_instance_source == :doppler_cell ? "#{rep_envelope.ip}:#{rep_envelope.index}" : nil
       ]
     ]
   end
@@ -118,12 +107,13 @@ module ViewModelsHelper
     end
 
     {
-      'application'          => @application_instance_source == :varz_dea ? nil : cc_app,
-      'application_instance' => @application_instance_source == :varz_dea ? varz_dea['instance_registry'][cc_app[:guid]][varz_dea_app_instance] : nil,
-      'container'            => container,
-      'organization'         => cc_organization,
-      'space'                => cc_space,
-      'stack'                => cc_stack
+      'application'  => cc_app,
+      'container'    => container,
+      'droplet'      => cc_droplet,
+      'organization' => cc_organization,
+      'process'      => cc_process,
+      'space'        => cc_space,
+      'stack'        => cc_stack
     }
   end
 
@@ -133,26 +123,26 @@ module ViewModelsHelper
         cc_app[:guid],
         cc_app[:name],
         cc_app[:guid],
-        cc_app[:state],
-        cc_app[:package_state],
-        cc_app[:staging_failed_reason],
+        cc_process[:state],
+        cc_droplet[:state],
+        cc_droplet[:error_id],
         cc_app[:created_at].to_datetime.rfc3339,
         cc_app[:updated_at].to_datetime.rfc3339,
-        cc_app[:diego],
-        cc_app[:enable_ssh],
-        !cc_app[:docker_image].nil?,
+        cc_process[:diego],
+        cc_process[:enable_ssh],
+        !cc_package[:docker_image].nil?,
         cc_stack[:name],
-        cc_app[:detected_buildpack],
-        cc_app[:detected_buildpack_guid],
+        cc_buildpack[:name],
+        cc_buildpack[:guid],
         1,
-        cc_app[:instances],
+        cc_process[:instances],
         1,
         1,
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
         @computed_pcpu,
-        cc_app[:memory],
-        cc_app[:disk_quota],
+        cc_process[:memory],
+        cc_process[:disk_quota],
         "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
@@ -160,11 +150,15 @@ module ViewModelsHelper
 
   def view_models_applications_detail
     {
-      'application'  => cc_app,
-      'droplet'      => cc_droplet,
-      'organization' => cc_organization,
-      'space'        => cc_space,
-      'stack'        => cc_stack
+      'application'     => cc_app,
+      'current_droplet' => cc_droplet,
+      'current_package' => cc_package,
+      'latest_droplet'  => cc_droplet,
+      'latest_package'  => cc_package,
+      'organization'    => cc_organization,
+      'process'         => cc_process,
+      'space'           => cc_space,
+      'stack'           => cc_stack
     }
   end
 
@@ -282,7 +276,7 @@ module ViewModelsHelper
         DateTime.parse(varz_cloud_controller['start']).rfc3339,
         varz_cloud_controller['num_cores'],
         varz_cloud_controller['cpu'],
-        AdminUI::Utils.convert_kilobytes_to_megabytes(varz_cloud_controller['mem'])
+        AdminUI::Utils.convert_kilobytes_to_megabytes(varz_cloud_controller['mem_bytes'])
       ]
     ]
   end
@@ -312,39 +306,6 @@ module ViewModelsHelper
         nats_cloud_controller_varz
       ],
       [
-        nats_dea['host'],
-        nats_dea['type'],
-        nats_dea['index'],
-        'varz',
-        nil,
-        'RUNNING',
-        DateTime.parse(varz_dea['start']).rfc3339,
-        nats_dea['host'],
-        nats_dea_varz
-      ],
-      [
-        "#{doppler_server_envelope.ip}:#{doppler_server_envelope.index}",
-        doppler_server_envelope.origin,
-        doppler_server_envelope.index,
-        'doppler',
-        Time.at(doppler_server_envelope.timestamp / BILLION).to_datetime.rfc3339,
-        'RUNNING',
-        nil,
-        "#{doppler_server_envelope.origin}:#{doppler_server_envelope.index}:#{doppler_server_envelope.ip}",
-        "#{doppler_server_envelope.origin}:#{doppler_server_envelope.index}:#{doppler_server_envelope.ip}"
-      ],
-      [
-        nats_health_manager['host'],
-        nats_health_manager['type'],
-        nats_health_manager['index'],
-        'varz',
-        nil,
-        'RUNNING',
-        nil,
-        nats_health_manager['host'],
-        nats_health_manager_varz
-      ],
-      [
         nats_provisioner['host'],
         nats_provisioner['type'],
         nats_provisioner['index'],
@@ -365,6 +326,28 @@ module ViewModelsHelper
         DateTime.parse(varz_router['start']).rfc3339,
         nats_router['host'],
         nats_router_varz
+      ],
+      [
+        "#{analyzer_envelope.ip}:#{analyzer_envelope.index}",
+        analyzer_envelope.origin,
+        analyzer_envelope.index,
+        'doppler',
+        Time.at(analyzer_envelope.timestamp / BILLION).to_datetime.rfc3339,
+        'RUNNING',
+        nil,
+        "#{analyzer_envelope.origin}:#{analyzer_envelope.index}:#{analyzer_envelope.ip}",
+        "#{analyzer_envelope.origin}:#{analyzer_envelope.index}:#{analyzer_envelope.ip}"
+      ],
+      [
+        "#{dea_envelope.ip}:#{dea_envelope.index}",
+        dea_envelope.origin,
+        dea_envelope.index,
+        'doppler',
+        Time.at(dea_envelope.timestamp / BILLION).to_datetime.rfc3339,
+        'RUNNING',
+        nil,
+        "#{dea_envelope.origin}:#{dea_envelope.index}:#{dea_envelope.ip}",
+        "#{dea_envelope.origin}:#{dea_envelope.index}:#{dea_envelope.ip}"
       ]
     ]
   end
@@ -379,59 +362,32 @@ module ViewModelsHelper
   def view_models_deas
     [
       [
-        application_instance_source == :varz_dea ? nats_dea['host'] : "#{dea_envelope.ip}:#{dea_envelope.index}",
-        application_instance_source == :varz_dea ? nats_dea['index'] : dea_envelope.index,
-        application_instance_source == :varz_dea ? 'varz' : 'doppler',
+        "#{dea_envelope.ip}:#{dea_envelope.index}",
+        dea_envelope.index,
+        'doppler',
         @application_instance_source == :doppler_dea ? Time.at(dea_envelope.timestamp / BILLION).to_datetime.rfc3339 : nil,
         'RUNNING',
-        application_instance_source == :varz_dea ? DateTime.parse(varz_dea['start']).rfc3339 : nil,
-        application_instance_source == :varz_dea ? varz_dea['stacks'] : nil,
-        application_instance_source == :varz_dea ? varz_dea['cpu'] : nil,
-        application_instance_source == :varz_dea ? AdminUI::Utils.convert_kilobytes_to_megabytes(varz_dea['mem']) : nil,
-        application_instance_source == :varz_dea ? varz_dea['instance_registry'].length : DEA_VALUE_METRICS['instances'],
-        application_instance_source == :varz_dea ? varz_dea['instance_registry'][cc_app[:guid]].length : cc_app[:instances],
+        DEA_VALUE_METRICS['instances'],
+        cc_process[:instances],
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
         @computed_pcpu,
-        application_instance_source == :varz_dea ? varz_dea['available_memory_ratio'] * 100 : DEA_VALUE_METRICS['available_memory_ratio'] * 100,
-        application_instance_source == :varz_dea ? varz_dea['available_disk_ratio'] * 100 : DEA_VALUE_METRICS['available_disk_ratio'] * 100,
-        application_instance_source == :doppler_dea ? DEA_VALUE_METRICS['remaining_memory'] : nil,
-        application_instance_source == :doppler_dea ? DEA_VALUE_METRICS['remaining_disk'] : nil
+        DEA_VALUE_METRICS['available_memory_ratio'] * 100,
+        DEA_VALUE_METRICS['available_disk_ratio'] * 100,
+        DEA_VALUE_METRICS['remaining_memory'],
+        DEA_VALUE_METRICS['remaining_disk']
       ]
     ]
   end
 
   def view_models_deas_detail
-    doppler_dea_hash = nil
-    varz_dea_hash    = nil
-
-    if application_instance_source == :doppler_dea
-      doppler_dea_hash =
-        {
-          'connected' => true,
-          'index'     => dea_envelope.index,
-          'ip'        => dea_envelope.ip,
-          'origin'    => dea_envelope.origin,
-          'timestamp' => dea_envelope.timestamp
-        }.merge(DEA_VALUE_METRICS)
-    end
-
-    if application_instance_source == :varz_dea
-      varz_dea_hash =
-        {
-          'connected' => true,
-          'data'      => varz_dea,
-          'index'     => nats_dea['index'],
-          'name'      => nats_dea['host'],
-          'type'      => nats_dea['type'],
-          'uri'       => nats_dea_varz
-        }
-    end
-
     {
-      'doppler_dea' => doppler_dea_hash,
-      'varz_dea'    => varz_dea_hash
-    }
+      'connected' => true,
+      'index'     => dea_envelope.index,
+      'ip'        => dea_envelope.ip,
+      'origin'    => dea_envelope.origin,
+      'timestamp' => dea_envelope.timestamp
+    }.merge(DEA_VALUE_METRICS)
   end
 
   def view_models_domains
@@ -572,46 +528,25 @@ module ViewModelsHelper
   def view_models_health_managers
     [
       [
-        @application_instance_source == :doppler_dea ? "#{analyzer_envelope.ip}:#{analyzer_envelope.index}" : nats_health_manager['host'],
-        @application_instance_source == :doppler_dea ? analyzer_envelope.index : nats_health_manager['index'],
-        @application_instance_source == :doppler_dea ? 'doppler' : 'varz',
-        @application_instance_source == :doppler_dea ? Time.at(analyzer_envelope.timestamp / BILLION).to_datetime.rfc3339 : nil,
+        "#{analyzer_envelope.ip}:#{analyzer_envelope.index}",
+        analyzer_envelope.index,
+        'doppler',
+        Time.at(analyzer_envelope.timestamp / BILLION).to_datetime.rfc3339,
         'RUNNING',
-        @application_instance_source == :doppler_dea ? ANALYZER_VALUE_METRICS['numCPUS'] : varz_health_manager['numCPUS'],
-        @application_instance_source == :doppler_dea ? AdminUI::Utils.convert_bytes_to_megabytes(ANALYZER_VALUE_METRICS['memoryStats.numBytesAllocated']) : AdminUI::Utils.convert_bytes_to_megabytes(varz_health_manager['memoryStats']['numBytesAllocated'])
+        ANALYZER_VALUE_METRICS['numCPUS'],
+        AdminUI::Utils.convert_bytes_to_megabytes(ANALYZER_VALUE_METRICS['memoryStats.numBytesAllocated'])
       ]
     ]
   end
 
   def view_models_health_managers_detail
-    doppler_analyzer_hash    = nil
-    varz_health_manager_hash = nil
-
-    if application_instance_source == :doppler_dea
-      doppler_analyzer_hash =
-        {
-          'connected' => true,
-          'index'     => analyzer_envelope.index,
-          'ip'        => analyzer_envelope.ip,
-          'origin'    => analyzer_envelope.origin,
-          'timestamp' => analyzer_envelope.timestamp
-        }.merge(ANALYZER_VALUE_METRICS)
-    else
-      varz_health_manager_hash =
-        {
-          'connected' => true,
-          'data'      => varz_health_manager,
-          'index'     => nats_health_manager['index'],
-          'name'      => nats_health_manager['host'],
-          'type'      => nats_health_manager['type'],
-          'uri'       => nats_health_manager_varz
-        }
-    end
-
     {
-      'doppler_analyzer'    => doppler_analyzer_hash,
-      'varz_health_manager' => varz_health_manager_hash
-    }
+      'connected' => true,
+      'index'     => analyzer_envelope.index,
+      'ip'        => analyzer_envelope.ip,
+      'origin'    => analyzer_envelope.origin,
+      'timestamp' => analyzer_envelope.timestamp
+    }.merge(ANALYZER_VALUE_METRICS)
   end
 
   def view_models_identity_providers
@@ -696,19 +631,19 @@ module ViewModelsHelper
         1,
         1,
         0,
-        cc_app[:instances],
+        cc_process[:instances],
         1,
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
         @computed_pcpu,
-        cc_app[:memory],
-        cc_app[:disk_quota],
+        cc_process[:memory],
+        cc_process[:disk_quota],
         1,
-        cc_app[:state] == 'STARTED' ? 1 : 0,
-        cc_app[:state] == 'STOPPED' ? 1 : 0,
-        cc_app[:package_state] == 'PENDING' ? 1 : 0,
-        cc_app[:package_state] == 'STAGED' ? 1 : 0,
-        cc_app[:package_state] == 'FAILED' ? 1 : 0
+        cc_process[:state] == 'STARTED' ? 1 : 0,
+        cc_process[:state] == 'STOPPED' ? 1 : 0,
+        cc_droplet[:state] == 'PENDING' ? 1 : 0,
+        cc_droplet[:state] == 'STAGED' ? 1 : 0,
+        cc_droplet[:state] == 'FAILED' ? 1 : 0
       ]
     ]
   end
@@ -796,18 +731,18 @@ module ViewModelsHelper
   def view_models_routers
     [
       [
-        @application_instance_source == :doppler_dea ? "#{gorouter_envelope.ip}:#{gorouter_envelope.index}" : nats_router['host'],
-        @application_instance_source == :doppler_dea ? gorouter_envelope.index : nats_router['index'],
-        @application_instance_source == :doppler_dea ? 'doppler' : 'varz',
-        @application_instance_source == :doppler_dea ? Time.at(gorouter_envelope.timestamp / BILLION).to_datetime.rfc3339 : nil,
+        @router_source == :doppler_router ? "#{gorouter_envelope.ip}:#{gorouter_envelope.index}" : nats_router['host'],
+        @router_source == :doppler_router ? gorouter_envelope.index : nats_router['index'],
+        @router_source == :doppler_router ? 'doppler' : 'varz',
+        @router_source == :doppler_router ? Time.at(gorouter_envelope.timestamp / BILLION).to_datetime.rfc3339 : nil,
         'RUNNING',
-        @application_instance_source == :doppler_dea ? nil : DateTime.parse(varz_router['start']).rfc3339,
-        @application_instance_source == :doppler_dea ? GOROUTER_VALUE_METRICS['numCPUS'] : varz_router['num_cores'],
-        @application_instance_source == :doppler_dea ? nil : varz_router['cpu'],
-        @application_instance_source == :doppler_dea ? AdminUI::Utils.convert_bytes_to_megabytes(GOROUTER_VALUE_METRICS['memoryStats.numBytesAllocated']) : AdminUI::Utils.convert_kilobytes_to_megabytes(varz_router['mem']),
-        @application_instance_source == :doppler_dea ? nil : varz_router['droplets'],
-        @application_instance_source == :doppler_dea ? nil : varz_router['requests'],
-        @application_instance_source == :doppler_dea ? nil : varz_router['bad_requests']
+        @router_source == :doppler_router ? nil : DateTime.parse(varz_router['start']).rfc3339,
+        @router_source == :doppler_router ? GOROUTER_VALUE_METRICS['numCPUS'] : varz_router['num_cores'],
+        @router_source == :doppler_router ? nil : varz_router['cpu'],
+        @router_source == :doppler_router ? AdminUI::Utils.convert_bytes_to_megabytes(GOROUTER_VALUE_METRICS['memoryStats.numBytesAllocated']) : AdminUI::Utils.convert_kilobytes_to_megabytes(varz_router['mem_bytes']),
+        @router_source == :doppler_router ? nil : varz_router['droplets'],
+        @router_source == :doppler_router ? nil : varz_router['requests'],
+        @router_source == :doppler_router ? nil : varz_router['bad_requests']
       ]
     ]
   end
@@ -817,7 +752,7 @@ module ViewModelsHelper
     varz_router_hash      = nil
     top10_apps_array      = nil
 
-    if application_instance_source == :doppler_dea
+    if @router_source == :doppler_router
       doppler_gorouter_hash =
         {
           'connected' => true,
@@ -860,10 +795,10 @@ module ViewModelsHelper
   def view_models_route_mappings
     [
       [
-        cc_app_route[:guid],
-        cc_app_route[:guid],
-        cc_app_route[:created_at].to_datetime.rfc3339,
-        cc_app_route[:updated_at].to_datetime.rfc3339,
+        cc_route_mapping[:guid],
+        cc_route_mapping[:guid],
+        cc_route_mapping[:created_at].to_datetime.rfc3339,
+        cc_route_mapping[:updated_at].to_datetime.rfc3339,
         cc_app[:name],
         cc_app[:guid],
         "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}",
@@ -875,12 +810,12 @@ module ViewModelsHelper
 
   def view_models_route_mappings_detail
     {
-      'application'  => cc_app,
-      'app_route'    => cc_app_route,
-      'domain'       => cc_domain,
-      'organization' => cc_organization,
-      'route'        => cc_route,
-      'space'        => cc_space
+      'application'   => cc_app,
+      'domain'        => cc_domain,
+      'organization'  => cc_organization,
+      'route'         => cc_route,
+      'route_mapping' => cc_route_mapping,
+      'space'         => cc_space
     }
   end
 
@@ -980,11 +915,9 @@ module ViewModelsHelper
         cc_service_plan[:active],
         cc_service_plan[:public],
         cc_service_plan[:free],
-        cc_service[:provider],
         cc_service[:label],
         cc_service[:guid],
         cc_service[:unique_id],
-        cc_service[:version],
         cc_service[:created_at].to_datetime.rfc3339,
         cc_service[:updated_at].to_datetime.rfc3339,
         cc_service[:active],
@@ -1065,11 +998,9 @@ module ViewModelsHelper
         cc_service_plan[:active],
         cc_service_plan[:public],
         cc_service_plan[:free],
-        cc_service[:provider],
         cc_service[:label],
         cc_service[:guid],
         cc_service[:unique_id],
-        cc_service[:version],
         cc_service[:created_at].to_datetime.rfc3339,
         cc_service[:updated_at].to_datetime.rfc3339,
         cc_service[:active],
@@ -1116,11 +1047,9 @@ module ViewModelsHelper
         cc_service_plan[:active],
         cc_service_plan[:public],
         cc_service_plan[:free],
-        cc_service[:provider],
         cc_service[:label],
         cc_service[:guid],
         cc_service[:unique_id],
-        cc_service[:version],
         cc_service[:created_at].to_datetime.rfc3339,
         cc_service[:updated_at].to_datetime.rfc3339,
         cc_service[:active],
@@ -1163,11 +1092,9 @@ module ViewModelsHelper
         1,
         1,
         1,
-        cc_service[:provider],
         cc_service[:label],
         cc_service[:guid],
         cc_service[:unique_id],
-        cc_service[:version],
         cc_service[:created_at].to_datetime.rfc3339,
         cc_service[:updated_at].to_datetime.rfc3339,
         cc_service[:active],
@@ -1204,11 +1131,9 @@ module ViewModelsHelper
         cc_service_plan[:active],
         cc_service_plan[:public],
         cc_service_plan[:free],
-        cc_service[:provider],
         cc_service[:label],
         cc_service[:guid],
         cc_service[:unique_id],
-        cc_service[:version],
         cc_service[:created_at].to_datetime.rfc3339,
         cc_service[:updated_at].to_datetime.rfc3339,
         cc_service[:active],
@@ -1239,11 +1164,9 @@ module ViewModelsHelper
     [
       [
         cc_service[:guid],
-        cc_service[:provider],
         cc_service[:label],
         cc_service[:guid],
         cc_service[:unique_id],
-        cc_service[:version],
         cc_service[:created_at].to_datetime.rfc3339,
         cc_service[:updated_at].to_datetime.rfc3339,
         cc_service[:active],
@@ -1367,18 +1290,18 @@ module ViewModelsHelper
         1,
         1,
         0,
-        cc_app[:instances],
+        cc_process[:instances],
         1,
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
         @computed_pcpu,
-        cc_app[:memory],
-        cc_app[:disk_quota],
+        cc_process[:memory],
+        cc_process[:disk_quota],
         1,
-        cc_app[:state] == 'STARTED' ? 1 : 0,
-        cc_app[:state] == 'STOPPED' ? 1 : 0,
-        cc_app[:package_state] == 'PENDING' ? 1 : 0,
-        cc_app[:package_state] == 'STAGED' ? 1 : 0,
+        cc_process[:state] == 'STARTED' ? 1 : 0,
+        cc_process[:state] == 'STOPPED' ? 1 : 0,
+        cc_droplet[:state] == 'PENDING' ? 1 : 0,
+        cc_droplet[:state] == 'STAGED' ? 1 : 0,
         cc_app[:package_state] == 'FAILED' ? 1 : 0
       ]
     ]
@@ -1400,7 +1323,7 @@ module ViewModelsHelper
         cc_stack[:created_at].to_datetime.rfc3339,
         cc_stack[:updated_at].to_datetime.rfc3339,
         1,
-        cc_app[:instances],
+        cc_process[:instances],
         cc_stack[:description]
       ]
     ]
@@ -1418,19 +1341,19 @@ module ViewModelsHelper
         1,
         1,
         1,
-        cc_app[:instances],
-        cc_app[:state] == 'STARTED' ? 1 : 0,
-        @application_instance_source == :varz_dea || @application_instance_source == :doppler_dea ? 1 : 0,
+        cc_process[:instances],
+        cc_process[:state] == 'STARTED' ? 1 : 0,
+        @application_instance_source == :doppler_dea ? 1 : 0,
         @application_instance_source == :doppler_cell ? 1 : 0,
         {
           apps:              1,
           cells:             @application_instance_source == :doppler_cell ? 1 : 0,
-          deas:              @application_instance_source == :varz_dea || @application_instance_source == :doppler_dea ? 1 : 0,
+          deas:              @application_instance_source == :doppler_dea ? 1 : 0,
           organizations:     1,
-          running_instances: cc_app[:state] == 'STARTED' ? 1 : 0,
+          running_instances: cc_process[:state] == 'STARTED' ? 1 : 0,
           spaces:            1,
           timestamp:         timestamp,
-          total_instances:   cc_app[:instances],
+          total_instances:   cc_process[:instances],
           users:             1
         }
       ]

@@ -200,15 +200,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def disable_app_ssh
-      response = put_request("/applications/#{cc_app[:guid]}", '{"enable_ssh":false,"allow_ssh":false}')
+      response = put_request("/applications/#{cc_app[:guid]}", '{"enable_ssh":false}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"enable_ssh\":false,\"allow_ssh\":false}"]], true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"enable_ssh\":false}"]], true)
     end
 
     def enable_app_ssh
-      response = put_request("/applications/#{cc_app[:guid]}", '{"enable_ssh":true,"allow_ssh":true}')
+      response = put_request("/applications/#{cc_app[:guid]}", '{"enable_ssh":true}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"enable_ssh\":true,\"allow_ssh\":true}"]], true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"enable_ssh\":true}"]], true)
     end
 
     def delete_app
@@ -462,17 +462,8 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/deas_view_model']], true)
     end
 
-    context 'varz dea' do
-      it 'deletes a dea' do
-        expect { delete_dea("/components?uri=#{nats_dea_varz}") }.to change { get_json('/deas_view_model')['items']['items'].length }.from(1).to(0)
-      end
-    end
-
-    context 'doppler dea' do
-      let(:application_instance_source) { :doppler_dea }
-      it 'deletes a dea' do
-        expect { delete_dea("/doppler_components?uri=#{dea_envelope.origin}:#{dea_envelope.index}:#{dea_envelope.ip}") }.to change { get_json('/deas_view_model')['items']['items'].length }.from(1).to(0)
-      end
+    it 'deletes a dea' do
+      expect { delete_dea("/doppler_components?uri=#{dea_envelope.origin}:#{dea_envelope.index}:#{dea_envelope.ip}") }.to change { get_json('/deas_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -608,17 +599,8 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/health_managers_view_model']], true)
     end
 
-    context 'varz dea' do
-      it 'deletes a health manager' do
-        expect { delete_health_manager("/components?uri=#{nats_health_manager_varz}") }.to change { get_json('/health_managers_view_model')['items']['items'].length }.from(1).to(0)
-      end
-    end
-
-    context 'doppler dea' do
-      let(:application_instance_source) { :doppler_dea }
-      it 'deletes a health manager' do
-        expect { delete_health_manager("/doppler_components?uri=#{analyzer_envelope.origin}:#{analyzer_envelope.index}:#{analyzer_envelope.ip}") }.to change { get_json('/health_managers_view_model')['items']['items'].length }.from(1).to(0)
-      end
+    it 'deletes a health manager' do
+      expect { delete_health_manager("/doppler_components?uri=#{analyzer_envelope.origin}:#{analyzer_envelope.index}:#{analyzer_envelope.ip}") }.to change { get_json('/health_managers_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -692,12 +674,12 @@ describe AdminUI::Admin, type: :integration do
       end
     end
 
-    it 'activates the organization' do
+    it 'activates an organization' do
       suspend_organization
       expect { activate_organization }.to change { get_json('/organizations_view_model')['items']['items'][0][3] }.from('suspended').to('active')
     end
 
-    it 'suspends the organization' do
+    it 'suspends an organization' do
       activate_organization
       expect { suspend_organization }.to change { get_json('/organizations_view_model')['items']['items'][0][3] }.from('active').to('suspended')
     end
@@ -809,15 +791,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_route_mapping
-      response = delete_request("/route_mappings/#{cc_app_route[:guid]}")
+      response = delete_request("/route_mappings/#{cc_route_mapping[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/route_mappings/#{cc_app_route[:guid]}"]])
-    end
-
-    def delete_route_mapping_old
-      response = delete_request("/route_mappings/#{cc_app[:guid]}/#{cc_route[:guid]}")
-      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/route_mappings/#{cc_app[:guid]}/#{cc_route[:guid]}"]])
+      verify_sys_log_entries([['delete', "/route_mappings/#{cc_route_mapping[:guid]}"]])
     end
 
     it 'has user name and routes request in the log file' do
@@ -826,10 +802,6 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a route mapping' do
       expect { delete_route_mapping }.to change { get_json('/route_mappings_view_model')['items']['items'].length }.from(1).to(0)
-    end
-
-    it 'deletes a route mapping old' do
-      expect { delete_route_mapping_old }.to change { get_json('/route_mappings_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -851,14 +823,14 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/routers_view_model']], true)
     end
 
-    context 'varz dea' do
+    context 'varz router' do
       it 'deletes a router' do
         expect { delete_router("/components?uri=#{nats_router_varz}") }.to change { get_json('/routers_view_model')['items']['items'].length }.from(1).to(0)
       end
     end
 
-    context 'doppler dea' do
-      let(:application_instance_source) { :doppler_dea }
+    context 'doppler router' do
+      let(:router_source) { :doppler_router }
       it 'deletes a router' do
         expect { delete_router("/doppler_components?uri=#{gorouter_envelope.origin}:#{gorouter_envelope.index}:#{gorouter_envelope.ip}") }.to change { get_json('/routers_view_model')['items']['items'].length }.from(1).to(0)
       end
@@ -1418,14 +1390,10 @@ describe AdminUI::Admin, type: :integration do
       end
 
       context 'application_instances_view_model detail' do
-        let(:path)              { "/application_instances_view_model/#{cc_app[:guid]}/#{cc_app_instance_index}/#{varz_application_instance_id}" }
+        let(:path)              { "/application_instances_view_model/#{cc_app[:guid]}/#{cc_app_instance_index}" }
         let(:view_model_source) { view_models_application_instances_detail }
         it_behaves_like('retrieves view_model detail')
       end
-    end
-
-    context 'varz dea' do
-      it_behaves_like('application_instances')
     end
 
     context 'doppler cell' do
@@ -1434,7 +1402,6 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'doppler dea' do
-      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('application_instances')
     end
 
@@ -1453,17 +1420,12 @@ describe AdminUI::Admin, type: :integration do
       end
     end
 
-    context 'varz dea' do
-      it_behaves_like('applications')
-    end
-
     context 'doppler cell' do
       let(:application_instance_source) { :doppler_cell }
       it_behaves_like('applications')
     end
 
     context 'doppler dea' do
-      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('applications')
     end
 
@@ -1545,19 +1507,6 @@ describe AdminUI::Admin, type: :integration do
     context 'current_statistics' do
       let(:retrieved) { get_json('/current_statistics') }
 
-      context 'varz dea' do
-        it 'retrieves' do
-          expect(retrieved).to include('apps'              => 1,
-                                       'cells'             => 0,
-                                       'deas'              => 1,
-                                       'organizations'     => 1,
-                                       'running_instances' => cc_app[:instances],
-                                       'spaces'            => 1,
-                                       'total_instances'   => cc_app[:instances],
-                                       'users'             => 1)
-        end
-      end
-
       context 'doppler cell' do
         let(:application_instance_source) { :doppler_cell }
         it 'retrieves' do
@@ -1565,57 +1514,37 @@ describe AdminUI::Admin, type: :integration do
                                        'cells'             => 1,
                                        'deas'              => 0,
                                        'organizations'     => 1,
-                                       'running_instances' => cc_app[:instances],
+                                       'running_instances' => cc_process[:instances],
                                        'spaces'            => 1,
-                                       'total_instances'   => cc_app[:instances],
+                                       'total_instances'   => cc_process[:instances],
                                        'users'             => 1)
         end
       end
 
       context 'doppler dea' do
-        let(:application_instance_source) { :doppler_dea }
         it 'retrieves' do
           expect(retrieved).to include('apps'              => 1,
                                        'cells'             => 0,
                                        'deas'              => 1,
                                        'organizations'     => 1,
-                                       'running_instances' => cc_app[:instances],
+                                       'running_instances' => cc_process[:instances],
                                        'spaces'            => 1,
-                                       'total_instances'   => cc_app[:instances],
+                                       'total_instances'   => cc_process[:instances],
                                        'users'             => 1)
         end
       end
     end
 
-    shared_examples 'deas_view_model' do
+    context 'deas_view_model' do
       let(:path)              { '/deas_view_model' }
       let(:view_model_source) { view_models_deas }
       it_behaves_like('retrieves view_model')
     end
 
-    shared_examples 'deas_view_model_detail' do
+    context 'deas_view_model_detail' do
+      let(:path)              { "/deas_view_model/#{dea_envelope.ip}:#{dea_envelope.index}" }
       let(:view_model_source) { view_models_deas_detail }
       it_behaves_like('retrieves view_model detail')
-    end
-
-    context 'varz deas_view_model' do
-      it_behaves_like('deas_view_model')
-    end
-
-    context 'varz deas_view_model_detail' do
-      let(:path) { "/deas_view_model/#{nats_dea['host']}" }
-      it_behaves_like('deas_view_model_detail')
-    end
-
-    context 'doppler deas_view_model' do
-      let(:application_instance_source) { :doppler_dea }
-      it_behaves_like('deas_view_model')
-    end
-
-    context 'doppler deas_view_model_detail' do
-      let(:application_instance_source) { :doppler_dea }
-      let(:path)                        { "/deas_view_model/#{dea_envelope.ip}:#{dea_envelope.index}" }
-      it_behaves_like('deas_view_model_detail')
     end
 
     context 'domains_view_model' do
@@ -1698,35 +1627,16 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
-    shared_examples 'health_managers_view_model' do
+    context 'health_managers_view_model' do
       let(:path)              { '/health_managers_view_model' }
       let(:view_model_source) { view_models_health_managers }
       it_behaves_like('retrieves view_model')
     end
 
-    shared_examples 'health_managers_view_model detail' do
+    context 'health_managers_view_model detail' do
+      let(:path) { "/health_managers_view_model/#{analyzer_envelope.ip}:#{analyzer_envelope.index}" }
       let(:view_model_source) { view_models_health_managers_detail }
       it_behaves_like('retrieves view_model detail')
-    end
-
-    context 'varz health_managers_view_model' do
-      it_behaves_like('health_managers_view_model')
-    end
-
-    context 'varz health_managers_view_model detail' do
-      let(:path) { "/health_managers_view_model/#{nats_health_manager['host']}" }
-      it_behaves_like('health_managers_view_model detail')
-    end
-
-    context 'doppler health_managers_view_model' do
-      let(:application_instance_source) { :doppler_dea }
-      it_behaves_like('health_managers_view_model')
-    end
-
-    context 'doppler health_managers_view_model detail' do
-      let(:application_instance_source) { :doppler_dea }
-      let(:path)                        { "/health_managers_view_model/#{analyzer_envelope.ip}:#{analyzer_envelope.index}" }
-      it_behaves_like('health_managers_view_model detail')
     end
 
     context 'identity_providers_view_model' do
@@ -1785,17 +1695,12 @@ describe AdminUI::Admin, type: :integration do
       end
     end
 
-    context 'varz dea' do
-      it_behaves_like('organizations')
-    end
-
     context 'doppler cell' do
       let(:application_instance_source) { :doppler_cell }
       it_behaves_like('organizations')
     end
 
     context 'doppler dea' do
-      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('organizations')
     end
 
@@ -1834,23 +1739,23 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
+    context 'doppler routers_view_model' do
+      let(:router_source) { :doppler_router }
+      it_behaves_like('routers_view_model')
+    end
+
+    context 'doppler routers_view_model detail' do
+      let(:router_source) { :doppler_router }
+      let(:path)          { "/routers_view_model/#{gorouter_envelope.ip}:#{gorouter_envelope.index}" }
+      it_behaves_like('routers_view_model detail')
+    end
+
     context 'varz routers_view_model' do
       it_behaves_like('routers_view_model')
     end
 
     context 'varz routers_view_model detail' do
       let(:path) { "/routers_view_model/#{nats_router['host']}" }
-      it_behaves_like('routers_view_model detail')
-    end
-
-    context 'doppler routers_view_model' do
-      let(:application_instance_source) { :doppler_dea }
-      it_behaves_like('routers_view_model')
-    end
-
-    context 'doppler routers_view_model detail' do
-      let(:application_instance_source) { :doppler_dea }
-      let(:path)                        { "/routers_view_model/#{gorouter_envelope.ip}:#{gorouter_envelope.index}" }
       it_behaves_like('routers_view_model detail')
     end
 
@@ -1861,7 +1766,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'route_mappings_view_model detail' do
-      let(:path)              { "/route_mappings_view_model/#{cc_app_route[:guid]}" }
+      let(:path)              { "/route_mappings_view_model/#{cc_route_mapping[:guid]}" }
       let(:view_model_source) { view_models_route_mappings_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -2044,17 +1949,12 @@ describe AdminUI::Admin, type: :integration do
       end
     end
 
-    context 'varz dea' do
-      it_behaves_like('spaces')
-    end
-
     context 'doppler cell' do
       let(:application_instance_source) { :doppler_cell }
       it_behaves_like('spaces')
     end
 
     context 'doppler dea' do
-      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('spaces')
     end
 
@@ -2077,17 +1977,12 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model')
     end
 
-    context 'varz dea' do
-      it_behaves_like('stats_view_model')
-    end
-
     context 'doppler cell' do
       let(:application_instance_source) { :doppler_cell }
       it_behaves_like('stats_view_model')
     end
 
     context 'doppler dea' do
-      let(:application_instance_source) { :doppler_dea }
       it_behaves_like('stats_view_model')
     end
 

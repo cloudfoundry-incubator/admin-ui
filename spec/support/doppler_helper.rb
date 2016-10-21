@@ -43,20 +43,6 @@ module DopplerHelper
       'uptime'                 => ((((7 * 24) + 8) * 60 + 9) * 60) + 10, # 7 days, 8 hours, 9 minutes, 10 seconds
     }.freeze
 
-  DOPPLER_SERVER_VALUE_METRICS =
-    {
-      'memoryStats.lastGCPauseTimeNS'       => 3_553_637.0,
-      'memoryStats.numBytesAllocated'       => 2_052_480.0,
-      'memoryStats.numBytesAllocatedHeap'   => 2_052_480.0,
-      'memoryStats.numBytesAllocatedStack'  => 720_896.0,
-      'memoryStats.numFrees'                => 1_225_251.0,
-      'memoryStats.numMallocs'              => 1_268_441.0,
-      'messageRouter.numberOfFirehoseSinks' => 1.0,
-      'numCPUS'                             => 4.0,
-      'numGoRoutines'                       => 58.0,
-      'Uptime'                              => 1_080.0
-    }.freeze
-
   GOROUTER_VALUE_METRICS =
     {
       'latency'                            => 15.0,
@@ -100,7 +86,7 @@ module DopplerHelper
     end
   end
 
-  def doppler_stub(application_instance_source)
+  def doppler_stub(application_instance_source, router_source)
     @close_blk = nil
 
     @time = Time.now
@@ -119,6 +105,10 @@ module DopplerHelper
     allow_any_instance_of(MockWebSocketClient).to receive(:on).with(:error)
 
     allow_any_instance_of(MockWebSocketClient).to receive(:on).with(:message) do |_event, &blk|
+      ANALYZER_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
+        EventMachine.next_tick { blk.call(event(analyzer_value_metric_envelope(value_metric_key, value_metric_value))) }
+      end
+
       if application_instance_source == :doppler_cell
         REP_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
           EventMachine.next_tick { blk.call(event(rep_value_metric_envelope(value_metric_key, value_metric_value))) }
@@ -126,24 +116,17 @@ module DopplerHelper
 
         EventMachine.next_tick { blk.call(event(rep_container_metric_envelope)) }
       elsif application_instance_source == :doppler_dea
-        ANALYZER_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
-          EventMachine.next_tick { blk.call(event(analyzer_value_metric_envelope(value_metric_key, value_metric_value))) }
-        end
-
         DEA_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
           EventMachine.next_tick { blk.call(event(dea_value_metric_envelope(value_metric_key, value_metric_value))) }
-        end
-
-        GOROUTER_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
-          EventMachine.next_tick { blk.call(event(gorouter_value_metric_envelope(value_metric_key, value_metric_value))) }
         end
 
         EventMachine.next_tick { blk.call(event(dea_container_metric_envelope)) }
       end
 
-      # We need at least one value metric for the doppler-retrieving code to be considered working
-      DOPPLER_SERVER_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
-        EventMachine.next_tick { blk.call(event(doppler_server_value_metric_envelope(value_metric_key, value_metric_value))) }
+      if router_source == :doppler_router
+        GOROUTER_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
+          EventMachine.next_tick { blk.call(event(gorouter_value_metric_envelope(value_metric_key, value_metric_value))) }
+        end
       end
     end
 
@@ -167,16 +150,6 @@ module DopplerHelper
     envelope.index     = '2'
     envelope.ip        = '10.10.10.11'
     envelope.origin    = 'DEA'
-    envelope.timestamp = @time.to_i * BILLION
-
-    envelope
-  end
-
-  def doppler_server_envelope
-    envelope           = Events::Envelope.new
-    envelope.index     = '3'
-    envelope.ip        = '10.10.10.12'
-    envelope.origin    = 'DopplerServer'
     envelope.timestamp = @time.to_i * BILLION
 
     envelope
@@ -228,14 +201,6 @@ module DopplerHelper
 
   def dea_value_metric_envelope(key, value)
     envelope             = dea_envelope
-    envelope.eventType   = Events::Envelope::EventType::ValueMetric
-    envelope.valueMetric = value_metric(key, value)
-
-    envelope
-  end
-
-  def doppler_server_value_metric_envelope(key, value)
-    envelope             = doppler_server_envelope
     envelope.eventType   = Events::Envelope::EventType::ValueMetric
     envelope.valueMetric = value_metric(key, value)
 

@@ -21,10 +21,10 @@ module AdminUI
 
       events_connected = events['connected']
 
-      application_hash      = Hash[applications['items'].map { |item| [item[:id], item] }]
+      application_hash      = Hash[applications['items'].map { |item| [item[:guid], item] }]
       organization_hash     = Hash[organizations['items'].map { |item| [item[:id], item] }]
       service_broker_hash   = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
-      service_instance_hash = Hash[service_instances['items'].map { |item| [item[:id], item] }]
+      service_instance_hash = Hash[service_instances['items'].map { |item| [item[:guid], item] }]
       service_plan_hash     = Hash[service_plans['items'].map { |item| [item[:id], item] }]
       service_hash          = Hash[services['items'].map { |item| [item[:id], item] }]
       space_hash            = Hash[spaces['items'].map { |item| [item[:id], item] }]
@@ -48,8 +48,8 @@ module AdminUI
         Thread.pass
 
         guid             = service_binding[:guid]
-        application      = application_hash[service_binding[:app_id]]
-        service_instance = service_instance_hash[service_binding[:service_instance_id]]
+        application      = application_hash[service_binding[:app_guid]]
+        service_instance = service_instance_hash[service_binding[:service_instance_guid]]
         service_plan_id  = service_instance.nil? ? nil : service_instance[:service_plan_id]
         service_plan     = service_plan_id.nil? ? nil : service_plan_hash[service_plan_id]
         service          = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
@@ -122,11 +122,9 @@ module AdminUI
         end
 
         if service
-          row.push(service[:provider])
           row.push(service[:label])
           row.push(service[:guid])
           row.push(service[:unique_id])
-          row.push(service[:version])
           row.push(service[:created_at].to_datetime.rfc3339)
 
           if service[:updated_at]
@@ -137,7 +135,7 @@ module AdminUI
 
           row.push(service[:active])
         else
-          row.push(nil, nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil, nil)
         end
 
         if service_broker
@@ -175,7 +173,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..32).to_a, (1..32).to_a - [5])
+      result(true, items, hash, (1..30).to_a, (1..30).to_a - [5])
     end
   end
 end

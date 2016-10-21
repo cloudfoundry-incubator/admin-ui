@@ -45,20 +45,8 @@ describe AdminUI::CC do
       expect(cc.applications_count).to be_nil
     end
 
-    it 'returns nil application running instances as expected' do
-      expect(cc.applications_running_instances).to be_nil
-    end
-
-    it 'returns nil application totals instances as expected' do
-      expect(cc.applications_total_instances).to be_nil
-    end
-
     it 'returns zero approvals as expected' do
       verify_disconnected_items(cc.approvals)
-    end
-
-    it 'returns zero apps_routes as expected' do
-      verify_disconnected_items(cc.apps_routes)
     end
 
     it 'returns zero buildpacks as expected' do
@@ -129,12 +117,32 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.organizations_users)
     end
 
+    it 'returns zero packages as expected' do
+      verify_disconnected_items(cc.packages)
+    end
+
+    it 'returns zero processes as expected' do
+      verify_disconnected_items(cc.processes)
+    end
+
+    it 'returns nil processes running instances as expected' do
+      expect(cc.processes_running_instances).to be_nil
+    end
+
+    it 'returns nil processes totals instances as expected' do
+      expect(cc.processes_total_instances).to be_nil
+    end
+
     it 'returns zero quota_definitions as expected' do
       verify_disconnected_items(cc.quota_definitions)
     end
 
     it 'returns zero routes as expected' do
       verify_disconnected_items(cc.routes)
+    end
+
+    it 'returns zero route_mappings as expected' do
+      verify_disconnected_items(cc.route_mappings)
     end
 
     it 'returns zero security_groups as expected' do
