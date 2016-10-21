@@ -1,4 +1,3 @@
-[![Build Status](https://api.travis-ci.org/cloudfoundry-incubator/admin-ui.png)](https://travis-ci.org/cloudfoundry-incubator/admin-ui)
 # Administration Web UI for Cloud Foundry NG 
 
 The Administration Web UI provides metrics and operations data for Cloud Foundry NG.
@@ -6,6 +5,14 @@ It gathers data from the varz providers and doppler_logging_endpoint for the var
 from the Cloud Controller and UAA REST APIs.
 
 See the [Using the Administration UI](#using) section for more information on using it and for sample screen shots.
+
+## cf-release 245
+
+In order to run the Administration UI on a release prior to cf-release v245, use the cf-release-pre-v245 branch.
+
+CF releases for v245 and later continue to use the master branch.
+
+This is due to the CCDB changes for applications in cf-release v245.
 
 ## Placement
 
