@@ -349,14 +349,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 7,
-                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                 colspans:        %w(1 16 3 5 2 3 3)
+                                 expected_length: 8,
+                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'Desired App States', 'App States', 'App Package States'],
+                                 colspans:        %w(1 16 3 6 2 2 2 3)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 33,
-                                 labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Default Users', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Security Groups', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                 expected_length: 35,
+                                 labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Default Users', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Security Groups', 'Total', 'Used', 'Unused', 'Apps', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Started', 'Stopped', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                  colspans:        nil
                                }
                              ])
@@ -386,6 +386,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                '1',
                                '1',
                                '0',
+                               '1',
                                @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})"),
                                '1',
                                @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})"),
@@ -393,7 +394,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                @driver.execute_script("return Format.formatNumber(#{used_cpu})"),
                                @driver.execute_script("return Format.formatNumber(#{cc_process[:memory]})"),
                                @driver.execute_script("return Format.formatNumber(#{cc_process[:disk_quota]})"),
-                               '1',
+                               cc_app[:desired_state] == 'STARTED' ? '1' : '0',
+                               cc_app[:desired_state] == 'STOPPED' ? '1' : '0',
                                cc_process[:state] == 'STARTED' ? '1' : '0',
                                cc_process[:state] == 'STOPPED' ? '1' : '0',
                                cc_droplet[:state] == 'PENDING' ? '1' : '0',
@@ -633,6 +635,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Total Routes',              tag:   'a', value: '1' },
                               { label: 'Used Routes',               tag:   nil, value: '1' },
                               { label: 'Unused Routes',             tag:   nil, value: '0' },
+                              { label: 'Total Apps',                tag:   'a', value: '1' },
                               { label: 'Instances Used',            tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})") },
                               { label: 'Services Used',             tag:   'a', value: '1' },
                               { label: 'Memory Used',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})") },
@@ -640,7 +643,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'CPU Used',                  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{used_cpu})") },
                               { label: 'Memory Reserved',           tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_process[:memory]})") },
                               { label: 'Disk Reserved',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_process[:disk_quota]})") },
-                              { label: 'Total Apps',                tag:   'a', value: '1' },
+                              { label: 'Desired Started Apps',      tag:   nil, value: cc_app[:desired_state] == 'STARTED' ? '1' : '0' },
+                              { label: 'Desired Stopped Apps',      tag:   nil, value: cc_app[:_desired_state] == 'STOPPED' ? '1' : '0' },
                               { label: 'Started Apps',              tag:   nil, value: cc_process[:state] == 'STARTED' ? '1' : '0' },
                               { label: 'Stopped Apps',              tag:   nil, value: cc_process[:state] == 'STOPPED' ? '1' : '0' },
                               { label: 'Pending Apps',              tag:   nil, value: cc_droplet[:state] == 'PENDING' ? '1' : '0' },
@@ -707,16 +711,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Organizations', 18, 'Routes', "#{cc_organization[:name]}/")
           end
 
+          it 'has applications link' do
+            check_filter_link('Organizations', 21, 'Applications', "#{cc_organization[:name]}/")
+          end
+
           it 'has application instances link' do
-            check_filter_link('Organizations', 21, 'ApplicationInstances', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 22, 'ApplicationInstances', "#{cc_organization[:name]}/")
           end
 
           it 'has services instances link' do
-            check_filter_link('Organizations', 22, 'ServiceInstances', "#{cc_organization[:name]}/")
-          end
-
-          it 'has applications link' do
-            check_filter_link('Organizations', 28, 'Applications', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 23, 'ServiceInstances', "#{cc_organization[:name]}/")
           end
         end
       end
@@ -729,14 +733,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 7,
-                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'App States', 'App Package States'],
-                                 colspans:        %w(1 13 3 5 2 3 3)
+                                 expected_length: 8,
+                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'Desired App States', 'App States', 'App Package States'],
+                                 colspans:        %w(1 13 3 6 2 2 2 3)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 30,
-                                 labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'SSH Allowed', 'Events', 'Events Target', 'Roles', 'Default Users', 'Space Quota', 'Private Service Brokers', 'Security Groups', 'Total', 'Used', 'Unused', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Total', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                 expected_length: 32,
+                                 labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'SSH Allowed', 'Events', 'Events Target', 'Roles', 'Default Users', 'Space Quota', 'Private Service Brokers', 'Security Groups', 'Total', 'Used', 'Unused', 'Apps', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Started', 'Stopped', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
                                  colspans:        nil
                                }
                              ])
@@ -763,6 +767,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                '1',
                                '1',
                                '0',
+                               '1',
                                @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})"),
                                '1',
                                @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})"),
@@ -770,7 +775,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                @driver.execute_script("return Format.formatNumber(#{used_cpu})"),
                                @driver.execute_script("return Format.formatNumber(#{cc_process[:memory]})"),
                                @driver.execute_script("return Format.formatNumber(#{cc_process[:disk_quota]})"),
-                               '1',
+                               cc_app[:desired_state] == 'STARTED' ? '1' : '0',
+                               cc_app[:desired_state] == 'STOPPED' ? '1' : '0',
                                cc_process[:state] == 'STARTED' ? '1' : '0',
                                cc_process[:state] == 'STOPPED' ? '1' : '0',
                                cc_droplet[:state] == 'PENDING' ? '1' : '0',
@@ -936,6 +942,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Total Routes',            tag:   'a', value: '1' },
                               { label: 'Used Routes',             tag:   nil, value: '1' },
                               { label: 'Unused Routes',           tag:   nil, value: '0' },
+                              { label: 'Total Apps',              tag:   'a', value: '1' },
                               { label: 'Instances Used',          tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})") },
                               { label: 'Services Used',           tag:   'a', value: '1' },
                               { label: 'Memory Used',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})") },
@@ -943,7 +950,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'CPU Used',                tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{used_cpu})") },
                               { label: 'Memory Reserved',         tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_process[:memory]})") },
                               { label: 'Disk Reserved',           tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_process[:disk_quota]})") },
-                              { label: 'Total Apps',              tag:   'a', value: '1' },
+                              { label: 'Desired Started Apps',    tag:   nil, value: cc_app[:desired_state] == 'STARTED' ? '1' : '0' },
+                              { label: 'Desired Stopped Apps',    tag:   nil, value: cc_app[:desired_state] == 'STOPPED' ? '1' : '0' },
                               { label: 'Started Apps',            tag:   nil, value: cc_process[:state] == 'STARTED' ? '1' : '0' },
                               { label: 'Stopped Apps',            tag:   nil, value: cc_process[:state] == 'STOPPED' ? '1' : '0' },
                               { label: 'Pending Apps',            tag:   nil, value: cc_droplet[:state] == 'PENDING' ? '1' : '0' },
@@ -998,16 +1006,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Spaces', 15, 'Routes', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
-          it 'has application instances link' do
-            check_filter_link('Spaces', 18, 'ApplicationInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
-          end
-
-          it 'has services link' do
-            check_filter_link('Spaces', 19, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
-          end
-
           it 'has applications link' do
-            check_filter_link('Spaces', 25, 'Applications', "#{cc_organization[:name]}/#{cc_space[:name]}")
+            check_filter_link('Spaces', 18, 'Applications', "#{cc_organization[:name]}/#{cc_space[:name]}")
+          end
+
+          it 'has application instances link' do
+            check_filter_link('Spaces', 19, 'ApplicationInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
+          end
+
+          it 'has service instances link' do
+            check_filter_link('Spaces', 20, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
         end
       end
@@ -1023,12 +1031,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 5,
                                  labels:          ['', '', 'Used', 'Reserved', ''],
-                                 colspans:        %w(1 17 3 2 1)
+                                 colspans:        %w(1 18 3 2 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 24,
-                                 labels:          ['', 'Name', 'GUID', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'Diego', 'SSH Enabled', 'Docker Image', 'Stack', 'Buildpack', 'Buildpack GUID', 'Events', 'Instances', 'Route Mappings', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
+                                 expected_length: 25,
+                                 labels:          ['', 'Name', 'GUID', 'Desired State', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'Diego', 'SSH Enabled', 'Docker Image', 'Stack', 'Buildpack', 'Buildpack GUID', 'Events', 'Instances', 'Route Mappings', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -1041,6 +1049,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                '',
                                cc_app[:name],
                                cc_app[:guid],
+                               cc_app[:desired_state],
                                cc_process[:state],
                                @driver.execute_script('return Constants.STATUS__STAGED'),
                                cc_droplet[:error_id],
@@ -1096,26 +1105,26 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           def check_app_state(expect_state)
             begin
-              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text == expect_state }
+              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[5]").text == expect_state }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[4]").text).to eq(expect_state)
+            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[5]").text).to eq(expect_state)
           end
 
           def check_app_diego(diego)
             begin
-              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[9]").text == diego }
+              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[10]").text == diego }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[9]").text).to eq(diego)
+            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[10]").text).to eq(diego)
           end
 
           def check_app_ssh(ssh)
             begin
-              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[10]").text == ssh }
+              Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[11]").text == ssh }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[10]").text).to eq(ssh)
+            expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[11]").text).to eq(ssh)
           end
 
           it 'has a Rename button' do
@@ -1311,6 +1320,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               check_details([
                               { label: 'Name',                       tag: 'div', value: cc_app[:name] },
                               { label: 'GUID',                       tag:   nil, value: cc_app[:guid] },
+                              { label: 'Desired State',              tag:   nil, value: cc_app[:desired_state] },
                               { label: 'State',                      tag:   nil, value: cc_process[:state] },
                               { label: 'Package State',              tag:   nil, value: cc_droplet[:state] },
                               { label: 'Staging Failed Reason',      tag:   nil, value: cc_droplet[:error_id] },
@@ -1355,35 +1365,35 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has stacks link' do
-            check_filter_link('Applications', 11, 'Stacks', cc_stack[:guid])
+            check_filter_link('Applications', 12, 'Stacks', cc_stack[:guid])
           end
 
           it 'has buildpacks link' do
-            check_filter_link('Applications', 14, 'Buildpacks', cc_buildpack[:guid])
+            check_filter_link('Applications', 15, 'Buildpacks', cc_buildpack[:guid])
           end
 
           it 'has events link' do
-            check_filter_link('Applications', 19, 'Events', cc_app[:guid])
+            check_filter_link('Applications', 20, 'Events', cc_app[:guid])
           end
 
           it 'has application instances link' do
-            check_filter_link('Applications', 20, 'ApplicationInstances', cc_app[:guid])
+            check_filter_link('Applications', 21, 'ApplicationInstances', cc_app[:guid])
           end
 
           it 'has route mappings link' do
-            check_filter_link('Applications', 21, 'RouteMappings', cc_app[:guid])
+            check_filter_link('Applications', 22, 'RouteMappings', cc_app[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('Applications', 22, 'ServiceBindings', cc_app[:guid])
+            check_filter_link('Applications', 23, 'ServiceBindings', cc_app[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('Applications', 28, 'Spaces', cc_space[:guid])
+            check_filter_link('Applications', 29, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Applications', 30, 'Organizations', cc_organization[:guid])
+            check_filter_link('Applications', 31, 'Organizations', cc_organization[:guid])
           end
         end
       end

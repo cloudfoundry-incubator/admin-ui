@@ -6,6 +6,12 @@ module AdminUI
     def add_instance_metrics(counters_hash, application, droplets_hash, latest_droplets_hash, latest_packages_hash, containers_hash)
       counters_hash['total'] += 1
 
+      desired_state = application[:desired_state]
+      unless desired_state.nil?
+        counters_hash[desired_state] = 0 if counters_hash[desired_state].nil?
+        counters_hash[desired_state] += 1
+      end
+
       application_guid = application[:guid]
 
       current_droplet_guid = application[:droplet_guid]

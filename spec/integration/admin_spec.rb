@@ -233,12 +233,12 @@ describe AdminUI::Admin, type: :integration do
 
     it 'stops a running application' do
       start_app
-      expect { stop_app }.to change { get_json('/applications_view_model')['items']['items'][0][3] }.from('STARTED').to('STOPPED')
+      expect { stop_app }.to change { get_json('/applications_view_model')['items']['items'][0][4] }.from('STARTED').to('STOPPED')
     end
 
     it 'starts a stopped application' do
       stop_app
-      expect { start_app }.to change { get_json('/applications_view_model')['items']['items'][0][3] }.from('STOPPED').to('STARTED')
+      expect { start_app }.to change { get_json('/applications_view_model')['items']['items'][0][4] }.from('STOPPED').to('STARTED')
     end
 
     it 'restages stopped application' do
@@ -247,22 +247,22 @@ describe AdminUI::Admin, type: :integration do
 
     it 'enables the application diego' do
       disable_app_diego
-      expect { enable_app_diego }.to change { get_json('/applications_view_model')['items']['items'][0][8] }.from(false).to(true)
+      expect { enable_app_diego }.to change { get_json('/applications_view_model')['items']['items'][0][9] }.from(false).to(true)
     end
 
     it 'disables the application diego' do
       enable_app_diego
-      expect { disable_app_diego }.to change { get_json('/applications_view_model')['items']['items'][0][8] }.from(true).to(false)
+      expect { disable_app_diego }.to change { get_json('/applications_view_model')['items']['items'][0][9] }.from(true).to(false)
     end
 
     it 'enables the application ssh' do
       disable_app_ssh
-      expect { enable_app_ssh }.to change { get_json('/applications_view_model')['items']['items'][0][9] }.from(false).to(true)
+      expect { enable_app_ssh }.to change { get_json('/applications_view_model')['items']['items'][0][10] }.from(false).to(true)
     end
 
     it 'disables the application ssh' do
       enable_app_ssh
-      expect { disable_app_ssh }.to change { get_json('/applications_view_model')['items']['items'][0][9] }.from(true).to(false)
+      expect { disable_app_ssh }.to change { get_json('/applications_view_model')['items']['items'][0][10] }.from(true).to(false)
     end
 
     it 'deletes an application' do

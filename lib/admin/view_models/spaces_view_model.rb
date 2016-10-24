@@ -301,6 +301,14 @@ module AdminUI
           row.push(nil, nil, nil)
         end
 
+        if space_app_counters
+          row.push(space_app_counters['total'])
+        elsif applications_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if space_process_counters
           row.push(space_process_counters['instances'])
         elsif applications_connected && processes_connected
@@ -341,11 +349,12 @@ module AdminUI
         end
 
         if space_app_counters
-          row.push(space_app_counters['total'])
+          row.push(space_app_counters['STARTED'] || 0)
+          row.push(space_app_counters['STOPPED'] || 0)
         elsif applications_connected
-          row.push(0)
+          row.push(0, 0)
         else
-          row.push(nil)
+          row.push(nil, nil)
         end
 
         if space_process_counters
@@ -377,7 +386,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..29).to_a, (1..6).to_a << 11)
+      result(true, items, hash, (1..31).to_a, (1..6).to_a << 11)
     end
 
     private

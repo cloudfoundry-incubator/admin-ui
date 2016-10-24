@@ -132,6 +132,8 @@ module AdminUI
         row.push(application[:name])
         row.push(guid)
 
+        row.push(application[:desired_state])
+
         if process
           row.push(process[:state])
         else
@@ -250,7 +252,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..23).to_a, (1..13).to_a << 23)
+      result(true, items, hash, (1..24).to_a, (1..14).to_a << 24)
     end
   end
 end
