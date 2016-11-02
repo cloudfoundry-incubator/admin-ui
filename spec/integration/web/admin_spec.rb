@@ -1365,7 +1365,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has stacks link' do
-            check_filter_link('Applications', 12, 'Stacks', cc_stack[:guid])
+            check_filter_link('Applications', 12, 'Stacks', cc_stack[:name])
           end
 
           it 'has buildpacks link' do
@@ -1502,7 +1502,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             it 'has details' do
               check_details([
+                              # rubocop:disable Style/ExtraSpacing
                               { label: 'Name',              tag:   nil, value: cc_app[:name] },
+                              # rubocop:enable Style/ExtraSpacing
                               { label: 'Application GUID',  tag: 'div', value: cc_app[:guid] },
                               { label: 'Index',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_app_instance_index})") },
                               { label: 'Metrics',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(rep_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
@@ -2746,7 +2748,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has group members link' do
-            check_filter_link('Users', 14, 'GroupMembers', uaa_group[:id])
+            check_filter_link('Users', 14, 'GroupMembers', uaa_user[:id])
           end
 
           it 'has approvals link' do
@@ -2896,8 +2898,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has details' do
             check_details([
                             { label: 'Group',      tag: 'div', value: uaa_group[:displayname] },
+                            # rubocop:disable Style/ExtraSpacing
                             { label: 'Group GUID', tag:   nil, value: uaa_group[:id] },
                             { label: 'User',       tag:    'a', value: uaa_user[:username] },
+                            # rubocop:enable Style/ExtraSpacing
                             { label: 'User GUID',  tag:   nil, value: uaa_user[:id] },
                             { label: 'Created',    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_group_membership[:added].to_datetime.rfc3339}\")") }
                           ])

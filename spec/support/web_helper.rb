@@ -66,9 +66,7 @@ shared_context :web_context do
       value = if expected_property[:tag].nil?
                 values[property_index].text
               elsif expected_property[:tag] == 'img'
-                # FIXME: innerHTML not being retrieved in move to latest firefox and marionette
-                # values[property_index].find_element(tag_name: 'div').attribute('innerHTML')
-                expected_property[:value]
+                values[property_index].find_element(tag_name: 'div').attribute('innerHTML')
               else
                 values[property_index].find_element(tag_name: expected_property[:tag]).text
               end
@@ -77,7 +75,7 @@ shared_context :web_context do
     end
   end
 
-  def check_filter_link(tab_id, link_index, target_tab_id, _expected_filter)
+  def check_filter_link(tab_id, link_index, target_tab_id, expected_filter)
     # TODO: Bug in selenium-webdriver 2.48.1.  Entire item must be displayed for it to click.  Workaround following two lines after commented out code
     # Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_elements(xpath: "//div[@id='#{tab_id}PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(tag_name: 'a').click }
     element = @driver.find_elements(xpath: "//div[@id='#{tab_id}PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(tag_name: 'a')
@@ -85,8 +83,7 @@ shared_context :web_context do
 
     expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(class_name: 'menuItemSelected').attribute('id') }).to eq(target_tab_id)
     expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: target_tab_id).displayed? }).to eq(true)
-    # FIXME: attribute value not returned in move to latest firefox and marionette - https://github.com/mozilla/geckodriver/issues/95
-    # expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{target_tab_id}Table_filter").find_element(tag_name: 'input').attribute('value') }).to eq(expected_filter)
+    expect(Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{target_tab_id}Table_filter").find_element(tag_name: 'input').attribute('value') }).to eq(expected_filter)
   end
 
   def check_stats_chart(id)

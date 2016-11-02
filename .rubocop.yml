@@ -13,6 +13,9 @@ AbcSize:
 AlignHash:
   EnforcedHashRocketStyle: table
 
+BlockLength:
+  Enabled: false
+
 BlockNesting:
   Enabled: false
 
