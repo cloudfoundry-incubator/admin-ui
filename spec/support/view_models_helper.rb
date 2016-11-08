@@ -1384,6 +1384,8 @@ module ViewModelsHelper
         1,
         1,
         1,
+        cc_request_count[:count],
+        cc_request_count[:valid_until].to_datetime.rfc3339,
         4,
         1,
         1,
@@ -1402,6 +1404,7 @@ module ViewModelsHelper
     {
       'identity_zone' => uaa_identity_zone,
       'organization'  => cc_organization,
+      'request_count' => cc_request_count,
       'space'         => cc_space,
       'user_cc'       => cc_user,
       'user_uaa'      => uaa_user

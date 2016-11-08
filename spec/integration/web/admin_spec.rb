@@ -530,7 +530,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               @driver.find_element(id: 'Buttons_OrganizationsTable_2').click
 
               # Check whether the dialog is displayed
+              begin
+                Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: 'ModalDialogContents').displayed? }
+              rescue
+              end
               expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
+
               expect(@driver.find_element(id: 'quotaSelector').displayed?).to be(true)
               expect(@driver.find_element(xpath: '//select[@id="quotaSelector"]/option[1]').text).to eq(cc_quota_definition[:name])
               expect(@driver.find_element(xpath: '//select[@id="quotaSelector"]/option[2]').text).to eq(cc_quota_definition2[:name])
@@ -2630,14 +2635,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 5,
-                                 labels:          ['', '', 'Organization Roles', 'Space Roles', ''],
-                                 colspans:        %w(1 15 5 4 1)
+                                 expected_length: 6,
+                                 labels:          ['', '', 'Requests', 'Organization Roles', 'Space Roles', ''],
+                                 colspans:        %w(1 15 2 5 4 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 26,
-                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Version', 'Events', 'Groups', 'Approvals', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
+                                 expected_length: 28,
+                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Version', 'Events', 'Groups', 'Approvals', 'Count', 'Valid Until', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2660,6 +2665,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              '1',
                              '1',
+                             @driver.execute_script("return Format.formatNumber(#{cc_request_count[:count]})"),
+                             cc_request_count[:valid_until].to_datetime.rfc3339,
                              '4',
                              '1',
                              '1',
@@ -2723,6 +2730,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Events',                             tag:   'a', value: '1' },
                             { label: 'Groups',                             tag:   'a', value: '1' },
                             { label: 'Approvals',                          tag:   'a', value: '1' },
+                            { label: 'Requests Count',                     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_request_count[:count]})") },
+                            { label: 'Requests Count Valid Until',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_request_count[:valid_until].to_datetime.rfc3339}\")") },
                             { label: 'Organization Total Roles',           tag:   'a', value: '4' },
                             { label: 'Organization Auditor Roles',         tag:   nil, value: '1' },
                             { label: 'Organization Billing Manager Roles', tag:   nil, value: '1' },
@@ -2756,19 +2765,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has organization roles link' do
-            check_filter_link('Users', 16, 'OrganizationRoles', uaa_user[:id])
+            check_filter_link('Users', 18, 'OrganizationRoles', uaa_user[:id])
           end
 
           it 'has space roles link' do
-            check_filter_link('Users', 21, 'SpaceRoles', uaa_user[:id])
+            check_filter_link('Users', 23, 'SpaceRoles', uaa_user[:id])
           end
 
           it 'has spaces link' do
-            check_filter_link('Users', 25, 'Spaces', cc_space[:guid])
+            check_filter_link('Users', 27, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Users', 27, 'Organizations', cc_organization[:guid])
+            check_filter_link('Users', 29, 'Organizations', cc_organization[:guid])
           end
         end
       end

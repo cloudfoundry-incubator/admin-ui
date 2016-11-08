@@ -150,6 +150,12 @@ module AdminUI
             table:   :quota_definitions,
             columns: [:app_instance_limit, :app_task_limit, :created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :total_private_domains, :total_reserved_route_ports, :total_routes, :total_services, :total_service_keys, :updated_at]
           },
+          request_counts:
+          {
+            db_uri:  ccdb_uri,
+            table:   :request_counts,
+            columns: [:count, :id, :user_guid, :valid_until]
+          },
           route_mappings:
           {
             db_uri:  ccdb_uri,
@@ -549,6 +555,10 @@ module AdminUI
 
     def quota_definitions
       result_cache(:quota_definitions)
+    end
+
+    def request_counts
+      result_cache(:request_counts)
     end
 
     def route_mappings

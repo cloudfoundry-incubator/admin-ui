@@ -247,6 +247,15 @@ Sequel.migration do
       index [:name], :name=>:quota_definitions_name_key, :unique=>true
     end
     
+    create_table(:request_counts, :ignore_index_errors=>true) do
+      primary_key :id
+      String :user_guid, :text=>true
+      Integer :count, :default=>0
+      DateTime :valid_until
+      
+      index [:user_guid]
+    end
+    
     create_table(:schema_migrations) do
       String :filename, :text=>true, :null=>false
       
@@ -365,22 +374,6 @@ Sequel.migration do
       index [:package_guid], :name=>:package_guid_index
     end
     
-    create_table(:organizations, :ignore_index_errors=>true) do
-      primary_key :id
-      String :guid, :text=>true, :null=>false
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      String :name, :null=>false
-      TrueClass :billing_enabled, :default=>false, :null=>false
-      foreign_key :quota_definition_id, :quota_definitions, :null=>false, :key=>[:id]
-      String :status, :default=>"active", :text=>true
-      
-      index [:created_at]
-      index [:guid], :unique=>true
-      index [:name], :unique=>true
-      index [:updated_at]
-    end
-    
     create_table(:packages, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -448,6 +441,7 @@ Sequel.migration do
       foreign_key :app_guid, :apps, :type=>String, :text=>true, :null=>false, :key=>[:guid]
       String :droplet_guid, :text=>true, :null=>false
       Integer :sequence_id
+      Integer :disk_in_mb
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -482,13 +476,44 @@ Sequel.migration do
       DateTime :updated_at
       String :name, :null=>false
       TrueClass :wildcard, :default=>true, :null=>false
-      foreign_key :owning_organization_id, :organizations, :key=>[:id]
+      Integer :owning_organization_id
       String :router_group_guid, :text=>true
       
       index [:created_at]
       index [:guid], :unique=>true
       index [:name], :unique=>true
       index [:updated_at]
+    end
+    
+    create_table(:organizations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :name, :null=>false
+      TrueClass :billing_enabled, :default=>false, :null=>false
+      foreign_key :quota_definition_id, :quota_definitions, :null=>false, :key=>[:id]
+      String :status, :default=>"active", :text=>true
+      String :default_isolation_segment_guid, :text=>true
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:name], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:organizations_isolation_segments) do
+      foreign_key :organization_guid, :organizations, :type=>String, :text=>true, :null=>false, :key=>[:guid]
+      foreign_key :isolation_segment_guid, :isolation_segments, :type=>String, :text=>true, :null=>false, :key=>[:guid]
+      
+      primary_key [:organization_guid, :isolation_segment_guid]
+    end
+    
+    create_table(:organizations_private_domains, :ignore_index_errors=>true) do
+      foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
+      foreign_key :private_domain_id, :domains, :null=>false, :key=>[:id]
+      
+      index [:organization_id, :private_domain_id], :name=>:orgs_pd_ids, :unique=>true
     end
     
     create_table(:space_quota_definitions, :ignore_index_errors=>true) do
@@ -512,13 +537,6 @@ Sequel.migration do
       index [:guid], :name=>:sqd_guid_index, :unique=>true
       index [:organization_id, :name], :name=>:sqd_org_id_index, :unique=>true
       index [:updated_at], :name=>:sqd_updated_at_index
-    end
-    
-    create_table(:organizations_private_domains, :ignore_index_errors=>true) do
-      foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
-      foreign_key :private_domain_id, :domains, :null=>false, :key=>[:id]
-      
-      index [:organization_id, :private_domain_id], :name=>:orgs_pd_ids, :unique=>true
     end
     
     create_table(:spaces, :ignore_index_errors=>true) do
@@ -821,6 +839,14 @@ Sequel.migration do
       index [:guid], :name=>:sk_guid_index, :unique=>true
       index [:updated_at], :name=>:sk_updated_at_index
       index [:name, :service_instance_id], :name=>:svc_key_name_instance_id_index, :unique=>true
+    end
+    
+    alter_table(:domains) do
+      add_foreign_key [:owning_organization_id], :organizations, :name=>:fk_domains_owning_org_id, :key=>[:id]
+    end
+    
+    alter_table(:organizations) do
+      add_foreign_key [:guid, :default_isolation_segment_guid], :organizations_isolation_segments, :name=>:organizations_isolation_segments_pk, :key=>[:organization_guid, :isolation_segment_guid]
     end
   end
 end

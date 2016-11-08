@@ -36,13 +36,16 @@ module AdminUI
       events           = @cc.events
       group_membership = @cc.group_membership
       identity_zones   = @cc.identity_zones
+      request_counts   = @cc.request_counts
 
       approvals_connected        = approvals['connected']
       events_connected           = events['connected']
       group_membership_connected = group_membership['connected']
+      request_counts_connected   = request_counts['connected']
 
       identity_zone_hash = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
       organization_hash  = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      request_count_hash = Hash[request_counts['items'].map { |item| [item[:user_guid], item] }]
       space_hash         = Hash[spaces['items'].map { |item| [item[:id], item] }]
       user_cc_hash       = Hash[users_cc['items'].map { |item| [item[:guid], item] }]
 
@@ -108,6 +111,7 @@ module AdminUI
         event_counter            = event_counters[guid]
         group_membership_counter = group_membership_counters[guid]
         identity_zone            = identity_zone_hash[user_uaa[:identity_zone_id]]
+        request_count            = request_count_hash[guid]
 
         row = []
 
@@ -166,6 +170,19 @@ module AdminUI
           row.push(nil)
         end
 
+        if request_count
+          row.push(request_count[:count])
+          if request_count[:valid_until]
+            row.push(request_count[:valid_until].to_datetime.rfc3339)
+          else
+            row.push(nil)
+          end
+        elsif request_counts_connected
+          row.push(0, nil)
+        else
+          row.push(nil, nil)
+        end
+
         user_cc = user_cc_hash[guid]
 
         if user_cc
@@ -209,13 +226,14 @@ module AdminUI
           {
             'identity_zone' => identity_zone,
             'organization'  => organization,
+            'request_count' => request_count,
             'space'         => space,
             'user_cc'       => user_cc,
             'user_uaa'      => user_uaa
           }
       end
 
-      result(true, items, hash, (1..25).to_a, (1..12).to_a << 25)
+      result(true, items, hash, (1..27).to_a, (1..12).to_a << 27)
     end
 
     private

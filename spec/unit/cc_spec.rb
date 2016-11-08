@@ -137,6 +137,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.quota_definitions)
     end
 
+    it 'returns zero request_counts as expected' do
+      verify_disconnected_items(cc.request_counts)
+    end
+
     it 'returns zero routes as expected' do
       verify_disconnected_items(cc.routes)
     end

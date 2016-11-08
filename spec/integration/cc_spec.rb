@@ -459,6 +459,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected request_counts' do
+      let(:results)  { cc.request_counts }
+      let(:expected) { cc_request_count }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected routes' do
       let(:results)  { cc.routes }
       let(:expected) { cc_route }
