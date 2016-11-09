@@ -61,7 +61,7 @@ describe AdminUI::ViewModels, type: :integration do
     File.utime(log_file_displayed_modified, log_file_displayed_modified, log_file_displayed)
 
     config_stub
-    cc_stub(config, false, event_type)
+    cc_stub(config, true, false, event_type)
     doppler_stub(application_instance_source, router_source)
     nats_stub(router_source)
     varz_stub

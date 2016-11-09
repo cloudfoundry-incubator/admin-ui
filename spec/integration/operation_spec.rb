@@ -60,7 +60,7 @@ describe AdminUI::Operation, type: :integration do
     cleanup_files
 
     config_stub
-    cc_stub(config, insert_second_quota_definition)
+    cc_stub(config, true, insert_second_quota_definition)
     doppler_stub(application_instance_source, router_source)
     nats_stub(router_source)
     varz_stub

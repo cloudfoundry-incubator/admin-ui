@@ -3670,8 +3670,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_details([
                             { label: 'Name',                  tag: 'div', value: cc_stack[:name] },
                             { label: 'GUID',                  tag:   nil, value: cc_stack[:guid] },
-                            { label: 'Created',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_quota_definition[:created_at].to_datetime.rfc3339}\")") },
-                            { label: 'Updated',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_quota_definition[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Created',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_stack[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_stack[:updated_at].to_datetime.rfc3339}\")") },
                             { label: 'Description',           tag:   nil, value: cc_stack[:description] },
                             { label: 'Applications',          tag:   'a', value: '1' },
                             { label: 'Application Instances', tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})") }

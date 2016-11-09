@@ -79,7 +79,7 @@ shared_context :server_context do
     end
     File.utime(log_file_displayed_modified, log_file_displayed_modified, log_file_displayed)
 
-    cc_stub(AdminUI::Config.load(config), insert_second_quota_definition, event_type)
+    cc_stub(AdminUI::Config.load(config), true, insert_second_quota_definition, event_type)
     doppler_stub(application_instance_source, router_source)
     login_stub_admin
     nats_stub(router_source)

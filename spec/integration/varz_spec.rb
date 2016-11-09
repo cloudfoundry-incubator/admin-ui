@@ -2,6 +2,7 @@ require 'logger'
 require_relative '../spec_helper'
 
 describe AdminUI::VARZ, type: :integration do
+  include CCHelper
   include ConfigHelper
   include NATSHelper
   include VARZHelper
@@ -26,6 +27,7 @@ describe AdminUI::VARZ, type: :integration do
 
   before do
     config_stub
+    cc_stub(config, false)
     nats_stub(:varz_router)
 
     event_machine_loop
