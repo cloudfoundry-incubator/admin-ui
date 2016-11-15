@@ -12,56 +12,60 @@ module AdminUI
       # organizations have to exist.  Other record types are optional
       return result unless organizations['connected']
 
-      applications                   = @cc.applications
-      containers                     = @doppler.containers
-      domains                        = @cc.domains
-      droplets                       = @cc.droplets
-      events                         = @cc.events
-      organizations_auditors         = @cc.organizations_auditors
-      organizations_billing_managers = @cc.organizations_billing_managers
-      organizations_managers         = @cc.organizations_managers
-      organizations_users            = @cc.organizations_users
-      packages                       = @cc.packages
-      processes                      = @cc.processes
-      quotas                         = @cc.quota_definitions
-      route_mappings                 = @cc.route_mappings
-      routes                         = @cc.routes
-      security_groups_spaces         = @cc.security_groups_spaces
-      service_brokers                = @cc.service_brokers
-      service_instances              = @cc.service_instances
-      service_plan_visibilities      = @cc.service_plan_visibilities
-      space_quotas                   = @cc.space_quota_definitions
-      spaces                         = @cc.spaces
-      spaces_auditors                = @cc.spaces_auditors
-      spaces_developers              = @cc.spaces_developers
-      spaces_managers                = @cc.spaces_managers
-      users                          = @cc.users_cc
+      applications                     = @cc.applications
+      containers                       = @doppler.containers
+      domains                          = @cc.domains
+      droplets                         = @cc.droplets
+      events                           = @cc.events
+      isolation_segments               = @cc.isolation_segments
+      organizations_auditors           = @cc.organizations_auditors
+      organizations_billing_managers   = @cc.organizations_billing_managers
+      organizations_isolation_segments = @cc.organizations_isolation_segments
+      organizations_managers           = @cc.organizations_managers
+      organizations_users              = @cc.organizations_users
+      packages                         = @cc.packages
+      processes                        = @cc.processes
+      quotas                           = @cc.quota_definitions
+      route_mappings                   = @cc.route_mappings
+      routes                           = @cc.routes
+      security_groups_spaces           = @cc.security_groups_spaces
+      service_brokers                  = @cc.service_brokers
+      service_instances                = @cc.service_instances
+      service_plan_visibilities        = @cc.service_plan_visibilities
+      space_quotas                     = @cc.space_quota_definitions
+      spaces                           = @cc.spaces
+      spaces_auditors                  = @cc.spaces_auditors
+      spaces_developers                = @cc.spaces_developers
+      spaces_managers                  = @cc.spaces_managers
+      users                            = @cc.users_cc
 
-      applications_connected              = applications['connected']
-      containers_connected                = containers['connected']
-      domains_connected                   = domains['connected']
-      droplets_connected                  = droplets['connected']
-      events_connected                    = events['connected']
-      organizations_roles_connected       = organizations_auditors['connected'] && organizations_billing_managers['connected'] && organizations_managers['connected'] && organizations_users['connected']
-      packages_connected                  = packages['connected']
-      processes_connected                 = processes['connected']
-      route_mappings_connected            = route_mappings['connected']
-      routes_connected                    = routes['connected']
-      security_groups_spaces_connected    = security_groups_spaces['connected']
-      service_brokers_connected           = service_brokers['connected']
-      service_instances_connected         = service_instances['connected']
-      service_plan_visibilities_connected = service_plan_visibilities['connected']
-      space_quotas_connected              = space_quotas['connected']
-      spaces_connected                    = spaces['connected']
-      spaces_roles_connected              = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
-      users_connected                     = users['connected']
+      applications_connected                     = applications['connected']
+      containers_connected                       = containers['connected']
+      domains_connected                          = domains['connected']
+      droplets_connected                         = droplets['connected']
+      events_connected                           = events['connected']
+      organizations_roles_connected              = organizations_auditors['connected'] && organizations_billing_managers['connected'] && organizations_managers['connected'] && organizations_users['connected']
+      organizations_isolation_segments_connected = organizations_isolation_segments['connected']
+      packages_connected                         = packages['connected']
+      processes_connected                        = processes['connected']
+      route_mappings_connected                   = route_mappings['connected']
+      routes_connected                           = routes['connected']
+      security_groups_spaces_connected           = security_groups_spaces['connected']
+      service_brokers_connected                  = service_brokers['connected']
+      service_instances_connected                = service_instances['connected']
+      service_plan_visibilities_connected        = service_plan_visibilities['connected']
+      space_quotas_connected                     = space_quotas['connected']
+      spaces_connected                           = spaces['connected']
+      spaces_roles_connected                     = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
+      users_connected                            = users['connected']
 
-      applications_hash = Hash[applications['items'].map { |item| [item[:guid], item] }]
-      droplets_hash     = Hash[droplets['items'].map { |item| [item[:guid], item] }]
-      quota_hash        = Hash[quotas['items'].map { |item| [item[:id], item] }]
-      routes_used_set   = route_mappings['items'].to_set { |route_mapping| route_mapping[:route_guid] }
-      spaces_guid_hash  = Hash[spaces['items'].map { |item| [item[:guid], item] }]
-      spaces_id_hash    = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      applications_hash       = Hash[applications['items'].map { |item| [item[:guid], item] }]
+      droplets_hash           = Hash[droplets['items'].map { |item| [item[:guid], item] }]
+      isolation_segments_hash = Hash[isolation_segments['items'].map { |item| [item[:guid], item] }]
+      quota_hash              = Hash[quotas['items'].map { |item| [item[:id], item] }]
+      routes_used_set         = route_mappings['items'].to_set { |route_mapping| route_mapping[:route_guid] }
+      spaces_guid_hash        = Hash[spaces['items'].map { |item| [item[:guid], item] }]
+      spaces_id_hash          = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
       latest_droplets = latest_app_guid_hash(droplets['items'])
       latest_packages = latest_app_guid_hash(packages['items'])
@@ -80,6 +84,7 @@ module AdminUI
       organization_process_counters_hash            = {}
       space_quota_counters                          = {}
       space_role_counters                           = {}
+      organization_isolation_segment_counters       = {}
 
       events['items'].each do |event|
         return result unless @running
@@ -259,6 +264,16 @@ module AdminUI
         add_process_metrics(organization_process_counters, process)
       end
 
+      organizations_isolation_segments['items'].each do |organization_isolation_segment|
+        return result unless @running
+        Thread.pass
+
+        organization_guid = organization_isolation_segment[:organization_guid]
+        next if organization_guid.nil?
+        organization_isolation_segment_counters[organization_guid] = 0 if organization_isolation_segment_counters[organization_guid].nil?
+        organization_isolation_segment_counters[organization_guid] += 1
+      end
+
       items = []
       hash  = {}
 
@@ -266,9 +281,11 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        organization_id   = organization[:id]
-        organization_guid = organization[:guid]
-        quota             = quota_hash[organization[:quota_definition_id]]
+        organization_id                = organization[:id]
+        organization_guid              = organization[:guid]
+        quota                          = quota_hash[organization[:quota_definition_id]]
+        default_isolation_segment_guid = organization[:default_isolation_segment_guid]
+        default_isolation_segment      = default_isolation_segment_guid.nil? ? nil : isolation_segments_hash[default_isolation_segment_guid]
 
         event_target_counter                         = event_target_counters[organization_guid]
         organization_default_user_counter            = organization_default_user_counters[organization_id]
@@ -284,6 +301,7 @@ module AdminUI
         organization_route_counters                  = organization_route_counters_hash[organization_id]
         space_quota_counter                          = space_quota_counters[organization_id]
         space_role_counter                           = space_role_counters[organization_id]
+        organization_isolation_segment_counter       = organization_isolation_segment_counters[organization_guid]
 
         row = []
 
@@ -470,16 +488,33 @@ module AdminUI
           row.push(nil, nil, nil)
         end
 
+        if default_isolation_segment
+          row.push(default_isolation_segment[:name])
+        else
+          row.push(nil)
+        end
+
+        row.push(default_isolation_segment_guid)
+
+        if organization_isolation_segment_counter
+          row.push(organization_isolation_segment_counter)
+        elsif organizations_isolation_segments_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         items.push(row)
 
         hash[organization_guid] =
           {
-            'organization'     => organization,
-            'quota_definition' => quota
+            'default_isolation_segment' => default_isolation_segment,
+            'organization'              => organization,
+            'quota_definition'          => quota
           }
       end
 
-      result(true, items, hash, (1..34).to_a, (1..5).to_a << 11)
+      result(true, items, hash, (1..37).to_a, [1, 2, 3, 4, 5, 11, 35, 36])
     end
 
     private

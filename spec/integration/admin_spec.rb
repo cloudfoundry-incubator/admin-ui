@@ -604,6 +604,50 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage isolation segment' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/isolation_segments_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def create_isolation_segment
+      response = post_request('/isolation_segments', "{\"name\":\"#{cc_isolation_segment2[:name]}\"}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['post', "/isolation_segments; body = {\"name\":\"#{cc_isolation_segment2[:name]}\"}"]], true)
+    end
+
+    def rename_isolation_segment
+      response = put_request("/isolation_segments/#{cc_isolation_segment[:guid]}", "{\"name\":\"#{cc_isolation_segment_rename}\"}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/isolation_segments/#{cc_isolation_segment[:guid]}; body = {\"name\":\"#{cc_isolation_segment_rename}\"}"]], true)
+    end
+
+    def delete_isolation_segment
+      response = delete_request("/isolation_segments/#{cc_isolation_segment[:guid]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/isolation_segments/#{cc_isolation_segment[:guid]}"]])
+    end
+
+    it 'has user name and isolation segments request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/isolation_segments_view_model']], true)
+    end
+
+    it 'creates an isolation segment' do
+      expect { create_isolation_segment }.to change { get_json('/isolation_segments_view_model')['items']['items'].length }.from(1).to(2)
+      expect(get_json('/isolation_segments_view_model', false)['items']['items'][1][1]).to eq(cc_isolation_segment2[:name])
+    end
+
+    it 'renames an isolation segment' do
+      expect { rename_isolation_segment }.to change { get_json('/isolation_segments_view_model')['items']['items'][0][1] }.from(cc_isolation_segment[:name]).to(cc_isolation_segment_rename)
+    end
+
+    it 'deletes an isolation segment' do
+      expect { delete_isolation_segment }.to change { get_json('/isolation_segments_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage organization' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -690,6 +734,29 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes an organization recursive' do
       expect { delete_organization_recursive }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
+  context 'manage organization isolation segment' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/organizations_isolation_segments_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_organization_isolation_segment
+      response = delete_request("/organizations_isolation_segments/#{cc_organization[:guid]}/#{cc_isolation_segment[:guid]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/organizations_isolation_segments/#{cc_organization[:guid]}/#{cc_isolation_segment[:guid]}"]])
+    end
+
+    it 'has user name and organizations isolation segments request in the log file' do
+      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/organizations_isolation_segments_view_model']], true)
+    end
+
+    it 'deletes an organization isolation segment' do
+      expect { delete_organization_isolation_segment }.to change { get_json('/organizations_isolation_segments_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -1196,6 +1263,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['put', "/spaces/#{cc_space[:guid]}; body = {\"allow_ssh\":true}"]], true)
     end
 
+    def remove_space_isolation_segment
+      response = delete_request("/spaces/#{cc_space[:guid]}/isolation_segment")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/isolation_segment"]], true)
+    end
+
     def delete_space
       response = delete_request("/spaces/#{cc_space[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -1224,6 +1297,12 @@ describe AdminUI::Admin, type: :integration do
     it 'disallows the space ssh' do
       allow_space_ssh
       expect { disallow_space_ssh }.to change { get_json('/spaces_view_model')['items']['items'][0][6] }.from(true).to(false)
+    end
+
+    it 'removes the space isolation segment' do
+      expect(get_json('/spaces_view_model')['items']['items'][0][33]).to eq(cc_isolation_segment[:guid])
+      expect { remove_space_isolation_segment }.to change { get_json('/spaces_view_model')['items']['items'][0][32] }.from(cc_isolation_segment[:name]).to(nil)
+      expect(get_json('/spaces_view_model')['items']['items'][0][33]).to eq(nil)
     end
 
     it 'deletes a space' do
@@ -1663,6 +1742,18 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model detail')
     end
 
+    context 'isolation_segments_view_model' do
+      let(:path)              { '/isolation_segments_view_model' }
+      let(:view_model_source) { view_models_isolation_segments }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'isolation_segments_view_model detail' do
+      let(:path)              { "/isolation_segments_view_model/#{cc_isolation_segment[:guid]}" }
+      let(:view_model_source) { view_models_isolation_segments_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'log' do
       let(:retrieved) { get_json("/log?path=#{log_file_displayed}", true) }
       it 'retrieves' do
@@ -1702,6 +1793,18 @@ describe AdminUI::Admin, type: :integration do
 
     context 'doppler dea' do
       it_behaves_like('organizations')
+    end
+
+    context 'organizations_isolation_segments_view_model' do
+      let(:path)              { '/organizations_isolation_segments_view_model' }
+      let(:view_model_source) { view_models_organizations_isolation_segments }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'organizations_isolation_segments_view_model detail' do
+      let(:path)              { "/organizations_isolation_segments_view_model/#{cc_organization[:guid]}/#{cc_isolation_segment[:guid]}" }
+      let(:view_model_source) { view_models_organizations_isolation_segments_detail }
+      it_behaves_like('retrieves view_model detail')
     end
 
     context 'organization_roles_view_model' do

@@ -8,16 +8,30 @@ module AdminUI
       @http_code = response.code
 
       begin
-        hash = Yajl::Parser.parse(response.body)
+        json = Yajl::Parser.parse(response.body)
       rescue
-        hash = nil
+        json = nil
       end
 
-      if hash.is_a?(Hash)
-        message        = hash['description']
-        message        = hash['message'] if message.nil? # This handles UAA cases
-        @cf_code       = hash['code']
-        @cf_error_code = hash['error_code']
+      if json.is_a?(Hash)
+        errors = json['errors']
+        if errors.nil?
+          # v2 response is { code: 'code', description: 'description', error_code: 'error_code' }
+          message        = json['description']
+          message        = json['message'] if message.nil? # This handles UAA cases
+          @cf_code       = json['code']
+          @cf_error_code = json['error_code']
+        elsif errors.is_a?(Array)
+          # v3 response is { error: [{ code: 'code', detail: 'detail', title: 'title' }] }
+          if errors.length.positive?
+            error = errors[0]
+            if error.is_a?(Hash)
+              message        = error['detail']
+              @cf_code       = error['code']
+              @cf_error_code = error['title']
+            end
+          end
+        end
       end
 
       message = response.message if message.nil?

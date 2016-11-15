@@ -16,6 +16,7 @@ module AdminUI
       containers             = @doppler.containers
       droplets               = @cc.droplets
       events                 = @cc.events
+      isolation_segments     = @cc.isolation_segments
       organizations          = @cc.organizations
       packages               = @cc.packages
       processes              = @cc.processes
@@ -44,11 +45,12 @@ module AdminUI
       spaces_roles_connected           = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
       users_connected                  = users['connected']
 
-      applications_hash = Hash[applications['items'].map { |item| [item[:guid], item] }]
-      droplets_hash     = Hash[droplets['items'].map { |item| [item[:guid], item] }]
-      organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      routes_used_set   = route_mappings['items'].to_set { |route_mapping| route_mapping[:route_guid] }
-      space_quota_hash  = Hash[space_quotas['items'].map { |item| [item[:id], item] }]
+      applications_hash       = Hash[applications['items'].map { |item| [item[:guid], item] }]
+      droplets_hash           = Hash[droplets['items'].map { |item| [item[:guid], item] }]
+      isolation_segments_hash = Hash[isolation_segments['items'].map { |item| [item[:guid], item] }]
+      organization_hash       = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      routes_used_set         = route_mappings['items'].to_set { |route_mapping| route_mapping[:route_guid] }
+      space_quota_hash        = Hash[space_quotas['items'].map { |item| [item[:id], item] }]
 
       latest_droplets = latest_app_guid_hash(droplets['items'])
       latest_packages = latest_app_guid_hash(packages['items'])
@@ -198,7 +200,10 @@ module AdminUI
         space_id   = space[:id]
         space_guid = space[:guid]
 
-        organization                   = organization_hash[space[:organization_id]]
+        organization           = organization_hash[space[:organization_id]]
+        isolation_segment_guid = space[:isolation_segment_guid]
+        isolation_segment      = isolation_segment_guid.nil? ? nil : isolation_segments_hash[isolation_segment_guid]
+
         event_counter                  = event_counters[space_guid]
         event_target_counter           = event_target_counters[space_guid]
         space_quota                    = space_quota_hash[space[:space_quota_definition_id]]
@@ -376,17 +381,26 @@ module AdminUI
           row.push(nil, nil, nil)
         end
 
+        if isolation_segment
+          row.push(isolation_segment[:name])
+        else
+          row.push(nil)
+        end
+
+        row.push(isolation_segment_guid)
+
         items.push(row)
 
         hash[space_guid] =
           {
+            'isolation_segment'      => isolation_segment,
             'organization'           => organization,
             'space'                  => space,
             'space_quota_definition' => space_quota
           }
       end
 
-      result(true, items, hash, (1..31).to_a, (1..6).to_a << 11)
+      result(true, items, hash, (1..33).to_a, [1, 2, 3, 4, 5, 6, 11, 32, 33])
     end
 
     private

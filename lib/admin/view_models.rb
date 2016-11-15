@@ -19,8 +19,10 @@ require_relative 'view_models/groups_view_model'
 require_relative 'view_models/health_managers_view_model'
 require_relative 'view_models/identity_providers_view_model'
 require_relative 'view_models/identity_zones_view_model'
+require_relative 'view_models/isolation_segments_view_model'
 require_relative 'view_models/logs_view_model'
 require_relative 'view_models/organization_roles_view_model'
+require_relative 'view_models/organizations_isolation_segments_view_model'
 require_relative 'view_models/organizations_view_model'
 require_relative 'view_models/quotas_view_model'
 require_relative 'view_models/routers_view_model'
@@ -52,46 +54,48 @@ module AdminUI
 
       @caches =
         {
-          application_instances:     { clazz: AdminUI::ApplicationInstancesViewModel },
-          applications:              { clazz: AdminUI::ApplicationsViewModel },
-          approvals:                 { clazz: AdminUI::ApprovalsViewModel },
-          buildpacks:                { clazz: AdminUI::BuildpacksViewModel },
-          cells:                     { clazz: AdminUI::CellsViewModel },
-          clients:                   { clazz: AdminUI::ClientsViewModel },
-          cloud_controllers:         { clazz: AdminUI::CloudControllersViewModel },
-          components:                { clazz: AdminUI::ComponentsViewModel },
-          deas:                      { clazz: AdminUI::DEAsViewModel },
-          domains:                   { clazz: AdminUI::DomainsViewModel },
-          events:                    { clazz: AdminUI::EventsViewModel },
-          feature_flags:             { clazz: AdminUI::FeatureFlagsViewModel },
-          gateways:                  { clazz: AdminUI::GatewaysViewModel },
-          group_members:             { clazz: AdminUI::GroupMembersViewModel },
-          groups:                    { clazz: AdminUI::GroupsViewModel },
-          health_managers:           { clazz: AdminUI::HealthManagersViewModel },
-          identity_providers:        { clazz: AdminUI::IdentityProvidersViewModel },
-          identity_zones:            { clazz: AdminUI::IdentityZonesViewModel },
-          logs:                      { clazz: AdminUI::LogsViewModel },
-          organizations:             { clazz: AdminUI::OrganizationsViewModel },
-          organization_roles:        { clazz: AdminUI::OrganizationRolesViewModel },
-          quotas:                    { clazz: AdminUI::QuotasViewModel },
-          routers:                   { clazz: AdminUI::RoutersViewModel },
-          routes:                    { clazz: AdminUI::RoutesViewModel },
-          route_mappings:            { clazz: AdminUI::RouteMappingsViewModel },
-          services:                  { clazz: AdminUI::ServicesViewModel },
-          security_groups:           { clazz: AdminUI::SecurityGroupsViewModel },
-          security_groups_spaces:    { clazz: AdminUI::SecurityGroupsSpacesViewModel },
-          service_bindings:          { clazz: AdminUI::ServiceBindingsViewModel },
-          service_brokers:           { clazz: AdminUI::ServiceBrokersViewModel },
-          service_instances:         { clazz: AdminUI::ServiceInstancesViewModel },
-          service_keys:              { clazz: AdminUI::ServiceKeysViewModel },
-          service_plans:             { clazz: AdminUI::ServicePlansViewModel },
-          service_plan_visibilities: { clazz: AdminUI::ServicePlanVisibilitiesViewModel },
-          space_quotas:              { clazz: AdminUI::SpaceQuotasViewModel },
-          space_roles:               { clazz: AdminUI::SpaceRolesViewModel },
-          spaces:                    { clazz: AdminUI::SpacesViewModel },
-          stacks:                    { clazz: AdminUI::StacksViewModel },
-          stats:                     { clazz: AdminUI::StatsViewModel },
-          users:                     { clazz: AdminUI::UsersViewModel }
+          application_instances:            { clazz: AdminUI::ApplicationInstancesViewModel },
+          applications:                     { clazz: AdminUI::ApplicationsViewModel },
+          approvals:                        { clazz: AdminUI::ApprovalsViewModel },
+          buildpacks:                       { clazz: AdminUI::BuildpacksViewModel },
+          cells:                            { clazz: AdminUI::CellsViewModel },
+          clients:                          { clazz: AdminUI::ClientsViewModel },
+          cloud_controllers:                { clazz: AdminUI::CloudControllersViewModel },
+          components:                       { clazz: AdminUI::ComponentsViewModel },
+          deas:                             { clazz: AdminUI::DEAsViewModel },
+          domains:                          { clazz: AdminUI::DomainsViewModel },
+          events:                           { clazz: AdminUI::EventsViewModel },
+          feature_flags:                    { clazz: AdminUI::FeatureFlagsViewModel },
+          gateways:                         { clazz: AdminUI::GatewaysViewModel },
+          group_members:                    { clazz: AdminUI::GroupMembersViewModel },
+          groups:                           { clazz: AdminUI::GroupsViewModel },
+          health_managers:                  { clazz: AdminUI::HealthManagersViewModel },
+          identity_providers:               { clazz: AdminUI::IdentityProvidersViewModel },
+          identity_zones:                   { clazz: AdminUI::IdentityZonesViewModel },
+          isolation_segments:               { clazz: AdminUI::IsolationSegmentsViewModel },
+          logs:                             { clazz: AdminUI::LogsViewModel },
+          organizations:                    { clazz: AdminUI::OrganizationsViewModel },
+          organizations_isolation_segments: { clazz: AdminUI::OrganizationsIsolationSegmentsViewModel },
+          organization_roles:               { clazz: AdminUI::OrganizationRolesViewModel },
+          quotas:                           { clazz: AdminUI::QuotasViewModel },
+          routers:                          { clazz: AdminUI::RoutersViewModel },
+          routes:                           { clazz: AdminUI::RoutesViewModel },
+          route_mappings:                   { clazz: AdminUI::RouteMappingsViewModel },
+          services:                         { clazz: AdminUI::ServicesViewModel },
+          security_groups:                  { clazz: AdminUI::SecurityGroupsViewModel },
+          security_groups_spaces:           { clazz: AdminUI::SecurityGroupsSpacesViewModel },
+          service_bindings:                 { clazz: AdminUI::ServiceBindingsViewModel },
+          service_brokers:                  { clazz: AdminUI::ServiceBrokersViewModel },
+          service_instances:                { clazz: AdminUI::ServiceInstancesViewModel },
+          service_keys:                     { clazz: AdminUI::ServiceKeysViewModel },
+          service_plans:                    { clazz: AdminUI::ServicePlansViewModel },
+          service_plan_visibilities:        { clazz: AdminUI::ServicePlanVisibilitiesViewModel },
+          space_quotas:                     { clazz: AdminUI::SpaceQuotasViewModel },
+          space_roles:                      { clazz: AdminUI::SpaceRolesViewModel },
+          spaces:                           { clazz: AdminUI::SpacesViewModel },
+          stacks:                           { clazz: AdminUI::StacksViewModel },
+          stats:                            { clazz: AdminUI::StatsViewModel },
+          users:                            { clazz: AdminUI::UsersViewModel }
         }
 
       number_threads = testing ? @caches.length : 2
@@ -172,8 +176,16 @@ module AdminUI
       invalidate_cache(:health_managers)
     end
 
+    def invalidate_isolation_segments
+      invalidate_cache(:isolation_segments)
+    end
+
     def invalidate_organizations
       invalidate_cache(:organizations)
+    end
+
+    def invalidate_organizations_isolation_segments
+      invalidate_cache(:organizations_isolation_segments)
     end
 
     def invalidate_organization_roles
@@ -396,6 +408,14 @@ module AdminUI
       result_cache(:identity_zones)
     end
 
+    def isolation_segment(guid)
+      details(:isolation_segments, guid)
+    end
+
+    def isolation_segments
+      result_cache(:isolation_segments)
+    end
+
     def logs
       result_cache(:logs)
     end
@@ -406,6 +426,14 @@ module AdminUI
 
     def organizations
       result_cache(:organizations)
+    end
+
+    def organization_isolation_segment(organization_guid, isolation_segment_guid)
+      details(:organizations_isolation_segments, "#{organization_guid}/#{isolation_segment_guid}")
+    end
+
+    def organizations_isolation_segments
+      result_cache(:organizations_isolation_segments)
     end
 
     def organization_role(organization_guid, role, user_guid)

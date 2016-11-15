@@ -89,6 +89,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.identity_zones)
     end
 
+    it 'returns zero isolation_segments as expected' do
+      verify_disconnected_items(cc.isolation_segments)
+    end
+
     it 'returns zero organizations as expected' do
       verify_disconnected_items(cc.organizations)
     end
@@ -103,6 +107,10 @@ describe AdminUI::CC do
 
     it 'returns zero organizations_billing_managers as expected' do
       verify_disconnected_items(cc.organizations_billing_managers)
+    end
+
+    it 'returns zero organizations_isolation_segments expected' do
+      verify_disconnected_items(cc.organizations_isolation_segments)
     end
 
     it 'returns zero organizations_managers as expected' do

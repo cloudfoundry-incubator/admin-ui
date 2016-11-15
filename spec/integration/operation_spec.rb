@@ -511,6 +511,77 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage isolation segment' do
+      before do
+        expect(cc.isolation_segments['items'].length).to eq(1)
+      end
+
+      def create_isolation_segment
+        operation.create_isolation_segment("{\"name\":\"#{cc_isolation_segment2[:name]}\"}")
+      end
+
+      def rename_isolation_segment
+        operation.manage_isolation_segment(cc_isolation_segment[:guid], "{\"name\":\"#{cc_isolation_segment_rename}\"}")
+      end
+
+      def delete_isolation_segment
+        operation.delete_isolation_segment(cc_isolation_segment[:guid])
+      end
+
+      it 'creates a new isolation segment' do
+        expect { create_isolation_segment }.to change { cc.isolation_segments['items'].length }.from(1).to(2)
+        expect(cc.isolation_segments['items'][1][:name]).to eq(cc_isolation_segment2[:name])
+      end
+
+      it 'renames the isolation segment' do
+        expect { rename_isolation_segment }.to change { cc.isolation_segments['items'][0][:name] }.from(cc_isolation_segment[:name]).to(cc_isolation_segment_rename)
+      end
+
+      it 'deletes isolation segment' do
+        expect { delete_isolation_segment }.to change { cc.isolation_segments['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        context 'not found error' do
+          before do
+            delete_isolation_segment
+          end
+
+          def verify_isolation_segment_not_found(exception)
+            expect(exception.cf_code).to eq(10_010)
+            expect(exception.cf_error_code).to eq('CF-ResourceNotFound')
+            expect(exception.http_code).to eq(404)
+            expect(exception.message).to eq('Isolation segment not found')
+          end
+
+          it 'fails renaming deleted isolation segment' do
+            expect { rename_isolation_segment }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_isolation_segment_not_found(exception) }
+          end
+
+          it 'fails deleting deleted isolation segment' do
+            expect { delete_isolation_segment }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_isolation_segment_not_found(exception) }
+          end
+        end
+
+        context 'bad request' do
+          before do
+            create_isolation_segment
+          end
+
+          def verify_isolation_segment_name_taken(exception)
+            expect(exception.cf_code).to eq(10_008)
+            expect(exception.cf_error_code).to eq('CF-UnprocessableEntity')
+            expect(exception.http_code).to eq(400)
+            expect(exception.message).to eq('The request is semantically invalid: Isolation Segment names are case insensitive and must be unique')
+          end
+
+          it 'failed creating created isolation segment' do
+            expect { create_isolation_segment }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_isolation_segment_name_taken(exception) }
+          end
+        end
+      end
+    end
+
     context 'manage organization' do
       before do
         expect(cc.organizations['items'].length).to eq(1)
@@ -634,6 +705,33 @@ describe AdminUI::Operation, type: :integration do
           it 'failed creating created organization' do
             expect { create_organization }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_name_taken(exception) }
           end
+        end
+      end
+    end
+
+    context 'manage organization isolation segment' do
+      def delete_organization_isolation_segment
+        operation.delete_organization_isolation_segment(cc_organization[:guid], cc_isolation_segment[:guid])
+      end
+
+      it 'deletes organization isolation segment' do
+        expect { delete_organization_isolation_segment }.to change { cc.organizations_isolation_segments['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          cc_clear_isolation_segments_cache_stub(config)
+        end
+
+        def verify_isolation_segment_not_found(exception)
+          expect(exception.cf_code).to eq(10_010)
+          expect(exception.cf_error_code).to eq('CF-ResourceNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq('Isolation segment not found')
+        end
+
+        it 'failed deleting organization isolation segment due to deleted isolation segment' do
+          expect { delete_organization_isolation_segment }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_isolation_segment_not_found(exception) }
         end
       end
     end
@@ -1264,6 +1362,10 @@ describe AdminUI::Operation, type: :integration do
         operation.manage_space(cc_space[:guid], '{"allow_ssh":false}')
       end
 
+      def remove_space_isolation_segment
+        operation.remove_space_isolation_segment(cc_space[:guid])
+      end
+
       def delete_space
         operation.delete_space(cc_space[:guid], false)
       end
@@ -1284,6 +1386,10 @@ describe AdminUI::Operation, type: :integration do
       it 'disallows space ssh' do
         allow_ssh_space
         expect { disallow_ssh_space }.to change { cc.spaces['items'][0][:allow_ssh] }.from(true).to(false)
+      end
+
+      it 'removes space isolation segment' do
+        expect { remove_space_isolation_segment }.to change { cc.spaces['items'][0][:isolation_segment_guid] }.from(cc_isolation_segment[:guid]).to(nil)
       end
 
       it 'deletes space' do
@@ -1316,6 +1422,10 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails disallowing ssh on deleted space' do
           expect { disallow_ssh_space }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
+        end
+
+        it 'fails removing isolation segment on deleted space' do
+          expect { remove_space_isolation_segment }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
         end
 
         it 'fails deleting deleted space' do

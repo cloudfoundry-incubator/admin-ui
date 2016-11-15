@@ -51,7 +51,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Spaces tab does not have rename, allow ssh, disallow ssh or delete buttons' do
+    context 'Spaces tab does not have rename, allow ssh, disallow ssh, remove isolation segment or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Spaces' }
         let(:page_id)   { 'SpacesPage' }
@@ -240,6 +240,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id)    { 'SecurityGroupsSpaces' }
         let(:page_id)   { 'SecurityGroupsSpacesPage' }
         let(:button_id) { 'Buttons_SecurityGroupsSpacesTable_0' }
+      end
+    end
+
+    context 'Isolation Segments tab does not have create, rename or delete buttons' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'IsolationSegments' }
+        let(:page_id)   { 'IsolationSegmentsPage' }
+        let(:button_id) { 'Buttons_IsolationSegmentsTable_0' }
+      end
+    end
+
+    context 'Organizations Isolation Segments tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'OrganizationsIsolationSegments' }
+        let(:page_id)   { 'OrganizationsIsolationSegmentsPage' }
+        let(:button_id) { 'Buttons_OrganizationsIsolationSegmentsTable_0' }
       end
     end
 

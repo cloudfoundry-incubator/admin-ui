@@ -84,14 +84,14 @@ describe AdminUI::CC, type: :integration do
       expect(cc.droplets['items'].length).to eq(0)
     end
 
-    it 'clears the feature_flags cache' do
+    it 'clears the feature flags cache' do
       expect(cc.feature_flags['items'].length).to eq(1)
       cc_clear_feature_flags_cache_stub(config)
       cc.invalidate_feature_flags
       expect(cc.feature_flags['items'].length).to eq(0)
     end
 
-    it 'clears the group_membership cache' do
+    it 'clears the group membership cache' do
       expect(cc.group_membership['items'].length).to eq(1)
       uaa_clear_group_membership_cache_stub(config)
       cc.invalidate_group_membership
@@ -103,6 +103,13 @@ describe AdminUI::CC, type: :integration do
       uaa_clear_groups_cache_stub(config)
       cc.invalidate_groups
       expect(cc.groups['items'].length).to eq(0)
+    end
+
+    it 'clears the isolation segments cache' do
+      expect(cc.isolation_segments['items'].length).to eq(1)
+      cc_clear_isolation_segments_cache_stub(config)
+      cc.invalidate_isolation_segments
+      expect(cc.isolation_segments['items'].length).to eq(0)
     end
 
     it 'clears the organizations cache' do
@@ -119,7 +126,7 @@ describe AdminUI::CC, type: :integration do
       expect(cc.organizations_auditors['items'].length).to eq(0)
     end
 
-    it 'clears the organizations billing_managers cache' do
+    it 'clears the organizations billing managers cache' do
       expect(cc.organizations_billing_managers['items'].length).to eq(1)
       cc_clear_organizations_cache_stub(config)
       cc.invalidate_organizations_billing_managers
@@ -131,6 +138,13 @@ describe AdminUI::CC, type: :integration do
       cc_clear_organizations_cache_stub(config)
       cc.invalidate_organizations_managers
       expect(cc.organizations_managers['items'].length).to eq(0)
+    end
+
+    it 'clears the organizations isolation segments users cache' do
+      expect(cc.organizations_isolation_segments['items'].length).to eq(1)
+      cc_clear_organizations_isolation_segments_cache_stub(config)
+      cc.invalidate_organizations_isolation_segments
+      expect(cc.organizations_isolation_segments['items'].length).to eq(0)
     end
 
     it 'clears the organizations users cache' do
@@ -273,14 +287,14 @@ describe AdminUI::CC, type: :integration do
       expect(cc.spaces_managers['items'].length).to eq(0)
     end
 
-    it 'clears the users_cc cache' do
+    it 'clears the users cc cache' do
       expect(cc.users_cc['items'].length).to eq(1)
       cc_clear_users_cache_stub(config)
       cc.invalidate_users_cc
       expect(cc.users_cc['items'].length).to eq(0)
     end
 
-    it 'clears the users_uaa cache' do
+    it 'clears the users uaa cache' do
       expect(cc.users_uaa['items'].length).to eq(1)
       uaa_clear_users_cache_stub(config)
       cc.invalidate_users_uaa
@@ -303,7 +317,7 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
-    it 'returns applications_count' do
+    it 'returns applications count' do
       expect(cc.applications_count).to be(1)
     end
 
@@ -349,14 +363,14 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected feature_flags' do
+    context 'returns connected feature flags' do
       let(:results)  { cc.feature_flags }
       let(:expected) { cc_feature_flag }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected group_membership' do
+    context 'returns connected group membership' do
       let(:results)  { cc.group_membership }
       let(:expected) { uaa_group_membership }
 
@@ -370,16 +384,23 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected identity_providers' do
+    context 'returns connected identity providers' do
       let(:results)  { cc.identity_providers }
       let(:expected) { uaa_identity_provider }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected identity_zones' do
+    context 'returns connected identity zones' do
       let(:results)  { cc.identity_zones }
       let(:expected) { uaa_identity_zone }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected isolation segments' do
+      let(:results)  { cc.isolation_segments }
+      let(:expected) { cc_isolation_segment }
 
       it_behaves_like('common cc retrieval')
     end
@@ -391,39 +412,46 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected organizations_auditors' do
+    context 'returns connected organizations auditors' do
       let(:results)  { cc.organizations_auditors }
       let(:expected) { cc_organization_auditor }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected organizations_billing_managers' do
+    context 'returns connected organizations billing managers' do
       let(:results)  { cc.organizations_billing_managers }
       let(:expected) { cc_organization_billing_manager }
 
       it_behaves_like('common cc retrieval')
     end
 
-    it 'returns organizations_count' do
+    it 'returns organizations count' do
       expect(cc.organizations_count).to be(1)
     end
 
-    context 'returns connected organizations_managers' do
+    context 'returns connected organizations isolation segments' do
+      let(:results)  { cc.organizations_isolation_segments }
+      let(:expected) { cc_organization_isolation_segment }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected organizations managers' do
       let(:results)  { cc.organizations_managers }
       let(:expected) { cc_organization_manager }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected organizations_private_domains' do
+    context 'returns connected organizations private domains' do
       let(:results)  { cc.organizations_private_domains }
       let(:expected) { cc_organization_private_domain }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected organizations_users' do
+    context 'returns connected organizations users' do
       let(:results)  { cc.organizations_users }
       let(:expected) { cc_organization_user }
 
@@ -444,22 +472,22 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
-    it 'returns processes_running_instances' do
+    it 'returns processes running instances' do
       expect(cc.processes_running_instances).to be(1)
     end
 
-    it 'returns processes_total_instances' do
+    it 'returns processes total instances' do
       expect(cc.processes_total_instances).to be(1)
     end
 
-    context 'returns connected quota_definitions' do
+    context 'returns connected quota definitions' do
       let(:results)  { cc.quota_definitions }
       let(:expected) { cc_quota_definition }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected request_counts' do
+    context 'returns connected request counts' do
       let(:results)  { cc.request_counts }
       let(:expected) { cc_request_count }
 
@@ -473,77 +501,77 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected route_mappings' do
+    context 'returns connected route mappings' do
       let(:results)  { cc.route_mappings }
       let(:expected) { cc_route_mapping }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected security_groups' do
+    context 'returns connected security groups' do
       let(:results)  { cc.security_groups }
       let(:expected) { cc_security_group }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected security_groups_spaces' do
+    context 'returns connected security groups spaces' do
       let(:results)  { cc.security_groups_spaces }
       let(:expected) { cc_security_group_space }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected service_bindings' do
+    context 'returns connected service bindings' do
       let(:results)  { cc.service_bindings }
       let(:expected) { cc_service_binding }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected service_brokers' do
+    context 'returns connected service brokers' do
       let(:results)  { cc.service_brokers }
       let(:expected) { cc_service_broker }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected service_dashboard_clients' do
+    context 'returns connected service dashboard clients' do
       let(:results)  { cc.service_dashboard_clients }
       let(:expected) { cc_service_dashboard_client }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected service_instance_operations' do
+    context 'returns connected service instance operations' do
       let(:results)  { cc.service_instance_operations }
       let(:expected) { cc_service_instance_operation }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected service_instances' do
+    context 'returns connected service instances' do
       let(:results)  { cc.service_instances }
       let(:expected) { cc_service_instance }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected service_keys' do
+    context 'returns connected service keys' do
       let(:results)  { cc.service_keys }
       let(:expected) { cc_service_key }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected service_plans' do
+    context 'returns connected service plans' do
       let(:results)  { cc.service_plans }
       let(:expected) { cc_service_plan }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected service_plan_visibilities' do
+    context 'returns connected service plan visibilities' do
       let(:results)  { cc.service_plan_visibilities }
       let(:expected) { cc_service_plan_visibility }
 
@@ -557,7 +585,7 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected space quota_definitions' do
+    context 'returns connected space quota definitions' do
       let(:results)  { cc.space_quota_definitions }
       let(:expected) { cc_space_quota_definition }
 
@@ -571,25 +599,25 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected spaces_auditors' do
+    context 'returns connected spaces auditors' do
       let(:results)  { cc.spaces_auditors }
       let(:expected) { cc_space_auditor }
 
       it_behaves_like('common cc retrieval')
     end
 
-    it 'returns spaces_count' do
+    it 'returns spaces count' do
       expect(cc.spaces_count).to be(1)
     end
 
-    context 'returns connected spaces_developers' do
+    context 'returns connected spaces developers' do
       let(:results)  { cc.spaces_developers }
       let(:expected) { cc_space_developer }
 
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected spaces_managers' do
+    context 'returns connected spaces managers' do
       let(:results)  { cc.spaces_managers }
       let(:expected) { cc_space_manager }
 
@@ -603,18 +631,18 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected users_cc' do
+    context 'returns connected users cc' do
       let(:results)  { cc.users_cc }
       let(:expected) { cc_user }
 
       it_behaves_like('common cc retrieval')
     end
 
-    it 'returns users_count' do
+    it 'returns users count' do
       expect(cc.users_count).to be(1)
     end
 
-    context 'returns connected users_uaa' do
+    context 'returns connected users uaa' do
       let(:results)  { cc.users_uaa }
       let(:expected) { uaa_user }
 

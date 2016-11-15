@@ -96,11 +96,17 @@ module AdminUI
             table:   :identity_zone,
             columns: [:config, :created, :description, :id, :lastmodified, :name, :subdomain, :version]
           },
+          isolation_segments:
+          {
+            db_uri:  ccdb_uri,
+            table:   :isolation_segments,
+            columns: [:created_at, :guid, :id, :name, :updated_at]
+          },
           organizations:
           {
             db_uri:  ccdb_uri,
             table:   :organizations,
-            columns: [:billing_enabled, :created_at, :guid, :id, :name, :quota_definition_id, :status, :updated_at]
+            columns: [:billing_enabled, :created_at, :default_isolation_segment_guid, :guid, :id, :name, :quota_definition_id, :status, :updated_at]
           },
           organizations_auditors:
           {
@@ -113,6 +119,12 @@ module AdminUI
             db_uri:  ccdb_uri,
             table:   :organizations_billing_managers,
             columns: [:organization_id, :user_id]
+          },
+          organizations_isolation_segments:
+          {
+            db_uri:  ccdb_uri,
+            table:   :organizations_isolation_segments,
+            columns: [:isolation_segment_guid, :organization_guid]
           },
           organizations_managers:
           {
@@ -244,7 +256,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :spaces,
-            columns: [:allow_ssh, :created_at, :guid, :id, :name, :organization_id, :space_quota_definition_id, :updated_at]
+            columns: [:allow_ssh, :created_at, :guid, :id, :isolation_segment_guid, :name, :organization_id, :space_quota_definition_id, :updated_at]
           },
           spaces_auditors:
           {
@@ -385,6 +397,10 @@ module AdminUI
       invalidate_cache(:group_membership)
     end
 
+    def invalidate_isolation_segments
+      invalidate_cache(:isolation_segments)
+    end
+
     def invalidate_organizations
       invalidate_cache(:organizations)
     end
@@ -395,6 +411,10 @@ module AdminUI
 
     def invalidate_organizations_billing_managers
       invalidate_cache(:organizations_billing_managers)
+    end
+
+    def invalidate_organizations_isolation_segments
+      invalidate_cache(:organizations_isolation_segments)
     end
 
     def invalidate_organizations_managers
@@ -489,6 +509,10 @@ module AdminUI
       invalidate_cache(:users_uaa)
     end
 
+    def isolation_segments
+      result_cache(:isolation_segments)
+    end
+
     def organizations
       result_cache(:organizations)
     end
@@ -505,6 +529,10 @@ module AdminUI
       hash = organizations
       return nil unless hash['connected']
       hash['items'].length
+    end
+
+    def organizations_isolation_segments
+      result_cache(:organizations_isolation_segments)
     end
 
     def organizations_managers

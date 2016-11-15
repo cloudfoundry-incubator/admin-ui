@@ -15,8 +15,8 @@ module AdminUI
       @build
     end
 
-    def delete_cc(path)
-      cf_request(get_cc_url(path), Utils::HTTP_DELETE)
+    def delete_cc(path, body = nil)
+      cf_request(get_cc_url(path), Utils::HTTP_DELETE, body, body.nil? ? nil : 'application/json')
     end
 
     def delete_uaa(path)
@@ -92,11 +92,11 @@ module AdminUI
     end
 
     def put_cc(path, body)
-      cf_request(get_cc_url(path), Utils::HTTP_PUT, body)
+      cf_request(get_cc_url(path), Utils::HTTP_PUT, body, 'application/json')
     end
 
     def post_cc(path, body)
-      cf_request(get_cc_url(path), Utils::HTTP_POST, body)
+      cf_request(get_cc_url(path), Utils::HTTP_POST, body, 'application/json')
     end
 
     def sso_logout(redirect_uri)
@@ -119,7 +119,9 @@ module AdminUI
                                     "#{@token_endpoint}/oauth/token",
                                     Utils::HTTP_POST,
                                     [@config.uaa_client_id, @config.uaa_client_secret],
-                                    content)
+                                    content,
+                                    nil,
+                                    'application/x-www-form-urlencoded')
       return Yajl::Parser.parse(response.body) if response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated)
       @logger.error("Unexpected response code from sso_login_token_json is #{response.code}, message #{response.message}, body #{response.body}")
       nil
@@ -127,7 +129,7 @@ module AdminUI
 
     private
 
-    def cf_request(url, method, body = nil)
+    def cf_request(url, method, body = nil, content_type = nil)
       recent_login = false
       if @token.nil?
         login
@@ -135,7 +137,7 @@ module AdminUI
       end
 
       loop do
-        response = Utils.http_request(@config, url, method, nil, body, @token)
+        response = Utils.http_request(@config, url, method, nil, body, @token, content_type)
 
         return Yajl::Parser.parse(response.body) if method == Utils::HTTP_GET && response.is_a?(Net::HTTPOK)
         return Yajl::Parser.parse(response.body) if method == Utils::HTTP_PUT && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
@@ -169,7 +171,9 @@ module AdminUI
                                     "#{@token_endpoint}/oauth/token",
                                     Utils::HTTP_POST,
                                     [@config.uaa_client_id, @config.uaa_client_secret],
-                                    'grant_type=client_credentials')
+                                    'grant_type=client_credentials',
+                                    nil,
+                                    'application/x-www-form-urlencoded')
 
       raise AdminUI::CCRestClientResponseError, response unless response.is_a?(Net::HTTPOK)
 

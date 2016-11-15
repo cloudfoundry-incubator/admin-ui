@@ -6,17 +6,19 @@ describe AdminUI::Doppler, type: :integration do
   include ConfigHelper
   include DopplerHelper
 
-  let(:ccdb_file)         { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri)          { "sqlite://#{ccdb_file}" }
-  let(:db_file)           { '/tmp/admin_ui_store.db' }
-  let(:db_uri)            { "sqlite://#{db_file}" }
-  let(:doppler_data_file) { '/tmp/admin_ui_doppler_data.json' }
-  let(:log_file)          { '/tmp/admin_ui.log' }
-  let(:uaadb_file)        { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri)         { "sqlite://#{uaadb_file}" }
+  let(:ccdb_file)            { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri)             { "sqlite://#{ccdb_file}" }
+  let(:cloud_controller_uri) { 'http://api.localhost' }
+  let(:db_file)              { '/tmp/admin_ui_store.db' }
+  let(:db_uri)               { "sqlite://#{db_file}" }
+  let(:doppler_data_file)    { '/tmp/admin_ui_doppler_data.json' }
+  let(:log_file)             { '/tmp/admin_ui.log' }
+  let(:uaadb_file)           { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri)            { "sqlite://#{uaadb_file}" }
 
   let(:config) do
     AdminUI::Config.load(ccdb_uri:                ccdb_uri,
+                         cloud_controller_uri:    cloud_controller_uri,
                          db_uri:                  db_uri,
                          doppler_data_file:       doppler_data_file,
                          doppler_rollup_interval: 1,

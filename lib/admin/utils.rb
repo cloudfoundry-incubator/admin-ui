@@ -27,7 +27,7 @@ module AdminUI
       HTTP_METHODS_MAP[method_string.upcase]
     end
 
-    def self.http_request(config, uri_string, method = HTTP_GET, basic_auth_array = nil, body = nil, authorization_header = nil)
+    def self.http_request(config, uri_string, method = HTTP_GET, basic_auth_array = nil, body = nil, authorization_header = nil, content_type = nil)
       uri = URI.parse(uri_string)
 
       path  = uri.path
@@ -41,6 +41,7 @@ module AdminUI
       request.basic_auth(basic_auth_array[0], basic_auth_array[1]) unless basic_auth_array.nil? || basic_auth_array.length < 2
       request['Authorization'] = authorization_header unless authorization_header.nil?
       request['Accept']        = 'application/json'
+      request['Content-Type']  = content_type unless content_type.nil?
 
       request.body = body if body
 

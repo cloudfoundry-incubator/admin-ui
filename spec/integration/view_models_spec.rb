@@ -397,6 +397,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected isolation_segments_view_model' do
+      let(:results)    { view_models.isolation_segments }
+      let(:expected)   { view_models_isolation_segments }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected isolation_segments_view_model detail' do
+      let(:results)  { view_models.isolation_segment(cc_isolation_segment[:guid]) }
+      let(:expected) { view_models_isolation_segments_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected logs_view_model' do
       let(:results)                                  { view_models.logs }
       let(:log_file_displayed_contents_length)       { log_file_displayed_contents.length }
@@ -429,6 +443,20 @@ describe AdminUI::ViewModels, type: :integration do
 
     context 'doppler dea' do
       it_behaves_like('organizations')
+    end
+
+    context 'returns connected organization_isolation_segments_view_model' do
+      let(:results)  { view_models.organizations_isolation_segments }
+      let(:expected) { view_models_organizations_isolation_segments }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected organization_isolation_segments_view_model detail' do
+      let(:results)  { view_models.organization_isolation_segment(cc_organization[:guid], cc_isolation_segment[:guid]) }
+      let(:expected) { view_models_organizations_isolation_segments_detail }
+
+      it_behaves_like('common view model retrieval detail')
     end
 
     context 'returns connected organization_roles_view_model' do

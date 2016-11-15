@@ -78,6 +78,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('IdentityProviders').displayed?).to be(true)
       expect(scroll_tab_into_view('SecurityGroups').displayed?).to be(true)
       expect(scroll_tab_into_view('SecurityGroupsSpaces').displayed?).to be(true)
+      expect(scroll_tab_into_view('IsolationSegments').displayed?).to be(true)
+      expect(scroll_tab_into_view('OrganizationsIsolationSegments').displayed?).to be(true)
       expect(scroll_tab_into_view('DEAs').displayed?).to be(true)
       expect(scroll_tab_into_view('Cells').displayed?).to be(true)
       expect(scroll_tab_into_view('CloudControllers').displayed?).to be(true)
@@ -349,14 +351,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 8,
-                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'Desired App States', 'App States', 'App Package States'],
-                                 colspans:        %w(1 16 3 6 2 2 2 3)
+                                 expected_length: 9,
+                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'Desired App States', 'App States', 'App Package States', 'Isolation Segments'],
+                                 colspans:        %w(1 16 3 6 2 2 2 3 3)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 35,
-                                 labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Default Users', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Security Groups', 'Total', 'Used', 'Unused', 'Apps', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Started', 'Stopped', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                 expected_length: 38,
+                                 labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Default Users', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Security Groups', 'Total', 'Used', 'Unused', 'Apps', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Started', 'Stopped', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed', 'Default Name', 'Default GUID', 'Related'],
                                  colspans:        nil
                                }
                              ])
@@ -400,7 +402,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_process[:state] == 'STOPPED' ? '1' : '0',
                                cc_droplet[:state] == 'PENDING' ? '1' : '0',
                                cc_droplet[:state] == 'STAGED' ? '1' : '0',
-                               cc_droplet[:state] == 'FAILED' ? '1' : '0'
+                               cc_droplet[:state] == 'FAILED' ? '1' : '0',
+                               cc_isolation_segment[:name],
+                               cc_isolation_segment[:guid],
+                               '1'
                              ])
           end
         end
@@ -619,42 +624,45 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           shared_examples 'has organization details' do
             it 'has details' do
               check_details([
-                              { label: 'Name',                      tag: 'div', value: cc_organization[:name] },
-                              { label: 'GUID',                      tag:   nil, value: cc_organization[:guid] },
-                              { label: 'Status',                    tag:   nil, value: cc_organization[:status].upcase },
-                              { label: 'Created',                   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_organization[:created_at].to_datetime.rfc3339}\")") },
-                              { label: 'Updated',                   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_organization[:updated_at].to_datetime.rfc3339}\")") },
-                              { label: 'Billing Enabled',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_organization[:billing_enabled]})") },
-                              { label: 'Events Target',             tag:   'a', value: '1' },
-                              { label: 'Spaces',                    tag:   'a', value: '1' },
-                              { label: 'Organization Roles',        tag:   'a', value: '4' },
-                              { label: 'Space Roles',               tag:   'a', value: '3' },
-                              { label: 'Default Users',             tag:   'a', value: '1' },
-                              { label: 'Quota',                     tag:   'a', value: cc_quota_definition[:name] },
-                              { label: 'Quota GUID',                tag:   nil, value: cc_quota_definition[:guid] },
-                              { label: 'Space Quotas',              tag:   'a', value: '1' },
-                              { label: 'Domains',                   tag:   'a', value: '1' },
-                              { label: 'Private Service Brokers',   tag:   'a', value: '1' },
-                              { label: 'Service Plan Visibilities', tag:   'a', value: '1' },
-                              { label: 'Security Groups',           tag:   'a', value: '1' },
-                              { label: 'Total Routes',              tag:   'a', value: '1' },
-                              { label: 'Used Routes',               tag:   nil, value: '1' },
-                              { label: 'Unused Routes',             tag:   nil, value: '0' },
-                              { label: 'Total Apps',                tag:   'a', value: '1' },
-                              { label: 'Instances Used',            tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})") },
-                              { label: 'Services Used',             tag:   'a', value: '1' },
-                              { label: 'Memory Used',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})") },
-                              { label: 'Disk Used',                 tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_disk)})") },
-                              { label: 'CPU Used',                  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{used_cpu})") },
-                              { label: 'Memory Reserved',           tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_process[:memory]})") },
-                              { label: 'Disk Reserved',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_process[:disk_quota]})") },
-                              { label: 'Desired Started Apps',      tag:   nil, value: cc_app[:desired_state] == 'STARTED' ? '1' : '0' },
-                              { label: 'Desired Stopped Apps',      tag:   nil, value: cc_app[:_desired_state] == 'STOPPED' ? '1' : '0' },
-                              { label: 'Started Apps',              tag:   nil, value: cc_process[:state] == 'STARTED' ? '1' : '0' },
-                              { label: 'Stopped Apps',              tag:   nil, value: cc_process[:state] == 'STOPPED' ? '1' : '0' },
-                              { label: 'Pending Apps',              tag:   nil, value: cc_droplet[:state] == 'PENDING' ? '1' : '0' },
-                              { label: 'Staged Apps',               tag:   nil, value: cc_droplet[:state] == 'STAGED' ? '1' : '0' },
-                              { label: 'Failed Apps',               tag:   nil, value: cc_droplet[:state] == 'FAILED' ? '1' : '0' }
+                              { label: 'Name',                           tag: 'div', value: cc_organization[:name] },
+                              { label: 'GUID',                           tag:   nil, value: cc_organization[:guid] },
+                              { label: 'Status',                         tag:   nil, value: cc_organization[:status].upcase },
+                              { label: 'Created',                        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_organization[:created_at].to_datetime.rfc3339}\")") },
+                              { label: 'Updated',                        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_organization[:updated_at].to_datetime.rfc3339}\")") },
+                              { label: 'Billing Enabled',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_organization[:billing_enabled]})") },
+                              { label: 'Events Target',                  tag:   'a', value: '1' },
+                              { label: 'Spaces',                         tag:   'a', value: '1' },
+                              { label: 'Organization Roles',             tag:   'a', value: '4' },
+                              { label: 'Space Roles',                    tag:   'a', value: '3' },
+                              { label: 'Default Users',                  tag:   'a', value: '1' },
+                              { label: 'Quota',                          tag:   'a', value: cc_quota_definition[:name] },
+                              { label: 'Quota GUID',                     tag:   nil, value: cc_quota_definition[:guid] },
+                              { label: 'Space Quotas',                   tag:   'a', value: '1' },
+                              { label: 'Domains',                        tag:   'a', value: '1' },
+                              { label: 'Private Service Brokers',        tag:   'a', value: '1' },
+                              { label: 'Service Plan Visibilities',      tag:   'a', value: '1' },
+                              { label: 'Security Groups',                tag:   'a', value: '1' },
+                              { label: 'Total Routes',                   tag:   'a', value: '1' },
+                              { label: 'Used Routes',                    tag:   nil, value: '1' },
+                              { label: 'Unused Routes',                  tag:   nil, value: '0' },
+                              { label: 'Total Apps',                     tag:   'a', value: '1' },
+                              { label: 'Instances Used',                 tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})") },
+                              { label: 'Services Used',                  tag:   'a', value: '1' },
+                              { label: 'Memory Used',                    tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})") },
+                              { label: 'Disk Used',                      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_disk)})") },
+                              { label: 'CPU Used',                       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{used_cpu})") },
+                              { label: 'Memory Reserved',                tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_process[:memory]})") },
+                              { label: 'Disk Reserved',                  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_process[:disk_quota]})") },
+                              { label: 'Desired Started Apps',           tag:   nil, value: cc_app[:desired_state] == 'STARTED' ? '1' : '0' },
+                              { label: 'Desired Stopped Apps',           tag:   nil, value: cc_app[:_desired_state] == 'STOPPED' ? '1' : '0' },
+                              { label: 'Started Apps',                   tag:   nil, value: cc_process[:state] == 'STARTED' ? '1' : '0' },
+                              { label: 'Stopped Apps',                   tag:   nil, value: cc_process[:state] == 'STOPPED' ? '1' : '0' },
+                              { label: 'Pending Apps',                   tag:   nil, value: cc_droplet[:state] == 'PENDING' ? '1' : '0' },
+                              { label: 'Staged Apps',                    tag:   nil, value: cc_droplet[:state] == 'STAGED' ? '1' : '0' },
+                              { label: 'Failed Apps',                    tag:   nil, value: cc_droplet[:state] == 'FAILED' ? '1' : '0' },
+                              { label: 'Default Isolation Segment',      tag:   'a', value: cc_isolation_segment[:name] },
+                              { label: 'Default Isolation Segment GUID', tag:   nil, value: cc_isolation_segment[:guid] },
+                              { label: 'Related Isolation Segments',     tag:   'a', value: '1' }
                             ])
             end
           end
@@ -727,6 +735,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it 'has services instances link' do
             check_filter_link('Organizations', 23, 'ServiceInstances', "#{cc_organization[:name]}/")
           end
+
+          it 'has default isolation segments link' do
+            check_filter_link('Organizations', 36, 'IsolationSegments', cc_organization[:default_isolation_segment_guid])
+          end
+
+          it 'has organizations isolation segments link' do
+            check_filter_link('Organizations', 38, 'OrganizationsIsolationSegments', cc_organization[:guid])
+          end
         end
       end
 
@@ -738,14 +754,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 8,
-                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'Desired App States', 'App States', 'App Package States'],
-                                 colspans:        %w(1 13 3 6 2 2 2 3)
+                                 expected_length: 9,
+                                 labels:          ['', '', 'Routes', 'Used', 'Reserved', 'Desired App States', 'App States', 'App Package States', 'Isolation Segment'],
+                                 colspans:        %w(1 13 3 6 2 2 2 3 2)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 32,
-                                 labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'SSH Allowed', 'Events', 'Events Target', 'Roles', 'Default Users', 'Space Quota', 'Private Service Brokers', 'Security Groups', 'Total', 'Used', 'Unused', 'Apps', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Started', 'Stopped', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed'],
+                                 expected_length: 34,
+                                 labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'SSH Allowed', 'Events', 'Events Target', 'Roles', 'Default Users', 'Space Quota', 'Private Service Brokers', 'Security Groups', 'Total', 'Used', 'Unused', 'Apps', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Started', 'Stopped', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed', 'Name', 'GUID'],
                                  colspans:        nil
                                }
                              ])
@@ -786,7 +802,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_process[:state] == 'STOPPED' ? '1' : '0',
                                cc_droplet[:state] == 'PENDING' ? '1' : '0',
                                cc_droplet[:state] == 'STAGED' ? '1' : '0',
-                               cc_droplet[:state] == 'FAILED' ? '1' : '0'
+                               cc_droplet[:state] == 'FAILED' ? '1' : '0',
+                               cc_isolation_segment[:name],
+                               cc_isolation_segment[:guid]
                              ])
           end
         end
@@ -801,7 +819,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_SpacesTable_5')
+          check_allowscriptaccess_attribute('Buttons_SpacesTable_6')
         end
 
         it 'has a checkbox in the first column' do
@@ -821,12 +839,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SpacesTable_2').text).to eq('Disallow SSH')
           end
 
+          it 'has a Remove Isolation Segment button' do
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_3').text).to eq('Remove Isolation Segment')
+          end
+
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'Buttons_SpacesTable_3').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_4').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'Buttons_SpacesTable_4').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_5').text).to eq('Delete Recursive')
           end
 
           context 'Rename button' do
@@ -847,15 +869,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Delete button' do
+          context 'Remove Isolation Segment button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_SpacesTable_3' }
             end
           end
 
-          context 'Delete Recursive button' do
+          context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_SpacesTable_4' }
+            end
+          end
+
+          context 'Delete Recursive button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_SpacesTable_5' }
             end
           end
 
@@ -885,12 +913,24 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             manage_space(2)
           end
 
+          def remove_isolation_segment_space
+            manage_space(3)
+          end
+
           def check_space_ssh(ssh)
             begin
               Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[7]").text == ssh }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[7]").text).to eq(ssh)
+          end
+
+          def check_space_isolation_segment
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[33]").text == '' }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[33]").text).to eq('')
           end
 
           it 'SSH allows the selected space' do
@@ -906,16 +946,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_space_ssh('false')
           end
 
+          it 'removes the isolation segment from the space' do
+            check_first_row('SpacesTable')
+            @driver.find_element(id: 'Buttons_SpacesTable_3').click
+
+            confirm("Are you sure you want to remove the selected spaces' isolation segments?")
+
+            check_operation_result
+
+            check_space_isolation_segment
+          end
+
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_SpacesTable_3' }
+              let(:button_id)       { 'Buttons_SpacesTable_4' }
               let(:confirm_message) { 'Are you sure you want to delete the selected spaces?' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_SpacesTable_4' }
+              let(:button_id)       { 'Buttons_SpacesTable_5' }
               let(:confirm_message) { 'Are you sure you want to delete the selected spaces and their contained applications, routes, route mappings, private service brokers, service instances, service bindings, service keys and route bindings?' }
             end
           end
@@ -961,7 +1012,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Stopped Apps',            tag:   nil, value: cc_process[:state] == 'STOPPED' ? '1' : '0' },
                               { label: 'Pending Apps',            tag:   nil, value: cc_droplet[:state] == 'PENDING' ? '1' : '0' },
                               { label: 'Staged Apps',             tag:   nil, value: cc_droplet[:state] == 'STAGED' ? '1' : '0' },
-                              { label: 'Failed Apps',             tag:   nil, value: cc_droplet[:state] == 'FAILED' ? '1' : '0' }
+                              { label: 'Failed Apps',             tag:   nil, value: cc_droplet[:state] == 'FAILED' ? '1' : '0' },
+                              { label: 'Isolation Segment',       tag:   'a', value: cc_isolation_segment[:name] },
+                              { label: 'Isolation Segment GUID',  tag:   nil, value: cc_isolation_segment[:guid] }
                             ])
             end
           end
@@ -1021,6 +1074,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has service instances link' do
             check_filter_link('Spaces', 20, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
+          end
+
+          it 'has isolation segments link' do
+            check_filter_link('Spaces', 33, 'IsolationSegments', cc_isolation_segment[:guid])
           end
         end
       end
@@ -1337,8 +1394,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Docker Image',               tag:   nil, value: cc_package[:docker_image] },
                               { label: 'Stack',                      tag:   'a', value: cc_stack[:name] },
                               { label: 'Stack GUID',                 tag:   nil, value: cc_stack[:guid] },
-                              { label: 'Buildpack',                  tag:   nil, value: cc_buildpack[:name] },
-                              { label: 'Buildpack GUID',             tag:   'a', value: cc_buildpack[:guid] },
+                              { label: 'Buildpack',                  tag:   'a', value: cc_buildpack[:name] },
+                              { label: 'Buildpack GUID',             tag:   nil, value: cc_buildpack[:guid] },
                               { label: 'Detected Buildpack',         tag:   nil, value: cc_droplet[:buildpack_receipt_detect_output] },
                               { label: 'Command',                    tag:   nil, value: cc_process[:command] },
                               { label: 'Detected Start Command',     tag:   nil, value: cc_process[:command] },
@@ -1374,7 +1431,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has buildpacks link' do
-            check_filter_link('Applications', 15, 'Buildpacks', cc_buildpack[:guid])
+            check_filter_link('Applications', 14, 'Buildpacks', cc_buildpack[:guid])
           end
 
           it 'has events link' do
@@ -5019,6 +5076,221 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has organization link' do
             check_filter_link('SecurityGroupsSpaces', 8, 'Organizations', cc_organization[:guid])
+          end
+        end
+      end
+
+      context 'Isolation Segments' do
+        let(:tab_id)   { 'IsolationSegments' }
+        let(:table_id) { 'IsolationSegmentsTable' }
+
+        it 'has a table' do
+          check_table_layout([
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='IsolationSegmentsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                 expected_length: 8,
+                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Related Organizations', 'Default Organizations', 'Spaces'],
+                                 colspans:        nil
+                               }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='IsolationSegmentsTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_isolation_segment[:name],
+                             cc_isolation_segment[:guid],
+                             cc_isolation_segment[:created_at].to_datetime.rfc3339,
+                             cc_isolation_segment[:updated_at].to_datetime.rfc3339,
+                             '1',
+                             '1',
+                             '1'
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_IsolationSegmentsTable_3')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('IsolationSegmentsTable', cc_isolation_segment[:guid])
+        end
+
+        context 'manage isolation segments' do
+          it 'has a Create button' do
+            expect(@driver.find_element(id: 'Buttons_IsolationSegmentsTable_0').text).to eq('Create')
+          end
+
+          it 'has a Rename button' do
+            expect(@driver.find_element(id: 'Buttons_IsolationSegmentsTable_1').text).to eq('Rename')
+          end
+
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_IsolationSegmentsTable_2').text).to eq('Delete')
+          end
+
+          it 'creates an isolation segment' do
+            @driver.find_element(id: 'Buttons_IsolationSegmentsTable_0').click
+
+            # Check whether the dialog is displayed
+            expect(@driver.find_element(id: 'ModalDialogContents').displayed?).to be(true)
+            expect(@driver.find_element(id: 'ModalDialogTitle').text).to eq('Create Isolation Segment')
+            expect(@driver.find_element(id: 'isolationSegmentName').displayed?).to be(true)
+
+            # Click the create button without input an isolation segment name
+            @driver.find_element(id: 'modalDialogButton0').click
+            alert = @driver.switch_to.alert
+            expect(alert.text).to eq('Please input the name first!')
+            alert.dismiss
+
+            # Input the name of the isolation segment and click 'Create'
+            @driver.find_element(id: 'isolationSegmentName').send_keys(cc_isolation_segment2[:name])
+            @driver.find_element(id: 'modalDialogButton0').click
+
+            check_operation_result
+
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='IsolationSegmentsTable']/tbody/tr[1]/td[2]").text == cc_isolation_segment2[:name] }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='IsolationSegmentsTable']/tbody/tr[1]/td[2]").text).to eq(cc_isolation_segment2[:name])
+          end
+
+          context 'Rename button' do
+            it_behaves_like('click button without selecting exactly one row') do
+              let(:button_id) { 'Buttons_IsolationSegmentsTable_1' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_IsolationSegmentsTable_2' }
+            end
+          end
+
+          context 'Rename button' do
+            it_behaves_like('rename first row') do
+              let(:button_id)     { 'Buttons_IsolationSegmentsTable_1' }
+              let(:title_text)    { 'Rename Isolation Segment' }
+              let(:object_rename) { cc_isolation_segment_rename }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_IsolationSegmentsTable_2' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected isolation segments?' }
+            end
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([
+                            { label: 'Name',                  tag: 'div', value: cc_isolation_segment[:name] },
+                            { label: 'GUID',                  tag:   nil, value: cc_isolation_segment[:guid] },
+                            { label: 'Created',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_isolation_segment[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_isolation_segment[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Related Organizations', tag:   'a', value: '1' },
+                            { label: 'Default Organizations', tag:   nil, value: '1' },
+                            { label: 'Spaces',                tag:   'a', value: '1' }
+                          ])
+          end
+
+          it 'has organizations isolation segments link' do
+            check_filter_link('IsolationSegments', 4, 'OrganizationsIsolationSegments', cc_isolation_segment[:guid])
+          end
+
+          it 'has organizations link' do
+            check_filter_link('IsolationSegments', 5, 'Organizations', cc_isolation_segment[:guid])
+          end
+
+          it 'has spaces link' do
+            check_filter_link('IsolationSegments', 6, 'Spaces', cc_isolation_segment[:guid])
+          end
+        end
+      end
+
+      context 'OrganizationsIsolationSegments' do
+        let(:tab_id)     { 'OrganizationsIsolationSegments' }
+        let(:table_id)   { 'OrganizationsIsolationSegmentsTable' }
+
+        it 'has a table' do
+          check_table_layout([
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsIsolationSegmentsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                 expected_length: 3,
+                                 labels:          ['', 'Organization', 'Isolation Segment'],
+                                 colspans:        %w(1 2 2)
+                               },
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsIsolationSegmentsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
+                                 expected_length: 5,
+                                 labels:          ['', 'Name', 'GUID', 'Name', 'GUID'],
+                                 colspans:        nil
+                               }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='OrganizationsIsolationSegmentsTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_organization[:name],
+                             cc_organization[:guid],
+                             cc_isolation_segment[:name],
+                             cc_isolation_segment[:guid]
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_OrganizationsIsolationSegmentsTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('OrganizationsIsolationSegmentsTable', "#{cc_organization[:guid]}/#{cc_isolation_segment[:guid]}")
+        end
+
+        context 'manage organization isolation segment' do
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_OrganizationsIsolationSegmentsTable_0').text).to eq('Delete')
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_OrganizationsIsolationSegmentsTable_0' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_OrganizationsIsolationSegmentsTable_0' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected organization isolation segments?' }
+            end
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([
+                            { label: 'Organization',           tag: 'div', value: cc_organization[:name] },
+                            { label: 'Organization GUID',      tag:   nil, value: cc_organization[:guid] },
+                            { label: 'Isolation Segment',      tag:   'a', value: cc_isolation_segment[:name] },
+                            { label: 'Isolation Segment GUID', tag:   nil, value: cc_isolation_segment[:guid] }
+                          ])
+          end
+
+          it 'has organizations link' do
+            check_filter_link('OrganizationsIsolationSegments', 0, 'Organizations', cc_organization[:guid])
+          end
+
+          it 'has isolation segments link' do
+            check_filter_link('OrganizationsIsolationSegments', 2, 'IsolationSegments', cc_isolation_segment[:guid])
           end
         end
       end

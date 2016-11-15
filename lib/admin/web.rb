@@ -281,6 +281,18 @@ module AdminUI
       404
     end
 
+    get '/isolation_segments_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/isolation_segments_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.isolation_segments, params).items)
+    end
+
+    get '/isolation_segments_view_model/:guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/isolation_segments_view_model/#{params[:guid]}")
+      result = @view_models.isolation_segment(params[:guid])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/log', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/log?path=#{params['path']}")
       result = @log_files.content(params['path'], params['start'])
@@ -325,6 +337,18 @@ module AdminUI
     get '/logs_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/logs_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.logs, params).items)
+    end
+
+    get '/organizations_isolation_segments_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/organizations_isolation_segments_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.organizations_isolation_segments, params).items)
+    end
+
+    get '/organizations_isolation_segments_view_model/:organization_guid/:isolation_segment_guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/organizations_isolation_segments_view_model/#{params[:organization_guid]}/#{params[:isolation_segment_guid]}")
+      result = @view_models.organization_isolation_segment(params[:organization_guid], params[:isolation_segment_guid])
+      return Yajl::Encoder.encode(result) if result
+      404
     end
 
     get '/organizations_view_model', auth: [:user] do
@@ -756,6 +780,32 @@ module AdminUI
                 filename:    'identity_zones.csv')
     end
 
+    post '/isolation_segments', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'post', "/isolation_segments; body = #{control_message}")
+        @operation.create_isolation_segment(control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during create isolation segment: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during create isolation segment: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    post '/isolation_segments_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/isolation_segments_view_model')
+      file = Download.download(request.body.read, 'isolation_segments', @view_models.isolation_segments)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'isolation_segments.csv')
+    end
+
     post '/logs_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'post', '/logs_view_model')
       file = Download.download(request.body.read, 'logs', @view_models.logs)
@@ -780,6 +830,14 @@ module AdminUI
         @logger.error(error.backtrace.join("\n"))
         500
       end
+    end
+
+    post '/organizations_isolation_segments_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/organizations_isolation_segments_view_model')
+      file = Download.download(request.body.read, 'organizations_isolation_segments', @view_models.organizations_isolation_segments)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'organizations_isolation_segments.csv')
     end
 
     post '/organizations_view_model', auth: [:user] do
@@ -1025,12 +1083,30 @@ module AdminUI
         @operation.manage_feature_flag(params[:feature_flag_name], control_message)
         204
       rescue CCRestClientResponseError => error
-        @logger.error("Error during update feature_flag: #{error.to_h}")
+        @logger.error("Error during update feature flag: #{error.to_h}")
         content_type(:json)
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.error("Error during update feature_flag: #{error.inspect}")
+        @logger.error("Error during update feature flag: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    put '/isolation_segments/:isolation_segment_guid', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'put', "/isolation_segments/#{params[:isolation_segment_guid]}; body = #{control_message}")
+        @operation.manage_isolation_segment(params[:isolation_segment_guid], control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during update isolation segment: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during update isolation segment: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end
@@ -1329,6 +1405,23 @@ module AdminUI
       end
     end
 
+    delete '/isolation_segments/:isolation_segment_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/isolation_segments/#{params[:isolation_segment_guid]}")
+      begin
+        @operation.delete_isolation_segment(params[:isolation_segment_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete isolation segment: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete isolation segment: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/organizations/:organization_guid', auth: [:admin] do
       recursive = params[:recursive] == 'true'
       url = "/organizations/#{params[:organization_guid]}"
@@ -1361,6 +1454,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete organization role: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/organizations_isolation_segments/:organization_guid/:isolation_segment_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/organizations_isolation_segments/#{params[:organization_guid]}/#{params[:isolation_segment_guid]}")
+      begin
+        @operation.delete_organization_isolation_segment(params[:organization_guid], params[:isolation_segment_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete organization isolation segment role: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete organization isolation segment: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end
@@ -1612,6 +1722,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete space quota definition space: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/spaces/:space_guid/isolation_segment', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/isolation_segment")
+      begin
+        @operation.remove_space_isolation_segment(params[:space_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during remove space isolation segment: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during remove space isolation segment: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

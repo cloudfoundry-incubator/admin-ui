@@ -212,12 +212,28 @@ describe AdminUI::ViewModels do
       verify_disconnected_items(view_models.identity_zones)
     end
 
+    it 'returns nil isolation_segment as expected' do
+      expect(view_models.isolation_segment('bogus')).to be_nil
+    end
+
+    it 'returns zero isolation_segments as expected' do
+      verify_disconnected_items(view_models.isolation_segments)
+    end
+
     it 'returns nil organization as expected' do
       expect(view_models.organization('bogus')).to be_nil
     end
 
     it 'returns zero organizations as expected' do
       verify_disconnected_items(view_models.organizations)
+    end
+
+    it 'returns nil organization_isolation_segment as expected' do
+      expect(view_models.organization_isolation_segment('bogus', 'bogus')).to be_nil
+    end
+
+    it 'returns zero organizations_isolation_segments as expected' do
+      verify_disconnected_items(view_models.organizations_isolation_segments)
     end
 
     it 'returns nil organization_role expected' do

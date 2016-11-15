@@ -21,6 +21,14 @@ module AdminUI
       @view_models.invalidate_organizations
     end
 
+    def create_isolation_segment(control_message)
+      url = 'v3/isolation_segments'
+      @logger.debug("POST #{url}, #{control_message}")
+      @client.post_cc(url, control_message)
+      @cc.invalidate_isolation_segments
+      @view_models.invalidate_isolation_segments
+    end
+
     def create_space_quota_definition_space(space_quota_definition_guid, space_guid)
       url = "v2/space_quota_definitions/#{space_quota_definition_guid}/spaces/#{space_guid}"
       @logger.debug("PUT #{url}")
@@ -100,6 +108,16 @@ module AdminUI
       @view_models.invalidate_group_members
     end
 
+    def delete_isolation_segment(isolation_segment_guid)
+      url = "v3/isolation_segments/#{isolation_segment_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_isolation_segments
+      @cc.invalidate_organizations_isolation_segments
+      @view_models.invalidate_isolation_segments
+      @view_models.invalidate_organizations_isolation_segments
+    end
+
     def delete_organization(organization_guid, recursive)
       url = "v2/organizations/#{organization_guid}"
       url += '?recursive=true' if recursive
@@ -145,6 +163,15 @@ module AdminUI
       @view_models.invalidate_organizations
       @view_models.invalidate_organization_roles
       @view_models.invalidate_service_plan_visibilities
+    end
+
+    def delete_organization_isolation_segment(organization_guid, isolation_segment_guid)
+      url = "v3/isolation_segments/#{isolation_segment_guid}/relationships/organizations"
+      body = Yajl::Encoder.encode(data: [{ guid: organization_guid }])
+      @logger.debug("DELETE #{url} #{body}")
+      @client.delete_cc(url, body)
+      @cc.invalidate_organizations_isolation_segments
+      @view_models.invalidate_organizations_isolation_segments
     end
 
     def delete_organization_role(organization_guid, role, user_guid)
@@ -412,6 +439,14 @@ module AdminUI
       @view_models.invalidate_feature_flags
     end
 
+    def manage_isolation_segment(organization_guid, control_message)
+      url = "v3/isolation_segments/#{organization_guid}"
+      @logger.debug("PUT #{url}, #{control_message}")
+      @client.put_cc(url, control_message)
+      @cc.invalidate_isolation_segments
+      @view_models.invalidate_isolation_segments
+    end
+
     def manage_organization(organization_guid, control_message)
       url = "v2/organizations/#{organization_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
@@ -505,19 +540,6 @@ module AdminUI
       @view_models.invalidate_space_quotas
     end
 
-    def restage_application(app_guid)
-      url = "v2/apps/#{app_guid}/restage"
-      @logger.debug("POST #{url}")
-      @client.post_cc(url, '{}')
-      @cc.invalidate_applications
-      @cc.invalidate_droplets
-      @cc.invalidate_packages
-      @cc.invalidate_processes
-      @varz.invalidate
-      @view_models.invalidate_applications
-      @view_models.invalidate_application_instances
-    end
-
     def remove_component(uri)
       @logger.debug("REMOVE component #{uri}")
       @varz.remove(uri)
@@ -535,6 +557,27 @@ module AdminUI
       @view_models.invalidate_deas
       @view_models.invalidate_health_managers
       @view_models.invalidate_routers
+    end
+
+    def remove_space_isolation_segment(space_guid)
+      url = "/v2/spaces/#{space_guid}/isolation_segment"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_spaces
+      @view_models.invalidate_spaces
+    end
+
+    def restage_application(app_guid)
+      url = "v2/apps/#{app_guid}/restage"
+      @logger.debug("POST #{url}")
+      @client.post_cc(url, '{}')
+      @cc.invalidate_applications
+      @cc.invalidate_droplets
+      @cc.invalidate_packages
+      @cc.invalidate_processes
+      @varz.invalidate
+      @view_models.invalidate_applications
+      @view_models.invalidate_application_instances
     end
   end
 end

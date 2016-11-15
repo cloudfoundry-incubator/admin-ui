@@ -594,6 +594,25 @@ module ViewModelsHelper
     uaa_identity_zone
   end
 
+  def view_models_isolation_segments
+    [
+      [
+        cc_isolation_segment[:guid],
+        cc_isolation_segment[:name],
+        cc_isolation_segment[:guid],
+        cc_isolation_segment[:created_at].to_datetime.rfc3339,
+        cc_isolation_segment[:updated_at].to_datetime.rfc3339,
+        1,
+        1,
+        1
+      ]
+    ]
+  end
+
+  def view_models_isolation_segments_detail
+    cc_isolation_segment
+  end
+
   def view_models_logs(log_file_displayed, log_file_displayed_contents_length, log_file_displayed_modified_milliseconds)
     [
       [
@@ -607,55 +626,6 @@ module ViewModelsHelper
         }
       ]
     ]
-  end
-
-  def view_models_organizations
-    [
-      [
-        cc_organization[:guid],
-        cc_organization[:name],
-        cc_organization[:guid],
-        cc_organization[:status],
-        cc_organization[:created_at].to_datetime.rfc3339,
-        cc_organization[:updated_at].to_datetime.rfc3339,
-        1,
-        1,
-        4,
-        3,
-        1,
-        cc_quota_definition[:name],
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        1,
-        cc_process[:instances],
-        1,
-        AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
-        AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
-        @computed_pcpu,
-        cc_process[:memory],
-        cc_process[:disk_quota],
-        cc_app[:desired_state] == 'STARTED' ? 1 : 0,
-        cc_app[:desired_state] == 'STOPPED' ? 1 : 0,
-        cc_process[:state] == 'STARTED' ? 1 : 0,
-        cc_process[:state] == 'STOPPED' ? 1 : 0,
-        cc_droplet[:state] == 'PENDING' ? 1 : 0,
-        cc_droplet[:state] == 'STAGED' ? 1 : 0,
-        cc_droplet[:state] == 'FAILED' ? 1 : 0
-      ]
-    ]
-  end
-
-  def view_models_organizations_detail
-    {
-      'organization'     => cc_organization,
-      'quota_definition' => cc_quota_definition
-    }
   end
 
   def view_models_organization_roles
@@ -701,6 +671,79 @@ module ViewModelsHelper
       'role'         => cc_organization_auditor,
       'user_cc'      => cc_user,
       'user_uaa'     => uaa_user
+    }
+  end
+
+  def view_models_organizations
+    [
+      [
+        cc_organization[:guid],
+        cc_organization[:name],
+        cc_organization[:guid],
+        cc_organization[:status],
+        cc_organization[:created_at].to_datetime.rfc3339,
+        cc_organization[:updated_at].to_datetime.rfc3339,
+        1,
+        1,
+        4,
+        3,
+        1,
+        cc_quota_definition[:name],
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        cc_process[:instances],
+        1,
+        AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
+        AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
+        @computed_pcpu,
+        cc_process[:memory],
+        cc_process[:disk_quota],
+        cc_app[:desired_state] == 'STARTED' ? 1 : 0,
+        cc_app[:desired_state] == 'STOPPED' ? 1 : 0,
+        cc_process[:state] == 'STARTED' ? 1 : 0,
+        cc_process[:state] == 'STOPPED' ? 1 : 0,
+        cc_droplet[:state] == 'PENDING' ? 1 : 0,
+        cc_droplet[:state] == 'STAGED' ? 1 : 0,
+        cc_droplet[:state] == 'FAILED' ? 1 : 0,
+        cc_isolation_segment[:name],
+        cc_isolation_segment[:guid],
+        1
+      ]
+    ]
+  end
+
+  def view_models_organizations_detail
+    {
+      'default_isolation_segment' => cc_isolation_segment,
+      'organization'              => cc_organization,
+      'quota_definition'          => cc_quota_definition
+    }
+  end
+
+  def view_models_organizations_isolation_segments
+    [
+      [
+        "#{cc_organization[:guid]}/#{cc_isolation_segment[:guid]}",
+        cc_organization[:name],
+        cc_organization[:guid],
+        cc_isolation_segment[:name],
+        cc_isolation_segment[:guid]
+      ]
+    ]
+  end
+
+  def view_models_organizations_isolation_segments_detail
+    {
+      'isolation_segment'              => cc_isolation_segment,
+      'organization'                   => cc_organization,
+      'organization_isolation_segment' => cc_organization_isolation_segment
     }
   end
 
@@ -1307,13 +1350,16 @@ module ViewModelsHelper
         cc_process[:state] == 'STOPPED' ? 1 : 0,
         cc_droplet[:state] == 'PENDING' ? 1 : 0,
         cc_droplet[:state] == 'STAGED' ? 1 : 0,
-        cc_app[:package_state] == 'FAILED' ? 1 : 0
+        cc_app[:package_state] == 'FAILED' ? 1 : 0,
+        cc_isolation_segment[:name],
+        cc_isolation_segment[:guid]
       ]
     ]
   end
 
   def view_models_spaces_detail
     {
+      'isolation_segment'      => cc_isolation_segment,
       'organization'           => cc_organization,
       'space'                  => cc_space,
       'space_quota_definition' => cc_space_quota_definition

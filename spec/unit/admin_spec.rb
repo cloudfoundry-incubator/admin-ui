@@ -239,6 +239,23 @@ describe AdminUI::Admin do
       http.request(request)
     end
 
+    shared_examples 'common create isolation segment' do
+      it 'returns failure code due to disconnection' do
+        response = post('/isolation_segments', '{"name":"bogus"}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'create isolation segment via http' do
+      it_behaves_like('common create isolation segment')
+    end
+
+    context 'create isolation segment via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common create isolation segment')
+    end
+
     shared_examples 'common create organization' do
       it 'returns failure code due to disconnection' do
         response = post('/organizations', '{"name":"new_org"}')
@@ -409,6 +426,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete group')
     end
 
+    shared_examples 'common delete isolation segment' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/isolation_segments/isolation_segment1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete isolation segment via http' do
+      it_behaves_like('common delete isolation segment')
+    end
+
+    context 'delete isolation segment via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete isolation segment')
+    end
+
     shared_examples 'common delete organization' do
       it 'returns failure code due to disconnection' do
         response = delete('/organizations/organization1')
@@ -441,6 +475,23 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete organization recursive')
+    end
+
+    shared_examples 'common delete organization isolation segment' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/organizations_isolation_segments/organization1/isolation_segment1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete organization isolation segment via http' do
+      it_behaves_like('common delete organization isolation segment')
+    end
+
+    context 'delete organization isolation segment role via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete organization isolation segment')
     end
 
     shared_examples 'common delete organization role' do
@@ -766,6 +817,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete space recursive')
     end
 
+    shared_examples 'common delete space isolation segment' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/spaces/isolation_segment')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete space isolation segment via http' do
+      it_behaves_like('common delete space isolation segment')
+    end
+
+    context 'delete space isolation segment via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete space isolation segment')
+    end
+
     shared_examples 'common delete space quota definition' do
       it 'returns failure code due to disconnection' do
         response = delete('/space_quota_definitions/space_quota1')
@@ -883,6 +951,23 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common manage feature flag')
+    end
+
+    shared_examples 'common manage isolation segment' do
+      it 'returns failure code due to disconnection' do
+        response = put('/isolation_segments/isolation_segment1', '{"name":"bogus"}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'manage isolation segment via http' do
+      it_behaves_like('common manage isolation segment')
+    end
+
+    context 'manage isolation segment via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common manage isolation segment')
     end
 
     shared_examples 'common manage organization' do
@@ -1241,8 +1326,24 @@ describe AdminUI::Admin do
         verify_not_found('/identity_zones_view_model/identity_zone1')
       end
 
+      it '/isolation_segments_view_model succeeds' do
+        verify_disconnected_view_model_items('/isolation_segments_view_model')
+      end
+
+      it '/isolation_segments_view_model/:guid returns not found' do
+        verify_not_found('/isolation_segments_view_model/isolation_segment1')
+      end
+
       it '/logs_view_model succeeds' do
         verify_connected_view_model_empty_items('/logs_view_model')
+      end
+
+      it '/organizations_isolation_segments_view_model succeeds' do
+        verify_disconnected_view_model_items('/organizations_isolation_segments_view_model')
+      end
+
+      it '/organizations_isolation_segments_view_model/:guid/:guid returns not found' do
+        verify_not_found('/organizations_isolation_segments_view_model/organization1/isolation_segment1')
       end
 
       it '/organizations_view_model succeeds' do
@@ -1608,6 +1709,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/identity_zones_view_model/identity_zone1')
       end
 
+      it '/isolation_segments_view_model redirects as expected' do
+        get_redirects_as_expected('/isolation_segments_view_model')
+      end
+
+      it '/isolation_segments_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/isolation_segments_view_model/isolation_segment1')
+      end
+
       it '/log redirects as expected' do
         get_redirects_as_expected('/log')
       end
@@ -1622,6 +1731,14 @@ describe AdminUI::Admin do
 
       it '/organization_roles_view_model/:guid/:role/:guid redirects as expected' do
         get_redirects_as_expected('/organization_roles_view_model/organization1/auditors/user1')
+      end
+
+      it '/organizations_isolation_segments_view_model redirects as expected' do
+        get_redirects_as_expected('/organizations_isolation_segments_view_model')
+      end
+
+      it '/organizations_isolation_segments_view_model/:guid/:guid redirects as expected' do
+        get_redirects_as_expected('/organizations_isolation_segments_view_model/organization1/isolation_segment1')
       end
 
       it '/organizations_view_model redirects as expected' do
@@ -1820,6 +1937,10 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/groups/group1')
       end
 
+      it 'deletes /isolation_segments/:guid redirects as expected' do
+        delete_redirects_as_expected('/isolation_segments/isolation_segment1')
+      end
+
       it 'deletes /organizations/:guid redirects as expected' do
         delete_redirects_as_expected('/organizations/organization1')
       end
@@ -1830,6 +1951,10 @@ describe AdminUI::Admin do
 
       it 'deletes /organizations/:guid/:role/:guid redirects as expected' do
         delete_redirects_as_expected('/organizations/organization1/auditors/user1')
+      end
+
+      it 'deletes /organizations_isolation_segments/:guid/:guid redirects as expected' do
+        delete_redirects_as_expected('/organizations_isolation_segments/organization1/isolation_segment1')
       end
 
       it 'deletes /quota_definitions/:guid redirects as expected' do
@@ -1912,6 +2037,10 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/spaces/space1?recursive=true')
       end
 
+      it 'deletes /spaces/:guid/isolation_segment redirects as expected' do
+        delete_redirects_as_expected('/spaces/space1/isolation_segment')
+      end
+
       it 'deletes /spaces/:guid/:role/:guid redirects as expected' do
         delete_redirects_as_expected('/spaces/space1/auditors/user1')
       end
@@ -1992,12 +2121,24 @@ describe AdminUI::Admin do
         post_redirects_as_expected('/identity_zones_view_model')
       end
 
+      it 'posts /isolation_segments redirects as expected' do
+        post_redirects_as_expected('/isolation_segments', '{"name":"bogus"}')
+      end
+
+      it 'posts /isolation_segments_view_model redirects as expected' do
+        post_redirects_as_expected('/isolation_segments_view_model')
+      end
+
       it 'posts /logs_view_model redirects as expected' do
         post_redirects_as_expected('/logs_view_model')
       end
 
       it 'posts /organizations redirects as expected' do
         post_redirects_as_expected('/organizations', '{"name":"new_org"}')
+      end
+
+      it 'posts /organizations_isolation_segments_view_model redirects as expected' do
+        post_redirects_as_expected('/organizations_isolation_segments_view_model')
       end
 
       it 'posts /organizations_view_model redirects as expected' do
@@ -2094,6 +2235,10 @@ describe AdminUI::Admin do
 
       it 'puts /feature_flags/:name redirects as expected' do
         put_redirects_as_expected('/feature_flags/name', '{"enabled":true}')
+      end
+
+      it 'puts /isolation_segments/:guid redirects as expected' do
+        put_redirects_as_expected('/isolation_segments/isolation_segment1', '{"name":"bogus"}')
       end
 
       it 'puts /organizations/:guid redirects as expected' do
