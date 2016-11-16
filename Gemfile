@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'faye-websocket', '0.10.4'
+gem 'faye-websocket', '0.10.5'
 gem 'membrane', '1.1.0'
 gem 'nats', '0.8.0'
 gem 'net-sftp', '2.1.2'
@@ -23,5 +23,5 @@ end
 
 group :test do
   gem 'rspec', '2.99.0'
-  gem 'selenium-webdriver', '3.0.0'
+  gem 'selenium-webdriver', '3.0.1'
 end
