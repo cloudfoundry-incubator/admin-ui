@@ -22,11 +22,13 @@ module AdminUI
       service_bindings = @cc.service_bindings
       spaces           = @cc.spaces
       stacks           = @cc.stacks
+      tasks            = @cc.tasks
 
       events_connected           = events['connected']
       processes_connected        = processes['connected']
       route_mappings_connected   = route_mappings['connected']
       service_bindings_connected = service_bindings['connected']
+      tasks_connected            = tasks['connected']
 
       droplet_hash      = Hash[droplets['items'].map { |item| [item[:guid], item] }]
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
@@ -96,6 +98,16 @@ module AdminUI
         application_usage_counters['used_cpu'] += container[:cpu_percentage]
       end
 
+      task_counters = {}
+      tasks['items'].each do |task|
+        return result unless @running
+        Thread.pass
+
+        app_guid = task[:app_guid]
+        task_counters[app_guid] = 0 if task_counters[app_guid].nil?
+        task_counters[app_guid] += 1
+      end
+
       items = []
       hash  = {}
 
@@ -125,6 +137,7 @@ module AdminUI
         event_counter              = event_counters[guid]
         route_mapping_counter      = route_mapping_counters[guid]
         service_binding_counter    = service_binding_counters[guid]
+        task_counter               = task_counters[guid]
 
         row = []
 
@@ -215,6 +228,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if task_counter
+          row.push(task_counter)
+        elsif tasks_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if application_usage_counters
           row.push(Utils.convert_bytes_to_megabytes(application_usage_counters['used_memory']))
           row.push(Utils.convert_bytes_to_megabytes(application_usage_counters['used_disk']))
@@ -252,7 +273,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..24).to_a, (1..14).to_a << 24)
+      result(true, items, hash, (1..25).to_a, (1..14).to_a << 25)
     end
   end
 end

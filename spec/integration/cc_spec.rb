@@ -287,6 +287,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.spaces_managers['items'].length).to eq(0)
     end
 
+    it 'clears the tasks cache' do
+      expect(cc.tasks['items'].length).to eq(1)
+      cc_clear_tasks_cache_stub(config)
+      cc.invalidate_tasks
+      expect(cc.tasks['items'].length).to eq(0)
+    end
+
     it 'clears the users cc cache' do
       expect(cc.users_cc['items'].length).to eq(1)
       cc_clear_users_cache_stub(config)
@@ -627,6 +634,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected stacks' do
       let(:results)  { cc.stacks }
       let(:expected) { cc_stack }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected tasks' do
+      let(:results)  { cc.tasks }
+      let(:expected) { cc_task }
 
       it_behaves_like('common cc retrieval')
     end

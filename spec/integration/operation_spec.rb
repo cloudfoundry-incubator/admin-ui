@@ -1581,6 +1581,39 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage task' do
+      before do
+        expect(cc.tasks['items'].length).to eq(1)
+      end
+
+      def cancel_task
+        operation.cancel_task(cc_task[:guid])
+      end
+
+      it 'cancels the task' do
+        expect { cancel_task }.to change { cc.tasks['items'][0][:state] }.from(cc_task[:state]).to('FAILED')
+      end
+
+      context 'errors' do
+        context 'not found error' do
+          before do
+            cc_clear_tasks_cache_stub(config)
+          end
+
+          def verify_task_not_found(exception)
+            expect(exception.cf_code).to eq(10_010)
+            expect(exception.cf_error_code).to eq('CF-ResourceNotFound')
+            expect(exception.http_code).to eq(404)
+            expect(exception.message).to eq('Task not found')
+          end
+
+          it 'fails canceling deleted task' do
+            expect { cancel_task }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_task_not_found(exception) }
+          end
+        end
+      end
+    end
+
     context 'manage user' do
       before do
         expect(cc.users_cc['items'].length).to eq(1)

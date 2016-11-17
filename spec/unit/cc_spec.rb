@@ -229,6 +229,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.stacks)
     end
 
+    it 'returns zero tasks as expected' do
+      verify_disconnected_items(cc.tasks)
+    end
+
     it 'returns zero users_cc as expected' do
       verify_disconnected_items(cc.users_cc)
     end

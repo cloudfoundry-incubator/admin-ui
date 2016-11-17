@@ -29,6 +29,7 @@ module AdminUI
       spaces_auditors        = @cc.spaces_auditors
       spaces_developers      = @cc.spaces_developers
       spaces_managers        = @cc.spaces_managers
+      tasks                  = @cc.tasks
       users                  = @cc.users_cc
 
       applications_connected           = applications['connected']
@@ -43,6 +44,7 @@ module AdminUI
       service_brokers_connected        = service_brokers['connected']
       service_instances_connected      = service_instances['connected']
       spaces_roles_connected           = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
+      tasks_connected                  = tasks['connected']
       users_connected                  = users['connected']
 
       applications_hash       = Hash[applications['items'].map { |item| [item[:guid], item] }]
@@ -81,6 +83,7 @@ module AdminUI
       space_route_counters_hash       = {}
       space_app_counters_hash         = {}
       space_process_counters_hash     = {}
+      space_task_counters             = {}
 
       count_space_roles(spaces_auditors, space_role_counters)
       count_space_roles(spaces_developers, space_role_counters)
@@ -190,6 +193,18 @@ module AdminUI
         add_process_metrics(space_process_counters, process)
       end
 
+      tasks['items'].each do |task|
+        return result unless @running
+        Thread.pass
+
+        application_guid = task[:app_guid]
+        application = applications_hash[application_guid]
+        next if application.nil?
+        space_guid = application[:space_guid]
+        space_task_counters[space_guid] = 0 if space_task_counters[space_guid].nil?
+        space_task_counters[space_guid] += 1
+      end
+
       items = []
       hash  = {}
 
@@ -215,6 +230,7 @@ module AdminUI
         space_default_user_counter     = space_default_user_counters[space_id]
         space_process_counters         = space_process_counters_hash[space_guid]
         space_route_counters           = space_route_counters_hash[space_id]
+        space_task_counter             = space_task_counters[space_guid]
 
         row = []
 
@@ -330,6 +346,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if space_task_counter
+          row.push(space_task_counter)
+        elsif applications_connected && tasks_connected
+          row.push(0)
+        else
+          row.push(0)
+        end
+
         if containers_connected
           if space_app_counters
             row.push(Utils.convert_bytes_to_megabytes(space_app_counters['used_memory']))
@@ -400,7 +424,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..33).to_a, [1, 2, 3, 4, 5, 6, 11, 32, 33])
+      result(true, items, hash, (1..34).to_a, [1, 2, 3, 4, 5, 6, 11, 33, 34])
     end
 
     private

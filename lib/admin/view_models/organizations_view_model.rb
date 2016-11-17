@@ -37,6 +37,7 @@ module AdminUI
       spaces_auditors                  = @cc.spaces_auditors
       spaces_developers                = @cc.spaces_developers
       spaces_managers                  = @cc.spaces_managers
+      tasks                            = @cc.tasks
       users                            = @cc.users_cc
 
       applications_connected                     = applications['connected']
@@ -57,6 +58,7 @@ module AdminUI
       space_quotas_connected                     = space_quotas['connected']
       spaces_connected                           = spaces['connected']
       spaces_roles_connected                     = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
+      tasks_connected                            = tasks['connected']
       users_connected                            = users['connected']
 
       applications_hash       = Hash[applications['items'].map { |item| [item[:guid], item] }]
@@ -85,6 +87,7 @@ module AdminUI
       space_quota_counters                          = {}
       space_role_counters                           = {}
       organization_isolation_segment_counters       = {}
+      organization_task_counters                    = {}
 
       events['items'].each do |event|
         return result unless @running
@@ -264,6 +267,20 @@ module AdminUI
         add_process_metrics(organization_process_counters, process)
       end
 
+      tasks['items'].each do |task|
+        return result unless @running
+        Thread.pass
+
+        application_guid = task[:app_guid]
+        application = applications_hash[application_guid]
+        next if application.nil?
+        space = spaces_guid_hash[application[:space_guid]]
+        next if space.nil?
+        organization_id = space[:organization_id]
+        organization_task_counters[organization_id] = 0 if organization_task_counters[organization_id].nil?
+        organization_task_counters[organization_id] += 1
+      end
+
       organizations_isolation_segments['items'].each do |organization_isolation_segment|
         return result unless @running
         Thread.pass
@@ -301,6 +318,7 @@ module AdminUI
         organization_route_counters                  = organization_route_counters_hash[organization_id]
         space_quota_counter                          = space_quota_counters[organization_id]
         space_role_counter                           = space_role_counters[organization_id]
+        organization_task_counter                    = organization_task_counters[organization_id]
         organization_isolation_segment_counter       = organization_isolation_segment_counters[organization_guid]
 
         row = []
@@ -437,6 +455,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if organization_task_counter
+          row.push(organization_task_counter)
+        elsif spaces_connected && applications_connected && tasks_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if containers_connected
           if organization_app_counters
             row.push(Utils.convert_bytes_to_megabytes(organization_app_counters['used_memory']))
@@ -514,7 +540,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..37).to_a, [1, 2, 3, 4, 5, 11, 35, 36])
+      result(true, items, hash, (1..38).to_a, [1, 2, 3, 4, 5, 11, 36, 37])
     end
 
     private

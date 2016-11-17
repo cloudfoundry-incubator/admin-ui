@@ -139,6 +139,7 @@ module ViewModelsHelper
         cc_process[:instances],
         1,
         1,
+        1,
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
         @computed_pcpu,
@@ -699,6 +700,7 @@ module ViewModelsHelper
         0,
         1,
         cc_process[:instances],
+        1,
         1,
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
@@ -1339,6 +1341,7 @@ module ViewModelsHelper
         1,
         cc_process[:instances],
         1,
+        1,
         AdminUI::Utils.convert_bytes_to_megabytes(@used_memory_in_bytes),
         AdminUI::Utils.convert_bytes_to_megabytes(@used_disk_in_bytes),
         @computed_pcpu,
@@ -1409,6 +1412,34 @@ module ViewModelsHelper
         }
       ]
     ]
+  end
+
+  def view_models_tasks
+    [
+      [
+        cc_task[:guid],
+        cc_task[:name],
+        cc_task[:guid],
+        cc_task[:state],
+        cc_task[:created_at].to_datetime.rfc3339,
+        cc_task[:updated_at].to_datetime.rfc3339,
+        cc_task[:memory_in_mb],
+        cc_task[:disk_in_mb],
+        cc_app[:name],
+        cc_app[:guid],
+        cc_task[:sequence_id],
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
+      ]
+    ]
+  end
+
+  def view_models_tasks_detail
+    {
+      'application'  => cc_app,
+      'organization' => cc_organization,
+      'space'        => cc_space,
+      'task'         => cc_task
+    }
   end
 
   def view_models_users

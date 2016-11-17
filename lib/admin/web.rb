@@ -607,6 +607,18 @@ module AdminUI
       send_file File.expand_path('stats.html', settings.public_folder)
     end
 
+    get '/tasks_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/tasks_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.tasks, params).items)
+    end
+
+    get '/tasks_view_model/:guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/tasks_view_model/#{params[:guid]}")
+      result = @view_models.task(params[:guid])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/users_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/users_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.users, params).items)
@@ -1030,6 +1042,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'stats.csv')
+    end
+
+    post '/tasks_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/tasks_view_model')
+      file = Download.download(request.body.read, 'tasks', @view_models.tasks)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'tasks.csv')
     end
 
     post '/users_view_model', auth: [:user] do
@@ -1776,6 +1796,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete space role: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/tasks/:task_guid/cancel', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/tasks/#{params[:task_guid]}/cancel")
+      begin
+        @operation.cancel_task(params[:task_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during cancel task: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during cancel task: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

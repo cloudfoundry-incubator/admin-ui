@@ -282,6 +282,12 @@ module AdminUI
             table:   :stacks,
             columns: [:created_at, :description, :guid, :id, :name, :updated_at]
           },
+          tasks:
+          {
+            db_uri:  ccdb_uri,
+            table:   :tasks,
+            columns: [:app_guid, :command, :created_at, :disk_in_mb, :droplet_guid, :failure_reason, :guid, :id, :memory_in_mb, :name, :sequence_id, :state, :updated_at]
+          },
           users_cc:
           {
             db_uri:  ccdb_uri,
@@ -501,6 +507,10 @@ module AdminUI
       invalidate_cache(:spaces_managers)
     end
 
+    def invalidate_tasks
+      invalidate_cache(:tasks)
+    end
+
     def invalidate_users_cc
       invalidate_cache(:users_cc)
     end
@@ -687,6 +697,10 @@ module AdminUI
 
     def stacks
       result_cache(:stacks)
+    end
+
+    def tasks
+      result_cache(:tasks)
     end
 
     def users_cc

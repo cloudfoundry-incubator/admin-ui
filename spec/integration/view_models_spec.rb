@@ -765,6 +765,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('stats_view_model')
     end
 
+    context 'returns connected tasks_view_model' do
+      let(:results)  { view_models.tasks }
+      let(:expected) { view_models_tasks }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected tasks_view_model detail' do
+      let(:results)  { view_models.task(cc_task[:guid]) }
+      let(:expected) { view_models_tasks_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected users_view_model' do
       let(:results)  { view_models.users }
       let(:expected) { view_models_users }

@@ -13,6 +13,14 @@ module AdminUI
       @testing     = testing
     end
 
+    def cancel_task(task_guid)
+      url = "v3/tasks/#{task_guid}/cancel"
+      @logger.debug("PUT #{url}")
+      @client.put_cc(url, '{}')
+      @cc.invalidate_tasks
+      @view_models.invalidate_tasks
+    end
+
     def create_organization(control_message)
       url = 'v2/organizations'
       @logger.debug("POST #{url}, #{control_message}")
@@ -46,6 +54,7 @@ module AdminUI
       @cc.invalidate_droplets
       @cc.invalidate_packages
       @cc.invalidate_processes
+      @cc.invalidate_tasks
       @varz.invalidate
       if recursive
         @cc.invalidate_service_bindings
@@ -53,6 +62,7 @@ module AdminUI
       end
       @view_models.invalidate_applications
       @view_models.invalidate_application_instances
+      @view_models.invalidate_tasks
     end
 
     def delete_application_instance(app_guid, instance_index)
@@ -146,6 +156,7 @@ module AdminUI
         @cc.invalidate_spaces_auditors
         @cc.invalidate_spaces_developers
         @cc.invalidate_spaces_managers
+        @cc.invalidate_tasks
         @varz.invalidate
         @view_models.invalidate_applications
         @view_models.invalidate_application_instances
@@ -159,6 +170,7 @@ module AdminUI
         @view_models.invalidate_space_quotas
         @view_models.invalidate_spaces
         @view_models.invalidate_space_roles
+        @view_models.invalidate_tasks
       end
       @view_models.invalidate_organizations
       @view_models.invalidate_organization_roles
@@ -340,6 +352,7 @@ module AdminUI
         @cc.invalidate_service_bindings
         @cc.invalidate_service_keys
         @cc.invalidate_service_brokers
+        @cc.invalidate_tasks
         @varz.invalidate
         @view_models.invalidate_applications
         @view_models.invalidate_application_instances
@@ -349,6 +362,7 @@ module AdminUI
         @view_models.invalidate_service_bindings
         @view_models.invalidate_service_keys
         @view_models.invalidate_service_brokers
+        @view_models.invalidate_tasks
       end
       @view_models.invalidate_security_groups_spaces
       @view_models.invalidate_spaces

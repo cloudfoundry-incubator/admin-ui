@@ -380,6 +380,14 @@ describe AdminUI::ViewModels do
       verify_disconnected_items(view_models.stacks)
     end
 
+    it 'returns nil task as expected' do
+      expect(view_models.task('bogus')).to be_nil
+    end
+
+    it 'returns zero tasks as expected' do
+      verify_disconnected_items(view_models.tasks)
+    end
+
     it 'returns nil user as expected' do
       expect(view_models.user('bogus')).to be_nil
     end

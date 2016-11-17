@@ -75,6 +75,7 @@ module CCHelper
     @cc_service_plan_visibilities_deleted        = false
     @cc_space_quota_definitions_deleted          = false
     @cc_spaces_deleted                           = false
+    @cc_tasks_deleted                            = false
     @cc_users_deleted                            = false
     @uaa_groups_deleted                          = false
     @uaa_users_deleted                           = false
@@ -112,6 +113,7 @@ module CCHelper
     cc_service_plan_visibility_stubs(config)
     cc_space_stubs(config)
     cc_space_quota_definition_stubs(config)
+    cc_task_stubs(config)
     cc_user_stubs(config)
 
     uaa_client_stubs(config)
@@ -122,6 +124,7 @@ module CCHelper
   def cc_clear_apps_cache_stub(config)
     cc_clear_service_bindings_cache_stub(config)
     cc_clear_route_mappings_cache_stub(config)
+    cc_clear_tasks_cache_stub(config)
     cc_clear_droplets_cache_stub(config)
     cc_clear_packages_cache_stub(config)
     cc_clear_processes_cache_stub(config)
@@ -306,6 +309,12 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM spaces')
 
     @cc_spaces_deleted = true
+  end
+
+  def cc_clear_tasks_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE from tasks')
+
+    @cc_tasks_deleted = true
   end
 
   def cc_clear_users_cache_stub(config)
@@ -1175,6 +1184,24 @@ module CCHelper
     }
   end
 
+  def cc_task
+    {
+      app_guid:       cc_app[:guid],
+      command:        'bogus command',
+      created_at:     unique_time('cc_task_created'),
+      disk_in_mb:     1_024,
+      droplet_guid:   cc_droplet[:guid],
+      failure_reason: 'Unable to request task to be run',
+      guid:           'task1',
+      id:             unique_id('cc_task'),
+      memory_in_mb:   128,
+      name:           'test_task',
+      sequence_id:    4,
+      state:          'RUNNING',
+      updated_at:     unique_time('cc_task_updated')
+    }
+  end
+
   def cc_user
     {
       active:           true,
@@ -1338,7 +1365,8 @@ module CCHelper
                [:service_plan_visibilities,        cc_service_plan_visibility],
                [:service_bindings,                 cc_service_binding_with_credentials],
                [:service_instance_operations,      cc_service_instance_operation],
-               [:service_keys,                     cc_service_key_with_credentials]
+               [:service_keys,                     cc_service_key_with_credentials],
+               [:tasks,                            cc_task]
              ]
 
     result << [:quota_definitions, cc_quota_definition2] if insert_second_quota_definition
@@ -2261,6 +2289,28 @@ module CCHelper
       else
         sql(config.ccdb_uri, 'UPDATE spaces SET space_quota_definition_id = NULL')
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_task_not_found
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 10_010,
+                     'detail' => 'Task not found',
+                     'title'  => 'CF-ResourceNotFound'
+                   }
+                 ])
+  end
+
+  def cc_task_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/tasks/#{cc_task[:guid]}/cancel", AdminUI::Utils::HTTP_PUT, anything, anything, anything, anything) do
+      if @cc_tasks_deleted
+        cc_task_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE tasks SET state = 'FAILED' WHERE guid = '#{cc_task[:guid]}'")
+        Created.new
       end
     end
   end

@@ -57,6 +57,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('ServiceInstances').displayed?).to be(true)
       expect(scroll_tab_into_view('ServiceBindings').displayed?).to be(true)
       expect(scroll_tab_into_view('ServiceKeys').displayed?).to be(true)
+      expect(scroll_tab_into_view('Tasks').displayed?).to be(true)
       expect(scroll_tab_into_view('OrganizationRoles').displayed?).to be(true)
       expect(scroll_tab_into_view('SpaceRoles').displayed?).to be(true)
       expect(scroll_tab_into_view('Clients').displayed?).to be(true)
@@ -353,12 +354,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 9,
                                  labels:          ['', '', 'Routes', 'Used', 'Reserved', 'Desired App States', 'App States', 'App Package States', 'Isolation Segments'],
-                                 colspans:        %w(1 16 3 6 2 2 2 3 3)
+                                 colspans:        %w(1 16 3 7 2 2 2 3 3)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 38,
-                                 labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Default Users', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Security Groups', 'Total', 'Used', 'Unused', 'Apps', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Started', 'Stopped', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed', 'Default Name', 'Default GUID', 'Related'],
+                                 expected_length: 39,
+                                 labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Default Users', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Security Groups', 'Total', 'Used', 'Unused', 'Apps', 'Instances', 'Services', 'Tasks', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Started', 'Stopped', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed', 'Default Name', 'Default GUID', 'Related'],
                                  colspans:        nil
                                }
                              ])
@@ -390,6 +391,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                '0',
                                '1',
                                @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})"),
+                               '1',
                                '1',
                                @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})"),
                                @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_disk)})"),
@@ -648,6 +650,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Total Apps',                     tag:   'a', value: '1' },
                               { label: 'Instances Used',                 tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})") },
                               { label: 'Services Used',                  tag:   'a', value: '1' },
+                              { label: 'Tasks Used',                     tag:   'a', value: '1' },
                               { label: 'Memory Used',                    tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})") },
                               { label: 'Disk Used',                      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_disk)})") },
                               { label: 'CPU Used',                       tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{used_cpu})") },
@@ -736,12 +739,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Organizations', 23, 'ServiceInstances', "#{cc_organization[:name]}/")
           end
 
+          it 'has tasks link' do
+            check_filter_link('Organizations', 24, 'Tasks', "#{cc_organization[:name]}/")
+          end
+
           it 'has default isolation segments link' do
-            check_filter_link('Organizations', 36, 'IsolationSegments', cc_organization[:default_isolation_segment_guid])
+            check_filter_link('Organizations', 37, 'IsolationSegments', cc_organization[:default_isolation_segment_guid])
           end
 
           it 'has organizations isolation segments link' do
-            check_filter_link('Organizations', 38, 'OrganizationsIsolationSegments', cc_organization[:guid])
+            check_filter_link('Organizations', 39, 'OrganizationsIsolationSegments', cc_organization[:guid])
           end
         end
       end
@@ -756,12 +763,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 9,
                                  labels:          ['', '', 'Routes', 'Used', 'Reserved', 'Desired App States', 'App States', 'App Package States', 'Isolation Segment'],
-                                 colspans:        %w(1 13 3 6 2 2 2 3 2)
+                                 colspans:        %w(1 13 3 7 2 2 2 3 2)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 34,
-                                 labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'SSH Allowed', 'Events', 'Events Target', 'Roles', 'Default Users', 'Space Quota', 'Private Service Brokers', 'Security Groups', 'Total', 'Used', 'Unused', 'Apps', 'Instances', 'Services', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Started', 'Stopped', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed', 'Name', 'GUID'],
+                                 expected_length: 35,
+                                 labels:          ['', 'Name', 'GUID', 'Target', 'Created', 'Updated', 'SSH Allowed', 'Events', 'Events Target', 'Roles', 'Default Users', 'Space Quota', 'Private Service Brokers', 'Security Groups', 'Total', 'Used', 'Unused', 'Apps', 'Instances', 'Services', 'Tasks', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Started', 'Stopped', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed', 'Name', 'GUID'],
                                  colspans:        nil
                                }
                              ])
@@ -790,6 +797,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                '0',
                                '1',
                                @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})"),
+                               '1',
                                '1',
                                @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})"),
                                @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_disk)})"),
@@ -927,10 +935,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           def check_space_isolation_segment
             begin
-              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[33]").text == '' }
+              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[34]").text == '' }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[33]").text).to eq('')
+            expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[34]").text).to eq('')
           end
 
           it 'SSH allows the selected space' do
@@ -1001,6 +1009,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Total Apps',              tag:   'a', value: '1' },
                               { label: 'Instances Used',          tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})") },
                               { label: 'Services Used',           tag:   'a', value: '1' },
+                              { label: 'Tasks Used',              tag:   'a', value: '1' },
                               { label: 'Memory Used',             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})") },
                               { label: 'Disk Used',               tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_disk)})") },
                               { label: 'CPU Used',                tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{used_cpu})") },
@@ -1076,8 +1085,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Spaces', 20, 'ServiceInstances', "#{cc_organization[:name]}/#{cc_space[:name]}")
           end
 
+          it 'has tasks link' do
+            check_filter_link('Spaces', 21, 'Tasks', "#{cc_organization[:name]}/#{cc_space[:name]}")
+          end
+
           it 'has isolation segments link' do
-            check_filter_link('Spaces', 33, 'IsolationSegments', cc_isolation_segment[:guid])
+            check_filter_link('Spaces', 34, 'IsolationSegments', cc_isolation_segment[:guid])
           end
         end
       end
@@ -1093,12 +1106,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 5,
                                  labels:          ['', '', 'Used', 'Reserved', ''],
-                                 colspans:        %w(1 18 3 2 1)
+                                 colspans:        %w(1 18 4 2 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 25,
-                                 labels:          ['', 'Name', 'GUID', 'Desired State', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'Diego', 'SSH Enabled', 'Docker Image', 'Stack', 'Buildpack', 'Buildpack GUID', 'Events', 'Instances', 'Route Mappings', 'Service Bindings', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
+                                 expected_length: 26,
+                                 labels:          ['', 'Name', 'GUID', 'Desired State', 'State', 'Package State', 'Staging Failed Reason', 'Created', 'Updated', 'Diego', 'SSH Enabled', 'Docker Image', 'Stack', 'Buildpack', 'Buildpack GUID', 'Events', 'Instances', 'Route Mappings', 'Service Bindings', 'Tasks', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -1123,6 +1136,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_stack[:name],
                                cc_buildpack[:name],
                                cc_buildpack[:guid],
+                               '1',
                                '1',
                                '1',
                                '1',
@@ -1404,6 +1418,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Instances',                  tag:   'a', value: '1' },
                               { label: 'Route Mappings',             tag:   'a', value: '1' },
                               { label: 'Service Bindings',           tag:   'a', value: '1' },
+                              { label: 'Tasks',                      tag:   'a', value: '1' },
                               { label: 'Memory Used',                tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_memory)})") },
                               { label: 'Disk Used',                  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(used_disk)})") },
                               { label: 'CPU Used',                   tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{used_cpu})") },
@@ -1450,12 +1465,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Applications', 23, 'ServiceBindings', cc_app[:guid])
           end
 
+          it 'has tasks link' do
+            check_filter_link('Applications', 24, 'Tasks', cc_app[:guid])
+          end
+
           it 'has spaces link' do
-            check_filter_link('Applications', 29, 'Spaces', cc_space[:guid])
+            check_filter_link('Applications', 30, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Applications', 31, 'Organizations', cc_organization[:guid])
+            check_filter_link('Applications', 32, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -2406,6 +2425,121 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has organizations link' do
             check_filter_link('ServiceKeys', 29, 'Organizations', cc_organization[:guid])
+          end
+        end
+      end
+
+      context 'Tasks' do
+        let(:tab_id)   { 'Tasks' }
+        let(:table_id) { 'TasksTable' }
+
+        it 'has a table' do
+          check_table_layout([
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='TasksTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                 expected_length: 4,
+                                 labels:          ['', '', 'Application', ''],
+                                 colspans:        %w(1 7 3 1)
+                               },
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='TasksTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
+                                 expected_length: 12,
+                                 labels:          ['', 'Name', 'GUID', 'State', 'Created', 'Updated', 'Memory', 'Disk', 'Name', 'GUID', 'Task Sequence', 'Target'],
+                                 colspans:        nil
+                               }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='TasksTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_task[:name],
+                             cc_task[:guid],
+                             cc_task[:state],
+                             cc_task[:created_at].to_datetime.rfc3339,
+                             cc_task[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatNumber(#{cc_task[:memory_in_mb]})"),
+                             @driver.execute_script("return Format.formatNumber(#{cc_task[:disk_in_mb]})"),
+                             cc_app[:name],
+                             cc_app[:guid],
+                             @driver.execute_script("return Format.formatNumber(#{cc_task[:sequence_id]})"),
+                             "#{cc_organization[:name]}/#{cc_space[:name]}"
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_TasksTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('TasksTable', cc_task[:guid])
+        end
+
+        context 'manage tasks' do
+          def check_task_canceled
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='TasksTable']/tbody/tr/td[4]").text == 'FAILED' }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='TasksTable']/tbody/tr/td[4]").text).to eq('FAILED')
+          end
+
+          it 'has a Stop button' do
+            expect(@driver.find_element(id: 'Buttons_TasksTable_0').text).to eq('Stop')
+          end
+
+          context 'Stop button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_TasksTable_0' }
+            end
+          end
+
+          it 'stops the task' do
+            check_first_row('TasksTable')
+            @driver.find_element(id: 'Buttons_TasksTable_0').click
+
+            confirm('Are you sure you want to stop the selected tasks?')
+
+            check_operation_result
+            check_task_canceled
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([
+                            { label: 'Name',                      tag: 'div', value: cc_task[:name] },
+                            { label: 'GUID',                      tag:   nil, value: cc_task[:guid] },
+                            { label: 'State',                     tag:   nil, value: cc_task[:state] },
+                            { label: 'Created',                   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_task[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',                   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_task[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Memory',                    tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_task[:memory_in_mb]})") },
+                            { label: 'Disk',                      tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_task[:disk_in_mb]})") },
+                            { label: 'Command',                   tag:   nil, value: cc_task[:command] },
+                            { label: 'Failure Reason',            tag:   nil, value: cc_task[:failure_reason] },
+                            { label: 'Application',               tag:   'a', value: cc_app[:name] },
+                            { label: 'Application GUID',          tag:   nil, value: cc_app[:guid] },
+                            { label: 'Application Task Sequence', tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_task[:sequence_id]})") },
+                            { label: 'Space',                     tag:   'a', value: cc_space[:name] },
+                            { label: 'Space GUID',                tag:   nil, value: cc_space[:guid] },
+                            { label: 'Organization',              tag:   'a', value: cc_organization[:name] },
+                            { label: 'Organization GUID',         tag:   nil, value: cc_organization[:guid] }
+                          ])
+          end
+
+          it 'has applications link' do
+            check_filter_link('Tasks', 9, 'Applications', cc_task[:app_guid])
+          end
+
+          it 'has spaces link' do
+            check_filter_link('Tasks', 12, 'Spaces', cc_space[:guid])
+          end
+
+          it 'has organizations link' do
+            check_filter_link('Tasks', 14, 'Organizations', cc_organization[:guid])
           end
         end
       end

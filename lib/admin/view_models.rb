@@ -42,6 +42,7 @@ require_relative 'view_models/space_roles_view_model'
 require_relative 'view_models/spaces_view_model'
 require_relative 'view_models/stacks_view_model'
 require_relative 'view_models/stats_view_model'
+require_relative 'view_models/tasks_view_model'
 require_relative 'view_models/users_view_model'
 
 module AdminUI
@@ -95,6 +96,7 @@ module AdminUI
           spaces:                           { clazz: AdminUI::SpacesViewModel },
           stacks:                           { clazz: AdminUI::StacksViewModel },
           stats:                            { clazz: AdminUI::StatsViewModel },
+          tasks:                            { clazz: AdminUI::TasksViewModel },
           users:                            { clazz: AdminUI::UsersViewModel }
         }
 
@@ -258,6 +260,10 @@ module AdminUI
 
     def invalidate_stats
       invalidate_cache(:stats)
+    end
+
+    def invalidate_tasks
+      invalidate_cache(:tasks)
     end
 
     def invalidate_users
@@ -601,6 +607,14 @@ module AdminUI
 
     def stats
       result_cache(:stats)
+    end
+
+    def task(guid)
+      details(:tasks, guid)
+    end
+
+    def tasks
+      result_cache(:tasks)
     end
 
     def user(guid)

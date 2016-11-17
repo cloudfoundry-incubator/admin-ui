@@ -239,6 +239,23 @@ describe AdminUI::Admin do
       http.request(request)
     end
 
+    shared_examples 'common cancel task' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/tasks/task1/cancel')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'cancel task via http' do
+      it_behaves_like('common cancel task')
+    end
+
+    context 'cancel task via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common cancel task')
+    end
+
     shared_examples 'common create isolation segment' do
       it 'returns failure code due to disconnection' do
         response = post('/isolation_segments', '{"name":"bogus"}')
@@ -1498,6 +1515,14 @@ describe AdminUI::Admin do
         verify_not_found('/stacks_view_model/stack1')
       end
 
+      it '/tasks_view_model succeeds' do
+        verify_disconnected_view_model_items('/tasks_view_model')
+      end
+
+      it '/tasks_view_model/:guid returns not found' do
+        verify_not_found('/tasks_view_model/task1')
+      end
+
       it '/users_view_model succeeds' do
         verify_disconnected_view_model_items('/users_view_model')
       end
@@ -1889,6 +1914,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/stacks_view_model/stack1')
       end
 
+      it '/tasks_view_model redirects as expected' do
+        get_redirects_as_expected('/tasks_view_model')
+      end
+
+      it '/tasks_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/tasks_view_model/stack1')
+      end
+
       it '/users_view_model redirects as expected' do
         get_redirects_as_expected('/users_view_model')
       end
@@ -2043,6 +2076,10 @@ describe AdminUI::Admin do
 
       it 'deletes /spaces/:guid/:role/:guid redirects as expected' do
         delete_redirects_as_expected('/spaces/space1/auditors/user1')
+      end
+
+      it 'deletes /tasks/:guid/cancel redirects as expected' do
+        delete_redirects_as_expected('/tasks/task1/cancel')
       end
 
       it 'deletes /users/:guid redirects as expected' do
@@ -2219,6 +2256,10 @@ describe AdminUI::Admin do
 
       it 'posts /stats_view_model redirects as expected' do
         post_redirects_as_expected('/stats_view_model')
+      end
+
+      it 'posts /tasks_view_model redirects as expected' do
+        post_redirects_as_expected('/tasks_view_model')
       end
 
       it 'posts /users_view_model redirects as expected' do
