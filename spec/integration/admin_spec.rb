@@ -2029,7 +2029,8 @@ describe AdminUI::Admin, type: :integration do
       let(:retrieved) { get_json('/settings') }
       it 'retrieves' do
         expect(retrieved).to eq('admin'                => true,
-                                'build'                => '2222',
+                                'api_version'          => cc_info_api_version,
+                                'build'                => cc_info_build,
                                 'cloud_controller_uri' => cloud_controller_uri,
                                 'table_height'         => table_height,
                                 'table_page_size'      => table_page_size,

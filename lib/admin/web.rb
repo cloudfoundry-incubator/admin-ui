@@ -450,6 +450,7 @@ module AdminUI
     get '/settings', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/settings')
       Yajl::Encoder.encode(admin:                session[:admin],
+                           api_version:          @client.api_version,
                            build:                @client.build,
                            cloud_controller_uri: @config.cloud_controller_uri,
                            table_height:         @config.table_height,

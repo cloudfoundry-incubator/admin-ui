@@ -44,7 +44,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       rescue Selenium::WebDriver::Error::TimeOutError
       end
       expect(@driver.find_element(class_name: 'cloudControllerText').text).to eq(cloud_controller_uri)
-      expect(@driver.find_element(class_name: 'build').text).to eq("Build #{cc_info['build']}")
+      expect(@driver.find_element(class_name: 'build').text).to eq("Build #{cc_info_build}")
+      expect(@driver.find_element(class_name: 'apiVersion').text).to eq("API Version #{cc_info_api_version}")
     end
 
     it 'has tabs' do

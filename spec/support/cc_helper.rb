@@ -672,13 +672,26 @@ module CCHelper
     }
   end
 
+  def cc_info_api_version
+    '2.65.0'
+  end
+
+  def cc_info_build
+    '2222'
+  end
+
+  def cc_info_token_endpoint
+    'http://token_endpoint.com'
+  end
+
   # /v2/info returned from the system is not symbols
   def cc_info
     {
+      'api_version'              => cc_info_api_version,
       'authorization_endpoint'   => 'http://authorization_endpoint.com',
-      'build'                    => '2222',
+      'build'                    => cc_info_build,
       'doppler_logging_endpoint' => 'wss://doppler_logging_endpoint.com',
-      'token_endpoint'           => 'http://token_endpoint.com'
+      'token_endpoint'           => cc_info_token_endpoint
     }
   end
 
@@ -1706,7 +1719,7 @@ module CCHelper
       OK.new(cc_info)
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info['token_endpoint']}/oauth/token", AdminUI::Utils::HTTP_POST, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/oauth/token", AdminUI::Utils::HTTP_POST, anything, anything, anything, anything) do
       OK.new(uaa_oauth)
     end
   end
@@ -2337,7 +2350,7 @@ module CCHelper
   end
 
   def uaa_client_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info['token_endpoint']}/oauth/clients/#{uaa_client[:client_id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/oauth/clients/#{uaa_client[:client_id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything) do
       if @uaa_clients_deleted
         uaa_client_not_found
       else
@@ -2352,7 +2365,7 @@ module CCHelper
   end
 
   def uaa_group_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info['token_endpoint']}/Groups/#{uaa_group[:id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/Groups/#{uaa_group[:id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything) do
       if @uaa_groups_deleted
         uaa_group_not_found
       else
@@ -2367,7 +2380,7 @@ module CCHelper
   end
 
   def uaa_user_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info['token_endpoint']}/Users/#{uaa_user[:id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/Users/#{uaa_user[:id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything) do
       if @uaa_users_deleted
         uaa_user_not_found
       else

@@ -44,23 +44,15 @@ html.waiting *
 .build
 {
     float: left;
-    padding: 7px 20px 0px 0px;
+    padding: 7px 10px 0px 0px;
     font-size: .8em;
 }
 
-.disconnected
+.apiVersion
 {
     float: left;
-    padding: 4px 10px;
-    font-size: .9em;
-    color: rgb(255, 30, 30);
-    display: none;
-}
-
-.disconnectedImage
-{
-    position: relative;
-    top: 2px;
+    padding: 7px 10px 0px 0px;
+    font-size: .8em;
 }
 
 .userContainer

@@ -10,6 +10,11 @@ module AdminUI
       @logger = logger
     end
 
+    def api_version
+      info
+      @api_version
+    end
+
     def build
       info
       @build
@@ -196,6 +201,9 @@ module AdminUI
       raise "Unable to fetch from #{get_cc_url('/v2/info')}" unless response.is_a?(Net::HTTPOK)
 
       body_json = Yajl::Parser.parse(response.body)
+
+      @api_version = body_json['api_version']
+      raise "Information retrieved from #{get_cc_url('/v2/info')} does not include api_version" if @api_version.nil?
 
       @build = body_json['build']
       raise "Information retrieved from #{get_cc_url('/v2/info')} does not include build" if @build.nil?
