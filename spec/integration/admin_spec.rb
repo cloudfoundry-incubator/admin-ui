@@ -224,7 +224,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and applications in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/applications_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/applications_view_model']], true)
     end
 
     it 'renames an application' do
@@ -289,7 +289,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and application instances request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/application_instances_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/application_instances_view_model']], true)
     end
 
     it 'deletes an application instance' do
@@ -342,7 +342,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and buildpack request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/buildpacks_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/buildpacks_view_model']], true)
     end
 
     it 'renames a buildpack' do
@@ -390,7 +390,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and cells request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/cells_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/cells_view_model']], true)
     end
 
     it 'deletes a cell' do
@@ -413,7 +413,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and clients request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/clients_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/clients_view_model']], true)
     end
 
     it 'deletes a client' do
@@ -436,7 +436,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and cloud controllers request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/cloud_controllers_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/cloud_controllers_view_model']], true)
     end
 
     it 'deletes a cloud controller' do
@@ -459,7 +459,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and deas request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/deas_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/deas_view_model']], true)
     end
 
     it 'deletes a dea' do
@@ -488,7 +488,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and domains request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/domains_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/domains_view_model']], true)
     end
 
     it 'deletes a domain' do
@@ -521,7 +521,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and feature flag request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/feature_flags_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/feature_flags_view_model']], true)
     end
 
     it 'disables feature flag' do
@@ -550,7 +550,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and gateways request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/gateways_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/gateways_view_model']], true)
     end
 
     it 'deletes a gateway' do
@@ -573,7 +573,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and groups request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/groups_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/groups_view_model']], true)
     end
 
     it 'deletes a group' do
@@ -596,7 +596,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and health managers request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/health_managers_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/health_managers_view_model']], true)
     end
 
     it 'deletes a health manager' do
@@ -631,7 +631,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and isolation segments request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/isolation_segments_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/isolation_segments_view_model']], true)
     end
 
     it 'creates an isolation segment' do
@@ -752,7 +752,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and organizations isolation segments request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/organizations_isolation_segments_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/organizations_isolation_segments_view_model']], true)
     end
 
     it 'deletes an organization isolation segment' do
@@ -775,7 +775,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and organization roles request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/organization_roles_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/organization_roles_view_model']], true)
     end
 
     it 'deletes an organization role' do
@@ -804,7 +804,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and quotas request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/quotas_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/quotas_view_model']], true)
     end
 
     it 'renames a quota' do
@@ -837,7 +837,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and routes request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/routes_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/routes_view_model']], true)
     end
 
     it 'deletes a route' do
@@ -864,7 +864,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and routes request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/route_mappings_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/route_mappings_view_model']], true)
     end
 
     it 'deletes a route mapping' do
@@ -887,7 +887,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and routers request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/routers_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/routers_view_model']], true)
     end
 
     context 'varz router' do
@@ -949,7 +949,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and security groups request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/security_groups_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/security_groups_view_model']], true)
     end
 
     it 'renames a security_group' do
@@ -996,7 +996,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and security groups request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/security_groups_spaces_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/security_groups_spaces_view_model']], true)
     end
 
     it 'deletes a security group space' do
@@ -1025,7 +1025,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and services request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/services_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/services_view_model']], true)
     end
 
     it 'deletes a service' do
@@ -1052,7 +1052,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and service bindings request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_bindings_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/service_bindings_view_model']], true)
     end
 
     it 'deletes a service binding' do
@@ -1081,7 +1081,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and service brokers request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_brokers_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/service_brokers_view_model']], true)
     end
 
     it 'renames a service broker' do
@@ -1126,7 +1126,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and service instances request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_instances_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/service_instances_view_model']], true)
     end
 
     it 'renames a service instance' do
@@ -1161,7 +1161,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and service keys request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_keys_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/service_keys_view_model']], true)
     end
 
     it 'deletes a service key' do
@@ -1196,7 +1196,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and service plan request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_plans_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/service_plans_view_model']], true)
     end
 
     it 'makes service plan private' do
@@ -1229,7 +1229,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and service plan visibility request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/service_plan_visibilities_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/service_plan_visibilities_view_model']], true)
     end
 
     it 'deletes a service plan visibility' do
@@ -1282,7 +1282,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and space request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/spaces_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/spaces_view_model']], true)
     end
 
     it 'renames a space' do
@@ -1335,7 +1335,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and quotas request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/space_quotas_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/space_quotas_view_model']], true)
     end
 
     it 'renames a space quota' do
@@ -1400,7 +1400,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and space roles request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/space_roles_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/space_roles_view_model']], true)
     end
 
     it 'deletes a space role' do
@@ -1423,7 +1423,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and tasks request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/tasks_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/tasks_view_model']], true)
     end
 
     it 'cancels a task' do
@@ -1446,7 +1446,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'has user name and users request in the log file' do
-      verify_sys_log_entries([['authenticated', 'is admin? true'], ['get', '/users_view_model']], true)
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/users_view_model']], true)
     end
 
     it 'deletes a user' do

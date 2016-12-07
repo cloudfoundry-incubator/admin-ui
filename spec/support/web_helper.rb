@@ -93,7 +93,7 @@ shared_context :web_context do
     end
     chart = @driver.find_element(id: "#{id}Chart")
     expect(chart.displayed?).to be(true)
-    rows = chart.find_elements(xpath: "//table[@class='jqplot-table-legend']/tbody/tr")
+    rows = chart.find_elements(xpath: "//table[@class='jqplot-table-legend']/tr")
     expect(rows[0].text).to eq('Organizations')
     expect(rows[1].text).to eq('Spaces')
     expect(rows[2].text).to eq('Users')

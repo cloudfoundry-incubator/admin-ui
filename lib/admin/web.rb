@@ -33,7 +33,11 @@ module AdminUI
 
     set(:auth) do |*roles|
       condition do
-        unless session[:username] && (!roles.include?(:admin) || session[:admin])
+        unless session[:username] &&
+               ((session[:role] == 'admin') ||
+                (session[:role] == 'user' && !roles.include?(:admin)) ||
+                (!roles.include?(:admin) && !roles.include?(:user))
+               )
           env['rack.session.options'][:expire_after] = @config.ssl_max_session_idle_length.to_i if @config.secured_client_connection
           @logger.error('Authorization failure, redirecting to login...')
           redirect_to_login
@@ -309,11 +313,11 @@ module AdminUI
         user_name, user_type = @login.login_user(code, local_redirect_uri(request))
 
         if AdminUI::Login::LOGIN_ADMIN == user_type
-          authenticated(user_name, true)
+          authenticated(user_name, 'admin', true)
         elsif AdminUI::Login::LOGIN_USER == user_type
-          authenticated(user_name, false)
+          authenticated(user_name, 'user', true)
         else
-          redirect "scopeError.html?user=#{user_name}", 303
+          authenticated(user_name, 'anyone', false)
         end
       rescue => error
         @logger.error("Error during /login: #{error.inspect}")
@@ -322,7 +326,7 @@ module AdminUI
       end
     end
 
-    get '/logout', auth: [:user] do
+    get '/logout', auth: [:anyone] do
       begin
         @logger.info_user(session[:username], 'get', '/logout')
         session.destroy
@@ -449,7 +453,7 @@ module AdminUI
 
     get '/settings', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/settings')
-      Yajl::Encoder.encode(admin:                session[:admin],
+      Yajl::Encoder.encode(admin:                session[:role] == 'admin',
                            api_version:          @client.api_version,
                            build:                @client.build,
                            cloud_controller_uri: @config.cloud_controller_uri,
@@ -1842,13 +1846,17 @@ module AdminUI
 
     private
 
-    def authenticated(username, admin)
+    def authenticated(username, role, authorized)
+      @logger.info_user(username, 'authenticated', "role #{role}, authorized #{authorized}")
+
       session[:username] = username
+      session[:role]     = role
 
-      session[:admin] = admin
-
-      @logger.info_user(username, 'authenticated', "is admin? #{admin}")
-      redirect 'application.html', 303
+      if authorized
+        redirect 'application.html', 303
+      else
+        redirect "scopeError.html?user=#{username}", 303
+      end
     end
 
     def redirect_to_login
