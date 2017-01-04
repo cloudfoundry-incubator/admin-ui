@@ -154,7 +154,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :processes,
-            columns: [:app_guid, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :enable_ssh, :file_descriptors, :guid, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :package_updated_at, :ports, :production, :state, :type, :updated_at, :version]
+            columns: [:app_guid, :command, :created_at, :detected_buildpack, :diego, :disk_quota, :enable_ssh, :file_descriptors, :guid, :health_check_http_endpoint, :health_check_timeout, :health_check_type, :id, :instances, :memory, :metadata, :package_updated_at, :ports, :production, :state, :type, :updated_at, :version]
           },
           quota_definitions:
           {
@@ -232,7 +232,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_plans,
-            columns: [:active, :created_at, :description, :extra, :free, :guid, :id, :name, :public, :service_id, :unique_id, :updated_at]
+            columns: [:active, :bindable, :created_at, :description, :extra, :free, :guid, :id, :name, :public, :service_id, :unique_id, :updated_at]
           },
           service_plan_visibilities:
           {

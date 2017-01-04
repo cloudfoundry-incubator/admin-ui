@@ -1201,12 +1201,12 @@ describe AdminUI::Admin, type: :integration do
 
     it 'makes service plan private' do
       make_service_plan_public
-      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][7] }.from(true).to(false)
+      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][9] }.from(true).to(false)
     end
 
     it 'makes service plan public' do
       make_service_plan_private
-      expect { make_service_plan_public }.to change { get_json('/service_plans_view_model')['items']['items'][0][7] }.from(false).to(true)
+      expect { make_service_plan_public }.to change { get_json('/service_plans_view_model')['items']['items'][0][9] }.from(false).to(true)
     end
 
     it 'deletes a service plan' do

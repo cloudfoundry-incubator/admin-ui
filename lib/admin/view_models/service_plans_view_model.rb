@@ -125,9 +125,10 @@ module AdminUI
           row.push(nil)
         end
 
+        row.push(service_plan[:bindable])
+        row.push(service_plan[:free])
         row.push(service_plan[:active])
         row.push(service_plan[:public])
-        row.push(service_plan[:free])
 
         display_name = nil
         if service_plan[:extra]
@@ -193,8 +194,8 @@ module AdminUI
             row.push(nil)
           end
 
-          row.push(service[:active])
           row.push(service[:bindable])
+          row.push(service[:active])
         else
           row.push(nil, nil, nil, nil, nil, nil, nil)
         end
@@ -223,7 +224,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..25).to_a, (1..25).to_a - [10, 11, 12, 13, 14])
+      result(true, items, hash, (1..26).to_a, (1..26).to_a - [11, 12, 13, 14, 15])
     end
   end
 end

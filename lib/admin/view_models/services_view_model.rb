@@ -154,9 +154,9 @@ module AdminUI
           row.push(nil)
         end
 
-        row.push(service[:active])
         row.push(service[:bindable])
         row.push(service[:plan_updateable])
+        row.push(service[:active])
 
         provider_display_name = nil
         display_name          = nil

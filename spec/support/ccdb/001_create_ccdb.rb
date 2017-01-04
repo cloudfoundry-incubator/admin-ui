@@ -418,6 +418,7 @@ Sequel.migration do
       String :encrypted_docker_credentials_json, :text=>true
       String :docker_salt, :text=>true
       String :ports, :text=>true
+      String :health_check_http_endpoint, :text=>true
       
       index [:created_at], :name=>:apps_created_at_index
       index [:diego], :name=>:apps_diego_index
@@ -600,6 +601,13 @@ Sequel.migration do
       index [:name], :unique=>true
     end
     
+    create_table(:staging_security_groups_spaces, :ignore_index_errors=>true) do
+      foreign_key :staging_security_group_id, :security_groups, :null=>false, :key=>[:id]
+      foreign_key :staging_space_id, :spaces, :null=>false, :key=>[:id]
+      
+      index [:staging_security_group_id, :staging_space_id], :name=>:staging_security_groups_spaces_ids, :unique=>true
+    end
+    
     create_table(:users, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -726,6 +734,7 @@ Sequel.migration do
       String :unique_id, :text=>true, :null=>false
       TrueClass :public, :default=>true
       TrueClass :active, :default=>true
+      TrueClass :bindable
       
       index [:created_at]
       index [:guid], :unique=>true

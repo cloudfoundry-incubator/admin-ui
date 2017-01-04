@@ -114,9 +114,9 @@ module AdminUI
             row.push(nil)
           end
 
+          row.push(service_plan[:free])
           row.push(service_plan[:active])
           row.push(service_plan[:public])
-          row.push(service_plan[:free])
         else
           row.push(nil, nil, nil, nil, nil, nil, nil, nil)
         end

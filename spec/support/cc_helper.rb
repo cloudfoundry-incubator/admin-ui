@@ -815,28 +815,29 @@ module CCHelper
 
   def cc_process
     {
-      app_guid:             cc_app[:guid],
-      command:              'node test.js',
-      created_at:           unique_time('cc_process_created'),
-      detected_buildpack:   cc_buildpack[:name],
-      diego:                true,
-      disk_quota:           1024,
-      enable_ssh:           true,
-      file_descriptors:     16_384,
-      guid:                 'process1',
-      health_check_timeout: nil,
-      health_check_type:    'port',
-      id:                   unique_id('cc_process'),
-      instances:            1,
-      memory:               128,
-      metadata:             '{}',
-      package_updated_at:   unique_time('cc_process_package_updated'),
-      ports:                '"[8081]"',
-      production:           true,
-      state:                'STARTED',
-      type:                 'web',
-      updated_at:           unique_time('cc_process_updated'),
-      version:              '87dc4122-8d26-4801-a98f-87d97cc76976'
+      app_guid:                   cc_app[:guid],
+      command:                    'node test.js',
+      created_at:                 unique_time('cc_process_created'),
+      detected_buildpack:         cc_buildpack[:name],
+      diego:                      true,
+      disk_quota:                 1024,
+      enable_ssh:                 true,
+      file_descriptors:           16_384,
+      guid:                       'process1',
+      health_check_http_endpoint: 'http://health_check_http_endpoint.com',
+      health_check_timeout:       5,
+      health_check_type:          'http',
+      id:                         unique_id('cc_process'),
+      instances:                  1,
+      memory:                     128,
+      metadata:                   '{}',
+      package_updated_at:         unique_time('cc_process_package_updated'),
+      ports:                      '"[8081]"',
+      production:                 true,
+      state:                      'STARTED',
+      type:                       'web',
+      updated_at:                 unique_time('cc_process_updated'),
+      version:                    '87dc4122-8d26-4801-a98f-87d97cc76976'
     }
   end
 
@@ -1078,6 +1079,7 @@ module CCHelper
   def cc_service_plan
     {
       active:      true,
+      bindable:    true,
       created_at:  unique_time('cc_service_plan_created'),
       description: 'TestServicePlan description',
       extra:       "{\"displayName\":\"#{cc_service_plan_display_name}\",\"bullets\":[\"bullet1\",\"bullet2\"]}",

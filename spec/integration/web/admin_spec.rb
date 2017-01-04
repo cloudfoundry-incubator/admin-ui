@@ -1902,12 +1902,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 7,
                                  labels:          ['', 'Service Instance', 'Service Instance Last Operation', 'Service Plan', 'Service', 'Service Broker', ''],
-                                 colspans:        %w(1 9 4 8 7 4 1)
+                                 colspans:        %w(1 9 4 9 7 4 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 34,
-                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'User Provided', 'Drain', 'Events', 'Service Bindings', 'Service Keys', 'Type', 'State', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
+                                 expected_length: 35,
+                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'User Provided', 'Drain', 'Events', 'Service Bindings', 'Service Keys', 'Type', 'State', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Free', 'Active', 'Public', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -1933,16 +1933,17 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_plan[:unique_id],
                              cc_service_plan[:created_at].to_datetime.rfc3339,
                              cc_service_plan[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:bindable]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
-                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              cc_service[:label],
                              cc_service[:guid],
                              cc_service[:unique_id],
                              cc_service[:created_at].to_datetime.rfc3339,
                              cc_service[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
                              cc_service_broker[:name],
                              cc_service_broker[:guid],
                              cc_service_broker[:created_at].to_datetime.rfc3339,
@@ -2061,16 +2062,17 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Plan Unique ID',                                    tag:   nil, value: cc_service_plan[:unique_id] },
                             { label: 'Service Plan Created',                                      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Plan Updated',                                      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Plan Bindable',                                     tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:bindable]})") },
+                            { label: 'Service Plan Free',                                         tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                             { label: 'Service Plan Active',                                       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
                             { label: 'Service Plan Public',                                       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
-                            { label: 'Service Plan Free',                                         tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                             { label: 'Service Label',                                             tag:   'a', value: cc_service[:label] },
                             { label: 'Service GUID',                                              tag:   nil, value: cc_service[:guid] },
                             { label: 'Service Unique ID',                                         tag:   nil, value: cc_service[:unique_id] },
                             { label: 'Service Created',                                           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Updated',                                           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
-                            { label: 'Service Active',                                            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
                             { label: 'Service Bindable',                                          tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})") },
+                            { label: 'Service Active',                                            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
                             { label: 'Service Broker Name',                                       tag:   'a', value: cc_service_broker[:name] },
                             { label: 'Service Broker GUID',                                       tag:   nil, value: cc_service_broker[:guid] },
                             { label: 'Service Broker Created',                                    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
@@ -2099,19 +2101,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has services link' do
-            check_filter_link('ServiceInstances', 26, 'Services', cc_service[:guid])
+            check_filter_link('ServiceInstances', 27, 'Services', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('ServiceInstances', 33, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('ServiceInstances', 34, 'ServiceBrokers', cc_service_broker[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('ServiceInstances', 37, 'Spaces', cc_space[:guid])
+            check_filter_link('ServiceInstances', 38, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceInstances', 39, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceInstances', 40, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -2132,7 +2134,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                  expected_length: 31,
-                                 labels:          ['', 'GUID', 'Created', 'Updated', 'Drain', 'Events', 'Name', 'GUID', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
+                                 labels:          ['', 'GUID', 'Created', 'Updated', 'Drain', 'Events', 'Name', 'GUID', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Free', 'Active', 'Public', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2156,9 +2158,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_plan[:unique_id],
                              cc_service_plan[:created_at].to_datetime.rfc3339,
                              cc_service_plan[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
-                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              cc_service[:label],
                              cc_service[:guid],
                              cc_service[:unique_id],
@@ -2223,9 +2225,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Plan Unique ID',           tag:   nil, value: cc_service_plan[:unique_id] },
                             { label: 'Service Plan Created',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Plan Updated',             tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Plan Free',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                             { label: 'Service Plan Active',              tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
                             { label: 'Service Plan Public',              tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
-                            { label: 'Service Plan Free',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                             { label: 'Service Label',                    tag:   'a', value: cc_service[:label] },
                             { label: 'Service GUID',                     tag:   nil, value: cc_service[:guid] },
                             { label: 'Service Unique ID',                tag:   nil, value: cc_service[:unique_id] },
@@ -2293,7 +2295,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceKeysTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                  expected_length: 29,
-                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Events', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
+                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Events', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Free', 'Active', 'Public', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2315,9 +2317,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_plan[:unique_id],
                              cc_service_plan[:created_at].to_datetime.rfc3339,
                              cc_service_plan[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
-                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              cc_service[:label],
                              cc_service[:guid],
                              cc_service[:unique_id],
@@ -2380,9 +2382,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Plan Unique ID',   tag:   nil, value: cc_service_plan[:unique_id] },
                             { label: 'Service Plan Created',     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Plan Updated',     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Plan Free',        tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                             { label: 'Service Plan Active',      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
                             { label: 'Service Plan Public',      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
-                            { label: 'Service Plan Free',        tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                             { label: 'Service Label',            tag:   'a', value: cc_service[:label] },
                             { label: 'Service GUID',             tag:   nil, value: cc_service[:guid] },
                             { label: 'Service Unique ID',        tag:   nil, value: cc_service[:unique_id] },
@@ -4290,7 +4292,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[4]/div/div/table/thead/tr[2]/th"),
                                  expected_length: 23,
-                                 labels:          ['', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Bindable', 'Plan Updateable', 'Provider Display Name', 'Display Name', 'Requires', 'Events', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Name', 'GUID', 'Created', 'Updated'],
+                                 labels:          ['', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Plan Updateable', 'Active', 'Provider Display Name', 'Display Name', 'Requires', 'Events', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Name', 'GUID', 'Created', 'Updated'],
                                  colspans:        nil
                                }
                              ])
@@ -4303,9 +4305,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service[:unique_id],
                              cc_service[:created_at].to_datetime.rfc3339,
                              cc_service[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service[:plan_updateable]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
                              cc_service_provider_display_name,
                              cc_service_display_name,
                              Yajl::Parser.parse(cc_service[:requires]).sort.join("\n"),
@@ -4382,9 +4384,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Unique ID',             tag:   nil, value: cc_service[:unique_id] },
                             { label: 'Service Created',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Updated',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
-                            { label: 'Service Active',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
                             { label: 'Service Bindable',              tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})") },
                             { label: 'Service Plan Updateable',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:plan_updateable]})") },
+                            { label: 'Service Active',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
                             { label: 'Service Description',           tag:   nil, value: cc_service[:description] },
                             { label: 'Service Requires',              tag:   nil, value: service_requires_json[0] },
                             { label: 'Service Requires',              tag:   nil, value: service_requires_json[1] },
@@ -4452,12 +4454,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Service Plan', 'Service', 'Service Broker'],
-                                 colspans:        %w(1 14 7 4)
+                                 colspans:        %w(1 15 7 4)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 26,
-                                 labels:          ['', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Display Name', 'Events', 'Visible Organizations', 'Service Instances', 'Service Bindings', 'Service Keys', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated'],
+                                 expected_length: 27,
+                                 labels:          ['', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Free', 'Active', 'Public', 'Display Name', 'Events', 'Visible Organizations', 'Service Instances', 'Service Bindings', 'Service Keys', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Active', 'Name', 'GUID', 'Created', 'Updated'],
                                  colspans:        nil
                                }
                              ])
@@ -4470,9 +4472,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_plan[:unique_id],
                              cc_service_plan[:created_at].to_datetime.rfc3339,
                              cc_service_plan[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:bindable]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
-                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              cc_service_plan_display_name,
                              '1',
                              '1',
@@ -4484,8 +4487,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service[:unique_id],
                              cc_service[:created_at].to_datetime.rfc3339,
                              cc_service[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
                              cc_service_broker[:name],
                              cc_service_broker[:guid],
                              cc_service_broker[:created_at].to_datetime.rfc3339,
@@ -4513,7 +4516,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[8]").text == expect_state }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[8]").text).to eq(expect_state)
+            expect(@driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[10]").text).to eq(expect_state)
           end
 
           it 'has a Public button' do
@@ -4573,9 +4576,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Plan Unique ID',    tag:   nil, value: cc_service_plan[:unique_id] },
                             { label: 'Service Plan Created',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Plan Updated',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Plan Bindable',     tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:bindable]})") },
+                            { label: 'Service Plan Free',         tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                             { label: 'Service Plan Active',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
                             { label: 'Service Plan Public',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
-                            { label: 'Service Plan Free',         tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                             { label: 'Service Plan Description',  tag:   nil, value: cc_service_plan[:description] },
                             { label: 'Service Plan Display Name', tag:   nil, value: service_plan_extra_json['displayName'] },
                             { label: 'Service Plan Bullet',       tag:   nil, value: service_plan_extra_json['bullets'][0] },
@@ -4590,8 +4594,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Unique ID',         tag:   nil, value: cc_service[:unique_id] },
                             { label: 'Service Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
-                            { label: 'Service Active',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
                             { label: 'Service Bindable',          tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})") },
+                            { label: 'Service Active',            tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
                             { label: 'Service Broker Name',       tag:   'a', value: cc_service_broker[:name] },
                             { label: 'Service Broker GUID',       tag:   nil, value: cc_service_broker[:guid] },
                             { label: 'Service Broker Created',    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
@@ -4600,31 +4604,31 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('ServicePlans', 12, 'Events', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 13, 'Events', cc_service_plan[:guid])
           end
 
           it 'has service plan visibilities link' do
-            check_filter_link('ServicePlans', 13, 'ServicePlanVisibilities', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 14, 'ServicePlanVisibilities', cc_service_plan[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('ServicePlans', 14, 'ServiceInstances', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 15, 'ServiceInstances', cc_service_plan[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('ServicePlans', 15, 'ServiceBindings', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 16, 'ServiceBindings', cc_service_plan[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('ServicePlans', 16, 'ServiceKeys', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 17, 'ServiceKeys', cc_service_plan[:guid])
           end
 
           it 'has services link' do
-            check_filter_link('ServicePlans', 17, 'Services', cc_service[:guid])
+            check_filter_link('ServicePlans', 18, 'Services', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('ServicePlans', 24, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('ServicePlans', 25, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end
@@ -4640,12 +4644,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicePlanVisibilitiesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 6,
                                  labels:          ['', 'Service Plan Visibility', 'Service Plan', 'Service', 'Service Broker', 'Organization'],
-                                 colspans:        %w(1 4 8 7 4 4)
+                                 colspans:        %w(1 4 9 7 4 4)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicePlanVisibilitiesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 28,
-                                 labels:          ['', 'GUID', 'Created', 'Updated', 'Events', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Public', 'Free', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Bindable', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Created', 'Updated'],
+                                 expected_length: 29,
+                                 labels:          ['', 'GUID', 'Created', 'Updated', 'Events', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Free', 'Active', 'Public', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Created', 'Updated'],
                                  colspans:        nil
                                }
                              ])
@@ -4662,16 +4666,17 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_plan[:unique_id],
                              cc_service_plan[:created_at].to_datetime.rfc3339,
                              cc_service_plan[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:bindable]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
-                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              cc_service[:label],
                              cc_service[:guid],
                              cc_service[:unique_id],
                              cc_service[:created_at].to_datetime.rfc3339,
                              cc_service[:updated_at].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
                              cc_service_broker[:name],
                              cc_service_broker[:guid],
                              cc_service_broker[:created_at].to_datetime.rfc3339,
@@ -4726,16 +4731,17 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Plan Unique ID',          tag:   nil, value: cc_service_plan[:unique_id] },
                             { label: 'Service Plan Created',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Plan Updated',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Plan Bindable',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:bindable]})") },
+                            { label: 'Service Plan Free',               tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                             { label: 'Service Plan Active',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
                             { label: 'Service Plan Public',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
-                            { label: 'Service Plan Free',               tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                             { label: 'Service Label',                   tag:   'a', value: cc_service[:label] },
                             { label: 'Service GUID',                    tag:   nil, value: cc_service[:guid] },
                             { label: 'Service Unique ID',               tag:   nil, value: cc_service[:unique_id] },
                             { label: 'Service Created',                 tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Updated',                 tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
-                            { label: 'Service Active',                  tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
                             { label: 'Service Bindable',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})") },
+                            { label: 'Service Active',                  tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
                             { label: 'Service Broker Name',             tag:   'a', value: cc_service_broker[:name] },
                             { label: 'Service Broker GUID',             tag:   nil, value: cc_service_broker[:guid] },
                             { label: 'Service Broker Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
@@ -4756,15 +4762,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has services link' do
-            check_filter_link('ServicePlanVisibilities', 12, 'Services', cc_service[:guid])
+            check_filter_link('ServicePlanVisibilities', 13, 'Services', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('ServicePlanVisibilities', 19, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('ServicePlanVisibilities', 20, 'ServiceBrokers', cc_service_broker[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ServicePlanVisibilities', 23, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServicePlanVisibilities', 24, 'Organizations', cc_organization[:guid])
           end
         end
       end
