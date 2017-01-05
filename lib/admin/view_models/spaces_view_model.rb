@@ -12,40 +12,42 @@ module AdminUI
       # spaces have to exist.  Other record types are optional
       return result unless spaces['connected']
 
-      applications           = @cc.applications
-      containers             = @doppler.containers
-      droplets               = @cc.droplets
-      events                 = @cc.events
-      isolation_segments     = @cc.isolation_segments
-      organizations          = @cc.organizations
-      packages               = @cc.packages
-      processes              = @cc.processes
-      route_mappings         = @cc.route_mappings
-      routes                 = @cc.routes
-      security_groups_spaces = @cc.security_groups_spaces
-      service_brokers        = @cc.service_brokers
-      service_instances      = @cc.service_instances
-      space_quotas           = @cc.space_quota_definitions
-      spaces_auditors        = @cc.spaces_auditors
-      spaces_developers      = @cc.spaces_developers
-      spaces_managers        = @cc.spaces_managers
-      tasks                  = @cc.tasks
-      users                  = @cc.users_cc
+      applications                   = @cc.applications
+      containers                     = @doppler.containers
+      droplets                       = @cc.droplets
+      events                         = @cc.events
+      isolation_segments             = @cc.isolation_segments
+      organizations                  = @cc.organizations
+      packages                       = @cc.packages
+      processes                      = @cc.processes
+      route_mappings                 = @cc.route_mappings
+      routes                         = @cc.routes
+      security_groups_spaces         = @cc.security_groups_spaces
+      service_brokers                = @cc.service_brokers
+      service_instances              = @cc.service_instances
+      space_quotas                   = @cc.space_quota_definitions
+      spaces_auditors                = @cc.spaces_auditors
+      spaces_developers              = @cc.spaces_developers
+      spaces_managers                = @cc.spaces_managers
+      staging_security_groups_spaces = @cc.staging_security_groups_spaces
+      tasks                          = @cc.tasks
+      users                          = @cc.users_cc
 
-      applications_connected           = applications['connected']
-      containers_connected             = containers['connected']
-      droplets_connected               = droplets['connected']
-      events_connected                 = events['connected']
-      packages_connected               = packages['connected']
-      processes_connected              = processes['connected']
-      route_mappings_connected         = route_mappings['connected']
-      routes_connected                 = routes['connected']
-      security_groups_spaces_connected = security_groups_spaces['connected']
-      service_brokers_connected        = service_brokers['connected']
-      service_instances_connected      = service_instances['connected']
-      spaces_roles_connected           = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
-      tasks_connected                  = tasks['connected']
-      users_connected                  = users['connected']
+      applications_connected                   = applications['connected']
+      containers_connected                     = containers['connected']
+      droplets_connected                       = droplets['connected']
+      events_connected                         = events['connected']
+      packages_connected                       = packages['connected']
+      processes_connected                      = processes['connected']
+      route_mappings_connected                 = route_mappings['connected']
+      routes_connected                         = routes['connected']
+      security_groups_spaces_connected         = security_groups_spaces['connected']
+      service_brokers_connected                = service_brokers['connected']
+      service_instances_connected              = service_instances['connected']
+      spaces_roles_connected                   = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
+      staging_security_groups_spaces_connected = staging_security_groups_spaces['connected']
+      tasks_connected                          = tasks['connected']
+      users_connected                          = users['connected']
 
       applications_hash       = Hash[applications['items'].map { |item| [item[:guid], item] }]
       droplets_hash           = Hash[droplets['items'].map { |item| [item[:guid], item] }]
@@ -75,15 +77,16 @@ module AdminUI
         event_target_counters[space_guid] += 1
       end
 
-      space_role_counters             = {}
-      space_default_user_counters     = {}
-      space_security_groups_counters  = {}
-      space_service_broker_counters   = {}
-      space_service_instance_counters = {}
-      space_route_counters_hash       = {}
-      space_app_counters_hash         = {}
-      space_process_counters_hash     = {}
-      space_task_counters             = {}
+      space_role_counters                    = {}
+      space_default_user_counters            = {}
+      space_security_groups_counters         = {}
+      space_staging_security_groups_counters = {}
+      space_service_broker_counters          = {}
+      space_service_instance_counters        = {}
+      space_route_counters_hash              = {}
+      space_app_counters_hash                = {}
+      space_process_counters_hash            = {}
+      space_task_counters                    = {}
 
       count_space_roles(spaces_auditors, space_role_counters)
       count_space_roles(spaces_developers, space_role_counters)
@@ -125,6 +128,15 @@ module AdminUI
         space_id = security_group_space[:space_id]
         space_security_groups_counters[space_id] = 0 if space_security_groups_counters[space_id].nil?
         space_security_groups_counters[space_id] += 1
+      end
+
+      staging_security_groups_spaces['items'].each do |staging_security_group_space|
+        return result unless @running
+        Thread.pass
+
+        staging_space_id = staging_security_group_space[:staging_space_id]
+        space_staging_security_groups_counters[staging_space_id] = 0 if space_staging_security_groups_counters[staging_space_id].nil?
+        space_staging_security_groups_counters[staging_space_id] += 1
       end
 
       routes['items'].each do |route|
@@ -219,18 +231,19 @@ module AdminUI
         isolation_segment_guid = space[:isolation_segment_guid]
         isolation_segment      = isolation_segment_guid.nil? ? nil : isolation_segments_hash[isolation_segment_guid]
 
-        event_counter                  = event_counters[space_guid]
-        event_target_counter           = event_target_counters[space_guid]
-        space_quota                    = space_quota_hash[space[:space_quota_definition_id]]
-        space_role_counter             = space_role_counters[space_id]
-        space_security_groups_counter  = space_security_groups_counters[space_id]
-        space_service_broker_counter   = space_service_broker_counters[space_id]
-        space_service_instance_counter = space_service_instance_counters[space_id]
-        space_app_counters             = space_app_counters_hash[space_guid]
-        space_default_user_counter     = space_default_user_counters[space_id]
-        space_process_counters         = space_process_counters_hash[space_guid]
-        space_route_counters           = space_route_counters_hash[space_id]
-        space_task_counter             = space_task_counters[space_guid]
+        event_counter                         = event_counters[space_guid]
+        event_target_counter                  = event_target_counters[space_guid]
+        space_quota                           = space_quota_hash[space[:space_quota_definition_id]]
+        space_role_counter                    = space_role_counters[space_id]
+        space_security_groups_counter         = space_security_groups_counters[space_id]
+        space_staging_security_groups_counter = space_staging_security_groups_counters[space_id]
+        space_service_broker_counter          = space_service_broker_counters[space_id]
+        space_service_instance_counter        = space_service_instance_counters[space_id]
+        space_app_counters                    = space_app_counters_hash[space_guid]
+        space_default_user_counter            = space_default_user_counters[space_id]
+        space_process_counters                = space_process_counters_hash[space_guid]
+        space_route_counters                  = space_route_counters_hash[space_id]
+        space_task_counter                    = space_task_counters[space_guid]
 
         row = []
 
@@ -307,6 +320,14 @@ module AdminUI
         if space_security_groups_counter
           row.push(space_security_groups_counter)
         elsif security_groups_spaces_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if space_staging_security_groups_counter
+          row.push(space_staging_security_groups_counter)
+        elsif staging_security_groups_spaces_connected
           row.push(0)
         else
           row.push(nil)
@@ -424,7 +445,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..34).to_a, [1, 2, 3, 4, 5, 6, 11, 33, 34])
+      result(true, items, hash, (1..35).to_a, [1, 2, 3, 4, 5, 6, 11, 34, 35])
     end
 
     private

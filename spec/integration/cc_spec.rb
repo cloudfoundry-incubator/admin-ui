@@ -287,6 +287,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.spaces_managers['items'].length).to eq(0)
     end
 
+    it 'clears the staging security group spaces cache' do
+      expect(cc.staging_security_groups_spaces['items'].length).to eq(1)
+      cc_clear_staging_security_groups_spaces_cache_stub(config)
+      cc.invalidate_staging_security_groups_spaces
+      expect(cc.staging_security_groups_spaces['items'].length).to eq(0)
+    end
+
     it 'clears the tasks cache' do
       expect(cc.tasks['items'].length).to eq(1)
       cc_clear_tasks_cache_stub(config)
@@ -634,6 +641,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected stacks' do
       let(:results)  { cc.stacks }
       let(:expected) { cc_stack }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected staging security groups spaces' do
+      let(:results)  { cc.staging_security_groups_spaces }
+      let(:expected) { cc_staging_security_group_space }
 
       it_behaves_like('common cc retrieval')
     end

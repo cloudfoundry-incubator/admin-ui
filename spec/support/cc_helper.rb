@@ -75,6 +75,7 @@ module CCHelper
     @cc_service_plan_visibilities_deleted        = false
     @cc_space_quota_definitions_deleted          = false
     @cc_spaces_deleted                           = false
+    @cc_staging_security_groups_spaces_deleted   = false
     @cc_tasks_deleted                            = false
     @cc_users_deleted                            = false
     @uaa_groups_deleted                          = false
@@ -113,6 +114,7 @@ module CCHelper
     cc_service_plan_visibility_stubs(config)
     cc_space_stubs(config)
     cc_space_quota_definition_stubs(config)
+    cc_staging_security_group_space_stubs(config)
     cc_task_stubs(config)
     cc_user_stubs(config)
 
@@ -224,6 +226,7 @@ module CCHelper
 
   def cc_clear_security_groups_cache_stub(config)
     cc_clear_security_groups_spaces_cache_stub(config)
+    cc_clear_staging_security_groups_spaces_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM security_groups')
 
@@ -301,6 +304,7 @@ module CCHelper
   def cc_clear_spaces_cache_stub(config)
     cc_clear_routes_cache_stub(config)
     cc_clear_security_groups_spaces_cache_stub(config)
+    cc_clear_staging_security_groups_spaces_cache_stub(config)
     cc_clear_service_brokers_cache_stub(config)
     cc_clear_users_cache_stub(config)
     cc_clear_apps_cache_stub(config)
@@ -309,6 +313,12 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM spaces')
 
     @cc_spaces_deleted = true
+  end
+
+  def cc_clear_staging_security_groups_spaces_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM staging_security_groups_spaces')
+
+    @cc_staging_security_groups_spaces_deleted = true
   end
 
   def cc_clear_tasks_cache_stub(config)
@@ -1199,6 +1209,13 @@ module CCHelper
     }
   end
 
+  def cc_staging_security_group_space
+    {
+      staging_security_group_id: cc_security_group[:id],
+      staging_space_id:          cc_space[:id]
+    }
+  end
+
   def cc_task
     {
       app_guid:       cc_app[:guid],
@@ -1358,6 +1375,7 @@ module CCHelper
                [:organizations_private_domains,    cc_organization_private_domain],
                [:spaces,                           cc_space],
                [:security_groups_spaces,           cc_security_group_space],
+               [:staging_security_groups_spaces,   cc_staging_security_group_space],
                [:apps,                             cc_app],
                [:processes,                        cc_process],
                [:packages,                         cc_package],
@@ -2303,6 +2321,17 @@ module CCHelper
         cc_space_quota_definition_not_found
       else
         sql(config.ccdb_uri, 'UPDATE spaces SET space_quota_definition_id = NULL')
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_staging_security_group_space_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/security_groups/#{cc_security_group[:guid]}/staging_spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything) do
+      if @cc_security_groups_deleted
+        cc_security_group_not_found
+      else
+        cc_clear_staging_security_groups_spaces_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end

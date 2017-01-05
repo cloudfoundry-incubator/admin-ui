@@ -251,6 +251,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Staging Security Groups Spaces tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'StagingSecurityGroupsSpaces' }
+        let(:page_id)   { 'StagingSecurityGroupsSpacesPage' }
+        let(:button_id) { 'Buttons_StagingSecurityGroupsSpacesTable_0' }
+      end
+    end
+
     context 'Isolation Segments tab does not have create, rename or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'IsolationSegments' }

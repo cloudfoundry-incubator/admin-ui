@@ -995,7 +995,7 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/security_groups/#{cc_security_group[:guid]}/#{cc_space[:guid]}"]])
     end
 
-    it 'has user name and security groups request in the log file' do
+    it 'has user name and security groups spaces request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/security_groups_spaces_view_model']], true)
     end
 
@@ -1300,9 +1300,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'removes the space isolation segment' do
-      expect(get_json('/spaces_view_model')['items']['items'][0][34]).to eq(cc_isolation_segment[:guid])
-      expect { remove_space_isolation_segment }.to change { get_json('/spaces_view_model')['items']['items'][0][33] }.from(cc_isolation_segment[:name]).to(nil)
-      expect(get_json('/spaces_view_model')['items']['items'][0][34]).to eq(nil)
+      expect(get_json('/spaces_view_model')['items']['items'][0][35]).to eq(cc_isolation_segment[:guid])
+      expect { remove_space_isolation_segment }.to change { get_json('/spaces_view_model')['items']['items'][0][34] }.from(cc_isolation_segment[:name]).to(nil)
+      expect(get_json('/spaces_view_model')['items']['items'][0][35]).to eq(nil)
     end
 
     it 'deletes a space' do
@@ -1405,6 +1405,29 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a space role' do
       expect { delete_space_role }.to change { get_json('/space_roles_view_model')['items']['items'].length }.from(3).to(2)
+    end
+  end
+
+  context 'manage staging security group space' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/staging_security_groups_spaces_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_staging_security_group_space
+      response = delete_request("/staging_security_groups/#{cc_security_group[:guid]}/#{cc_space[:guid]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/staging_security_groups/#{cc_security_group[:guid]}/#{cc_space[:guid]}"]])
+    end
+
+    it 'has user name and staging security groups spaces request in the log file' do
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/staging_security_groups_spaces_view_model']], true)
+    end
+
+    it 'deletes a staging security group space' do
+      expect { delete_staging_security_group_space }.to change { get_json('/staging_security_groups_spaces_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -2094,6 +2117,18 @@ describe AdminUI::Admin, type: :integration do
     context 'stacks_view_model detail' do
       let(:path)              { "/stacks_view_model/#{cc_stack[:guid]}" }
       let(:view_model_source) { view_models_stacks_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'staging_security_groups_spaces_view_model' do
+      let(:path)              { '/staging_security_groups_spaces_view_model' }
+      let(:view_model_source) { view_models_staging_security_groups_spaces }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'staging_security_groups_spaces_view_model detail' do
+      let(:path)              { "/staging_security_groups_spaces_view_model/#{cc_security_group[:guid]}/#{cc_space[:guid]}" }
+      let(:view_model_source) { view_models_staging_security_groups_spaces_detail }
       it_behaves_like('retrieves view_model detail')
     end
 

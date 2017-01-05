@@ -1017,7 +1017,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_security_group_space
-        operation.delete_security_group(cc_security_group[:guid])
+        operation.delete_security_group_space(cc_security_group[:guid], cc_space[:guid])
       end
 
       it 'deletes security group space' do
@@ -1577,6 +1577,37 @@ describe AdminUI::Operation, type: :integration do
 
         it 'failed deleting space manager role due to deleted space' do
           expect { delete_space_manager }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
+        end
+      end
+    end
+
+    context 'manage staging security group space' do
+      before do
+        expect(cc.staging_security_groups_spaces['items'].length).to eq(1)
+      end
+
+      def delete_staging_security_group_space
+        operation.delete_staging_security_group_space(cc_security_group[:guid], cc_space[:guid])
+      end
+
+      it 'deletes staging security group space' do
+        expect { delete_staging_security_group_space }.to change { cc.staging_security_groups_spaces['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          cc_clear_security_groups_cache_stub(config)
+        end
+
+        def verify_security_group_not_found(exception)
+          expect(exception.cf_code).to eq(300_002)
+          expect(exception.cf_error_code).to eq('CF-SecurityGroupNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The security group could not be found: #{cc_security_group[:guid]}")
+        end
+
+        it 'failed deleting staging security group space due to deleted security group' do
+          expect { delete_staging_security_group_space }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_security_group_not_found(exception) }
         end
       end
     end

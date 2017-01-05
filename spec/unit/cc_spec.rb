@@ -229,6 +229,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.stacks)
     end
 
+    it 'returns zero staging_security_groups_spaces as expected' do
+      verify_disconnected_items(cc.staging_security_groups_spaces)
+    end
+
     it 'returns zero tasks as expected' do
       verify_disconnected_items(cc.tasks)
     end

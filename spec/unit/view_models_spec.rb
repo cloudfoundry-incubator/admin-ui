@@ -376,6 +376,14 @@ describe AdminUI::ViewModels do
       expect(view_models.stack('bogus')).to be_nil
     end
 
+    it 'returns nil staging_security_group_space as expected' do
+      expect(view_models.staging_security_group_space('bogus', 'bogus')).to be_nil
+    end
+
+    it 'returns zero staging_security_groups_spaces as expected' do
+      verify_disconnected_items(view_models.staging_security_groups_spaces)
+    end
+
     it 'returns zero stacks as expected' do
       verify_disconnected_items(view_models.stacks)
     end

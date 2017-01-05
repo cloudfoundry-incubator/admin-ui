@@ -41,6 +41,7 @@ require_relative 'view_models/space_quotas_view_model'
 require_relative 'view_models/space_roles_view_model'
 require_relative 'view_models/spaces_view_model'
 require_relative 'view_models/stacks_view_model'
+require_relative 'view_models/staging_security_groups_spaces_view_model'
 require_relative 'view_models/stats_view_model'
 require_relative 'view_models/tasks_view_model'
 require_relative 'view_models/users_view_model'
@@ -95,6 +96,7 @@ module AdminUI
           space_roles:                      { clazz: AdminUI::SpaceRolesViewModel },
           spaces:                           { clazz: AdminUI::SpacesViewModel },
           stacks:                           { clazz: AdminUI::StacksViewModel },
+          staging_security_groups_spaces:   { clazz: AdminUI::StagingSecurityGroupsSpacesViewModel },
           stats:                            { clazz: AdminUI::StatsViewModel },
           tasks:                            { clazz: AdminUI::TasksViewModel },
           users:                            { clazz: AdminUI::UsersViewModel }
@@ -256,6 +258,10 @@ module AdminUI
 
     def invalidate_spaces
       invalidate_cache(:spaces)
+    end
+
+    def invalidate_staging_security_groups_spaces
+      invalidate_cache(:staging_security_groups_spaces)
     end
 
     def invalidate_stats
@@ -603,6 +609,14 @@ module AdminUI
 
     def stacks
       result_cache(:stacks)
+    end
+
+    def staging_security_group_space(staging_security_group_guid, staging_space_guid)
+      details(:staging_security_groups_spaces, "#{staging_security_group_guid}/#{staging_space_guid}")
+    end
+
+    def staging_security_groups_spaces
+      result_cache(:staging_security_groups_spaces)
     end
 
     def stats

@@ -156,6 +156,7 @@ module AdminUI
         @cc.invalidate_spaces_auditors
         @cc.invalidate_spaces_developers
         @cc.invalidate_spaces_managers
+        @cc.invalidate_staging_security_groups_spaces
         @cc.invalidate_tasks
         @varz.invalidate
         @view_models.invalidate_applications
@@ -170,6 +171,7 @@ module AdminUI
         @view_models.invalidate_space_quotas
         @view_models.invalidate_spaces
         @view_models.invalidate_space_roles
+        @view_models.invalidate_staging_security_groups_spaces
         @view_models.invalidate_tasks
       end
       @view_models.invalidate_organizations
@@ -230,8 +232,10 @@ module AdminUI
       @client.delete_cc(url)
       @cc.invalidate_security_groups
       @cc.invalidate_security_groups_spaces
+      @cc.invalidate_staging_security_groups_spaces
       @view_models.invalidate_security_groups
       @view_models.invalidate_security_groups_spaces
+      @view_models.invalidate_staging_security_groups_spaces
     end
 
     def delete_security_group_space(security_group_guid, space_guid)
@@ -341,6 +345,7 @@ module AdminUI
       @cc.invalidate_spaces_auditors
       @cc.invalidate_spaces_developers
       @cc.invalidate_spaces_managers
+      @cc.invalidate_staging_security_groups_spaces
       if recursive
         @cc.invalidate_applications
         @cc.invalidate_droplets
@@ -367,6 +372,7 @@ module AdminUI
       @view_models.invalidate_security_groups_spaces
       @view_models.invalidate_spaces
       @view_models.invalidate_space_roles
+      @view_models.invalidate_staging_security_groups_spaces
     end
 
     def delete_space_quota_definition(space_quota_definition_guid)
@@ -393,6 +399,14 @@ module AdminUI
       @cc.invalidate_spaces_developers if role == 'developers'
       @cc.invalidate_spaces_managers if role == 'managers'
       @view_models.invalidate_space_roles
+    end
+
+    def delete_staging_security_group_space(staging_security_group_guid, staging_space_guid)
+      url = "v2/security_groups/#{staging_security_group_guid}/staging_spaces/#{staging_space_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_staging_security_groups_spaces
+      @view_models.invalidate_staging_security_groups_spaces
     end
 
     def delete_user(user_guid)

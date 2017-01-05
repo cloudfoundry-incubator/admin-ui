@@ -902,6 +902,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete space role')
     end
 
+    shared_examples 'common delete staging security group space' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/staging_security_groups/security_group1/space1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete staging security group space via http' do
+      it_behaves_like('common delete staging security group space')
+    end
+
+    context 'delete staging security group via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete staging security group space')
+    end
+
     shared_examples 'common delete user' do
       it 'returns failure code due to disconnection' do
         response = delete('/users/user1')
@@ -1515,6 +1532,14 @@ describe AdminUI::Admin do
         verify_not_found('/stacks_view_model/stack1')
       end
 
+      it '/staging_security_groups_spaces_view_model succeeds' do
+        verify_disconnected_view_model_items('/staging_security_groups_spaces_view_model')
+      end
+
+      it '/staging_security_groups_spaces_view_model/:guid/:guid returns not found' do
+        verify_not_found('/staging_security_groups_view_model/security_group1/space1')
+      end
+
       it '/tasks_view_model succeeds' do
         verify_disconnected_view_model_items('/tasks_view_model')
       end
@@ -1914,6 +1939,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/stacks_view_model/stack1')
       end
 
+      it '/staging_security_groups_spaces_view_model redirects as expected' do
+        get_redirects_as_expected('/staging_security_groups_spaces_view_model')
+      end
+
+      it '/staging_security_groups_spaces_view_model/:guid/:guid redirects as expected' do
+        get_redirects_as_expected('/staging_security_groups_spaces_view_model/security_group1/space1')
+      end
+
       it '/tasks_view_model redirects as expected' do
         get_redirects_as_expected('/tasks_view_model')
       end
@@ -2076,6 +2109,10 @@ describe AdminUI::Admin do
 
       it 'deletes /spaces/:guid/:role/:guid redirects as expected' do
         delete_redirects_as_expected('/spaces/space1/auditors/user1')
+      end
+
+      it 'deletes /staging_security_groups/:guid/:guid redirects as expected' do
+        delete_redirects_as_expected('/staging_security_groups/security_group1/space1')
       end
 
       it 'deletes /tasks/:guid/cancel redirects as expected' do
@@ -2252,6 +2289,10 @@ describe AdminUI::Admin do
 
       it 'posts /stacks_view_model redirects as expected' do
         post_redirects_as_expected('/stacks_view_model')
+      end
+
+      it 'posts /staging_security_groups_spaces_view_model redirects as expected' do
+        post_redirects_as_expected('/staging_security_groups_spaces_view_model')
       end
 
       it 'posts /stats_view_model redirects as expected' do

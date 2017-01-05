@@ -594,6 +594,18 @@ module AdminUI
       404
     end
 
+    get '/staging_security_groups_spaces_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/staging_security_groups_spaces_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.staging_security_groups_spaces, params).items)
+    end
+
+    get '/staging_security_groups_spaces_view_model/:staging_security_group_guid/:staging_space_guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/staging_security_groups_spaces_view_model/#{params[:staging_security_group_guid]}/#{params[:staging_space_guid]}")
+      result = @view_models.staging_security_group_space(params[:staging_security_group_guid], params[:staging_space_guid])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/statistics' do
       @logger.info_user(session[:username], 'get', '/statistics')
       Yajl::Encoder.encode(@stats.stats)
@@ -1007,6 +1019,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'stacks.csv')
+    end
+
+    post '/staging_security_groups_spaces_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/staging_security_groups_spaces_view_model')
+      file = Download.download(request.body.read, 'staging_security_groups_spaces', @view_models.staging_security_groups_spaces)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'staging_security_groups_spaces.csv')
     end
 
     post '/statistics', auth: [:admin] do
@@ -1801,6 +1821,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete space role: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/staging_security_groups/:staging_security_group_guid/:staging_space_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/staging_security_groups/#{params[:staging_security_group_guid]}/#{params[:staging_space_guid]}")
+      begin
+        @operation.delete_staging_security_group_space(params[:staging_security_group_guid], params[:staging_space_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete staging security group space: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete staging security group space: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

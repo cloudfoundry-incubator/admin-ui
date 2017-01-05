@@ -748,6 +748,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected staging_security_groups_spaces_view_model' do
+      let(:results)    { view_models.staging_security_groups_spaces }
+      let(:expected)   { view_models_staging_security_groups_spaces }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected staging_security_groups_spaces_view_model detail' do
+      let(:results)  { view_models.staging_security_group_space(cc_security_group[:guid], cc_space[:guid]) }
+      let(:expected) { view_models_staging_security_groups_spaces_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     shared_examples 'stats_view_model' do
       let(:results)   { view_models.stats }
       let(:timestamp) { results[:items][0][9][:timestamp] } # We have to copy the timestamp from the result since it is variable

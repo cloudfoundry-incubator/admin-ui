@@ -282,6 +282,12 @@ module AdminUI
             table:   :stacks,
             columns: [:created_at, :description, :guid, :id, :name, :updated_at]
           },
+          staging_security_groups_spaces:
+          {
+            db_uri:  ccdb_uri,
+            table:   :staging_security_groups_spaces,
+            columns: [:staging_security_group_id, :staging_space_id]
+          },
           tasks:
           {
             db_uri:  ccdb_uri,
@@ -507,6 +513,10 @@ module AdminUI
       invalidate_cache(:spaces_managers)
     end
 
+    def invalidate_staging_security_groups_spaces
+      invalidate_cache(:staging_security_groups_spaces)
+    end
+
     def invalidate_tasks
       invalidate_cache(:tasks)
     end
@@ -697,6 +707,10 @@ module AdminUI
 
     def stacks
       result_cache(:stacks)
+    end
+
+    def staging_security_groups_spaces
+      result_cache(:staging_security_groups_spaces)
     end
 
     def tasks
