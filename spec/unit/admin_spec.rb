@@ -443,6 +443,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete group')
     end
 
+    shared_examples 'common delete group member' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/groups/group1/member1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete group member via http' do
+      it_behaves_like('common delete group member')
+    end
+
+    context 'delete group member via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete group member')
+    end
+
     shared_examples 'common delete isolation segment' do
       it 'returns failure code due to disconnection' do
         response = delete('/isolation_segments/isolation_segment1')
@@ -2018,6 +2035,10 @@ describe AdminUI::Admin do
 
       it 'deletes /groups/:guid redirects as expected' do
         delete_redirects_as_expected('/groups/group1')
+      end
+
+      it 'deletes /groups/:guid/:guid redirects as expected' do
+        delete_redirects_as_expected('/groups/group1/member1')
       end
 
       it 'deletes /isolation_segments/:guid redirects as expected' do

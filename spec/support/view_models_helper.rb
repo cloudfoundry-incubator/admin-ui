@@ -488,10 +488,11 @@ module ViewModelsHelper
   def view_models_group_members
     [
       [
+        "#{uaa_group[:id]}/#{uaa_user[:id]}",
         uaa_group[:displayname],
         uaa_group[:id],
         uaa_user[:username],
-        uaa_approval[:user_id],
+        uaa_user[:id],
         uaa_group_membership[:added].to_datetime.rfc3339
       ]
     ]

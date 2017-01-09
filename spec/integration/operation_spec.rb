@@ -511,6 +511,37 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage group member' do
+      before do
+        expect(cc.group_membership['items'].length).to eq(1)
+      end
+
+      def delete_group_member
+        operation.delete_group_member(uaa_group[:id], uaa_user[:id])
+      end
+
+      it 'deletes group member' do
+        expect { delete_group_member }.to change { cc.group_membership['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_group_member
+        end
+
+        def verify_group_member_not_found(exception)
+          expect(exception.cf_code).to eq(nil)
+          expect(exception.cf_error_code).to eq(nil)
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("Member #{uaa_user[:id]} does not exist in group #{uaa_group[:id]}")
+        end
+
+        it 'fails deleting deleted group member' do
+          expect { delete_group_member }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_group_member_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage isolation segment' do
       before do
         expect(cc.isolation_segments['items'].length).to eq(1)

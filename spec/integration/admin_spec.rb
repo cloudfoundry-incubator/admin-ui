@@ -581,6 +581,29 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage group members' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/group_members_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_group_member
+      response = delete_request("/groups/#{uaa_group[:id]}/#{uaa_user[:id]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/groups/#{uaa_group[:id]}/#{uaa_user[:id]}"]])
+    end
+
+    it 'has user name and group members request in the log file' do
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/group_members_view_model']], true)
+    end
+
+    it 'deletes a group member' do
+      expect { delete_group_member }.to change { get_json('/group_members_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage health manager' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }

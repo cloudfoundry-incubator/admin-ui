@@ -79,6 +79,7 @@ module CCHelper
     @cc_tasks_deleted                            = false
     @cc_users_deleted                            = false
     @uaa_groups_deleted                          = false
+    @uaa_group_membership_deleted                = false
     @uaa_users_deleted                           = false
     @uaa_clients_deleted                         = false
 
@@ -120,6 +121,7 @@ module CCHelper
 
     uaa_client_stubs(config)
     uaa_group_stubs(config)
+    uaa_group_membership_stubs(config)
     uaa_user_stubs(config)
   end
 
@@ -355,6 +357,8 @@ module CCHelper
 
   def uaa_clear_group_membership_cache_stub(config)
     sql(config.uaadb_uri, 'DELETE FROM group_membership')
+
+    @uaa_group_membership_deleted = true
   end
 
   def uaa_clear_groups_cache_stub(config)
@@ -2401,6 +2405,21 @@ module CCHelper
         uaa_group_not_found
       else
         uaa_clear_groups_cache_stub(config)
+        OK.new({})
+      end
+    end
+  end
+
+  def uaa_group_membership_not_found
+    NotFound.new('message' => "Member #{uaa_user[:id]} does not exist in group #{uaa_group[:id]}")
+  end
+
+  def uaa_group_membership_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/Groups/#{uaa_group[:id]}/members/#{uaa_user[:id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @uaa_group_membership_deleted
+        uaa_group_membership_not_found
+      else
+        uaa_clear_group_membership_cache_stub(config)
         OK.new({})
       end
     end

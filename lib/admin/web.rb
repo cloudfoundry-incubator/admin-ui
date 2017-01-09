@@ -1468,6 +1468,23 @@ module AdminUI
       end
     end
 
+    delete '/groups/:group_guid/:member_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/groups/#{params[:group_guid]}/#{params[:member_guid]}")
+      begin
+        @operation.delete_group_member(params[:group_guid], params[:member_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete group member: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete group member: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/isolation_segments/:isolation_segment_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/isolation_segments/#{params[:isolation_segment_guid]}")
       begin

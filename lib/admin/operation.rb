@@ -118,6 +118,14 @@ module AdminUI
       @view_models.invalidate_group_members
     end
 
+    def delete_group_member(group_guid, member_guid)
+      url = "Groups/#{group_guid}/members/#{member_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_uaa(url)
+      @cc.invalidate_group_membership
+      @view_models.invalidate_group_members
+    end
+
     def delete_isolation_segment(isolation_segment_guid)
       url = "v3/isolation_segments/#{isolation_segment_guid}"
       @logger.debug("DELETE #{url}")

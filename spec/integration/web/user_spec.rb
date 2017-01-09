@@ -163,6 +163,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Group Members tab does not have remove button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'GroupMembers' }
+        let(:page_id)   { 'GroupMembersPage' }
+        let(:button_id) { 'Buttons_GroupMembersTable_0' }
+      end
+    end
+
     context 'Buildpacks tab does not have rename, enable, disable, lock, unlock or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Buildpacks' }

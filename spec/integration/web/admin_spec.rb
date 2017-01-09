@@ -3190,20 +3190,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='GroupMembersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 3,
-                                 labels:          ['Group', 'User', ''],
-                                 colspans:        %w(2 2 1)
+                                 expected_length: 4,
+                                 labels:          ['', 'Group', 'User', ''],
+                                 colspans:        %w(1 2 2 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='GroupMembersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 5,
-                                 labels:          %w(Name GUID Name GUID Created),
+                                 expected_length: 6,
+                                 labels:          ['', 'Name', 'GUID', 'Name', 'GUID', 'Created'],
                                  colspans:        nil
                                }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='GroupMembersTable']/tbody/tr/td"),
                            [
+                             '',
                              uaa_group[:displayname],
                              uaa_group[:id],
                              uaa_user[:username],
@@ -3213,7 +3214,26 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_GroupMembersTable_0')
+          check_allowscriptaccess_attribute('Buttons_GroupMembersTable_1')
+        end
+
+        context 'manage group members' do
+          it 'has a Remove button' do
+            expect(@driver.find_element(id: 'Buttons_GroupMembersTable_0').text).to eq('Remove')
+          end
+
+          context 'Remove button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_GroupMembersTable_0' }
+            end
+          end
+
+          context 'Remove button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_GroupMembersTable_0' }
+              let(:confirm_message) { 'Are you sure you want to remove the selected group members?' }
+            end
+          end
         end
 
         context 'selectable' do
