@@ -1318,6 +1318,24 @@ module AdminUI
       end
     end
 
+    put '/users/:user_guid', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'put', "/users/#{params[:user_guid]}; body = #{control_message}")
+        @operation.manage_user(params[:user_guid], control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during update user: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during update user: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/applications/:app_guid', auth: [:admin] do
       recursive = params[:recursive] == 'true'
       url = "/applications/#{params[:app_guid]}"

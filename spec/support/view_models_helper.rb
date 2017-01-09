@@ -1489,6 +1489,7 @@ module ViewModelsHelper
         uaa_user[:givenname],
         uaa_user[:phonenumber],
         uaa_user[:active],
+        uaa_user[:verified],
         uaa_user[:version],
         1,
         1,

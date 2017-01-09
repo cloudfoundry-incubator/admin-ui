@@ -1462,6 +1462,30 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/users_view_model')['items']['items'].length).to eq(1)
     end
 
+    def activate_user
+      response = put_request("/users/#{uaa_user[:id]}", '{"active":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/users/#{uaa_user[:id]}; body = {\"active\":true}"]], true)
+    end
+
+    def deactivate_user
+      response = put_request("/users/#{uaa_user[:id]}", '{"active":false}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/users/#{uaa_user[:id]}; body = {\"active\":false}"]], true)
+    end
+
+    def verify_user
+      response = put_request("/users/#{uaa_user[:id]}", '{"verified":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/users/#{uaa_user[:id]}; body = {\"verified\":true}"]], true)
+    end
+
+    def unverify_user
+      response = put_request("/users/#{uaa_user[:id]}", '{"verified":false}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/users/#{uaa_user[:id]}; body = {\"verified\":false}"]], true)
+    end
+
     def delete_user
       response = delete_request("/users/#{uaa_user[:id]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -1470,6 +1494,26 @@ describe AdminUI::Admin, type: :integration do
 
     it 'has user name and users request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/users_view_model']], true)
+    end
+
+    it 'activates a user' do
+      deactivate_user
+      expect { activate_user }.to change { get_json('/users_view_model')['items']['items'][0][11] }.from(false).to(true)
+    end
+
+    it 'deactivates a user' do
+      activate_user
+      expect { deactivate_user }.to change { get_json('/users_view_model')['items']['items'][0][11] }.from(true).to(false)
+    end
+
+    it 'verifies a user' do
+      unverify_user
+      expect { verify_user }.to change { get_json('/users_view_model')['items']['items'][0][12] }.from(false).to(true)
+    end
+
+    it 'unverifies a user' do
+      verify_user
+      expect { unverify_user }.to change { get_json('/users_view_model')['items']['items'][0][12] }.from(true).to(false)
     end
 
     it 'deletes a user' do

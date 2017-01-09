@@ -80,20 +80,8 @@ module AdminUI
       end
     end
 
-    def get_uaa(path)
-      uri = get_uaa_token_endpoint_url(path)
-
-      resources = []
-      loop do
-        json = cf_request(uri, Utils::HTTP_GET)
-        resources.concat(json['resources'])
-        total_results = json['totalResults']
-        start_index = resources.length + 1
-        return resources unless total_results > start_index
-        uri = get_uaa_token_endpoint_url("#{path}?startIndex=#{start_index}")
-      end
-
-      resources
+    def patch_uaa(path, body)
+      cf_request(get_uaa_token_endpoint_url(path), Utils::HTTP_PATCH, body, 'application/json', '*')
     end
 
     def put_cc(path, body)
@@ -134,7 +122,7 @@ module AdminUI
 
     private
 
-    def cf_request(url, method, body = nil, content_type = nil)
+    def cf_request(url, method, body = nil, content_type = nil, if_match = nil)
       recent_login = false
       if @token.nil?
         login
@@ -142,12 +130,13 @@ module AdminUI
       end
 
       loop do
-        response = Utils.http_request(@config, url, method, nil, body, @token, content_type)
+        response = Utils.http_request(@config, url, method, nil, body, @token, content_type, if_match)
 
         return Yajl::Parser.parse(response.body) if method == Utils::HTTP_GET && response.is_a?(Net::HTTPOK)
         return Yajl::Parser.parse(response.body) if method == Utils::HTTP_PUT && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
         return if method == Utils::HTTP_DELETE && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated) || response.is_a?(Net::HTTPAccepted) || response.is_a?(Net::HTTPNoContent))
         return Yajl::Parser.parse(response.body) if method == Utils::HTTP_POST && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
+        return Yajl::Parser.parse(response.body) if method == Utils::HTTP_PATCH && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
 
         raise AdminUI::CCRestClientResponseError, response unless !recent_login && response.is_a?(Net::HTTPUnauthorized)
 

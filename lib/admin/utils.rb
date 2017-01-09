@@ -7,6 +7,7 @@ module AdminUI
     HTTP_DELETE = 'DELETE'.freeze
     HTTP_GET    = 'GET'.freeze
     HTTP_HEAD   = 'HEAD'.freeze
+    HTTP_PATCH  = 'PATCH'.freeze
     HTTP_PUT    = 'PUT'.freeze
     HTTP_POST   = 'POST'.freeze
 
@@ -15,6 +16,7 @@ module AdminUI
         HTTP_DELETE => Net::HTTP::Delete,
         HTTP_GET    => Net::HTTP::Get,
         HTTP_HEAD   => Net::HTTP::Head,
+        HTTP_PATCH  => Net::HTTP::Patch,
         HTTP_PUT    => Net::HTTP::Put,
         HTTP_POST   => Net::HTTP::Post
       }.freeze
@@ -27,7 +29,7 @@ module AdminUI
       HTTP_METHODS_MAP[method_string.upcase]
     end
 
-    def self.http_request(config, uri_string, method = HTTP_GET, basic_auth_array = nil, body = nil, authorization_header = nil, content_type = nil)
+    def self.http_request(config, uri_string, method = HTTP_GET, basic_auth_array = nil, body = nil, authorization_header = nil, content_type = nil, if_match = nil)
       uri = URI.parse(uri_string)
 
       path  = uri.path
@@ -42,6 +44,7 @@ module AdminUI
       request['Authorization'] = authorization_header unless authorization_header.nil?
       request['Accept']        = 'application/json'
       request['Content-Type']  = content_type unless content_type.nil?
+      request['If-Match']      = if_match unless if_match.nil?
 
       request.body = body if body
 

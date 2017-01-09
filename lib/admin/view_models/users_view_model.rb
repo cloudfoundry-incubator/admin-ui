@@ -144,6 +144,7 @@ module AdminUI
         row.push(user_uaa[:givenname])
         row.push(user_uaa[:phonenumber])
         row.push(user_uaa[:active])
+        row.push(user_uaa[:verified])
         row.push(user_uaa[:version])
 
         if event_counter
@@ -233,7 +234,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..27).to_a, (1..12).to_a << 27)
+      result(true, items, hash, (1..28).to_a, (1..12).to_a << 28)
     end
 
     private

@@ -1651,8 +1651,44 @@ describe AdminUI::Operation, type: :integration do
         expect(cc.users_uaa['items'].length).to eq(1)
       end
 
+      def activate_user
+        operation.manage_user(uaa_user[:id], '{"active":true}')
+      end
+
+      def deactivate_user
+        operation.manage_user(uaa_user[:id], '{"active":false}')
+      end
+
+      def verify_user
+        operation.manage_user(uaa_user[:id], '{"verified":true}')
+      end
+
+      def unverify_user
+        operation.manage_user(uaa_user[:id], '{"verified":false}')
+      end
+
       def delete_user
         operation.delete_user(cc_user[:guid])
+      end
+
+      it 'activates user' do
+        deactivate_user
+        expect { activate_user }.to change { cc.users_uaa['items'][0][:active] }.from(false).to(true)
+      end
+
+      it 'deactivates user' do
+        activate_user
+        expect { deactivate_user }.to change { cc.users_uaa['items'][0][:active] }.from(true).to(false)
+      end
+
+      it 'verifies user' do
+        unverify_user
+        expect { verify_user }.to change { cc.users_uaa['items'][0][:verified] }.from(false).to(true)
+      end
+
+      it 'unverifies user' do
+        verify_user
+        expect { unverify_user }.to change { cc.users_uaa['items'][0][:verified] }.from(true).to(false)
       end
 
       it 'deletes user' do
@@ -1665,15 +1701,35 @@ describe AdminUI::Operation, type: :integration do
           delete_user
         end
 
-        def verify_user_not_found(exception)
+        def verify_cc_user_not_found(exception)
           expect(exception.cf_code).to eq(20_003)
           expect(exception.cf_error_code).to eq('CF-UserNotFound')
           expect(exception.http_code).to eq(404)
           expect(exception.message).to eq("The user could not be found: #{cc_user[:guid]}")
         end
 
+        def verify_uaa_user_not_found(exception)
+          expect(exception.message).to eq("User #{uaa_user[:id]} does not exist")
+        end
+
+        it 'fails activating deleted user' do
+          expect { activate_user }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_uaa_user_not_found(exception) }
+        end
+
+        it 'fails deactivating deleted user' do
+          expect { deactivate_user }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_uaa_user_not_found(exception) }
+        end
+
+        it 'fails verifying deleted user' do
+          expect { verify_user }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_uaa_user_not_found(exception) }
+        end
+
+        it 'fails unverifying deleted user' do
+          expect { unverify_user }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_uaa_user_not_found(exception) }
+        end
+
         it 'fails deleting deleted user' do
-          expect { delete_user }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_user_not_found(exception) }
+          expect { delete_user }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_cc_user_not_found(exception) }
         end
       end
     end

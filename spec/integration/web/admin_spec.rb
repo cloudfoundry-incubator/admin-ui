@@ -2844,12 +2844,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 6,
                                  labels:          ['', '', 'Requests', 'Organization Roles', 'Space Roles', ''],
-                                 colspans:        %w(1 15 2 5 4 1)
+                                 colspans:        %w(1 16 2 5 4 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 28,
-                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Version', 'Events', 'Groups', 'Approvals', 'Count', 'Valid Until', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
+                                 expected_length: 29,
+                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Verified', 'Version', 'Events', 'Groups', 'Approvals', 'Count', 'Valid Until', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2868,6 +2868,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_user[:givenname],
                              uaa_user[:phonenumber],
                              @driver.execute_script("return Format.formatBoolean(#{uaa_user[:active]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{uaa_user[:verified]})"),
                              @driver.execute_script("return Format.formatNumber(#{uaa_user[:version]})"),
                              '1',
                              '1',
@@ -2888,7 +2889,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_UsersTable_1')
+          check_allowscriptaccess_attribute('Buttons_UsersTable_5')
         end
 
         it 'has a checkbox in the first column' do
@@ -2896,19 +2897,127 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage users' do
-          it 'has a Delete button' do
-            expect(@driver.find_element(id: 'Buttons_UsersTable_0').text).to eq('Delete')
+          it 'has an Activate button' do
+            expect(@driver.find_element(id: 'Buttons_UsersTable_0').text).to eq('Activate')
           end
 
-          context 'Delete button' do
+          it 'has a Deactivate button' do
+            expect(@driver.find_element(id: 'Buttons_UsersTable_1').text).to eq('Deactivate')
+          end
+
+          it 'has a Verify button' do
+            expect(@driver.find_element(id: 'Buttons_UsersTable_2').text).to eq('Verify')
+          end
+
+          it 'has an Unverify button' do
+            expect(@driver.find_element(id: 'Buttons_UsersTable_3').text).to eq('Unverify')
+          end
+
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_UsersTable_4').text).to eq('Delete')
+          end
+
+          context 'Activate button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_UsersTable_0' }
             end
           end
 
+          context 'Deactivate button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_UsersTable_1' }
+            end
+          end
+
+          context 'Verify button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_UsersTable_2' }
+            end
+          end
+
+          context 'Unverify button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_UsersTable_3' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_UsersTable_4' }
+            end
+          end
+
+          def manage_user(button_index)
+            check_first_row('UsersTable')
+
+            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # @driver.find_element(id: button_id).click
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_UsersTable_' + button_index.to_s))
+
+            check_operation_result
+          end
+
+          def activate_user
+            manage_user(0)
+          end
+
+          def deactivate_user
+            manage_user(1)
+          end
+
+          def check_user_active(active)
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[12]").text == active }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[12]").text).to eq(active)
+          end
+
+          it 'Activates the selected user' do
+            deactivate_user
+            check_user_active('false')
+
+            activate_user
+            check_user_active('true')
+          end
+
+          it 'Deactivates the selected user' do
+            deactivate_user
+            check_user_active('false')
+          end
+
+          def verify_user
+            manage_user(2)
+          end
+
+          def unverify_user
+            manage_user(3)
+          end
+
+          def check_user_verified(verified)
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[13]").text == verified }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[13]").text).to eq(verified)
+          end
+
+          it 'Verifies the selected user' do
+            unverify_user
+            check_user_verified('false')
+
+            verify_user
+            check_user_verified('true')
+          end
+
+          it 'Unverifies the selected user' do
+            unverify_user
+            check_user_verified('false')
+          end
+
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_UsersTable_0' }
+              let(:button_id)       { 'Buttons_UsersTable_4' }
               let(:confirm_message) { 'Are you sure you want to delete the selected users?' }
             end
           end
@@ -2933,6 +3042,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Given Name',                         tag:   nil, value: uaa_user[:givenname] },
                             { label: 'Phone Number',                       tag:   nil, value: uaa_user[:phonenumber] },
                             { label: 'Active',                             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_user[:active]})") },
+                            { label: 'Verified',                           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_user[:verified]})") },
                             { label: 'Version',                            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_user[:version]})") },
                             { label: 'Events',                             tag:   'a', value: '1' },
                             { label: 'Groups',                             tag:   'a', value: '1' },
@@ -2960,31 +3070,31 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('Users', 13, 'Events', uaa_user[:id])
+            check_filter_link('Users', 14, 'Events', uaa_user[:id])
           end
 
           it 'has group members link' do
-            check_filter_link('Users', 14, 'GroupMembers', uaa_user[:id])
+            check_filter_link('Users', 15, 'GroupMembers', uaa_user[:id])
           end
 
           it 'has approvals link' do
-            check_filter_link('Users', 15, 'Approvals', uaa_user[:id])
+            check_filter_link('Users', 16, 'Approvals', uaa_user[:id])
           end
 
           it 'has organization roles link' do
-            check_filter_link('Users', 18, 'OrganizationRoles', uaa_user[:id])
+            check_filter_link('Users', 19, 'OrganizationRoles', uaa_user[:id])
           end
 
           it 'has space roles link' do
-            check_filter_link('Users', 23, 'SpaceRoles', uaa_user[:id])
+            check_filter_link('Users', 24, 'SpaceRoles', uaa_user[:id])
           end
 
           it 'has spaces link' do
-            check_filter_link('Users', 27, 'Spaces', cc_space[:guid])
+            check_filter_link('Users', 28, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Users', 29, 'Organizations', cc_organization[:guid])
+            check_filter_link('Users', 30, 'Organizations', cc_organization[:guid])
           end
         end
       end
