@@ -260,6 +260,10 @@ module AdminUI
       invalidate_cache(:spaces)
     end
 
+    def invalidate_stacks
+      invalidate_cache(:stacks)
+    end
+
     def invalidate_staging_security_groups_spaces
       invalidate_cache(:staging_security_groups_spaces)
     end

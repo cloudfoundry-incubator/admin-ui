@@ -919,6 +919,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete space role')
     end
 
+    shared_examples 'common delete stack' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/stacks/stack1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete stack via http' do
+      it_behaves_like('common delete stack')
+    end
+
+    context 'delete stack via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete stack')
+    end
+
     shared_examples 'common delete staging security group space' do
       it 'returns failure code due to disconnection' do
         response = delete('/staging_security_groups/security_group1/space1')
@@ -2147,6 +2164,10 @@ describe AdminUI::Admin do
 
       it 'deletes /spaces/:guid/:role/:guid redirects as expected' do
         delete_redirects_as_expected('/spaces/space1/auditors/user1')
+      end
+
+      it 'deletes /stacks/:guid redirects as expected' do
+        delete_redirects_as_expected('/stacks/stack1')
       end
 
       it 'deletes /staging_security_groups/:guid/:guid redirects as expected' do

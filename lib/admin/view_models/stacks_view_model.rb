@@ -69,6 +69,7 @@ module AdminUI
 
         row = []
 
+        row.push(guid)
         row.push(name)
         row.push(guid)
 
@@ -105,7 +106,7 @@ module AdminUI
         hash[guid] = stack
       end
 
-      result(true, items, hash, (0..6).to_a, [0, 1, 2, 3, 6])
+      result(true, items, hash, (1..7).to_a, [1, 2, 3, 4, 7])
     end
   end
 end

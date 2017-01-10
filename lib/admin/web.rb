@@ -1861,6 +1861,23 @@ module AdminUI
       end
     end
 
+    delete '/stacks/:stack_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/stacks/#{params[:stack_guid]}")
+      begin
+        @operation.delete_stack(params[:stack_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete stack: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete stack: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/staging_security_groups/:staging_security_group_guid/:staging_space_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/staging_security_groups/#{params[:staging_security_group_guid]}/#{params[:staging_space_guid]}")
       begin

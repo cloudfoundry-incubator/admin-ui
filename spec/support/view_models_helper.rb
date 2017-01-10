@@ -1379,6 +1379,7 @@ module ViewModelsHelper
   def view_models_stacks
     [
       [
+        cc_stack[:guid],
         cc_stack[:name],
         cc_stack[:guid],
         cc_stack[:created_at].to_datetime.rfc3339,

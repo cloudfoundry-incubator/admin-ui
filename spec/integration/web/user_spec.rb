@@ -211,6 +211,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Stacks tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Stacks' }
+        let(:page_id)   { 'StacksPage' }
+        let(:button_id) { 'Buttons_StacksTable_0' }
+      end
+    end
+
     context 'Service Brokers tab does not have rename or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceBrokers' }

@@ -75,6 +75,7 @@ module CCHelper
     @cc_service_plan_visibilities_deleted        = false
     @cc_space_quota_definitions_deleted          = false
     @cc_spaces_deleted                           = false
+    @cc_stacks_deleted                           = false
     @cc_staging_security_groups_spaces_deleted   = false
     @cc_tasks_deleted                            = false
     @cc_users_deleted                            = false
@@ -115,6 +116,7 @@ module CCHelper
     cc_service_plan_visibility_stubs(config)
     cc_space_stubs(config)
     cc_space_quota_definition_stubs(config)
+    cc_stack_stubs(config)
     cc_staging_security_group_space_stubs(config)
     cc_task_stubs(config)
     cc_user_stubs(config)
@@ -315,6 +317,12 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM spaces')
 
     @cc_spaces_deleted = true
+  end
+
+  def cc_clear_stacks_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE from stacks')
+
+    @cc_stacks_deleted = true
   end
 
   def cc_clear_staging_security_groups_spaces_cache_stub(config)
@@ -2326,6 +2334,23 @@ module CCHelper
       else
         sql(config.ccdb_uri, 'UPDATE spaces SET space_quota_definition_id = NULL')
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_stack_not_found
+    NotFound.new('code'        => 250_003,
+                 'description' => "The stack could not be found: #{cc_stack[:guid]}",
+                 'error_code'  => 'CF-StackNotFound')
+  end
+
+  def cc_stack_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/stacks/#{cc_stack[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @cc_stacks_deleted
+        cc_stack_not_found
+      else
+        cc_clear_stacks_cache_stub(config)
+        OK.new({})
       end
     end
   end

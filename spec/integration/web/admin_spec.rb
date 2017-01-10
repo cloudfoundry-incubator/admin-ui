@@ -251,7 +251,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
       def check_checkbox_guid(table_id, guid)
         inputs = @driver.find_elements(xpath: "//table[@id='#{table_id}']/tbody/tr/td[1]/input")
-        expect(inputs.length).to eq(1)
+        expect(inputs.length).to be > 0
         expect(inputs[0].attribute('value')).to eq(guid)
       end
 
@@ -2595,6 +2595,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_allowscriptaccess_attribute('Buttons_OrganizationRolesTable_1')
         end
 
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('OrganizationRolesTable', "#{cc_organization[:guid]}/auditors/#{uaa_user[:id]}")
+        end
+
         context 'manage organization roles' do
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'Buttons_OrganizationRolesTable_0').text).to eq('Delete')
@@ -2674,6 +2678,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has allowscriptaccess property set to sameDomain' do
           check_allowscriptaccess_attribute('Buttons_SpaceRolesTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('SpaceRolesTable', "#{cc_space[:guid]}/auditors/#{uaa_user[:id]}")
         end
 
         context 'manage space roles' do
@@ -3215,6 +3223,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has allowscriptaccess property set to sameDomain' do
           check_allowscriptaccess_attribute('Buttons_GroupMembersTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('GroupMembersTable', "#{uaa_group[:id]}/#{uaa_user[:id]}")
         end
 
         context 'manage group members' do
@@ -3970,20 +3982,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       context 'Stacks' do
-        let(:tab_id) { 'Stacks' }
+        let(:tab_id)   { 'Stacks' }
+        let(:table_id) { 'StacksTable' }
 
         it 'has a table' do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='StacksTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 7,
-                                 labels:          ['Name', 'GUID', 'Created', 'Updated', 'Applications', 'Application Instances', 'Description'],
+                                 expected_length: 8,
+                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Applications', 'Application Instances', 'Description'],
                                  colspans:        nil
                                }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='StacksTable']/tbody/tr/td"),
                            [
+                             '',
                              cc_stack[:name],
                              cc_stack[:guid],
                              cc_stack[:created_at].to_datetime.rfc3339,
@@ -3995,7 +4009,30 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_StacksTable_0')
+          check_allowscriptaccess_attribute('Buttons_StacksTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('StacksTable', cc_stack[:guid])
+        end
+
+        context 'manage stacks' do
+          it 'has a delete button' do
+            expect(@driver.find_element(id: 'Buttons_StacksTable_0').text).to eq('Delete')
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_StacksTable_0' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_StacksTable_0' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected stacks?' }
+            end
+          end
         end
 
         context 'selectable' do

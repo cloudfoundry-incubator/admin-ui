@@ -1612,6 +1612,37 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage stack' do
+      before do
+        expect(cc.stacks['items'].length).to eq(1)
+      end
+
+      def delete_stack
+        operation.delete_stack(cc_stack[:guid])
+      end
+
+      it 'deletes stack' do
+        expect { delete_stack }.to change { cc.stacks['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_stack
+        end
+
+        def verify_stack_not_found(exception)
+          expect(exception.cf_code).to eq(250_003)
+          expect(exception.cf_error_code).to eq('CF-StackNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The stack could not be found: #{cc_stack[:guid]}")
+        end
+
+        it 'fails deleting deleted stack' do
+          expect { delete_stack }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_stack_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage staging security group space' do
       before do
         expect(cc.staging_security_groups_spaces['items'].length).to eq(1)

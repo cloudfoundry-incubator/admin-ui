@@ -1431,6 +1431,29 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage stack' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/stacks_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_stack
+      response = delete_request("/stacks/#{cc_stack[:guid]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/stacks/#{cc_stack[:guid]}"]])
+    end
+
+    it 'has user name and stacks request in the log file' do
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/stacks_view_model']], true)
+    end
+
+    it 'deletes a stack' do
+      expect { delete_stack }.to change { get_json('/stacks_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage staging security group space' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }

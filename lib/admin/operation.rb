@@ -409,6 +409,14 @@ module AdminUI
       @view_models.invalidate_space_roles
     end
 
+    def delete_stack(stack_guid)
+      url = "v2/stacks/#{stack_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_stacks
+      @view_models.invalidate_stacks
+    end
+
     def delete_staging_security_group_space(staging_security_group_guid, staging_space_guid)
       url = "v2/security_groups/#{staging_security_group_guid}/staging_spaces/#{staging_space_guid}"
       @logger.debug("DELETE #{url}")

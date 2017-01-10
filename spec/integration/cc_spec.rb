@@ -287,6 +287,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.spaces_managers['items'].length).to eq(0)
     end
 
+    it 'clears the stacks cache' do
+      expect(cc.stacks['items'].length).to eq(1)
+      cc_clear_stacks_cache_stub(config)
+      cc.invalidate_stacks
+      expect(cc.stacks['items'].length).to eq(0)
+    end
+
     it 'clears the staging security group spaces cache' do
       expect(cc.staging_security_groups_spaces['items'].length).to eq(1)
       cc_clear_staging_security_groups_spaces_cache_stub(config)
