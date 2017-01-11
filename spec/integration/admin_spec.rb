@@ -769,9 +769,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_organization_isolation_segment
-      response = delete_request("/organizations_isolation_segments/#{cc_organization[:guid]}/#{cc_isolation_segment[:guid]}")
+      response = delete_request("/organizations/#{cc_organization[:guid]}/#{cc_isolation_segment[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/organizations_isolation_segments/#{cc_organization[:guid]}/#{cc_isolation_segment[:guid]}"]])
+      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/#{cc_isolation_segment[:guid]}"]])
     end
 
     it 'has user name and organizations isolation segments request in the log file' do

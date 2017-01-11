@@ -513,7 +513,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete organization isolation segment' do
       it 'returns failure code due to disconnection' do
-        response = delete('/organizations_isolation_segments/organization1/isolation_segment1')
+        response = delete('/organizations/organization1/isolation_segment1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -2070,12 +2070,12 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/organizations/organization1?recursive=true')
       end
 
-      it 'deletes /organizations/:guid/:role/:guid redirects as expected' do
-        delete_redirects_as_expected('/organizations/organization1/auditors/user1')
+      it 'deletes /organizations/:guid/:guid redirects as expected' do
+        delete_redirects_as_expected('/organizations/organization1/isolation_segment1')
       end
 
-      it 'deletes /organizations_isolation_segments/:guid/:guid redirects as expected' do
-        delete_redirects_as_expected('/organizations_isolation_segments/organization1/isolation_segment1')
+      it 'deletes /organizations/:guid/:role/:guid redirects as expected' do
+        delete_redirects_as_expected('/organizations/organization1/auditors/user1')
       end
 
       it 'deletes /quota_definitions/:guid redirects as expected' do

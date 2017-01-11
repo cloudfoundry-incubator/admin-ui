@@ -1522,6 +1522,23 @@ module AdminUI
       end
     end
 
+    delete '/organizations/:organization_guid/:isolation_segment_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/#{params[:isolation_segment_guid]}")
+      begin
+        @operation.delete_organization_isolation_segment(params[:organization_guid], params[:isolation_segment_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete organization isolation segment: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete organization isolation segment: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/organizations/:organization_guid/:role/:user_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/#{params[:role]}/#{params[:user_guid]}")
       begin
@@ -1534,23 +1551,6 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete organization role: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
-    end
-
-    delete '/organizations_isolation_segments/:organization_guid/:isolation_segment_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/organizations_isolation_segments/#{params[:organization_guid]}/#{params[:isolation_segment_guid]}")
-      begin
-        @operation.delete_organization_isolation_segment(params[:organization_guid], params[:isolation_segment_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete organization isolation segment role: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete organization isolation segment: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end
