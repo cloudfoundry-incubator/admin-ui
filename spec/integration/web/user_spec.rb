@@ -33,12 +33,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         begin
           Selenium::WebDriver::Wait.new(timeout: 5).until do
-            @driver.find_element(id: page_id).displayed? &&
-              @driver.find_element(id: button_id).text == 'Copy'
+            @driver.find_element(id: page_id).displayed?
           end
         rescue Selenium::WebDriver::Error::TimeOutError
         end
         expect(@driver.find_element(id: page_id).displayed?).to eq(true)
+
+        select_first_row
+
+        begin
+          Selenium::WebDriver::Wait.new(timeout: 5).until do
+            @driver.find_element(id: button_id).text == 'Copy'
+          end
+        rescue Selenium::WebDriver::Error::TimeOutError
+        end
         expect(@driver.find_element(id: button_id).text).to eq('Copy')
       end
     end
@@ -184,6 +192,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id)    { 'Domains' }
         let(:page_id)   { 'DomainsPage' }
         let(:button_id) { 'Buttons_DomainsTable_0' }
+      end
+    end
+
+    context 'Domains tab Shared organizations does not have unshare button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Domains' }
+        let(:page_id)   { 'DomainsPage' }
+        let(:button_id) { 'Buttons_DomainsOrganizationsTable_0' }
       end
     end
 

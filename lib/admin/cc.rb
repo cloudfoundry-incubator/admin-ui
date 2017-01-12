@@ -433,6 +433,10 @@ module AdminUI
       invalidate_cache(:organizations_managers)
     end
 
+    def invalidate_organizations_private_domains
+      invalidate_cache(:organizations_private_domains)
+    end
+
     def invalidate_organizations_users
       invalidate_cache(:organizations_users)
     end

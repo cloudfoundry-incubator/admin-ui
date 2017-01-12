@@ -767,6 +767,33 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage organization private domain' do
+      def delete_organization_private_domain
+        operation.delete_organization_private_domain(cc_organization[:guid], cc_domain[:guid])
+      end
+
+      it 'deletes organization program domain' do
+        expect { delete_organization_private_domain }.to change { cc.organizations_private_domains['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          cc_clear_organizations_cache_stub(config)
+        end
+
+        def verify_organization_not_found(exception)
+          expect(exception.cf_code).to eq(30_003)
+          expect(exception.cf_error_code).to eq('CF-OrganizationNotFound')
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq("The organization could not be found: #{cc_organization[:guid]}")
+        end
+
+        it 'failed deleting organization private domain due to deleted organization' do
+          expect { delete_organization_private_domain }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage organization roles' do
       def delete_organization_auditor
         operation.delete_organization_role(cc_organization[:guid], 'auditors', cc_user[:guid])

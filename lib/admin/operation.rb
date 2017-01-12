@@ -196,6 +196,14 @@ module AdminUI
       @view_models.invalidate_organizations_isolation_segments
     end
 
+    def delete_organization_private_domain(organization_guid, domain_guid)
+      url = "/v2/organizations/#{organization_guid}/private_domains/#{domain_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_organizations_private_domains
+      @view_models.invalidate_domains
+    end
+
     def delete_organization_role(organization_guid, role, user_guid)
       url = "v2/organizations/#{organization_guid}/#{role}/#{user_guid}"
       @logger.debug("DELETE #{url}")

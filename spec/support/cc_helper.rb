@@ -147,9 +147,9 @@ module CCHelper
   end
 
   def cc_clear_domains_cache_stub(config)
+    cc_clear_organizations_private_domains_cache_stub(config)
     cc_clear_routes_cache_stub(config)
 
-    sql(config.ccdb_uri, 'DELETE FROM organizations_private_domains')
     sql(config.ccdb_uri, 'DELETE FROM domains')
 
     @cc_domains_deleted = true
@@ -179,6 +179,7 @@ module CCHelper
     cc_clear_space_quota_definitions_cache_stub(config)
     cc_clear_spaces_cache_stub(config)
     cc_clear_organizations_isolation_segments_cache_stub(config)
+    cc_clear_organizations_private_domains_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM organizations_auditors')
     sql(config.ccdb_uri, 'DELETE FROM organizations_billing_managers')
@@ -196,6 +197,10 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE from organizations_isolation_segments')
 
     @cc_organizations_isolation_segments_deleted = true
+  end
+
+  def cc_clear_organizations_private_domains_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM organizations_private_domains')
   end
 
   def cc_clear_packages_cache_stub(config)
@@ -1876,6 +1881,15 @@ module CCHelper
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_users WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}/private_domains/#{cc_domain[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "DELETE FROM organizations_private_domains WHERE organization_id = '#{cc_organization[:id]}' AND private_domain_id = '#{cc_domain[:id]}'")
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end

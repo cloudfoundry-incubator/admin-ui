@@ -1451,6 +1451,23 @@ module AdminUI
       end
     end
 
+    delete '/domains/:domain_guid/:organization_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/domains/#{params[:domain_guid]}/#{params[:organization_guid]}")
+      begin
+        @operation.delete_organization_private_domain(params[:organization_guid], params[:domain_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete domain organization: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete domain organization: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/groups/:group_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/groups/#{params[:group_guid]}")
       begin

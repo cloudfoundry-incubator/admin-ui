@@ -426,6 +426,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete domain recursive')
     end
 
+    shared_examples 'common delete domain organization' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/domains/domain1/organization1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete domain organization via http' do
+      it_behaves_like('common delete domain organization')
+    end
+
+    context 'delete domain organization via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete domain organization')
+    end
+
     shared_examples 'common delete group' do
       it 'returns failure code due to disconnection' do
         response = delete('/groups/group1')
@@ -2044,6 +2061,10 @@ describe AdminUI::Admin do
 
       it 'deletes /domains/:guid?recursive=true redirects as expected' do
         delete_redirects_as_expected('/domains/domain1?recursive=true')
+      end
+
+      it 'deletes /domains/:guid/:guid redirects as expected' do
+        delete_redirects_as_expected('/domains/domain1/organization1')
       end
 
       it 'deletes /doppler_components/?uri redirects as expected' do

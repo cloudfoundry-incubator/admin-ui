@@ -3615,23 +3615,51 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
-          it 'has private shared organizations' do
-            expect(@driver.find_element(id: 'DomainsOrganizationsDetailsLabel').displayed?).to be(true)
+          context 'private shared organizations' do
+            it 'has a table' do
+              expect(@driver.find_element(id: 'DomainsOrganizationsDetailsLabel').displayed?).to be(true)
 
-            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='DomainsOrganizationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
-                                expected_length: 2,
-                                labels:          %w(Organization GUID),
-                                colspans:        nil)
+              check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='DomainsOrganizationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                  expected_length: 3,
+                                  labels:          ['', 'Organization', 'GUID'],
+                                  colspans:        nil)
 
-            check_table_data(@driver.find_elements(xpath: "//table[@id='DomainsOrganizationsTable']/tbody/tr/td"),
-                             [
-                               cc_organization[:name],
-                               cc_organization[:guid]
-                             ])
-          end
+              check_table_data(@driver.find_elements(xpath: "//table[@id='DomainsOrganizationsTable']/tbody/tr/td"),
+                               [
+                                 '',
+                                 cc_organization[:name],
+                                 cc_organization[:guid]
+                               ])
+            end
 
-          it 'private shared organizations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_DomainsOrganizationsTable_0')
+            it 'has allowscriptaccess property set to sameDomain' do
+              check_allowscriptaccess_attribute('Buttons_DomainsOrganizationsTable_1')
+            end
+
+            it 'has a checkbox in the first column' do
+              check_checkbox_guid('DomainsOrganizationsTable', "#{cc_domain[:guid]}/#{cc_organization[:guid]}")
+            end
+
+            context 'manage private shared organizations' do
+              it 'has an Unshare button' do
+                expect(@driver.find_element(id: 'Buttons_DomainsOrganizationsTable_0').text).to eq('Unshare')
+              end
+
+              context 'Unshare button' do
+                it_behaves_like('click button without selecting any rows') do
+                  let(:button_id) { 'Buttons_DomainsOrganizationsTable_0' }
+                end
+              end
+
+              context 'Unshare button' do
+                it_behaves_like('delete first row') do
+                  let(:table_id)                { 'DomainsOrganizationsTable' }
+                  let(:button_id)               { 'Buttons_DomainsOrganizationsTable_0' }
+                  let(:check_no_data_available) { false }
+                  let(:confirm_message)         { 'Are you sure you want to unshare the domain from the selected organizations?' }
+                end
+              end
+            end
           end
 
           it 'has organizations link' do

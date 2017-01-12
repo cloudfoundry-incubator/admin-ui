@@ -487,6 +487,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}?recursive=true"]], true)
     end
 
+    def unshare_private_domain
+      response = delete_request("/domains/#{cc_domain[:guid]}/#{cc_organization[:guid]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}/#{cc_organization[:guid]}"]], true)
+    end
+
     it 'has user name and domains request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/domains_view_model']], true)
     end
@@ -497,6 +503,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a domain recursive' do
       expect { delete_domain_recursive }.to change { get_json('/domains_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'unshares a private domain' do
+      expect { unshare_private_domain }.to change { get_json('/domains_view_model')['items']['items'][0][6] }.from(1).to(0)
     end
   end
 

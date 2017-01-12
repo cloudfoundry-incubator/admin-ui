@@ -147,6 +147,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.organizations_isolation_segments['items'].length).to eq(0)
     end
 
+    it 'clears the organizations private domains cache' do
+      expect(cc.organizations_private_domains['items'].length).to eq(1)
+      cc_clear_organizations_private_domains_cache_stub(config)
+      cc.invalidate_organizations_private_domains
+      expect(cc.organizations_private_domains['items'].length).to eq(0)
+    end
+
     it 'clears the organizations users cache' do
       expect(cc.organizations_users['items'].length).to eq(1)
       cc_clear_organizations_cache_stub(config)
