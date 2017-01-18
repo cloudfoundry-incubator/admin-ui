@@ -186,6 +186,18 @@ module AdminUI
       end
     end
 
+    get '/environment_groups_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/environment_groups_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.environment_groups, params).items)
+    end
+
+    get '/environment_groups_view_model/:name', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/environment_groups_view_model/#{params[:name]}")
+      result = @view_models.environment_group(params[:name])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/events_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/events_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.events, params).items)
@@ -743,6 +755,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'domains.csv')
+    end
+
+    post '/environment_groups_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/environment_groups_view_model')
+      file = Download.download(request.body.read, 'events', @view_models.environment_groups)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'environment_groups.csv')
     end
 
     post '/events_view_model', auth: [:user] do

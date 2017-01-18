@@ -65,6 +65,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.droplets)
     end
 
+    it 'returns zero env-groups as expected' do
+      verify_disconnected_items(cc.env_groups)
+    end
+
     it 'returns zero events as expected' do
       verify_disconnected_items(cc.events)
     end

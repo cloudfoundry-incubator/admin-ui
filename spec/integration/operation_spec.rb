@@ -50,7 +50,7 @@ describe AdminUI::Operation, type: :integration do
   let(:router_source)      { :varz_router }
   let(:stats)              { AdminUI::Stats.new(config, logger, cc, doppler, varz, true) }
   let(:varz)               { AdminUI::VARZ.new(config, logger, nats, true) }
-  let(:view_models)        { AdminUI::ViewModels.new(config, logger, cc, doppler, log_files, stats, varz, true) }
+  let(:view_models)        { AdminUI::ViewModels.new(config, logger, cc, client, doppler, log_files, stats, varz, true) }
 
   def cleanup_files
     Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{doppler_data_file} #{log_file} #{uaadb_file}"))

@@ -46,7 +46,7 @@ describe AdminUI::ViewModels, type: :integration do
   let(:nats)               { AdminUI::NATS.new(config, logger, email, true) }
   let(:varz)               { AdminUI::VARZ.new(config, logger, nats, true) }
   let(:stats)              { AdminUI::Stats.new(config, logger, cc, doppler, varz, true) }
-  let(:view_models)        { AdminUI::ViewModels.new(config, logger, cc, doppler, log_files, stats, varz, true) }
+  let(:view_models)        { AdminUI::ViewModels.new(config, logger, cc, client, doppler, log_files, stats, varz, true) }
 
   def cleanup_files
     Process.wait(Process.spawn({}, "rm -fr #{ccdb_file} #{data_file} #{db_file} #{doppler_data_file} #{log_file} #{log_file_displayed} #{uaadb_file}"))
@@ -273,6 +273,20 @@ describe AdminUI::ViewModels, type: :integration do
     context 'returns connected domains_view_model detail' do
       let(:results)  { view_models.domain(cc_domain[:guid]) }
       let(:expected) { view_models_domains_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
+    context 'returns connected environment_groups_view_model' do
+      let(:results)  { view_models.environment_groups }
+      let(:expected) { view_models_environment_groups }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected environment_groups_view_model detail' do
+      let(:results)  { view_models.environment_group(cc_env_group[:name]) }
+      let(:expected) { view_models_environment_groups_detail }
 
       it_behaves_like('common view model retrieval detail')
     end

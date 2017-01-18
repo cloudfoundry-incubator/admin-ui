@@ -29,16 +29,7 @@ module AdminUI
     end
 
     def get_cc(path)
-      uri = get_cc_url(path)
-      resources = []
-      loop do
-        json = cf_request(uri, Utils::HTTP_GET)
-        resources.concat(json['resources'])
-        next_url = json['next_url']
-        return resources if next_url.nil?
-        uri = get_cc_url(next_url)
-      end
-      resources
+      cf_request(get_cc_url(path), Utils::HTTP_GET)
     end
 
     def get_firehose(subscription_id, force_login)

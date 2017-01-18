@@ -1792,6 +1792,18 @@ describe AdminUI::Admin, type: :integration do
       end
     end
 
+    context 'environment_groups_view_model' do
+      let(:path)              { '/environment_groups_view_model' }
+      let(:view_model_source) { view_models_environment_groups }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'environment_groups_view_model detail' do
+      let(:path)              { "/environment_groups_view_model/#{cc_env_group[:name]}" }
+      let(:view_model_source) { view_models_environment_groups_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     context 'events_view_model' do
       let(:path)              { '/events_view_model' }
       let(:view_model_source) { view_models_events }

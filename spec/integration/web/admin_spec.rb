@@ -83,6 +83,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('StagingSecurityGroupsSpaces').displayed?).to be(true)
       expect(scroll_tab_into_view('IsolationSegments').displayed?).to be(true)
       expect(scroll_tab_into_view('OrganizationsIsolationSegments').displayed?).to be(true)
+      expect(scroll_tab_into_view('EnvironmentGroups').displayed?).to be(true)
       expect(scroll_tab_into_view('DEAs').displayed?).to be(true)
       expect(scroll_tab_into_view('Cells').displayed?).to be(true)
       expect(scroll_tab_into_view('CloudControllers').displayed?).to be(true)
@@ -5742,6 +5743,50 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has isolation segments link' do
             check_filter_link('OrganizationsIsolationSegments', 2, 'IsolationSegments', cc_isolation_segment[:guid])
+          end
+        end
+      end
+
+      context 'Environment Groups' do
+        let(:tab_id)   { 'EnvironmentGroups' }
+        let(:table_id) { 'EnvironmentGroupsTable' }
+
+        it 'has a table' do
+          check_table_layout([
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='EnvironmentGroupsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                 expected_length: 4,
+                                 labels:          %w(Name GUID Created Updated),
+                                 colspans:        nil
+                               }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='EnvironmentGroupsTable']/tbody/tr/td"),
+                           [
+                             cc_env_group[:name],
+                             cc_env_group[:guid],
+                             cc_env_group[:created_at].to_datetime.rfc3339,
+                             cc_env_group[:updated_at].to_datetime.rfc3339
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_EnvironmentGroupsTable_0')
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([
+                            { label: 'Name',                                             tag: 'div', value: cc_env_group[:name] },
+                            { label: 'GUID',                                             tag:   nil, value: cc_env_group[:guid] },
+                            { label: 'Created',                                          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_env_group[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',                                          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_env_group[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: "Variable \"#{cc_env_group_variable.keys.first}\"", tag:   nil, value: "\"#{cc_env_group_variable.values.first}\"" }
+                          ])
           end
         end
       end

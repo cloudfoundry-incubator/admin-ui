@@ -59,6 +59,12 @@ module AdminUI
             table:   :droplets,
             columns: [:app_guid, :buildpack_receipt_detect_output, :buildpack_receipt_buildpack, :buildpack_receipt_buildpack_guid, :buildpack_receipt_stack_name, :created_at, :droplet_hash, :error_description, :error_id, :execution_metadata, :guid, :id, :package_guid, :process_types, :staging_disk_in_mb, :staging_memory_in_mb, :state, :updated_at]
           },
+          env_groups:
+          {
+            db_uri:  ccdb_uri,
+            table:   :env_groups,
+            columns: [:created_at, :guid, :id, :name, :updated_at]
+          },
           events:
           {
             db_uri:  ccdb_uri,
@@ -347,6 +353,10 @@ module AdminUI
 
     def droplets
       result_cache(:droplets)
+    end
+
+    def env_groups
+      result_cache(:env_groups)
     end
 
     def events

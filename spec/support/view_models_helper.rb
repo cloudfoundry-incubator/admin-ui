@@ -415,6 +415,21 @@ module ViewModelsHelper
     }
   end
 
+  def view_models_environment_groups
+    [
+      [
+        cc_env_group[:name],
+        cc_env_group[:guid],
+        cc_env_group[:created_at].to_datetime.rfc3339,
+        cc_env_group[:updated_at].to_datetime.rfc3339
+      ]
+    ]
+  end
+
+  def view_models_environment_groups_detail
+    cc_env_group.merge(variables: cc_env_group_variable)
+  end
+
   def view_models_events
     [
       [

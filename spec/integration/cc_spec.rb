@@ -384,6 +384,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected env_groups' do
+      let(:results)  { cc.env_groups }
+      let(:expected) { cc_env_group }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected events' do
       let(:results)  { cc.events }
       let(:expected) { cc_event_space }

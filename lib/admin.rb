@@ -117,7 +117,7 @@ module AdminUI
       @nats        = NATS.new(@config, @logger, email, @testing)
       @varz        = VARZ.new(@config, @logger, @nats, @testing)
       @stats       = Stats.new(@config, @logger, @cc, @doppler, @varz, @testing)
-      @view_models = ViewModels.new(@config, @logger, @cc, @doppler, @log_files, @stats, @varz, @testing)
+      @view_models = ViewModels.new(@config, @logger, @cc, @client, @doppler, @log_files, @stats, @varz, @testing)
       @operation   = Operation.new(@config, @logger, @cc, @client, @doppler, @varz, @view_models, @testing)
     end
 

@@ -99,6 +99,7 @@ module CCHelper
     cc_app_stubs(config)
     cc_buildpack_stubs(config)
     cc_domain_stubs(config)
+    cc_env_group_stubs(config)
     cc_feature_flag_stubs(config)
     cc_isolation_segment_stubs(config)
     cc_organization_stubs(config)
@@ -464,6 +465,22 @@ module CCHelper
       staging_memory_in_mb:             1024,
       state:                            'STAGED',
       updated_at:                       unique_time('cc_droplet_updated')
+    }
+  end
+
+  def cc_env_group
+    {
+      created_at:             unique_time('cc_env_group_created'),
+      guid:                   'env_group1',
+      id:                     unique_id('cc_env_group'),
+      name:                   'running',
+      updated_at:             unique_time('cc_env_group_updated')
+    }
+  end
+
+  def cc_env_group_variable
+    {
+      'env_key' => 'env_value'
     }
   end
 
@@ -1379,6 +1396,7 @@ module CCHelper
   def ccdb_inserts(insert_second_quota_definition, event_type)
     result = [
                [:buildpacks,                       cc_buildpack],
+               [:env_groups,                       cc_env_group],
                [:feature_flags,                    cc_feature_flag],
                [:quota_definitions,                cc_quota_definition],
                [:security_groups,                  cc_security_group],
@@ -1650,6 +1668,12 @@ module CCHelper
         cc_clear_domains_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
+    end
+  end
+
+  def cc_env_group_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/config/environment_variable_groups/#{cc_env_group[:name]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
+      OK.new(cc_env_group_variable)
     end
   end
 

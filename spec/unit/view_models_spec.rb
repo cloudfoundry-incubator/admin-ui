@@ -35,7 +35,7 @@ describe AdminUI::ViewModels do
   let(:nats)               { AdminUI::NATS.new(config, logger, email, true) }
   let(:stats)              { AdminUI::Stats.new(config, logger, cc, doppler, varz, true) }
   let(:varz)               { AdminUI::VARZ.new(config, logger, nats, true) }
-  let(:view_models)        { AdminUI::ViewModels.new(config, logger, cc, doppler, log_files, stats, varz, true) }
+  let(:view_models)        { AdminUI::ViewModels.new(config, logger, cc, client, doppler, log_files, stats, varz, true) }
 
   before do
     config_stub
@@ -146,6 +146,14 @@ describe AdminUI::ViewModels do
 
     it 'returns zero domains as expected' do
       verify_disconnected_items(view_models.domains)
+    end
+
+    it 'returns nil environment_group as expected' do
+      expect(view_models.environment_group('bogus')).to be_nil
+    end
+
+    it 'returns zero environment_groups as expected' do
+      verify_disconnected_items(view_models.environment_groups)
     end
 
     it 'returns nil event as expected' do

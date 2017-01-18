@@ -1364,6 +1364,14 @@ describe AdminUI::Admin do
         verify_not_found('/domains_view_model/domain1')
       end
 
+      it '/environment_groups_view_model succeeds' do
+        verify_disconnected_view_model_items('/environment_groups_view_model')
+      end
+
+      it '/environment_groups_view_model/:name returns not found' do
+        verify_not_found('/environment_groups_view_model/running')
+      end
+
       it '/events_view_model succeeds' do
         verify_disconnected_view_model_items('/events_view_model')
       end
@@ -1761,6 +1769,14 @@ describe AdminUI::Admin do
 
       it '/download redirects as expected' do
         get_redirects_as_expected('/download')
+      end
+
+      it '/environment_groups_view_model redirects as expected' do
+        get_redirects_as_expected('/environment_groups_view_model')
+      end
+
+      it '/environment_groups_view_model/:name redirects as expected' do
+        get_redirects_as_expected('/environment_groups_view_model/running')
       end
 
       it '/events_view_model redirects as expected' do
@@ -2241,6 +2257,10 @@ describe AdminUI::Admin do
 
       it 'posts /domains_view_model redirects as expected' do
         post_redirects_as_expected('/domains_view_model')
+      end
+
+      it 'posts /environment_groups_view_model redirects as expected' do
+        post_redirects_as_expected('/environment_groups_view_model')
       end
 
       it 'posts /events_view_model redirects as expected' do

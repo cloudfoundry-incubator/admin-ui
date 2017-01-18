@@ -40,6 +40,7 @@
         <script src="js/app/tabs/componentsTab.js"></script>
         <script src="js/app/tabs/deasTab.js"></script>
         <script src="js/app/tabs/domainsTab.js"></script>
+        <script src="js/app/tabs/environmentGroupsTab.js"></script>
         <script src="js/app/tabs/eventsTab.js"></script>
         <script src="js/app/tabs/featureFlagsTab.js"></script>
         <script src="js/app/tabs/gatewaysTab.js"></script>
@@ -140,6 +141,7 @@
                 <span id="StagingSecurityGroupsSpaces" class="menuItem">Staging Security Groups Spaces</span>
                 <span id="IsolationSegments" class="menuItem">Isolation Segments</span>
                 <span id="OrganizationsIsolationSegments" class="menuItem">Organization Isolation Segments</span>
+                <span id="EnvironmentGroups" class="menuItem">Environment Groups</span>
                 <span id="DEAs" class="menuItem">DEAs</span>
                 <span id="Cells" class="menuItem">Cells</span>
                 <span id="CloudControllers" class="menuItem">Cloud Controllers</span>
@@ -1350,6 +1352,17 @@
                 <div class="verticalPageSection">
                     <div id="OrganizationsIsolationSegmentsDetailsLabel" class="propertyLabel">Details</div>
                     <div id="OrganizationsIsolationSegmentsPropertiesContainer"></div>
+                </div>
+            </div>
+
+           <div id="EnvironmentGroupsPage" class="page hiddenPage">
+                <div id="EnvironmentGroupsTableContainer" class="pageSection">
+                    <table id="EnvironmentGroupsTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="EnvironmentGroupsDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="EnvironmentGroupsPropertiesContainer"></div>
                 </div>
             </div>
 

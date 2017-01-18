@@ -11,6 +11,7 @@ require_relative 'view_models/cloud_controllers_view_model'
 require_relative 'view_models/components_view_model'
 require_relative 'view_models/deas_view_model'
 require_relative 'view_models/domains_view_model'
+require_relative 'view_models/environment_groups_view_model'
 require_relative 'view_models/events_view_model'
 require_relative 'view_models/feature_flags_view_model'
 require_relative 'view_models/gateways_view_model'
@@ -48,9 +49,10 @@ require_relative 'view_models/users_view_model'
 
 module AdminUI
   class ViewModels
-    def initialize(config, logger, cc, doppler, log_files, stats, varz, testing)
-      @logger  = logger
-      @testing = testing
+    def initialize(config, logger, cc, cc_rest_client, doppler, log_files, stats, varz, testing)
+      @logger          = logger
+      @testing         = testing
+      @cc_rest_client  = cc_rest_client
 
       @running = true
 
@@ -66,6 +68,7 @@ module AdminUI
           components:                       { clazz: AdminUI::ComponentsViewModel },
           deas:                             { clazz: AdminUI::DEAsViewModel },
           domains:                          { clazz: AdminUI::DomainsViewModel },
+          environment_groups:               { clazz: AdminUI::EnvironmentGroupsViewModel },
           events:                           { clazz: AdminUI::EventsViewModel },
           feature_flags:                    { clazz: AdminUI::FeatureFlagsViewModel },
           gateways:                         { clazz: AdminUI::GatewaysViewModel },
@@ -358,6 +361,25 @@ module AdminUI
 
     def domains
       result_cache(:domains)
+    end
+
+    def environment_group(name)
+      result = details(:environment_groups, name)
+      unless result.nil?
+        begin
+          json = @cc_rest_client.get_cc("/v2/config/environment_variable_groups/#{name}")
+          json = Hash[json.sort_by { |key, _| key.downcase }]
+          return Hash[result.merge(variables: json).sort_by { |key, _| key }]
+        rescue => error
+          @logger.error("Error during environment_group #{name} retrieval: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
+        end
+      end
+      result
+    end
+
+    def environment_groups
+      result_cache(:environment_groups)
     end
 
     def event(guid)
