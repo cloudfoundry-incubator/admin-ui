@@ -481,7 +481,7 @@ module AdminUI
 
     get '/service_bindings_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/service_bindings_view_model/#{params[:guid]}")
-      result = @view_models.service_binding(params[:guid])
+      result = @view_models.service_binding(params[:guid], session[:role] == 'admin')
       return Yajl::Encoder.encode(result) if result
       404
     end
@@ -503,9 +503,9 @@ module AdminUI
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.service_instances, params).items)
     end
 
-    get '/service_instances_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/service_instances_view_model/#{params[:guid]}")
-      result = @view_models.service_instance(params[:guid])
+    get '/service_instances_view_model/:guid/:is_gateway_service', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/service_instances_view_model/#{params[:guid]}/#{params[:is_gateway_service]}")
+      result = @view_models.service_instance(params[:guid], params[:is_gateway_service] == 'true', session[:role] == 'admin')
       return Yajl::Encoder.encode(result) if result
       404
     end
@@ -517,7 +517,7 @@ module AdminUI
 
     get '/service_keys_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/service_keys_view_model/#{params[:guid]}")
-      result = @view_models.service_key(params[:guid])
+      result = @view_models.service_key(params[:guid], session[:role] == 'admin')
       return Yajl::Encoder.encode(result) if result
       404
     end
@@ -1725,7 +1725,7 @@ module AdminUI
       end
       @logger.info_user(session[:username], 'delete', url)
       begin
-        @operation.delete_service_instance(params[:service_instance_guid], params[:is_gateway_service], recursive, purge)
+        @operation.delete_service_instance(params[:service_instance_guid], params[:is_gateway_service] == 'true', recursive, purge)
         204
       rescue CCRestClientResponseError => error
         @logger.error("Error during delete service instance: #{error.to_h}")

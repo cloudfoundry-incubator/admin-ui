@@ -301,7 +301,7 @@ describe AdminUI::ViewModels do
     end
 
     it 'returns nil service_binding as expected' do
-      expect(view_models.service_binding('bogus')).to be_nil
+      expect(view_models.service_binding('bogus', true)).to be_nil
     end
 
     it 'returns zero service_bindings as expected' do
@@ -317,7 +317,7 @@ describe AdminUI::ViewModels do
     end
 
     it 'returns nil service_instance as expected' do
-      expect(view_models.service_instance('bogus')).to be_nil
+      expect(view_models.service_instance('bogus', true, true)).to be_nil
     end
 
     it 'returns zero service_instances as expected' do
@@ -325,7 +325,7 @@ describe AdminUI::ViewModels do
     end
 
     it 'returns nil service_key as expected' do
-      expect(view_models.service_key('bogus')).to be_nil
+      expect(view_models.service_key('bogus', true)).to be_nil
     end
 
     it 'returns zero service_keys as expected' do

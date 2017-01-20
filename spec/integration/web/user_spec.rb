@@ -51,6 +51,35 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    shared_examples 'verifies subtable is not shown' do
+      it 'verifies subtable is not shown' do
+        begin
+          Selenium::WebDriver::Wait.new(timeout: 5).until do
+            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # scroll_tab_into_view(tab_id, true).click
+            @driver.execute_script('arguments[0].click();', scroll_tab_into_view(tab_id, true))
+
+            @driver.find_element(class_name: 'menuItemSelected').attribute('id') == tab_id
+          end
+        rescue Selenium::WebDriver::Error::TimeOutError
+        end
+        expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq(tab_id)
+
+        begin
+          Selenium::WebDriver::Wait.new(timeout: 5).until do
+            @driver.find_element(id: page_id).displayed?
+          end
+        rescue Selenium::WebDriver::Error::TimeOutError
+        end
+        expect(@driver.find_element(id: page_id).displayed?).to eq(true)
+
+        select_first_row
+
+        expect(@driver.find_element(id: table_id_label).displayed?).to be(false)
+        expect(@driver.find_element(id: table_id).displayed?).to be(false)
+      end
+    end
+
     context 'Organizations tab does not have create, rename, set quota, activate, suspend or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Organizations' }
@@ -107,6 +136,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Service Instances tab does not have credentials subtable' do
+      it_behaves_like('verifies subtable is not shown') do
+        let(:tab_id)         { 'ServiceInstances' }
+        let(:page_id)        { 'ServiceInstancesPage' }
+        let(:table_id)       { 'ServiceInstancesCredentialsTable' }
+        let(:table_id_label) { 'ServiceInstancesCredentialsDetailsLabel' }
+      end
+    end
+
     context 'Service Bindings tab does not have delete button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceBindings' }
@@ -115,11 +153,29 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Service Bindings tab does not have credentials subtable' do
+      it_behaves_like('verifies subtable is not shown') do
+        let(:tab_id)         { 'ServiceBindings' }
+        let(:page_id)        { 'ServiceBindingsPage' }
+        let(:table_id)       { 'ServiceBindingsCredentialsTable' }
+        let(:table_id_label) { 'ServiceBindingsCredentialsDetailsLabel' }
+      end
+    end
+
     context 'Service Keys tab does not have delete button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceKeys' }
         let(:page_id)   { 'ServiceKeysPage' }
         let(:button_id) { 'Buttons_ServiceKeysTable_0' }
+      end
+    end
+
+    context 'Service Keys tab does not have credentials subtable' do
+      it_behaves_like('verifies subtable is not shown') do
+        let(:tab_id)         { 'ServiceKeys' }
+        let(:page_id)        { 'ServiceKeysPage' }
+        let(:table_id)       { 'ServiceKeysCredentialsTable' }
+        let(:table_id_label) { 'ServiceKeysCredentialsDetailsLabel' }
       end
     end
 

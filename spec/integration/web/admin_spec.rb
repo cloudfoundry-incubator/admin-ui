@@ -2098,6 +2098,25 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
+          it 'has credentials' do
+            expect(@driver.find_element(id: 'ServiceInstancesCredentialsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesCredentialsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 2,
+                                labels:          %w(Key Value),
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceInstancesCredentialsTable']/tbody/tr/td"),
+                             [
+                               cc_service_instance_credential.keys.first,
+                               "\"#{cc_service_instance_credential.values.first}\""
+                             ])
+          end
+
+          it 'credentials subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ServiceInstancesCredentialsTable_0')
+          end
+
           it 'has events link' do
             check_filter_link('ServiceInstances', 7, 'Events', cc_service_instance[:guid])
           end
@@ -2259,6 +2278,25 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
+          it 'has credentials' do
+            expect(@driver.find_element(id: 'ServiceBindingsCredentialsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsCredentialsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 2,
+                                labels:          %w(Key Value),
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceBindingsCredentialsTable']/tbody/tr/td"),
+                             [
+                               cc_service_binding_credential.keys.first,
+                               "\"#{cc_service_binding_credential.values.first}\""
+                             ])
+          end
+
+          it 'credentials subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ServiceBindingsCredentialsTable_0')
+          end
+
           it 'has events' do
             check_filter_link('ServiceBindings', 4, 'Events', cc_service_binding[:guid])
           end
@@ -2414,6 +2452,25 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Organization',             tag:   'a', value: cc_organization[:name] },
                             { label: 'Organization GUID',        tag:   nil, value: cc_organization[:guid] }
                           ])
+          end
+
+          it 'has credentials' do
+            expect(@driver.find_element(id: 'ServiceKeysCredentialsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceKeysCredentialsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 2,
+                                labels:          %w(Key Value),
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceKeysCredentialsTable']/tbody/tr/td"),
+                             [
+                               cc_service_key_credential.keys.first,
+                               "\"#{cc_service_key_credential.values.first}\""
+                             ])
+          end
+
+          it 'credentials subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ServiceKeysCredentialsTable_0')
           end
 
           it 'has events' do

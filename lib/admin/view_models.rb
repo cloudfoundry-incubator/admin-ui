@@ -50,6 +50,7 @@ require_relative 'view_models/users_view_model'
 module AdminUI
   class ViewModels
     def initialize(config, logger, cc, cc_rest_client, doppler, log_files, stats, varz, testing)
+      @config          = config
       @logger          = logger
       @testing         = testing
       @cc_rest_client  = cc_rest_client
@@ -534,8 +535,20 @@ module AdminUI
       details(:services, guid)
     end
 
-    def service_binding(guid)
-      details(:service_bindings, guid)
+    def service_binding(guid, admin)
+      result = details(:service_bindings, guid)
+      if @config.display_encrypted_values && admin && !result.nil?
+        begin
+          json = @cc_rest_client.get_cc("/v2/service_bindings/#{guid}")
+          credentials = json['entity']['credentials']
+          credentials = Hash[credentials.sort_by { |key, _| key.downcase }]
+          return Hash[result.merge('credentials' => credentials).sort_by { |key, _| key }]
+        rescue => error
+          @logger.error("Error during service_binding #{guid} retrieval: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
+        end
+      end
+      result
     end
 
     def service_bindings
@@ -550,16 +563,41 @@ module AdminUI
       result_cache(:service_brokers)
     end
 
-    def service_instance(guid)
-      details(:service_instances, guid)
+    def service_instance(guid, is_gateway_service, admin)
+      result = details(:service_instances, guid)
+      if @config.display_encrypted_values && admin && !result.nil?
+        begin
+          type = is_gateway_service ? 'service_instances' : 'user_provided_service_instances'
+          json = @cc_rest_client.get_cc("/v2/#{type}/#{guid}")
+          credentials = json['entity']['credentials']
+          credentials = Hash[credentials.sort_by { |key, _| key.downcase }]
+          return Hash[result.merge('credentials' => credentials).sort_by { |key, _| key }]
+        rescue => error
+          @logger.error("Error during service_instance #{guid} retrieval: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
+        end
+      end
+      result
     end
 
     def service_instances
       result_cache(:service_instances)
     end
 
-    def service_key(guid)
-      details(:service_keys, guid)
+    def service_key(guid, admin)
+      result = details(:service_keys, guid)
+      if @config.display_encrypted_values && admin && !result.nil?
+        begin
+          json = @cc_rest_client.get_cc("/v2/service_keys/#{guid}")
+          credentials = json['entity']['credentials']
+          credentials = Hash[credentials.sort_by { |key, _| key.downcase }]
+          return Hash[result.merge('credentials' => credentials).sort_by { |key, _| key }]
+        rescue => error
+          @logger.error("Error during service_key #{guid} retrieval: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
+        end
+      end
+      result
     end
 
     def service_keys

@@ -1540,8 +1540,8 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/service_instances_view_model')
       end
 
-      it '/service_instances_view_model/:guid returns not found' do
-        verify_not_found('/service_instances_view_model/service_instance1')
+      it '/service_instances_view_model/:guid/true returns not found' do
+        verify_not_found('/service_instances_view_model/service_instance1/true')
       end
 
       it '/service_keys_view_model succeeds' do
@@ -1955,8 +1955,8 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/service_instances_view_model')
       end
 
-      it '/service_instances_view_model/:guid redirects as expected' do
-        get_redirects_as_expected('/service_instances_view_model/service_instance1')
+      it '/service_instances_view_model/:guid/true redirects as expected' do
+        get_redirects_as_expected('/service_instances_view_model/service_instance1/true')
       end
 
       it '/service_keys_view_model redirects as expected' do

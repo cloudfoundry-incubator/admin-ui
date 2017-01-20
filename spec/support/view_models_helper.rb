@@ -999,6 +999,7 @@ module ViewModelsHelper
   def view_models_service_bindings_detail
     {
       'application'      => cc_app,
+      'credentials'      => cc_service_binding_credential,
       'organization'     => cc_organization,
       'service'          => cc_service,
       'service_binding'  => cc_service_binding,
@@ -1083,6 +1084,7 @@ module ViewModelsHelper
 
   def view_models_service_instances_detail
     {
+      'credentials'                => cc_service_instance_credential,
       'organization'               => cc_organization,
       'service'                    => cc_service,
       'service_broker'             => cc_service_broker,
@@ -1131,6 +1133,7 @@ module ViewModelsHelper
 
   def view_models_service_keys_detail
     {
+      'credentials'      => cc_service_key_credential,
       'organization'     => cc_organization,
       'service'          => cc_service,
       'service_broker'   => cc_service_broker,

@@ -203,6 +203,16 @@ In this case, the store.db file is located in the 'data' directory.  Absolute pa
 <code>sqlite:///tmp/store.db</code> indicates the database file 'store.db' is located in the '/tmp' directory.
 </dd>
 <dt>
+<code>display_encrypted_values</code>
+</dt>
+<dd>
+Whether to display encrypted values like service instance credentials, service binding credentials, service key credentials, etc. Encrypted values are also only displayed if the signed-in user is a member of a UAA admin group for the Administration UI.
+<br>
+Example: <code>true</code>
+<br>
+Example: <code>false</code>
+</dd>
+<dt>
 <code>doppler_data_file</code>
 </dt>
 <dd>

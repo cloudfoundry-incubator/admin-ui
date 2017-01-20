@@ -1029,9 +1029,15 @@ module CCHelper
     }
   end
 
+  def cc_service_binding_credential
+    {
+      'service_binding_key' => 'service_binding_value'
+    }
+  end
+
   # We do not retrieve credentials, but it is required for insert
   def cc_service_binding_with_credentials
-    cc_service_binding.merge(credentials: '{}')
+    cc_service_binding.merge(credentials: cc_service_binding_credential)
   end
 
   def cc_service_broker
@@ -1081,6 +1087,17 @@ module CCHelper
     }
   end
 
+  def cc_service_instance_credential
+    {
+      'service_instance_key' => 'service_instance_value'
+    }
+  end
+
+  # We do not retrieve credentials, but it is required for insert
+  def cc_service_instance_with_credentials
+    cc_service_instance.merge(credentials: cc_service_instance_credential)
+  end
+
   def cc_service_instance_rename
     'renamed_TestService-random'
   end
@@ -1111,9 +1128,15 @@ module CCHelper
     }
   end
 
+  def cc_service_key_credential
+    {
+      'service_key_key' => 'service_key_value'
+    }
+  end
+
   # We do not retrieve credentials, but it is required for insert
   def cc_service_key_with_credentials
-    cc_service_key.merge(credentials: '{}')
+    cc_service_key.merge(credentials: cc_service_key_credential)
   end
 
   def cc_service_plan_display_name
@@ -1429,7 +1452,7 @@ module CCHelper
                [:spaces_developers,                cc_space_developer],
                [:spaces_managers,                  cc_space_manager],
                [:service_plans,                    cc_service_plan],
-               [:service_instances,                cc_service_instance],
+               [:service_instances,                cc_service_instance_with_credentials],
                [:service_plan_visibilities,        cc_service_plan_visibility],
                [:service_bindings,                 cc_service_binding_with_credentials],
                [:service_instance_operations,      cc_service_instance_operation],
@@ -2094,6 +2117,10 @@ module CCHelper
   end
 
   def cc_service_binding_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_bindings/#{cc_service_binding[:guid]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
+      OK.new('entity' => { 'credentials' => cc_service_binding_credential })
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_bindings/#{cc_service_binding[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_service_bindings_deleted
         cc_service_binding_not_found
@@ -2137,6 +2164,10 @@ module CCHelper
   end
 
   def cc_service_instance_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
+      OK.new('entity' => { 'credentials' => cc_service_instance_credential })
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_service_instance_rename}\"}", anything, anything, anything) do
       if @cc_service_instances_deleted
         cc_service_instance_not_found
@@ -2181,6 +2212,10 @@ module CCHelper
   end
 
   def cc_service_key_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_keys/#{cc_service_key[:guid]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
+      OK.new('entity' => { 'credentials' => cc_service_key_credential })
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_keys/#{cc_service_key[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_service_keys_deleted
         cc_service_key_not_found

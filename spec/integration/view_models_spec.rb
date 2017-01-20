@@ -599,7 +599,7 @@ describe AdminUI::ViewModels, type: :integration do
     end
 
     context 'returns connected service_bindings_view_model detail' do
-      let(:results)  { view_models.service_binding(cc_service_binding[:guid]) }
+      let(:results)  { view_models.service_binding(cc_service_binding[:guid], true) }
       let(:expected) { view_models_service_bindings_detail }
 
       it_behaves_like('common view model retrieval detail')
@@ -629,7 +629,7 @@ describe AdminUI::ViewModels, type: :integration do
     end
 
     context 'returns connected service_instances_view_model detail' do
-      let(:results)  { view_models.service_instance(cc_service_instance[:guid]) }
+      let(:results)  { view_models.service_instance(cc_service_instance[:guid], true, true) }
       let(:expected) { view_models_service_instances_detail }
 
       it_behaves_like('common view model retrieval detail')
@@ -644,7 +644,7 @@ describe AdminUI::ViewModels, type: :integration do
     end
 
     context 'returns connected service_keys_view_model detail' do
-      let(:results)  { view_models.service_key(cc_service_key[:guid]) }
+      let(:results)  { view_models.service_key(cc_service_key[:guid], true) }
       let(:expected) { view_models_service_keys_detail }
 
       it_behaves_like('common view model retrieval detail')

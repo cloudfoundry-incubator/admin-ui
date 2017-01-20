@@ -2103,7 +2103,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_instances_view_model detail' do
-      let(:path)              { "/service_instances_view_model/#{cc_service_instance[:guid]}" }
+      let(:path)              { "/service_instances_view_model/#{cc_service_instance[:guid]}/true" }
       let(:view_model_source) { view_models_service_instances_detail }
       it_behaves_like('retrieves view_model detail')
     end

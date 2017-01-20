@@ -57,6 +57,12 @@ describe AdminUI::Config do
         expect(config.db_uri).to eq(db_uri)
       end
 
+      it 'display_encrypted_values' do
+        display_encrypted_values = false
+        config = AdminUI::Config.load('display_encrypted_values' => false)
+        expect(config.display_encrypted_values).to eq(display_encrypted_values)
+      end
+
       it 'doppler_data_file' do
         doppler_data_file = 'doppler_data.json'
         config = AdminUI::Config.load('doppler_data_file' => doppler_data_file)
@@ -375,6 +381,10 @@ describe AdminUI::Config do
         expect(config.db_uri).to be_nil
       end
 
+      it 'display_encrypted_values' do
+        expect(config.display_encrypted_values).to eq(true)
+      end
+
       it 'doppler_data_file' do
         expect(config.doppler_data_file).to be_nil
       end
@@ -585,6 +595,10 @@ describe AdminUI::Config do
 
       it 'db_uri' do
         expect { AdminUI::Config.load(config.merge(db_uri: 5)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'display_encrypted_values' do
+        expect { AdminUI::Config.load(config.merge(display_encrypted_values: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'doppler_data_file' do

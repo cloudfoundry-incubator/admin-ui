@@ -7,6 +7,7 @@ cloud_controller_uri: http://api.10.244.0.34.xip.io
 component_connection_retries: 2
 data_file: data/data.json
 db_uri: sqlite://data/store.db
+display_encrypted_values: true
 doppler_data_file: data/doppler_data.json
 doppler_reconnect_delay: 300
 doppler_rollup_interval: 30
