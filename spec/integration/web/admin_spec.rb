@@ -5838,12 +5838,30 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Name',                                             tag: 'div', value: cc_env_group[:name] },
-                            { label: 'GUID',                                             tag:   nil, value: cc_env_group[:guid] },
-                            { label: 'Created',                                          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_env_group[:created_at].to_datetime.rfc3339}\")") },
-                            { label: 'Updated',                                          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_env_group[:updated_at].to_datetime.rfc3339}\")") },
-                            { label: "Variable \"#{cc_env_group_variable.keys.first}\"", tag:   nil, value: "\"#{cc_env_group_variable.values.first}\"" }
+                            { label: 'Name',    tag: 'div', value: cc_env_group[:name] },
+                            { label: 'GUID',    tag:   nil, value: cc_env_group[:guid] },
+                            { label: 'Created', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_env_group[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Updated', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_env_group[:updated_at].to_datetime.rfc3339}\")") }
                           ])
+          end
+
+          it 'has variables' do
+            expect(@driver.find_element(id: 'EnvironmentGroupsVariablesDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='EnvironmentGroupsVariablesTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 2,
+                                labels:          %w(Key Value),
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='EnvironmentGroupsVariablesTable']/tbody/tr/td"),
+                             [
+                               cc_env_group_variable.keys.first,
+                               "\"#{cc_env_group_variable.values.first}\""
+                             ])
+          end
+
+          it 'variables subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_EnvironmentGroupsVariablesTable_0')
           end
         end
       end
