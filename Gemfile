@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'faye-websocket', '0.10.5'
+gem 'faye-websocket', '0.10.6'
 gem 'membrane', '1.1.0'
 gem 'nats', '0.8.0'
 gem 'net-sftp', '2.1.2'
@@ -19,7 +19,7 @@ end
 
 group :development do
   gem 'rake', '12.0.0' # Temporarily required since rubocop requires rainbow which requires rake: https://github.com/sickill/rainbow/issues/44
-  gem 'rubocop', '0.47.0'
+  gem 'rubocop', '0.47.1'
 end
 
 group :test do
