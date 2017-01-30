@@ -133,6 +133,10 @@ module DopplerHelper
     allow_any_instance_of(MockWebSocketClient).to receive(:on).with(:close) do |_event, &blk|
       @close_blk = blk
     end
+
+    allow_any_instance_of(MockWebSocketClient).to receive(:status) do
+      101
+    end
   end
 
   def analyzer_envelope

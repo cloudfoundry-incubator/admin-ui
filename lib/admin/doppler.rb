@@ -178,7 +178,7 @@ module AdminUI
 
       if @doppler_websocket.nil?
         @logger.error('Doppler failure attempting websocket connection to firehose')
-        doppler_future_connect(false)
+        doppler_future_connect(false, false)
       else
         @doppler_websocket.on :open do |event|
           doppler_open(event)
@@ -198,7 +198,7 @@ module AdminUI
         end
 
         @doppler_websocket.on :close do |event|
-          doppler_close(event, force_login)
+          doppler_close(event, force_login, !first_message)
         end
       end
     rescue => error
@@ -225,20 +225,20 @@ module AdminUI
       @rollup_interval_timer = nil
     end
 
-    def doppler_future_connect(force_login)
+    def doppler_future_connect(immediate, force_login)
       cancel_connect_timer
 
       return unless @running
 
-      if force_login
-        @logger.debug('Doppler will attempt reconnect on next tick with forced login')
+      if immediate
+        @logger.debug("Doppler will attempt reconnect on next tick with forced login=#{force_login}")
         EventMachine.next_tick do
-          eventmachine_setup(true)
+          eventmachine_setup(force_login)
         end
       else
-        @logger.debug("Doppler will attempt reconnect in #{@config.doppler_reconnect_delay} seconds without forced login")
+        @logger.debug("Doppler will attempt reconnect in #{@config.doppler_reconnect_delay} seconds with forced login=#{force_login}")
         @connect_timer = EventMachine.add_timer(@config.doppler_reconnect_delay) do
-          eventmachine_setup(false)
+          eventmachine_setup(force_login)
         end
       end
     end
@@ -327,12 +327,15 @@ module AdminUI
       end
     end
 
-    def doppler_close(event, force_login)
-      @logger.debug("Doppler close: #{event.inspect}")
+    def doppler_close(event, force_login, messages_received)
+      @logger.debug("Doppler close status: #{@doppler_websocket.status}") unless @doppler_websocket.nil?
+      @logger.debug("Doppler close event: #{event.inspect}")
 
       if @running
         force_login = !force_login && (@doppler_websocket.status == 401)
-        doppler_future_connect(force_login)
+        immediate = force_login || messages_received || (event.code == 1008)
+        force_login ||= !immediate
+        doppler_future_connect(immediate, force_login)
       end
       @doppler_websocket = nil
     rescue => error
