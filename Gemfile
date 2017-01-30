@@ -9,7 +9,7 @@ gem 'rack-ssl', '1.4.1'
 gem 'ruby_protobuf', '0.4.11'
 gem 'sequel', '4.42.1'
 gem 'sequel_pg', '1.6.17'
-gem 'sinatra', '1.4.7'
+gem 'sinatra', '1.4.8'
 gem 'sqlite3', '1.3.13'
 gem 'yajl-ruby', '1.3.0'
 
