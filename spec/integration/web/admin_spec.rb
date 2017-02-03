@@ -26,7 +26,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
     def check_allowscriptaccess_attribute(copy_node_id)
       expect(@driver.find_element(id: copy_node_id).text).to eq('Copy')
-      expect(@driver.find_element(xpath: "//a[@id='#{copy_node_id}']/div/embed").attribute('allowscriptaccess')).to eq('sameDomain')
+
+      # Optionally test allowscriptaccess field, but only if flash-based buttons, not if html5 buttons
+      @driver.manage.timeouts.implicit_wait = 0.1
+      begin
+        divs = @driver.find_elements(xpath: "//a[@id='#{copy_node_id}']/div")
+        expect(@driver.find_element(xpath: "//a[@id='#{copy_node_id}']/div/embed").attribute('allowscriptaccess')).to eq('sameDomain') unless divs.empty?
+      ensure
+        @driver.manage.timeouts.implicit_wait = implicit_wait
+      end
     end
 
     def refresh_button

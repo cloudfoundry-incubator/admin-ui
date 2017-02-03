@@ -10,13 +10,14 @@ RSpec.configure do |config|
 end
 
 shared_context :web_context do
-  let(:current_date) { (Time.now.to_f * 1000).to_i }
-  let(:stat_count)   { 1 }
-  let(:stat_date)    { 1_383_238_113_597 }
+  let(:current_date)  { (Time.now.to_f * 1000).to_i }
+  let(:implicit_wait) { 5 }
+  let(:stat_count)    { 1 }
+  let(:stat_date)     { 1_383_238_113_597 }
 
   before do
     @driver = selenium_web_driver
-    @driver.manage.timeouts.implicit_wait = 360
+    @driver.manage.timeouts.implicit_wait = implicit_wait
 
     allow(AdminUI::Utils).to receive(:time_in_milliseconds) do
       current_date
