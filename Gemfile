@@ -1,5 +1,7 @@
 source 'http://rubygems.org'
 
+ruby '2.3.3'
+
 gem 'faye-websocket', '0.10.4'
 gem 'membrane', '1.1.0'
 gem 'nats', '0.8.0'
