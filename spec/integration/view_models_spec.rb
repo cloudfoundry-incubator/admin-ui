@@ -680,6 +680,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected service_providers_view_model' do
+      let(:results)    { view_models.service_providers }
+      let(:expected)   { view_models_service_providers }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected service_providers_view_model detail' do
+      let(:results)  { view_models.service_provider(uaa_service_provider[:id]) }
+      let(:expected) { view_models_service_providers_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected services_view_model' do
       let(:event_type) { 'service' }
       let(:results)    { view_models.services }

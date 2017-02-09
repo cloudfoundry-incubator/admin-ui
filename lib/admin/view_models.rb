@@ -37,6 +37,7 @@ require_relative 'view_models/service_instances_view_model'
 require_relative 'view_models/service_keys_view_model'
 require_relative 'view_models/service_plans_view_model'
 require_relative 'view_models/service_plan_visibilities_view_model'
+require_relative 'view_models/service_providers_view_model'
 require_relative 'view_models/services_view_model'
 require_relative 'view_models/space_quotas_view_model'
 require_relative 'view_models/space_roles_view_model'
@@ -96,6 +97,7 @@ module AdminUI
           service_keys:                     { clazz: AdminUI::ServiceKeysViewModel },
           service_plans:                    { clazz: AdminUI::ServicePlansViewModel },
           service_plan_visibilities:        { clazz: AdminUI::ServicePlanVisibilitiesViewModel },
+          service_providers:                { clazz: AdminUI::ServiceProvidersViewModel },
           space_quotas:                     { clazz: AdminUI::SpaceQuotasViewModel },
           space_roles:                      { clazz: AdminUI::SpaceRolesViewModel },
           spaces:                           { clazz: AdminUI::SpacesViewModel },
@@ -246,6 +248,10 @@ module AdminUI
 
     def invalidate_service_plans
       invalidate_cache(:service_plans)
+    end
+
+    def invalidate_service_providers
+      invalidate_cache(:service_providers)
     end
 
     def invalidate_services
@@ -618,6 +624,14 @@ module AdminUI
 
     def service_plan_visibilities
       result_cache(:service_plan_visibilities)
+    end
+
+    def service_provider(id)
+      details(:service_providers, id)
+    end
+
+    def service_providers
+      result_cache(:service_providers)
     end
 
     def services

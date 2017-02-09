@@ -105,7 +105,7 @@ uaac member add admin_ui.admin admin
 
 # Create the new UAA admin_ui_client
 uaac client add admin_ui_client \
- --authorities clients.write,cloud_controller.admin,cloud_controller.read,cloud_controller.write,doppler.firehose,openid,scim.read,scim.write \
+ --authorities clients.write,cloud_controller.admin,cloud_controller.read,cloud_controller.write,doppler.firehose,openid,scim.read,scim.write,sps.write \
  --authorized_grant_types authorization_code,client_credentials,refresh_token \
  --autoapprove true \
  --scope admin_ui.admin,admin_ui.user,openid \
@@ -623,14 +623,14 @@ Example: <code>admin_ui_secret</code>
 </dl>
 The UAA client used by the Administration UI must be added to the system via the cf-uaac command-line tool, BOSH deployment or equivalent and is required to consist of the following:
 <ul>
-<li>authorities: clients.write,cloud_controller.admin,cloud_controller.read,cloud_controller.write,doppler.firehose,openid,scim.read,scim.write
+<li>authorities: clients.write,cloud_controller.admin,cloud_controller.read,cloud_controller.write,doppler.firehose,openid,scim.read,scim.write,sps.write
 <li>authorized_grant_types:  authorization_code,client_credentials,refresh_token
 <li>autoapprove: true 
 <li>scopes: openid as well as those defined in the uaa_groups_admin and uaa_groups_user configuration values.
 </ul>
 Example: 
 <pre>uaac client add admin_ui_client \
-     --authorities clients.write,cloud_controller.admin,cloud_controller.read,cloud_controller.write,doppler.firehose,openid,scim.read,scim.write \
+     --authorities clients.write,cloud_controller.admin,cloud_controller.read,cloud_controller.write,doppler.firehose,openid,scim.read,scim.write,sps.write \
      --authorized_grant_types authorization_code,client_credentials,refresh_token \
      --autoapprove true \
      --scope admin_ui.admin,admin_ui.user,openid \

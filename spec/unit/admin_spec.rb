@@ -834,6 +834,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete service plan visibility')
     end
 
+    shared_examples 'common delete service provider' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_providers/service_provider1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service provider via http' do
+      it_behaves_like('common delete service provider')
+    end
+
+    context 'delete service provider via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service provider')
+    end
+
     shared_examples 'common delete space' do
       it 'returns failure code due to disconnection' do
         response = delete('/spaces/space1')
@@ -1568,6 +1585,14 @@ describe AdminUI::Admin do
         verify_not_found('/service_plan_visibilities_view_model/service_plan_visibility1')
       end
 
+      it '/service_providers_view_model succeeds' do
+        verify_disconnected_view_model_items('/service_providers_view_model')
+      end
+
+      it '/service_providers_view_model/:id returns not found' do
+        verify_not_found('/service_providers_view_model/service_provider1')
+      end
+
       it '/services_view_model succeeds' do
         verify_disconnected_view_model_items('/services_view_model')
       end
@@ -1983,6 +2008,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/service_plans_view_model/service_plan_visibilities1')
       end
 
+      it '/service_providers_view_model redirects as expected' do
+        get_redirects_as_expected('/service_providers_view_model')
+      end
+
+      it '/service_providers_view_model/:id redirects as expected' do
+        get_redirects_as_expected('/service_providers_view_model/service_provider1')
+      end
+
       it '/services_view_model redirects as expected' do
         get_redirects_as_expected('/services_view_model')
       end
@@ -2169,6 +2202,10 @@ describe AdminUI::Admin do
 
       it 'deletes /service_plan_visibilities/:guid redirects as expected' do
         delete_redirects_as_expected('/service_plan_visibilities/service_plan_visibility1')
+      end
+
+      it 'deletes /service_providers/:id redirects as expected' do
+        delete_redirects_as_expected('/service_providers/service_provider1')
       end
 
       it 'deletes /services/:guid redirects as expected' do
@@ -2369,6 +2406,10 @@ describe AdminUI::Admin do
 
       it 'posts /service_plan_visibilities_view_model redirects as expected' do
         post_redirects_as_expected('/service_plan_visibilities_view_model')
+      end
+
+      it 'posts /service_providers_view_model redirects as expected' do
+        post_redirects_as_expected('/service_providers_view_model')
       end
 
       it 'posts /services_view_model redirects as expected' do

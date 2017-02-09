@@ -602,6 +602,7 @@ module ViewModelsHelper
         1,
         1,
         1,
+        1,
         uaa_identity_zone[:description]
       ]
     ]
@@ -1229,6 +1230,29 @@ module ViewModelsHelper
       'service_broker'          => cc_service_broker,
       'service_plan'            => cc_service_plan,
       'service_plan_visibility' => cc_service_plan_visibility
+    }
+  end
+
+  def view_models_service_providers
+    [
+      [
+        uaa_service_provider[:id],
+        uaa_identity_zone[:name],
+        uaa_service_provider[:name],
+        uaa_service_provider[:id],
+        uaa_service_provider[:entity_id],
+        uaa_service_provider[:created].to_datetime.rfc3339,
+        uaa_service_provider[:lastmodified].to_datetime.rfc3339,
+        uaa_service_provider[:active],
+        uaa_service_provider[:version]
+      ]
+    ]
+  end
+
+  def view_models_service_providers_detail
+    {
+      'identity_zone'    => uaa_identity_zone,
+      'service_provider' => uaa_service_provider
     }
   end
 

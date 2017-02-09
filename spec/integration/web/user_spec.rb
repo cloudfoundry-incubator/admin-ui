@@ -323,6 +323,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'SAML Providers tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceProviders' }
+        let(:page_id)   { 'ServiceProvidersPage' }
+        let(:button_id) { 'Buttons_ServiceProvidersTable_0' }
+      end
+    end
+
     context 'Security Groups tab does not have rename, enable staging, disable staging, enable running, disable running or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'SecurityGroups' }

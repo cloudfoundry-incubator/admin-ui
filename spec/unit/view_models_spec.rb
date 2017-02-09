@@ -348,6 +348,14 @@ describe AdminUI::ViewModels do
       verify_disconnected_items(view_models.service_plan_visibilities)
     end
 
+    it 'returns nil service_provider as expected' do
+      expect(view_models.service_provider('bogus')).to be_nil
+    end
+
+    it 'returns zero service_providers as expected' do
+      verify_disconnected_items(view_models.service_providers)
+    end
+
     it 'returns nil service as expected' do
       expect(view_models.service('bogus')).to be_nil
     end

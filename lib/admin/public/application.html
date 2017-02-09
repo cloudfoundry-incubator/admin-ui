@@ -70,6 +70,7 @@
         <script src="js/app/tabs/serviceKeysTab.js"></script>
         <script src="js/app/tabs/servicePlansTab.js"></script>
         <script src="js/app/tabs/servicePlanVisibilitiesTab.js"></script>
+        <script src="js/app/tabs/serviceProvidersTab.js"></script>
         <script src="js/app/tabs/servicesTab.js"></script>
         <script src="js/app/tabs/spaceQuotasTab.js"></script>
         <script src="js/app/tabs/spaceRolesTab.js"></script>
@@ -140,6 +141,7 @@
                 <span id="ServicePlanVisibilities" class="menuItem">Service Plan Visibilities</span>
                 <span id="IdentityZones" class="menuItem">Identity Zones</span>
                 <span id="IdentityProviders" class="menuItem">Identity Providers</span>
+                <span id="ServiceProviders" class="menuItem">SAML Providers</span>
                 <span id="SecurityGroups" class="menuItem">Security Groups</span>
                 <span id="SecurityGroupsSpaces" class="menuItem">Security Groups Spaces</span>
                 <span id="StagingSecurityGroupsSpaces" class="menuItem">Staging Security Groups Spaces</span>
@@ -1247,6 +1249,17 @@
                 <div class="verticalPageSection">
                     <div id="IdentityProvidersDetailsLabel" class="propertyLabel">Details</div>
                     <div id="IdentityProvidersPropertiesContainer"></div>
+                </div>
+            </div>
+
+            <div id="ServiceProvidersPage" class="page hiddenPage">
+                <div id="ServiceProvidersTableContainer" class="pageSection">
+                    <table id="ServiceProvidersTable" cellpadding="0" cellspacing="0" border="0" class="customTable"></table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="ServiceProvidersDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="ServiceProvidersPropertiesContainer"></div>
                 </div>
             </div>
 

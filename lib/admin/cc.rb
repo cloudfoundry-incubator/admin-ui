@@ -246,6 +246,12 @@ module AdminUI
             table:   :service_plan_visibilities,
             columns: [:created_at, :guid, :id, :organization_id, :service_plan_id, :updated_at]
           },
+          service_providers:
+          {
+            db_uri:  uaadb_uri,
+            table:   :service_provider,
+            columns: [:active, :created, :entity_id, :id, :identity_zone_id, :lastmodified, :name, :version]
+          },
           services:
           {
             db_uri:  ccdb_uri,
@@ -499,6 +505,10 @@ module AdminUI
       invalidate_cache(:service_plans)
     end
 
+    def invalidate_service_providers
+      invalidate_cache(:service_providers)
+    end
+
     def invalidate_services
       invalidate_cache(:services)
     end
@@ -673,6 +683,10 @@ module AdminUI
 
     def service_plan_visibilities
       result_cache(:service_plan_visibilities)
+    end
+
+    def service_providers
+      result_cache(:service_providers)
     end
 
     def services

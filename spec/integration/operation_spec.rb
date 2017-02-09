@@ -1403,6 +1403,37 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage service provider' do
+      before do
+        expect(cc.service_providers['items'].length).to eq(1)
+      end
+
+      def delete_service_provider
+        operation.delete_service_provider(uaa_service_provider[:id])
+      end
+
+      it 'deletes service provider' do
+        expect { delete_service_provider }.to change { cc.service_providers['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_service_provider
+        end
+
+        def verify_service_provider_not_found(exception)
+          expect(exception.cf_code).to eq(nil)
+          expect(exception.cf_error_code).to eq(nil)
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq('Not Found')
+        end
+
+        it 'fails deleting deleted service provider' do
+          expect { delete_service_provider }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_provider_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage space' do
       before do
         expect(cc.spaces['items'].length).to eq(1)

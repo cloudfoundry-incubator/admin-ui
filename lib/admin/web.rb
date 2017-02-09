@@ -546,6 +546,18 @@ module AdminUI
       404
     end
 
+    get '/service_providers_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/service_providers_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.service_providers, params).items)
+    end
+
+    get '/service_providers_view_model/:id', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/service_providers_view_model/#{params[:id]}")
+      result = @view_models.service_provider(params[:id])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/services_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/services_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.services, params).items)
@@ -1001,6 +1013,14 @@ module AdminUI
                 filename:    'service_plan_visibilities.csv')
     end
 
+    post '/service_providers_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/service_providers_view_model')
+      file = Download.download(request.body.read, 'service_plans', @view_models.service_providers)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'service_providers.csv')
+    end
+
     post '/services_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'post', '/services_view_model')
       file = Download.download(request.body.read, 'services', @view_models.services)
@@ -1261,7 +1281,7 @@ module AdminUI
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.error("Error during update service instance #{error.inspect}")
+        @logger.error("Error during update service instance: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end
@@ -1279,7 +1299,7 @@ module AdminUI
         status(error.http_code)
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
-        @logger.error("Error during update service plan #{error.inspect}")
+        @logger.error("Error during update service plan: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end
@@ -1785,6 +1805,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete service plan visibility: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/service_providers/:service_provider_id', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/service_providers/#{params[:service_provider_id]}")
+      begin
+        @operation.delete_service_provider(params[:service_provider_id])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete service provider: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete service provider: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

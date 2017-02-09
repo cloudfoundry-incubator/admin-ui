@@ -86,6 +86,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('ServicePlanVisibilities').displayed?).to be(true)
       expect(scroll_tab_into_view('IdentityZones').displayed?).to be(true)
       expect(scroll_tab_into_view('IdentityProviders').displayed?).to be(true)
+      expect(scroll_tab_into_view('ServiceProviders').displayed?).to be(true)
       expect(scroll_tab_into_view('SecurityGroups').displayed?).to be(true)
       expect(scroll_tab_into_view('SecurityGroupsSpaces').displayed?).to be(true)
       expect(scroll_tab_into_view('StagingSecurityGroupsSpaces').displayed?).to be(true)
@@ -5056,8 +5057,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='IdentityZonesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 10,
-                                 labels:          ['Name', 'ID', 'Created', 'Updated', 'Subdomain', 'Version', 'Identity Providers', 'Clients', 'Users', 'Description'],
+                                 expected_length: 11,
+                                 labels:          ['Name', 'ID', 'Created', 'Updated', 'Subdomain', 'Version', 'Identity Providers', 'SAML Providers', 'Clients', 'Users', 'Description'],
                                  colspans:        nil
                                }
                              ])
@@ -5070,6 +5071,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_identity_zone[:lastmodified].to_datetime.rfc3339,
                              uaa_identity_zone[:subdomain],
                              @driver.execute_script("return Format.formatNumber(#{uaa_identity_zone[:version]})"),
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -5096,6 +5098,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Version',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_identity_zone[:version]})") },
                             { label: 'Description',        tag:   nil, value: uaa_identity_zone[:description] },
                             { label: 'Identity Providers', tag:   'a', value: '1' },
+                            { label: 'SAML Providers',     tag:   'a', value: '1' },
                             { label: 'Clients',            tag:   'a', value: '1' },
                             { label: 'Users',              tag:   'a', value: '1' }
                           ])
@@ -5105,12 +5108,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('IdentityZones', 7, 'IdentityProviders', uaa_identity_zone[:id])
           end
 
+          it 'has service providers link' do
+            check_filter_link('IdentityZones', 8, 'ServiceProviders', uaa_identity_zone[:id])
+          end
+
           it 'has clients link' do
-            check_filter_link('IdentityZones', 8, 'Clients', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 9, 'Clients', uaa_identity_zone[:id])
           end
 
           it 'has users link' do
-            check_filter_link('IdentityZones', 9, 'Users', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 10, 'Users', uaa_identity_zone[:id])
           end
         end
       end
@@ -5168,6 +5175,86 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has identity zones link' do
             check_filter_link('IdentityProviders', 0, 'IdentityZones', uaa_identity_zone[:id])
+          end
+        end
+      end
+
+      context 'ServiceProviders' do
+        let(:tab_id)   { 'ServiceProviders' }
+        let(:table_id) { 'ServiceProvidersTable' }
+
+        it 'has a table' do
+          check_table_layout([
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='ServiceProvidersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                 expected_length: 9,
+                                 labels:          ['', 'Identity Zone', 'Name', 'GUID', 'Entity ID', 'Created', 'Updated', 'Active', 'Version'],
+                                 colspans:        nil
+                               }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceProvidersTable']/tbody/tr/td"),
+                           [
+                             '',
+                             uaa_identity_zone[:name],
+                             uaa_service_provider[:name],
+                             uaa_service_provider[:id],
+                             uaa_service_provider[:entity_id],
+                             uaa_service_provider[:created].to_datetime.rfc3339,
+                             uaa_service_provider[:lastmodified].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatBoolean(#{uaa_service_provider[:active]})"),
+                             @driver.execute_script("return Format.formatNumber(#{uaa_service_provider[:version]})")
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_ServiceProvidersTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('ServiceProvidersTable', uaa_service_provider[:id])
+        end
+
+        context 'manage service providers' do
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_ServiceProvidersTable_0').text).to eq('Delete')
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_ServiceProvidersTable_0' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_ServiceProvidersTable_0' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected SAML providers?' }
+            end
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([
+                            { label: 'Identity Zone',    tag:   'a', value: uaa_identity_zone[:name] },
+                            { label: 'Identity Zone ID', tag:   nil, value: uaa_identity_zone[:id] },
+                            { label: 'Name',             tag: 'div', value: uaa_service_provider[:name] },
+                            { label: 'GUID',             tag:   nil, value: uaa_service_provider[:id] },
+                            { label: 'Entity ID',        tag:   nil, value: uaa_service_provider[:entity_id] },
+                            { label: 'Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_service_provider[:created].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_service_provider[:lastmodified].to_datetime.rfc3339}\")") },
+                            { label: 'Active',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_service_provider[:active]})") },
+                            { label: 'Version',          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_service_provider[:version]})") }
+                          ])
+          end
+
+          it 'has identity zones link' do
+            check_filter_link('ServiceProviders', 0, 'IdentityZones', uaa_identity_zone[:id])
           end
         end
       end

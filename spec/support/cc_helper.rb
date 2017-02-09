@@ -81,6 +81,7 @@ module CCHelper
     @cc_users_deleted                            = false
     @uaa_groups_deleted                          = false
     @uaa_group_membership_deleted                = false
+    @uaa_service_providers_deleted               = false
     @uaa_users_deleted                           = false
     @uaa_clients_deleted                         = false
 
@@ -125,6 +126,7 @@ module CCHelper
     uaa_client_stubs(config)
     uaa_group_stubs(config)
     uaa_group_membership_stubs(config)
+    uaa_service_provider_stubs(config)
     uaa_user_stubs(config)
   end
 
@@ -382,6 +384,12 @@ module CCHelper
     sql(config.uaadb_uri, 'DELETE FROM groups')
 
     @uaa_groups_deleted = true
+  end
+
+  def uaa_clear_service_providers_cache_stub(config)
+    sql(config.uaadb_uri, 'DELETE FROM service_provider')
+
+    @uaa_service_providers_deleted = true
   end
 
   def uaa_clear_users_cache_stub(config)
@@ -1384,6 +1392,19 @@ module CCHelper
     }
   end
 
+  def uaa_service_provider
+    {
+      active:              true,
+      created:             unique_time('uaa_service_provider_created'),
+      entity_id:           'test.cloudfoundry-saml-login',
+      id:                  'service_provider1',
+      identity_zone_id:    uaa_identity_zone[:id],
+      name:                'service_provider_name',
+      lastmodified:        unique_time('uaa_service_provider_last'),
+      version:             5
+    }
+  end
+
   def uaa_user
     {
       active:              true,
@@ -1483,6 +1504,7 @@ module CCHelper
       [:identity_zone,        uaa_identity_zone],
       [:identity_provider,    uaa_identity_provider],
       [:groups,               uaa_group],
+      [:service_provider,     uaa_service_provider],
       [:users,                uaa_user_with_password],
       [:group_membership,     uaa_group_membership],
       [:oauth_client_details, uaa_client],
@@ -2518,6 +2540,21 @@ module CCHelper
         uaa_group_membership_not_found
       else
         uaa_clear_group_membership_cache_stub(config)
+        OK.new({})
+      end
+    end
+  end
+
+  def uaa_service_provider_not_found
+    NotFound.new('message' => 'Not Found')
+  end
+
+  def uaa_service_provider_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/saml/service-providers/#{uaa_service_provider[:id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @uaa_service_providers_deleted
+        uaa_service_provider_not_found
+      else
+        uaa_clear_service_providers_cache_stub(config)
         OK.new({})
       end
     end

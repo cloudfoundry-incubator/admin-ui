@@ -12,10 +12,12 @@ module AdminUI
 
       clients            = @cc.clients
       identity_providers = @cc.identity_providers
+      service_providers  = @cc.service_providers
       users              = @cc.users_uaa
 
       clients_connected            = clients['connected']
       identity_providers_connected = identity_providers['connected']
+      service_providers_connected  = service_providers['connected']
       users_connected              = users['connected']
 
       client_counters = {}
@@ -40,6 +42,17 @@ module AdminUI
         identity_provider_counters[identity_zone_id] += 1
       end
 
+      service_provider_counters = {}
+      service_providers['items'].each do |service_provider|
+        return result unless @running
+        Thread.pass
+
+        identity_zone_id = service_provider[:identity_zone_id]
+        next if identity_zone_id.nil?
+        service_provider_counters[identity_zone_id] = 0 if service_provider_counters[identity_zone_id].nil?
+        service_provider_counters[identity_zone_id] += 1
+      end
+
       user_counters = {}
       users['items'].each do |user|
         return result unless @running
@@ -62,6 +75,7 @@ module AdminUI
 
         client_counter            = client_counters[id]
         identity_provider_counter = identity_provider_counters[id]
+        service_provider_counter  = service_provider_counters[id]
         user_counter              = user_counters[id]
 
         row = []
@@ -82,6 +96,14 @@ module AdminUI
         if identity_provider_counter
           row.push(identity_provider_counter)
         elsif identity_providers_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if service_provider_counter
+          row.push(service_provider_counter)
+        elsif service_providers_connected
           row.push(0)
         else
           row.push(nil)
@@ -110,7 +132,7 @@ module AdminUI
         hash[id] = identity_zone
       end
 
-      result(true, items, hash, (0..9).to_a, (0..4).to_a << 9)
+      result(true, items, hash, (0..10).to_a, (0..4).to_a << 10)
     end
   end
 end

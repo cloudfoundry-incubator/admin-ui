@@ -259,6 +259,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.service_plan_visibilities['items'].length).to eq(0)
     end
 
+    it 'clears the service provider cache' do
+      expect(cc.service_providers['items'].length).to eq(1)
+      uaa_clear_service_providers_cache_stub(config)
+      cc.invalidate_service_providers
+      expect(cc.service_providers['items'].length).to eq(0)
+    end
+
     it 'clears the space quota definition cache' do
       expect(cc.space_quota_definitions['items'].length).to eq(1)
       cc_clear_space_quota_definitions_cache_stub(config)
@@ -609,6 +616,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected service plan visibilities' do
       let(:results)  { cc.service_plan_visibilities }
       let(:expected) { cc_service_plan_visibility }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected service providers' do
+      let(:results)  { cc.service_providers }
+      let(:expected) { uaa_service_provider }
 
       it_behaves_like('common cc retrieval')
     end

@@ -1270,6 +1270,29 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage service provider' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/service_providers_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_service_provider
+      response = delete_request("/service_providers/#{uaa_service_provider[:id]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/service_providers/#{uaa_service_provider[:id]}"]])
+    end
+
+    it 'has user name and service providers request in the log file' do
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/service_providers_view_model']], true)
+    end
+
+    it 'deletes a service provider' do
+      expect { delete_service_provider }.to change { get_json('/service_providers_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage space' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -2144,6 +2167,18 @@ describe AdminUI::Admin, type: :integration do
     context 'service_plan_visibilities_view_model detail' do
       let(:path)              { "/service_plan_visibilities_view_model/#{cc_service_plan_visibility[:guid]}" }
       let(:view_model_source) { view_models_service_plan_visibilities_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'service_providers_view_model' do
+      let(:path)              { '/service_providers_view_model' }
+      let(:view_model_source) { view_models_service_providers }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'service_providers_view_model detail' do
+      let(:path)              { "/service_providers_view_model/#{uaa_service_provider[:id]}" }
+      let(:view_model_source) { view_models_service_providers_detail }
       it_behaves_like('retrieves view_model detail')
     end
 

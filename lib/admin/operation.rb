@@ -351,6 +351,14 @@ module AdminUI
       @view_models.invalidate_service_plan_visibilities
     end
 
+    def delete_service_provider(service_provider_id)
+      url = "saml/service-providers/#{service_provider_id}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_uaa(url)
+      @cc.invalidate_service_providers
+      @view_models.invalidate_service_providers
+    end
+
     def delete_space(space_guid, recursive)
       url = "v2/spaces/#{space_guid}"
       url += '?recursive=true' if recursive
