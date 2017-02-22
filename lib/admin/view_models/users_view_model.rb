@@ -133,8 +133,26 @@ module AdminUI
           row.push(nil)
         end
 
+        if user_uaa[:last_logon_success_time]
+          row.push(Time.at(user_uaa[:last_logon_success_time] / 1000.0).to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
+        if user_uaa[:previous_logon_success_time]
+          row.push(Time.at(user_uaa[:previous_logon_success_time] / 1000.0).to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
         if user_uaa[:passwd_lastmodified]
           row.push(user_uaa[:passwd_lastmodified].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
+        if !user_uaa[:passwd_change_required].nil?
+          row.push(user_uaa[:passwd_change_required])
         else
           row.push(nil)
         end
@@ -234,7 +252,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..28).to_a, (1..12).to_a << 28)
+      result(true, items, hash, (1..31).to_a, (1..15).to_a << 31)
     end
 
     private

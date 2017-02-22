@@ -1577,22 +1577,22 @@ describe AdminUI::Admin, type: :integration do
 
     it 'activates a user' do
       deactivate_user
-      expect { activate_user }.to change { get_json('/users_view_model')['items']['items'][0][11] }.from(false).to(true)
+      expect { activate_user }.to change { get_json('/users_view_model')['items']['items'][0][14] }.from(false).to(true)
     end
 
     it 'deactivates a user' do
       activate_user
-      expect { deactivate_user }.to change { get_json('/users_view_model')['items']['items'][0][11] }.from(true).to(false)
+      expect { deactivate_user }.to change { get_json('/users_view_model')['items']['items'][0][14] }.from(true).to(false)
     end
 
     it 'verifies a user' do
       unverify_user
-      expect { verify_user }.to change { get_json('/users_view_model')['items']['items'][0][12] }.from(false).to(true)
+      expect { verify_user }.to change { get_json('/users_view_model')['items']['items'][0][15] }.from(false).to(true)
     end
 
     it 'unverifies a user' do
       verify_user
-      expect { unverify_user }.to change { get_json('/users_view_model')['items']['items'][0][12] }.from(true).to(false)
+      expect { unverify_user }.to change { get_json('/users_view_model')['items']['items'][0][15] }.from(true).to(false)
     end
 
     it 'deletes a user' do

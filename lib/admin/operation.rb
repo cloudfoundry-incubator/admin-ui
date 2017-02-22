@@ -191,7 +191,23 @@ module AdminUI
       url = "v3/isolation_segments/#{isolation_segment_guid}/relationships/organizations"
       body = Yajl::Encoder.encode(data: [{ guid: organization_guid }])
       @logger.debug("DELETE #{url} #{body}")
-      @client.delete_cc(url, body)
+
+      unknown_request = false
+      begin
+        @client.delete_cc(url, body)
+      rescue CCRestClientResponseError => error
+        # As of cf-release 252, the protocol to delete an organization isolation segment changed
+        raise unless error.cf_code == 10_000 # This checks for an unknown request
+        unknown_request = true
+      end
+
+      if unknown_request
+        # Try the cf-release 252 version since the pre-cf-release 252 was considered an unknown request
+        url = "v3/isolation_segments/#{isolation_segment_guid}/relationships/organizations/#{organization_guid}"
+        @logger.debug("DELETE #{url}")
+        @client.delete_cc(url)
+      end
+
       @cc.invalidate_organizations_isolation_segments
       @view_models.invalidate_organizations_isolation_segments
     end

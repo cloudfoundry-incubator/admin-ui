@@ -42,6 +42,7 @@ Sequel.migration do
       String :encrypted_environment_variables, :text=>true
       String :salt, :text=>true
       Integer :max_task_sequence_id, :default=>1
+      String :buildpack_cache_sha256_checksum, :text=>true
       
       index [:droplet_guid], :name=>:apps_desired_droplet_guid
       index [:created_at], :name=>:apps_v3_created_at_index
@@ -115,6 +116,7 @@ Sequel.migration do
       TrueClass :enabled, :default=>true
       TrueClass :locked, :default=>false
       String :filename, :text=>true
+      String :sha256_checksum, :text=>true
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -175,6 +177,7 @@ Sequel.migration do
       String :space_guid, :default=>"", :text=>true, :null=>false
       String :actor_name, :text=>true
       String :actee_name, :text=>true
+      String :actor_username, :text=>true
       
       index [:actee]
       index [:actee_type]
@@ -365,10 +368,12 @@ Sequel.migration do
       String :docker_receipt_image, :text=>true
       String :package_guid, :text=>true
       foreign_key :app_guid, :apps, :type=>String, :text=>true, :key=>[:guid]
+      String :sha256_checksum, :text=>true
       
       index [:created_at]
       index [:droplet_hash]
       index [:guid], :unique=>true
+      index [:sha256_checksum]
       index [:state]
       index [:updated_at]
       index [:package_guid], :name=>:package_guid_index
@@ -385,6 +390,7 @@ Sequel.migration do
       String :error, :text=>true
       foreign_key :app_guid, :apps, :type=>String, :text=>true, :key=>[:guid]
       String :docker_image, :text=>true
+      String :sha256_checksum, :text=>true
       
       index [:created_at]
       index [:guid], :unique=>true

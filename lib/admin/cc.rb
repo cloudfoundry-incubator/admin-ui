@@ -69,7 +69,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :events,
-            columns: [:actee, :actee_name, :actee_type, :actor, :actor_name, :actor_type, :created_at, :guid, :id, :metadata, :organization_guid, :space_guid, :timestamp, :type, :updated_at],
+            columns: [:actee, :actee_name, :actee_type, :actor, :actor_name, :actor_type, :actor_username, :created_at, :guid, :id, :metadata, :organization_guid, :space_guid, :timestamp, :type, :updated_at],
             where:   "timestamp >= CURRENT_TIMESTAMP - INTERVAL '#{@config.event_days}' DAY"
           },
           feature_flags:
@@ -316,7 +316,7 @@ module AdminUI
           {
             db_uri:  uaadb_uri,
             table:   :users,
-            columns: [:active, :created, :email, :familyname, :givenname, :id, :identity_zone_id, :lastmodified, :passwd_lastmodified, :phonenumber, :username, :verified, :version]
+            columns: [:active, :created, :email, :familyname, :givenname, :id, :identity_zone_id, :lastmodified, :last_logon_success_time, :passwd_change_required, :passwd_lastmodified, :phonenumber, :previous_logon_success_time, :username, :verified, :version]
           }
         }
 

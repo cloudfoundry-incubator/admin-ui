@@ -440,6 +440,7 @@ module ViewModelsHelper
         cc_event_space[:actee_name],
         cc_event_space[:actee],
         cc_event_space[:actor_type],
+        cc_event_space[:actor_username],
         cc_event_space[:actor_name],
         cc_event_space[:actor],
         "#{cc_organization[:name]}/#{cc_space[:name]}"
@@ -1527,7 +1528,10 @@ module ViewModelsHelper
         uaa_user[:id],
         uaa_user[:created].to_datetime.rfc3339,
         uaa_user[:lastmodified].to_datetime.rfc3339,
+        Time.at(uaa_user[:last_logon_success_time] / 1000.0).to_datetime.rfc3339,
+        Time.at(uaa_user[:previous_logon_success_time] / 1000.0).to_datetime.rfc3339,
         uaa_user[:passwd_lastmodified].to_datetime.rfc3339,
+        uaa_user[:passwd_change_required],
         uaa_user[:email],
         uaa_user[:familyname],
         uaa_user[:givenname],

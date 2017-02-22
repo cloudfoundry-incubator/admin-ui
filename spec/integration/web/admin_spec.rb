@@ -2919,12 +2919,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 6,
                                  labels:          ['', '', 'Requests', 'Organization Roles', 'Space Roles', ''],
-                                 colspans:        %w(1 16 2 5 4 1)
+                                 colspans:        %w(1 19 2 5 4 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 29,
-                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Password Updated', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Verified', 'Version', 'Events', 'Groups', 'Approvals', 'Count', 'Valid Until', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
+                                 expected_length: 32,
+                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Last Successful Logon', 'Previous Successful Logon', 'Password Updated', 'Password Change Required', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Verified', 'Version', 'Events', 'Groups', 'Approvals', 'Count', 'Valid Until', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2937,7 +2937,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_user[:id],
                              uaa_user[:created].to_datetime.rfc3339,
                              uaa_user[:lastmodified].to_datetime.rfc3339,
+                             Time.at(uaa_user[:last_logon_success_time] / 1000.0).to_datetime.rfc3339,
+                             Time.at(uaa_user[:previous_logon_success_time] / 1000.0).to_datetime.rfc3339,
                              uaa_user[:passwd_lastmodified].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatBoolean(#{uaa_user[:passwd_change_required]})"),
                              uaa_user[:email],
                              uaa_user[:familyname],
                              uaa_user[:givenname],
@@ -3042,10 +3045,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           def check_user_active(active)
             begin
-              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[12]").text == active }
+              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[15]").text == active }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[12]").text).to eq(active)
+            expect(@driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[15]").text).to eq(active)
           end
 
           it 'Activates the selected user' do
@@ -3071,10 +3074,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           def check_user_verified(verified)
             begin
-              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[13]").text == verified }
+              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[16]").text == verified }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[13]").text).to eq(verified)
+            expect(@driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[16]").text).to eq(verified)
           end
 
           it 'Verifies the selected user' do
@@ -3111,7 +3114,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'GUID',                               tag:   nil, value: uaa_user[:id] },
                             { label: 'Created',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_user[:created].to_datetime.rfc3339}\")") },
                             { label: 'Updated',                            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_user[:lastmodified].to_datetime.rfc3339}\")") },
+                            { label: 'Last Successful Logon',              tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{uaa_user[:last_logon_success_time]})") },
+                            { label: 'Previous Successful Logon',          tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{uaa_user[:previous_logon_success_time]})") },
                             { label: 'Password Updated',                   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_user[:passwd_lastmodified].to_datetime.rfc3339}\")") },
+                            { label: 'Password Change Required',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_user[:passwd_change_required]})") },
                             { label: 'Email',                              tag:   'a', value: "mailto:#{uaa_user[:email]}" },
                             { label: 'Family Name',                        tag:   nil, value: uaa_user[:familyname] },
                             { label: 'Given Name',                         tag:   nil, value: uaa_user[:givenname] },
@@ -3145,31 +3151,31 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('Users', 14, 'Events', uaa_user[:id])
+            check_filter_link('Users', 17, 'Events', uaa_user[:id])
           end
 
           it 'has group members link' do
-            check_filter_link('Users', 15, 'GroupMembers', uaa_user[:id])
+            check_filter_link('Users', 18, 'GroupMembers', uaa_user[:id])
           end
 
           it 'has approvals link' do
-            check_filter_link('Users', 16, 'Approvals', uaa_user[:id])
+            check_filter_link('Users', 19, 'Approvals', uaa_user[:id])
           end
 
           it 'has organization roles link' do
-            check_filter_link('Users', 19, 'OrganizationRoles', uaa_user[:id])
+            check_filter_link('Users', 22, 'OrganizationRoles', uaa_user[:id])
           end
 
           it 'has space roles link' do
-            check_filter_link('Users', 24, 'SpaceRoles', uaa_user[:id])
+            check_filter_link('Users', 27, 'SpaceRoles', uaa_user[:id])
           end
 
           it 'has spaces link' do
-            check_filter_link('Users', 28, 'Spaces', cc_space[:guid])
+            check_filter_link('Users', 31, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Users', 30, 'Organizations', cc_organization[:guid])
+            check_filter_link('Users', 33, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -4166,12 +4172,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='EventsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Actee', 'Actor', ''],
-                                 colspans:        %w(3 3 3 1)
+                                 colspans:        %w(3 3 4 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='EventsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 10,
-                                 labels:          %w(Timestamp GUID Type Type Name GUID Type Name GUID Target),
+                                 expected_length: 11,
+                                 labels:          %w(Timestamp GUID Type Type Name GUID Type Username Name GUID Target),
                                  colspans:        nil
                                }
                              ])
@@ -4185,6 +4191,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_event_space[:actee_name],
                              cc_event_space[:actee],
                              cc_event_space[:actor_type],
+                             cc_event_space[:actor_username],
                              cc_event_space[:actor_name],
                              cc_event_space[:actor],
                              "#{cc_organization[:name]}/#{cc_space[:name]}"
@@ -4209,6 +4216,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Actee',             tag:   nil, value: cc_event_space[:actee_name] },
                             { label: 'Actee GUID',        tag:   'a', value: cc_event_space[:actee] },
                             { label: 'Actor Type',        tag:   nil, value: cc_event_space[:actor_type] },
+                            { label: 'Actor Username',    tag:   nil, value: cc_event_space[:actor_username] },
                             { label: 'Actor',             tag:   nil, value: cc_event_space[:actor_name] },
                             { label: 'Actor GUID',        tag:   'a', value: cc_event_space[:actor] },
                             { label: 'Space',             tag:   'a', value: cc_space[:name] },
@@ -4223,15 +4231,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has users actor link' do
-            check_filter_link('Events', 8, 'Users', cc_event_space[:actor])
+            check_filter_link('Events', 9, 'Users', cc_event_space[:actor])
           end
 
           it 'has spaces link' do
-            check_filter_link('Events', 9, 'Spaces', cc_space[:guid])
+            check_filter_link('Events', 10, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Events', 11, 'Organizations', cc_organization[:guid])
+            check_filter_link('Events', 12, 'Organizations', cc_organization[:guid])
           end
 
           context 'app event' do
@@ -4242,15 +4250,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has users actor link' do
-              check_filter_link('Events', 8, 'Users', cc_event_app[:actor])
+              check_filter_link('Events', 9, 'Users', cc_event_app[:actor])
             end
 
             it 'has spaces link' do
-              check_filter_link('Events', 9, 'Spaces', cc_space[:guid])
+              check_filter_link('Events', 10, 'Spaces', cc_space[:guid])
             end
 
             it 'has organizations link' do
-              check_filter_link('Events', 11, 'Organizations', cc_organization[:guid])
+              check_filter_link('Events', 12, 'Organizations', cc_organization[:guid])
             end
           end
 
@@ -4274,15 +4282,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has users actor link' do
-              check_filter_link('Events', 8, 'Users', cc_event_route[:actor])
+              check_filter_link('Events', 9, 'Users', cc_event_route[:actor])
             end
 
             it 'has spaces link' do
-              check_filter_link('Events', 9, 'Spaces', cc_space[:guid])
+              check_filter_link('Events', 10, 'Spaces', cc_space[:guid])
             end
 
             it 'has organizations link' do
-              check_filter_link('Events', 11, 'Organizations', cc_organization[:guid])
+              check_filter_link('Events', 12, 'Organizations', cc_organization[:guid])
             end
           end
 
@@ -4294,15 +4302,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has users actor link' do
-              check_filter_link('Events', 8, 'Users', cc_event_service_instance[:actor])
+              check_filter_link('Events', 9, 'Users', cc_event_service_instance[:actor])
             end
 
             it 'has spaces link' do
-              check_filter_link('Events', 9, 'Spaces', cc_space[:guid])
+              check_filter_link('Events', 10, 'Spaces', cc_space[:guid])
             end
 
             it 'has organizations link' do
-              check_filter_link('Events', 11, 'Organizations', cc_organization[:guid])
+              check_filter_link('Events', 12, 'Organizations', cc_organization[:guid])
             end
           end
 
@@ -4314,15 +4322,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has users actor link' do
-              check_filter_link('Events', 7, 'Users', cc_event_service_binding[:actor])
+              check_filter_link('Events', 8, 'Users', cc_event_service_binding[:actor])
             end
 
             it 'has spaces link' do
-              check_filter_link('Events', 8, 'Spaces', cc_space[:guid])
+              check_filter_link('Events', 9, 'Spaces', cc_space[:guid])
             end
 
             it 'has organizations link' do
-              check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
+              check_filter_link('Events', 11, 'Organizations', cc_organization[:guid])
             end
           end
 
@@ -4334,7 +4342,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has users actor link' do
-              check_filter_link('Events', 8, 'Users', cc_event_service_broker[:actor])
+              check_filter_link('Events', 9, 'Users', cc_event_service_broker[:actor])
             end
           end
 
@@ -4358,15 +4366,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has users actor link' do
-              check_filter_link('Events', 8, 'Users', cc_event_service_key[:actor])
+              check_filter_link('Events', 9, 'Users', cc_event_service_key[:actor])
             end
 
             it 'has spaces link' do
-              check_filter_link('Events', 9, 'Spaces', cc_space[:guid])
+              check_filter_link('Events', 10, 'Spaces', cc_space[:guid])
             end
 
             it 'has organizations link' do
-              check_filter_link('Events', 11, 'Organizations', cc_organization[:guid])
+              check_filter_link('Events', 12, 'Organizations', cc_organization[:guid])
             end
           end
 
@@ -4390,11 +4398,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has users actor link' do
-              check_filter_link('Events', 7, 'Users', cc_event_service_plan_visibility[:actor])
+              check_filter_link('Events', 8, 'Users', cc_event_service_plan_visibility[:actor])
             end
 
             it 'has organizations link' do
-              check_filter_link('Events', 8, 'Organizations', cc_organization[:guid])
+              check_filter_link('Events', 9, 'Organizations', cc_organization[:guid])
             end
           end
         end

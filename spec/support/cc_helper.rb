@@ -498,8 +498,9 @@ module CCHelper
       actee_name:        cc_app[:name],
       actee_type:        'app',
       actor:             cc_user[:guid],
-      actor_name:        uaa_user[:username],
+      actor_name:        uaa_user[:email],
       actor_type:        'user',
+      actor_username:    uaa_user[:username],
       created_at:        unique_time('cc_event_app_created'),
       guid:              'event1',
       id:                unique_id('cc_event_app'),
@@ -518,8 +519,9 @@ module CCHelper
       actee_name:        cc_route[:host],
       actee_type:        'route',
       actor:             cc_user[:guid],
-      actor_name:        uaa_user[:username],
+      actor_name:        uaa_user[:email],
       actor_type:        'user',
+      actor_username:    uaa_user[:username],
       created_at:        unique_time('cc_event_route_created'),
       guid:              'event1',
       id:                unique_id('cc_event_route'),
@@ -540,6 +542,7 @@ module CCHelper
       actor:             cc_service_broker[:guid],
       actor_name:        cc_service_broker[:name],
       actor_type:        'service_broker',
+      actor_username:    nil,
       created_at:        unique_time('cc_event_service_created'),
       guid:              'event1',
       id:                unique_id('cc_event_service'),
@@ -558,8 +561,9 @@ module CCHelper
       actee_name:        nil,
       actee_type:        'service_binding',
       actor:             cc_user[:guid],
-      actor_name:        uaa_user[:username],
+      actor_name:        uaa_user[:email],
       actor_type:        'user',
+      actor_username:    uaa_user[:username],
       created_at:        unique_time('cc_event_service_binding_created'),
       guid:              'event1',
       id:                unique_id('cc_event_service_binding'),
@@ -578,8 +582,9 @@ module CCHelper
       actee_name:        cc_service_broker[:name],
       actee_type:        'service_broker',
       actor:             cc_user[:guid],
-      actor_name:        uaa_user[:username],
+      actor_name:        uaa_user[:email],
       actor_type:        'user',
+      actor_username:    uaa_user[:username],
       created_at:        unique_time('cc_event_service_broker_created'),
       guid:              'event1',
       id:                unique_id('cc_event_service_broker'),
@@ -600,6 +605,7 @@ module CCHelper
       actor:             cc_service_broker[:guid],
       actor_name:        cc_service_broker[:name],
       actor_type:        'service_broker',
+      actor_username:    nil,
       created_at:        unique_time('cc_event_service_dashboard_client_created'),
       guid:              'event1',
       id:                unique_id('cc_event_service_dashboard_client'),
@@ -618,8 +624,9 @@ module CCHelper
       actee_name:        cc_service_instance[:name],
       actee_type:        'service_instance',
       actor:             cc_user[:guid],
-      actor_name:        uaa_user[:username],
+      actor_name:        uaa_user[:email],
       actor_type:        'user',
+      actor_username:    uaa_user[:username],
       created_at:        unique_time('cc_event_service_instance_created'),
       guid:              'event1',
       id:                unique_id('cc_event_service_instance'),
@@ -638,8 +645,9 @@ module CCHelper
       actee_name:        cc_service_key[:name],
       actee_type:        'service_key',
       actor:             cc_user[:guid],
-      actor_name:        uaa_user[:username],
+      actor_name:        uaa_user[:email],
       actor_type:        'user',
+      actor_username:    uaa_user[:username],
       created_at:        unique_time('cc_event_service_key_created'),
       guid:              'event1',
       id:                unique_id('cc_event_service_key'),
@@ -660,6 +668,7 @@ module CCHelper
       actor:             cc_service_broker[:guid],
       actor_name:        cc_service_broker[:name],
       actor_type:        'service_broker',
+      actor_username:    nil,
       created_at:        unique_time('cc_event_service_plan_created'),
       guid:              'event1',
       id:                unique_id('cc_event_service_plan'),
@@ -678,8 +687,9 @@ module CCHelper
       actee_name:        nil,
       actee_type:        'service_plan_visibility',
       actor:             cc_user[:guid],
-      actor_name:        uaa_user[:username],
+      actor_name:        uaa_user[:email],
       actor_type:        'user',
+      actor_username:    uaa_user[:username],
       created_at:        unique_time('cc_event_service_plan_visibility_created'),
       guid:              'event1',
       id:                unique_id('cc_event_service_plan_visibility'),
@@ -698,8 +708,9 @@ module CCHelper
       actee_name:        cc_space[:name],
       actee_type:        'space',
       actor:             cc_user[:guid],
-      actor_name:        uaa_user[:username],
+      actor_name:        uaa_user[:email],
       actor_type:        'user',
+      actor_username:    uaa_user[:username],
       created_at:        unique_time('cc_event_space_created'),
       guid:              'event1',
       id:                unique_id('cc_event_space'),
@@ -1407,19 +1418,22 @@ module CCHelper
 
   def uaa_user
     {
-      active:              true,
-      created:             unique_time('uaa_user_created'),
-      email:               'admin',
-      familyname:          'Flintstone',
-      givenname:           'Fred',
-      id:                  'user1',
-      identity_zone_id:    uaa_identity_zone[:id],
-      lastmodified:        unique_time('uaa_user_last'),
-      passwd_lastmodified: unique_time('uaa_user_passwd'),
-      phonenumber:         '012-345-6789',
-      username:            'admin',
-      verified:            true,
-      version:             5
+      active:                      true,
+      created:                     unique_time('uaa_user_created'),
+      email:                       'admin@something.com',
+      familyname:                  'Flintstone',
+      givenname:                   'Fred',
+      id:                          'user1',
+      identity_zone_id:            uaa_identity_zone[:id],
+      lastmodified:                unique_time('uaa_user_last'),
+      last_logon_success_time:     unique_time('uaa_user_last_login_success_time').to_f * 1000,
+      passwd_change_required:      false,
+      passwd_lastmodified:         unique_time('uaa_user_passwd'),
+      phonenumber:                 '012-345-6789',
+      previous_logon_success_time: unique_time('uaa_user_previous_login_success_time').to_f * 1000,
+      username:                    'admin',
+      verified:                    true,
+      version:                     5
     }
   end
 
@@ -1810,7 +1824,14 @@ module CCHelper
       end
     end
 
+    # This is the old pre-cf-release 252 mechanism
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/isolation_segments/#{cc_isolation_segment[:guid]}/relationships/organizations", AdminUI::Utils::HTTP_DELETE, anything, "{\"data\":[{\"guid\":\"#{cc_organization[:guid]}\"}]}", anything, anything, anything) do
+      NotFound.new('code'        => 10_000,
+                   'description' => 'Unknown request',
+                   'error_code'  => 'CF-NotFound')
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/isolation_segments/#{cc_isolation_segment[:guid]}/relationships/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_isolation_segments_deleted
         cc_isolation_segment_not_found
       else

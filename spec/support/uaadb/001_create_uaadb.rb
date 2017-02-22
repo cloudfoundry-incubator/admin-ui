@@ -114,6 +114,7 @@ Sequel.migration do
       TrueClass :show_on_home_page, :default=>true, :null=>false
       String :app_launch_url, :size=>1024
       File :app_icon
+      String :created_by, :size=>36, :fixed=>true
       
       primary_key [:client_id, :identity_zone_id]
     end
@@ -191,6 +192,13 @@ Sequel.migration do
       index [:identity_zone_id, :entity_id], :name=>:entity_in_zone, :unique=>true
     end
     
+    create_table(:user_info) do
+      String :user_id, :size=>36, :null=>false
+      String :info, :text=>true, :null=>false
+      
+      primary_key [:user_id]
+    end
+    
     create_table(:users, :ignore_index_errors=>true) do
       String :id, :size=>36, :fixed=>true, :null=>false
       DateTime :created, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
@@ -211,6 +219,9 @@ Sequel.migration do
       String :salt, :size=>36
       DateTime :passwd_lastmodified
       TrueClass :legacy_verification_behavior, :default=>false, :null=>false
+      TrueClass :passwd_change_required, :default=>false, :null=>false
+      Bignum :last_logon_success_time
+      Bignum :previous_logon_success_time
       
       primary_key [:id]
       

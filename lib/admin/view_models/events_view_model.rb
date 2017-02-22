@@ -39,6 +39,7 @@ module AdminUI
         row.push(event[:actee_name])
         row.push(event[:actee])
         row.push(event[:actor_type])
+        row.push(event[:actor_username])
         row.push(event[:actor_name])
         row.push(event[:actor])
 
@@ -62,7 +63,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (0..9).to_a, (0..9).to_a)
+      result(true, items, hash, (0..10).to_a, (0..10).to_a)
     end
   end
 end
