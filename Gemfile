@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 ruby '2.3.3'
 
-gem 'faye-websocket', '0.10.6'
+gem 'faye-websocket', '0.10.7'
 gem 'membrane', '1.1.0'
 gem 'nats', '0.8.0'
 gem 'net-sftp', '2.1.2'
@@ -26,5 +26,5 @@ end
 
 group :test do
   gem 'rspec', '3.5.0'
-  gem 'selenium-webdriver', '3.0.5'
+  gem 'selenium-webdriver', '3.2.1'
 end
