@@ -18,7 +18,7 @@ module AdminUI
         set_roles_by_username:                true, # Added in cf_release 218
         space_developer_env_var_visibility:   true, # Added in cf_release 232
         space_scoped_private_broker_creation: true, # Added in cf release 231
-        task_creation:                        false, # Added in cf_release 228
+        # task_creation:                      false, # Added in cf_release 228 as false, but changed in cf_release 253 (API version 2.75.0) to true. Determined via code below
         unset_roles_by_username:              true, # Added in cf_release 218
         user_org_creation:                    false
       }.freeze
@@ -39,6 +39,13 @@ module AdminUI
         DEFAULT_FLAGS.each_pair do |name, enabled|
           name_string = name.to_s
           combined_feature_flags.push(name: name_string, enabled: enabled) unless feature_flags_set.include?(name_string)
+        end
+
+        unless feature_flags_set.include?('task_creation')
+          # As of cf-release v253 (API version 2.75.0), task_creation changed from default of false to true
+          api_version = @cc_rest_client.api_version
+          task_creation = Gem::Version.new(api_version) >= Gem::Version.new('2.75.0')
+          combined_feature_flags.push(name: 'task_creation', enabled: task_creation)
         end
       end
 

@@ -202,7 +202,7 @@ module AdminUI
       end
 
       if unknown_request
-        # Try the cf-release 252 version since the pre-cf-release 252 was considered an unknown request
+        # Try the cf-release 252 version since the pre-cf-release 252 version was considered an unknown request
         url = "v3/isolation_segments/#{isolation_segment_guid}/relationships/organizations/#{organization_guid}"
         @logger.debug("DELETE #{url}")
         @client.delete_cc(url)
@@ -515,10 +515,25 @@ module AdminUI
       @view_models.invalidate_feature_flags
     end
 
-    def manage_isolation_segment(organization_guid, control_message)
-      url = "v3/isolation_segments/#{organization_guid}"
+    def manage_isolation_segment(isolation_segment_guid, control_message)
+      url = "v3/isolation_segments/#{isolation_segment_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
-      @client.put_cc(url, control_message)
+
+      unknown_request = false
+      begin
+        @client.put_cc(url, control_message)
+      rescue CCRestClientResponseError => error
+        # As of cf-release 253, the protocol to rename an isolation segment changed
+        raise unless error.cf_code == 10_000 # This checks for an unknown request
+        unknown_request = true
+      end
+
+      if unknown_request
+        # Try the cf-release 253 version since the pre-cf-release 253 version was considered an unknown request
+        @logger.debug("PATCH #{url}, #{control_message}")
+        @client.patch_cc(url, control_message)
+      end
+
       @cc.invalidate_isolation_segments
       @view_models.invalidate_isolation_segments
     end

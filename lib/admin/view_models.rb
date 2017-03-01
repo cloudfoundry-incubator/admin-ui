@@ -120,7 +120,7 @@ module AdminUI
         cache[:condition]          = ConditionVariable.new
         cache[:result]             = nil
         cache[:semaphore]          = Mutex.new
-        cache[:view_model_factory] = cache[:clazz].new(@logger, cc, doppler, log_files, stats, varz, @testing)
+        cache[:view_model_factory] = cache[:clazz].new(@logger, cc, cc_rest_client, doppler, log_files, stats, varz, @testing)
 
         schedule(key)
       end

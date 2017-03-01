@@ -1806,7 +1806,14 @@ module CCHelper
       end
     end
 
+    # This is the old pre-cf-release 253 mechanism
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/isolation_segments/#{cc_isolation_segment[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_isolation_segment_rename}\"}", anything, anything, anything) do
+      NotFound.new('code'        => 10_000,
+                   'description' => 'Unknown request',
+                   'error_code'  => 'CF-NotFound')
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/isolation_segments/#{cc_isolation_segment[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, "{\"name\":\"#{cc_isolation_segment_rename}\"}", anything, anything, anything) do
       if @cc_isolation_segments_deleted
         cc_isolation_segment_not_found
       else

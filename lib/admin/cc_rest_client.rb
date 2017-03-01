@@ -71,6 +71,10 @@ module AdminUI
       end
     end
 
+    def patch_cc(path, body)
+      cf_request(get_cc_url(path), Utils::HTTP_PATCH, body, 'application/json')
+    end
+
     def patch_uaa(path, body)
       cf_request(get_uaa_token_endpoint_url(path), Utils::HTTP_PATCH, body, 'application/json', '*')
     end
