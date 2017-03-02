@@ -188,24 +188,18 @@ module AdminUI
     end
 
     def delete_organization_isolation_segment(organization_guid, isolation_segment_guid)
-      url = "v3/isolation_segments/#{isolation_segment_guid}/relationships/organizations"
-      body = Yajl::Encoder.encode(data: [{ guid: organization_guid }])
-      @logger.debug("DELETE #{url} #{body}")
-
-      unknown_request = false
-      begin
-        @client.delete_cc(url, body)
-      rescue CCRestClientResponseError => error
-        # As of cf-release 252, the protocol to delete an organization isolation segment changed
-        raise unless error.cf_code == 10_000 # This checks for an unknown request
-        unknown_request = true
-      end
-
-      if unknown_request
-        # Try the cf-release 252 version since the pre-cf-release 252 version was considered an unknown request
+      # As of cf-release 252 (API version 2.74.0), the protocol to delete an organization isolation segment changed
+      api_version = @client.api_version
+      new_protocol = Gem::Version.new(api_version) >= Gem::Version.new('2.74.0')
+      if new_protocol
         url = "v3/isolation_segments/#{isolation_segment_guid}/relationships/organizations/#{organization_guid}"
         @logger.debug("DELETE #{url}")
         @client.delete_cc(url)
+      else
+        url = "v3/isolation_segments/#{isolation_segment_guid}/relationships/organizations"
+        body = Yajl::Encoder.encode(data: [{ guid: organization_guid }])
+        @logger.debug("DELETE #{url} #{body}")
+        @client.delete_cc(url, body)
       end
 
       @cc.invalidate_organizations_isolation_segments
@@ -517,21 +511,16 @@ module AdminUI
 
     def manage_isolation_segment(isolation_segment_guid, control_message)
       url = "v3/isolation_segments/#{isolation_segment_guid}"
-      @logger.debug("PUT #{url}, #{control_message}")
 
-      unknown_request = false
-      begin
-        @client.put_cc(url, control_message)
-      rescue CCRestClientResponseError => error
-        # As of cf-release 253, the protocol to rename an isolation segment changed
-        raise unless error.cf_code == 10_000 # This checks for an unknown request
-        unknown_request = true
-      end
-
-      if unknown_request
-        # Try the cf-release 253 version since the pre-cf-release 253 version was considered an unknown request
+      # As of cf-release 253 (API version 2.75.0), the protocol to rename an isolation segment changed from PUT to PATCH
+      api_version = @client.api_version
+      new_protocol = Gem::Version.new(api_version) >= Gem::Version.new('2.75.0')
+      if new_protocol
         @logger.debug("PATCH #{url}, #{control_message}")
         @client.patch_cc(url, control_message)
+      else
+        @logger.debug("PUT #{url}, #{control_message}")
+        @client.put_cc(url, control_message)
       end
 
       @cc.invalidate_isolation_segments

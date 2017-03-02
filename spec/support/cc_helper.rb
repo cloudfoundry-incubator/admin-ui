@@ -736,7 +736,7 @@ module CCHelper
   end
 
   def cc_info_api_version
-    '2.65.0'
+    '2.75.0'
   end
 
   def cc_info_build
