@@ -626,7 +626,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_OrganizationsTable_6' }
-              let(:confirm_message) { 'Are you sure you want to delete the selected organizations and their contained spaces, space quotas, applications, routes, route mappings, private service brokers, service instances, service bindings, service keys and route bindings?' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected organizations and their contained spaces, space quotas, applications, routes, route mappings, private domains, private service brokers, service instances, service bindings, service keys and route bindings?' }
             end
           end
         end
