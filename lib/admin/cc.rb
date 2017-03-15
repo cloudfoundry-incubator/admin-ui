@@ -834,48 +834,54 @@ module AdminUI
       exists = cache[:exists]
       if exists || exists.nil?
         Sequel.connect(cache[:db_uri], single_threaded: @testing, max_connections: @max_connections) do |connection|
-          # If we have not yet determined if the table exists
-          if exists.nil?
-            table = cache[:table]
-            # Determine if the table exists
-            exists = connection.table_exists?(table)
-            cache[:exists] = exists
-            if exists
-              # Determine the columns the current level of database supports
-              columns        = cache[:columns]
-              db_columns     = connection[table].columns
-              # Downcase needed on column names to get around case sensitivity in MySQL
-              db_columns     = db_columns.map(&:downcase)
-              statement      = connection[table].select(*(columns & db_columns))
-              statement      = statement.where(cache[:where]) if cache[:where] && !@testing
-              cache[:select] = statement.sql
+          begin
+            # If we have not yet determined if the table exists
+            if exists.nil?
+              table = cache[:table]
+              # Determine if the table exists
+              exists = connection.table_exists?(table)
+              cache[:exists] = exists
+              if exists
+                # Determine the columns the current level of database supports
+                columns        = cache[:columns]
+                db_columns     = connection[table].columns
+                # Downcase needed on column names to get around case sensitivity in MySQL
+                db_columns     = db_columns.map(&:downcase)
+                statement      = connection[table].select(*(columns & db_columns))
+                statement      = statement.where(cache[:where]) if cache[:where] && !@testing
+                cache[:select] = statement.sql
 
-              @logger.debug("Select for key #{key}, table #{table}: #{cache[:select]}")
-              @logger.debug("Columns removed for key #{key}, table #{table}: #{columns - db_columns}")
-            else
-              begin
-                # Test if the connection is valid
-                connection.test_connection
-                @logger.warn("Table #{table} does not exist")
-              rescue
-                # In this case we think the table does not exist because we cannot connect to the database.
-                # We want to try again on the next iteration in case the database becomes available
-                cache[:exists] = nil
-                @logger.error("Table #{table} existence cannot be determined due to invalid database connection")
+                @logger.debug("Select for key #{key}, table #{table}: #{cache[:select]}")
+                @logger.debug("Columns removed for key #{key}, table #{table}: #{columns - db_columns}")
+              else
+                begin
+                  # Test if the connection is valid
+                  connection.test_connection
+                  @logger.warn("Table #{table} does not exist")
+                rescue
+                  # In this case we think the table does not exist because we cannot connect to the database.
+                  # We want to try again on the next iteration in case the database becomes available
+                  cache[:exists] = nil
+                  @logger.error("Table #{table} existence cannot be determined due to invalid database connection")
+                end
               end
             end
-          end
 
-          # If the table exists
-          if exists
-            items = []
-            connection.fetch(cache[:select]) do |row|
-              return result unless @running
-              Thread.pass
+            # If the table exists
+            if exists
+              items = []
+              connection.fetch(cache[:select]) do |row|
+                return result unless @running
+                Thread.pass
 
-              items.push(row)
+                items.push(row)
+              end
+              return result(items)
             end
-            return result(items)
+
+          ensure
+            connection.disconnect
+            Sequel.synchronize { ::Sequel::DATABASES.delete(connection) }
           end
         end
       end
