@@ -719,6 +719,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['put', "/organizations/#{cc_organization[:guid]}; body = {\"status\":\"suspended\"}"]], true)
     end
 
+    def remove_organization_default_isolation_segment
+      response = delete_request("/organizations/#{cc_organization[:guid]}/default_isolation_segment")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/default_isolation_segment"]], true)
+    end
+
     def delete_organization
       response = delete_request("/organizations/#{cc_organization[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -759,6 +765,12 @@ describe AdminUI::Admin, type: :integration do
     it 'suspends an organization' do
       activate_organization
       expect { suspend_organization }.to change { get_json('/organizations_view_model')['items']['items'][0][3] }.from('active').to('suspended')
+    end
+
+    it 'removes an organization default isolation segment' do
+      expect(get_json('/organizations_view_model')['items']['items'][0][39]).to eq(cc_isolation_segment[:guid])
+      expect { remove_organization_default_isolation_segment }.to change { get_json('/organizations_view_model')['items']['items'][0][38] }.from(cc_isolation_segment[:name]).to(nil)
+      expect(get_json('/organizations_view_model')['items']['items'][0][39]).to eq(nil)
     end
 
     it 'deletes an organization' do

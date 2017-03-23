@@ -80,7 +80,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Organizations tab does not have create, rename, set quota, activate, suspend or delete buttons' do
+    context 'Organizations tab does not have create, rename, set quota, activate, suspend, remove default isolation segment or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Organizations' }
         let(:page_id)   { 'OrganizationsPage' }

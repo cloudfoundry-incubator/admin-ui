@@ -1840,7 +1840,7 @@ module CCHelper
         cc_isolation_segment_not_found
       else
         sql(config.ccdb_uri, "UPDATE isolation_segments SET name = '#{cc_isolation_segment_rename}' WHERE guid = '#{cc_isolation_segment[:guid]}'")
-        OK.new('{}')
+        OK.new({})
       end
     end
 
@@ -1965,6 +1965,15 @@ module CCHelper
       else
         cc_clear_organizations_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}/default_isolation_segment", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE organizations SET default_isolation_segment_guid = NULL WHERE guid = '#{cc_organization[:guid]}'")
+        OK.new({})
       end
     end
 

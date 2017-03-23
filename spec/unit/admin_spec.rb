@@ -528,6 +528,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete organization recursive')
     end
 
+    shared_examples 'common delete organization default isolation segment' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/organizations/organization1/default_isolation_segment')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete organization default isolation segment via http' do
+      it_behaves_like('common delete organization default isolation segment')
+    end
+
+    context 'delete organization default isolation segment role via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete organization default isolation segment')
+    end
+
     shared_examples 'common delete organization isolation segment' do
       it 'returns failure code due to disconnection' do
         response = delete('/organizations/organization1/isolation_segment1')
@@ -2138,6 +2155,10 @@ describe AdminUI::Admin do
 
       it 'deletes /organizations/:guid?recursive=true redirects as expected' do
         delete_redirects_as_expected('/organizations/organization1?recursive=true')
+      end
+
+      it 'deletes /organizations/:guid/default_isolation_segment redirects as expected' do
+        delete_redirects_as_expected('/organizations/organization1/default_isolation_segment')
       end
 
       it 'deletes /organizations/:guid/:guid redirects as expected' do

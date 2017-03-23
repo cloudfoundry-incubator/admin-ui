@@ -437,7 +437,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_OrganizationsTable_7')
+          check_allowscriptaccess_attribute('Buttons_OrganizationsTable_8')
         end
 
         it 'has a checkbox in the first column' do
@@ -465,12 +465,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_OrganizationsTable_4').text).to eq('Suspend')
           end
 
+          it 'has a Remove Default Isolation Segment button' do
+            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_5').text).to eq('Remove Default Isolation Segment')
+          end
+
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_5').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_6').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_6').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_7').text).to eq('Delete Recursive')
           end
 
           it 'creates an organization' do
@@ -524,15 +528,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Delete button' do
+          context 'Remove Default Isolation Segment button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_OrganizationsTable_5' }
             end
           end
 
-          context 'Delete Recursive button' do
+          context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_OrganizationsTable_6' }
+            end
+          end
+
+          context 'Delete Recursive button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_OrganizationsTable_7' }
             end
           end
 
@@ -605,6 +615,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text).to eq(status)
           end
 
+          def check_organization_default_isolation_segment
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[39]").text == '' }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[39]").text).to eq('')
+          end
+
           it 'activates the selected organization' do
             suspend_organization
             check_organization_status('SUSPENDED')
@@ -618,16 +636,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_organization_status('SUSPENDED')
           end
 
+          it 'removes the default isolation segment from the organization' do
+            check_first_row('OrganizationsTable')
+            @driver.find_element(id: 'Buttons_OrganizationsTable_5').click
+
+            confirm("Are you sure you want to remove the selected organizations' default isolation segments?")
+
+            check_operation_result
+
+            check_organization_default_isolation_segment
+          end
+
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_OrganizationsTable_5' }
+              let(:button_id)       { 'Buttons_OrganizationsTable_6' }
               let(:confirm_message) { 'Are you sure you want to delete the selected organizations?' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_OrganizationsTable_6' }
+              let(:button_id)       { 'Buttons_OrganizationsTable_7' }
               let(:confirm_message) { 'Are you sure you want to delete the selected organizations and their contained spaces, space quotas, applications, routes, route mappings, private domains, private service brokers, service instances, service bindings, service keys and route bindings?' }
             end
           end

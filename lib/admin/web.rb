@@ -1579,6 +1579,23 @@ module AdminUI
       end
     end
 
+    delete '/organizations/:organization_guid/default_isolation_segment', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/default_isolation_segment")
+      begin
+        @operation.remove_organization_default_isolation_segment(params[:organization_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during remove organization default isolation segment: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during remove organization default isolation segment: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/organizations/:organization_guid/:isolation_segment_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/#{params[:isolation_segment_guid]}")
       begin

@@ -638,6 +638,10 @@ describe AdminUI::Operation, type: :integration do
         operation.manage_organization(cc_organization[:guid], '{"status":"suspended"}')
       end
 
+      def remove_organization_default_isolation_segment
+        operation.remove_organization_default_isolation_segment(cc_organization[:guid])
+      end
+
       def delete_organization
         operation.delete_organization(cc_organization[:guid], false)
       end
@@ -670,6 +674,10 @@ describe AdminUI::Operation, type: :integration do
       it 'suspends the organization' do
         activate_organization
         expect { suspend_organization }.to change { cc.organizations['items'][0][:status] }.from('active').to('suspended')
+      end
+
+      it 'removes the organization default isolation segment' do
+        expect { remove_organization_default_isolation_segment }.to change { cc.organizations['items'][0][:default_isolation_segment_guid] }.from(cc_isolation_segment[:guid]).to(nil)
       end
 
       it 'deletes organization' do
@@ -710,6 +718,10 @@ describe AdminUI::Operation, type: :integration do
 
           it 'fails suspending deleted organization' do
             expect { suspend_organization }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_not_found(exception) }
+          end
+
+          it 'fails removing default isolation segment on deleted organization' do
+            expect { remove_organization_default_isolation_segment }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_not_found(exception) }
           end
 
           it 'fails deleting deleted organization' do

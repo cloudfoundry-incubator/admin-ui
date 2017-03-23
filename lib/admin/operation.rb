@@ -14,7 +14,7 @@ module AdminUI
     end
 
     def cancel_task(task_guid)
-      url = "v3/tasks/#{task_guid}/cancel"
+      url = "/v3/tasks/#{task_guid}/cancel"
       @logger.debug("PUT #{url}")
       @client.put_cc(url, '{}')
       @cc.invalidate_tasks
@@ -22,7 +22,7 @@ module AdminUI
     end
 
     def create_organization(control_message)
-      url = 'v2/organizations'
+      url = '/v2/organizations'
       @logger.debug("POST #{url}, #{control_message}")
       @client.post_cc(url, control_message)
       @cc.invalidate_organizations
@@ -30,7 +30,7 @@ module AdminUI
     end
 
     def create_isolation_segment(control_message)
-      url = 'v3/isolation_segments'
+      url = '/v3/isolation_segments'
       @logger.debug("POST #{url}, #{control_message}")
       @client.post_cc(url, control_message)
       @cc.invalidate_isolation_segments
@@ -38,7 +38,7 @@ module AdminUI
     end
 
     def create_space_quota_definition_space(space_quota_definition_guid, space_guid)
-      url = "v2/space_quota_definitions/#{space_quota_definition_guid}/spaces/#{space_guid}"
+      url = "/v2/space_quota_definitions/#{space_quota_definition_guid}/spaces/#{space_guid}"
       @logger.debug("PUT #{url}")
       @client.put_cc(url, '{}')
       @cc.invalidate_spaces
@@ -46,7 +46,7 @@ module AdminUI
     end
 
     def delete_application(app_guid, recursive)
-      url = "v2/apps/#{app_guid}"
+      url = "/v2/apps/#{app_guid}"
       url += '?recursive=true' if recursive
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -66,7 +66,7 @@ module AdminUI
     end
 
     def delete_application_instance(app_guid, instance_index)
-      url = "v2/apps/#{app_guid}/instances/#{instance_index}"
+      url = "/v2/apps/#{app_guid}/instances/#{instance_index}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @doppler.testing_remove_container_metric(app_guid, instance_index) if @testing
@@ -75,7 +75,7 @@ module AdminUI
     end
 
     def delete_buildpack(buildpack_guid)
-      url = "v2/buildpacks/#{buildpack_guid}"
+      url = "/v2/buildpacks/#{buildpack_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_buildpacks
@@ -83,7 +83,7 @@ module AdminUI
     end
 
     def delete_client(client_id)
-      url = "oauth/clients/#{client_id}"
+      url = "/oauth/clients/#{client_id}"
       @logger.debug("DELETE #{url}")
       @client.delete_uaa(url)
       @cc.invalidate_approvals
@@ -92,7 +92,7 @@ module AdminUI
     end
 
     def delete_domain(domain_guid, recursive)
-      url = "v2/domains/#{domain_guid}"
+      url = "/v2/domains/#{domain_guid}"
       url += '?recursive=true' if recursive
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -107,7 +107,7 @@ module AdminUI
     end
 
     def delete_group(group_guid)
-      url = "Groups/#{group_guid}"
+      url = "/Groups/#{group_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_uaa(url)
       @cc.invalidate_approvals
@@ -119,7 +119,7 @@ module AdminUI
     end
 
     def delete_group_member(group_guid, member_guid)
-      url = "Groups/#{group_guid}/members/#{member_guid}"
+      url = "/Groups/#{group_guid}/members/#{member_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_uaa(url)
       @cc.invalidate_group_membership
@@ -127,7 +127,7 @@ module AdminUI
     end
 
     def delete_isolation_segment(isolation_segment_guid)
-      url = "v3/isolation_segments/#{isolation_segment_guid}"
+      url = "/v3/isolation_segments/#{isolation_segment_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_isolation_segments
@@ -137,7 +137,7 @@ module AdminUI
     end
 
     def delete_organization(organization_guid, recursive)
-      url = "v2/organizations/#{organization_guid}"
+      url = "/v2/organizations/#{organization_guid}"
       url += '?recursive=true' if recursive
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -192,11 +192,11 @@ module AdminUI
       api_version = @client.api_version
       new_protocol = Gem::Version.new(api_version) >= Gem::Version.new('2.74.0')
       if new_protocol
-        url = "v3/isolation_segments/#{isolation_segment_guid}/relationships/organizations/#{organization_guid}"
+        url = "/v3/isolation_segments/#{isolation_segment_guid}/relationships/organizations/#{organization_guid}"
         @logger.debug("DELETE #{url}")
         @client.delete_cc(url)
       else
-        url = "v3/isolation_segments/#{isolation_segment_guid}/relationships/organizations"
+        url = "/v3/isolation_segments/#{isolation_segment_guid}/relationships/organizations"
         body = Yajl::Encoder.encode(data: [{ guid: organization_guid }])
         @logger.debug("DELETE #{url} #{body}")
         @client.delete_cc(url, body)
@@ -215,7 +215,7 @@ module AdminUI
     end
 
     def delete_organization_role(organization_guid, role, user_guid)
-      url = "v2/organizations/#{organization_guid}/#{role}/#{user_guid}"
+      url = "/v2/organizations/#{organization_guid}/#{role}/#{user_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_organizations_auditors if role == 'auditors'
@@ -226,7 +226,7 @@ module AdminUI
     end
 
     def delete_quota_definition(quota_definition_guid)
-      url = "v2/quota_definitions/#{quota_definition_guid}"
+      url = "/v2/quota_definitions/#{quota_definition_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_quota_definitions
@@ -234,7 +234,7 @@ module AdminUI
     end
 
     def delete_route(route_guid, recursive)
-      url = "v2/routes/#{route_guid}"
+      url = "/v2/routes/#{route_guid}"
       url += '?recursive=true' if recursive
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -245,7 +245,7 @@ module AdminUI
     end
 
     def delete_route_mapping(route_mapping_guid)
-      url = "v2/route_mappings/#{route_mapping_guid}"
+      url = "/v2/route_mappings/#{route_mapping_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_route_mappings
@@ -253,7 +253,7 @@ module AdminUI
     end
 
     def delete_security_group(security_group_guid)
-      url = "v2/security_groups/#{security_group_guid}"
+      url = "/v2/security_groups/#{security_group_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_security_groups
@@ -265,7 +265,7 @@ module AdminUI
     end
 
     def delete_security_group_space(security_group_guid, space_guid)
-      url = "v2/security_groups/#{security_group_guid}/spaces/#{space_guid}"
+      url = "/v2/security_groups/#{security_group_guid}/spaces/#{space_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_security_groups_spaces
@@ -273,7 +273,7 @@ module AdminUI
     end
 
     def delete_service(service_guid, purge)
-      url = "v2/services/#{service_guid}"
+      url = "/v2/services/#{service_guid}"
       url += '?purge=true' if purge
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -294,7 +294,7 @@ module AdminUI
     end
 
     def delete_service_binding(service_binding_guid)
-      url = "v2/service_bindings/#{service_binding_guid}"
+      url = "/v2/service_bindings/#{service_binding_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_bindings
@@ -302,7 +302,7 @@ module AdminUI
     end
 
     def delete_service_broker(service_broker_guid)
-      url = "v2/service_brokers/#{service_broker_guid}"
+      url = "/v2/service_brokers/#{service_broker_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_clients
@@ -336,7 +336,7 @@ module AdminUI
     end
 
     def delete_service_key(service_key_guid)
-      url = "v2/service_keys/#{service_key_guid}"
+      url = "/v2/service_keys/#{service_key_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_keys
@@ -344,7 +344,7 @@ module AdminUI
     end
 
     def delete_service_plan(service_plan_guid)
-      url = "v2/service_plans/#{service_plan_guid}"
+      url = "/v2/service_plans/#{service_plan_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_plans
@@ -354,7 +354,7 @@ module AdminUI
     end
 
     def delete_service_plan_visibility(service_plan_visibility_guid)
-      url = "v2/service_plan_visibilities/#{service_plan_visibility_guid}"
+      url = "/v2/service_plan_visibilities/#{service_plan_visibility_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_plan_visibilities
@@ -370,7 +370,7 @@ module AdminUI
     end
 
     def delete_space(space_guid, recursive)
-      url = "v2/spaces/#{space_guid}"
+      url = "/v2/spaces/#{space_guid}"
       url += '?recursive=true' if recursive
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -410,7 +410,7 @@ module AdminUI
     end
 
     def delete_space_quota_definition(space_quota_definition_guid)
-      url = "v2/space_quota_definitions/#{space_quota_definition_guid}"
+      url = "/v2/space_quota_definitions/#{space_quota_definition_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_space_quota_definitions
@@ -418,7 +418,7 @@ module AdminUI
     end
 
     def delete_space_quota_definition_space(space_quota_definition_guid, space_guid)
-      url = "v2/space_quota_definitions/#{space_quota_definition_guid}/spaces/#{space_guid}"
+      url = "/v2/space_quota_definitions/#{space_quota_definition_guid}/spaces/#{space_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_spaces
@@ -426,7 +426,7 @@ module AdminUI
     end
 
     def delete_space_role(space_guid, role, user_guid)
-      url = "v2/spaces/#{space_guid}/#{role}/#{user_guid}"
+      url = "/v2/spaces/#{space_guid}/#{role}/#{user_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_spaces_auditors if role == 'auditors'
@@ -436,7 +436,7 @@ module AdminUI
     end
 
     def delete_stack(stack_guid)
-      url = "v2/stacks/#{stack_guid}"
+      url = "/v2/stacks/#{stack_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_stacks
@@ -444,7 +444,7 @@ module AdminUI
     end
 
     def delete_staging_security_group_space(staging_security_group_guid, staging_space_guid)
-      url = "v2/security_groups/#{staging_security_group_guid}/staging_spaces/#{staging_space_guid}"
+      url = "/v2/security_groups/#{staging_security_group_guid}/staging_spaces/#{staging_space_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_staging_security_groups_spaces
@@ -452,7 +452,7 @@ module AdminUI
     end
 
     def delete_user(user_guid)
-      url = "v2/users/#{user_guid}"
+      url = "/v2/users/#{user_guid}"
       @logger.debug("DELETE #{url}")
 
       cc_error = nil
@@ -465,7 +465,7 @@ module AdminUI
         cc_error = error
       end
 
-      url = "Users/#{user_guid}"
+      url = "/Users/#{user_guid}"
       @logger.debug("DELETE #{url}")
       begin
         @client.delete_uaa(url)
@@ -481,7 +481,7 @@ module AdminUI
     end
 
     def manage_application(app_guid, control_message)
-      url = "v2/apps/#{app_guid}"
+      url = "/v2/apps/#{app_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
       @cc.invalidate_applications
@@ -494,7 +494,7 @@ module AdminUI
     end
 
     def manage_buildpack(buildpack_guid, control_message)
-      url = "v2/buildpacks/#{buildpack_guid}"
+      url = "/v2/buildpacks/#{buildpack_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
       @cc.invalidate_buildpacks
@@ -502,7 +502,7 @@ module AdminUI
     end
 
     def manage_feature_flag(feature_flag_name, control_message)
-      url = "v2/config/feature_flags/#{feature_flag_name}"
+      url = "/v2/config/feature_flags/#{feature_flag_name}"
       @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
       @cc.invalidate_feature_flags
@@ -510,7 +510,7 @@ module AdminUI
     end
 
     def manage_isolation_segment(isolation_segment_guid, control_message)
-      url = "v3/isolation_segments/#{isolation_segment_guid}"
+      url = "/v3/isolation_segments/#{isolation_segment_guid}"
 
       # As of cf-release 253 (API version 2.75.0), the protocol to rename an isolation segment changed from PUT to PATCH
       api_version = @client.api_version
@@ -528,7 +528,7 @@ module AdminUI
     end
 
     def manage_organization(organization_guid, control_message)
-      url = "v2/organizations/#{organization_guid}"
+      url = "/v2/organizations/#{organization_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
       @cc.invalidate_organizations
@@ -536,7 +536,7 @@ module AdminUI
     end
 
     def manage_quota_definition(quota_definition_guid, control_message)
-      url = "v2/quota_definitions/#{quota_definition_guid}"
+      url = "/v2/quota_definitions/#{quota_definition_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
       @cc.invalidate_quota_definitions
@@ -605,7 +605,7 @@ module AdminUI
     end
 
     def manage_space(space_guid, control_message)
-      url = "v2/spaces/#{space_guid}"
+      url = "/v2/spaces/#{space_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
       @cc.invalidate_spaces
@@ -613,7 +613,7 @@ module AdminUI
     end
 
     def manage_space_quota_definition(space_quota_definition_guid, control_message)
-      url = "v2/space_quota_definitions/#{space_quota_definition_guid}"
+      url = "/v2/space_quota_definitions/#{space_quota_definition_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
       @cc.invalidate_space_quota_definitions
@@ -621,7 +621,7 @@ module AdminUI
     end
 
     def manage_user(user_guid, control_message)
-      url = "Users/#{user_guid}"
+      url = "/Users/#{user_guid}"
       @logger.debug("PATCH #{url}, #{control_message}")
       @client.patch_uaa(url, control_message)
       @cc.invalidate_users_uaa
@@ -647,6 +647,14 @@ module AdminUI
       @view_models.invalidate_routers
     end
 
+    def remove_organization_default_isolation_segment(organization_guid)
+      url = "/v2/organizations/#{organization_guid}/default_isolation_segment"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_organizations
+      @view_models.invalidate_organizations
+    end
+
     def remove_space_isolation_segment(space_guid)
       url = "/v2/spaces/#{space_guid}/isolation_segment"
       @logger.debug("DELETE #{url}")
@@ -656,7 +664,7 @@ module AdminUI
     end
 
     def restage_application(app_guid)
-      url = "v2/apps/#{app_guid}/restage"
+      url = "/v2/apps/#{app_guid}/restage"
       @logger.debug("POST #{url}")
       @client.post_cc(url, '{}')
       @cc.invalidate_applications
