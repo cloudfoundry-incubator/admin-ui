@@ -124,6 +124,15 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:clock_jobs, :ignore_index_errors=>true) do
+      primary_key :id
+      String :name, :text=>true, :null=>false
+      DateTime :last_started_at
+      DateTime :last_completed_at
+      
+      index [:name], :name=>:clock_jobs_name_unique, :unique=>true
+    end
+    
     create_table(:delayed_jobs, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -370,6 +379,7 @@ Sequel.migration do
       foreign_key :app_guid, :apps, :type=>String, :text=>true, :key=>[:guid]
       String :sha256_checksum, :text=>true
       
+      index [:app_guid], :name=>:droplet_app_guid_index
       index [:created_at]
       index [:droplet_hash]
       index [:guid], :unique=>true
@@ -392,6 +402,7 @@ Sequel.migration do
       String :docker_image, :text=>true
       String :sha256_checksum, :text=>true
       
+      index [:app_guid], :name=>:package_app_guid_index
       index [:created_at]
       index [:guid], :unique=>true
       index [:type]

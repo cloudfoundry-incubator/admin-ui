@@ -747,7 +747,7 @@ describe AdminUI::Admin, type: :integration do
     context 'sets the quota for organization' do
       let(:insert_second_quota_definition) { true }
       it 'sets the quota for organization' do
-        expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][11] }.from(cc_quota_definition[:name]).to(cc_quota_definition2[:name])
+        expect { set_quota }.to change { get_json('/organizations_view_model')['items']['items'][0][12] }.from(cc_quota_definition[:name]).to(cc_quota_definition2[:name])
       end
     end
 
@@ -1955,6 +1955,7 @@ describe AdminUI::Admin, type: :integration do
 
     shared_examples 'organizations' do
       context 'organizations_view_model' do
+        let(:event_type)        { 'organization' }
         let(:path)              { '/organizations_view_model' }
         let(:view_model_source) { view_models_organizations }
         it_behaves_like('retrieves view_model')

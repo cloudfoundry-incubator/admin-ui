@@ -74,7 +74,8 @@ module AdminUI
       latest_droplets = latest_app_guid_hash(droplets['items'])
       latest_packages = latest_app_guid_hash(packages['items'])
 
-      event_target_counters = {}
+      event_counters                                = {}
+      event_target_counters                         = {}
       organization_space_counters                   = {}
       organization_role_counters                    = {}
       organization_default_user_counters            = {}
@@ -95,6 +96,12 @@ module AdminUI
       events['items'].each do |event|
         return result unless @running
         Thread.pass
+
+        if event[:actee_type] == 'organization'
+          actee = event[:actee]
+          event_counters[actee] = 0 if event_counters[actee].nil?
+          event_counters[actee] += 1
+        end
 
         organization_guid = event[:organization_guid]
         next if organization_guid.nil?
@@ -318,6 +325,7 @@ module AdminUI
         default_isolation_segment_guid = organization[:default_isolation_segment_guid]
         default_isolation_segment      = default_isolation_segment_guid.nil? ? nil : isolation_segments_hash[default_isolation_segment_guid]
 
+        event_counter                                = event_counters[organization_guid]
         event_target_counter                         = event_target_counters[organization_guid]
         organization_default_user_counter            = organization_default_user_counters[organization_id]
         organization_role_counter                    = organization_role_counters[organization_id]
@@ -346,6 +354,14 @@ module AdminUI
 
         if organization[:updated_at]
           row.push(organization[:updated_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
+        if event_counter
+          row.push(event_counter)
+        elsif events_connected
+          row.push(0)
         else
           row.push(nil)
         end
@@ -563,7 +579,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..39).to_a, [1, 2, 3, 4, 5, 11, 37, 38])
+      result(true, items, hash, (1..40).to_a, [1, 2, 3, 4, 5, 12, 38, 39])
     end
 
     private

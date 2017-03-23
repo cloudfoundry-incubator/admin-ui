@@ -436,8 +436,9 @@ describe AdminUI::ViewModels, type: :integration do
 
     shared_examples 'organizations' do
       context 'returns connected organizations_view_model' do
-        let(:results)  { view_models.organizations }
-        let(:expected) { view_models_organizations }
+        let(:event_type) { 'organization' }
+        let(:results)    { view_models.organizations }
+        let(:expected)   { view_models_organizations }
 
         it_behaves_like('common view model retrieval')
       end

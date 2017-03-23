@@ -513,6 +513,27 @@ module CCHelper
     }
   end
 
+  def cc_event_organization
+    {
+      actee:             cc_organization[:guid],
+      actee_name:        cc_organization[:name],
+      actee_type:        'organization',
+      actor:             cc_user[:guid],
+      actor_name:        uaa_user[:email],
+      actor_type:        'user',
+      actor_username:    uaa_user[:username],
+      created_at:        unique_time('cc_event_organization_created'),
+      guid:              'event1',
+      id:                unique_id('cc_event_organization'),
+      metadata:          '{}',
+      organization_guid: cc_organization[:guid],
+      space_guid:        '',
+      timestamp:         unique_time('cc_event_organization_timestamp'),
+      type:              'audit.organization.create',
+      updated_at:        unique_time('cc_event_organization_updated')
+    }
+  end
+
   def cc_event_route
     {
       actee:             cc_route[:guid],
@@ -1499,6 +1520,7 @@ module CCHelper
     result << [:space_quota_definitions, cc_space_quota_definition2] if insert_second_quota_definition
 
     result << [:events, cc_event_app] if event_type == 'app'
+    result << [:events, cc_event_organization] if event_type == 'organization'
     result << [:events, cc_event_route] if event_type == 'route'
     result << [:events, cc_event_service] if event_type == 'service'
     result << [:events, cc_event_service_binding] if event_type == 'service_binding'

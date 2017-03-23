@@ -357,8 +357,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       context 'Organizations' do
-        let(:tab_id)   { 'Organizations' }
-        let(:table_id) { 'OrganizationsTable' }
+        let(:tab_id)     { 'Organizations' }
+        let(:table_id)   { 'OrganizationsTable' }
+        let(:event_type) { 'organization' }
 
         it 'has a table' do
           check_table_layout([
@@ -366,12 +367,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 9,
                                  labels:          ['', '', 'Routes', 'Used', 'Reserved', 'Desired App States', 'App States', 'App Package States', 'Isolation Segments'],
-                                 colspans:        %w(1 17 3 7 2 2 2 3 3)
+                                 colspans:        %w(1 18 3 7 2 2 2 3 3)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 40,
-                                 labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Default Users', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Security Groups', 'Staging Security Groups', 'Total', 'Used', 'Unused', 'Apps', 'Instances', 'Services', 'Tasks', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Started', 'Stopped', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed', 'Default Name', 'Default GUID', 'Related'],
+                                 expected_length: 41,
+                                 labels:          ['', 'Name', 'GUID', 'Status', 'Created', 'Updated', 'Events', 'Events Target', 'Spaces', 'Organization Roles', 'Space Roles', 'Default Users', 'Quota', 'Space Quotas', 'Domains', 'Private Service Brokers', 'Service Plan Visibilities', 'Security Groups', 'Staging Security Groups', 'Total', 'Used', 'Unused', 'Apps', 'Instances', 'Services', 'Tasks', 'Memory', 'Disk', '% CPU', 'Memory', 'Disk', 'Started', 'Stopped', 'Started', 'Stopped', 'Pending', 'Staged', 'Failed', 'Default Name', 'Default GUID', 'Related'],
                                  colspans:        nil
                                }
                              ])
@@ -387,6 +388,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_organization[:status].upcase,
                                cc_organization[:created_at].to_datetime.rfc3339,
                                cc_organization[:updated_at].to_datetime.rfc3339,
+                               '1',
                                '1',
                                '1',
                                '4',
@@ -570,10 +572,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               check_operation_result
 
               begin
-                Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[12]").text == cc_quota_definition2[:name] }
+                Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[13]").text == cc_quota_definition2[:name] }
               rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
               end
-              expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[12]").text).to eq(cc_quota_definition2[:name])
+              expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[13]").text).to eq(cc_quota_definition2[:name])
             end
           end
 
@@ -645,6 +647,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Created',                        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_organization[:created_at].to_datetime.rfc3339}\")") },
                               { label: 'Updated',                        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_organization[:updated_at].to_datetime.rfc3339}\")") },
                               { label: 'Billing Enabled',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_organization[:billing_enabled]})") },
+                              { label: 'Events',                         tag:   'a', value: '1' },
                               { label: 'Events Target',                  tag:   'a', value: '1' },
                               { label: 'Spaces',                         tag:   'a', value: '1' },
                               { label: 'Organization Roles',             tag:   'a', value: '4' },
@@ -693,80 +696,84 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('has organization details')
           end
 
+          it 'has events link' do
+            check_filter_link('Organizations', 6, 'Events', cc_organization[:guid])
+          end
+
           it 'has events target link' do
-            check_filter_link('Organizations', 6, 'Events', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 7, 'Events', "#{cc_organization[:name]}/")
           end
 
           it 'has spaces link' do
-            check_filter_link('Organizations', 7, 'Spaces', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 8, 'Spaces', "#{cc_organization[:name]}/")
           end
 
           it 'has organization roles link' do
-            check_filter_link('Organizations', 8, 'OrganizationRoles', cc_organization[:guid])
+            check_filter_link('Organizations', 9, 'OrganizationRoles', cc_organization[:guid])
           end
 
           it 'has space roles link' do
-            check_filter_link('Organizations', 9, 'SpaceRoles', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 10, 'SpaceRoles', "#{cc_organization[:name]}/")
           end
 
           it 'has users link' do
-            check_filter_link('Organizations', 10, 'Users', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 11, 'Users', "#{cc_organization[:name]}/")
           end
 
           it 'has quotas link' do
-            check_filter_link('Organizations', 11, 'Quotas', cc_quota_definition[:guid])
+            check_filter_link('Organizations', 12, 'Quotas', cc_quota_definition[:guid])
           end
 
           it 'has space quotas link' do
-            check_filter_link('Organizations', 13, 'SpaceQuotas', cc_organization[:guid])
+            check_filter_link('Organizations', 14, 'SpaceQuotas', cc_organization[:guid])
           end
 
           it 'has domains link' do
-            check_filter_link('Organizations', 14, 'Domains', cc_organization[:name])
+            check_filter_link('Organizations', 15, 'Domains', cc_organization[:name])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Organizations', 15, 'ServiceBrokers', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 16, 'ServiceBrokers', "#{cc_organization[:name]}/")
           end
 
           it 'has service plan visibilities link' do
-            check_filter_link('Organizations', 16, 'ServicePlanVisibilities', cc_organization[:guid])
+            check_filter_link('Organizations', 17, 'ServicePlanVisibilities', cc_organization[:guid])
           end
 
           it 'has security groups spaces link' do
-            check_filter_link('Organizations', 17, 'SecurityGroupsSpaces', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 18, 'SecurityGroupsSpaces', "#{cc_organization[:name]}/")
           end
 
           it 'has staging security groups spaces link' do
-            check_filter_link('Organizations', 18, 'StagingSecurityGroupsSpaces', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 19, 'StagingSecurityGroupsSpaces', "#{cc_organization[:name]}/")
           end
 
           it 'has routes link' do
-            check_filter_link('Organizations', 19, 'Routes', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 20, 'Routes', "#{cc_organization[:name]}/")
           end
 
           it 'has applications link' do
-            check_filter_link('Organizations', 22, 'Applications', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 23, 'Applications', "#{cc_organization[:name]}/")
           end
 
           it 'has application instances link' do
-            check_filter_link('Organizations', 23, 'ApplicationInstances', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 24, 'ApplicationInstances', "#{cc_organization[:name]}/")
           end
 
           it 'has services instances link' do
-            check_filter_link('Organizations', 24, 'ServiceInstances', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 25, 'ServiceInstances', "#{cc_organization[:name]}/")
           end
 
           it 'has tasks link' do
-            check_filter_link('Organizations', 25, 'Tasks', "#{cc_organization[:name]}/")
+            check_filter_link('Organizations', 26, 'Tasks', "#{cc_organization[:name]}/")
           end
 
           it 'has default isolation segments link' do
-            check_filter_link('Organizations', 38, 'IsolationSegments', cc_organization[:default_isolation_segment_guid])
+            check_filter_link('Organizations', 39, 'IsolationSegments', cc_organization[:default_isolation_segment_guid])
           end
 
           it 'has organizations isolation segments link' do
-            check_filter_link('Organizations', 40, 'OrganizationsIsolationSegments', cc_organization[:guid])
+            check_filter_link('Organizations', 41, 'OrganizationsIsolationSegments', cc_organization[:guid])
           end
         end
       end
@@ -4271,6 +4278,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             it 'has service brokers actor link' do
               check_filter_link('Events', 8, 'ServiceBrokers', cc_event_service_dashboard_client[:actor])
+            end
+          end
+
+          context 'organization event' do
+            let(:event_type) { 'organization' }
+
+            it 'has organizations actee link' do
+              check_filter_link('Events', 5, 'Organizations', cc_event_organization[:actee])
+            end
+
+            it 'has users actor link' do
+              check_filter_link('Events', 9, 'Users', cc_event_organization[:actor])
+            end
+
+            it 'has organizations link' do
+              check_filter_link('Events', 10, 'Organizations', cc_organization[:guid])
             end
           end
 

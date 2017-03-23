@@ -174,6 +174,8 @@ Sequel.migration do
       
       index [:created], :name=>:audit_created
       index [:principal_id], :name=>:audit_principal
+      index [:created], :name=>:sec_audit_created_idx
+      index [:principal_id], :name=>:sec_audit_principal_idx
     end
     
     create_table(:service_provider, :ignore_index_errors=>true) do

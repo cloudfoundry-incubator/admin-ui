@@ -704,6 +704,7 @@ module ViewModelsHelper
         cc_organization[:updated_at].to_datetime.rfc3339,
         1,
         1,
+        1,
         4,
         3,
         1,
