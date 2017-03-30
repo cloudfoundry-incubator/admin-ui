@@ -2221,12 +2221,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 8,
                                  labels:          ['', 'Service Binding', 'Application', 'Service Instance', 'Service Plan', 'Service', 'Service Broker', ''],
-                                 colspans:        %w(1 5 2 4 8 6 4 1)
+                                 colspans:        %w(1 6 2 4 8 6 4 1)
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 31,
-                                 labels:          ['', 'GUID', 'Created', 'Updated', 'Drain', 'Events', 'Name', 'GUID', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Free', 'Active', 'Public', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
+                                 expected_length: 32,
+                                 labels:          ['', 'GUID', 'Created', 'Updated', 'Drain', 'Volume Mounts', 'Events', 'Name', 'GUID', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Free', 'Active', 'Public', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2238,6 +2238,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_binding[:created_at].to_datetime.rfc3339,
                              cc_service_binding[:updated_at].to_datetime.rfc3339,
                              @driver.execute_script("return Format.formatBoolean(#{!cc_service_binding[:syslog_drain_url].nil? && cc_service_binding[:syslog_drain_url].length.positive?})"),
+                             @driver.execute_script("return Format.formatBoolean(#{!cc_service_binding[:volume_mounts_salt].nil?})"),
                              '1',
                              cc_app[:name],
                              cc_app[:guid],
@@ -2354,6 +2355,26 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'credentials subtable has allowscriptaccess property set to sameDomain' do
             check_allowscriptaccess_attribute('Buttons_ServiceBindingsCredentialsTable_0')
+          end
+
+          it 'has volume mounts' do
+            expect(@driver.find_element(id: 'ServiceBindingsVolumeMountsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsVolumeMountsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 3,
+                                labels:          ['Container Directory', 'Device Type', 'Mode'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceBindingsVolumeMountsTable']/tbody/tr/td"),
+                             [
+                               cc_service_binding_volume_mounts[0]['container_dir'],
+                               cc_service_binding_volume_mounts[0]['device_type'],
+                               cc_service_binding_volume_mounts[0]['mode']
+                             ])
+          end
+
+          it 'volume mounts subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ServiceBindingsVolumeMountsTable_0')
           end
 
           it 'has events' do

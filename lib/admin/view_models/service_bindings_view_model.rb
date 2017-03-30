@@ -72,6 +72,7 @@ module AdminUI
         end
 
         row.push(!service_binding[:syslog_drain_url].nil? && service_binding[:syslog_drain_url].length.positive?)
+        row.push(!service_binding[:volume_mounts_salt].nil?)
 
         if event_counter
           row.push(event_counter)
@@ -165,7 +166,7 @@ module AdminUI
             'application'      => application,
             'organization'     => organization,
             'service'          => service,
-            'service_binding'  => service_binding,
+            'service_binding'  => service_binding.reject { |key, _| key == :volume_mounts_salt },
             'service_broker'   => service_broker,
             'service_instance' => service_instance,
             'service_plan'     => service_plan,
@@ -173,7 +174,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..30).to_a, (1..30).to_a - [5])
+      result(true, items, hash, (1..31).to_a, (1..31).to_a - [6])
     end
   end
 end

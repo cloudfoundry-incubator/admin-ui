@@ -1020,6 +1020,7 @@ module ViewModelsHelper
         cc_service_binding[:created_at].to_datetime.rfc3339,
         cc_service_binding[:updated_at].to_datetime.rfc3339,
         !cc_service_binding[:syslog_drain_url].nil? && cc_service_binding[:syslog_drain_url].length.positive?,
+        !cc_service_binding[:volume_mounts_salt].nil?,
         1,
         cc_app[:name],
         cc_app[:guid],
@@ -1056,11 +1057,12 @@ module ViewModelsHelper
       'credentials'      => cc_service_binding_credential,
       'organization'     => cc_organization,
       'service'          => cc_service,
-      'service_binding'  => cc_service_binding,
+      'service_binding'  => cc_service_binding.reject { |key, _| key == :volume_mounts_salt },
       'service_broker'   => cc_service_broker,
       'service_instance' => cc_service_instance,
       'service_plan'     => cc_service_plan,
-      'space'            => cc_space
+      'space'            => cc_space,
+      'volume_mounts'    => cc_service_binding_volume_mounts
     }
   end
 

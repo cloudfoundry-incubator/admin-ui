@@ -562,7 +562,8 @@ module AdminUI
           json = @cc_rest_client.get_cc("/v2/service_bindings/#{guid}")
           credentials = json['entity']['credentials']
           credentials = Hash[credentials.sort_by { |key, _| key.downcase }]
-          return Hash[result.merge('credentials' => credentials).sort_by { |key, _| key }]
+          volume_mounts = json['entity']['volume_mounts']
+          return Hash[result.merge('credentials' => credentials, 'volume_mounts' => volume_mounts).sort_by { |key, _| key }]
         rescue => error
           @logger.error("Error during service_binding #{guid} retrieval: #{error.inspect}")
           @logger.error(error.backtrace.join("\n"))

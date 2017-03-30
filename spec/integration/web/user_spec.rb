@@ -162,6 +162,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Service Bindings tab does not have volume mounts subtable' do
+      it_behaves_like('verifies subtable is not shown') do
+        let(:tab_id)         { 'ServiceBindings' }
+        let(:page_id)        { 'ServiceBindingsPage' }
+        let(:table_id)       { 'ServiceBindingsVolumeMountsTable' }
+        let(:table_id_label) { 'ServiceBindingsVolumeMountsDetailsLabel' }
+      end
+    end
+
     context 'Service Keys tab does not have delete button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceKeys' }

@@ -208,7 +208,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_bindings,
-            columns: [:app_guid, :created_at, :guid, :id, :service_instance_guid, :syslog_drain_url, :updated_at]
+            columns: [:app_guid, :created_at, :guid, :id, :service_instance_guid, :syslog_drain_url, :updated_at, :volume_mounts_salt]
           },
           service_brokers:
           {

@@ -1087,7 +1087,8 @@ module CCHelper
       id:                    unique_id('cc_service_binding'),
       service_instance_guid: cc_service_instance[:guid],
       syslog_drain_url:      'http://service_binding_syslog_drain_url.com',
-      updated_at:            unique_time('cc_service_binding_updated')
+      updated_at:            unique_time('cc_service_binding_updated'),
+      volume_mounts_salt:    'non-empty'
     }
   end
 
@@ -1100,6 +1101,16 @@ module CCHelper
   # We do not retrieve credentials, but it is required for insert
   def cc_service_binding_with_credentials
     cc_service_binding.merge(credentials: cc_service_binding_credential)
+  end
+
+  def cc_service_binding_volume_mounts
+    [
+      {
+        'container_dir' => 'container_dir1',
+        'device_type'   => 'device_type1',
+        'mode'          => 'bogus mode1'
+      }
+    ]
   end
 
   def cc_service_broker
@@ -2240,7 +2251,7 @@ module CCHelper
 
   def cc_service_binding_stubs(config)
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_bindings/#{cc_service_binding[:guid]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
-      OK.new('entity' => { 'credentials' => cc_service_binding_credential })
+      OK.new('entity' => { 'credentials' => cc_service_binding_credential, 'volume_mounts' => cc_service_binding_volume_mounts })
     end
 
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_bindings/#{cc_service_binding[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
