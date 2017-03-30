@@ -168,6 +168,12 @@ module AdminUI
             table:   :quota_definitions,
             columns: [:app_instance_limit, :app_task_limit, :created_at, :guid, :id, :instance_memory_limit, :memory_limit, :name, :non_basic_services_allowed, :total_private_domains, :total_reserved_route_ports, :total_routes, :total_services, :total_service_keys, :updated_at]
           },
+          route_bindings:
+          {
+            db_uri:  ccdb_uri,
+            table:   :route_bindings,
+            columns: [:created_at, :guid, :id, :route_id, :route_service_url, :service_instance_id, :updated_at]
+          },
           request_counts:
           {
             db_uri:  ccdb_uri,
@@ -220,7 +226,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_instances,
-            columns: [:created_at, :dashboard_url, :gateway_name, :gateway_data, :guid, :id, :is_gateway_service, :name, :service_plan_id, :space_id, :syslog_drain_url, :tags, :updated_at]
+            columns: [:created_at, :dashboard_url, :gateway_name, :gateway_data, :guid, :id, :is_gateway_service, :name, :route_service_url, :service_plan_id, :space_id, :syslog_drain_url, :tags, :updated_at]
           },
           service_instance_operations:
           {
@@ -465,6 +471,10 @@ module AdminUI
       invalidate_cache(:processes)
     end
 
+    def invalidate_route_bindings
+      invalidate_cache(:route_bindings)
+    end
+
     def invalidate_route_mappings
       invalidate_cache(:route_mappings)
     end
@@ -635,6 +645,10 @@ module AdminUI
 
     def request_counts
       result_cache(:request_counts)
+    end
+
+    def route_bindings
+      result_cache(:route_bindings)
     end
 
     def route_mappings

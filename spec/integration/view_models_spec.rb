@@ -534,6 +534,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('routers_view_model detail')
     end
 
+    context 'returns connected route_bindings_view_model' do
+      let(:results)    { view_models.route_bindings }
+      let(:expected)   { view_models_route_bindings }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected route_bindings_view_model detail' do
+      let(:results)  { view_models.route_binding(cc_route_binding[:guid]) }
+      let(:expected) { view_models_route_bindings_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected route_mappings_view_model' do
       let(:results)    { view_models.route_mappings }
       let(:expected)   { view_models_route_mappings }

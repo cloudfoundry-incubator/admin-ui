@@ -276,6 +276,14 @@ describe AdminUI::ViewModels do
       verify_disconnected_items(view_models.routes)
     end
 
+    it 'returns nil route_binding as expected' do
+      expect(view_models.route_binding('bogus')).to be_nil
+    end
+
+    it 'returns zero route_bindings as expected' do
+      verify_disconnected_items(view_models.route_bindings)
+    end
+
     it 'returns nil route_mapping as expected' do
       expect(view_models.route_mapping('bogus')).to be_nil
     end

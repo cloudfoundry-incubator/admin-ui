@@ -894,6 +894,29 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage route binding' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/route_bindings_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_route_binding
+      response = delete_request("/route_bindings/#{cc_service_instance[:guid]}/#{cc_route[:guid]}/#{cc_service_instance[:is_gateway_service]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/route_bindings/#{cc_service_instance[:guid]}/#{cc_route[:guid]}/#{cc_service_instance[:is_gateway_service]}"]])
+    end
+
+    it 'has user name and route bindings request in the log file' do
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/route_bindings_view_model']], true)
+    end
+
+    it 'deletes a route binding' do
+      expect { delete_route_binding }.to change { get_json('/route_bindings_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage route mapping' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -2054,6 +2077,18 @@ describe AdminUI::Admin, type: :integration do
     context 'varz routers_view_model detail' do
       let(:path) { "/routers_view_model/#{nats_router['host']}" }
       it_behaves_like('routers_view_model detail')
+    end
+
+    context 'route_bindings_view_model' do
+      let(:path)              { '/route_bindings_view_model' }
+      let(:view_model_source) { view_models_route_bindings }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'route_bindings_view_model detail' do
+      let(:path)              { "/route_bindings_view_model/#{cc_route_binding[:guid]}" }
+      let(:view_model_source) { view_models_route_bindings_detail }
+      it_behaves_like('retrieves view_model detail')
     end
 
     context 'route_mappings_view_model' do

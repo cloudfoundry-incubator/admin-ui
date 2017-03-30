@@ -12,6 +12,7 @@ module AdminUI
 
       events                      = @cc.events
       organizations               = @cc.organizations
+      route_bindings              = @cc.route_bindings
       service_brokers             = @cc.service_brokers
       service_bindings            = @cc.service_bindings
       service_instance_operations = @cc.service_instance_operations
@@ -21,6 +22,7 @@ module AdminUI
       spaces                      = @cc.spaces
 
       events_connected           = events['connected']
+      route_bindings_connected   = route_bindings['connected']
       service_bindings_connected = service_bindings['connected']
       service_keys_connected     = service_keys['connected']
 
@@ -65,6 +67,17 @@ module AdminUI
         service_key_counters[service_instance_id] += 1
       end
 
+      route_binding_counters = {}
+      route_bindings['items'].each do |route_binding|
+        return result unless @running
+        Thread.pass
+
+        service_instance_id = route_binding[:service_instance_id]
+        next if service_instance_id.nil?
+        route_binding_counters[service_instance_id] = 0 if route_binding_counters[service_instance_id].nil?
+        route_binding_counters[service_instance_id] += 1
+      end
+
       items = []
       hash  = {}
 
@@ -84,6 +97,7 @@ module AdminUI
         organization               = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         event_counter           = event_counters[guid]
+        route_binding_counter   = route_binding_counters[id]
         service_binding_counter = service_binding_counters[guid]
         service_key_counter     = service_key_counters[id]
 
@@ -123,6 +137,14 @@ module AdminUI
         if service_key_counter
           row.push(service_key_counter)
         elsif service_keys_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if route_binding_counter
+          row.push(route_binding_counter)
+        elsif route_bindings_connected
           row.push(0)
         else
           row.push(nil)
@@ -214,7 +236,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..34).to_a, (1..34).to_a - [7, 8, 9])
+      result(true, items, hash, (1..35).to_a, (1..35).to_a - [7, 8, 9, 10])
     end
   end
 end

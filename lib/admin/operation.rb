@@ -244,6 +244,14 @@ module AdminUI
       @view_models.invalidate_route_mappings
     end
 
+    def delete_route_binding(service_instance_guid, route_guid, is_gateway_service)
+      url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}/routes/#{route_guid}" : "/v2/user_provided_service_instances/#{service_instance_guid}/routes/#{route_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_route_bindings
+      @view_models.invalidate_route_bindings
+    end
+
     def delete_route_mapping(route_mapping_guid)
       url = "/v2/route_mappings/#{route_mapping_guid}"
       @logger.debug("DELETE #{url}")

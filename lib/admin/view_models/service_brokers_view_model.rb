@@ -12,6 +12,7 @@ module AdminUI
 
       events                    = @cc.events
       organizations             = @cc.organizations
+      route_bindings            = @cc.route_bindings
       service_bindings          = @cc.service_bindings
       service_dashboard_clients = @cc.service_dashboard_clients
       service_instances         = @cc.service_instances
@@ -22,6 +23,7 @@ module AdminUI
       spaces                    = @cc.spaces
 
       events_connected                    = events['connected']
+      route_bindings_connected            = route_bindings['connected']
       service_bindings_connected          = service_bindings['connected']
       service_instances_connected         = service_instances['connected']
       service_keys_connected              = service_keys['connected']
@@ -158,6 +160,27 @@ module AdminUI
         service_key_counters[service_broker_id] += 1
       end
 
+      route_binding_counters = {}
+      route_bindings['items'].each do |route_binding|
+        return result unless @running
+        Thread.pass
+
+        service_instance_id = route_binding[:service_instance_id]
+        next if service_instance_id.nil?
+        service_instance = service_instance_id_hash[service_instance_id]
+        next if service_instance.nil?
+        service_plan_id = service_instance[:service_plan_id]
+        next if service_plan_id.nil?
+        service_plan = service_plan_hash[service_plan_id]
+        next if service_plan.nil?
+        service = service_hash[service_plan[:service_id]]
+        next if service.nil?
+        service_broker_id = service[:service_broker_id]
+        next if service_broker_id.nil?
+        route_binding_counters[service_broker_id] = 0 if route_binding_counters[service_broker_id].nil?
+        route_binding_counters[service_broker_id] += 1
+      end
+
       items = []
       hash  = {}
 
@@ -173,6 +196,7 @@ module AdminUI
         organization             = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         event_counter                      = event_counters[guid]
+        route_binding_counter              = route_binding_counters[id]
         service_binding_counter            = service_binding_counters[id]
         service_counter                    = service_counters[id]
         service_instance_counter           = service_instance_counters[id]
@@ -264,6 +288,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if route_binding_counter
+          row.push(route_binding_counter)
+        elsif route_bindings_connected && service_instances_connected && service_plans_connected && services_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if organization && space
           row.push("#{organization[:name]}/#{space[:name]}")
         else
@@ -280,7 +312,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..14).to_a, [1, 2, 3, 4, 6, 14])
+      result(true, items, hash, (1..15).to_a, [1, 2, 3, 4, 6, 15])
     end
   end
 end

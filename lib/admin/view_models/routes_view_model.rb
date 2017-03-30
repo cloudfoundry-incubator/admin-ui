@@ -13,10 +13,12 @@ module AdminUI
       domains        = @cc.domains
       events         = @cc.events
       organizations  = @cc.organizations
+      route_bindings = @cc.route_bindings
       route_mappings = @cc.route_mappings
       spaces         = @cc.spaces
 
       events_connected         = events['connected']
+      route_bindings_connected = route_bindings['connected']
       route_mappings_connected = route_mappings['connected']
 
       domain_hash       = Hash[domains['items'].map { |item| [item[:id], item] }]
@@ -44,6 +46,16 @@ module AdminUI
         app_counters[route_guid] += 1
       end
 
+      binding_counters = {}
+      route_bindings['items'].each do |route_binding|
+        return result unless @running
+        Thread.pass
+
+        route_id = route_binding[:route_id]
+        binding_counters[route_id] = 0 if binding_counters[route_id].nil?
+        binding_counters[route_id] += 1
+      end
+
       items = []
       hash  = {}
 
@@ -57,8 +69,9 @@ module AdminUI
         space        = space_hash[route[:space_id]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]
 
-        app_counter   = app_counters[guid]
-        event_counter = event_counters[guid]
+        app_counter     = app_counters[guid]
+        binding_counter = binding_counters[route[:id]]
+        event_counter   = event_counters[guid]
 
         row = []
 
@@ -124,6 +137,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if binding_counter
+          row.push(binding_counter)
+        elsif route_bindings_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if organization && space
           row.push("#{organization[:name]}/#{space[:name]}")
         else
@@ -141,7 +162,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..11).to_a, [1, 2, 3, 5, 6, 7, 8, 11])
+      result(true, items, hash, (1..12).to_a, [1, 2, 3, 5, 6, 7, 8, 12])
     end
   end
 end

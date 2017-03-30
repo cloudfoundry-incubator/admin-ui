@@ -955,6 +955,37 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage route binding' do
+      before do
+        expect(cc.route_bindings['items'].length).to eq(1)
+      end
+
+      def delete_route_binding
+        operation.delete_route_binding(cc_service_instance[:guid], cc_route[:guid], cc_service_instance[:is_gateway_service])
+      end
+
+      it 'deletes route binding' do
+        expect { delete_route_binding }.to change { cc.route_bindings['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_route_binding
+        end
+
+        def verify_route_binding_not_found(exception)
+          expect(exception.cf_code).to eq(1_002)
+          expect(exception.cf_error_code).to eq('CF-InvalidRelation')
+          expect(exception.http_code).to eq(400)
+          expect(exception.message).to eq("Invalid relation: Route #{cc_route[:guid]} is not bound to service instance #{cc_service_instance[:guid]}.")
+        end
+
+        it 'fails deleting deleted route binding' do
+          expect { delete_route_binding }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_route_binding_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage route mapping' do
       before do
         expect(cc.route_mappings['items'].length).to eq(1)

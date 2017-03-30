@@ -189,6 +189,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.routes['items'].length).to eq(0)
     end
 
+    it 'clears the route bindings cache' do
+      expect(cc.route_bindings['items'].length).to eq(1)
+      cc_clear_route_bindings_cache_stub(config)
+      cc.invalidate_route_bindings
+      expect(cc.route_bindings['items'].length).to eq(0)
+    end
+
     it 'clears the route mappings cache' do
       expect(cc.route_mappings['items'].length).to eq(1)
       cc_clear_route_mappings_cache_stub(config)
@@ -539,6 +546,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected routes' do
       let(:results)  { cc.routes }
       let(:expected) { cc_route }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected route bindings' do
+      let(:results)  { cc.route_bindings }
+      let(:expected) { cc_route_binding }
 
       it_behaves_like('common cc retrieval')
     end

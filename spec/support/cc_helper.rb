@@ -63,6 +63,7 @@ module CCHelper
     @cc_organizations_isolation_segments_deleted = false
     @cc_quota_definitions_deleted                = false
     @cc_routes_deleted                           = false
+    @cc_route_bindings_deleted                   = false
     @cc_route_mappings_deleted                   = false
     @cc_security_groups_deleted                  = false
     @cc_security_groups_spaces_deleted           = false
@@ -106,6 +107,7 @@ module CCHelper
     cc_organization_stubs(config)
     cc_quota_definition_stubs(config)
     cc_route_stubs(config)
+    cc_route_binding_stubs(config)
     cc_route_mapping_stubs(config)
     cc_security_group_stubs(config)
     cc_security_group_space_stubs(config)
@@ -223,11 +225,18 @@ module CCHelper
   end
 
   def cc_clear_routes_cache_stub(config)
+    cc_clear_route_bindings_cache_stub(config)
     cc_clear_route_mappings_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM routes')
 
     @cc_routes_deleted = true
+  end
+
+  def cc_clear_route_bindings_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM route_bindings')
+
+    @cc_route_bindings_deleted = true
   end
 
   def cc_clear_route_mappings_cache_stub(config)
@@ -267,6 +276,7 @@ module CCHelper
   end
 
   def cc_clear_service_instances_cache_stub(config)
+    cc_clear_route_bindings_cache_stub(config)
     cc_clear_service_bindings_cache_stub(config)
     cc_clear_service_keys_cache_stub(config)
 
@@ -992,6 +1002,18 @@ module CCHelper
     }
   end
 
+  def cc_route_binding
+    {
+      created_at:          unique_time('cc_route_binding_created'),
+      guid:                'route_binding1',
+      id:                  unique_id('cc_route_binding'),
+      route_id:            cc_route[:id],
+      route_service_url:   cc_service_instance[:route_service_url],
+      service_instance_id: cc_service_instance[:id],
+      updated_at:          unique_time('cc_route_binding_updated')
+    }
+  end
+
   def cc_route_mapping
     {
       app_guid:     cc_app[:guid],
@@ -1119,6 +1141,7 @@ module CCHelper
       gateway_name:       nil,
       is_gateway_service: true,
       name:               'TestService-random',
+      route_service_url:  'http://service_instance_route_service_url.com',
       service_plan_id:    cc_service_plan[:id],
       space_id:           cc_space[:id],
       syslog_drain_url:   'http://service_instance_syslog_drain_url.com',
@@ -1513,7 +1536,8 @@ module CCHelper
                [:service_bindings,                 cc_service_binding_with_credentials],
                [:service_instance_operations,      cc_service_instance_operation],
                [:service_keys,                     cc_service_key_with_credentials],
-               [:tasks,                            cc_task]
+               [:tasks,                            cc_task],
+               [:route_bindings,                   cc_route_binding]
              ]
 
     result << [:quota_definitions, cc_quota_definition2] if insert_second_quota_definition
@@ -2070,6 +2094,23 @@ module CCHelper
         cc_route_not_found
       else
         cc_clear_routes_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_route_binding_not_found
+    BadRequest.new('code'        => 1_002,
+                   'description' => "Invalid relation: Route #{cc_route[:guid]} is not bound to service instance #{cc_service_instance[:guid]}.",
+                   'error_code'  => 'CF-InvalidRelation')
+  end
+
+  def cc_route_binding_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}/routes/#{cc_route[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @cc_route_bindings_deleted
+        cc_route_binding_not_found
+      else
+        cc_clear_route_bindings_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end

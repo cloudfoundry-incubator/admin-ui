@@ -630,6 +630,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete route recursive')
     end
 
+    shared_examples 'common delete route binding' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/route_bindings/service_instance1/route1/true')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete route binding via http' do
+      it_behaves_like('common delete route binding')
+    end
+
+    context 'delete route binding via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete route binding')
+    end
+
     shared_examples 'common delete route mapping' do
       it 'returns failure code due to disconnection' do
         response = delete('/route_mappings/route1')
@@ -1522,6 +1539,14 @@ describe AdminUI::Admin do
         verify_not_found('/routers_view_model/name')
       end
 
+      it '/route_bindings_view_model succeeds' do
+        verify_disconnected_view_model_items('/route_bindings_view_model')
+      end
+
+      it '/route_bindings_view_model/:guid returns not found' do
+        verify_not_found('/route_bindings_view_model/route1')
+      end
+
       it '/route_mappings_view_model succeeds' do
         verify_disconnected_view_model_items('/route_mappings_view_model')
       end
@@ -1941,6 +1966,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/routers_view_model/name')
       end
 
+      it '/route_bindings_view_model redirects as expected' do
+        get_redirects_as_expected('/route_bindings_view_model')
+      end
+
+      it '/route_bindings_view_model/:guid redirects as expected' do
+        get_redirects_as_expected('/route_bindings_view_model/route_binding1')
+      end
+
       it '/route_mappings_view_model redirects as expected' do
         get_redirects_as_expected('/route_mappings_view_model')
       end
@@ -2173,6 +2206,10 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/quota_definitions/quota1')
       end
 
+      it 'deletes /route_bindings/:guid/:guid/:boolean redirects as expected' do
+        delete_redirects_as_expected('/route_bindings/service_instance1/route1/true')
+      end
+
       it 'deletes /route_mappings/:guid redirects as expected' do
         delete_redirects_as_expected('/route_mappings/route_mapping1')
       end
@@ -2387,6 +2424,10 @@ describe AdminUI::Admin do
 
       it 'posts /routers_view_model redirects as expected' do
         post_redirects_as_expected('/routers_view_model')
+      end
+
+      it 'posts /route_bindings_view_model redirects as expected' do
+        post_redirects_as_expected('/route_bindings_view_model')
       end
 
       it 'posts /route_mappings_view_model redirects as expected' do
