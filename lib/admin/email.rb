@@ -67,27 +67,27 @@ module AdminUI
     end
 
     def email_content(recipients, title, rows)
-      <<END_OF_MESSAGE
-From: #{@config.sender_email_account}
-To: #{recipients}
-Importance: High
-MIME-Version: 1.0
-Content-type: text/html
-Subject: #{title}
+      <<~END_OF_MESSAGE
+        From: #{@config.sender_email_account}
+        To: #{recipients}
+        Importance: High
+        MIME-Version: 1.0
+        Content-type: text/html
+        Subject: #{title}
 
-<div style="font-family: verdana,tahoma,sans-serif; font-size: .9em; color: rgb(35, 35, 35);">
-  <div style="font-weight: bold; margin-bottom: 1em;">Cloud Controller: #{@config.cloud_controller_uri}</div>
-  <div style="margin-bottom: .7em;">The following Cloud Foundry components are down:</div>
-</div>
+        <div style="font-family: verdana,tahoma,sans-serif; font-size: .9em; color: rgb(35, 35, 35);">
+          <div style="font-weight: bold; margin-bottom: 1em;">Cloud Controller: #{@config.cloud_controller_uri}</div>
+          <div style="margin-bottom: .7em;">The following Cloud Foundry components are down:</div>
+        </div>
 
-<table cellpadding="5" style="border-collapse: collapse; border: 1px solid rgb(100, 100, 100); font-family: verdana,tahoma,sans-serif; font-size: .9em">
-  <tr style="background-color: rgb(150, 160, 170); color: rgb(250, 250, 250); border: 1px solid rgb(100, 100, 100);">
-    <th style="border: 1px solid rgb(100, 100, 100);">Type</th>
-    <th style="border: 1px solid rgb(100, 100, 100);">URI</th>
-  </tr>
-  #{rows}
-</table>
-END_OF_MESSAGE
+        <table cellpadding="5" style="border-collapse: collapse; border: 1px solid rgb(100, 100, 100); font-family: verdana,tahoma,sans-serif; font-size: .9em">
+          <tr style="background-color: rgb(150, 160, 170); color: rgb(250, 250, 250); border: 1px solid rgb(100, 100, 100);">
+            <th style="border: 1px solid rgb(100, 100, 100);">Type</th>
+            <th style="border: 1px solid rgb(100, 100, 100);">URI</th>
+          </tr>
+          #{rows}
+        </table>
+      END_OF_MESSAGE
     end
   end
 end

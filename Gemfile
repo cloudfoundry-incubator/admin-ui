@@ -21,7 +21,7 @@ end
 
 group :development do
   gem 'rake', '12.0.0' # Temporarily required since rubocop requires rainbow which requires rake: https://github.com/sickill/rainbow/issues/44
-  gem 'rubocop', '0.47.1'
+  gem 'rubocop', '0.48.0'
 end
 
 group :test do
