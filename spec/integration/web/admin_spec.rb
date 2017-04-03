@@ -368,7 +368,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 9,
                                  labels:          ['', '', 'Routes', 'Used', 'Reserved', 'Desired App States', 'App States', 'App Package States', 'Isolation Segments'],
-                                 colspans:        %w(1 18 3 7 2 2 2 3 3)
+                                 colspans:        %w[1 18 3 7 2 2 2 3 3]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -818,7 +818,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 9,
                                  labels:          ['', '', 'Routes', 'Used', 'Reserved', 'Desired App States', 'App States', 'App Package States', 'Isolation Segment'],
-                                 colspans:        %w(1 14 3 7 2 2 2 3 2)
+                                 colspans:        %w[1 14 3 7 2 2 2 3 2]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpacesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -1167,7 +1167,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 5,
                                  labels:          ['', '', 'Used', 'Reserved', ''],
-                                 colspans:        %w(1 18 4 2 1)
+                                 colspans:        %w[1 18 4 2 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -1550,7 +1550,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 5,
                                  labels:          ['', '', 'Used', 'Reserved', ''],
-                                 colspans:        %w(1 6 3 2 3)
+                                 colspans:        %w[1 6 3 2 3]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApplicationInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -1861,7 +1861,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='RouteMappingsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 5,
                                  labels:          ['', '', 'Application', 'Route', ''],
-                                 colspans:        %w(1 3 2 2 1)
+                                 colspans:        %w[1 3 2 2 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='RouteMappingsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -1968,7 +1968,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 7,
                                  labels:          ['', 'Service Instance', 'Service Instance Last Operation', 'Service Plan', 'Service', 'Service Broker', ''],
-                                 colspans:        %w(1 10 4 9 7 4 1)
+                                 colspans:        %w[1 10 4 9 7 4 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -2158,7 +2158,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesCredentialsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 2,
-                                labels:          %w(Key Value),
+                                labels:          %w[Key Value],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceInstancesCredentialsTable']/tbody/tr/td"),
@@ -2221,7 +2221,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 8,
                                  labels:          ['', 'Service Binding', 'Application', 'Service Instance', 'Service Plan', 'Service', 'Service Broker', ''],
-                                 colspans:        %w(1 6 2 4 8 6 4 1)
+                                 colspans:        %w[1 6 2 4 8 6 4 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -2343,7 +2343,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsCredentialsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 2,
-                                labels:          %w(Key Value),
+                                labels:          %w[Key Value],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceBindingsCredentialsTable']/tbody/tr/td"),
@@ -2422,7 +2422,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceKeysTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 7,
                                  labels:          ['', 'Service Key', 'Service Instance', 'Service Plan', 'Service', 'Service Broker', ''],
-                                 colspans:        %w(1 5 4 8 6 4 1)
+                                 colspans:        %w[1 5 4 8 6 4 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceKeysTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -2539,7 +2539,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceKeysCredentialsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 2,
-                                labels:          %w(Key Value),
+                                labels:          %w[Key Value],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceKeysCredentialsTable']/tbody/tr/td"),
@@ -2593,7 +2593,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='RouteBindingsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 8,
                                  labels:          ['', 'Route Binding', 'Route', 'Service Instance', 'Service Plan', 'Service', 'Service Broker', ''],
-                                 colspans:        %w(1 3 2 4 8 6 4 1)
+                                 colspans:        %w[1 3 2 4 8 6 4 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='RouteBindingsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -2752,7 +2752,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='TasksTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', '', 'Application', ''],
-                                 colspans:        %w(1 7 3 1)
+                                 colspans:        %w[1 7 3 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='TasksTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -2867,7 +2867,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationRolesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Organization', 'User', ''],
-                                 colspans:        %w(1 2 2 1)
+                                 colspans:        %w[1 2 2 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationRolesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -2951,7 +2951,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpaceRolesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Space', 'User', ''],
-                                 colspans:        %w(1 3 2 1)
+                                 colspans:        %w[1 3 2 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpaceRolesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -3149,7 +3149,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 6,
                                  labels:          ['', '', 'Requests', 'Organization Roles', 'Space Roles', ''],
-                                 colspans:        %w(1 19 2 5 4 1)
+                                 colspans:        %w[1 19 2 5 4 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -3503,7 +3503,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='GroupMembersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Group', 'User', ''],
-                                 colspans:        %w(1 2 2 1)
+                                 colspans:        %w[1 2 2 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='GroupMembersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -3588,12 +3588,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApprovalsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 2,
                                  labels:          ['User', ''],
-                                 colspans:        %w(2 5)
+                                 colspans:        %w[2 5]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApprovalsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                  expected_length: 7,
-                                 labels:          %w(Name GUID Client Scope Status Updated Expires),
+                                 labels:          %w[Name GUID Client Scope Status Updated Expires],
                                  colspans:        nil
                                }
                              ])
@@ -4199,7 +4199,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpaceQuotasTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 3,
                                  labels:          ['', '', 'Organization'],
-                                 colspans:        %w(1 14 2)
+                                 colspans:        %w[1 14 2]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpaceQuotasTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -4402,12 +4402,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='EventsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Actee', 'Actor', ''],
-                                 colspans:        %w(3 3 4 1)
+                                 colspans:        %w[3 3 4 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='EventsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                  expected_length: 11,
-                                 labels:          %w(Timestamp GUID Type Type Name GUID Type Username Name GUID Target),
+                                 labels:          %w[Timestamp GUID Type Type Name GUID Type Username Name GUID Target],
                                  colspans:        nil
                                }
                              ])
@@ -4822,7 +4822,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 3,
                                  labels:          ['', 'Service', 'Service Broker'],
-                                 colspans:        %w(1 19 4)
+                                 colspans:        %w[1 19 4]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[4]/div/div/table/thead/tr[2]/th"),
@@ -4995,7 +4995,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Service Plan', 'Service', 'Service Broker'],
-                                 colspans:        %w(1 16 7 4)
+                                 colspans:        %w[1 16 7 4]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[4]/div/div/table/thead/tr[2]/th"),
@@ -5191,7 +5191,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicePlanVisibilitiesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 6,
                                  labels:          ['', 'Service Plan Visibility', 'Service Plan', 'Service', 'Service Broker', 'Organization'],
-                                 colspans:        %w(1 4 9 7 4 4)
+                                 colspans:        %w[1 4 9 7 4 4]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicePlanVisibilitiesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -5733,7 +5733,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsRulesTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 6,
-                                labels:          %w(Protocol Destination Log Ports Type Code),
+                                labels:          %w[Protocol Destination Log Ports Type Code],
                                 colspans:        nil)
 
             rules_json = Yajl::Parser.parse(cc_security_group[:rules])
@@ -5774,7 +5774,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsSpacesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Security Group', 'Space', ''],
-                                 colspans:        %w(1 4 4 1)
+                                 colspans:        %w[1 4 4 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsSpacesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -5870,7 +5870,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='StagingSecurityGroupsSpacesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Security Group', 'Space', ''],
-                                 colspans:        %w(1 4 4 1)
+                                 colspans:        %w[1 4 4 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='StagingSecurityGroupsSpacesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -6100,7 +6100,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsIsolationSegmentsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 3,
                                  labels:          ['', 'Organization', 'Isolation Segment'],
-                                 colspans:        %w(1 2 2)
+                                 colspans:        %w[1 2 2]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsIsolationSegmentsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -6180,7 +6180,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='EnvironmentGroupsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
-                                 labels:          %w(Name GUID Created Updated),
+                                 labels:          %w[Name GUID Created Updated],
                                  colspans:        nil
                                }
                              ])
@@ -6217,7 +6217,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='EnvironmentGroupsVariablesTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
                                 expected_length: 2,
-                                labels:          %w(Key Value),
+                                labels:          %w[Key Value],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='EnvironmentGroupsVariablesTable']/tbody/tr/td"),
@@ -6242,7 +6242,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='DEAsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Instances', '% Free', 'Remaining'],
-                                 colspans:        %w(5 5 2 2)
+                                 colspans:        %w[5 5 2 2]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='DEAsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -6319,7 +6319,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='CellsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Containers', 'Memory', 'Disk'],
-                                 colspans:        %w(10 3 2 2)
+                                 colspans:        %w[10 3 2 2]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='CellsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
@@ -6399,7 +6399,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='CloudControllersTableContainer']/div/div[4]/div/div/table/thead/tr/th"),
                                  expected_length: 8,
-                                 labels:          %w(Name Index Source State Started Cores CPU Memory),
+                                 labels:          %w[Name Index Source State Started Cores CPU Memory],
                                  colspans:        nil
                                }
                              ])
@@ -6449,7 +6449,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='HealthManagersTableContainer']/div/div[4]/div/div/table/thead/tr/th"),
                                  expected_length: 7,
-                                 labels:          %w(Name Index Source Metrics State Cores Memory),
+                                 labels:          %w[Name Index Source Metrics State Cores Memory],
                                  colspans:        nil
                                }
                              ])
@@ -6675,7 +6675,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
               check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='RoutersTop10ApplicationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
                                   expected_length: 5,
-                                  labels:          %w(Name GUID RPM RPS Target),
+                                  labels:          %w[Name GUID RPM RPS Target],
                                   colspans:        nil)
 
               check_table_data(@driver.find_elements(xpath: "//table[@id='RoutersTop10ApplicationsTable']/tbody/tr/td"),
@@ -6719,7 +6719,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ComponentsTableContainer']/div/div[4]/div/div/table/thead/tr/th"),
                                  expected_length: 7,
-                                 labels:          %w(Name Type Index Source Metrics State Started),
+                                 labels:          %w[Name Type Index Source Metrics State Started],
                                  colspans:        nil
                                }
                              ])

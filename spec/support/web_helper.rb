@@ -110,12 +110,12 @@ shared_context :web_context do
                            columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                            expected_length: 3,
                            labels:          ['', 'Instances', ''],
-                           colspans:        %w(5 2 2)
+                           colspans:        %w[5 2 2]
                          },
                          {
                            columns:         @driver.find_elements(xpath: "//div[@id='#{id}TableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                            expected_length: 9,
-                           labels:          %w(Date Organizations Spaces Users Apps Total Running DEAs Cells),
+                           labels:          %w[Date Organizations Spaces Users Apps Total Running DEAs Cells],
                            colspans:        nil
                          }
                        ])

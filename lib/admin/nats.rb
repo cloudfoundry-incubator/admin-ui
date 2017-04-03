@@ -5,7 +5,7 @@ require 'yajl'
 
 module AdminUI
   class NATS
-    NATS_COMMON_KEYS = %w(credentials host index start type uuid uptime).freeze
+    NATS_COMMON_KEYS = %w[credentials host index start type uuid uptime].freeze
 
     def initialize(config, logger, email, testing)
       @config  = config

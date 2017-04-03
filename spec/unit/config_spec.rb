@@ -106,7 +106,7 @@ describe AdminUI::Config do
       end
 
       it 'log_files' do
-        log_files = %w(file1 file2)
+        log_files = %w[file1 file2]
         config = AdminUI::Config.load('log_files' => log_files)
         expect(config.log_files).to eq(log_files)
       end
@@ -326,7 +326,7 @@ describe AdminUI::Config do
       end
 
       context 'uaa_groups_admin' do
-        let(:uaa_groups_admin) { %w(admin1 admin2) }
+        let(:uaa_groups_admin) { %w[admin1 admin2] }
         let(:config) { AdminUI::Config.load('uaa_groups_admin' => uaa_groups_admin) }
 
         it 'uaa_groups_admin' do
@@ -335,7 +335,7 @@ describe AdminUI::Config do
       end
 
       context 'uaa_groups_user' do
-        let(:uaa_groups_user) { %w(user1 user2) }
+        let(:uaa_groups_user) { %w[user1 user2] }
         let(:config) { AdminUI::Config.load('uaa_groups_user' => uaa_groups_user) }
 
         it 'uaa_groups_user' do

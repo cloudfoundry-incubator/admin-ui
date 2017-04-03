@@ -20,7 +20,7 @@ module NATSHelper
 
   def nats_cloud_controller
     {
-      'credentials' => %w(cc_user cc_password),
+      'credentials' => %w[cc_user cc_password],
       'host'        => 'CloudControllerHost',
       'index'       => 0,
       'type'        => 'CloudController'
@@ -29,7 +29,7 @@ module NATSHelper
 
   def nats_provisioner
     {
-      'credentials' => %w(provisioner_user provisioner_password),
+      'credentials' => %w[provisioner_user provisioner_password],
       'host'        => 'Test-ProvisionerHost',
       'index'       => 0,
       'type'        => 'Test-Provisioner'
@@ -38,7 +38,7 @@ module NATSHelper
 
   def nats_router
     {
-      'credentials' => %w(router_user router_password),
+      'credentials' => %w[router_user router_password],
       'host'        => 'RouterHost',
       'index'       => 0,
       'type'        => 'Router'

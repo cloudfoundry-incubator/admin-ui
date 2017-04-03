@@ -27,302 +27,302 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :apps,
-            columns: %i(created_at desired_state droplet_guid guid id max_task_sequence_id name space_guid updated_at)
+            columns: %i[created_at desired_state droplet_guid guid id max_task_sequence_id name space_guid updated_at]
           },
           approvals:
           {
             db_uri:  uaadb_uri,
             table:   :authz_approvals,
-            columns: %i(client_id expiresat lastmodifiedat scope status user_id)
+            columns: %i[client_id expiresat lastmodifiedat scope status user_id]
           },
           buildpacks:
           {
             db_uri:  ccdb_uri,
             table:   :buildpacks,
-            columns: %i(created_at enabled filename guid id key locked name position updated_at)
+            columns: %i[created_at enabled filename guid id key locked name position updated_at]
           },
           clients:
           {
             db_uri:  uaadb_uri,
             table:   :oauth_client_details,
-            columns: %i(access_token_validity additional_information app_launch_url authorities authorized_grant_types autoapprove client_id identity_zone_id lastmodified refresh_token_validity scope show_on_home_page web_server_redirect_uri)
+            columns: %i[access_token_validity additional_information app_launch_url authorities authorized_grant_types autoapprove client_id identity_zone_id lastmodified refresh_token_validity scope show_on_home_page web_server_redirect_uri]
           },
           domains:
           {
             db_uri:  ccdb_uri,
             table:   :domains,
-            columns: %i(created_at guid id name owning_organization_id updated_at)
+            columns: %i[created_at guid id name owning_organization_id updated_at]
           },
           droplets:
           {
             db_uri:  ccdb_uri,
             table:   :droplets,
-            columns: %i(app_guid buildpack_receipt_detect_output buildpack_receipt_buildpack buildpack_receipt_buildpack_guid buildpack_receipt_stack_name created_at droplet_hash error_description error_id execution_metadata guid id package_guid process_types staging_disk_in_mb staging_memory_in_mb state updated_at)
+            columns: %i[app_guid buildpack_receipt_detect_output buildpack_receipt_buildpack buildpack_receipt_buildpack_guid buildpack_receipt_stack_name created_at droplet_hash error_description error_id execution_metadata guid id package_guid process_types staging_disk_in_mb staging_memory_in_mb state updated_at]
           },
           env_groups:
           {
             db_uri:  ccdb_uri,
             table:   :env_groups,
-            columns: %i(created_at guid id name updated_at)
+            columns: %i[created_at guid id name updated_at]
           },
           events:
           {
             db_uri:  ccdb_uri,
             table:   :events,
-            columns: %i(actee actee_name actee_type actor actor_name actor_type actor_username created_at guid id metadata organization_guid space_guid timestamp type updated_at),
+            columns: %i[actee actee_name actee_type actor actor_name actor_type actor_username created_at guid id metadata organization_guid space_guid timestamp type updated_at],
             where:   "timestamp >= CURRENT_TIMESTAMP - INTERVAL '#{@config.event_days}' DAY"
           },
           feature_flags:
           {
             db_uri:  ccdb_uri,
             table:   :feature_flags,
-            columns: %i(created_at enabled error_message guid id name updated_at)
+            columns: %i[created_at enabled error_message guid id name updated_at]
           },
           groups:
           {
             db_uri:  uaadb_uri,
             table:   :groups,
-            columns: %i(created description displayname id identity_zone_id lastmodified version)
+            columns: %i[created description displayname id identity_zone_id lastmodified version]
           },
           group_membership:
           {
             db_uri:  uaadb_uri,
             table:   :group_membership,
-            columns: %i(added group_id member_id)
+            columns: %i[added group_id member_id]
           },
           identity_providers:
           {
             db_uri:  uaadb_uri,
             table:   :identity_provider,
-            columns: %i(active config created id identity_zone_id lastmodified name origin_key type version)
+            columns: %i[active config created id identity_zone_id lastmodified name origin_key type version]
           },
           identity_zones:
           {
             db_uri:  uaadb_uri,
             table:   :identity_zone,
-            columns: %i(config created description id lastmodified name subdomain version)
+            columns: %i[config created description id lastmodified name subdomain version]
           },
           isolation_segments:
           {
             db_uri:  ccdb_uri,
             table:   :isolation_segments,
-            columns: %i(created_at guid id name updated_at)
+            columns: %i[created_at guid id name updated_at]
           },
           organizations:
           {
             db_uri:  ccdb_uri,
             table:   :organizations,
-            columns: %i(billing_enabled created_at default_isolation_segment_guid guid id name quota_definition_id status updated_at)
+            columns: %i[billing_enabled created_at default_isolation_segment_guid guid id name quota_definition_id status updated_at]
           },
           organizations_auditors:
           {
             db_uri:  ccdb_uri,
             table:   :organizations_auditors,
-            columns: %i(organization_id user_id)
+            columns: %i[organization_id user_id]
           },
           organizations_billing_managers:
           {
             db_uri:  ccdb_uri,
             table:   :organizations_billing_managers,
-            columns: %i(organization_id user_id)
+            columns: %i[organization_id user_id]
           },
           organizations_isolation_segments:
           {
             db_uri:  ccdb_uri,
             table:   :organizations_isolation_segments,
-            columns: %i(isolation_segment_guid organization_guid)
+            columns: %i[isolation_segment_guid organization_guid]
           },
           organizations_managers:
           {
             db_uri:  ccdb_uri,
             table:   :organizations_managers,
-            columns: %i(organization_id user_id)
+            columns: %i[organization_id user_id]
           },
           organizations_private_domains:
           {
             db_uri:  ccdb_uri,
             table:   :organizations_private_domains,
-            columns: %i(organization_id private_domain_id)
+            columns: %i[organization_id private_domain_id]
           },
           organizations_users:
           {
             db_uri:  ccdb_uri,
             table:   :organizations_users,
-            columns: %i(organization_id user_id)
+            columns: %i[organization_id user_id]
           },
           packages:
           {
             db_uri:  ccdb_uri,
             table:   :packages,
-            columns: %i(app_guid created_at docker_image error guid id package_hash state type updated_at)
+            columns: %i[app_guid created_at docker_image error guid id package_hash state type updated_at]
           },
           processes:
           {
             db_uri:  ccdb_uri,
             table:   :processes,
-            columns: %i(app_guid command created_at detected_buildpack diego disk_quota enable_ssh file_descriptors guid health_check_http_endpoint health_check_timeout health_check_type id instances memory metadata package_updated_at ports production state type updated_at version)
+            columns: %i[app_guid command created_at detected_buildpack diego disk_quota enable_ssh file_descriptors guid health_check_http_endpoint health_check_timeout health_check_type id instances memory metadata package_updated_at ports production state type updated_at version]
           },
           quota_definitions:
           {
             db_uri:  ccdb_uri,
             table:   :quota_definitions,
-            columns: %i(app_instance_limit app_task_limit created_at guid id instance_memory_limit memory_limit name non_basic_services_allowed total_private_domains total_reserved_route_ports total_routes total_services total_service_keys updated_at)
+            columns: %i[app_instance_limit app_task_limit created_at guid id instance_memory_limit memory_limit name non_basic_services_allowed total_private_domains total_reserved_route_ports total_routes total_services total_service_keys updated_at]
           },
           route_bindings:
           {
             db_uri:  ccdb_uri,
             table:   :route_bindings,
-            columns: %i(created_at guid id route_id route_service_url service_instance_id updated_at)
+            columns: %i[created_at guid id route_id route_service_url service_instance_id updated_at]
           },
           request_counts:
           {
             db_uri:  ccdb_uri,
             table:   :request_counts,
-            columns: %i(count id user_guid valid_until)
+            columns: %i[count id user_guid valid_until]
           },
           route_mappings:
           {
             db_uri:  ccdb_uri,
             table:   :route_mappings,
-            columns: %i(app_guid app_port created_at guid id process_type route_guid updated_at)
+            columns: %i[app_guid app_port created_at guid id process_type route_guid updated_at]
           },
           routes:
           {
             db_uri:  ccdb_uri,
             table:   :routes,
-            columns: %i(created_at domain_id guid host id path port space_id updated_at)
+            columns: %i[created_at domain_id guid host id path port space_id updated_at]
           },
           security_groups:
           {
             db_uri:  ccdb_uri,
             table:   :security_groups,
-            columns: %i(created_at guid id name rules running_default staging_default updated_at)
+            columns: %i[created_at guid id name rules running_default staging_default updated_at]
           },
           security_groups_spaces:
           {
             db_uri:  ccdb_uri,
             table:   :security_groups_spaces,
-            columns: %i(security_group_id space_id)
+            columns: %i[security_group_id space_id]
           },
           service_bindings:
           {
             db_uri:  ccdb_uri,
             table:   :service_bindings,
-            columns: %i(app_guid created_at guid id service_instance_guid syslog_drain_url updated_at volume_mounts_salt)
+            columns: %i[app_guid created_at guid id service_instance_guid syslog_drain_url updated_at volume_mounts_salt]
           },
           service_brokers:
           {
             db_uri:  ccdb_uri,
             table:   :service_brokers,
-            columns: %i(auth_username broker_url created_at guid id name space_id updated_at)
+            columns: %i[auth_username broker_url created_at guid id name space_id updated_at]
           },
           service_dashboard_clients:
           {
             db_uri:  ccdb_uri,
             table:   :service_dashboard_clients,
-            columns: %i(service_broker_id uaa_id)
+            columns: %i[service_broker_id uaa_id]
           },
           service_instances:
           {
             db_uri:  ccdb_uri,
             table:   :service_instances,
-            columns: %i(created_at dashboard_url gateway_name gateway_data guid id is_gateway_service name route_service_url service_plan_id space_id syslog_drain_url tags updated_at)
+            columns: %i[created_at dashboard_url gateway_name gateway_data guid id is_gateway_service name route_service_url service_plan_id space_id syslog_drain_url tags updated_at]
           },
           service_instance_operations:
           {
             db_uri:  ccdb_uri,
             table:   :service_instance_operations,
-            columns: %i(broker_provided_operation created_at description guid id proposed_changes service_instance_id state type updated_at)
+            columns: %i[broker_provided_operation created_at description guid id proposed_changes service_instance_id state type updated_at]
           },
           service_keys:
           {
             db_uri:  ccdb_uri,
             table:   :service_keys,
-            columns: %i(created_at guid id name service_instance_id updated_at)
+            columns: %i[created_at guid id name service_instance_id updated_at]
           },
           service_plans:
           {
             db_uri:  ccdb_uri,
             table:   :service_plans,
-            columns: %i(active bindable created_at description extra free guid id name public service_id unique_id updated_at)
+            columns: %i[active bindable created_at description extra free guid id name public service_id unique_id updated_at]
           },
           service_plan_visibilities:
           {
             db_uri:  ccdb_uri,
             table:   :service_plan_visibilities,
-            columns: %i(created_at guid id organization_id service_plan_id updated_at)
+            columns: %i[created_at guid id organization_id service_plan_id updated_at]
           },
           service_providers:
           {
             db_uri:  uaadb_uri,
             table:   :service_provider,
-            columns: %i(active created entity_id id identity_zone_id lastmodified name version)
+            columns: %i[active created entity_id id identity_zone_id lastmodified name version]
           },
           services:
           {
             db_uri:  ccdb_uri,
             table:   :services,
-            columns: %i(active bindable created_at description extra guid id label plan_updateable purging requires service_broker_id tags unique_id updated_at)
+            columns: %i[active bindable created_at description extra guid id label plan_updateable purging requires service_broker_id tags unique_id updated_at]
           },
           space_quota_definitions:
           {
             db_uri:  ccdb_uri,
             table:   :space_quota_definitions,
-            columns: %i(app_instance_limit app_task_limit created_at guid id instance_memory_limit memory_limit name non_basic_services_allowed organization_id total_reserved_route_ports total_routes total_services total_service_keys updated_at)
+            columns: %i[app_instance_limit app_task_limit created_at guid id instance_memory_limit memory_limit name non_basic_services_allowed organization_id total_reserved_route_ports total_routes total_services total_service_keys updated_at]
           },
           spaces:
           {
             db_uri:  ccdb_uri,
             table:   :spaces,
-            columns: %i(allow_ssh created_at guid id isolation_segment_guid name organization_id space_quota_definition_id updated_at)
+            columns: %i[allow_ssh created_at guid id isolation_segment_guid name organization_id space_quota_definition_id updated_at]
           },
           spaces_auditors:
           {
             db_uri:  ccdb_uri,
             table:   :spaces_auditors,
-            columns: %i(space_id user_id)
+            columns: %i[space_id user_id]
           },
           spaces_developers:
           {
             db_uri:  ccdb_uri,
             table:   :spaces_developers,
-            columns: %i(space_id user_id)
+            columns: %i[space_id user_id]
           },
           spaces_managers:
           {
             db_uri:  ccdb_uri,
             table:   :spaces_managers,
-            columns: %i(space_id user_id)
+            columns: %i[space_id user_id]
           },
           stacks:
           {
             db_uri:  ccdb_uri,
             table:   :stacks,
-            columns: %i(created_at description guid id name updated_at)
+            columns: %i[created_at description guid id name updated_at]
           },
           staging_security_groups_spaces:
           {
             db_uri:  ccdb_uri,
             table:   :staging_security_groups_spaces,
-            columns: %i(staging_security_group_id staging_space_id)
+            columns: %i[staging_security_group_id staging_space_id]
           },
           tasks:
           {
             db_uri:  ccdb_uri,
             table:   :tasks,
-            columns: %i(app_guid command created_at disk_in_mb droplet_guid failure_reason guid id memory_in_mb name sequence_id state updated_at)
+            columns: %i[app_guid command created_at disk_in_mb droplet_guid failure_reason guid id memory_in_mb name sequence_id state updated_at]
           },
           users_cc:
           {
             db_uri:  ccdb_uri,
             table:   :users,
-            columns: %i(active admin created_at default_space_id guid id updated_at)
+            columns: %i[active admin created_at default_space_id guid id updated_at]
           },
           users_uaa:
           {
             db_uri:  uaadb_uri,
             table:   :users,
-            columns: %i(active created email familyname givenname id identity_zone_id lastmodified last_logon_success_time passwd_change_required passwd_lastmodified phonenumber previous_logon_success_time username verified version)
+            columns: %i[active created email familyname givenname id identity_zone_id lastmodified last_logon_success_time passwd_change_required passwd_lastmodified phonenumber previous_logon_success_time username verified version]
           }
         }
 

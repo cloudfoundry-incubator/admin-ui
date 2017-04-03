@@ -74,7 +74,7 @@ module AdminUI
         sort_dir   = value[:dir]
 
         next if sort_indices_used.add?(sort_index).nil?
-        next unless %w(asc desc).include?(sort_dir)
+        next unless %w[asc desc].include?(sort_dir)
 
         case_insensitive_sort_column = case_insensitive_sort_columns.include?(sort_index)
         result.push(SortColumn.new(sort_index, sort_dir == 'asc', case_insensitive_sort_column))

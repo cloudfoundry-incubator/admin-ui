@@ -8,7 +8,7 @@ require 'envelope.pb.rb'
 module AdminUI
   class Doppler
     BILLION              = 1000.0 * 1000.0 * 1000.0
-    DOPPLER_PERSIST_KEYS = %w(connected index ip origin timestamp).freeze
+    DOPPLER_PERSIST_KEYS = %w[connected index ip origin timestamp].freeze
 
     def initialize(config, logger, client, email, testing)
       @config  = config

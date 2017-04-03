@@ -71,7 +71,7 @@ module AdminUI
     private
 
     def setup_traps
-      %w(TERM INT).each do |signal|
+      %w[TERM INT].each do |signal|
         trap(signal) do
           puts "\n\n"
           puts 'Shutting down ...'
