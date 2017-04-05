@@ -115,17 +115,21 @@ Sequel.migration do
       String :app_launch_url, :size=>1024
       File :app_icon
       String :created_by, :size=>36, :fixed=>true
+      String :required_user_groups, :size=>1024
       
       primary_key [:client_id, :identity_zone_id]
     end
     
-    create_table(:oauth_code) do
+    create_table(:oauth_code, :ignore_index_errors=>true) do
       String :code, :size=>256
       File :authentication
       DateTime :created, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       Bignum :expiresat, :default=>0, :null=>false
       String :user_id, :size=>36
       String :client_id, :size=>255
+      
+      index [:expiresat], :name=>:oauth_code_expiresat_idx
+      index [:code], :name=>:oauth_code_uq_idx, :unique=>true
     end
     
     create_table(:revocable_tokens, :ignore_index_errors=>true) do

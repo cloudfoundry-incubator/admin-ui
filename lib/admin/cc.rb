@@ -866,6 +866,7 @@ module AdminUI
 
               @logger.debug("Select for key #{key}, table #{table}: #{cache[:select]}")
               @logger.debug("Columns removed for key #{key}, table #{table}: #{columns - db_columns}")
+              @logger.debug("Columns available, but not consumed for key #{key}, table #{table}: #{db_columns - columns}")
             else
               begin
                 # Test if the connection is valid
