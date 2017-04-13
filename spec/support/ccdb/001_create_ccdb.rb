@@ -245,11 +245,11 @@ Sequel.migration do
       Integer :total_services, :null=>false
       Integer :memory_limit, :null=>false
       Integer :total_routes, :null=>false
-      Integer :instance_memory_limit, :default=>-1, :null=>false
-      Integer :total_private_domains, :default=>-1, :null=>false
-      Integer :app_instance_limit, :default=>-1
-      Integer :app_task_limit, :default=>-1
-      Integer :total_service_keys, :default=>-1
+      Integer :instance_memory_limit, :null=>false
+      Integer :total_private_domains, :null=>false
+      Integer :app_instance_limit
+      Integer :app_task_limit
+      Integer :total_service_keys
       Integer :total_reserved_route_ports, :default=>0
       
       index [:created_at], :name=>:qd_created_at_index
@@ -544,12 +544,12 @@ Sequel.migration do
       Integer :total_services, :null=>false
       Integer :memory_limit, :null=>false
       Integer :total_routes, :null=>false
-      Integer :instance_memory_limit, :default=>-1, :null=>false
+      Integer :instance_memory_limit, :null=>false
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
-      Integer :app_instance_limit, :default=>-1
+      Integer :app_instance_limit
       Integer :app_task_limit, :default=>5
-      Integer :total_service_keys, :default=>-1, :null=>false
-      Integer :total_reserved_route_ports, :default=>-1
+      Integer :total_service_keys, :null=>false
+      Integer :total_reserved_route_ports
       
       index [:created_at], :name=>:sqd_created_at_index
       index [:guid], :name=>:sqd_guid_index, :unique=>true

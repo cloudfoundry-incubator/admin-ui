@@ -69,7 +69,7 @@ describe AdminUI::ViewModels do
     end
 
     it 'returns nil application as expected' do
-      expect(view_models.application('bogus')).to be_nil
+      expect(view_models.application('bogus', true)).to be_nil
     end
 
     it 'returns zero applications as expected' do

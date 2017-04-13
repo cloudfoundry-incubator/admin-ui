@@ -146,7 +146,7 @@ describe AdminUI::ViewModels, type: :integration do
       end
 
       context 'returns connected applications_view_model detail' do
-        let(:results)  { view_models.application(cc_app[:guid]) }
+        let(:results)  { view_models.application(cc_app[:guid], true) }
         let(:expected) { view_models_applications_detail }
 
         it_behaves_like('common view model retrieval detail')

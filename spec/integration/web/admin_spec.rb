@@ -1502,6 +1502,25 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('has application details')
           end
 
+          it 'has environment variables' do
+            expect(@driver.find_element(id: 'ApplicationsEnvironmentVariablesDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsEnvironmentVariablesTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 2,
+                                labels:          %w[Key Value],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ApplicationsEnvironmentVariablesTable']/tbody/tr/td"),
+                             [
+                               cc_app_environment_variable.keys.first,
+                               "\"#{cc_app_environment_variable.values.first}\""
+                             ])
+          end
+
+          it 'environment variables subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ApplicationsEnvironmentVariablesTable_0')
+          end
+
           it 'has stacks link' do
             check_filter_link('Applications', 12, 'Stacks', cc_stack[:name])
           end

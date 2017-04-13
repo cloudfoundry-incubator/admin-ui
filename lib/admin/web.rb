@@ -68,7 +68,7 @@ module AdminUI
 
     get '/applications_view_model/:guid', auth: [:user] do
       @logger.info_user(session[:username], 'get', "/applications_view_model/#{params[:guid]}")
-      result = @view_models.application(params[:guid])
+      result = @view_models.application(params[:guid], session[:role] == 'admin')
       return Yajl::Encoder.encode(result) if result
       404
     end

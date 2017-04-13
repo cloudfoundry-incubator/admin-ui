@@ -425,6 +425,12 @@ module CCHelper
     }
   end
 
+  def cc_app_environment_variable
+    {
+      'app_env_key' => 'app_env_value'
+    }
+  end
+
   def cc_app_rename
     'renamed_test'
   end
@@ -1594,6 +1600,10 @@ module CCHelper
   end
 
   def cc_app_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
+      OK.new('entity' => { 'environment_json' => cc_app_environment_variable })
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}/restage", AdminUI::Utils::HTTP_POST, anything, anything, anything, anything, anything) do
       if @cc_apps_deleted
         cc_app_not_found

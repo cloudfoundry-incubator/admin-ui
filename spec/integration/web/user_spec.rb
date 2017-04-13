@@ -104,6 +104,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Applications tab does not have environment variables subtable' do
+      it_behaves_like('verifies subtable is not shown') do
+        let(:tab_id)         { 'Applications' }
+        let(:page_id)        { 'ApplicationsPage' }
+        let(:table_id)       { 'ApplicationsEnvironmentVariablesTable' }
+        let(:table_id_label) { 'ApplicationsEnvironmentVariablesDetailsLabel' }
+      end
+    end
+
     context 'Application Instances tab does not have restart button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ApplicationInstances' }

@@ -304,8 +304,20 @@ module AdminUI
       result_cache(:application_instances)
     end
 
-    def application(guid)
-      details(:applications, guid)
+    def application(guid, admin)
+      result = details(:applications, guid)
+      if @config.display_encrypted_values && admin && !result.nil?
+        begin
+          json = @cc_rest_client.get_cc("/v2/apps/#{guid}")
+          environment_variables = json['entity']['environment_json']
+          environment_variables = Hash[environment_variables.sort_by { |key, _| key.downcase }]
+          return Hash[result.merge('environment_variables' => environment_variables).sort_by { |key, _| key }]
+        rescue => error
+          @logger.error("Error during application #{guid} retrieval: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
+        end
+      end
+      result
     end
 
     def applications
