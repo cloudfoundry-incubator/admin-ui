@@ -394,7 +394,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete domain' do
       it 'returns failure code due to disconnection' do
-        response = delete('/domains/domain1')
+        response = delete('/domains/domain1/false')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -411,7 +411,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete domain recursive' do
       it 'returns failure code due to disconnection' do
-        response = delete('/domains/domain1?recursive=true')
+        response = delete('/domains/domain1/false?recursive=true')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -428,7 +428,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete domain organization' do
       it 'returns failure code due to disconnection' do
-        response = delete('/domains/domain1/organization1')
+        response = delete('/domains/domain1/false/organization1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1411,8 +1411,8 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/domains_view_model')
       end
 
-      it '/domains_view_model/:guid returns not found' do
-        verify_not_found('/domains_view_model/domain1')
+      it '/domains_view_model/:guid/:boolean returns not found' do
+        verify_not_found('/domains_view_model/domain1/false')
       end
 
       it '/environment_groups_view_model succeeds' do
@@ -1599,7 +1599,7 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/service_instances_view_model')
       end
 
-      it '/service_instances_view_model/:guid/true returns not found' do
+      it '/service_instances_view_model/:guid/:boolean returns not found' do
         verify_not_found('/service_instances_view_model/service_instance1/true')
       end
 
@@ -1830,8 +1830,8 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/domains_view_model')
       end
 
-      it '/domains_view_model/:guid redirects as expected' do
-        get_redirects_as_expected('/domains_view_model/domain1')
+      it '/domains_view_model/:guid/:boolean redirects as expected' do
+        get_redirects_as_expected('/domains_view_model/domain1/false')
       end
 
       it '/download redirects as expected' do
@@ -1851,7 +1851,7 @@ describe AdminUI::Admin do
       end
 
       it '/events_view_model/:guid redirects as expected' do
-        get_redirects_as_expected('/events_view_model/domain1')
+        get_redirects_as_expected('/events_view_model/event1')
       end
 
       it '/feature_flags_view_model redirects as expected' do
@@ -1883,7 +1883,7 @@ describe AdminUI::Admin do
       end
 
       it '/groups_view_model/:guid redirects as expected' do
-        get_redirects_as_expected('/groups_view_model/domain1')
+        get_redirects_as_expected('/groups_view_model/group1')
       end
 
       it '/health_managers_view_model redirects as expected' do
@@ -2030,7 +2030,7 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/service_instances_view_model')
       end
 
-      it '/service_instances_view_model/:guid/true redirects as expected' do
+      it '/service_instances_view_model/:guid/:boolean redirects as expected' do
         get_redirects_as_expected('/service_instances_view_model/service_instance1/true')
       end
 
@@ -2154,16 +2154,16 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/components?uri=uri1')
       end
 
-      it 'deletes /domains/:guid redirects as expected' do
-        delete_redirects_as_expected('/domains/domain1')
+      it 'deletes /domains/:guid/:boolean redirects as expected' do
+        delete_redirects_as_expected('/domains/domain1/false')
       end
 
-      it 'deletes /domains/:guid?recursive=true redirects as expected' do
-        delete_redirects_as_expected('/domains/domain1?recursive=true')
+      it 'deletes /domains/:guid/:boolean?recursive=true redirects as expected' do
+        delete_redirects_as_expected('/domains/domain1/false?recursive=true')
       end
 
-      it 'deletes /domains/:guid/:guid redirects as expected' do
-        delete_redirects_as_expected('/domains/domain1/organization1')
+      it 'deletes /domains/:guid/:boolean/:guid redirects as expected' do
+        delete_redirects_as_expected('/domains/domain1/false/organization1')
       end
 
       it 'deletes /doppler_components/?uri redirects as expected' do
@@ -2238,15 +2238,15 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/service_brokers/service_broker1')
       end
 
-      it 'deletes /service_instances/:guid/true redirects as expected' do
+      it 'deletes /service_instances/:guid/:boolean redirects as expected' do
         delete_redirects_as_expected('/service_instances/service_instance1/true')
       end
 
-      it 'deletes /service_instances/:guid/true?recursive=true redirects as expected' do
+      it 'deletes /service_instances/:guid/:boolean?recursive=true redirects as expected' do
         delete_redirects_as_expected('/service_instances/service_instance1/true?recursive=true')
       end
 
-      it 'deletes /service_instances/:guid/true?recursive=true&purge=true redirects as expected' do
+      it 'deletes /service_instances/:guid/:boolean?recursive=true&purge=true redirects as expected' do
         delete_redirects_as_expected('/service_instances/service_instance1/true?recursive=true&purge=true')
       end
 
@@ -2542,7 +2542,7 @@ describe AdminUI::Admin do
         put_redirects_as_expected('/service_brokers/service_broker1', '{"name":"bogus"}')
       end
 
-      it 'puts /service_instances/:guid/true redirects as expected' do
+      it 'puts /service_instances/:guid/:boolean redirects as expected' do
         put_redirects_as_expected('/service_instances/service_instance1/true', '{"name":"bogus"}')
       end
 

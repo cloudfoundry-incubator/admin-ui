@@ -476,21 +476,21 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_domain
-      response = delete_request("/domains/#{cc_domain[:guid]}")
+      response = delete_request("/domains/#{cc_domain[:guid]}/false")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}"]])
+      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}/false"]])
     end
 
     def delete_domain_recursive
-      response = delete_request("/domains/#{cc_domain[:guid]}?recursive=true")
+      response = delete_request("/domains/#{cc_domain[:guid]}/false?recursive=true")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}?recursive=true"]], true)
+      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}/false?recursive=true"]], true)
     end
 
     def unshare_private_domain
-      response = delete_request("/domains/#{cc_domain[:guid]}/#{cc_organization[:guid]}")
+      response = delete_request("/domains/#{cc_domain[:guid]}/false/#{cc_organization[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}/#{cc_organization[:guid]}"]], true)
+      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}/false/#{cc_organization[:guid]}"]], true)
     end
 
     it 'has user name and domains request in the log file' do
@@ -506,7 +506,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'unshares a private domain' do
-      expect { unshare_private_domain }.to change { get_json('/domains_view_model')['items']['items'][0][6] }.from(1).to(0)
+      expect { unshare_private_domain }.to change { get_json('/domains_view_model')['items']['items'][0][7] }.from(1).to(0)
     end
   end
 
@@ -1837,7 +1837,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'domains_view_model detail' do
-      let(:path)              { "/domains_view_model/#{cc_domain[:guid]}" }
+      let(:path)              { "/domains_view_model/#{cc_domain[:guid]}/false" }
       let(:view_model_source) { view_models_domains_detail }
       it_behaves_like('retrieves view_model detail')
     end

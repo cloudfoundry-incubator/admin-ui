@@ -167,8 +167,8 @@ module AdminUI
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.domains, params).items)
     end
 
-    get '/domains_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/domains_view_model/#{params[:guid]}")
+    get '/domains_view_model/:guid/:is_shared', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/domains_view_model/#{params[:guid]}/#{params[:is_shared]}")
       result = @view_models.domain(params[:guid])
       return Yajl::Encoder.encode(result) if result
       404
@@ -1479,25 +1479,13 @@ module AdminUI
       end
     end
 
-    delete '/doppler_components', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/doppler_components?uri=#{params[:uri]}")
-      begin
-        @operation.remove_doppler_component(params[:uri])
-        204
-      rescue => error
-        @logger.error("Error during removing doppler component: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
-    end
-
-    delete '/domains/:domain_guid', auth: [:admin] do
+    delete '/domains/:domain_guid/:is_shared', auth: [:admin] do
       recursive = params[:recursive] == 'true'
-      url = "/domains/#{params[:domain_guid]}"
+      url = "/domains/#{params[:domain_guid]}/#{params[:is_shared]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
       begin
-        @operation.delete_domain(params[:domain_guid], recursive)
+        @operation.delete_domain(params[:domain_guid], params[:is_shared] == 'true', recursive)
         204
       rescue CCRestClientResponseError => error
         @logger.error("Error during delete domain: #{error.to_h}")
@@ -1511,8 +1499,8 @@ module AdminUI
       end
     end
 
-    delete '/domains/:domain_guid/:organization_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/domains/#{params[:domain_guid]}/#{params[:organization_guid]}")
+    delete '/domains/:domain_guid/:is_shared/:organization_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/domains/#{params[:domain_guid]}/#{params[:is_shared]}/#{params[:organization_guid]}")
       begin
         @operation.delete_organization_private_domain(params[:organization_guid], params[:domain_guid])
         204
@@ -1523,6 +1511,18 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete domain organization: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/doppler_components', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/doppler_components?uri=#{params[:uri]}")
+      begin
+        @operation.remove_doppler_component(params[:uri])
+        204
+      rescue => error
+        @logger.error("Error during removing doppler component: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

@@ -398,11 +398,11 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_domain
-        operation.delete_domain(cc_domain[:guid], false)
+        operation.delete_domain(cc_domain[:guid], false, false)
       end
 
       def delete_domain_recursive
-        operation.delete_domain(cc_domain[:guid], true)
+        operation.delete_domain(cc_domain[:guid], false, true)
       end
 
       it 'deletes domain' do

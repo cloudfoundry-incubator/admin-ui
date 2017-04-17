@@ -3857,8 +3857,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='DomainsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 8,
-                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Owning Organization', 'Private Shared Organizations', 'Routes'],
+                                 expected_length: 9,
+                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Shared', 'Owning Organization', 'Private Shared Organizations', 'Routes'],
                                  colspans:        nil
                                }
                              ])
@@ -3870,6 +3870,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_domain[:guid],
                              cc_domain[:created_at].to_datetime.rfc3339,
                              cc_domain[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script('return Format.formatBoolean(false)'),
                              cc_organization[:name],
                              '1',
                              '1'
@@ -3881,7 +3882,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          check_checkbox_guid('DomainsTable', cc_domain[:guid])
+          check_checkbox_guid('DomainsTable', "#{cc_domain[:guid]}/false")
         end
 
         context 'manage domains' do
@@ -3931,6 +3932,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'GUID',                     tag:   nil, value: cc_domain[:guid] },
                             { label: 'Created',                  tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_domain[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Updated',                  tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_domain[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Shared',                   tag:   nil, value: @driver.execute_script('return Format.formatBoolean(false)') },
                             { label: 'Owning Organization',      tag:   'a', value: cc_organization[:name] },
                             { label: 'Owning Organization GUID', tag:   nil, value: cc_organization[:guid] },
                             { label: 'Routes',                   tag:   'a', value: '1' }
@@ -3959,7 +3961,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             it 'has a checkbox in the first column' do
-              check_checkbox_guid('DomainsOrganizationsTable', "#{cc_domain[:guid]}/#{cc_organization[:guid]}")
+              check_checkbox_guid('DomainsOrganizationsTable', "#{cc_domain[:guid]}/false/#{cc_organization[:guid]}")
             end
 
             context 'manage private shared organizations' do
@@ -3985,11 +3987,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has organizations link' do
-            check_filter_link('Domains', 4, 'Organizations', cc_organization[:guid])
+            check_filter_link('Domains', 5, 'Organizations', cc_organization[:guid])
           end
 
           it 'has routes link' do
-            check_filter_link('Domains', 6, 'Routes', cc_domain[:name])
+            check_filter_link('Domains', 7, 'Routes', cc_domain[:name])
           end
         end
       end

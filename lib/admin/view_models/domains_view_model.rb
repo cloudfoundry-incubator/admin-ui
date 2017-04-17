@@ -58,13 +58,14 @@ module AdminUI
 
         domain_id                  = domain[:id]
         owning_organization_id     = domain[:owning_organization_id]
-        organization               = owning_organization_id.nil? ? nil : organization_hash[owning_organization_id]
+        shared                     = owning_organization_id.nil?
+        organization               = shared ? nil : organization_hash[owning_organization_id]
         domain_organizations_array = domains_organizations_hash[domain_id]
         domain_route_counter       = domain_route_counters[domain_id]
 
         row = []
 
-        row.push(domain[:guid])
+        row.push("#{domain[:guid]}/#{shared}")
         row.push(domain[:name])
         row.push(domain[:guid])
         row.push(domain[:created_at].to_datetime.rfc3339)
@@ -74,6 +75,8 @@ module AdminUI
         else
           row.push(nil)
         end
+
+        row.push(shared)
 
         if organization
           row.push(organization[:name])
@@ -107,7 +110,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..7).to_a, (1..5).to_a)
+      result(true, items, hash, (1..8).to_a, (1..6).to_a)
     end
   end
 end

@@ -91,8 +91,8 @@ module AdminUI
       @view_models.invalidate_clients
     end
 
-    def delete_domain(domain_guid, recursive)
-      url = "/v2/domains/#{domain_guid}"
+    def delete_domain(domain_guid, is_shared, recursive)
+      url = is_shared ? "/v2/shared_domains/#{domain_guid}" : "/v2/private_domains/#{domain_guid}"
       url += '?recursive=true' if recursive
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)

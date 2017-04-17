@@ -396,11 +396,12 @@ module ViewModelsHelper
   def view_models_domains
     [
       [
-        cc_domain[:guid],
+        "#{cc_domain[:guid]}/false",
         cc_domain[:name],
         cc_domain[:guid],
         cc_domain[:created_at].to_datetime.rfc3339,
         cc_domain[:updated_at].to_datetime.rfc3339,
+        false,
         cc_organization[:name],
         1,
         1

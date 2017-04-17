@@ -1778,7 +1778,7 @@ module CCHelper
   end
 
   def cc_domain_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/domains/#{cc_domain[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/private_domains/#{cc_domain[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_domains_deleted
         cc_domain_not_found
       else
@@ -1787,7 +1787,7 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/domains/#{cc_domain[:guid]}?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/private_domains/#{cc_domain[:guid]}?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_domains_deleted
         cc_domain_not_found
       else
