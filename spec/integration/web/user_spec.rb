@@ -88,7 +88,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Spaces tab does not have rename, allow ssh, disallow ssh, remove isolation segment or delete buttons' do
+    context 'Spaces tab does not have rename, allow ssh, disallow ssh, remove isolation segment, delete unmapped routes or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Spaces' }
         let(:page_id)   { 'SpacesPage' }

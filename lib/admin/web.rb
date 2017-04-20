@@ -1935,23 +1935,6 @@ module AdminUI
       end
     end
 
-    delete '/spaces/:space_guid/isolation_segment', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/isolation_segment")
-      begin
-        @operation.remove_space_isolation_segment(params[:space_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during remove space isolation segment: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during remove space isolation segment: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
-    end
-
     delete '/spaces/:space_guid', auth: [:admin] do
       recursive = params[:recursive] == 'true'
       url = "/spaces/#{params[:space_guid]}"
@@ -1972,6 +1955,23 @@ module AdminUI
       end
     end
 
+    delete '/spaces/:space_guid/isolation_segment', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/isolation_segment")
+      begin
+        @operation.remove_space_isolation_segment(params[:space_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during remove space isolation segment: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during remove space isolation segment: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/spaces/:space_guid/:role/:user_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/#{params[:role]}/#{params[:user_guid]}")
       begin
@@ -1984,6 +1984,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete space role: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/spaces/:space_guid/unmapped_routes', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/unmapped_routes")
+      begin
+        @operation.delete_space_unmapped_routes(params[:space_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete space unmapped routes: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete space unmapped_routes: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

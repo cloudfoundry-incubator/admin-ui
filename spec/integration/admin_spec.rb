@@ -1360,6 +1360,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/isolation_segment"]], true)
     end
 
+    def delete_space_unmapped_routes
+      response = delete_request("/spaces/#{cc_space[:guid]}/unmapped_routes")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/unmapped_routes"]], true)
+    end
+
     def delete_space
       response = delete_request("/spaces/#{cc_space[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -1394,6 +1400,14 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/spaces_view_model')['items']['items'][0][35]).to eq(cc_isolation_segment[:guid])
       expect { remove_space_isolation_segment }.to change { get_json('/spaces_view_model')['items']['items'][0][34] }.from(cc_isolation_segment[:name]).to(nil)
       expect(get_json('/spaces_view_model')['items']['items'][0][35]).to eq(nil)
+    end
+
+    context 'delete the space unmapped routes' do
+      let(:use_route) { false }
+
+      it 'delete the space unmapped routes' do
+        expect { delete_space_unmapped_routes }.to change { get_json('/spaces_view_model')['items']['items'][0][17] }.from(1).to(0)
+      end
     end
 
     it 'deletes a space' do

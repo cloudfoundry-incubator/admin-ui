@@ -45,7 +45,7 @@ module CCHelper
     end
   end
 
-  def cc_stub(config, populate_and_stub = true, insert_second_quota_definition = false, event_type = 'space')
+  def cc_stub(config, populate_and_stub = true, insert_second_quota_definition = false, event_type = 'space', use_route = true)
     @last_unique_id   = 0
     @unique_ids       = {}
 
@@ -89,7 +89,7 @@ module CCHelper
     @cc_isolation_segment_created = false
     @cc_organization_created      = false
 
-    populate_db(config.ccdb_uri,  File.join(File.dirname(__FILE__), './ccdb'), ccdb_inserts(insert_second_quota_definition, event_type))
+    populate_db(config.ccdb_uri,  File.join(File.dirname(__FILE__), './ccdb'), ccdb_inserts(insert_second_quota_definition, event_type, use_route))
     populate_db(config.uaadb_uri, File.join(File.dirname(__FILE__), './uaadb'), uaadb_inserts)
 
     # In order to set the organization's default_isolation_segment_guid, there has to first be an
@@ -1512,7 +1512,7 @@ module CCHelper
     }
   end
 
-  def ccdb_inserts(insert_second_quota_definition, event_type)
+  def ccdb_inserts(insert_second_quota_definition, event_type, use_route)
     result = [
                [:buildpacks,                       cc_buildpack],
                [:env_groups,                       cc_env_group],
@@ -1538,7 +1538,6 @@ module CCHelper
                [:service_brokers,                  cc_service_broker_with_password],
                [:users,                            cc_user],
                [:request_counts,                   cc_request_count],
-               [:route_mappings,                   cc_route_mapping],
                [:organizations_auditors,           cc_organization_auditor],
                [:organizations_billing_managers,   cc_organization_billing_manager],
                [:organizations_managers,           cc_organization_manager],
@@ -1553,9 +1552,11 @@ module CCHelper
                [:service_bindings,                 cc_service_binding_with_credentials],
                [:service_instance_operations,      cc_service_instance_operation],
                [:service_keys,                     cc_service_key_with_credentials],
-               [:tasks,                            cc_task],
-               [:route_bindings,                   cc_route_binding]
+               [:tasks,                            cc_task]
              ]
+
+    result << [:route_bindings, cc_route_binding] if use_route
+    result << [:route_mappings, cc_route_mapping] if use_route
 
     result << [:quota_definitions, cc_quota_definition2] if insert_second_quota_definition
     result << [:space_quota_definitions, cc_space_quota_definition2] if insert_second_quota_definition
@@ -2505,6 +2506,15 @@ module CCHelper
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_managers WHERE space_id = '#{cc_space[:id]}' AND user_id = '#{cc_user[:id]}'")
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}/unmapped_routes", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "DELETE FROM routes WHERE space_id = '#{cc_space[:id]}' AND NOT EXISTS (SELECT * FROM route_mappings WHERE routes.guid == route_mappings.route_guid)")
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end

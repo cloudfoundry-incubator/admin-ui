@@ -921,7 +921,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete space isolation segment' do
       it 'returns failure code due to disconnection' do
-        response = delete('/spaces/isolation_segment')
+        response = delete('/spaces/space1/isolation_segment')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -934,6 +934,23 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete space isolation segment')
+    end
+
+    shared_examples 'common delete space unmapped routes' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/spaces/space1/unmapped_routes')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete space unmapped routes via http' do
+      it_behaves_like('common delete space unmapped routes')
+    end
+
+    context 'delete space unmapped routes via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete space unmapped routes')
     end
 
     shared_examples 'common delete space quota definition' do
@@ -2292,6 +2309,10 @@ describe AdminUI::Admin do
 
       it 'deletes /spaces/:guid/isolation_segment redirects as expected' do
         delete_redirects_as_expected('/spaces/space1/isolation_segment')
+      end
+
+      it 'deletes /spaces/:guid/unmapped_routes redirects as expected' do
+        delete_redirects_as_expected('/spaces/space1/unmapped_routes')
       end
 
       it 'deletes /spaces/:guid/:role/:guid redirects as expected' do

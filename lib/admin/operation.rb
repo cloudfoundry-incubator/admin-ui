@@ -443,6 +443,16 @@ module AdminUI
       @view_models.invalidate_space_roles
     end
 
+    def delete_space_unmapped_routes(space_guid)
+      url = "/v2/spaces/#{space_guid}/unmapped_routes"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_routes
+      @cc.invalidate_spaces
+      @view_models.invalidate_routes
+      @view_models.invalidate_spaces
+    end
+
     def delete_stack(stack_guid)
       url = "/v2/stacks/#{stack_guid}"
       @logger.debug("DELETE #{url}")

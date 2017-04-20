@@ -39,6 +39,7 @@ shared_context :server_context do
   let(:table_page_size)                          { 10 }
   let(:uaadb_file)                               { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)                                { "sqlite://#{uaadb_file}" }
+  let(:use_route)                                { true }
   let(:used_cpu)                                 { determine_used_cpu(application_instance_source) }
   let(:used_disk)                                { determine_used_disk(application_instance_source) }
   let(:used_memory)                              { determine_used_memory(application_instance_source) }
@@ -79,7 +80,7 @@ shared_context :server_context do
     end
     File.utime(log_file_displayed_modified, log_file_displayed_modified, log_file_displayed)
 
-    cc_stub(AdminUI::Config.load(config), true, insert_second_quota_definition, event_type)
+    cc_stub(AdminUI::Config.load(config), true, insert_second_quota_definition, event_type, use_route)
     doppler_stub(application_instance_source, router_source)
     login_stub_admin
     nats_stub(router_source)

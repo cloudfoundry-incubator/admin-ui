@@ -883,7 +883,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_SpacesTable_6')
+          check_allowscriptaccess_attribute('Buttons_SpacesTable_7')
         end
 
         it 'has a checkbox in the first column' do
@@ -907,12 +907,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SpacesTable_3').text).to eq('Remove Isolation Segment')
           end
 
+          it 'has a Delete Unmapped Routes button' do
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_4').text).to eq('Delete Unmapped Routes')
+          end
+
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'Buttons_SpacesTable_4').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_5').text).to eq('Delete')
           end
 
           it 'has a Delete Recursive button' do
-            expect(@driver.find_element(id: 'Buttons_SpacesTable_5').text).to eq('Delete Recursive')
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_6').text).to eq('Delete Recursive')
           end
 
           context 'Rename button' do
@@ -939,15 +943,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Delete button' do
+          context 'Delete Unmapped Routes button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_SpacesTable_4' }
             end
           end
 
-          context 'Delete Recursive button' do
+          context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_SpacesTable_5' }
+            end
+          end
+
+          context 'Delete Recursive button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_SpacesTable_6' }
             end
           end
 
@@ -997,6 +1007,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[35]").text).to eq('')
           end
 
+          def check_space_unused_routes(expected_value)
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[18]").text == expected_value }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[18]").text).to eq(expected_value)
+          end
+
           it 'SSH allows the selected space' do
             disallow_ssh_space
             check_space_ssh('false')
@@ -1021,16 +1039,33 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_space_isolation_segment
           end
 
+          context 'deletes the unmapped routes from the space' do
+            let(:use_route) { false }
+
+            it 'deletes the unmapped routes from the space' do
+              check_space_unused_routes('1')
+              expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[18]").text).to eq('1')
+              check_first_row('SpacesTable')
+              @driver.find_element(id: 'Buttons_SpacesTable_4').click
+
+              confirm("Are you sure you want to delete the selected spaces' unmapped routes?")
+
+              check_operation_result
+
+              check_space_unused_routes('0')
+            end
+          end
+
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_SpacesTable_4' }
+              let(:button_id)       { 'Buttons_SpacesTable_5' }
               let(:confirm_message) { 'Are you sure you want to delete the selected spaces?' }
             end
           end
 
           context 'Delete Recursive button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_SpacesTable_5' }
+              let(:button_id)       { 'Buttons_SpacesTable_6' }
               let(:confirm_message) { 'Are you sure you want to delete the selected spaces and their contained applications, routes, route mappings, private service brokers, service instances, service bindings, service keys and route bindings?' }
             end
           end

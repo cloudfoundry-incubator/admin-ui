@@ -20,6 +20,7 @@ describe AdminUI::Operation, type: :integration do
   let(:log_file)                       { '/tmp/admin_ui.log' }
   let(:uaadb_file)                     { '/tmp/admin_ui_uaadb.db' }
   let(:uaadb_uri)                      { "sqlite://#{uaadb_file}" }
+  let(:use_route)                      { true }
 
   let(:config) do
     AdminUI::Config.load(ccdb_uri:                ccdb_uri,
@@ -60,7 +61,7 @@ describe AdminUI::Operation, type: :integration do
     cleanup_files
 
     config_stub
-    cc_stub(config, true, insert_second_quota_definition)
+    cc_stub(config, true, insert_second_quota_definition, 'space', use_route)
     doppler_stub(application_instance_source, router_source)
     nats_stub(router_source)
     varz_stub
@@ -1498,6 +1499,10 @@ describe AdminUI::Operation, type: :integration do
         operation.remove_space_isolation_segment(cc_space[:guid])
       end
 
+      def delete_space_unmapped_routes
+        operation.delete_space_unmapped_routes(cc_space[:guid])
+      end
+
       def delete_space
         operation.delete_space(cc_space[:guid], false)
       end
@@ -1522,6 +1527,14 @@ describe AdminUI::Operation, type: :integration do
 
       it 'removes space isolation segment' do
         expect { remove_space_isolation_segment }.to change { cc.spaces['items'][0][:isolation_segment_guid] }.from(cc_isolation_segment[:guid]).to(nil)
+      end
+
+      context 'deletes space unmapped routes' do
+        let(:use_route) { false }
+
+        it 'deletes space unmapped routes' do
+          expect { delete_space_unmapped_routes }.to change { cc.routes['items'].length }.from(1).to(0)
+        end
       end
 
       it 'deletes space' do
@@ -1558,6 +1571,10 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails removing isolation segment on deleted space' do
           expect { remove_space_isolation_segment }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
+        end
+
+        it 'fails deleting unmapped routes on deleted space' do
+          expect { delete_space_unmapped_routes }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
         end
 
         it 'fails deleting deleted space' do
