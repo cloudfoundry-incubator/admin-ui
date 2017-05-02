@@ -861,7 +861,7 @@ module AdminUI
               # Downcase needed on column names to get around case sensitivity in MySQL
               db_columns     = db_columns.map(&:downcase)
               statement      = connection[table].select(*(columns & db_columns))
-              statement      = statement.where(cache[:where]) if cache[:where] && !@testing
+              statement      = statement.where(Sequel.lit(cache[:where])) if cache[:where] && !@testing
               cache[:select] = statement.sql
 
               @logger.debug("Select for key #{key}, table #{table}: #{cache[:select]}")
