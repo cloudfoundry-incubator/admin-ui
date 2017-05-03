@@ -195,8 +195,13 @@ module AdminUI
       @authorization_endpoint = body_json['authorization_endpoint']
       raise "Information retrieved from #{get_cc_url('/v2/info')} does not include authorization_endpoint" if @authorization_endpoint.nil?
 
-      @doppler_logging_endpoint = body_json['doppler_logging_endpoint']
-      @logger.warn("Information retrieved from #{get_cc_url('/v2/info')} does not include doppler_logging_endpoint") if @doppler_logging_endpoint.nil?
+      if @config.doppler_logging_endpoint_override.empty?
+        @doppler_logging_endpoint = body_json['doppler_logging_endpoint']
+        @logger.warn("Information retrieved from #{get_cc_url('/v2/info')} does not include doppler_logging_endpoint") if @doppler_logging_endpoint.nil?
+      else
+        @doppler_logging_endpoint = @config.doppler_logging_endpoint_override
+      end
+
 
       @token_endpoint = body_json['token_endpoint']
       raise "Information retrieved from #{get_cc_url('/v2/info')} does not include token_endpoint" if @token_endpoint.nil?
