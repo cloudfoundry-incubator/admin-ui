@@ -69,6 +69,12 @@ describe AdminUI::Config do
         expect(config.doppler_data_file).to eq(doppler_data_file)
       end
 
+      it 'doppler_logging_endpoint_override' do
+        doppler_logging_endpoint_override = 'wss://doppler_logging_endpoint_override.com'
+        config = AdminUI::Config.load('doppler_logging_endpoint_override' => doppler_logging_endpoint_override)
+        expect(config.doppler_logging_endpoint_override).to eq(doppler_logging_endpoint_override)
+      end
+
       it 'doppler_reconnect_delay' do
         doppler_reconnect_delay = 333
         config = AdminUI::Config.load('doppler_reconnect_delay' => doppler_reconnect_delay)
@@ -389,6 +395,10 @@ describe AdminUI::Config do
         expect(config.doppler_data_file).to be_nil
       end
 
+      it 'doppler_logging_endpoint_override' do
+        expect(config.doppler_logging_endpoint_override).to be_nil
+      end
+
       it 'doppler_reconnect_delay' do
         expect(config.doppler_reconnect_delay).to eq(300)
       end
@@ -603,6 +613,10 @@ describe AdminUI::Config do
 
       it 'doppler_data_file' do
         expect { AdminUI::Config.load(config.merge(doppler_data_file: 5)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'doppler_logging_endpoint_override' do
+        expect { AdminUI::Config.load(config.merge(doppler_logging_endpoint_override: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'doppler_reconnect_delay' do

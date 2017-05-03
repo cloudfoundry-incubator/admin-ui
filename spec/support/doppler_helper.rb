@@ -1,6 +1,7 @@
 require 'eventmachine'
 require 'faye/websocket'
 require 'time'
+require 'uri'
 require_relative '../spec_helper'
 require_relative 'cc_helper'
 
@@ -86,12 +87,20 @@ module DopplerHelper
     end
   end
 
-  def doppler_stub(application_instance_source, router_source)
+  def doppler_stub(doppler_logging_endpoint, application_instance_source, router_source)
+    @doppler_logging_endpoint_host = URI.parse(doppler_logging_endpoint).host
+
     @close_blk = nil
 
     @time = Time.now
 
-    allow(Faye::WebSocket::Client).to receive(:new).and_return(MockWebSocketClient.new)
+    # We don't want our mock Faye::Websocket::Client to be stubbed
+    allow(MockWebSocketClient).to receive(:new).and_call_original
+
+    allow(Faye::WebSocket::Client).to receive(:new) do |url|
+      expect(@doppler_logging_endpoint_host).to eq(URI.parse(url).host)
+      MockWebSocketClient.new
+    end
 
     allow_any_instance_of(MockWebSocketClient).to receive(:close) do
       return unless @close_blk

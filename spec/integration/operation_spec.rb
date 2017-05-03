@@ -62,7 +62,7 @@ describe AdminUI::Operation, type: :integration do
 
     config_stub
     cc_stub(config, true, insert_second_quota_definition, 'space', use_route)
-    doppler_stub(application_instance_source, router_source)
+    doppler_stub(cc_info['doppler_logging_endpoint'], application_instance_source, router_source)
     nats_stub(router_source)
     varz_stub
     view_models_stub(application_instance_source, router_source)

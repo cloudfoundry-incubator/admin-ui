@@ -6,27 +6,35 @@ describe AdminUI::Doppler, type: :integration do
   include ConfigHelper
   include DopplerHelper
 
-  let(:ccdb_file)            { '/tmp/admin_ui_ccdb.db' }
-  let(:ccdb_uri)             { "sqlite://#{ccdb_file}" }
-  let(:cloud_controller_uri) { 'http://api.localhost' }
-  let(:db_file)              { '/tmp/admin_ui_store.db' }
-  let(:db_uri)               { "sqlite://#{db_file}" }
-  let(:doppler_data_file)    { '/tmp/admin_ui_doppler_data.json' }
-  let(:log_file)             { '/tmp/admin_ui.log' }
-  let(:uaadb_file)           { '/tmp/admin_ui_uaadb.db' }
-  let(:uaadb_uri)            { "sqlite://#{uaadb_file}" }
+  let(:ccdb_file)                { '/tmp/admin_ui_ccdb.db' }
+  let(:ccdb_uri)                 { "sqlite://#{ccdb_file}" }
+  let(:cloud_controller_uri)     { 'http://api.localhost' }
+  let(:db_file)                  { '/tmp/admin_ui_store.db' }
+  let(:db_uri)                   { "sqlite://#{db_file}" }
+  let(:doppler_data_file)        { '/tmp/admin_ui_doppler_data.json' }
+  let(:doppler_logging_endpoint) { cc_info['doppler_logging_endpoint'] }
+  let(:log_file)                 { '/tmp/admin_ui.log' }
+  let(:uaadb_file)               { '/tmp/admin_ui_uaadb.db' }
+  let(:uaadb_uri)                { "sqlite://#{uaadb_file}" }
 
-  let(:config) do
-    AdminUI::Config.load(ccdb_uri:                ccdb_uri,
-                         cloud_controller_uri:    cloud_controller_uri,
-                         db_uri:                  db_uri,
-                         doppler_data_file:       doppler_data_file,
-                         doppler_rollup_interval: 1,
-                         monitored_components:    [],
-                         uaadb_uri:               uaadb_uri)
+  let(:base_config_values) do
+    {
+      ccdb_uri:                ccdb_uri,
+      cloud_controller_uri:    cloud_controller_uri,
+      db_uri:                  db_uri,
+      doppler_data_file:       doppler_data_file,
+      doppler_rollup_interval: 1,
+      monitored_components:    [],
+      uaadb_uri:               uaadb_uri
+    }
+  end
+
+  let(:config_values) do
+    base_config_values
   end
 
   let(:application_instance_source) { :doppler_cell }
+  let(:config)                      { AdminUI::Config.load(config_values) }
   let(:client)                      { AdminUI::CCRestClient.new(config, logger) }
   let(:doppler)                     { AdminUI::Doppler.new(config, logger, client, email, true) }
   let(:email)                       { AdminUI::EMail.new(config, logger) }
@@ -42,7 +50,7 @@ describe AdminUI::Doppler, type: :integration do
 
     config_stub
     cc_stub(config)
-    doppler_stub(application_instance_source, :doppler_router)
+    doppler_stub(doppler_logging_endpoint, application_instance_source, :doppler_router)
 
     event_machine_loop
   end
@@ -262,6 +270,14 @@ describe AdminUI::Doppler, type: :integration do
 
     it 'returns reps_count' do
       expect(doppler.reps_count).to be(0)
+    end
+  end
+
+  context 'supports doppler_logging_endpoint_override' do
+    let(:doppler_logging_endpoint) { 'wss://doppler_logging_endpoint_override.com' }
+    let(:config_values) { base_config_values.merge(doppler_logging_endpoint_override: doppler_logging_endpoint) }
+    it 'supports doppler_logging_endpoint_override' do
+      expect(doppler.components['connected']).to eq(true)
     end
   end
 end

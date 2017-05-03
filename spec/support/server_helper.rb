@@ -81,7 +81,7 @@ shared_context :server_context do
     File.utime(log_file_displayed_modified, log_file_displayed_modified, log_file_displayed)
 
     cc_stub(AdminUI::Config.load(config), true, insert_second_quota_definition, event_type, use_route)
-    doppler_stub(application_instance_source, router_source)
+    doppler_stub(cc_info['doppler_logging_endpoint'], application_instance_source, router_source)
     login_stub_admin
     nats_stub(router_source)
     varz_stub
