@@ -46,7 +46,7 @@ sudo apt-get install -f -y --no-install-recommends git-core build-essential libr
 
 ### Ruby
 
-Ruby is required to run the Administration UI.  This has been tested with Ruby 2.3.3 with previous testing performed on Ruby 1.9.3-p484, 2.1.7, 2.2.3, 2.2.4 and 2.3.1.
+Ruby is required to run the Administration UI. This has been tested with Ruby 2.3.3 with previous testing performed on Ruby 1.9.3-p484, 2.1.7, 2.2.3, 2.2.4 and 2.3.1.
 Here is a sample installation of ruby using rbenv:
 
 ```
@@ -171,7 +171,7 @@ Example: <code>false</code>
 <code><b>cloud_controller_uri</b></code>
 </dt>
 <dd>
-The URI used to connect to the Cloud Controller REST API.  This is also used as a title for the web UI header as well as email notification.
+The URI used to connect to the Cloud Controller REST API. This is also used as a title for the web UI header as well as email notification.
 </dd>
 <dt>
 <code>component_connection_retries</code>
@@ -185,7 +185,7 @@ Example: <code>2</code>
 <code>data_file</code>
 </dt>
 <dd>
-Relative path location to store the Administration UI data file.  
+Relative path location to store the Administration UI data file. 
 <br>
 Example: <code>data/data.json</code>
 </dd>
@@ -193,13 +193,13 @@ Example: <code>data/data.json</code>
 <code>db_uri</code>
 </dt>
 <dd>
-The URI used to connect to a sqlite database instance.   
+The URI used to connect to a sqlite database instance.
 
-If the database instance does not exist, Admin-UI will automatically create an instance.  
+If the database instance does not exist, Admin-UI will automatically create an instance. 
 <br>
 Example: <code>sqlite://data/store.db</code> 
 <br>
-In this case, the store.db file is located in the 'data' directory.  Absolute path is allowed in the uri.  For example,
+In this case, the store.db file is located in the 'data' directory. Absolute path is allowed in the uri. For example,
 <code>sqlite:///tmp/store.db</code> indicates the database file 'store.db' is located in the '/tmp' directory.
 </dd>
 <dt>
@@ -217,9 +217,15 @@ Example: <code>false</code>
 <code>doppler_data_file</code>
 </dt>
 <dd>
-Relative path location to store the Administration UI doppler data file.  
+Relative path location to store the Administration UI doppler data file. 
 <br>
 Example: <code>data/doppler_data.json</code>
+</dd>
+<dt>
+<code><b>doppler_logging_endpoint_override</b></code>
+</dt>
+<dd>
+This optional URI is used to override the doppler_logging_endpoint retrieved from /v2/info. This can be used to offload filtering of the standard dopper_logging_endpoint to allow only those metrics consumed by the Administration UI, namely container metrics and value metrics. The doppler_logging_endpoint_override is required to support the same protocol as the base /v2/info doppler_logging_endpoint.
 </dd>
 <dt>
 <code>doppler_reconnect_delay</code>
@@ -233,7 +239,7 @@ Example: <code>300</code>
 <code>doppler_rollup_interval</code>
 </dt>
 <dd>
-Seconds between rolling up doppler_logging_endpoint data to be made available.  
+Seconds between rolling up doppler_logging_endpoint data to be made available. 
 <br>
 Example: <code>30</code>
 </dd>
@@ -273,8 +279,8 @@ Example: <code>[/some_directory/some_key.pem]</code>
 <code>log_files</code>
 </dt>
 <dd>
-Log files in a comma-delimited array being exposed through the Administration UI. Note that these files must be accessible by the user that started the Administration UI.  These files can either be found on a file system accessible by the local system or as an SFTP URI.  In the case of SFTP, both
-user:password and user with pem files are supported.  If the SFTP password is not specified, the key files specified in log_file_sftp_keys will be used. <br>
+Log files in a comma-delimited array being exposed through the Administration UI. Note that these files must be accessible by the user that started the Administration UI. These files can either be found on a file system accessible by the local system or as an SFTP URI. In the case of SFTP, both
+user:password and user with pem files are supported. If the SFTP password is not specified, the key files specified in log_file_sftp_keys will be used. <br>
 Example <code>['/var/vcap/sys/log/cloud_controller_ng/cloud_controller_ng.log']</code>
 <br>
 Example <code>['/var/vcap/sys/log/cloud_controller_ng/*.log']</code>
@@ -327,7 +333,7 @@ Example: <code>10</code>
 <code>port</code>
 </dt>
 <dd>
-Port for the Administration UI web server.  
+Port for the Administration UI web server. 
 <br>
 Example: <code>8070</code>
 </dd>
@@ -346,11 +352,11 @@ Example: <code>[bar@10.10.10.10, baz@10.10.10.10]</code>
 </dt>
 <dd>
 A true/false indicator about whether the Admin-UI server process will operate in secure or unprotected 
-mode.  In the secure mode, Admin-UI uses SSL security mechanism to protect communication with its users.  
+mode. In the secure mode, Admin-UI uses SSL security mechanism to protect communication with its users. 
 As such, it requires its users to connect via https; in unprotected mode, Admin-UI expects http requests.
 <br>
 When set to 'true', a SSL certificate is required and the 'ssl' property must be present in the 
-configuration file.  Please see configuration property 'ssl' for details about how to configure Admin-UI 
+configuration file. Please see configuration property 'ssl' for details about how to configure Admin-UI 
 to work with SSL certificate.<br>
 By default, Admin-UI runs in the unprotected mode.
 <br>
@@ -416,14 +422,14 @@ Example: <code>login</code>
 <code>ssl</code>
 </dt>
 <dd>
-A set of configuration properties for Admin-UI to work with SSL certificate.  It 
+A set of configuration properties for Admin-UI to work with SSL certificate. It 
 is required when the 'secured_client_connection' is set to true.<br>
-Certificate can be self-signed or signed by Certificate Authority (CA).  Admin-UI 
+Certificate can be self-signed or signed by Certificate Authority (CA). Admin-UI 
 supports these certificates. However, intermediate certificate from CA is not yet 
 supported.<br>
 <b>Generate Self-signed certificate</b><br>
 You can generate a self-signed certificate on a server, all without involving 
-third-party CA.  The following steps illustrate a way in how you can generate a 
+third-party CA. The following steps illustrate a way in how you can generate a 
 self-signed certificate:
 * generate private key
 <pre>
@@ -441,7 +447,7 @@ passphrase involved in the previous step.
 <pre>
 openssl x509 -req -days 365 -passin pass:private_key_pass -in /tmp/admin_ui_server.csr -signkey /tmp/admin_ui_server.key -out /tmp/admin_ui_server.crt
 </pre>
-This command generates a certificate that is good for the next 365 days.  At this 
+This command generates a certificate that is good for the next 365 days. At this 
 point, you no longer need to keep the certificate request (dot csr file).
 <br>
 <dl>
@@ -483,11 +489,11 @@ Example: <code>my_secret</code>
 <code>stats_file</code>
 </dt>
 <dd>
-Deprecated.  Relative path location to store the Administration UI statistics.  
+Deprecated. Relative path location to store the Administration UI statistics. 
 
-Admin-UI no longer stores its stats data in the stats file.  Instead, the data is now stored in a database.  This property 
-is required only for the purpose of data migration.  When data migration is no longer needed, you can remove this property 
-from the configuration file.  Please see the Data Migration section for details.
+Admin-UI no longer stores its stats data in the stats file. Instead, the data is now stored in a database. This property 
+is required only for the purpose of data migration. When data migration is no longer needed, you can remove this property 
+from the configuration file. Please see the Data Migration section for details.
 <br>
 Example: <code>data/stats.json</code>
 </dd>
@@ -495,17 +501,17 @@ Example: <code>data/stats.json</code>
 <code>stats_refresh_time</code>
 </dt>
 <dd>
-Deprecated.  See stats_refresh_schedules for details.
+Deprecated. See stats_refresh_schedules for details.
 <br>
 A daily schedule which starts at specified minutes from midnight for automatic stats collection
 <br>
-Example: <code>300</code>.  This results in stats collection starting at 5 AM.
+Example: <code>300</code>. This results in stats collection starting at 5 AM.
 </dd>
 <dt>
 <code>stats_refresh_schedules</code>
 </dt>
 <dd>
-Schedules of automatic stats collection expressed in an array of strings.  Each string represents a schedule and follows a syntax very similar to crontab.  It consists of five fields, for specifying time, date, days of a week and etc, as follow.
+Schedules of automatic stats collection expressed in an array of strings. Each string represents a schedule and follows a syntax very similar to crontab. It consists of five fields, for specifying time, date, days of a week and etc, as follow.
 <br>
 <pre>
        *        *        *        *        * 
@@ -520,7 +526,7 @@ Schedules of automatic stats collection expressed in an array of strings.  Each 
        where * denotes an expression using legal values shown inside the parenthesis for the column. 
 </pre>
 
-* Fields are separated by spaces.  
+* Fields are separated by spaces. 
 
 * Fields can be expressed by a wild card * symbol which means every occurrence of the fields.
 <br>
@@ -530,7 +536,7 @@ Example: <code>['0 * * * *']</code> means the collection starts once every hour 
 <br>
 Example: <code>['0 0 * * 1-5']</code> means the collection starts at midnight 12:00AM, Monday to Friday. 
 
-* Field value can also be a sequence of legal values separated by comma.  Sequence doesn't need to be monotonic.
+* Field value can also be a sequence of legal values separated by comma. Sequence doesn't need to be monotonic.
 <br>
 Example: <code>['0 1,11,12,13 * * *']</code> means the collection process starts at 1:00AM, 11:00AM, 12:00PM and 1:00PM every day.
 
@@ -555,13 +561,13 @@ This property supports the following predefined schedules
  ['@weekly']                      runs at the 12:00AM every Sunday
  ['@monthly']                     runs at the 12:00AM on first day of the month
  ['@yearly']                      runs at the 12:00AM on every Jan 1st
- ['@annually']                    runs at the 12:00AM on every Jan 1st.  It is the same as @yearly.
+ ['@annually']                    runs at the 12:00AM on every Jan 1st. It is the same as @yearly.
 </pre>
 
 * When stats_refresh_schedules and stats_refresh_time are both present in the default.yml file, admin-ui will error out with an error message which reads 
-Two mutually exclusive properties, stats_refresh_time and stats_refresh_schedules, are present in the configuration file.  Please remove one of the two properties.<br>
+Two mutually exclusive properties, stats_refresh_time and stats_refresh_schedules, are present in the configuration file. Please remove one of the two properties.<br>
 * When neither stats_refresh_schedules supports nor stats_refresh_time is present in the default.yml file, admin-ui disables stats collection.<br>
-* The default value of stats_refresh_schedules in default.yml file is <code>stats_refresh_schedules: ['0 5 * * *']</code>.  This value translates to a schedule that starts daily at 5:00AM. <br>
+* The default value of stats_refresh_schedules in default.yml file is <code>stats_refresh_schedules: ['0 5 * * *']</code>. This value translates to a schedule that starts daily at 5:00AM. <br>
 </dd>
 <dt>
 <code>stats_retries</code>
@@ -583,9 +589,9 @@ Example: <code>300</code>
 <code>table_height</code>
 </dt>
 <dd>
-Maximum height of the data table, will be set to 287px if not configured.  If the records on the page are too large
-to fit in this height then a vertical scroll bar will appear in the table.  Can be set to either a specific pixel size
-or a percentage.  Using 100% will ensure that all data will be displayed without a scroll bar in the table.
+Maximum height of the data table, will be set to 287px if not configured. If the records on the page are too large
+to fit in this height then a vertical scroll bar will appear in the table. Can be set to either a specific pixel size
+or a percentage. Using 100% will ensure that all data will be displayed without a scroll bar in the table.
 <br>
 Example: <code>100%</code>
 </dd>
@@ -704,8 +710,8 @@ Example: <code>30</code>
 
 ### Data Migration
 
-Prior releases of Admin-UI store stats data in a file as indicated by the stats_file configuration property.  This data is 
-now stored in a database.  Data migration is referring to the transfer of stats information from file to database.
+Prior releases of Admin-UI store stats data in a file as indicated by the stats_file configuration property. This data is 
+now stored in a database. Data migration is referring to the transfer of stats information from file to database.
 
 Data migration takes place automatically at the start of admin-UI daemon process when the following conditions are all met:
   * stats_file property is present and valid in the default.yml file
@@ -714,19 +720,19 @@ Data migration takes place automatically at the start of admin-UI daemon process
   * the database instance either does not exist or has not yet been initialized with schema.
 
 When Admin-UI completes the data migration to database, it will rename the original stats file by appending '.bak' file 
-extension. For example, 'stats.json' becomes 'stats.json.bak'.  
+extension. For example, 'stats.json' becomes 'stats.json.bak'. 
 
-Data migration is run only once on a given database instance.  If for some reason you wish to rerun data migration, you 
+Data migration is run only once on a given database instance. If for some reason you wish to rerun data migration, you 
 must operate on a different database instance.
 
 ### Database schema Migration 
 At the start of its daemon process, Admin-UI always checks its database schema migration directory and attempts to bring its 
-database schema up to date.  So it's not required to run schema migration manually.  This migration takes place before data 
+database schema up to date. So it's not required to run schema migration manually. This migration takes place before data 
 migration.
 
 The database schema migration directory is located at 'db/migrations'. This directory contains files responsible for both
-populating database schema and subsequently migrating the schema.  Migration files are built on the Sequel migration framework,
-and hence adhere to its file naming convention. i.e.  
+populating database schema and subsequently migrating the schema. Migration files are built on the Sequel migration framework,
+and hence adhere to its file naming convention. i.e. 
 
            <timestamp>_<title>.rb
 
@@ -756,12 +762,12 @@ To access the Administration UI, go to:
 http://<admin ui host>:8070
 ```
 
-You will be prompted for the credentials.  Once there, by default, you will be
+You will be prompted for the credentials. Once there, by default, you will be
 taken to the DEA tab:
 ![DEA Tab](./images/dea-tab.png)
 
 From there you will see the list of DEAs running in the environment, along with
-some basic statistics.  Selecting one from the list will bring up another
+some basic statistics. Selecting one from the list will bring up another
 table below the DEA table showing even more details about the DEA you selected:
 
 ![DEA Tab](./images/dea-tab-vm.png)
@@ -769,7 +775,7 @@ table below the DEA table showing even more details about the DEA you selected:
 One important thing to note is that some of the items in the secondary
 table are hyperlinks. Clicking on that link will take you to the appropriate
 tab with a query already filled in, allowing you to see just the data
-related to what you clicked on.  For example, in the table above if you
+related to what you clicked on. For example, in the table above if you
 clicked on the <code>Apps</code> link, meaning the <code>2</code>,
 you'll be taken to the <code>Apps</code> tab and the query will be
 filled in such that you will only see the apps running on this DEA,
@@ -780,7 +786,7 @@ Notice the <code>Search</code> entry field is pre-populated with a string
 and the table is filtered to show just those rows that contain that string
 in any column.
 
-Also, note that each row in the table has a checkbox.  While not all tables
+Also, note that each row in the table has a checkbox. While not all tables
 will have those, by selecting a set of rows an action can be performed on
 them. For example, in this case, by selecting one or more apps you can then
 use the buttons on the right side of the main table:
@@ -799,7 +805,7 @@ Administration UI has access to - these need to be local to the application:
 ![Logs Tab](./images/logs-tab.png)
 
 On this tab, once a particular log file is selected, you can examine its
-contents in the text area.  Use the buttons to iterate through the file
+contents in the text area. Use the buttons to iterate through the file
 one page at a time, or use horizontal scroll bar at the top of the text area
 to quickly move to one section of the file.
 
@@ -807,7 +813,7 @@ The <code>Stats</code> tab:
 
 ![Stats Tab](./images/stats-tab.png)
 
-can be used to view basic history data about the environment.  Normally, 
+can be used to view basic history data about the environment. Normally, 
 a snapshot of the statistics are taken once a day, but you can force a new
 set of data points to be taken by using the <code>Create Stats</code>
 button. 
