@@ -11,6 +11,7 @@ module AdminUI
         cloud_controller_ssl_verify_none:                 false,
         component_connection_retries:                         2,
         display_encrypted_values:                          true,
+        doppler_logging_endpoint_override:                   '',
         doppler_reconnect_delay:                            300,
         doppler_rollup_interval:                             30,
         event_days:                                           7,
@@ -46,6 +47,7 @@ module AdminUI
             db_uri:                                           /[^\r\n\t]+/,
             optional(:display_encrypted_values)            => bool,
             doppler_data_file:                                /[^\r\n\t]+/,
+            optional(:doppler_logging_endpoint_override)   => String,
             optional(:doppler_reconnect_delay)             => Integer,
             optional(:doppler_rollup_interval)             => Integer,
             optional(:event_days)                          => Integer,
@@ -170,6 +172,10 @@ module AdminUI
 
     def doppler_data_file
       @config[:doppler_data_file]
+    end
+
+    def doppler_logging_endpoint_override
+      @config[:doppler_logging_endpoint_override]
     end
 
     def doppler_reconnect_delay
