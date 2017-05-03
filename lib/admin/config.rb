@@ -11,7 +11,6 @@ module AdminUI
         cloud_controller_ssl_verify_none:                 false,
         component_connection_retries:                         2,
         display_encrypted_values:                          true,
-        doppler_logging_endpoint_override:                   '',
         doppler_reconnect_delay:                            300,
         doppler_rollup_interval:                             30,
         event_days:                                           7,
