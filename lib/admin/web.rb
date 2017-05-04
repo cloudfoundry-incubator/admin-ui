@@ -261,6 +261,9 @@ module AdminUI
       404
     end
 
+    get '/health' do
+    end
+
     get '/health_managers_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/health_managers_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.health_managers, params).items)

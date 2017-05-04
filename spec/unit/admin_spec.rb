@@ -2744,4 +2744,29 @@ describe AdminUI::Admin do
       end
     end
   end
+
+  context 'health' do
+    shared_examples 'common health' do
+      before do
+        login_stub_fail
+      end
+      let(:http) { create_http }
+
+      it '/health succeeds' do
+        request = Net::HTTP::Get.new('/health')
+
+        response = http.request(request)
+        expect(response.is_a?(Net::HTTPOK)).to be(true)
+      end
+    end
+
+    context 'health via http' do
+      it_behaves_like('common health')
+    end
+
+    context 'health via https' do
+      let(:secured_client_connection) { true }
+      it_behaves_like('common health')
+    end
+  end
 end

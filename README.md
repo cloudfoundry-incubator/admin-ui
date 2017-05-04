@@ -754,6 +754,14 @@ can let it default to config/default.yml
 ruby bin/admin [-c <configuration file>]
 ```
 
+## Simple Health Check
+
+You can remotely check if the Administration UI is running by accessing the /health path and checking for a status code of 200. This path does not require authorization. Currently no response body is returned.
+
+```
+http://<admin ui host>:8070/health
+```
+
 ## <a name="using"></a> Using the Administration UI 
 
 To access the Administration UI, go to:
