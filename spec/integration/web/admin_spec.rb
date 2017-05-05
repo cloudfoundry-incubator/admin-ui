@@ -357,6 +357,23 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
       end
 
+      shared_examples 'copy button' do
+        it 'copies the data in the table' do
+          @driver.find_element(id: button_id).click
+          begin
+            Selenium::WebDriver::Wait.new(timeout: 5).until do
+              element = @driver.find_element(id: 'datatables_buttons_info')
+              expect(element).to_not be_nil
+              expect(element.displayed?).to be(true)
+            end
+          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            element = @driver.find_element(id: 'datatables_buttons_info')
+            expect(element).to_not be_nil
+            expect(element.displayed?).to be(true)
+          end
+        end
+      end
+
       context 'Organizations' do
         let(:tab_id)     { 'Organizations' }
         let(:table_id)   { 'OrganizationsTable' }
@@ -445,7 +462,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_checkbox_guid('OrganizationsTable', cc_organization[:guid])
         end
 
-        context 'manage organization' do
+        context 'manage organizations' do
           it 'has a Create button' do
             expect(@driver.find_element(id: 'Buttons_OrganizationsTable_0').text).to eq('Create')
           end
@@ -476,6 +493,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has a Delete Recursive button' do
             expect(@driver.find_element(id: 'Buttons_OrganizationsTable_7').text).to eq('Delete Recursive')
+          end
+
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_8').text).to eq('Copy')
           end
 
           it 'creates an organization' do
@@ -659,6 +680,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_OrganizationsTable_7' }
               let(:confirm_message) { 'Are you sure you want to delete the selected organizations and their contained spaces, space quotas, applications, routes, route mappings, private domains, private service brokers, service instances, service bindings, service keys and route bindings?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_OrganizationsTable_8' }
             end
           end
         end
@@ -919,6 +946,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SpacesTable_6').text).to eq('Delete Recursive')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_SpacesTable_7').text).to eq('Copy')
+          end
+
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_SpacesTable_0' }
@@ -1067,6 +1098,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_SpacesTable_6' }
               let(:confirm_message) { 'Are you sure you want to delete the selected spaces and their contained applications, routes, route mappings, private service brokers, service instances, service bindings, service keys and route bindings?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_SpacesTable_7' }
             end
           end
         end
@@ -1264,7 +1301,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_checkbox_guid('ApplicationsTable', cc_app[:guid])
         end
 
-        context 'manage application' do
+        context 'manage applications' do
           def manage_application(button_index)
             check_first_row('ApplicationsTable')
 
@@ -1337,6 +1374,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has a Delete Recursive button' do
             expect(@driver.find_element(id: 'Buttons_ApplicationsTable_9').text).to eq('Delete Recursive')
+          end
+
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_10').text).to eq('Copy')
           end
 
           context 'Rename button' do
@@ -1480,6 +1521,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               let(:confirm_message) { 'Are you sure you want to delete the selected applications and their associated service bindings?' }
             end
           end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ApplicationsTable_10' }
+            end
+          end
         end
 
         context 'selectable' do
@@ -1554,6 +1601,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'environment variables subtable has allowscriptaccess property set to sameDomain' do
             check_allowscriptaccess_attribute('Buttons_ApplicationsEnvironmentVariablesTable_0')
+          end
+
+          context 'manage environment variables subtable' do
+            it 'has a Copy button' do
+              expect(@driver.find_element(id: 'Buttons_ApplicationsEnvironmentVariablesTable_0').text).to eq('Copy')
+            end
+
+            context 'Copy button' do
+              it_behaves_like('copy button') do
+                let(:button_id) { 'Buttons_ApplicationsEnvironmentVariablesTable_0' }
+              end
+            end
           end
 
           it 'has stacks link' do
@@ -1674,6 +1733,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ApplicationInstancesTable_0').text).to eq('Restart')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ApplicationInstancesTable_1').text).to eq('Copy')
+          end
+
           context 'Restart button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ApplicationInstancesTable_0' }
@@ -1684,6 +1747,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_ApplicationInstancesTable_0' }
               let(:confirm_message) { 'Are you sure you want to restart the selected application instances?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ApplicationInstancesTable_1' }
             end
           end
         end
@@ -1827,6 +1896,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_RoutesTable_1').text).to eq('Delete Recursive')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_RoutesTable_2').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_RoutesTable_0' }
@@ -1850,6 +1923,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_RoutesTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected routes and their associated route mappings and route bindings?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_RoutesTable_2' }
             end
           end
         end
@@ -1952,6 +2031,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_RouteMappingsTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_RouteMappingsTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_RouteMappingsTable_0' }
@@ -1962,6 +2045,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_RouteMappingsTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected route mappings?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_RouteMappingsTable_1' }
             end
           end
         end
@@ -2098,6 +2187,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServiceInstancesTable_3').text).to eq('Purge')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ServiceInstancesTable_4').text).to eq('Copy')
+          end
+
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_ServiceInstancesTable_0' }
@@ -2148,6 +2241,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_ServiceInstancesTable_3' }
               let(:confirm_message) { 'Are you sure you want to purge the selected service instances?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ServiceInstancesTable_4' }
             end
           end
         end
@@ -2224,6 +2323,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'credentials subtable has allowscriptaccess property set to sameDomain' do
             check_allowscriptaccess_attribute('Buttons_ServiceInstancesCredentialsTable_0')
+          end
+
+          context 'manage credentials subtable' do
+            it 'has a Copy button' do
+              expect(@driver.find_element(id: 'Buttons_ServiceInstancesCredentialsTable_0').text).to eq('Copy')
+            end
+
+            context 'Copy button' do
+              it_behaves_like('copy button') do
+                let(:button_id) { 'Buttons_ServiceInstancesCredentialsTable_0' }
+              end
+            end
           end
 
           it 'has events link' do
@@ -2335,6 +2446,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServiceBindingsTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ServiceBindingsTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ServiceBindingsTable_0' }
@@ -2345,6 +2460,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_ServiceBindingsTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service bindings?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ServiceBindingsTable_1' }
             end
           end
         end
@@ -2411,6 +2532,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_allowscriptaccess_attribute('Buttons_ServiceBindingsCredentialsTable_0')
           end
 
+          context 'manage credentials subtable' do
+            it 'has a Copy button' do
+              expect(@driver.find_element(id: 'Buttons_ServiceBindingsCredentialsTable_0').text).to eq('Copy')
+            end
+
+            context 'Copy button' do
+              it_behaves_like('copy button') do
+                let(:button_id) { 'Buttons_ServiceBindingsCredentialsTable_0' }
+              end
+            end
+          end
+
           it 'has volume mounts' do
             expect(@driver.find_element(id: 'ServiceBindingsVolumeMountsDetailsLabel').displayed?).to be(true)
 
@@ -2429,6 +2562,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'volume mounts subtable has allowscriptaccess property set to sameDomain' do
             check_allowscriptaccess_attribute('Buttons_ServiceBindingsVolumeMountsTable_0')
+          end
+
+          context 'manage volume mounts subtable' do
+            it 'has a Copy button' do
+              expect(@driver.find_element(id: 'Buttons_ServiceBindingsVolumeMountsTable_0').text).to eq('Copy')
+            end
+
+            context 'Copy button' do
+              it_behaves_like('copy button') do
+                let(:button_id) { 'Buttons_ServiceBindingsVolumeMountsTable_0' }
+              end
+            end
           end
 
           it 'has events' do
@@ -2533,6 +2678,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServiceKeysTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ServiceKeysTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ServiceKeysTable_0' }
@@ -2543,6 +2692,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_ServiceKeysTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service keys?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ServiceKeysTable_1' }
             end
           end
         end
@@ -2605,6 +2760,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'credentials subtable has allowscriptaccess property set to sameDomain' do
             check_allowscriptaccess_attribute('Buttons_ServiceKeysCredentialsTable_0')
+          end
+
+          context 'manage credentials subtable' do
+            it 'has a Copy button' do
+              expect(@driver.find_element(id: 'Buttons_ServiceKeysCredentialsTable_0').text).to eq('Copy')
+            end
+
+            context 'Copy button' do
+              it_behaves_like('copy button') do
+                let(:button_id) { 'Buttons_ServiceKeysCredentialsTable_0' }
+              end
+            end
           end
 
           it 'has events' do
@@ -2704,6 +2871,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_RouteBindingsTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_RouteBindingsTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_RouteBindingsTable_0' }
@@ -2714,6 +2885,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_RouteBindingsTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected route bindings?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_RouteBindingsTable_1' }
             end
           end
         end
@@ -2854,6 +3031,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_TasksTable_0').text).to eq('Stop')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_TasksTable_1').text).to eq('Copy')
+          end
+
           context 'Stop button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_TasksTable_0' }
@@ -2868,6 +3049,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             check_operation_result
             check_task_canceled
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_TasksTable_1' }
+            end
           end
         end
 
@@ -2955,6 +3142,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_OrganizationRolesTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_OrganizationRolesTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_OrganizationRolesTable_0' }
@@ -2966,6 +3157,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               let(:button_id)               { 'Buttons_OrganizationRolesTable_0' }
               let(:check_no_data_available) { false }
               let(:confirm_message)         { 'Are you sure you want to delete the selected organization roles?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_OrganizationRolesTable_1' }
             end
           end
         end
@@ -3040,6 +3237,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SpaceRolesTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_SpaceRolesTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_SpaceRolesTable_0' }
@@ -3051,6 +3252,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               let(:button_id)               { 'Buttons_SpaceRolesTable_0' }
               let(:check_no_data_available) { false }
               let(:confirm_message)         { 'Are you sure you want to delete the selected space roles?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_SpaceRolesTable_1' }
             end
           end
         end
@@ -3133,6 +3340,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ClientsTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ClientsTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ClientsTable_0' }
@@ -3143,6 +3354,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_ClientsTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected clients?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ClientsTable_1' }
             end
           end
         end
@@ -3279,6 +3496,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_UsersTable_4').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_UsersTable_5').text).to eq('Copy')
+          end
+
           context 'Activate button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_UsersTable_0' }
@@ -3381,6 +3602,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_UsersTable_4' }
               let(:confirm_message) { 'Are you sure you want to delete the selected users?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_UsersTable_5' }
             end
           end
         end
@@ -3504,6 +3731,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_GroupsTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_GroupsTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_GroupsTable_0' }
@@ -3514,6 +3745,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_GroupsTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected groups?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_GroupsTable_1' }
             end
           end
         end
@@ -3591,6 +3828,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_GroupMembersTable_0').text).to eq('Remove')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_GroupMembersTable_1').text).to eq('Copy')
+          end
+
           context 'Remove button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_GroupMembersTable_0' }
@@ -3601,6 +3842,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_GroupMembersTable_0' }
               let(:confirm_message) { 'Are you sure you want to remove the selected group members?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_GroupMembersTable_1' }
             end
           end
         end
@@ -3666,6 +3913,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has allowscriptaccess property set to sameDomain' do
           check_allowscriptaccess_attribute('Buttons_ApprovalsTable_0')
+        end
+
+        context 'manage approvals' do
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ApprovalsTable_0').text).to eq('Copy')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ApprovalsTable_0' }
+            end
+          end
         end
 
         context 'selectable' do
@@ -3782,6 +4041,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_BuildpacksTable_5').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_BuildpacksTable_6').text).to eq('Copy')
+          end
+
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_BuildpacksTable_0' }
@@ -3854,6 +4117,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_BuildpacksTable_5' }
               let(:confirm_message) { 'Are you sure you want to delete the selected buildpacks?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_BuildpacksTable_6' }
             end
           end
         end
@@ -3929,6 +4198,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_DomainsTable_1').text).to eq('Delete Recursive')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_DomainsTable_2').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_DomainsTable_0' }
@@ -3952,6 +4225,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_DomainsTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected domains and their associated routes, route mappings and route bindings?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_DomainsTable_2' }
             end
           end
         end
@@ -4091,6 +4370,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_FeatureFlagsTable_1').text).to eq('Disable')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_FeatureFlagsTable_2').text).to eq('Copy')
+          end
+
           context 'Enable button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_FeatureFlagsTable_0' }
@@ -4113,6 +4396,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_feature_flag_enabled('false')
             manage_feature_flag(0)
             check_feature_flag_enabled('true')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_FeatureFlagsTable_2' }
+            end
           end
         end
 
@@ -4186,6 +4475,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_QuotasTable_1').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_QuotasTable_2').text).to eq('Copy')
+          end
+
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_QuotasTable_0' }
@@ -4210,6 +4503,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_QuotasTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected quota definitions?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_QuotasTable_2' }
             end
           end
         end
@@ -4304,6 +4603,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SpaceQuotasTable_1').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_SpaceQuotasTable_2').text).to eq('Copy')
+          end
+
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_SpaceQuotasTable_0' }
@@ -4328,6 +4631,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_SpaceQuotasTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected space quota definitions?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_SpaceQuotasTable_2' }
             end
           end
         end
@@ -4408,6 +4717,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_StacksTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_StacksTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_StacksTable_0' }
@@ -4418,6 +4731,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_StacksTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected stacks?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_StacksTable_1' }
             end
           end
         end
@@ -4486,6 +4805,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has allowscriptaccess property set to sameDomain' do
           check_allowscriptaccess_attribute('Buttons_EventsTable_0')
+        end
+
+        context 'manage events' do
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_EventsTable_0').text).to eq('Copy')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_EventsTable_0' }
+            end
+          end
         end
 
         context 'selectable' do
@@ -4763,6 +5094,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServiceBrokersTable_1').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ServiceBrokersTable_2').text).to eq('Copy')
+          end
+
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_ServiceBrokersTable_0' }
@@ -4787,6 +5122,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_ServiceBrokersTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service brokers?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ServiceBrokersTable_2' }
             end
           end
         end
@@ -4934,6 +5275,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServicesTable_1').text).to eq('Purge')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ServicesTable_2').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ServicesTable_0' }
@@ -4957,6 +5302,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_ServicesTable_1' }
               let(:confirm_message) { 'Are you sure you want to purge the selected services?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ServicesTable_2' }
             end
           end
         end
@@ -5129,6 +5480,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServicePlansTable_2').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ServicePlansTable_3').text).to eq('Copy')
+          end
+
           context 'Public button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ServicePlansTable_0' }
@@ -5157,6 +5512,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_ServicePlansTable_2' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service plans?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ServicePlansTable_3' }
             end
           end
         end
@@ -5304,6 +5665,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServicePlanVisibilitiesTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ServicePlanVisibilitiesTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ServicePlanVisibilitiesTable_0' }
@@ -5314,6 +5679,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_ServicePlanVisibilitiesTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected service plan visibilities?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ServicePlanVisibilitiesTable_1' }
             end
           end
         end
@@ -5411,6 +5782,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_allowscriptaccess_attribute('Buttons_IdentityZonesTable_0')
         end
 
+        context 'manage identity zones' do
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_IdentityZonesTable_0').text).to eq('Copy')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_IdentityZonesTable_0' }
+            end
+          end
+        end
+
         context 'selectable' do
           before do
             select_first_row
@@ -5481,6 +5864,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_allowscriptaccess_attribute('Buttons_IdentityProvidersTable_0')
         end
 
+        context 'manage identity providers' do
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_IdentityProvidersTable_0').text).to eq('Copy')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_IdentityProvidersTable_0' }
+            end
+          end
+        end
+
         context 'selectable' do
           before do
             select_first_row
@@ -5548,6 +5943,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServiceProvidersTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ServiceProvidersTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ServiceProvidersTable_0' }
@@ -5558,6 +5957,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_ServiceProvidersTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected SAML providers?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ServiceProvidersTable_1' }
             end
           end
         end
@@ -5674,6 +6079,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_5').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_6').text).to eq('Copy')
+          end
+
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_SecurityGroupsTable_0' }
@@ -5764,6 +6173,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               let(:confirm_message) { 'Are you sure you want to delete the selected security groups?' }
             end
           end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_SecurityGroupsTable_6' }
+            end
+          end
         end
 
         context 'selectable' do
@@ -5808,6 +6223,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'rules subtable has allowscriptaccess property set to sameDomain' do
             check_allowscriptaccess_attribute('Buttons_SecurityGroupsRulesTable_0')
+          end
+
+          context 'manage rules subtable' do
+            it 'has a Copy button' do
+              expect(@driver.find_element(id: 'Buttons_SecurityGroupsRulesTable_0').text).to eq('Copy')
+            end
+
+            context 'Copy button' do
+              it_behaves_like('copy button') do
+                let(:button_id) { 'Buttons_SecurityGroupsRulesTable_0' }
+              end
+            end
           end
 
           it 'has security groups spaces link' do
@@ -5868,6 +6295,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SecurityGroupsSpacesTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_SecurityGroupsSpacesTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_SecurityGroupsSpacesTable_0' }
@@ -5878,6 +6309,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_SecurityGroupsSpacesTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected security groups spaces?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_SecurityGroupsSpacesTable_1' }
             end
           end
         end
@@ -5964,6 +6401,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_StagingSecurityGroupsSpacesTable_0').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_StagingSecurityGroupsSpacesTable_1').text).to eq('Copy')
+          end
+
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_StagingSecurityGroupsSpacesTable_0' }
@@ -5974,6 +6415,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_StagingSecurityGroupsSpacesTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected staging security groups spaces?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_StagingSecurityGroupsSpacesTable_1' }
             end
           end
         end
@@ -6060,6 +6507,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_IsolationSegmentsTable_2').text).to eq('Delete')
           end
 
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_IsolationSegmentsTable_3').text).to eq('Copy')
+          end
+
           it 'creates an isolation segment' do
             @driver.find_element(id: 'Buttons_IsolationSegmentsTable_0').click
 
@@ -6111,6 +6562,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_IsolationSegmentsTable_2' }
               let(:confirm_message) { 'Are you sure you want to delete the selected isolation segments?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_IsolationSegmentsTable_3' }
             end
           end
         end
@@ -6184,9 +6641,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_checkbox_guid('OrganizationsIsolationSegmentsTable', "#{cc_organization[:guid]}/#{cc_isolation_segment[:guid]}")
         end
 
-        context 'manage organization isolation segment' do
+        context 'manage organization isolation segments' do
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'Buttons_OrganizationsIsolationSegmentsTable_0').text).to eq('Delete')
+          end
+
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_OrganizationsIsolationSegmentsTable_1').text).to eq('Copy')
           end
 
           context 'Delete button' do
@@ -6199,6 +6660,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('delete first row') do
               let(:button_id)       { 'Buttons_OrganizationsIsolationSegmentsTable_0' }
               let(:confirm_message) { 'Are you sure you want to delete the selected organization isolation segments?' }
+            end
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_OrganizationsIsolationSegmentsTable_1' }
             end
           end
         end
@@ -6254,6 +6721,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_allowscriptaccess_attribute('Buttons_EnvironmentGroupsTable_0')
         end
 
+        context 'manage environment groups' do
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_EnvironmentGroupsTable_0').text).to eq('Copy')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_EnvironmentGroupsTable_0' }
+            end
+          end
+        end
+
         context 'selectable' do
           before do
             select_first_row
@@ -6285,6 +6764,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'variables subtable has allowscriptaccess property set to sameDomain' do
             check_allowscriptaccess_attribute('Buttons_EnvironmentGroupsVariablesTable_0')
+          end
+
+          context 'manage variables subtable' do
+            it 'has a Copy button' do
+              expect(@driver.find_element(id: 'Buttons_EnvironmentGroupsVariablesTable_0').text).to eq('Copy')
+            end
+
+            context 'Copy button' do
+              it_behaves_like('copy button') do
+                let(:button_id) { 'Buttons_EnvironmentGroupsVariablesTable_0' }
+              end
+            end
           end
         end
       end
@@ -6331,6 +6822,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has allowscriptaccess property set to sameDomain' do
           check_allowscriptaccess_attribute('Buttons_DEAsTable_0')
+        end
+
+        context 'manage DEAs' do
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_DEAsTable_0').text).to eq('Copy')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_DEAsTable_0' }
+            end
+          end
         end
 
         context 'selectable' do
@@ -6411,6 +6914,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_allowscriptaccess_attribute('Buttons_CellsTable_0')
         end
 
+        context 'manage cells' do
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_CellsTable_0').text).to eq('Copy')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_CellsTable_0' }
+            end
+          end
+        end
+
         context 'selectable' do
           before do
             select_first_row
@@ -6477,6 +6992,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_allowscriptaccess_attribute('Buttons_CloudControllersTable_0')
         end
 
+        context 'manage cloud controllers' do
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_CloudControllersTable_0').text).to eq('Copy')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_CloudControllersTable_0' }
+            end
+          end
+        end
+
         context 'selectable' do
           it 'has details' do
             select_first_row
@@ -6526,6 +7053,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         it 'has allowscriptaccess property set to sameDomain' do
           check_allowscriptaccess_attribute('Buttons_HealthManagersTable_0')
+        end
+
+        context 'manage health managers' do
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_HealthManagersTable_0').text).to eq('Copy')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_HealthManagersTable_0' }
+            end
+          end
         end
 
         context 'selectable' do
@@ -6596,6 +7135,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_allowscriptaccess_attribute('Buttons_GatewaysTable_0')
         end
 
+        context 'manage service gateways' do
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_GatewaysTable_0').text).to eq('Copy')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_GatewaysTable_0' }
+            end
+          end
+        end
+
         context 'selectable' do
           before do
             select_first_row
@@ -6635,6 +7186,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'nodes subtable has allowscriptaccess property set to sameDomain' do
             check_allowscriptaccess_attribute('Buttons_GatewaysNodesTable_0')
+          end
+
+          context 'manage nodes subtable' do
+            it 'has a Copy button' do
+              expect(@driver.find_element(id: 'Buttons_GatewaysNodesTable_0').text).to eq('Copy')
+            end
+
+            context 'Copy button' do
+              it_behaves_like('copy button') do
+                let(:button_id) { 'Buttons_GatewaysNodesTable_0' }
+              end
+            end
           end
         end
       end
@@ -6698,6 +7261,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_allowscriptaccess_attribute('Buttons_RoutersTable_0')
         end
 
+        context 'manage routers' do
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_RoutersTable_0').text).to eq('Copy')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_RoutersTable_0' }
+            end
+          end
+        end
+
         context 'selectable' do
           before do
             select_first_row
@@ -6746,6 +7321,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             it 'top10 subtable has allowscriptaccess property set to sameDomain' do
               check_allowscriptaccess_attribute('Buttons_RoutersTop10ApplicationsTable_0')
+            end
+
+            context 'manage top10 applications subtable' do
+              it 'has a Copy button' do
+                expect(@driver.find_element(id: 'Buttons_RoutersTop10ApplicationsTable_0').text).to eq('Copy')
+              end
+
+              context 'Copy button' do
+                it_behaves_like('copy button') do
+                  let(:button_id) { 'Buttons_RoutersTop10ApplicationsTable_0' }
+                end
+              end
             end
           end
 
@@ -6796,24 +7383,36 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_allowscriptaccess_attribute('Buttons_ComponentsTable_2')
         end
 
-        it 'has a Remove OFFLINE Doppler button' do
-          expect(@driver.find_element(id: 'Buttons_ComponentsTable_0').text).to eq('Remove OFFLINE Doppler')
-        end
+        context 'manage components' do
+          it 'has a Remove OFFLINE Doppler button' do
+            expect(@driver.find_element(id: 'Buttons_ComponentsTable_0').text).to eq('Remove OFFLINE Doppler')
+          end
 
-        it 'has a Remove OFFLINE Varz button' do
-          expect(@driver.find_element(id: 'Buttons_ComponentsTable_1').text).to eq('Remove OFFLINE Varz')
-        end
+          it 'has a Remove OFFLINE Varz button' do
+            expect(@driver.find_element(id: 'Buttons_ComponentsTable_1').text).to eq('Remove OFFLINE Varz')
+          end
 
-        it 'removes the OFFLINE Doppler components' do
-          @driver.find_element(id: 'Buttons_ComponentsTable_0').click
-          confirm('Are you sure you want to remove all OFFLINE doppler components?')
-          check_operation_result
-        end
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_ComponentsTable_2').text).to eq('Copy')
+          end
 
-        it 'removes the OFFLINE Varz components' do
-          @driver.find_element(id: 'Buttons_ComponentsTable_1').click
-          confirm('Are you sure you want to remove all OFFLINE varz components?')
-          check_operation_result
+          it 'removes the OFFLINE Doppler components' do
+            @driver.find_element(id: 'Buttons_ComponentsTable_0').click
+            confirm('Are you sure you want to remove all OFFLINE doppler components?')
+            check_operation_result
+          end
+
+          it 'removes the OFFLINE Varz components' do
+            @driver.find_element(id: 'Buttons_ComponentsTable_1').click
+            confirm('Are you sure you want to remove all OFFLINE varz components?')
+            check_operation_result
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_ComponentsTable_2' }
+            end
+          end
         end
 
         context 'selectable' do
@@ -6863,6 +7462,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         it 'has allowscriptaccess property set to sameDomain' do
           check_allowscriptaccess_attribute('Buttons_LogsTable_0')
         end
+
+        context 'manage logs' do
+          it 'has a Copy button' do
+            expect(@driver.find_element(id: 'Buttons_LogsTable_0').text).to eq('Copy')
+          end
+
+          context 'Copy button' do
+            it_behaves_like('copy button') do
+              let(:button_id) { 'Buttons_LogsTable_0' }
+            end
+          end
+        end
       end
 
       context 'Stats' do
@@ -6890,6 +7501,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has allowscriptaccess property set to sameDomain' do
             check_allowscriptaccess_attribute('Buttons_StatsTable_1')
+          end
+
+          context 'manage stats' do
+            it 'has a Copy button' do
+              expect(@driver.find_element(id: 'Buttons_StatsTable_1').text).to eq('Copy')
+            end
+
+            context 'Copy button' do
+              it_behaves_like('copy button') do
+                let(:button_id) { 'Buttons_StatsTable_1' }
+              end
+            end
           end
 
           it 'has a chart' do
