@@ -401,6 +401,9 @@ Sequel.migration do
       foreign_key :app_guid, :apps, :type=>String, :text=>true, :key=>[:guid]
       String :docker_image, :text=>true
       String :sha256_checksum, :text=>true
+      String :docker_username, :text=>true
+      String :docker_password_salt, :text=>true
+      String :encrypted_docker_password, :text=>true
       
       index [:app_guid], :name=>:package_app_guid_index
       index [:created_at]
@@ -583,7 +586,6 @@ Sequel.migration do
       foreign_key :domain_id, :domains, :null=>false, :key=>[:id]
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       String :path, :default=>"", :null=>false
-      Integer :service_instance_id
       Integer :port, :default=>0, :null=>false
       
       index [:created_at]

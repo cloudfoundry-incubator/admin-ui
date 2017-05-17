@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'selenium-webdriver'
 
 RSpec.configure do |config|
@@ -11,11 +12,19 @@ end
 
 shared_context :web_context do
   let(:current_date)  { (Time.now.to_f * 1000).to_i }
+  let(:directory)     { '/tmp/admin_ui_directory' }
   let(:implicit_wait) { 5 }
   let(:stat_count)    { 1 }
   let(:stat_date)     { 1_383_238_113_597 }
 
+  def cleanup_web_helper_files
+    Process.wait(Process.spawn({}, "rm -fr #{directory}"))
+  end
+
   before do
+    cleanup_web_helper_files
+    FileUtils.mkdir_p(directory)
+
     @driver = selenium_web_driver
     @driver.manage.timeouts.implicit_wait = implicit_wait
 
@@ -26,27 +35,37 @@ shared_context :web_context do
 
   after do
     @driver.quit
+
+    cleanup_web_helper_files
   end
 
   def selenium_web_driver
-    return Selenium::WebDriver.for(:firefox, marionette: true) unless ENV['TRAVIS']
+    if ENV['TRAVIS']
+      access_key        = ENV['SAUCE_ACCESS_KEY']
+      build_number      = ENV['TRAVIS_BUILD_NUMBER']
+      tunnel_identifier = ENV['TRAVIS_JOB_NUMBER']
+      username          = ENV['SAUCE_USERNAME']
 
-    access_key        = ENV['SAUCE_ACCESS_KEY']
-    build_number      = ENV['TRAVIS_BUILD_NUMBER']
-    tunnel_identifier = ENV['TRAVIS_JOB_NUMBER']
-    username          = ENV['SAUCE_USERNAME']
+      caps = Selenium::WebDriver::Remote::Capabilities.firefox(marionette: true,
+                                                               build: build_number,
+                                                               'tunnel-identifier' => tunnel_identifier)
 
-    caps = Selenium::WebDriver::Remote::Capabilities.firefox(marionette: true,
-                                                             build: build_number,
-                                                             'tunnel-identifier' => tunnel_identifier)
+      url = "http://#{username}:#{access_key}@localhost:4445/wd/hub"
+      client = Selenium::WebDriver::Remote::Http::Default.new
+      client.timeout = 600
+      return Selenium::WebDriver.for(:remote,
+                                     http_client:          client,
+                                     desired_capabilities: caps,
+                                     url:                  url)
+    else
+      profile = Selenium::WebDriver::Firefox::Profile.new
+      profile['browser.download.dir']                   = directory
+      profile['browser.download.folderList']            = 2
+      profile['browser.helperApps.neverAsk.saveToDisk'] = 'application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv'
+      profile['pdfjs.disabled']                         = true
 
-    url = "http://#{username}:#{access_key}@localhost:4445/wd/hub"
-    client = Selenium::WebDriver::Remote::Http::Default.new
-    client.timeout = 600
-    return Selenium::WebDriver.for(:remote,
-                                   http_client:          client,
-                                   desired_capabilities: caps,
-                                   url:                  url)
+      return Selenium::WebDriver.for(:firefox, marionette: true, profile: profile)
+    end
   rescue => error
     unless url.nil?
       puts "Trying to connect to: #{url.gsub(access_key, '<access_key>')}"

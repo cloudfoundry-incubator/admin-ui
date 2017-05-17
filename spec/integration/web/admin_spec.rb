@@ -1,4 +1,5 @@
 require 'date'
+require 'fileutils'
 require 'rubygems'
 require 'yajl'
 require_relative '../../spec_helper'
@@ -357,19 +358,108 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
       end
 
-      shared_examples 'copy button' do
+      shared_examples 'save button' do
+        it 'saves the data in the table' do
+          @driver.find_element(id: save_button_id).click
+          Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: specific_save_button_id).displayed? }
+          expect(@driver.find_element(id: specific_save_button_id).displayed?).to be(true)
+          expect(@driver.find_element(id: specific_save_button_id).text).to eq(save_button_text)
+          @driver.find_element(id: specific_save_button_id).click
+
+          begin
+            Selenium::WebDriver::Wait.new(timeout: 10).until do
+              files = Dir.glob("#{directory}/*")
+              files.empty? == false && File.size(files.first) > 0
+            end
+          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+          end
+
+          files = Dir.glob("#{directory}/*")
+          expect(files.empty?).to be(false)
+          first = files.first
+          basename = File.basename(first)
+          expect(basename).to eq("#{filename}.#{extension}")
+          expect(File.size(first)).to be > 0
+        end
+      end
+
+      shared_examples 'standard buttons' do
+        it 'has a Copy button' do
+          expect(@driver.find_element(id: copy_button_id).text).to eq('Copy')
+        end
+
+        it 'has a Print button' do
+          expect(@driver.find_element(id: print_button_id).text).to eq('Print')
+        end
+
+        it 'has a Save button' do
+          expect(@driver.find_element(id: save_button_id).text).to eq('Save')
+        end
+
         it 'copies the data in the table' do
-          @driver.find_element(id: button_id).click
+          @driver.find_element(id: copy_button_id).click
+
           begin
             Selenium::WebDriver::Wait.new(timeout: 5).until do
               element = @driver.find_element(id: 'datatables_buttons_info')
-              expect(element).to_not be_nil
-              expect(element.displayed?).to be(true)
+              !element.nil? && element.displayed?
             end
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-            element = @driver.find_element(id: 'datatables_buttons_info')
-            expect(element).to_not be_nil
-            expect(element.displayed?).to be(true)
+          end
+
+          element = @driver.find_element(id: 'datatables_buttons_info')
+          expect(element).to_not be_nil
+          expect(element.displayed?).to be(true)
+        end
+
+        context 'CSV button' do
+          it_behaves_like('save button') do
+            let(:extension)               { 'csv' }
+            let(:save_button_text)        { 'CSV' }
+            let(:specific_save_button_id) { csv_button_id }
+          end
+        end
+
+        context 'Excel button' do
+          it_behaves_like('save button') do
+            let(:extension)               { 'xlsx' }
+            let(:save_button_text)        { 'Excel' }
+            let(:specific_save_button_id) { excel_button_id }
+          end
+        end
+
+        context 'PDF button' do
+          it_behaves_like('save button') do
+            let(:extension)               { 'pdf' }
+            let(:save_button_text)        { 'PDF' }
+            let(:specific_save_button_id) { pdf_button_id }
+          end
+        end
+      end
+
+      shared_examples 'download button' do
+        it 'has a Download button' do
+          expect(@driver.find_element(id: download_button_id).text).to eq('Download')
+        end
+
+        context 'Download button' do
+          it 'downloads the data in the table' do
+            @driver.find_element(id: download_button_id).click
+
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 5).until do
+                files = Dir.glob("#{directory}/*")
+                files.empty? == false && File.size(files.first) > 0
+              end
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+
+            files = Dir.glob("#{directory}/*")
+            expect(files.empty?).to be(false)
+            first = files.first
+            basename = File.basename(first)
+            expect(basename).to eq("#{filename}.csv")
+            expect(File.size(first)).to be > 0
           end
         end
       end
@@ -493,10 +583,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has a Delete Recursive button' do
             expect(@driver.find_element(id: 'Buttons_OrganizationsTable_7').text).to eq('Delete Recursive')
-          end
-
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_OrganizationsTable_8').text).to eq('Copy')
           end
 
           it 'creates an organization' do
@@ -683,9 +769,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_OrganizationsTable_8' }
+          context 'Standard buttons' do
+            let(:filename) { 'organizations' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)     { 'Buttons_OrganizationsTable_8' }
+              let(:print_button_id)    { 'Buttons_OrganizationsTable_9' }
+              let(:save_button_id)     { 'Buttons_OrganizationsTable_10' }
+              let(:csv_button_id)      { 'Buttons_OrganizationsTable_11' }
+              let(:excel_button_id)    { 'Buttons_OrganizationsTable_12' }
+              let(:pdf_button_id)      { 'Buttons_OrganizationsTable_13' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_OrganizationsTable_14' }
             end
           end
         end
@@ -946,10 +1043,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SpacesTable_6').text).to eq('Delete Recursive')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_SpacesTable_7').text).to eq('Copy')
-          end
-
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_SpacesTable_0' }
@@ -1101,9 +1194,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_SpacesTable_7' }
+          context 'Standard buttons' do
+            let(:filename) { 'spaces' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_SpacesTable_7' }
+              let(:print_button_id) { 'Buttons_SpacesTable_8' }
+              let(:save_button_id)  { 'Buttons_SpacesTable_9' }
+              let(:csv_button_id)   { 'Buttons_SpacesTable_10' }
+              let(:excel_button_id) { 'Buttons_SpacesTable_11' }
+              let(:pdf_button_id)   { 'Buttons_SpacesTable_12' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_SpacesTable_13' }
             end
           end
         end
@@ -1376,10 +1480,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ApplicationsTable_9').text).to eq('Delete Recursive')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ApplicationsTable_10').text).to eq('Copy')
-          end
-
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_ApplicationsTable_0' }
@@ -1522,9 +1622,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ApplicationsTable_10' }
+          context 'Standard buttons' do
+            let(:filename) { 'applications' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ApplicationsTable_10' }
+              let(:print_button_id) { 'Buttons_ApplicationsTable_11' }
+              let(:save_button_id)  { 'Buttons_ApplicationsTable_12' }
+              let(:csv_button_id)   { 'Buttons_ApplicationsTable_13' }
+              let(:excel_button_id) { 'Buttons_ApplicationsTable_14' }
+              let(:pdf_button_id)   { 'Buttons_ApplicationsTable_15' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ApplicationsTable_16' }
             end
           end
         end
@@ -1604,13 +1715,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'manage environment variables subtable' do
-            it 'has a Copy button' do
-              expect(@driver.find_element(id: 'Buttons_ApplicationsEnvironmentVariablesTable_0').text).to eq('Copy')
-            end
+            context 'Standard buttons' do
+              let(:filename) { 'application_environment_variables' }
 
-            context 'Copy button' do
-              it_behaves_like('copy button') do
-                let(:button_id) { 'Buttons_ApplicationsEnvironmentVariablesTable_0' }
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ApplicationsEnvironmentVariablesTable_0' }
+                let(:print_button_id) { 'Buttons_ApplicationsEnvironmentVariablesTable_1' }
+                let(:save_button_id)  { 'Buttons_ApplicationsEnvironmentVariablesTable_2' }
+                let(:csv_button_id)   { 'Buttons_ApplicationsEnvironmentVariablesTable_3' }
+                let(:excel_button_id) { 'Buttons_ApplicationsEnvironmentVariablesTable_4' }
+                let(:pdf_button_id)   { 'Buttons_ApplicationsEnvironmentVariablesTable_5' }
               end
             end
           end
@@ -1733,10 +1847,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ApplicationInstancesTable_0').text).to eq('Restart')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ApplicationInstancesTable_1').text).to eq('Copy')
-          end
-
           context 'Restart button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ApplicationInstancesTable_0' }
@@ -1750,9 +1860,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ApplicationInstancesTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'application_instances' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ApplicationInstancesTable_1' }
+              let(:print_button_id) { 'Buttons_ApplicationInstancesTable_2' }
+              let(:save_button_id)  { 'Buttons_ApplicationInstancesTable_3' }
+              let(:csv_button_id)   { 'Buttons_ApplicationInstancesTable_4' }
+              let(:excel_button_id) { 'Buttons_ApplicationInstancesTable_5' }
+              let(:pdf_button_id)   { 'Buttons_ApplicationInstancesTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ApplicationInstancesTable_7' }
             end
           end
         end
@@ -1896,10 +2017,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_RoutesTable_1').text).to eq('Delete Recursive')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_RoutesTable_2').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_RoutesTable_0' }
@@ -1926,9 +2043,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_RoutesTable_2' }
+          context 'Standard buttons' do
+            let(:filename) { 'routes' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_RoutesTable_2' }
+              let(:print_button_id) { 'Buttons_RoutesTable_3' }
+              let(:save_button_id)  { 'Buttons_RoutesTable_4' }
+              let(:csv_button_id)   { 'Buttons_RoutesTable_5' }
+              let(:excel_button_id) { 'Buttons_RoutesTable_6' }
+              let(:pdf_button_id)   { 'Buttons_RoutesTable_7' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_RoutesTable_8' }
             end
           end
         end
@@ -2031,10 +2159,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_RouteMappingsTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_RouteMappingsTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_RouteMappingsTable_0' }
@@ -2048,9 +2172,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_RouteMappingsTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'route_mappings' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_RouteMappingsTable_1' }
+              let(:print_button_id) { 'Buttons_RouteMappingsTable_2' }
+              let(:save_button_id)  { 'Buttons_RouteMappingsTable_3' }
+              let(:csv_button_id)   { 'Buttons_RouteMappingsTable_4' }
+              let(:excel_button_id) { 'Buttons_RouteMappingsTable_5' }
+              let(:pdf_button_id)   { 'Buttons_RouteMappingsTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_RouteMappingsTable_7' }
             end
           end
         end
@@ -2187,10 +2322,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServiceInstancesTable_3').text).to eq('Purge')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ServiceInstancesTable_4').text).to eq('Copy')
-          end
-
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_ServiceInstancesTable_0' }
@@ -2244,9 +2375,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ServiceInstancesTable_4' }
+          context 'Standard buttons' do
+            let(:filename) { 'service_instances' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ServiceInstancesTable_4' }
+              let(:print_button_id) { 'Buttons_ServiceInstancesTable_5' }
+              let(:save_button_id)  { 'Buttons_ServiceInstancesTable_6' }
+              let(:csv_button_id)   { 'Buttons_ServiceInstancesTable_7' }
+              let(:excel_button_id) { 'Buttons_ServiceInstancesTable_8' }
+              let(:pdf_button_id)   { 'Buttons_ServiceInstancesTable_9' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ServiceInstancesTable_10' }
             end
           end
         end
@@ -2326,13 +2468,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'manage credentials subtable' do
-            it 'has a Copy button' do
-              expect(@driver.find_element(id: 'Buttons_ServiceInstancesCredentialsTable_0').text).to eq('Copy')
-            end
+            context 'Standard buttons' do
+              let(:filename) { 'service_instance_credentials' }
 
-            context 'Copy button' do
-              it_behaves_like('copy button') do
-                let(:button_id) { 'Buttons_ServiceInstancesCredentialsTable_0' }
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ServiceInstancesCredentialsTable_0' }
+                let(:print_button_id) { 'Buttons_ServiceInstancesCredentialsTable_1' }
+                let(:save_button_id)  { 'Buttons_ServiceInstancesCredentialsTable_2' }
+                let(:csv_button_id)   { 'Buttons_ServiceInstancesCredentialsTable_3' }
+                let(:excel_button_id) { 'Buttons_ServiceInstancesCredentialsTable_4' }
+                let(:pdf_button_id)   { 'Buttons_ServiceInstancesCredentialsTable_5' }
               end
             end
           end
@@ -2446,10 +2591,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServiceBindingsTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ServiceBindingsTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ServiceBindingsTable_0' }
@@ -2463,9 +2604,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ServiceBindingsTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'service_bindings' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ServiceBindingsTable_1' }
+              let(:print_button_id) { 'Buttons_ServiceBindingsTable_2' }
+              let(:save_button_id)  { 'Buttons_ServiceBindingsTable_3' }
+              let(:csv_button_id)   { 'Buttons_ServiceBindingsTable_4' }
+              let(:excel_button_id) { 'Buttons_ServiceBindingsTable_5' }
+              let(:pdf_button_id)   { 'Buttons_ServiceBindingsTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ServiceBindingsTable_7' }
             end
           end
         end
@@ -2533,13 +2685,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'manage credentials subtable' do
-            it 'has a Copy button' do
-              expect(@driver.find_element(id: 'Buttons_ServiceBindingsCredentialsTable_0').text).to eq('Copy')
-            end
+            context 'Standard buttons' do
+              let(:filename) { 'service_binding_credentials' }
 
-            context 'Copy button' do
-              it_behaves_like('copy button') do
-                let(:button_id) { 'Buttons_ServiceBindingsCredentialsTable_0' }
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ServiceBindingsCredentialsTable_0' }
+                let(:print_button_id) { 'Buttons_ServiceBindingsCredentialsTable_1' }
+                let(:save_button_id)  { 'Buttons_ServiceBindingsCredentialsTable_2' }
+                let(:csv_button_id)   { 'Buttons_ServiceBindingsCredentialsTable_3' }
+                let(:excel_button_id) { 'Buttons_ServiceBindingsCredentialsTable_4' }
+                let(:pdf_button_id)   { 'Buttons_ServiceBindingsCredentialsTable_5' }
               end
             end
           end
@@ -2565,13 +2720,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'manage volume mounts subtable' do
-            it 'has a Copy button' do
-              expect(@driver.find_element(id: 'Buttons_ServiceBindingsVolumeMountsTable_0').text).to eq('Copy')
-            end
+            context 'Standard buttons' do
+              let(:filename) { 'service_binding_volume_mounts' }
 
-            context 'Copy button' do
-              it_behaves_like('copy button') do
-                let(:button_id) { 'Buttons_ServiceBindingsVolumeMountsTable_0' }
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ServiceBindingsVolumeMountsTable_0' }
+                let(:print_button_id) { 'Buttons_ServiceBindingsVolumeMountsTable_1' }
+                let(:save_button_id)  { 'Buttons_ServiceBindingsVolumeMountsTable_2' }
+                let(:csv_button_id)   { 'Buttons_ServiceBindingsVolumeMountsTable_3' }
+                let(:excel_button_id) { 'Buttons_ServiceBindingsVolumeMountsTable_4' }
+                let(:pdf_button_id)   { 'Buttons_ServiceBindingsVolumeMountsTable_5' }
               end
             end
           end
@@ -2678,10 +2836,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServiceKeysTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ServiceKeysTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ServiceKeysTable_0' }
@@ -2695,9 +2849,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ServiceKeysTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'service_keys' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ServiceKeysTable_1' }
+              let(:print_button_id) { 'Buttons_ServiceKeysTable_2' }
+              let(:save_button_id)  { 'Buttons_ServiceKeysTable_3' }
+              let(:csv_button_id)   { 'Buttons_ServiceKeysTable_4' }
+              let(:excel_button_id) { 'Buttons_ServiceKeysTable_5' }
+              let(:pdf_button_id)   { 'Buttons_ServiceKeysTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ServiceKeysTable_7' }
             end
           end
         end
@@ -2763,13 +2928,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'manage credentials subtable' do
-            it 'has a Copy button' do
-              expect(@driver.find_element(id: 'Buttons_ServiceKeysCredentialsTable_0').text).to eq('Copy')
-            end
+            context 'Standard buttons' do
+              let(:filename) { 'service_key_credentials' }
 
-            context 'Copy button' do
-              it_behaves_like('copy button') do
-                let(:button_id) { 'Buttons_ServiceKeysCredentialsTable_0' }
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ServiceKeysCredentialsTable_0' }
+                let(:print_button_id) { 'Buttons_ServiceKeysCredentialsTable_1' }
+                let(:save_button_id)  { 'Buttons_ServiceKeysCredentialsTable_2' }
+                let(:csv_button_id)   { 'Buttons_ServiceKeysCredentialsTable_3' }
+                let(:excel_button_id) { 'Buttons_ServiceKeysCredentialsTable_4' }
+                let(:pdf_button_id)   { 'Buttons_ServiceKeysCredentialsTable_5' }
               end
             end
           end
@@ -2871,10 +3039,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_RouteBindingsTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_RouteBindingsTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_RouteBindingsTable_0' }
@@ -2888,9 +3052,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_RouteBindingsTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'route_bindings' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_RouteBindingsTable_1' }
+              let(:print_button_id) { 'Buttons_RouteBindingsTable_2' }
+              let(:save_button_id)  { 'Buttons_RouteBindingsTable_3' }
+              let(:csv_button_id)   { 'Buttons_RouteBindingsTable_4' }
+              let(:excel_button_id) { 'Buttons_RouteBindingsTable_5' }
+              let(:pdf_button_id)   { 'Buttons_RouteBindingsTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_RouteBindingsTable_7' }
             end
           end
         end
@@ -3031,10 +3206,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_TasksTable_0').text).to eq('Stop')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_TasksTable_1').text).to eq('Copy')
-          end
-
           context 'Stop button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_TasksTable_0' }
@@ -3051,9 +3222,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_task_canceled
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_TasksTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'tasks' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_TasksTable_1' }
+              let(:print_button_id) { 'Buttons_TasksTable_2' }
+              let(:save_button_id)  { 'Buttons_TasksTable_3' }
+              let(:csv_button_id)   { 'Buttons_TasksTable_4' }
+              let(:excel_button_id) { 'Buttons_TasksTable_5' }
+              let(:pdf_button_id)   { 'Buttons_TasksTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_TasksTable_7' }
             end
           end
         end
@@ -3142,10 +3324,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_OrganizationRolesTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_OrganizationRolesTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_OrganizationRolesTable_0' }
@@ -3160,9 +3338,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_OrganizationRolesTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'organization_roles' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_OrganizationRolesTable_1' }
+              let(:print_button_id) { 'Buttons_OrganizationRolesTable_2' }
+              let(:save_button_id)  { 'Buttons_OrganizationRolesTable_3' }
+              let(:csv_button_id)   { 'Buttons_OrganizationRolesTable_4' }
+              let(:excel_button_id) { 'Buttons_OrganizationRolesTable_5' }
+              let(:pdf_button_id)   { 'Buttons_OrganizationRolesTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_OrganizationRolesTable_7' }
             end
           end
         end
@@ -3237,10 +3426,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SpaceRolesTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_SpaceRolesTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_SpaceRolesTable_0' }
@@ -3255,9 +3440,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_SpaceRolesTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'space_roles' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_SpaceRolesTable_1' }
+              let(:print_button_id) { 'Buttons_SpaceRolesTable_2' }
+              let(:save_button_id)  { 'Buttons_SpaceRolesTable_3' }
+              let(:csv_button_id)   { 'Buttons_SpaceRolesTable_4' }
+              let(:excel_button_id) { 'Buttons_SpaceRolesTable_5' }
+              let(:pdf_button_id)   { 'Buttons_SpaceRolesTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_SpaceRolesTable_7' }
             end
           end
         end
@@ -3340,10 +3536,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ClientsTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ClientsTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ClientsTable_0' }
@@ -3357,9 +3549,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ClientsTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'clients' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ClientsTable_1' }
+              let(:print_button_id) { 'Buttons_ClientsTable_2' }
+              let(:save_button_id)  { 'Buttons_ClientsTable_3' }
+              let(:csv_button_id)   { 'Buttons_ClientsTable_4' }
+              let(:excel_button_id) { 'Buttons_ClientsTable_5' }
+              let(:pdf_button_id)   { 'Buttons_ClientsTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ClientsTable_7' }
             end
           end
         end
@@ -3496,10 +3699,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_UsersTable_4').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_UsersTable_5').text).to eq('Copy')
-          end
-
           context 'Activate button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_UsersTable_0' }
@@ -3605,9 +3804,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_UsersTable_5' }
+          context 'Standard buttons' do
+            let(:filename) { 'users' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_UsersTable_5' }
+              let(:print_button_id) { 'Buttons_UsersTable_6' }
+              let(:save_button_id)  { 'Buttons_UsersTable_7' }
+              let(:csv_button_id)   { 'Buttons_UsersTable_8' }
+              let(:excel_button_id) { 'Buttons_UsersTable_9' }
+              let(:pdf_button_id)   { 'Buttons_UsersTable_10' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_UsersTable_11' }
             end
           end
         end
@@ -3731,10 +3941,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_GroupsTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_GroupsTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_GroupsTable_0' }
@@ -3748,9 +3954,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_GroupsTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'groups' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_GroupsTable_1' }
+              let(:print_button_id) { 'Buttons_GroupsTable_2' }
+              let(:save_button_id)  { 'Buttons_GroupsTable_3' }
+              let(:csv_button_id)   { 'Buttons_GroupsTable_4' }
+              let(:excel_button_id) { 'Buttons_GroupsTable_5' }
+              let(:pdf_button_id)   { 'Buttons_GroupsTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_GroupsTable_7' }
             end
           end
         end
@@ -3828,10 +4045,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_GroupMembersTable_0').text).to eq('Remove')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_GroupMembersTable_1').text).to eq('Copy')
-          end
-
           context 'Remove button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_GroupMembersTable_0' }
@@ -3845,9 +4058,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_GroupMembersTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'group_members' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_GroupMembersTable_1' }
+              let(:print_button_id) { 'Buttons_GroupMembersTable_2' }
+              let(:save_button_id)  { 'Buttons_GroupMembersTable_3' }
+              let(:csv_button_id)   { 'Buttons_GroupMembersTable_4' }
+              let(:excel_button_id) { 'Buttons_GroupMembersTable_5' }
+              let(:pdf_button_id)   { 'Buttons_GroupMembersTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_GroupMembersTable_7' }
             end
           end
         end
@@ -3916,13 +4140,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage approvals' do
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ApprovalsTable_0').text).to eq('Copy')
-          end
+          context 'Standard buttons' do
+            let(:filename) { 'approvals' }
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ApprovalsTable_0' }
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ApprovalsTable_0' }
+              let(:print_button_id) { 'Buttons_ApprovalsTable_1' }
+              let(:save_button_id)  { 'Buttons_ApprovalsTable_2' }
+              let(:csv_button_id)   { 'Buttons_ApprovalsTable_3' }
+              let(:excel_button_id) { 'Buttons_ApprovalsTable_4' }
+              let(:pdf_button_id)   { 'Buttons_ApprovalsTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ApprovalsTable_6' }
             end
           end
         end
@@ -4041,10 +4272,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_BuildpacksTable_5').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_BuildpacksTable_6').text).to eq('Copy')
-          end
-
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_BuildpacksTable_0' }
@@ -4120,9 +4347,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_BuildpacksTable_6' }
+          context 'Standard buttons' do
+            let(:filename) { 'buildpacks' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_BuildpacksTable_6' }
+              let(:print_button_id) { 'Buttons_BuildpacksTable_7' }
+              let(:save_button_id)  { 'Buttons_BuildpacksTable_8' }
+              let(:csv_button_id)   { 'Buttons_BuildpacksTable_9' }
+              let(:excel_button_id) { 'Buttons_BuildpacksTable_10' }
+              let(:pdf_button_id)   { 'Buttons_BuildpacksTable_11' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_BuildpacksTable_12' }
             end
           end
         end
@@ -4198,10 +4436,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_DomainsTable_1').text).to eq('Delete Recursive')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_DomainsTable_2').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_DomainsTable_0' }
@@ -4228,9 +4462,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_DomainsTable_2' }
+          context 'Standard buttons' do
+            let(:filename) { 'domains' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_DomainsTable_2' }
+              let(:print_button_id) { 'Buttons_DomainsTable_3' }
+              let(:save_button_id)  { 'Buttons_DomainsTable_4' }
+              let(:csv_button_id)   { 'Buttons_DomainsTable_5' }
+              let(:excel_button_id) { 'Buttons_DomainsTable_6' }
+              let(:pdf_button_id)   { 'Buttons_DomainsTable_7' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_DomainsTable_8' }
             end
           end
         end
@@ -4370,10 +4615,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_FeatureFlagsTable_1').text).to eq('Disable')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_FeatureFlagsTable_2').text).to eq('Copy')
-          end
-
           context 'Enable button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_FeatureFlagsTable_0' }
@@ -4398,9 +4639,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_feature_flag_enabled('true')
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_FeatureFlagsTable_2' }
+          context 'Standard buttons' do
+            let(:filename) { 'feature_flags' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_FeatureFlagsTable_2' }
+              let(:print_button_id) { 'Buttons_FeatureFlagsTable_3' }
+              let(:save_button_id)  { 'Buttons_FeatureFlagsTable_4' }
+              let(:csv_button_id)   { 'Buttons_FeatureFlagsTable_5' }
+              let(:excel_button_id) { 'Buttons_FeatureFlagsTable_6' }
+              let(:pdf_button_id)   { 'Buttons_FeatureFlagsTable_7' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_FeatureFlagsTable_8' }
             end
           end
         end
@@ -4475,10 +4727,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_QuotasTable_1').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_QuotasTable_2').text).to eq('Copy')
-          end
-
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_QuotasTable_0' }
@@ -4506,9 +4754,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_QuotasTable_2' }
+          context 'Standard buttons' do
+            let(:filename) { 'quotas' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_QuotasTable_2' }
+              let(:print_button_id) { 'Buttons_QuotasTable_3' }
+              let(:save_button_id)  { 'Buttons_QuotasTable_4' }
+              let(:csv_button_id)   { 'Buttons_QuotasTable_5' }
+              let(:excel_button_id) { 'Buttons_QuotasTable_6' }
+              let(:pdf_button_id)   { 'Buttons_QuotasTable_7' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_QuotasTable_8' }
             end
           end
         end
@@ -4603,10 +4862,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SpaceQuotasTable_1').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_SpaceQuotasTable_2').text).to eq('Copy')
-          end
-
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_SpaceQuotasTable_0' }
@@ -4634,9 +4889,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_SpaceQuotasTable_2' }
+          context 'Standard buttons' do
+            let(:filename) { 'space_quotas' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_SpaceQuotasTable_2' }
+              let(:print_button_id) { 'Buttons_SpaceQuotasTable_3' }
+              let(:save_button_id)  { 'Buttons_SpaceQuotasTable_4' }
+              let(:csv_button_id)   { 'Buttons_SpaceQuotasTable_5' }
+              let(:excel_button_id) { 'Buttons_SpaceQuotasTable_6' }
+              let(:pdf_button_id)   { 'Buttons_SpaceQuotasTable_7' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_SpaceQuotasTable_8' }
             end
           end
         end
@@ -4717,10 +4983,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_StacksTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_StacksTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_StacksTable_0' }
@@ -4734,9 +4996,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_StacksTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'stacks' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_StacksTable_1' }
+              let(:print_button_id) { 'Buttons_StacksTable_2' }
+              let(:save_button_id)  { 'Buttons_StacksTable_3' }
+              let(:csv_button_id)   { 'Buttons_StacksTable_4' }
+              let(:excel_button_id) { 'Buttons_StacksTable_5' }
+              let(:pdf_button_id)   { 'Buttons_StacksTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_StacksTable_7' }
             end
           end
         end
@@ -4808,13 +5081,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage events' do
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_EventsTable_0').text).to eq('Copy')
-          end
+          context 'Standard buttons' do
+            let(:filename) { 'events' }
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_EventsTable_0' }
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_EventsTable_0' }
+              let(:print_button_id) { 'Buttons_EventsTable_1' }
+              let(:save_button_id)  { 'Buttons_EventsTable_2' }
+              let(:csv_button_id)   { 'Buttons_EventsTable_3' }
+              let(:excel_button_id) { 'Buttons_EventsTable_4' }
+              let(:pdf_button_id)   { 'Buttons_EventsTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_EventsTable_6' }
             end
           end
         end
@@ -5094,10 +5374,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServiceBrokersTable_1').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ServiceBrokersTable_2').text).to eq('Copy')
-          end
-
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_ServiceBrokersTable_0' }
@@ -5125,9 +5401,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ServiceBrokersTable_2' }
+          context 'Standard buttons' do
+            let(:filename) { 'service_brokers' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ServiceBrokersTable_2' }
+              let(:print_button_id) { 'Buttons_ServiceBrokersTable_3' }
+              let(:save_button_id)  { 'Buttons_ServiceBrokersTable_4' }
+              let(:csv_button_id)   { 'Buttons_ServiceBrokersTable_5' }
+              let(:excel_button_id) { 'Buttons_ServiceBrokersTable_6' }
+              let(:pdf_button_id)   { 'Buttons_ServiceBrokersTable_7' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ServiceBrokersTable_8' }
             end
           end
         end
@@ -5275,10 +5562,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServicesTable_1').text).to eq('Purge')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ServicesTable_2').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ServicesTable_0' }
@@ -5305,9 +5588,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ServicesTable_2' }
+          context 'Standard buttons' do
+            let(:filename) { 'services' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ServicesTable_2' }
+              let(:print_button_id) { 'Buttons_ServicesTable_3' }
+              let(:save_button_id)  { 'Buttons_ServicesTable_4' }
+              let(:csv_button_id)   { 'Buttons_ServicesTable_5' }
+              let(:excel_button_id) { 'Buttons_ServicesTable_6' }
+              let(:pdf_button_id)   { 'Buttons_ServicesTable_7' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ServicesTable_8' }
             end
           end
         end
@@ -5480,10 +5774,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServicePlansTable_2').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ServicePlansTable_3').text).to eq('Copy')
-          end
-
           context 'Public button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ServicePlansTable_0' }
@@ -5515,9 +5805,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ServicePlansTable_3' }
+          context 'Standard buttons' do
+            let(:filename) { 'service_plans' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ServicePlansTable_3' }
+              let(:print_button_id) { 'Buttons_ServicePlansTable_4' }
+              let(:save_button_id)  { 'Buttons_ServicePlansTable_5' }
+              let(:csv_button_id)   { 'Buttons_ServicePlansTable_6' }
+              let(:excel_button_id) { 'Buttons_ServicePlansTable_7' }
+              let(:pdf_button_id)   { 'Buttons_ServicePlansTable_8' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ServicePlansTable_9' }
             end
           end
         end
@@ -5665,10 +5966,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServicePlanVisibilitiesTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ServicePlanVisibilitiesTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ServicePlanVisibilitiesTable_0' }
@@ -5682,9 +5979,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ServicePlanVisibilitiesTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'service_plan_visibilities' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ServicePlanVisibilitiesTable_1' }
+              let(:print_button_id) { 'Buttons_ServicePlanVisibilitiesTable_2' }
+              let(:save_button_id)  { 'Buttons_ServicePlanVisibilitiesTable_3' }
+              let(:csv_button_id)   { 'Buttons_ServicePlanVisibilitiesTable_4' }
+              let(:excel_button_id) { 'Buttons_ServicePlanVisibilitiesTable_5' }
+              let(:pdf_button_id)   { 'Buttons_ServicePlanVisibilitiesTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ServicePlanVisibilitiesTable_7' }
             end
           end
         end
@@ -5783,13 +6091,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage identity zones' do
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_IdentityZonesTable_0').text).to eq('Copy')
-          end
+          context 'Standard buttons' do
+            let(:filename) { 'identity_zones' }
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_IdentityZonesTable_0' }
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_IdentityZonesTable_0' }
+              let(:print_button_id) { 'Buttons_IdentityZonesTable_1' }
+              let(:save_button_id)  { 'Buttons_IdentityZonesTable_2' }
+              let(:csv_button_id)   { 'Buttons_IdentityZonesTable_3' }
+              let(:excel_button_id) { 'Buttons_IdentityZonesTable_4' }
+              let(:pdf_button_id)   { 'Buttons_IdentityZonesTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_IdentityZonesTable_6' }
             end
           end
         end
@@ -5865,13 +6180,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage identity providers' do
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_IdentityProvidersTable_0').text).to eq('Copy')
-          end
+          context 'Standard buttons' do
+            let(:filename) { 'identity_providers' }
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_IdentityProvidersTable_0' }
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_IdentityProvidersTable_0' }
+              let(:print_button_id) { 'Buttons_IdentityProvidersTable_1' }
+              let(:save_button_id)  { 'Buttons_IdentityProvidersTable_2' }
+              let(:csv_button_id)   { 'Buttons_IdentityProvidersTable_3' }
+              let(:excel_button_id) { 'Buttons_IdentityProvidersTable_4' }
+              let(:pdf_button_id)   { 'Buttons_IdentityProvidersTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_IdentityProvidersTable_6' }
             end
           end
         end
@@ -5943,10 +6265,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ServiceProvidersTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ServiceProvidersTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ServiceProvidersTable_0' }
@@ -5960,9 +6278,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ServiceProvidersTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'service_providers' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ServiceProvidersTable_1' }
+              let(:print_button_id) { 'Buttons_ServiceProvidersTable_2' }
+              let(:save_button_id)  { 'Buttons_ServiceProvidersTable_3' }
+              let(:csv_button_id)   { 'Buttons_ServiceProvidersTable_4' }
+              let(:excel_button_id) { 'Buttons_ServiceProvidersTable_5' }
+              let(:pdf_button_id)   { 'Buttons_ServiceProvidersTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ServiceProvidersTable_7' }
             end
           end
         end
@@ -6079,10 +6408,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_5').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_SecurityGroupsTable_6').text).to eq('Copy')
-          end
-
           context 'Rename button' do
             it_behaves_like('click button without selecting exactly one row') do
               let(:button_id) { 'Buttons_SecurityGroupsTable_0' }
@@ -6174,9 +6499,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_SecurityGroupsTable_6' }
+          context 'Standard buttons' do
+            let(:filename) { 'security_groups' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_SecurityGroupsTable_6' }
+              let(:print_button_id) { 'Buttons_SecurityGroupsTable_7' }
+              let(:save_button_id)  { 'Buttons_SecurityGroupsTable_8' }
+              let(:csv_button_id)   { 'Buttons_SecurityGroupsTable_9' }
+              let(:excel_button_id) { 'Buttons_SecurityGroupsTable_10' }
+              let(:pdf_button_id)   { 'Buttons_SecurityGroupsTable_11' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_SecurityGroupsTable_12' }
             end
           end
         end
@@ -6226,13 +6562,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'manage rules subtable' do
-            it 'has a Copy button' do
-              expect(@driver.find_element(id: 'Buttons_SecurityGroupsRulesTable_0').text).to eq('Copy')
-            end
+            context 'Standard buttons' do
+              let(:filename) { 'security_group_rules' }
 
-            context 'Copy button' do
-              it_behaves_like('copy button') do
-                let(:button_id) { 'Buttons_SecurityGroupsRulesTable_0' }
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_SecurityGroupsRulesTable_0' }
+                let(:print_button_id) { 'Buttons_SecurityGroupsRulesTable_1' }
+                let(:save_button_id)  { 'Buttons_SecurityGroupsRulesTable_2' }
+                let(:csv_button_id)   { 'Buttons_SecurityGroupsRulesTable_3' }
+                let(:excel_button_id) { 'Buttons_SecurityGroupsRulesTable_4' }
+                let(:pdf_button_id)   { 'Buttons_SecurityGroupsRulesTable_5' }
               end
             end
           end
@@ -6295,10 +6634,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_SecurityGroupsSpacesTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_SecurityGroupsSpacesTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_SecurityGroupsSpacesTable_0' }
@@ -6312,9 +6647,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_SecurityGroupsSpacesTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'security_groups_spaces' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_SecurityGroupsSpacesTable_1' }
+              let(:print_button_id) { 'Buttons_SecurityGroupsSpacesTable_2' }
+              let(:save_button_id)  { 'Buttons_SecurityGroupsSpacesTable_3' }
+              let(:csv_button_id)   { 'Buttons_SecurityGroupsSpacesTable_4' }
+              let(:excel_button_id) { 'Buttons_SecurityGroupsSpacesTable_5' }
+              let(:pdf_button_id)   { 'Buttons_SecurityGroupsSpacesTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_SecurityGroupsSpacesTable_7' }
             end
           end
         end
@@ -6401,10 +6747,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_StagingSecurityGroupsSpacesTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_StagingSecurityGroupsSpacesTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_StagingSecurityGroupsSpacesTable_0' }
@@ -6418,9 +6760,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_StagingSecurityGroupsSpacesTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'staging_security_groups_spaces' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_StagingSecurityGroupsSpacesTable_1' }
+              let(:print_button_id) { 'Buttons_StagingSecurityGroupsSpacesTable_2' }
+              let(:save_button_id)  { 'Buttons_StagingSecurityGroupsSpacesTable_3' }
+              let(:csv_button_id)   { 'Buttons_StagingSecurityGroupsSpacesTable_4' }
+              let(:excel_button_id) { 'Buttons_StagingSecurityGroupsSpacesTable_5' }
+              let(:pdf_button_id)   { 'Buttons_StagingSecurityGroupsSpacesTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_StagingSecurityGroupsSpacesTable_7' }
             end
           end
         end
@@ -6507,10 +6860,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_IsolationSegmentsTable_2').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_IsolationSegmentsTable_3').text).to eq('Copy')
-          end
-
           it 'creates an isolation segment' do
             @driver.find_element(id: 'Buttons_IsolationSegmentsTable_0').click
 
@@ -6565,9 +6914,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_IsolationSegmentsTable_3' }
+          context 'Standard buttons' do
+            let(:filename) { 'isolation_segments' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_IsolationSegmentsTable_3' }
+              let(:print_button_id) { 'Buttons_IsolationSegmentsTable_4' }
+              let(:save_button_id)  { 'Buttons_IsolationSegmentsTable_5' }
+              let(:csv_button_id)   { 'Buttons_IsolationSegmentsTable_6' }
+              let(:excel_button_id) { 'Buttons_IsolationSegmentsTable_7' }
+              let(:pdf_button_id)   { 'Buttons_IsolationSegmentsTable_8' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_IsolationSegmentsTable_9' }
             end
           end
         end
@@ -6646,10 +7006,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_OrganizationsIsolationSegmentsTable_0').text).to eq('Delete')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_OrganizationsIsolationSegmentsTable_1').text).to eq('Copy')
-          end
-
           context 'Delete button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_OrganizationsIsolationSegmentsTable_0' }
@@ -6663,9 +7019,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_OrganizationsIsolationSegmentsTable_1' }
+          context 'Standard buttons' do
+            let(:filename) { 'organizations_isolation_segments' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_OrganizationsIsolationSegmentsTable_1' }
+              let(:print_button_id) { 'Buttons_OrganizationsIsolationSegmentsTable_2' }
+              let(:save_button_id)  { 'Buttons_OrganizationsIsolationSegmentsTable_3' }
+              let(:csv_button_id)   { 'Buttons_OrganizationsIsolationSegmentsTable_4' }
+              let(:excel_button_id) { 'Buttons_OrganizationsIsolationSegmentsTable_5' }
+              let(:pdf_button_id)   { 'Buttons_OrganizationsIsolationSegmentsTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_OrganizationsIsolationSegmentsTable_7' }
             end
           end
         end
@@ -6722,13 +7089,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage environment groups' do
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_EnvironmentGroupsTable_0').text).to eq('Copy')
-          end
+          context 'Standard buttons' do
+            let(:filename) { 'environment_groups' }
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_EnvironmentGroupsTable_0' }
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_EnvironmentGroupsTable_0' }
+              let(:print_button_id) { 'Buttons_EnvironmentGroupsTable_1' }
+              let(:save_button_id)  { 'Buttons_EnvironmentGroupsTable_2' }
+              let(:csv_button_id)   { 'Buttons_EnvironmentGroupsTable_3' }
+              let(:excel_button_id) { 'Buttons_EnvironmentGroupsTable_4' }
+              let(:pdf_button_id)   { 'Buttons_EnvironmentGroupsTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_EnvironmentGroupsTable_6' }
             end
           end
         end
@@ -6767,13 +7141,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'manage variables subtable' do
-            it 'has a Copy button' do
-              expect(@driver.find_element(id: 'Buttons_EnvironmentGroupsVariablesTable_0').text).to eq('Copy')
-            end
+            context 'Standard buttons' do
+              let(:filename) { 'environment_group_variables' }
 
-            context 'Copy button' do
-              it_behaves_like('copy button') do
-                let(:button_id) { 'Buttons_EnvironmentGroupsVariablesTable_0' }
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_EnvironmentGroupsVariablesTable_0' }
+                let(:print_button_id) { 'Buttons_EnvironmentGroupsVariablesTable_1' }
+                let(:save_button_id)  { 'Buttons_EnvironmentGroupsVariablesTable_2' }
+                let(:csv_button_id)   { 'Buttons_EnvironmentGroupsVariablesTable_3' }
+                let(:excel_button_id) { 'Buttons_EnvironmentGroupsVariablesTable_4' }
+                let(:pdf_button_id)   { 'Buttons_EnvironmentGroupsVariablesTable_5' }
               end
             end
           end
@@ -6825,13 +7202,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage DEAs' do
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_DEAsTable_0').text).to eq('Copy')
-          end
+          context 'Standard buttons' do
+            let(:filename) { 'deas' }
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_DEAsTable_0' }
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_DEAsTable_0' }
+              let(:print_button_id) { 'Buttons_DEAsTable_1' }
+              let(:save_button_id)  { 'Buttons_DEAsTable_2' }
+              let(:csv_button_id)   { 'Buttons_DEAsTable_3' }
+              let(:excel_button_id) { 'Buttons_DEAsTable_4' }
+              let(:pdf_button_id)   { 'Buttons_DEAsTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_DEAsTable_6' }
             end
           end
         end
@@ -6915,13 +7299,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage cells' do
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_CellsTable_0').text).to eq('Copy')
-          end
+          context 'Standard buttons' do
+            let(:filename) { 'cells' }
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_CellsTable_0' }
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_CellsTable_0' }
+              let(:print_button_id) { 'Buttons_CellsTable_1' }
+              let(:save_button_id)  { 'Buttons_CellsTable_2' }
+              let(:csv_button_id)   { 'Buttons_CellsTable_3' }
+              let(:excel_button_id) { 'Buttons_CellsTable_4' }
+              let(:pdf_button_id)   { 'Buttons_CellsTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_CellsTable_6' }
             end
           end
         end
@@ -6993,13 +7384,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage cloud controllers' do
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_CloudControllersTable_0').text).to eq('Copy')
-          end
+          context 'Standard buttons' do
+            let(:filename) { 'cloud_controllers' }
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_CloudControllersTable_0' }
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_CloudControllersTable_0' }
+              let(:print_button_id) { 'Buttons_CloudControllersTable_1' }
+              let(:save_button_id)  { 'Buttons_CloudControllersTable_2' }
+              let(:csv_button_id)   { 'Buttons_CloudControllersTable_3' }
+              let(:excel_button_id) { 'Buttons_CloudControllersTable_4' }
+              let(:pdf_button_id)   { 'Buttons_CloudControllersTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_CloudControllersTable_6' }
             end
           end
         end
@@ -7056,13 +7454,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage health managers' do
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_HealthManagersTable_0').text).to eq('Copy')
-          end
+          context 'Standard buttons' do
+            let(:filename) { 'health_managers' }
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_HealthManagersTable_0' }
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_HealthManagersTable_0' }
+              let(:print_button_id) { 'Buttons_HealthManagersTable_1' }
+              let(:save_button_id)  { 'Buttons_HealthManagersTable_2' }
+              let(:csv_button_id)   { 'Buttons_HealthManagersTable_3' }
+              let(:excel_button_id) { 'Buttons_HealthManagersTable_4' }
+              let(:pdf_button_id)   { 'Buttons_HealthManagersTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_HealthManagersTable_6' }
             end
           end
         end
@@ -7136,13 +7541,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage service gateways' do
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_GatewaysTable_0').text).to eq('Copy')
-          end
+          context 'Standard buttons' do
+            let(:filename) { 'gateways' }
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_GatewaysTable_0' }
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_GatewaysTable_0' }
+              let(:print_button_id) { 'Buttons_GatewaysTable_1' }
+              let(:save_button_id)  { 'Buttons_GatewaysTable_2' }
+              let(:csv_button_id)   { 'Buttons_GatewaysTable_3' }
+              let(:excel_button_id) { 'Buttons_GatewaysTable_4' }
+              let(:pdf_button_id)   { 'Buttons_GatewaysTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_GatewaysTable_6' }
             end
           end
         end
@@ -7189,13 +7601,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'manage nodes subtable' do
-            it 'has a Copy button' do
-              expect(@driver.find_element(id: 'Buttons_GatewaysNodesTable_0').text).to eq('Copy')
-            end
+            context 'Standard buttons' do
+              let(:filename) { 'gateway_nodes' }
 
-            context 'Copy button' do
-              it_behaves_like('copy button') do
-                let(:button_id) { 'Buttons_GatewaysNodesTable_0' }
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_GatewaysNodesTable_0' }
+                let(:print_button_id) { 'Buttons_GatewaysNodesTable_1' }
+                let(:save_button_id)  { 'Buttons_GatewaysNodesTable_2' }
+                let(:csv_button_id)   { 'Buttons_GatewaysNodesTable_3' }
+                let(:excel_button_id) { 'Buttons_GatewaysNodesTable_4' }
+                let(:pdf_button_id)   { 'Buttons_GatewaysNodesTable_5' }
               end
             end
           end
@@ -7262,13 +7677,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage routers' do
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_RoutersTable_0').text).to eq('Copy')
-          end
+          context 'Standard buttons' do
+            let(:filename) { 'routers' }
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_RoutersTable_0' }
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_RoutersTable_0' }
+              let(:print_button_id) { 'Buttons_RoutersTable_1' }
+              let(:save_button_id)  { 'Buttons_RoutersTable_2' }
+              let(:csv_button_id)   { 'Buttons_RoutersTable_3' }
+              let(:excel_button_id) { 'Buttons_RoutersTable_4' }
+              let(:pdf_button_id)   { 'Buttons_RoutersTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_RoutersTable_6' }
             end
           end
         end
@@ -7324,13 +7746,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
 
             context 'manage top10 applications subtable' do
-              it 'has a Copy button' do
-                expect(@driver.find_element(id: 'Buttons_RoutersTop10ApplicationsTable_0').text).to eq('Copy')
-              end
+              context 'Standard buttons' do
+                let(:filename) { 'router_applications' }
 
-              context 'Copy button' do
-                it_behaves_like('copy button') do
-                  let(:button_id) { 'Buttons_RoutersTop10ApplicationsTable_0' }
+                it_behaves_like('standard buttons') do
+                  let(:copy_button_id)  { 'Buttons_RoutersTop10ApplicationsTable_0' }
+                  let(:print_button_id) { 'Buttons_RoutersTop10ApplicationsTable_1' }
+                  let(:save_button_id)  { 'Buttons_RoutersTop10ApplicationsTable_2' }
+                  let(:csv_button_id)   { 'Buttons_RoutersTop10ApplicationsTable_3' }
+                  let(:excel_button_id) { 'Buttons_RoutersTop10ApplicationsTable_4' }
+                  let(:pdf_button_id)   { 'Buttons_RoutersTop10ApplicationsTable_5' }
                 end
               end
             end
@@ -7392,10 +7817,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_ComponentsTable_1').text).to eq('Remove OFFLINE Varz')
           end
 
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_ComponentsTable_2').text).to eq('Copy')
-          end
-
           it 'removes the OFFLINE Doppler components' do
             @driver.find_element(id: 'Buttons_ComponentsTable_0').click
             confirm('Are you sure you want to remove all OFFLINE doppler components?')
@@ -7408,9 +7829,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_operation_result
           end
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_ComponentsTable_2' }
+          context 'Standard buttons' do
+            let(:filename) { 'components' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_ComponentsTable_2' }
+              let(:print_button_id) { 'Buttons_ComponentsTable_3' }
+              let(:save_button_id)  { 'Buttons_ComponentsTable_4' }
+              let(:csv_button_id)   { 'Buttons_ComponentsTable_5' }
+              let(:excel_button_id) { 'Buttons_ComponentsTable_6' }
+              let(:pdf_button_id)   { 'Buttons_ComponentsTable_7' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_ComponentsTable_8' }
             end
           end
         end
@@ -7464,13 +7896,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage logs' do
-          it 'has a Copy button' do
-            expect(@driver.find_element(id: 'Buttons_LogsTable_0').text).to eq('Copy')
-          end
+          context 'Standard buttons' do
+            let(:filename) { 'logs' }
 
-          context 'Copy button' do
-            it_behaves_like('copy button') do
-              let(:button_id) { 'Buttons_LogsTable_0' }
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_LogsTable_0' }
+              let(:print_button_id) { 'Buttons_LogsTable_1' }
+              let(:save_button_id)  { 'Buttons_LogsTable_2' }
+              let(:csv_button_id)   { 'Buttons_LogsTable_3' }
+              let(:excel_button_id) { 'Buttons_LogsTable_4' }
+              let(:pdf_button_id)   { 'Buttons_LogsTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_LogsTable_6' }
             end
           end
         end
@@ -7504,13 +7943,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           context 'manage stats' do
-            it 'has a Copy button' do
-              expect(@driver.find_element(id: 'Buttons_StatsTable_1').text).to eq('Copy')
-            end
+            context 'Standard buttons' do
+              let(:filename) { 'stats' }
 
-            context 'Copy button' do
-              it_behaves_like('copy button') do
-                let(:button_id) { 'Buttons_StatsTable_1' }
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_StatsTable_1' }
+                let(:print_button_id) { 'Buttons_StatsTable_2' }
+                let(:save_button_id)  { 'Buttons_StatsTable_3' }
+                let(:csv_button_id)   { 'Buttons_StatsTable_4' }
+                let(:excel_button_id) { 'Buttons_StatsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_StatsTable_6' }
+              end
+
+              it_behaves_like('download button') do
+                let(:download_button_id) { 'Buttons_StatsTable_7' }
               end
             end
           end
