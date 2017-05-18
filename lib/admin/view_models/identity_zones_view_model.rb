@@ -10,15 +10,32 @@ module AdminUI
       # identity_zones have to exist.  Other record types are optional
       return result unless identity_zones['connected']
 
+      approvals          = @cc.approvals
       clients            = @cc.clients
+      group_membership   = @cc.group_membership
+      groups             = @cc.groups
       identity_providers = @cc.identity_providers
       service_providers  = @cc.service_providers
       users              = @cc.users_uaa
 
+      approvals_connected          = approvals['connected']
       clients_connected            = clients['connected']
+      group_membership_connected   = group_membership['connected']
+      groups_connected             = groups['connected']
       identity_providers_connected = identity_providers['connected']
       service_providers_connected  = service_providers['connected']
       users_connected              = users['connected']
+
+      approval_counters = {}
+      approvals['items'].each do |approval|
+        return result unless @running
+        Thread.pass
+
+        identity_zone_id = approval[:identity_zone_id]
+        next if identity_zone_id.nil?
+        approval_counters[identity_zone_id] = 0 if approval_counters[identity_zone_id].nil?
+        approval_counters[identity_zone_id] += 1
+      end
 
       client_counters = {}
       clients['items'].each do |client|
@@ -29,6 +46,28 @@ module AdminUI
         next if identity_zone_id.nil?
         client_counters[identity_zone_id] = 0 if client_counters[identity_zone_id].nil?
         client_counters[identity_zone_id] += 1
+      end
+
+      group_counters = {}
+      groups['items'].each do |group|
+        return result unless @running
+        Thread.pass
+
+        identity_zone_id = group[:identity_zone_id]
+        next if identity_zone_id.nil?
+        group_counters[identity_zone_id] = 0 if group_counters[identity_zone_id].nil?
+        group_counters[identity_zone_id] += 1
+      end
+
+      group_membership_counters = {}
+      group_membership['items'].each do |group_membership_entry|
+        return result unless @running
+        Thread.pass
+
+        identity_zone_id = group_membership_entry[:identity_zone_id]
+        next if identity_zone_id.nil?
+        group_membership_counters[identity_zone_id] = 0 if group_membership_counters[identity_zone_id].nil?
+        group_membership_counters[identity_zone_id] += 1
       end
 
       identity_provider_counters = {}
@@ -73,7 +112,10 @@ module AdminUI
 
         id = identity_zone[:id]
 
+        approval_counter          = approval_counters[id]
         client_counter            = client_counters[id]
+        group_counter             = group_counters[id]
+        group_membership_counter  = group_membership_counters[id]
         identity_provider_counter = identity_provider_counters[id]
         service_provider_counter  = service_provider_counters[id]
         user_counter              = user_counters[id]
@@ -125,6 +167,30 @@ module AdminUI
           row.push(nil)
         end
 
+        if group_counter
+          row.push(group_counter)
+        elsif groups_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if group_membership_counter
+          row.push(group_membership_counter)
+        elsif group_membership_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if approval_counter
+          row.push(approval_counter)
+        elsif approvals_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         row.push(identity_zone[:description])
 
         items.push(row)
@@ -132,7 +198,7 @@ module AdminUI
         hash[id] = identity_zone
       end
 
-      result(true, items, hash, (0..10).to_a, (0..4).to_a << 10)
+      result(true, items, hash, (0..13).to_a, (0..4).to_a << 13)
     end
   end
 end

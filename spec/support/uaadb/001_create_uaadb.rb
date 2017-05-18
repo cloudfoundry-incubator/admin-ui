@@ -7,19 +7,9 @@ Sequel.migration do
       DateTime :expiresat, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       String :status, :default=>"APPROVED", :size=>50, :null=>false
       DateTime :lastmodifiedat, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      String :identity_zone_id, :size=>36
       
       primary_key [:user_id, :client_id, :scope]
-    end
-    
-    create_table(:authz_approvals_old) do
-      String :username, :size=>255, :null=>false
-      String :clientid, :size=>36, :null=>false
-      String :scope, :size=>255, :null=>false
-      DateTime :expiresat, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      String :status, :default=>"APPROVED", :size=>50, :null=>false
-      DateTime :lastmodifiedat, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      
-      primary_key [:username, :clientid, :scope]
     end
     
     create_table(:expiring_code_store) do
@@ -27,6 +17,7 @@ Sequel.migration do
       Bignum :expiresat, :null=>false
       String :data, :text=>true, :null=>false
       String :intent, :text=>true
+      String :identity_zone_id, :default=>"uaa", :size=>36, :null=>false
       
       primary_key [:code]
     end
@@ -36,6 +27,7 @@ Sequel.migration do
       String :external_group, :size=>255, :null=>false
       DateTime :added, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       String :origin, :size=>36
+      String :identity_zone_id, :size=>36
       
       index [:origin, :external_group, :group_id], :name=>:external_group_unique_key, :unique=>true
     end
@@ -47,6 +39,7 @@ Sequel.migration do
       String :authorities, :default=>"READ", :size=>255, :null=>false
       DateTime :added, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       String :origin, :default=>"uaa", :size=>36, :null=>false
+      String :identity_zone_id, :size=>36
       
       index [:member_id, :group_id], :name=>:group_membership_unique_key, :unique=>true
     end
@@ -101,10 +94,10 @@ Sequel.migration do
       String :client_id, :size=>255, :null=>false
       String :resource_ids, :size=>1024
       String :client_secret, :size=>256
-      String :scope, :size=>1024
+      String :scope, :size=>4000
       String :authorized_grant_types, :size=>256
       String :web_server_redirect_uri, :size=>1024
-      String :authorities, :size=>1024
+      String :authorities, :size=>4000
       Integer :access_token_validity
       Integer :refresh_token_validity, :default=>0
       String :additional_information, :size=>4096
@@ -127,6 +120,7 @@ Sequel.migration do
       Bignum :expiresat, :default=>0, :null=>false
       String :user_id, :size=>36
       String :client_id, :size=>255
+      String :identity_zone_id, :size=>36
       
       index [:expiresat], :name=>:oauth_code_expiresat_idx
       index [:code], :name=>:oauth_code_uq_idx, :unique=>true
@@ -140,7 +134,7 @@ Sequel.migration do
       String :response_type, :size=>25, :null=>false
       Bignum :issued_at, :null=>false
       Bignum :expires_at, :null=>false
-      String :scope, :size=>1000
+      String :scope, :size=>4000
       String :data, :text=>true, :null=>false
       String :identity_zone_id, :default=>"uaa", :size=>36, :null=>false
       
@@ -149,6 +143,7 @@ Sequel.migration do
       index [:client_id], :name=>:idx_revocable_token_client_id
       index [:expires_at], :name=>:idx_revocable_token_expires_at
       index [:user_id], :name=>:idx_revocable_token_user_id
+      index [:identity_zone_id], :name=>:revocable_tokens_zone_id
     end
     
     create_table(:schema_version, :ignore_index_errors=>true) do

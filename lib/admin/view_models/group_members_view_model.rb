@@ -14,8 +14,11 @@ module AdminUI
                            group_membership['connected'] &&
                            users['connected']
 
-      group_hash = Hash[groups['items'].map { |item| [item[:id], item] }]
-      user_hash  = Hash[users['items'].map { |item| [item[:id], item] }]
+      identity_zones = @cc.identity_zones
+
+      group_hash         = Hash[groups['items'].map { |item| [item[:id], item] }]
+      identity_zone_hash = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
+      user_hash          = Hash[users['items'].map { |item| [item[:id], item] }]
 
       items = []
       hash  = {}
@@ -32,11 +35,20 @@ module AdminUI
 
         next if group.nil? || user.nil?
 
+        identity_zone = identity_zone_hash[group[:identity_zone_id]]
+
         row = []
 
         key = "#{group_id}/#{member_id}"
 
         row.push(key)
+
+        if identity_zone
+          row.push(identity_zone[:name])
+        else
+          row.push(nil)
+        end
+
         row.push(group[:displayname])
         row.push(group_id)
         row.push(user[:username])
@@ -49,11 +61,12 @@ module AdminUI
           {
             'group'            => group,
             'group_membership' => group_member,
+            'identity_zone'    => identity_zone,
             'user_uaa'         => user
           }
       end
 
-      result(true, items, hash, (1..5).to_a, (1..5).to_a)
+      result(true, items, hash, (1..6).to_a, (1..6).to_a)
     end
   end
 end

@@ -30,29 +30,6 @@ Sequel.migration do
       index [:created_at], :name=>:usage_events_created_at_index
     end
     
-    create_table(:apps, :ignore_index_errors=>true) do
-      primary_key :id
-      String :guid, :text=>true, :null=>false
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      String :space_guid, :text=>true
-      String :name
-      String :droplet_guid, :text=>true
-      String :desired_state, :default=>"STOPPED", :text=>true
-      String :encrypted_environment_variables, :text=>true
-      String :salt, :text=>true
-      Integer :max_task_sequence_id, :default=>1
-      String :buildpack_cache_sha256_checksum, :text=>true
-      
-      index [:droplet_guid], :name=>:apps_desired_droplet_guid
-      index [:created_at], :name=>:apps_v3_created_at_index
-      index [:guid], :name=>:apps_v3_guid_index, :unique=>true
-      index [:name], :name=>:apps_v3_name_index
-      index [:space_guid], :name=>:apps_v3_space_guid_index
-      index [:space_guid, :name], :name=>:apps_v3_space_guid_name_index, :unique=>true
-      index [:updated_at], :name=>:apps_v3_updated_at_index
-    end
-    
     create_table(:billing_events, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -355,6 +332,47 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:app_events, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      Integer :app_id, :null=>false
+      String :instance_guid, :text=>true, :null=>false
+      Integer :instance_index, :null=>false
+      Integer :exit_status, :null=>false
+      DateTime :timestamp, :null=>false
+      String :exit_description, :text=>true
+      
+      index [:app_id]
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:apps, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :space_guid, :text=>true
+      String :name
+      String :droplet_guid, :text=>true
+      String :desired_state, :default=>"STOPPED", :text=>true
+      String :encrypted_environment_variables, :text=>true
+      String :salt, :text=>true
+      Integer :max_task_sequence_id, :default=>1
+      String :buildpack_cache_sha256_checksum, :text=>true
+      
+      index [:droplet_guid], :name=>:apps_desired_droplet_guid
+      index [:created_at], :name=>:apps_v3_created_at_index
+      index [:guid], :name=>:apps_v3_guid_index, :unique=>true
+      index [:name], :name=>:apps_v3_name_index
+      index [:space_guid], :name=>:apps_v3_space_guid_index
+      index [:space_guid, :name], :name=>:apps_v3_space_guid_name_index, :unique=>true
+      index [:updated_at], :name=>:apps_v3_updated_at_index
+    end
+    
     create_table(:droplets, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -378,6 +396,9 @@ Sequel.migration do
       String :package_guid, :text=>true
       foreign_key :app_guid, :apps, :type=>String, :text=>true, :key=>[:guid]
       String :sha256_checksum, :text=>true
+      String :docker_receipt_username, :text=>true
+      String :docker_receipt_password_salt, :text=>true
+      String :encrypted_docker_receipt_password, :text=>true
       
       index [:app_guid], :name=>:droplet_app_guid_index
       index [:created_at]
@@ -470,24 +491,6 @@ Sequel.migration do
       index [:state]
       index [:updated_at]
       index [:app_guid, :sequence_id], :name=>:unique_task_app_guid_sequence_id, :unique=>true
-    end
-    
-    create_table(:app_events, :ignore_index_errors=>true) do
-      primary_key :id
-      String :guid, :text=>true, :null=>false
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      foreign_key :app_id, :processes, :null=>false, :key=>[:id]
-      String :instance_guid, :text=>true, :null=>false
-      Integer :instance_index, :null=>false
-      Integer :exit_status, :null=>false
-      DateTime :timestamp, :null=>false
-      String :exit_description, :text=>true
-      
-      index [:app_id]
-      index [:created_at]
-      index [:guid], :unique=>true
-      index [:updated_at]
     end
     
     create_table(:domains, :ignore_index_errors=>true) do
@@ -867,6 +870,14 @@ Sequel.migration do
       index [:guid], :name=>:sk_guid_index, :unique=>true
       index [:updated_at], :name=>:sk_updated_at_index
       index [:name, :service_instance_id], :name=>:svc_key_name_instance_id_index, :unique=>true
+    end
+    
+    alter_table(:app_events) do
+      add_foreign_key [:app_id], :processes, :name=>:fk_app_events_app_id, :key=>[:id]
+    end
+    
+    alter_table(:apps) do
+      add_foreign_key [:space_guid], :spaces, :name=>:fk_apps_space_guid, :key=>[:guid]
     end
     
     alter_table(:domains) do

@@ -12,7 +12,10 @@ module AdminUI
       return result unless approvals['connected'] &&
                            users['connected']
 
-      user_hash = Hash[users['items'].map { |item| [item[:id], item] }]
+      identity_zones = @cc.identity_zones
+
+      identity_zone_hash = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
+      user_hash          = Hash[users['items'].map { |item| [item[:id], item] }]
 
       items = []
       hash  = {}
@@ -25,7 +28,15 @@ module AdminUI
 
         next if user.nil?
 
+        identity_zone = identity_zone_hash[approval[:identity_zone_id]]
+
         row = []
+
+        if identity_zone
+          row.push(identity_zone[:name])
+        else
+          row.push(nil)
+        end
 
         row.push(user[:username])
         row.push(approval[:user_id])
@@ -39,12 +50,13 @@ module AdminUI
 
         hash["#{approval[:user_id]}/#{approval[:client_id]}/#{approval[:scope]}"] =
           {
-            'approval' => approval,
-            'user_uaa' => user
+            'approval'      => approval,
+            'identity_zone' => identity_zone,
+            'user_uaa'      => user
           }
       end
 
-      result(true, items, hash, (0..6).to_a, (0..6).to_a)
+      result(true, items, hash, (0..7).to_a, (0..7).to_a)
     end
   end
 end

@@ -168,6 +168,7 @@ module ViewModelsHelper
   def view_models_approvals
     [
       [
+        uaa_identity_zone[:name],
         uaa_user[:username],
         uaa_approval[:user_id],
         uaa_approval[:client_id],
@@ -181,8 +182,9 @@ module ViewModelsHelper
 
   def view_models_approvals_detail
     {
-      'approval' => uaa_approval,
-      'user_uaa' => uaa_user
+      'approval'      => uaa_approval,
+      'identity_zone' => uaa_identity_zone,
+      'user_uaa'      => uaa_user
     }
   end
 
@@ -507,6 +509,7 @@ module ViewModelsHelper
     [
       [
         "#{uaa_group[:id]}/#{uaa_user[:id]}",
+        uaa_identity_zone[:name],
         uaa_group[:displayname],
         uaa_group[:id],
         uaa_user[:username],
@@ -520,6 +523,7 @@ module ViewModelsHelper
     {
       'group'            => uaa_group,
       'group_membership' => uaa_group_membership,
+      'identity_zone'    => uaa_identity_zone,
       'user_uaa'         => uaa_user
     }
   end
@@ -602,6 +606,9 @@ module ViewModelsHelper
         uaa_identity_zone[:lastmodified].to_datetime.rfc3339,
         uaa_identity_zone[:subdomain],
         uaa_identity_zone[:version],
+        1,
+        1,
+        1,
         1,
         1,
         1,

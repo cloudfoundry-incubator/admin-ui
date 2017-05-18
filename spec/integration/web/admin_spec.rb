@@ -4009,14 +4009,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='GroupMembersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 4,
-                                 labels:          ['', 'Group', 'User', ''],
-                                 colspans:        %w[1 2 2 1]
+                                 expected_length: 5,
+                                 labels:          ['', '', 'Group', 'User', ''],
+                                 colspans:        %w[1 1 2 2 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='GroupMembersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 6,
-                                 labels:          ['', 'Name', 'GUID', 'Name', 'GUID', 'Created'],
+                                 expected_length: 7,
+                                 labels:          ['', 'Identity Zone', 'Name', 'GUID', 'Name', 'GUID', 'Created'],
                                  colspans:        nil
                                }
                              ])
@@ -4024,6 +4024,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='GroupMembersTable']/tbody/tr/td"),
                            [
                              '',
+                             uaa_identity_zone[:name],
                              uaa_group[:displayname],
                              uaa_group[:id],
                              uaa_user[:username],
@@ -4083,22 +4084,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Group',      tag: 'div', value: uaa_group[:displayname] },
+                            { label: 'Identity Zone',    tag:   'a', value: uaa_identity_zone[:name] },
+                            { label: 'Identity Zone ID', tag:   nil, value: uaa_identity_zone[:id] },
+                            { label: 'Group',            tag: 'div', value: uaa_group[:displayname] },
                             # rubocop:disable Style/ExtraSpacing
-                            { label: 'Group GUID', tag:   nil, value: uaa_group[:id] },
-                            { label: 'User',       tag:    'a', value: uaa_user[:username] },
+                            { label: 'Group GUID',       tag:   nil, value: uaa_group[:id] },
+                            { label: 'User',             tag:    'a', value: uaa_user[:username] },
                             # rubocop:enable Style/ExtraSpacing
-                            { label: 'User GUID',  tag:   nil, value: uaa_user[:id] },
-                            { label: 'Created',    tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_group_membership[:added].to_datetime.rfc3339}\")") }
+                            { label: 'User GUID',        tag:   nil, value: uaa_user[:id] },
+                            { label: 'Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_group_membership[:added].to_datetime.rfc3339}\")") }
                           ])
           end
 
+          it 'has identity zones link' do
+            check_filter_link('GroupMembers', 0, 'IdentityZones', uaa_identity_zone[:id])
+          end
+
           it 'has groups link' do
-            check_filter_link('GroupMembers', 0, 'Groups', uaa_group[:id])
+            check_filter_link('GroupMembers', 2, 'Groups', uaa_group[:id])
           end
 
           it 'has users link' do
-            check_filter_link('GroupMembers', 2, 'Users', uaa_user[:id])
+            check_filter_link('GroupMembers', 4, 'Users', uaa_user[:id])
           end
         end
       end
@@ -4111,20 +4118,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApprovalsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 2,
-                                 labels:          ['User', ''],
-                                 colspans:        %w[2 5]
+                                 expected_length: 3,
+                                 labels:          ['', 'User', ''],
+                                 colspans:        %w[1 2 5]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ApprovalsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 7,
-                                 labels:          %w[Name GUID Client Scope Status Updated Expires],
+                                 expected_length: 8,
+                                 labels:          ['Identity Zone', 'Name', 'GUID', 'Client', 'Scope', 'Status', 'Updated', 'Expires'],
                                  colspans:        nil
                                }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='ApprovalsTable']/tbody/tr/td"),
                            [
+                             uaa_identity_zone[:name],
                              uaa_user[:username],
                              uaa_approval[:user_id],
                              uaa_approval[:client_id],
@@ -4165,22 +4173,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'User',      tag: 'div', value: uaa_user[:username] },
-                            { label: 'User GUID', tag:   nil, value: uaa_approval[:user_id] },
-                            { label: 'Client',    tag:   'a', value: uaa_approval[:client_id] },
-                            { label: 'Scope',     tag:   nil, value: uaa_approval[:scope] },
-                            { label: 'Status',    tag:   nil, value: uaa_approval[:status] },
-                            { label: 'Updated',   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_approval[:lastmodifiedat].to_datetime.rfc3339}\")") },
-                            { label: 'Expires',   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_approval[:expiresat].to_datetime.rfc3339}\")") }
+                            { label: 'Identity Zone',    tag:   'a', value: uaa_identity_zone[:name] },
+                            { label: 'Identity Zone ID', tag:   nil, value: uaa_identity_zone[:id] },
+                            { label: 'User',             tag: 'div', value: uaa_user[:username] },
+                            { label: 'User GUID',        tag:   nil, value: uaa_approval[:user_id] },
+                            { label: 'Client',           tag:   'a', value: uaa_approval[:client_id] },
+                            { label: 'Scope',            tag:   nil, value: uaa_approval[:scope] },
+                            { label: 'Status',           tag:   nil, value: uaa_approval[:status] },
+                            { label: 'Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_approval[:lastmodifiedat].to_datetime.rfc3339}\")") },
+                            { label: 'Expires',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_approval[:expiresat].to_datetime.rfc3339}\")") }
                           ])
           end
 
+          it 'has identity zones link' do
+            check_filter_link('Approvals', 0, 'IdentityZones', uaa_identity_zone[:id])
+          end
+
           it 'has users link' do
-            check_filter_link('Approvals', 0, 'Users', uaa_approval[:user_id])
+            check_filter_link('Approvals', 2, 'Users', uaa_approval[:user_id])
           end
 
           it 'has clients link' do
-            check_filter_link('Approvals', 2, 'Clients', uaa_approval[:client_id])
+            check_filter_link('Approvals', 4, 'Clients', uaa_approval[:client_id])
           end
         end
       end
@@ -6064,8 +6078,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='IdentityZonesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 11,
-                                 labels:          ['Name', 'ID', 'Created', 'Updated', 'Subdomain', 'Version', 'Identity Providers', 'SAML Providers', 'Clients', 'Users', 'Description'],
+                                 expected_length: 14,
+                                 labels:          ['Name', 'ID', 'Created', 'Updated', 'Subdomain', 'Version', 'Identity Providers', 'SAML Providers', 'Clients', 'Users', 'Groups', 'Group Members', 'Approvals', 'Description'],
                                  colspans:        nil
                                }
                              ])
@@ -6078,6 +6092,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_identity_zone[:lastmodified].to_datetime.rfc3339,
                              uaa_identity_zone[:subdomain],
                              @driver.execute_script("return Format.formatNumber(#{uaa_identity_zone[:version]})"),
+                             '1',
+                             '1',
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -6126,7 +6143,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Identity Providers', tag:   'a', value: '1' },
                             { label: 'SAML Providers',     tag:   'a', value: '1' },
                             { label: 'Clients',            tag:   'a', value: '1' },
-                            { label: 'Users',              tag:   'a', value: '1' }
+                            { label: 'Users',              tag:   'a', value: '1' },
+                            { label: 'Groups',             tag:   'a', value: '1' },
+                            { label: 'Group Members',      tag:   'a', value: '1' },
+                            { label: 'Approvals',          tag:   'a', value: '1' }
                           ])
           end
 
@@ -6144,6 +6164,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has users link' do
             check_filter_link('IdentityZones', 10, 'Users', uaa_identity_zone[:id])
+          end
+
+          it 'has groups link' do
+            check_filter_link('IdentityZones', 11, 'Groups', uaa_identity_zone[:id])
+          end
+
+          it 'has group members link' do
+            check_filter_link('IdentityZones', 12, 'GroupMembers', uaa_identity_zone[:id])
+          end
+
+          it 'has approvals link' do
+            check_filter_link('IdentityZones', 13, 'Approvals', uaa_identity_zone[:id])
           end
         end
       end

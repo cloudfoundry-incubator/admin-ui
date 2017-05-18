@@ -33,7 +33,7 @@ module AdminUI
           {
             db_uri:  uaadb_uri,
             table:   :authz_approvals,
-            columns: %i[client_id expiresat lastmodifiedat scope status user_id]
+            columns: %i[client_id expiresat identity_zone_id lastmodifiedat scope status user_id]
           },
           buildpacks:
           {
@@ -88,7 +88,7 @@ module AdminUI
           {
             db_uri:  uaadb_uri,
             table:   :group_membership,
-            columns: %i[added group_id member_id]
+            columns: %i[added group_id identity_zone_id member_id]
           },
           identity_providers:
           {

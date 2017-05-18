@@ -1385,12 +1385,13 @@ module CCHelper
 
   def uaa_approval
     {
-      client_id:      uaa_client[:client_id],
-      expiresat:      unique_time('uaa_appoval_expires'),
-      lastmodifiedat: unique_time('uaa_appoval_last'),
-      scope:          uaa_client[:scope],
-      status:         'APPROVED',
-      user_id:        uaa_user[:id]
+      client_id:        uaa_client[:client_id],
+      expiresat:        unique_time('uaa_appoval_expires'),
+      identity_zone_id: uaa_identity_zone[:id],
+      lastmodifiedat:   unique_time('uaa_appoval_last'),
+      scope:            uaa_client[:scope],
+      status:           'APPROVED',
+      user_id:          uaa_user[:id]
     }
   end
 
@@ -1430,9 +1431,10 @@ module CCHelper
 
   def uaa_group_membership
     {
-      added:     unique_time('uaa_group_membership_added'),
-      group_id:  uaa_group[:id],
-      member_id: uaa_user[:id]
+      added:            unique_time('uaa_group_membership_added'),
+      group_id:         uaa_group[:id],
+      identity_zone_id: uaa_identity_zone[:id],
+      member_id:        uaa_user[:id]
     }
   end
 
