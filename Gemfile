@@ -11,7 +11,7 @@ gem 'rack-ssl', '1.4.1'
 gem 'ruby_protobuf', '0.4.11'
 gem 'sequel', '4.46.0'
 gem 'sequel_pg', '1.6.18'
-gem 'sinatra', '1.4.8'
+gem 'sinatra', '2.0.0'
 gem 'sqlite3', '1.3.13'
 gem 'yajl-ruby', '1.3.0'
 
@@ -24,6 +24,6 @@ group :development do
 end
 
 group :test do
-  gem 'rspec', '3.5.0'
+  gem 'rspec', '3.6.0'
   gem 'selenium-webdriver', '3.4.0'
 end
