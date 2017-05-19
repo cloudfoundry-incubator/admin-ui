@@ -59,7 +59,7 @@ module AdminUI
       end
 
       begin
-        websocket = Faye::WebSocket::Client.new("#{uri_base}/#{subscription_id}",
+        websocket = Faye::WebSocket::Client.new("#{uri_base}/#{subscription_id}?filter-type=metrics",
                                                 nil,
                                                 headers: { 'Authorization' => @token },
                                                 ping:    30)

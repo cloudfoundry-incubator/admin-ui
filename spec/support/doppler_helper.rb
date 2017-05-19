@@ -94,7 +94,7 @@ module DopplerHelper
 
     @time = Time.now
 
-    # We don't want our mock Faye::Websocket::Client to be stubbed
+    # We don't want our mock Faye::WebSocket::Client to be stubbed
     allow(MockWebSocketClient).to receive(:new).and_call_original
 
     allow(Faye::WebSocket::Client).to receive(:new) do |url|
