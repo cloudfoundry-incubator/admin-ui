@@ -39,7 +39,7 @@ module AdminUI
         Thread.pass
 
         actee_type = event[:actee_type]
-        next unless actee_type == 'service_instance' || actee_type == 'user_provided_service_instance'
+        next unless %w[service_instance user_provided_service_instance].include?(actee_type)
         actee = event[:actee]
         event_counters[actee] = 0 if event_counters[actee].nil?
         event_counters[actee] += 1
