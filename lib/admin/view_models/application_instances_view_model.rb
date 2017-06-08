@@ -43,7 +43,7 @@ module AdminUI
         stack            = nil
 
         # ContainerMetrics can come from either a Cell (rep) or a DEA as of cf-release 233
-        diego = container[:origin] == 'rep'
+        diego = container[:origin] != 'DEA' # Coming from rep can be empty string. Better to check for !DEA.
 
         row = []
 
