@@ -64,7 +64,10 @@ shared_context :web_context do
       profile['browser.helperApps.neverAsk.saveToDisk'] = 'application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv'
       profile['pdfjs.disabled']                         = true
 
-      return Selenium::WebDriver.for(:firefox, marionette: true, profile: profile)
+      options = Selenium::WebDriver::Firefox::Options.new
+      options.profile = profile
+
+      return Selenium::WebDriver.for(:firefox, marionette: true, options: options)
     end
   rescue => error
     unless url.nil?

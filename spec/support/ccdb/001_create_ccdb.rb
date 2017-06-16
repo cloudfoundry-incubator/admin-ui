@@ -73,10 +73,12 @@ Sequel.migration do
       String :encrypted_buildpack_url, :text=>true
       String :encrypted_buildpack_url_salt, :text=>true
       String :admin_buildpack_name, :text=>true
+      String :build_guid, :text=>true
       
       index [:droplet_guid], :name=>:bp_lifecycle_data_droplet_guid
       index [:admin_buildpack_name]
       index [:app_guid], :name=>:buildpack_lifecycle_data_app_guid
+      index [:build_guid]
       index [:created_at]
       index [:guid], :unique=>true
       index [:updated_at]
@@ -373,6 +375,25 @@ Sequel.migration do
       index [:updated_at], :name=>:apps_v3_updated_at_index
     end
     
+    create_table(:builds, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :state, :text=>true
+      String :package_guid, :text=>true
+      String :error_description, :text=>true
+      foreign_key :app_guid, :apps, :type=>String, :text=>true, :key=>[:guid]
+      String :error_id, :text=>true
+      String :created_by_user_guid, :text=>true
+      String :created_by_user_name, :text=>true
+      String :created_by_user_email, :text=>true
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
     create_table(:droplets, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -396,11 +417,13 @@ Sequel.migration do
       String :package_guid, :text=>true
       foreign_key :app_guid, :apps, :type=>String, :text=>true, :key=>[:guid]
       String :sha256_checksum, :text=>true
+      String :build_guid, :text=>true
       String :docker_receipt_username, :text=>true
       String :docker_receipt_password_salt, :text=>true
       String :encrypted_docker_receipt_password, :text=>true
       
       index [:app_guid], :name=>:droplet_app_guid_index
+      index [:build_guid], :name=>:droplet_build_guid_index
       index [:created_at]
       index [:droplet_hash]
       index [:guid], :unique=>true
