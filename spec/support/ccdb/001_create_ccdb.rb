@@ -99,6 +99,7 @@ Sequel.migration do
       
       index [:created_at]
       index [:guid], :unique=>true
+      index [:key]
       index [:name], :unique=>true
       index [:updated_at]
     end
@@ -207,11 +208,42 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:jobs, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :state, :text=>true
+      String :operation, :text=>true
+      String :resource_guid, :text=>true
+      String :resource_type, :text=>true
+      String :delayed_job_guid, :text=>true
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
     create_table(:lockings, :ignore_index_errors=>true) do
       primary_key :id
       String :name, :text=>true, :null=>false
       
       index [:name], :unique=>true
+    end
+    
+    create_table(:orphaned_blobs, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :blob_key, :text=>true
+      Integer :dirty_count
+      String :blobstore_type, :text=>true
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:blob_key, :blobstore_type], :name=>:orphaned_blobs_unique_blob_index, :unique=>true
+      index [:updated_at]
     end
     
     create_table(:quota_definitions, :ignore_index_errors=>true) do
@@ -426,6 +458,7 @@ Sequel.migration do
       index [:build_guid], :name=>:droplet_build_guid_index
       index [:created_at]
       index [:droplet_hash]
+      index [:guid, :droplet_hash]
       index [:guid], :unique=>true
       index [:sha256_checksum]
       index [:state]
@@ -508,6 +541,7 @@ Sequel.migration do
       Integer :sequence_id
       Integer :disk_in_mb
       
+      index [:app_guid]
       index [:created_at]
       index [:guid], :unique=>true
       index [:name]
