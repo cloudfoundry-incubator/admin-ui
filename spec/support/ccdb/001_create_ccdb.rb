@@ -814,6 +814,7 @@ Sequel.migration do
       TrueClass :public, :default=>true
       TrueClass :active, :default=>true
       TrueClass :bindable
+      String :create_instance_schema, :text=>true
       
       index [:created_at]
       index [:guid], :unique=>true

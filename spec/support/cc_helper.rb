@@ -1225,19 +1225,20 @@ module CCHelper
 
   def cc_service_plan
     {
-      active:      true,
-      bindable:    true,
-      created_at:  unique_time('cc_service_plan_created'),
-      description: 'TestServicePlan description',
-      extra:       "{\"displayName\":\"#{cc_service_plan_display_name}\",\"bullets\":[\"bullet1\",\"bullet2\"]}",
-      free:        true,
-      guid:        'service_plan1',
-      id:          unique_id('cc_service_plan'),
-      name:        'TestServicePlan',
-      public:      true,
-      service_id:  cc_service[:id],
-      unique_id:   'service_plan_unique_id1',
-      updated_at:  unique_time('cc_service_plan_updated')
+      active:                 true,
+      bindable:               true,
+      created_at:             unique_time('cc_service_plan_created'),
+      create_instance_schema: '{"key":"value"}',
+      description:            'TestServicePlan description',
+      extra:                  "{\"displayName\":\"#{cc_service_plan_display_name}\",\"bullets\":[\"bullet1\",\"bullet2\"]}",
+      free:                   true,
+      guid:                   'service_plan1',
+      id:                     unique_id('cc_service_plan'),
+      name:                   'TestServicePlan',
+      public:                 true,
+      service_id:             cc_service[:id],
+      unique_id:              'service_plan_unique_id1',
+      updated_at:             unique_time('cc_service_plan_updated')
     }
   end
 
