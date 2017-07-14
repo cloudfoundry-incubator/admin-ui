@@ -5858,7 +5858,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Plan Display Name',           tag:   nil, value: service_plan_extra_json['displayName'] },
                             { label: 'Service Plan Bullet',                 tag:   nil, value: service_plan_extra_json['bullets'][0] },
                             { label: 'Service Plan Bullet',                 tag:   nil, value: service_plan_extra_json['bullets'][1] },
-                            { label: 'Service Plan Create Instance Schema', tag:   nil, value: cc_service_plan[:create_instance_schema] },
+                            { label: 'Service Plan Create Instance Schema', tag: 'div', value: cc_service_plan[:create_instance_schema] },
                             { label: 'Service Plan Events',                 tag:   'a', value: '1' },
                             { label: 'Service Plan Visibilities',           tag:   'a', value: '1' },
                             { label: 'Service Instances',                   tag:   'a', value: '1' },
