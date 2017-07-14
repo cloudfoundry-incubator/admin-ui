@@ -25,5 +25,5 @@ end
 
 group :test do
   gem 'rspec', '3.6.0'
-  gem 'selenium-webdriver', '3.4.3'
+  gem 'selenium-webdriver', '3.4.4'
 end
