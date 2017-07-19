@@ -7214,7 +7214,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='DEAsTable']/tbody/tr/td"),
                            [
                              "#{dea_envelope.ip}:#{dea_envelope.index}",
-                             @driver.execute_script("return Format.formatNumber(#{dea_envelope.index})"),
+                             dea_envelope.index,
                              'doppler',
                              Time.at(dea_envelope.timestamp / BILLION).to_datetime.rfc3339,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
@@ -7262,7 +7262,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_details([
                             { label: 'Name',                  tag: 'div', value: "#{dea_envelope.ip}:#{dea_envelope.index}" },
                             { label: 'IP',                    tag:   nil, value: dea_envelope.ip },
-                            { label: 'Index',                 tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{dea_envelope.index})") },
+                            { label: 'Index',                 tag:   nil, value: dea_envelope.index },
                             { label: 'Source',                tag:   nil, value: 'doppler' },
                             { label: 'Metrics',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(dea_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
                             { label: 'Uptime',                tag:   nil, value: @driver.execute_script("return Format.formatDopplerUptime(#{DopplerHelper::DEA_VALUE_METRICS['uptime']})") },
@@ -7309,7 +7309,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            [
                              "#{rep_envelope.ip}:#{rep_envelope.index}",
                              rep_envelope.ip,
-                             @driver.execute_script("return Format.formatNumber(#{rep_envelope.index})"),
+                             rep_envelope.index,
                              'doppler',
                              Time.at(rep_envelope.timestamp / BILLION).to_datetime.rfc3339,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
@@ -7359,7 +7359,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_details([
                             { label: 'Name',                           tag: 'div', value: "#{rep_envelope.ip}:#{rep_envelope.index}" },
                             { label: 'IP',                             tag:   nil, value: rep_envelope.ip },
-                            { label: 'Index',                          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{rep_envelope.index})") },
+                            { label: 'Index',                          tag:   nil, value: rep_envelope.index },
                             { label: 'Source',                         tag:   nil, value: 'doppler' },
                             { label: 'Metrics',                        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(rep_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
                             { label: 'Cores',                          tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::REP_VALUE_METRICS['numCPUS']})") },
@@ -7473,7 +7473,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='HealthManagersTable']/tbody/tr/td"),
                            [
                              "#{analyzer_envelope.ip}:#{analyzer_envelope.index}",
-                             @driver.execute_script("return Format.formatNumber(#{analyzer_envelope.index})"),
+                             analyzer_envelope.index,
                              'doppler',
                              Time.at(analyzer_envelope.timestamp / BILLION).to_datetime.rfc3339,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
@@ -7514,7 +7514,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_details([
                             { label: 'Name',                              tag: 'div', value: "#{analyzer_envelope.ip}:#{analyzer_envelope.index}" },
                             { label: 'IP',                                tag:   nil, value: analyzer_envelope.ip },
-                            { label: 'Index',                             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{analyzer_envelope.index})") },
+                            { label: 'Index',                             tag:   nil, value: analyzer_envelope.index },
                             { label: 'Source',                            tag:   nil, value: 'doppler' },
                             { label: 'Metrics',                           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(analyzer_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
                             { label: 'Cores',                             tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{DopplerHelper::ANALYZER_VALUE_METRICS['numCPUS']})") },
@@ -7669,7 +7669,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_table_data(@driver.find_elements(xpath: "//table[@id='RoutersTable']/tbody/tr/td"),
                              [
                                nats_router['host'],
-                               @driver.execute_script("return Format.formatNumber(#{nats_router['index']})"),
+                               nats_router['index'].to_s,
                                'varz',
                                nil,
                                @driver.execute_script('return Constants.STATUS__RUNNING'),
@@ -7690,7 +7690,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_table_data(@driver.find_elements(xpath: "//table[@id='RoutersTable']/tbody/tr/td"),
                              [
                                "#{gorouter_envelope.ip}:#{gorouter_envelope.index}",
-                               @driver.execute_script("return Format.formatNumber(#{gorouter_envelope.index})"),
+                               gorouter_envelope.index,
                                'doppler',
                                Time.at(gorouter_envelope.timestamp / BILLION).to_datetime.rfc3339,
                                @driver.execute_script('return Constants.STATUS__RUNNING'),
@@ -7737,7 +7737,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it 'has details' do
               check_details([
                               { label: 'Name',          tag: nil, value: nats_router['host'] },
-                              { label: 'Index',         tag: nil, value: @driver.execute_script("return Format.formatNumber(#{nats_router['index']})") },
+                              { label: 'Index',         tag: nil, value: nats_router['index'].to_s },
                               { label: 'Source',        tag: nil, value: 'varz' },
                               { label: 'URI',           tag: 'a', value: nats_router_varz },
                               { label: 'Started',       tag: nil, value: @driver.execute_script("return Format.formatDateString(\"#{varz_router['start']}\")") },
@@ -7800,7 +7800,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               check_details([
                               { label: 'Name',    tag: 'div', value: "#{gorouter_envelope.ip}:#{gorouter_envelope.index}" },
                               { label: 'IP',      tag:   nil, value: gorouter_envelope.ip },
-                              { label: 'Index',   tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{gorouter_envelope.index})") },
+                              { label: 'Index',   tag:   nil, value: gorouter_envelope.index },
                               { label: 'Source',  tag:   nil, value: 'doppler' },
                               { label: 'Metrics', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{Time.at(gorouter_envelope.timestamp / BILLION).to_datetime.rfc3339}\")") },
                               { label: 'Uptime',  tag:   nil, value: @driver.execute_script("return Format.formatDopplerUptime(#{DopplerHelper::GOROUTER_VALUE_METRICS['uptime']})") },
@@ -7829,7 +7829,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            [
                              nats_cloud_controller['host'],
                              nats_cloud_controller['type'],
-                             @driver.execute_script("return Format.formatNumber(#{nats_cloud_controller['index']})"),
+                             nats_cloud_controller['index'].to_s,
                              'varz',
                              nil,
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
@@ -7886,7 +7886,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_details([
                             { label: 'Name',    tag: nil, value: nats_cloud_controller['host'] },
                             { label: 'Type',    tag: nil, value: nats_cloud_controller['type'] },
-                            { label: 'Index',   tag: nil, value: @driver.execute_script("return Format.formatNumber(#{nats_cloud_controller['index']})") },
+                            { label: 'Index',   tag: nil, value: nats_cloud_controller['index'].to_s },
                             { label: 'Source',  tag: nil, value: 'varz' },
                             { label: 'URI',     tag: 'a', value: nats_cloud_controller_varz },
                             { label: 'State',   tag: nil, value: @driver.execute_script('return Constants.STATUS__RUNNING') },

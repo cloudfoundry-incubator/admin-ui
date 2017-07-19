@@ -24,7 +24,7 @@ module AdminUI
 
           row.push(component['name'])
           row.push(component['type'])
-          row.push(component['index'])
+          row.push(component['index'].to_s)
           row.push('varz')
           row.push(nil) # Metrics date
           row.push(component['connected'] ? 'RUNNING' : 'OFFLINE')

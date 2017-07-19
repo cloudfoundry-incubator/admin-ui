@@ -150,7 +150,7 @@ module DopplerHelper
 
   def analyzer_envelope
     envelope           = Events::Envelope.new
-    envelope.index     = '1'
+    envelope.index     = 'bf125926-3373-4a75-a093-3207b294c480'
     envelope.ip        = '10.10.10.10'
     envelope.origin    = 'analyzer'
     envelope.timestamp = @time.to_i * BILLION
@@ -160,7 +160,7 @@ module DopplerHelper
 
   def dea_envelope
     envelope           = Events::Envelope.new
-    envelope.index     = '2'
+    envelope.index     = '9489dffd-4758-452d-a631-cc22985d8dd1'
     envelope.ip        = '10.10.10.11'
     envelope.origin    = 'DEA'
     envelope.timestamp = @time.to_i * BILLION
@@ -170,7 +170,7 @@ module DopplerHelper
 
   def gorouter_envelope
     envelope           = Events::Envelope.new
-    envelope.index     = '4'
+    envelope.index     = '058a6e78-2aae-444d-bc18-e7b0ba257b76'
     envelope.ip        = '10.10.10.13'
     envelope.origin    = 'gorouter'
     envelope.timestamp = @time.to_i * BILLION
@@ -180,7 +180,7 @@ module DopplerHelper
 
   def rep_envelope
     envelope           = Events::Envelope.new
-    envelope.index     = '5'
+    envelope.index     = '0494f7e9-78ce-4d47-b2ba-b1fd9a9da4dd'
     envelope.ip        = '10.10.10.14'
     envelope.origin    = 'rep'
     envelope.timestamp = @time.to_i * BILLION

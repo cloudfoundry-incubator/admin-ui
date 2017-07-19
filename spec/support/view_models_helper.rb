@@ -302,7 +302,7 @@ module ViewModelsHelper
       [
         nats_cloud_controller['host'],
         nats_cloud_controller['type'],
-        nats_cloud_controller['index'],
+        nats_cloud_controller['index'].to_s,
         'varz',
         nil,
         'RUNNING',
@@ -313,7 +313,7 @@ module ViewModelsHelper
       [
         nats_provisioner['host'],
         nats_provisioner['type'],
-        nats_provisioner['index'],
+        nats_provisioner['index'].to_s,
         'varz',
         nil,
         'RUNNING',
@@ -324,7 +324,7 @@ module ViewModelsHelper
       [
         nats_router['host'],
         nats_router['type'],
-        nats_router['index'],
+        nats_router['index'].to_s,
         'varz',
         nil,
         'RUNNING',
@@ -809,7 +809,7 @@ module ViewModelsHelper
     [
       [
         @router_source == :doppler_router ? "#{gorouter_envelope.ip}:#{gorouter_envelope.index}" : nats_router['host'],
-        @router_source == :doppler_router ? gorouter_envelope.index : nats_router['index'],
+        @router_source == :doppler_router ? gorouter_envelope.index : nats_router['index'].to_s,
         @router_source == :doppler_router ? 'doppler' : 'varz',
         @router_source == :doppler_router ? Time.at(gorouter_envelope.timestamp / BILLION).to_datetime.rfc3339 : nil,
         'RUNNING',

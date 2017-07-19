@@ -31,7 +31,7 @@ module AdminUI
           row = []
 
           row.push(router['name'])
-          row.push(router['index'])
+          row.push(router['index'].to_s)
           row.push('varz')
           row.push(nil) # Metrics date
 
