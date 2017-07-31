@@ -218,6 +218,7 @@ Sequel.migration do
       String :resource_guid, :text=>true
       String :resource_type, :text=>true
       String :delayed_job_guid, :text=>true
+      String :cf_api_error, :size=>16000
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -349,6 +350,8 @@ Sequel.migration do
       String :service_label, :text=>true
       
       index [:created_at], :name=>:created_at_index
+      index [:service_guid]
+      index [:service_instance_type]
       index [:guid], :name=>:usage_events_guid_index, :unique=>true
     end
     
@@ -363,6 +366,22 @@ Sequel.migration do
       index [:created_at]
       index [:guid], :unique=>true
       index [:name], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:buildpack_lifecycle_buildpacks, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :admin_buildpack_name, :text=>true
+      String :encrypted_buildpack_url, :size=>16000
+      String :encrypted_buildpack_url_salt, :text=>true
+      foreign_key :buildpack_lifecycle_data_guid, :buildpack_lifecycle_data, :type=>String, :text=>true, :key=>[:guid]
+      
+      index [:buildpack_lifecycle_data_guid], :name=>:bl_buildpack_bldata_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
       index [:updated_at]
     end
     
@@ -421,6 +440,7 @@ Sequel.migration do
       String :created_by_user_name, :text=>true
       String :created_by_user_email, :text=>true
       
+      index [:app_guid]
       index [:created_at]
       index [:guid], :unique=>true
       index [:updated_at]
@@ -480,7 +500,7 @@ Sequel.migration do
       String :sha256_checksum, :text=>true
       String :docker_username, :text=>true
       String :docker_password_salt, :text=>true
-      String :encrypted_docker_password, :text=>true
+      String :encrypted_docker_password, :size=>16000
       
       index [:app_guid], :name=>:package_app_guid_index
       index [:created_at]
@@ -894,6 +914,8 @@ Sequel.migration do
       index [:created_at], :name=>:sb_created_at_index
       index [:guid], :name=>:sb_guid_index, :unique=>true
       index [:updated_at], :name=>:sb_updated_at_index
+      index [:app_guid]
+      index [:service_instance_guid]
     end
     
     create_table(:service_instance_operations, :ignore_index_errors=>true) do
