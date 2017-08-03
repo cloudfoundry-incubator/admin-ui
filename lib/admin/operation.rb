@@ -14,9 +14,19 @@ module AdminUI
     end
 
     def cancel_task(task_guid)
-      url = "/v3/tasks/#{task_guid}/cancel"
-      @logger.debug("PUT #{url}")
-      @client.put_cc(url, '{}')
+      # As of cf-release 269 (API version 2.90.0), the protocol to cancel a task changed
+      api_version = @client.api_version
+      new_protocol = Gem::Version.new(api_version) >= Gem::Version.new('2.90.0')
+      if new_protocol
+        url = "/v3/tasks/#{task_guid}/actions/cancel"
+        @logger.debug("POST #{url}")
+        @client.post_cc(url, '{}')
+      else
+        url = "/v3/tasks/#{task_guid}/cancel"
+        @logger.debug("PUT #{url}")
+        @client.put_cc(url, '{}')
+      end
+
       @cc.invalidate_tasks
       @view_models.invalidate_tasks
     end

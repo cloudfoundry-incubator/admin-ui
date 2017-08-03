@@ -130,7 +130,7 @@ module AdminUI
         return Yajl::Parser.parse(response.body) if method == Utils::HTTP_GET && response.is_a?(Net::HTTPOK)
         return Yajl::Parser.parse(response.body) if method == Utils::HTTP_PUT && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
         return if method == Utils::HTTP_DELETE && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated) || response.is_a?(Net::HTTPAccepted) || response.is_a?(Net::HTTPNoContent))
-        return Yajl::Parser.parse(response.body) if method == Utils::HTTP_POST && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
+        return Yajl::Parser.parse(response.body) if method == Utils::HTTP_POST && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated) || response.is_a?(Net::HTTPAccepted))
         return Yajl::Parser.parse(response.body) if method == Utils::HTTP_PATCH && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
 
         raise AdminUI::CCRestClientResponseError, response unless !recent_login && response.is_a?(Net::HTTPUnauthorized)

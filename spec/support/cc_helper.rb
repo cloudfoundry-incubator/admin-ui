@@ -45,6 +45,16 @@ module CCHelper
     end
   end
 
+  # Workaround since I cannot instantiate Net::HTTPBadRequest and have body() function successfully
+  # Failing with NoMethodError: undefined method `closed?
+  class Accepted < Net::HTTPAccepted
+    attr_reader :body
+    def initialize(hash)
+      super(1.0, 202, 'Accepted')
+      @body = Yajl::Encoder.encode(hash)
+    end
+  end
+
   def cc_stub(config, populate_and_stub = true, insert_second_quota_definition = false, event_type = 'space', use_route = true)
     @last_unique_id   = 0
     @unique_ids       = {}
@@ -773,7 +783,7 @@ module CCHelper
   end
 
   def cc_info_api_version
-    '2.75.0'
+    '2.90.0'
   end
 
   def cc_info_build
@@ -2607,12 +2617,12 @@ module CCHelper
   end
 
   def cc_task_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/tasks/#{cc_task[:guid]}/cancel", AdminUI::Utils::HTTP_PUT, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/tasks/#{cc_task[:guid]}/actions/cancel", AdminUI::Utils::HTTP_POST, anything, anything, anything, anything, anything) do
       if @cc_tasks_deleted
         cc_task_not_found
       else
         sql(config.ccdb_uri, "UPDATE tasks SET state = 'FAILED' WHERE guid = '#{cc_task[:guid]}'")
-        Created.new
+        Accepted.new({})
       end
     end
   end
