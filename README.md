@@ -108,6 +108,7 @@ uaac client add admin_ui_client \
  --authorities clients.write,cloud_controller.admin,cloud_controller.read,cloud_controller.write,doppler.firehose,openid,scim.read,scim.write,sps.write \
  --authorized_grant_types authorization_code,client_credentials,refresh_token \
  --autoapprove true \
+ --redirect_uri http://<admin ui host>:8070/login \
  --scope admin_ui.admin,admin_ui.user,openid \
  -s admin_ui_secret
 ```
@@ -632,7 +633,8 @@ The UAA client used by the Administration UI must be added to the system via the
 <ul>
 <li>authorities: clients.write,cloud_controller.admin,cloud_controller.read,cloud_controller.write,doppler.firehose,openid,scim.read,scim.write,sps.write
 <li>authorized_grant_types:  authorization_code,client_credentials,refresh_token
-<li>autoapprove: true 
+<li>autoapprove: true
+<li>redirect_uri: http://&lt;admin ui host&gt;:8070/login 
 <li>scopes: openid as well as those defined in the uaa_groups_admin and uaa_groups_user configuration values.
 </ul>
 Example: 
@@ -640,6 +642,7 @@ Example:
      --authorities clients.write,cloud_controller.admin,cloud_controller.read,cloud_controller.write,doppler.firehose,openid,scim.read,scim.write,sps.write \
      --authorized_grant_types authorization_code,client_credentials,refresh_token \
      --autoapprove true \
+     --redirect_uri http://&lt;admin ui host&gt;:8070/login \
      --scope admin_ui.admin,admin_ui.user,openid \
      -s admin_ui_secret</code>
 </pre>
