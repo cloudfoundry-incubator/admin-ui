@@ -1,6 +1,7 @@
-require_relative 'base_view_model'
 require 'date'
 require 'thread'
+require 'uri'
+require_relative 'base_view_model'
 
 module AdminUI
   class ApprovalsViewModel < AdminUI::BaseViewModel
@@ -45,6 +46,9 @@ module AdminUI
         row.push(approval[:status])
         row.push(approval[:lastmodifiedat].to_datetime.rfc3339)
         row.push(approval[:expiresat].to_datetime.rfc3339)
+
+        # We need an additional escaped client id for retrieval
+        row.push(URI.escape(approval[:client_id]))
 
         items.push(row)
 

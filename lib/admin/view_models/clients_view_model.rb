@@ -70,7 +70,7 @@ module AdminUI
 
         row = []
 
-        row.push(client_id)
+        row.push(URI.escape(client_id))
 
         if identity_zone
           row.push(identity_zone[:name])

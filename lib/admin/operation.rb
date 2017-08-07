@@ -1,3 +1,4 @@
+require 'uri'
 require 'yajl'
 
 module AdminUI
@@ -93,7 +94,7 @@ module AdminUI
     end
 
     def delete_client(client_id)
-      url = "/oauth/clients/#{client_id}"
+      url = "/oauth/clients/#{URI.escape(client_id)}"
       @logger.debug("DELETE #{url}")
       @client.delete_uaa(url)
       @cc.invalidate_approvals
