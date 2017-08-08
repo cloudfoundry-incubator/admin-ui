@@ -76,6 +76,14 @@ module AdminUI
       @view_models.invalidate_tasks
     end
 
+    def delete_application_environment_variable(app_guid, environment_variable)
+      url = "/v3/apps/#{app_guid}/environment_variables"
+      body = "{\"#{environment_variable}\":null}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      # Since the application environment variables are fetched on a per-application-retrieval basis, no reason to invalidate.
+    end
+
     def delete_application_instance(app_guid, instance_index)
       url = "/v2/apps/#{app_guid}/instances/#{instance_index}"
       @logger.debug("DELETE #{url}")

@@ -324,6 +324,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete application')
     end
 
+    shared_examples 'common delete application environment variable' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/applications/application1/environment_variables/environment_variable1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete application environment variable via http' do
+      it_behaves_like('common delete application environment variable')
+    end
+
+    context 'delete application environment variable via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete application environment variable')
+    end
+
     shared_examples 'common delete application instance' do
       it 'returns failure code due to disconnection' do
         response = delete('/applications/application1/index0')
@@ -2153,6 +2170,10 @@ describe AdminUI::Admin do
 
       it 'deletes /applications/:guid?recursive=true redirects as expected' do
         delete_redirects_as_expected('/applications/application1?recursive=true')
+      end
+
+      it 'deletes /applications/:app_guid/environment_variables/:environment_variable redirects as expected' do
+        delete_redirects_as_expected('/applications/application1/environment_variables/environment_variable1')
       end
 
       it 'deletes /applications/:app_guid/:index redirects as expected' do

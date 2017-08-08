@@ -223,6 +223,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}?recursive=true"]], true)
     end
 
+    def delete_app_environment_variable
+      response = delete_request("/applications/#{cc_app[:guid]}/environment_variables/#{cc_app_environment_variable_name}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/environment_variables/#{cc_app_environment_variable_name}"]])
+    end
+
     it 'has user name and applications in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/applications_view_model']], true)
     end
@@ -271,6 +277,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes an application recursive' do
       expect { delete_app_recursive }.to change { get_json('/applications_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes an application environment_variable' do
+      expect { delete_app_environment_variable }.to change { get_json("/applications_view_model/#{cc_app[:guid]}")['environment_variables'].keys.length }.from(1).to(0)
     end
   end
 

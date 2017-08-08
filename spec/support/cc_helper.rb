@@ -65,6 +65,7 @@ module CCHelper
     return unless populate_and_stub
 
     @cc_apps_deleted                             = false
+    @cc_apps_environment_variables_deleted       = false
     @cc_buildpacks_deleted                       = false
     @cc_domains_deleted                          = false
     @cc_feature_flags_deleted                    = false
@@ -435,9 +436,14 @@ module CCHelper
     }
   end
 
+  def cc_app_environment_variable_name
+    'app_env_key'
+  end
+
   def cc_app_environment_variable
+    return {} if @cc_apps_environment_variables_deleted
     {
-      'app_env_key' => 'app_env_value'
+      cc_app_environment_variable_name => 'app_env_value'
     }
   end
 
@@ -1616,6 +1622,16 @@ module CCHelper
   def cc_app_stubs(config)
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
       OK.new('entity' => { 'environment_json' => cc_app_environment_variable })
+    end
+
+    # Since set of environment variable not supported, assuming PATCH is to delete
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}/environment_variables", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        @cc_apps_environment_variables_deleted = true
+        OK.new({})
+      end
     end
 
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}/restage", AdminUI::Utils::HTTP_POST, anything, anything, anything, anything, anything) do

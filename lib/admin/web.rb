@@ -1419,6 +1419,23 @@ module AdminUI
       end
     end
 
+    delete '/applications/:app_guid/environment_variables/:environment_variable', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/applications/#{params[:app_guid]}/environment_variables/#{params[:environment_variable]}")
+      begin
+        @operation.delete_application_environment_variable(params[:app_guid], params[:environment_variable])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete application environment variable: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete application environment variable: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/applications/:app_guid/:instance_index', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/applications/#{params[:app_guid]}/#{params[:instance_index]}")
       begin

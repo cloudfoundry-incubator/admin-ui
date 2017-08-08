@@ -1699,32 +1699,56 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ApplicationsEnvironmentVariablesDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsEnvironmentVariablesTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
-                                expected_length: 2,
-                                labels:          %w[Key Value],
+                                expected_length: 3,
+                                labels:          ['', 'Key', 'Value'],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='ApplicationsEnvironmentVariablesTable']/tbody/tr/td"),
                              [
+                               '',
                                cc_app_environment_variable.keys.first,
                                "\"#{cc_app_environment_variable.values.first}\""
                              ])
           end
 
           it 'environment variables subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ApplicationsEnvironmentVariablesTable_0')
+            check_allowscriptaccess_attribute('Buttons_ApplicationsEnvironmentVariablesTable_1')
+          end
+
+          it 'has a checkbox in the first column' do
+            check_checkbox_guid('ApplicationsEnvironmentVariablesTable', "#{cc_app[:guid]}/environment_variables/#{cc_app_environment_variable_name}")
           end
 
           context 'manage environment variables subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_ApplicationsEnvironmentVariablesTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_ApplicationsEnvironmentVariablesTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'ApplicationsEnvironmentVariablesTable' }
+                let(:button_id)               { 'Buttons_ApplicationsEnvironmentVariablesTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the application's selected environment variables?" }
+              end
+            end
+
             context 'Standard buttons' do
               let(:filename) { 'application_environment_variables' }
 
               it_behaves_like('standard buttons') do
-                let(:copy_button_id)  { 'Buttons_ApplicationsEnvironmentVariablesTable_0' }
-                let(:print_button_id) { 'Buttons_ApplicationsEnvironmentVariablesTable_1' }
-                let(:save_button_id)  { 'Buttons_ApplicationsEnvironmentVariablesTable_2' }
-                let(:csv_button_id)   { 'Buttons_ApplicationsEnvironmentVariablesTable_3' }
-                let(:excel_button_id) { 'Buttons_ApplicationsEnvironmentVariablesTable_4' }
-                let(:pdf_button_id)   { 'Buttons_ApplicationsEnvironmentVariablesTable_5' }
+                let(:copy_button_id)  { 'Buttons_ApplicationsEnvironmentVariablesTable_1' }
+                let(:print_button_id) { 'Buttons_ApplicationsEnvironmentVariablesTable_2' }
+                let(:save_button_id)  { 'Buttons_ApplicationsEnvironmentVariablesTable_3' }
+                let(:csv_button_id)   { 'Buttons_ApplicationsEnvironmentVariablesTable_4' }
+                let(:excel_button_id) { 'Buttons_ApplicationsEnvironmentVariablesTable_5' }
+                let(:pdf_button_id)   { 'Buttons_ApplicationsEnvironmentVariablesTable_6' }
               end
             end
           end
@@ -4554,6 +4578,19 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                   let(:button_id)               { 'Buttons_DomainsOrganizationsTable_0' }
                   let(:check_no_data_available) { false }
                   let(:confirm_message)         { 'Are you sure you want to unshare the domain from the selected organizations?' }
+                end
+              end
+
+              context 'Standard buttons' do
+                let(:filename) { 'domain_organizations' }
+
+                it_behaves_like('standard buttons') do
+                  let(:copy_button_id)  { 'Buttons_DomainsOrganizationsTable_1' }
+                  let(:print_button_id) { 'Buttons_DomainsOrganizationsTable_2' }
+                  let(:save_button_id)  { 'Buttons_DomainsOrganizationsTable_3' }
+                  let(:csv_button_id)   { 'Buttons_DomainsOrganizationsTable_4' }
+                  let(:excel_button_id) { 'Buttons_DomainsOrganizationsTable_5' }
+                  let(:pdf_button_id)   { 'Buttons_DomainsOrganizationsTable_6' }
                 end
               end
             end

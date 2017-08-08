@@ -108,6 +108,10 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_application(cc_app[:guid], true)
       end
 
+      def delete_application_environment_variable
+        operation.delete_application_environment_variable(cc_app[:guid], cc_app_environment_variable_name)
+      end
+
       def restage_application
         operation.restage_application(cc_app[:guid])
       end
@@ -182,6 +186,10 @@ describe AdminUI::Operation, type: :integration do
         expect { delete_application_recursive }.to change { cc.applications['items'].length }.from(1).to(0)
       end
 
+      it 'deletes the application environment variable' do
+        expect { delete_application_environment_variable }.to change { cc_app_environment_variable.keys.length }.from(1).to(0)
+      end
+
       context 'errors' do
         before do
           delete_application
@@ -232,6 +240,10 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting recursive deleted app' do
           expect { delete_application_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
+        end
+
+        it 'fails deleting environment variable on deleted app' do
+          expect { delete_application_environment_variable }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
         end
       end
     end
