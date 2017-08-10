@@ -5896,6 +5896,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Plan Bullet',                 tag:   nil, value: service_plan_extra_json['bullets'][0] },
                             { label: 'Service Plan Bullet',                 tag:   nil, value: service_plan_extra_json['bullets'][1] },
                             { label: 'Service Plan Create Instance Schema', tag: 'div', value: cc_service_plan[:create_instance_schema] },
+                            { label: 'Service Plan Update Instance Schema', tag: 'div', value: cc_service_plan[:update_instance_schema] },
                             { label: 'Service Plan Events',                 tag:   'a', value: '1' },
                             { label: 'Service Plan Visibilities',           tag:   'a', value: '1' },
                             { label: 'Service Instances',                   tag:   'a', value: '1' },
@@ -5917,35 +5918,35 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('ServicePlans', 14, 'Events', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 15, 'Events', cc_service_plan[:guid])
           end
 
           it 'has service plan visibilities link' do
-            check_filter_link('ServicePlans', 15, 'ServicePlanVisibilities', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 16, 'ServicePlanVisibilities', cc_service_plan[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('ServicePlans', 16, 'ServiceInstances', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 17, 'ServiceInstances', cc_service_plan[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('ServicePlans', 17, 'ServiceBindings', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 18, 'ServiceBindings', cc_service_plan[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('ServicePlans', 18, 'ServiceKeys', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 19, 'ServiceKeys', cc_service_plan[:guid])
           end
 
           it 'has route bindings link' do
-            check_filter_link('ServicePlans', 19, 'RouteBindings', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 20, 'RouteBindings', cc_service_plan[:guid])
           end
 
           it 'has services link' do
-            check_filter_link('ServicePlans', 20, 'Services', cc_service[:guid])
+            check_filter_link('ServicePlans', 21, 'Services', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('ServicePlans', 27, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('ServicePlans', 28, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end

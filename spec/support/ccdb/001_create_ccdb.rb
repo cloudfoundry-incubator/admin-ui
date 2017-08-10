@@ -835,6 +835,7 @@ Sequel.migration do
       TrueClass :active, :default=>true
       TrueClass :bindable
       String :create_instance_schema, :text=>true
+      String :update_instance_schema, :text=>true
       
       index [:created_at]
       index [:guid], :unique=>true

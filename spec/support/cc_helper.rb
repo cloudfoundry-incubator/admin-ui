@@ -1254,6 +1254,7 @@ module CCHelper
       public:                 true,
       service_id:             cc_service[:id],
       unique_id:              'service_plan_unique_id1',
+      update_instance_schema: '{"key2":"value2"}',
       updated_at:             unique_time('cc_service_plan_updated')
     }
   end
