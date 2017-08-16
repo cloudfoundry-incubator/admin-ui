@@ -125,6 +125,12 @@ module AdminUI
         end
         row.push(autoapprove)
 
+        if client[:required_user_groups]
+          row.push(client[:required_user_groups].split(',').sort)
+        else
+          row.push(nil)
+        end
+
         row.push(client[:access_token_validity])
         row.push(client[:refresh_token_validity])
 
@@ -160,7 +166,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..13).to_a, [1, 2, 3, 4, 5, 6, 7, 8, 13])
+      result(true, items, hash, (1..14).to_a, [1, 2, 3, 4, 5, 6, 7, 8, 9, 14])
     end
   end
 end

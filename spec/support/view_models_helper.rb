@@ -256,6 +256,7 @@ module ViewModelsHelper
         uaa_client[:web_server_redirect_uri].split(',').sort,
         uaa_client[:authorities].split(',').sort,
         [uaa_client_autoapprove.to_s],
+        uaa_client[:required_user_groups].split(',').sort,
         uaa_client[:access_token_validity],
         uaa_client[:refresh_token_validity],
         1,

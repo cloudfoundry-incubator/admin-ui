@@ -1429,6 +1429,7 @@ module CCHelper
       identity_zone_id:        uaa_identity_zone[:id],
       lastmodified:            unique_time('uaa_client_last'),
       refresh_token_validity:  2_592_000,
+      required_user_groups:    'scope1',
       scope:                   'scope1',
       show_on_home_page:       false,
       web_server_redirect_uri: 'http://redirect_uri.com'

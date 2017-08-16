@@ -45,7 +45,7 @@ module AdminUI
           {
             db_uri:  uaadb_uri,
             table:   :oauth_client_details,
-            columns: %i[access_token_validity additional_information app_launch_url authorities authorized_grant_types autoapprove client_id identity_zone_id lastmodified refresh_token_validity scope show_on_home_page web_server_redirect_uri]
+            columns: %i[access_token_validity additional_information app_launch_url authorities authorized_grant_types autoapprove client_id identity_zone_id lastmodified refresh_token_validity required_user_groups scope show_on_home_page web_server_redirect_uri]
           },
           domains:
           {

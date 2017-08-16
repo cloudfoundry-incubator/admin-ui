@@ -3522,8 +3522,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 14,
-                                 labels:          ['', 'Identity Zone', 'Identifier', 'Updated', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Access Token Validity', 'Refresh Token Validity', 'Events', 'Approvals', 'Service Broker'],
+                                 expected_length: 15,
+                                 labels:          ['', 'Identity Zone', 'Identifier', 'Updated', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Required User Groups', 'Access Token Validity', 'Refresh Token Validity', 'Events', 'Approvals', 'Service Broker'],
                                  colspans:        nil
                                }
                              ])
@@ -3539,6 +3539,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_client[:web_server_redirect_uri],
                              uaa_client[:authorities],
                              uaa_client_autoapprove.to_s,
+                             uaa_client[:required_user_groups],
                              @driver.execute_script("return Format.formatNumber(#{uaa_client[:access_token_validity]})"),
                              @driver.execute_script("return Format.formatNumber(#{uaa_client[:refresh_token_validity]})"),
                              '1',
@@ -3607,6 +3608,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Redirect URI',           tag:   nil, value: uaa_client[:web_server_redirect_uri] },
                             { label: 'Authority',              tag:   nil, value: uaa_client[:authorities] },
                             { label: 'Auto Approve',           tag:   nil, value: uaa_client_autoapprove.to_s },
+                            { label: 'Required User Group',    tag:   nil, value: uaa_client[:required_user_groups] },
                             { label: 'Access Token Validity',  tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_client[:access_token_validity]})") },
                             { label: 'Refresh Token Validity', tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_client[:refresh_token_validity]})") },
                             { label: 'Show on Home Page',      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_client[:show_on_home_page]})") },
@@ -3624,15 +3626,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('Clients', 13, 'Events', uaa_client[:client_id])
+            check_filter_link('Clients', 14, 'Events', uaa_client[:client_id])
           end
 
           it 'has approvals link' do
-            check_filter_link('Clients', 14, 'Approvals', uaa_client[:client_id])
+            check_filter_link('Clients', 15, 'Approvals', uaa_client[:client_id])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Clients', 16, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Clients', 17, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end
