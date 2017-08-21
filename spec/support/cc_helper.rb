@@ -1244,7 +1244,8 @@ module CCHelper
       active:                 true,
       bindable:               true,
       created_at:             unique_time('cc_service_plan_created'),
-      create_instance_schema: '{"key":"value"}',
+      create_binding_schema:  '{"key":"value"}',
+      create_instance_schema: '{"key2":"value2"}',
       description:            'TestServicePlan description',
       extra:                  "{\"displayName\":\"#{cc_service_plan_display_name}\",\"bullets\":[\"bullet1\",\"bullet2\"]}",
       free:                   true,
@@ -1254,7 +1255,7 @@ module CCHelper
       public:                 true,
       service_id:             cc_service[:id],
       unique_id:              'service_plan_unique_id1',
-      update_instance_schema: '{"key2":"value2"}',
+      update_instance_schema: '{"key3":"value3"}',
       updated_at:             unique_time('cc_service_plan_updated')
     }
   end

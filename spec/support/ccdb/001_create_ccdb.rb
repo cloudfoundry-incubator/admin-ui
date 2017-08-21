@@ -30,38 +30,6 @@ Sequel.migration do
       index [:created_at], :name=>:usage_events_created_at_index
     end
     
-    create_table(:billing_events, :ignore_index_errors=>true) do
-      primary_key :id
-      String :guid, :text=>true, :null=>false
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      DateTime :timestamp, :null=>false
-      String :kind, :text=>true, :null=>false
-      String :organization_guid, :text=>true, :null=>false
-      String :organization_name, :text=>true, :null=>false
-      String :space_guid, :text=>true
-      String :space_name, :text=>true
-      String :app_guid, :text=>true
-      String :app_name, :text=>true
-      String :app_plan_name, :text=>true
-      String :app_run_id, :text=>true
-      Integer :app_memory
-      Integer :app_instance_count
-      String :service_instance_guid, :text=>true
-      String :service_instance_name, :text=>true
-      String :service_guid, :text=>true
-      String :service_label, :text=>true
-      String :service_provider, :text=>true
-      String :service_version, :text=>true
-      String :service_plan_guid, :text=>true
-      String :service_plan_name, :text=>true
-      
-      index [:created_at], :name=>:be_created_at_index
-      index [:timestamp], :name=>:be_event_timestamp_index
-      index [:guid], :name=>:be_guid_index, :unique=>true
-      index [:updated_at], :name=>:be_updated_at_index
-    end
-    
     create_table(:buildpack_lifecycle_data, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -302,22 +270,6 @@ Sequel.migration do
       index [:updated_at], :name=>:sg_updated_at_index
       index [:running_default], :name=>:sgs_running_default_index
       index [:staging_default], :name=>:sgs_staging_default_index
-    end
-    
-    create_table(:service_auth_tokens, :ignore_index_errors=>true) do
-      primary_key :id
-      String :guid, :text=>true, :null=>false
-      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
-      DateTime :updated_at
-      String :label, :null=>false
-      String :provider, :null=>false
-      String :token, :text=>true, :null=>false
-      String :salt, :text=>true
-      
-      index [:created_at], :name=>:sat_created_at_index
-      index [:guid], :name=>:sat_guid_index, :unique=>true
-      index [:label, :provider], :name=>:sat_label_provider_index, :unique=>true
-      index [:updated_at], :name=>:sat_updated_at_index
     end
     
     create_table(:service_dashboard_clients, :ignore_index_errors=>true) do
@@ -836,6 +788,7 @@ Sequel.migration do
       TrueClass :bindable
       String :create_instance_schema, :text=>true
       String :update_instance_schema, :text=>true
+      String :create_binding_schema, :text=>true
       
       index [:created_at]
       index [:guid], :unique=>true

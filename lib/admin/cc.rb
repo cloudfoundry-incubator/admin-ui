@@ -244,7 +244,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_plans,
-            columns: %i[active bindable created_at create_instance_schema description extra free guid id name public service_id unique_id updated_at update_instance_schema]
+            columns: %i[active bindable created_at create_binding_schema create_instance_schema description extra free guid id name public service_id unique_id updated_at update_instance_schema]
           },
           service_plan_visibilities:
           {
