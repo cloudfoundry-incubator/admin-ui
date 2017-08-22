@@ -9,7 +9,7 @@ module AdminUI
       doppler_gorouters = @doppler.gorouters
       varz_routers      = @varz.routers
 
-      # doppler_gorouters or varz_routers have to exist.  Other record types are optional
+      # doppler_gorouters or varz_routers have to exist. Other record types are optional
       return result unless doppler_gorouters['connected'] || varz_routers['connected']
 
       applications  = @cc.applications

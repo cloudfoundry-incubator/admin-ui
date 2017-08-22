@@ -10,7 +10,7 @@ module AdminUI
       route_mappings = @cc.route_mappings
       routes         = @cc.routes
 
-      # applications, domains, route_mappings and routes have to exist.  Other record types are optional
+      # applications, domains, route_mappings and routes have to exist. Other record types are optional
       return result unless applications['connected'] &&
                            domains['connected'] &&
                            route_mappings['connected'] &&

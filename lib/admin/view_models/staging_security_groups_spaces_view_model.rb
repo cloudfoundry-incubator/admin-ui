@@ -9,7 +9,7 @@ module AdminUI
       spaces                         = @cc.spaces
       staging_security_groups_spaces = @cc.staging_security_groups_spaces
 
-      # security_groups, spaces and staging_security_groups_spaces have to exist.  Other record types are optional
+      # security_groups, spaces and staging_security_groups_spaces have to exist. Other record types are optional
       return result unless security_groups['connected'] &&
                            spaces['connected'] &&
                            staging_security_groups_spaces['connected']

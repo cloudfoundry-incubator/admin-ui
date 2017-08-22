@@ -9,7 +9,7 @@ module AdminUI
       droplets     = @cc.droplets
       packages     = @cc.packages
 
-      # applications, droplets and packages have to exist.  Other record types are optional
+      # applications, droplets and packages have to exist. Other record types are optional
       return result unless applications['connected'] &&
                            droplets['connected'] &&
                            packages['connected']

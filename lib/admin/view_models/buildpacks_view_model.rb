@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       buildpacks = @cc.buildpacks
 
-      # buildpacks have to exist.  Other record types are optional
+      # buildpacks have to exist. Other record types are optional
       return result unless buildpacks['connected']
 
       applications = @cc.applications

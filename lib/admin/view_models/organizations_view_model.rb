@@ -9,7 +9,7 @@ module AdminUI
     def do_items
       organizations = @cc.organizations
 
-      # organizations have to exist.  Other record types are optional
+      # organizations have to exist. Other record types are optional
       return result unless organizations['connected']
 
       applications                     = @cc.applications

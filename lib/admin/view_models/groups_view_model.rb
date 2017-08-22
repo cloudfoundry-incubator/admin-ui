@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       groups = @cc.groups
 
-      # groups has to exist.  Other record types are optional
+      # groups has to exist. Other record types are optional
       return result unless groups['connected']
 
       group_membership = @cc.group_membership

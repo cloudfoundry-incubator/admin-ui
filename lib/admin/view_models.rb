@@ -115,7 +115,7 @@ module AdminUI
       # TODO: Need config for number of threads
       @pool = AdminUI::ScheduledThreadPool.new(logger, number_threads, -1)
 
-      # Using an interval of half of the cloud_controller_interval.  The value of 1 is there for a test-time boundary
+      # Using an interval of half of the cloud_controller_interval. The value of 1 is there for a test-time boundary
       @interval = [config.cloud_controller_discovery_interval / 2, 1].max
 
       @caches.each_pair do |key, cache|
@@ -780,7 +780,7 @@ module AdminUI
       connected = result_cache[:connected]
 
       cache[:semaphore].synchronize do
-        @logger.debug("Caching view model #{key} data.  Compilation time: #{finish - start} seconds")
+        @logger.debug("Caching view model #{key} data. Compilation time: #{finish - start} seconds")
 
         # Only replace the cached result if the value is connected or this is the first time
         cache[:result] = result_cache if connected || cache[:result].nil?

@@ -15,7 +15,7 @@ module AdminUI
     # Subclasses should override and return values in the following format:
     # {
     #   connected:                     whether the fetch is successful
-    #   items:                         array of rows.  Each row is an array of objects
+    #   items:                         array of rows. Each row is an array of objects
     #   detail_hash:                   hash of values where the key is used to find the row object details
     #   searchable_columns:            array of searchable column indices
     #   case_insensitive_sort_columns: array of column indices where values need downcasing prior to comparison

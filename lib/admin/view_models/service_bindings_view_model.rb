@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       service_bindings = @cc.service_bindings
 
-      # service_bindings have to exist.  Other record types are optional
+      # service_bindings have to exist. Other record types are optional
       return result unless service_bindings['connected']
 
       applications      = @cc.applications

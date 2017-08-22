@@ -8,7 +8,7 @@ module AdminUI
     def do_items
       reps = @doppler.reps
 
-      # reps have to exist.  Other record types are optional
+      # reps have to exist. Other record types are optional
       return result unless reps['connected']
 
       items = []

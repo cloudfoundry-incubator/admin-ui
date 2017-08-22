@@ -9,7 +9,7 @@ module AdminUI
       doppler_components = @doppler.components
       varz_components    = @varz.components
 
-      # doppler_components or varz_components have to exist.  Other record types are optional
+      # doppler_components or varz_components have to exist. Other record types are optional
       return result unless doppler_components['connected'] || varz_components['connected']
 
       items = []

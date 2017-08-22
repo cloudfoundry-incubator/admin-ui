@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       domains = @cc.domains
 
-      # domains have to exist.  Other record types are optional
+      # domains have to exist. Other record types are optional
       return result unless domains['connected']
 
       organizations                 = @cc.organizations

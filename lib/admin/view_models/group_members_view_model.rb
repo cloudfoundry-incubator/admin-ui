@@ -9,7 +9,7 @@ module AdminUI
       group_membership = @cc.group_membership
       users            = @cc.users_uaa
 
-      # groups, group_membership and users_uaa have to exist.  Other record types are optional
+      # groups, group_membership and users_uaa have to exist. Other record types are optional
       return result unless groups['connected'] &&
                            group_membership['connected'] &&
                            users['connected']

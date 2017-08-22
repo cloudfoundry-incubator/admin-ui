@@ -21,7 +21,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it 'verifies first button is copy button' do
         begin
           Selenium::WebDriver::Wait.new(timeout: 5).until do
-            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # scroll_tab_into_view(tab_id, true).click
             @driver.execute_script('arguments[0].click();', scroll_tab_into_view(tab_id, true))
 
@@ -55,7 +55,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       it 'verifies subtable is not shown' do
         begin
           Selenium::WebDriver::Wait.new(timeout: 5).until do
-            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # scroll_tab_into_view(tab_id, true).click
             @driver.execute_script('arguments[0].click();', scroll_tab_into_view(tab_id, true))
 

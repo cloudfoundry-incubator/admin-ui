@@ -104,7 +104,7 @@ module CCHelper
     populate_db(config.uaadb_uri, File.join(File.dirname(__FILE__), './uaadb'), uaadb_inserts)
 
     # In order to set the organization's default_isolation_segment_guid, there has to first be an
-    # organizations_isolation_segment record.  As a result, we have to have both isolation_segment and
+    # organizations_isolation_segment record. As a result, we have to have both isolation_segment and
     # organization created prior to being able to set the organization's default_isolation_segment_guid
     sql(config.ccdb_uri, "UPDATE organizations SET default_isolation_segment_guid = '#{cc_isolation_segment[:guid]}'")
 

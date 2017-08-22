@@ -39,7 +39,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     end
 
     def refresh_button
-      # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+      # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
       # @driver.find_element(id: 'MenuButtonRefresh').click
       @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'MenuButtonRefresh'))
 
@@ -234,7 +234,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         # Second select the desired tab via scrolling
         begin
           Selenium::WebDriver::Wait.new(timeout: 5).until do
-            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # scroll_tab_into_view(tab_id, true).click
             @driver.execute_script('arguments[0].click();', scroll_tab_into_view(tab_id, true))
 
@@ -268,7 +268,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       def check_first_row(table_id)
-        # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+        # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
         # @driver.find_elements(xpath: "//table[@id='#{table_id}']/tbody/tr/td[1]/input")[0].click
         @driver.execute_script('arguments[0].click();', @driver.find_elements(xpath: "//table[@id='#{table_id}']/tbody/tr/td[1]/input")[0])
       end
@@ -360,11 +360,17 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
       shared_examples 'save button' do
         it 'saves the data in the table' do
-          @driver.find_element(id: save_button_id).click
+          # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
+          # @driver.find_element(id: save_button_id).click
+          @driver.execute_script('arguments[0].click();', @driver.find_element(id: save_button_id))
+
           Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: specific_save_button_id).displayed? }
           expect(@driver.find_element(id: specific_save_button_id).displayed?).to be(true)
           expect(@driver.find_element(id: specific_save_button_id).text).to eq(save_button_text)
-          @driver.find_element(id: specific_save_button_id).click
+
+          # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
+          # @driver.find_element(id: specific_save_button_id).click
+          @driver.execute_script('arguments[0].click();', @driver.find_element(id: specific_save_button_id))
 
           begin
             Selenium::WebDriver::Wait.new(timeout: 10).until do
@@ -683,7 +689,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               # Select another quota and click the set button
               @driver.find_element(xpath: '//select[@id="quotaSelector"]/option[2]').click
 
-              # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+              # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
               # @driver.find_element(id: 'modalDialogButton0').click
               @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'modalDialogButton0'))
 
@@ -700,7 +706,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def manage_organization(button_index)
             check_first_row('OrganizationsTable')
 
-            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: button_id).click
             @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_OrganizationsTable_' + button_index.to_s))
 
@@ -1096,7 +1102,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def manage_space(button_index)
             check_first_row('SpacesTable')
 
-            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: button_id).click
             @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_SpacesTable_' + button_index.to_s))
 
@@ -1409,7 +1415,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def manage_application(button_index)
             check_first_row('ApplicationsTable')
 
-            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: 'Buttons_ApplicationsTable_' + button_index.to_s).click
             @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_ApplicationsTable_' + button_index.to_s))
 
@@ -3758,7 +3764,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def manage_user(button_index)
             check_first_row('UsersTable')
 
-            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: button_id).click
             @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_UsersTable_' + button_index.to_s))
 
@@ -4265,7 +4271,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def manage_buildpack(button_index)
             check_first_row('BuildpacksTable')
 
-            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: 'Buttons_BuildpacksTable_' + button_index.to_s).click
             @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_BuildpacksTable_' + button_index.to_s))
 
@@ -4645,7 +4651,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def manage_feature_flag(button_index)
             check_first_row('FeatureFlagsTable')
 
-            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: 'Buttons_FeatureFlagsTable_' + button_index.to_s).click
             @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_FeatureFlagsTable_' + button_index.to_s))
 
@@ -6435,7 +6441,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def manage_security_group(button_index)
             check_first_row('SecurityGroupsTable')
 
-            # TODO: Bug in selenium-webdriver.  Entire item must be displayed for it to click.  Workaround following after commented out code
+            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: 'Buttons_SecurityGroupsTable_' + button_index.to_s).click
             @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_SecurityGroupsTable_' + button_index.to_s))
 

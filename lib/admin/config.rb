@@ -117,7 +117,7 @@ module AdminUI
       elsif filtered_select[:stats_refresh_time].nil?
         # let the mechanism of :stats_refresh_schedules to take effect, so do nothing else.
       else
-        raise Membrane::SchemaValidationError, 'Two mutally exclusive properties, stats_refresh_time and stats_refresh_schedules, are both present in the configuration file.  Please remove one of the two properties.'
+        raise Membrane::SchemaValidationError, 'Two mutally exclusive properties, stats_refresh_time and stats_refresh_schedules, are both present in the configuration file. Please remove one of the two properties.'
       end
 
       config_instance = Config.new(filtered_select).tap(&:validate)

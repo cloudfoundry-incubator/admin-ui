@@ -34,7 +34,7 @@ module AdminUI
           event_counters[actee] += 1
         else
           next unless event[:actor_type] == 'user'
-          # A user actor_type is used for a client.  But, the actor_name is nil in this case
+          # A user actor_type is used for a client. But, the actor_name is nil in this case
           next unless event[:actor_name].nil?
           actor = event[:actor]
           event_counters[actor] = 0 if event_counters[actor].nil?

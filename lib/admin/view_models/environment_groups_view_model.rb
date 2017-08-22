@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       env_groups = @cc.env_groups
 
-      # env_groups have to exist.  Other record types are optional
+      # env_groups have to exist. Other record types are optional
       return result unless env_groups['connected']
 
       items = []

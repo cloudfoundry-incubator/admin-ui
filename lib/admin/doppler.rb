@@ -393,7 +393,7 @@ module AdminUI
     def save_data(local_value_metrics, disconnected)
       @logger.debug('Saving doppler component data...')
 
-      # Sort the local value metrics.  Nice for the UI when displaying JSON block.
+      # Sort the local value metrics. Nice for the UI when displaying JSON block.
       sorted_local_value_metrics = {}
       local_value_metrics.each_pair do |key, value|
         sorted_local_value_metrics[key] = value.sort_by { |k, _v| k.downcase }.to_h
@@ -494,7 +494,7 @@ module AdminUI
 
     # The call to this method must be in a synchronized block
     def write_components(param_components)
-      # Prune the keys being persisted for the components.  No need to persist all of their metrics
+      # Prune the keys being persisted for the components. No need to persist all of their metrics
       items = {}
       param_components['items'].each_pair do |key, value|
         items[key] = value.select { |value_key, _| DOPPLER_PERSIST_KEYS.include?(value_key) }

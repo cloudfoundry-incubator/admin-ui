@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       space_quota_definitions = @cc.space_quota_definitions
 
-      # space_quota_definitions have to exist.  Other record types are optional
+      # space_quota_definitions have to exist. Other record types are optional
       return result unless space_quota_definitions['connected']
 
       organizations = @cc.organizations

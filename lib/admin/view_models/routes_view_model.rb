@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       routes = @cc.routes
 
-      # routes have to exist.  Other record types are optional
+      # routes have to exist. Other record types are optional
       return result unless routes['connected']
 
       domains        = @cc.domains

@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       tasks = @cc.tasks
 
-      # tasks have to exist.  Other record types are optional
+      # tasks have to exist. Other record types are optional
       return result unless tasks['connected']
 
       applications  = @cc.applications

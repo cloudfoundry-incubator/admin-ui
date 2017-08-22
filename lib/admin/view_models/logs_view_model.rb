@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       logs = @log_files.infos
 
-      # logs have to exist.  Other record types are optional
+      # logs have to exist. Other record types are optional
       return result unless logs
 
       items = []

@@ -15,12 +15,12 @@ module AdminUI
         return if @config.stats_file.nil?
         file_path = @config.stats_file
         if File.exist?(file_path) && !does_schema_exist
-          @logger.debug('AdminUI::DBStoreMigration.migrate_to_db: found stats_file.  Prepare for data migration from stats_file to database.')
+          @logger.debug('AdminUI::DBStoreMigration.migrate_to_db: found stats_file. Prepare for data migration from stats_file to database.')
           record_array = Yajl::Parser.parse(IO.read(file_path))
           store(connection, record_array)
           backup_file_path = "#{@config.stats_file}.bak"
           FileUtils.move(@config.stats_file, backup_file_path)
-          @logger.debug("AdminUI::DBStoreMigration.migrate_to_db: completed data migration from stats_file to database.  The stats_file is now renamed to #{backup_file_path}.")
+          @logger.debug("AdminUI::DBStoreMigration.migrate_to_db: completed data migration from stats_file to database. The stats_file is now renamed to #{backup_file_path}.")
         end
       ensure
         connection.disconnect

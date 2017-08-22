@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       service_providers = @cc.service_providers
 
-      # service_providers have to exist.  Other record types are optional
+      # service_providers have to exist. Other record types are optional
       return result unless service_providers['connected']
 
       identity_zones = @cc.identity_zones

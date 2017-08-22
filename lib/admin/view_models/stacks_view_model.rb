@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       stacks = @cc.stacks
 
-      # stacks have to exist.  Other record types are optional
+      # stacks have to exist. Other record types are optional
       return result unless stacks['connected']
 
       applications = @cc.applications

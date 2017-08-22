@@ -746,7 +746,7 @@ describe AdminUI::Config do
       end
 
       it 'has both stats_refresh_time and stats_refresh_schedules entry' do
-        expect { AdminUI::Config.load(stats_refresh_schedules: ['@daily'], stats_refresh_time: 300) }.to raise_error(Membrane::SchemaValidationError, 'Two mutally exclusive properties, stats_refresh_time and stats_refresh_schedules, are both present in the configuration file.  Please remove one of the two properties.')
+        expect { AdminUI::Config.load(stats_refresh_schedules: ['@daily'], stats_refresh_time: 300) }.to raise_error(Membrane::SchemaValidationError, 'Two mutally exclusive properties, stats_refresh_time and stats_refresh_schedules, are both present in the configuration file. Please remove one of the two properties.')
       end
 
       it 'stats_retries' do

@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       security_groups = @cc.security_groups
 
-      # security_groups have to exist.  Other record types are optional
+      # security_groups have to exist. Other record types are optional
       return result unless security_groups['connected']
 
       security_groups_spaces         = @cc.security_groups_spaces

@@ -99,7 +99,7 @@ shared_context :web_context do
   end
 
   def check_filter_link(tab_id, link_index, target_tab_id, expected_filter)
-    # TODO: Bug in selenium-webdriver 2.48.1.  Entire item must be displayed for it to click.  Workaround following two lines after commented out code
+    # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following two lines after commented out code
     # Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_elements(xpath: "//div[@id='#{tab_id}PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(tag_name: 'a').click }
     element = @driver.find_elements(xpath: "//div[@id='#{tab_id}PropertiesContainer']/table/tr[*]/td[2]")[link_index].find_element(tag_name: 'a')
     @driver.execute_script('arguments[0].click();', element)

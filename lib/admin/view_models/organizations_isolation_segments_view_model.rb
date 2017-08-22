@@ -9,7 +9,7 @@ module AdminUI
       organizations                    = @cc.organizations
       organizations_isolation_segments = @cc.organizations_isolation_segments
 
-      # isolation_segments, organizations and organizations_isolation_segments have to exist.  Other record types are optional
+      # isolation_segments, organizations and organizations_isolation_segments have to exist. Other record types are optional
       return result unless isolation_segments['connected'] &&
                            organizations['connected'] &&
                            organizations_isolation_segments['connected']

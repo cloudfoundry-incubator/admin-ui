@@ -26,7 +26,7 @@ module AdminUI
     def do_items
       feature_flags = @cc.feature_flags
 
-      # feature_flags have to exist.  Other record types are optional
+      # feature_flags have to exist. Other record types are optional
       return result unless feature_flags['connected']
 
       # Set of persisted feature_flag keys

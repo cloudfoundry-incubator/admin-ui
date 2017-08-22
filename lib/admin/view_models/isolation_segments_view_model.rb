@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       isolation_segments = @cc.isolation_segments
 
-      # isolation_segments have to exist.  Other record types are optional
+      # isolation_segments have to exist. Other record types are optional
       return result unless isolation_segments['connected']
 
       organizations                    = @cc.organizations

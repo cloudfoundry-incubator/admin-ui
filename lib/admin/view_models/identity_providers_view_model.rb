@@ -7,7 +7,7 @@ module AdminUI
     def do_items
       identity_providers = @cc.identity_providers
 
-      # identity_providers have to exist.  Other record types are optional
+      # identity_providers have to exist. Other record types are optional
       return result unless identity_providers['connected']
 
       identity_zones = @cc.identity_zones

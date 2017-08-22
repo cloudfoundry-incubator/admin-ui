@@ -9,7 +9,7 @@ module AdminUI
     def do_items
       spaces = @cc.spaces
 
-      # spaces have to exist.  Other record types are optional
+      # spaces have to exist. Other record types are optional
       return result unless spaces['connected']
 
       applications                   = @cc.applications

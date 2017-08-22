@@ -8,7 +8,7 @@ module AdminUI
     def do_items
       services = @cc.services
 
-      # services have to exist.  Other record types are optional
+      # services have to exist. Other record types are optional
       return result unless services['connected']
 
       events                    = @cc.events

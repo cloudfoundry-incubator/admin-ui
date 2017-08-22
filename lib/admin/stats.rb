@@ -95,7 +95,7 @@ module AdminUI
           raise error
         end
       end
-      @logger.debug("AdminUI::Stats.calculate_time_until_generate_stats:  Next data collection time will be at #{target_time}.")
+      @logger.debug("AdminUI::Stats.calculate_time_until_generate_stats: Next data collection time will be at #{target_time}.")
       target_time.to_i
     end
 

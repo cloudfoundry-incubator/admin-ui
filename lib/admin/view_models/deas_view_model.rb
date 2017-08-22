@@ -8,7 +8,7 @@ module AdminUI
     def do_items
       doppler_deas = @doppler.deas
 
-      # doppler_deas has to exist.  Other record types are optional
+      # doppler_deas has to exist. Other record types are optional
       return result unless doppler_deas['connected']
 
       items = []

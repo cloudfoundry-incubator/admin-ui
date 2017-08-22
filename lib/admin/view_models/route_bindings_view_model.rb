@@ -9,7 +9,7 @@ module AdminUI
       route_bindings    = @cc.route_bindings
       service_instances = @cc.service_instances
 
-      # routes, route_bindings and service_instances have to exist.  Other record types are optional
+      # routes, route_bindings and service_instances have to exist. Other record types are optional
       return result unless routes['connected'] &&
                            route_bindings['connected'] &&
                            service_instances['connected']

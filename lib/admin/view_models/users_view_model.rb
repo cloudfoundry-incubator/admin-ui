@@ -19,7 +19,7 @@ module AdminUI
 
       # organizations, organizations_auditors, organizations_billing_managers, organizations_managers, organizations_users,
       # spaces, spaces_auditors, spaces_developers, spaces_managers,
-      # users_cc and users_uaa have to exist.  Other record types are optional
+      # users_cc and users_uaa have to exist. Other record types are optional
       return result unless organizations['connected'] &&
                            organizations_auditors['connected'] &&
                            organizations_billing_managers['connected'] &&
@@ -55,7 +55,7 @@ module AdminUI
         Thread.pass
 
         next unless event[:actor_type] == 'user'
-        # A user actor_type is used for a client.  But, the actor_name is nil in this case
+        # A user actor_type is used for a client. But, the actor_name is nil in this case
         next if event[:actor_name].nil?
         actor = event[:actor]
         event_counters[actor] = 0 if event_counters[actor].nil?

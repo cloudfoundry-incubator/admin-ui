@@ -8,7 +8,7 @@ module AdminUI
     def do_items
       containers = @doppler.containers
 
-      # containers have to exist.  Other record types are optional
+      # containers have to exist. Other record types are optional
       return result unless containers['connected']
 
       applications  = @cc.applications

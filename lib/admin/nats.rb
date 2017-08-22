@@ -309,7 +309,7 @@ module AdminUI
       "http://#{item['host']}/varz"
     end
 
-    # Determine key for comparison.  Type and index are insufficient.  Host must be included (without port) as well.
+    # Determine key for comparison. Type and index are insufficient. Host must be included (without port) as well.
     def item_key(uri_string, item)
       uri = URI.parse(uri_string)
       "#{item['type']}:#{item['index']}:#{uri.host}"

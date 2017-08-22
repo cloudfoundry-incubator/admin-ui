@@ -9,7 +9,7 @@ module AdminUI
       approvals = @cc.approvals
       users     = @cc.users_uaa
 
-      # approvals and users have to exist.  Other record types are optional
+      # approvals and users have to exist. Other record types are optional
       return result unless approvals['connected'] &&
                            users['connected']
 
