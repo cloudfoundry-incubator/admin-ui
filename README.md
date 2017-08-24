@@ -600,8 +600,7 @@ Example: <code>100%</code>
 <code>table_page_size</code>
 </dt>
 <dd>
-Default selection for the page size in the table, will be set to 10 if not configured. Valid values are: 5, 10, 25, 50,
-100, 250, 500, 1000.
+Default selection for the page size in the table, will be set to 10 if not configured. Valid values are: 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000.
 <br>
 Example: <code>25</code>
 </dd>

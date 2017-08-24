@@ -83,7 +83,7 @@ module AdminUI
             optional(:stats_retries)                       => Integer,
             optional(:stats_retry_interval)                => Integer,
             optional(:table_height)                        => /[^\r\n\t]+/,
-            optional(:table_page_size)                     => enum(5, 10, 25, 50, 100, 250, 500, 1000),
+            optional(:table_page_size)                     => enum(5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10_000),
             uaa_client:
             {
               id:     /[^\r\n\t]+/,
