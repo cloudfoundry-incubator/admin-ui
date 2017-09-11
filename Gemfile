@@ -9,7 +9,7 @@ gem 'net-sftp', '2.1.2'
 gem 'parse-cron', '0.1.4'
 gem 'rack-ssl', '1.4.1'
 gem 'ruby_protobuf', '0.4.11'
-gem 'sequel', '4.49.0'
+gem 'sequel', '5.0.0'
 gem 'sequel_pg', '1.7.1'
 gem 'sinatra', '2.0.0'
 gem 'sqlite3', '1.3.13'
@@ -25,5 +25,5 @@ end
 
 group :test do
   gem 'rspec', '3.6.0'
-  gem 'selenium-webdriver', '3.5.1'
+  gem 'selenium-webdriver', '3.5.2'
 end
