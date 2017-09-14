@@ -131,7 +131,7 @@ module ViewModelsHelper
         cc_app[:created_at].to_datetime.rfc3339,
         cc_app[:updated_at].to_datetime.rfc3339,
         cc_process[:diego],
-        cc_process[:enable_ssh],
+        cc_app[:enable_ssh],
         !cc_package[:docker_image].nil?,
         cc_stack[:name],
         cc_buildpack[:name],

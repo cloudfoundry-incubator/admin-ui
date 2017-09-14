@@ -170,12 +170,12 @@ describe AdminUI::Operation, type: :integration do
 
       it 'enables application ssh' do
         disable_ssh_application
-        expect { enable_ssh_application }.to change { cc.processes['items'][0][:enable_ssh] }.from(false).to(true)
+        expect { enable_ssh_application }.to change { cc.applications['items'][0][:enable_ssh] }.from(false).to(true)
       end
 
       it 'disables application ssh' do
         enable_ssh_application
-        expect { disable_ssh_application }.to change { cc.processes['items'][0][:enable_ssh] }.from(true).to(false)
+        expect { disable_ssh_application }.to change { cc.applications['items'][0][:enable_ssh] }.from(true).to(false)
       end
 
       it 'deletes the application' do

@@ -27,7 +27,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :apps,
-            columns: %i[created_at desired_state droplet_guid guid id max_task_sequence_id name space_guid updated_at]
+            columns: %i[created_at desired_state droplet_guid enable_ssh guid id max_task_sequence_id name space_guid updated_at]
           },
           approvals:
           {

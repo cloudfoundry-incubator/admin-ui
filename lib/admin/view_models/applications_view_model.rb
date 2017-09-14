@@ -171,9 +171,19 @@ module AdminUI
 
         if process
           row.push(process[:diego])
-          row.push(process[:enable_ssh])
         else
-          row.push(nil, nil)
+          row.push(nil)
+        end
+
+        # enable_ssh moved from process to application in cf-release 273
+        if application[:enable_ssh].nil?
+          if process
+            row.push(process[:enable_ssh])
+          else
+            row.push(nil)
+          end
+        else
+          row.push(application[:enable_ssh])
         end
 
         if package

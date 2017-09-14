@@ -368,6 +368,7 @@ Sequel.migration do
       String :salt, :text=>true
       Integer :max_task_sequence_id, :default=>1
       String :buildpack_cache_sha256_checksum, :text=>true
+      TrueClass :enable_ssh
       
       index [:droplet_guid], :name=>:apps_desired_droplet_guid
       index [:created_at], :name=>:apps_v3_created_at_index

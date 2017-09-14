@@ -427,6 +427,7 @@ module CCHelper
       created_at:           unique_time('cc_app_created'),
       desired_state:        'STARTED',
       droplet_guid:         cc_droplet_guid,
+      enable_ssh:           true,
       guid:                 'application1',
       id:                   unique_id('cc_app'),
       max_task_sequence_id: 1,
@@ -1696,7 +1697,7 @@ module CCHelper
       if @cc_apps_deleted
         cc_app_not_found
       else
-        sql(config.ccdb_uri, "UPDATE processes SET enable_ssh = 'true' WHERE app_guid = '#{cc_app[:guid]}'")
+        sql(config.ccdb_uri, "UPDATE apps SET enable_ssh = 'true' WHERE guid = '#{cc_app[:guid]}'")
         Created.new
       end
     end
@@ -1705,7 +1706,7 @@ module CCHelper
       if @cc_apps_deleted
         cc_app_not_found
       else
-        sql(config.ccdb_uri, "UPDATE processes SET enable_ssh = 'false' WHERE app_guid = '#{cc_app[:guid]}'")
+        sql(config.ccdb_uri, "UPDATE apps SET enable_ssh = 'false' WHERE guid = '#{cc_app[:guid]}'")
         Created.new
       end
     end
