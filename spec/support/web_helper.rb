@@ -59,10 +59,12 @@ shared_context :web_context do
                                      url:                  url)
     else
       profile = Selenium::WebDriver::Firefox::Profile.new
-      profile['browser.download.dir']                   = directory
-      profile['browser.download.folderList']            = 2
-      profile['browser.helperApps.neverAsk.saveToDisk'] = 'application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv'
-      profile['pdfjs.disabled']                         = true
+      profile['browser.download.dir']                     = directory
+      profile['browser.download.folderList']              = 2
+      profile['browser.helperApps.neverAsk.saveToDisk']   = 'application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv'
+      profile['pdfjs.disabled']                           = true
+      profile['browser.startup.homepage_override.mstone'] = 'ignore'
+      profile['startup.homepage_welcome_url.additional']  = 'about:blank'
 
       options = Selenium::WebDriver::Firefox::Options.new
       options.profile = profile

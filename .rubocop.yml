@@ -51,3 +51,12 @@ ParameterLists:
 
 PerceivedComplexity:
   Enabled: false
+
+RescueWithoutErrorClass:
+  Enabled: false
+
+Style/SafeNavigation:
+  Enabled: false
+
+UriEscapeUnescape:
+  Enabled: false

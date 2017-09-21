@@ -67,7 +67,7 @@ module AdminUI
     end
 
     def email_content(recipients, title, rows)
-      <<~END_OF_MESSAGE
+      <<~EMAIL_CONTENT
         From: #{@config.sender_email_account}
         To: #{recipients}
         Importance: High
@@ -87,7 +87,7 @@ module AdminUI
           </tr>
           #{rows}
         </table>
-      END_OF_MESSAGE
+      EMAIL_CONTENT
     end
   end
 end
