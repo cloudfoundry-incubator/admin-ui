@@ -20,7 +20,9 @@ describe AdminUI::Admin, type: :integration do
       request['Cookie'] = cookie
 
       response = http.request(request)
-      cookie   = response['Set-Cookie'] unless response['Set-Cookie'].nil?
+
+      all_cookies = response.get_fields('set-cookie')
+      cookie = all_cookies.last.split('; ')[0] unless all_cookies.nil? || all_cookies.empty?
 
       break unless response['location']
       uri = URI.parse(response['location'])
@@ -53,13 +55,13 @@ describe AdminUI::Admin, type: :integration do
     found_match = 0
     File.readlines(log_file).each do |line|
       line.chomp!
-      next unless line =~ /\[ admin \] : \[ /
+      next unless line.match?(/\[ admin \] : \[ /)
       operations_msgs.each do |op_msg|
         op  = op_msg[0]
         msg = op_msg[1]
         esmsg = msg
         esmsg = Regexp.escape(msg) if escapes
-        next unless line =~ /\[ admin \] : \[ #{op} \] : #{esmsg}/
+        next unless line.match?(/\[ admin \] : \[ #{op} \] : #{esmsg}/)
         found_match += 1
         break
       end

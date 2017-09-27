@@ -122,11 +122,9 @@ describe AdminUI::Admin do
       request['Cookie'] = cookie
 
       response = http.request(request)
-      if secured_client_connection
-        cookie = { 'cookie' => response.to_hash['set-cookie'].map { |ea| ea[/^.*?;/] }.join }
-      else
-        cookie = response['Set-Cookie'] unless response['Set-Cookie'].nil?
-      end
+
+      all_cookies = response.get_fields('set-cookie')
+      cookie = all_cookies.last.split('; ')[0] unless all_cookies.nil? || all_cookies.empty?
 
       break unless response['location']
       uri = URI.parse(response['location'])
@@ -1740,7 +1738,6 @@ describe AdminUI::Admin do
 
     context 'all tabs via https' do
       let(:secured_client_connection) { true }
-
       it_behaves_like('common all tabs succeed')
     end
   end
