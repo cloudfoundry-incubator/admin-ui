@@ -214,6 +214,7 @@ describe AdminUI::Config do
 
         it 'max_session_idle_length' do
           expect(config.ssl_max_session_idle_length).to eq(4)
+          expect(AdminUI::Config.ssl_max_session_idle_length).to eq(4)
         end
       end
 
@@ -496,6 +497,7 @@ describe AdminUI::Config do
 
         it 'max_session_idle_length' do
           expect(config.ssl_max_session_idle_length).to be_nil
+          expect(AdminUI::Config.ssl_max_session_idle_length).to be_nil
         end
       end
 

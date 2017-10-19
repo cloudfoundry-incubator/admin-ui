@@ -126,7 +126,17 @@ module AdminUI
         stats_refresh_time = filtered_select[:stats_refresh_time]
         config_instance.stats_refresh_schedules.push("#{Utils.minutes_in_an_hour(stats_refresh_time)} #{Utils.hours_in_a_day(stats_refresh_time).positive? ? Utils.hours_in_a_day(stats_refresh_time) : '*'} * * *")
       end
-      @config = config_instance
+
+      # In order to allow class load of SecureWeb to use this value, it has to be static
+      # rubocop:disable Style/ClassVars
+      @@ssl_max_session_idle_length = config_instance.ssl_max_session_idle_length
+      # rubocop:enable Style/ClassVars
+
+      config_instance
+    end
+
+    def self.ssl_max_session_idle_length
+      @@ssl_max_session_idle_length
     end
 
     def validate

@@ -15,7 +15,6 @@ require_relative 'admin/log_files'
 require_relative 'admin/logger'
 require_relative 'admin/nats'
 require_relative 'admin/operation'
-require_relative 'admin/secure_web'
 require_relative 'admin/stats'
 require_relative 'admin/varz'
 require_relative 'admin/view_models'
@@ -175,6 +174,9 @@ module AdminUI
         web_hash[:SSLEnable]       = true
         web_hash[:SSLPrivateKey]   = pkey
         web_hash[:SSLVerifyClient] = OpenSSL::SSL::VERIFY_NONE
+
+        # Delay this require until after config is loaded
+        require_relative 'admin/secure_web'
 
         web_class = AdminUI::SecureWeb
       else
