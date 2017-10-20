@@ -97,6 +97,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.isolation_segments)
     end
 
+    it 'returns zero mfa_providers as expected' do
+      verify_disconnected_items(cc.mfa_providers)
+    end
+
     it 'returns zero organizations as expected' do
       verify_disconnected_items(cc.organizations)
     end

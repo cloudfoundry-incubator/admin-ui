@@ -108,6 +108,12 @@ module AdminUI
             table:   :isolation_segments,
             columns: %i[created_at guid id name updated_at]
           },
+          mfa_providers:
+          {
+            db_uri:  uaadb_uri,
+            table:   :mfa_providers,
+            columns: %i[active config created id identity_zone_id lastmodified name type]
+          },
           organizations:
           {
             db_uri:  ccdb_uri,
@@ -569,6 +575,10 @@ module AdminUI
 
     def isolation_segments
       result_cache(:isolation_segments)
+    end
+
+    def mfa_providers
+      result_cache(:mfa_providers)
     end
 
     def organizations

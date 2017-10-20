@@ -357,6 +357,18 @@ module AdminUI
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.logs, params).items)
     end
 
+    get '/mfa_providers_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/mfa_providers_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.mfa_providers, params).items)
+    end
+
+    get '/mfa_providers_view_model/:id', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/mfa_providers_view_model/#{params[:id]}")
+      result = @view_models.mfa_provider(params[:id])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/organizations_isolation_segments_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/organizations_isolation_segments_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.organizations_isolation_segments, params).items)
@@ -887,6 +899,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'logs.csv')
+    end
+
+    post '/mfa_providers_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/mfa_providers_view_model')
+      file = Download.download(request.body.read, 'mfa_providers', @view_models.mfa_providers)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'mfa_providers.csv')
     end
 
     post '/organizations', auth: [:admin] do

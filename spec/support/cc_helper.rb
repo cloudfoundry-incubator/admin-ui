@@ -1487,6 +1487,19 @@ module CCHelper
     }
   end
 
+  def uaa_mfa_provider
+    {
+      active:           true,
+      config:           '{"algorithm":"SHA256","digits":6,"duration":30,"issuer":"uaa","providerDescription":"Test MFA for default zone"}',
+      created:          unique_time('uaa_mfa_provider_created'),
+      id:               'mfa_provider1',
+      identity_zone_id: uaa_identity_zone[:id],
+      lastmodified:     unique_time('uaa_mfa_provider_last'),
+      name:             'mfa_provider_name',
+      type:             'mfa_provider_type1'
+    }
+  end
+
   def uaa_service_provider
     {
       active:              true,
@@ -1605,6 +1618,7 @@ module CCHelper
       [:identity_zone,        uaa_identity_zone],
       [:identity_provider,    uaa_identity_provider],
       [:groups,               uaa_group],
+      [:mfa_providers,        uaa_mfa_provider],
       [:service_provider,     uaa_service_provider],
       [:users,                uaa_user_with_password],
       [:group_membership,     uaa_group_membership],

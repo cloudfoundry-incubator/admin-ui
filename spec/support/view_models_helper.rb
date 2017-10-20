@@ -616,6 +616,7 @@ module ViewModelsHelper
         1,
         1,
         1,
+        1,
         uaa_identity_zone[:description]
       ]
     ]
@@ -657,6 +658,33 @@ module ViewModelsHelper
         }
       ]
     ]
+  end
+
+  def view_models_mfa_providers
+    config = Yajl::Parser.parse(uaa_mfa_provider[:config])
+
+    [
+      [
+        uaa_identity_zone[:name],
+        uaa_mfa_provider[:type],
+        uaa_mfa_provider[:name],
+        uaa_mfa_provider[:id],
+        uaa_mfa_provider[:created].to_datetime.rfc3339,
+        uaa_mfa_provider[:lastmodified].to_datetime.rfc3339,
+        uaa_mfa_provider[:active],
+        config['issuer'],
+        config['algorithm'],
+        config['digits'],
+        config['duration']
+      ]
+    ]
+  end
+
+  def view_models_mfa_providers_detail
+    {
+      'identity_zone' => uaa_identity_zone,
+      'mfa_provider'  => uaa_mfa_provider
+    }
   end
 
   def view_models_organization_roles

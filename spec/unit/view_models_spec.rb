@@ -228,6 +228,14 @@ describe AdminUI::ViewModels do
       verify_disconnected_items(view_models.isolation_segments)
     end
 
+    it 'returns nil mfa_provider as expected' do
+      expect(view_models.mfa_provider('bogus')).to be_nil
+    end
+
+    it 'returns zero mfa_providers as expected' do
+      verify_disconnected_items(view_models.mfa_providers)
+    end
+
     it 'returns nil organization as expected' do
       expect(view_models.organization('bogus')).to be_nil
     end

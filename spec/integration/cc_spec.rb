@@ -454,6 +454,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected mfa providers' do
+      let(:results)  { cc.mfa_providers }
+      let(:expected) { uaa_mfa_provider }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected organizations' do
       let(:results)  { cc.organizations }
       let(:expected) { cc_organization }

@@ -90,6 +90,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('IdentityZones').displayed?).to be(true)
       expect(scroll_tab_into_view('IdentityProviders').displayed?).to be(true)
       expect(scroll_tab_into_view('ServiceProviders').displayed?).to be(true)
+      expect(scroll_tab_into_view('MFAProviders').displayed?).to be(true)
       expect(scroll_tab_into_view('SecurityGroups').displayed?).to be(true)
       expect(scroll_tab_into_view('SecurityGroupsSpaces').displayed?).to be(true)
       expect(scroll_tab_into_view('StagingSecurityGroupsSpaces').displayed?).to be(true)
@@ -6126,8 +6127,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='IdentityZonesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 14,
-                                 labels:          ['Name', 'ID', 'Created', 'Updated', 'Subdomain', 'Version', 'Identity Providers', 'SAML Providers', 'Clients', 'Users', 'Groups', 'Group Members', 'Approvals', 'Description'],
+                                 expected_length: 15,
+                                 labels:          ['Name', 'ID', 'Created', 'Updated', 'Subdomain', 'Version', 'Identity Providers', 'SAML Providers', 'MFA Providers', 'Clients', 'Users', 'Groups', 'Group Members', 'Approvals', 'Description'],
                                  colspans:        nil
                                }
                              ])
@@ -6140,6 +6141,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_identity_zone[:lastmodified].to_datetime.rfc3339,
                              uaa_identity_zone[:subdomain],
                              @driver.execute_script("return Format.formatNumber(#{uaa_identity_zone[:version]})"),
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -6190,6 +6192,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Description',        tag:   nil, value: uaa_identity_zone[:description] },
                             { label: 'Identity Providers', tag:   'a', value: '1' },
                             { label: 'SAML Providers',     tag:   'a', value: '1' },
+                            { label: 'MFA Providers',      tag:   'a', value: '1' },
                             { label: 'Clients',            tag:   'a', value: '1' },
                             { label: 'Users',              tag:   'a', value: '1' },
                             { label: 'Groups',             tag:   'a', value: '1' },
@@ -6206,24 +6209,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('IdentityZones', 8, 'ServiceProviders', uaa_identity_zone[:id])
           end
 
+          it 'has MFA providers link' do
+            check_filter_link('IdentityZones', 9, 'MFAProviders', uaa_identity_zone[:id])
+          end
+
           it 'has clients link' do
-            check_filter_link('IdentityZones', 9, 'Clients', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 10, 'Clients', uaa_identity_zone[:id])
           end
 
           it 'has users link' do
-            check_filter_link('IdentityZones', 10, 'Users', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 11, 'Users', uaa_identity_zone[:id])
           end
 
           it 'has groups link' do
-            check_filter_link('IdentityZones', 11, 'Groups', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 12, 'Groups', uaa_identity_zone[:id])
           end
 
           it 'has group members link' do
-            check_filter_link('IdentityZones', 12, 'GroupMembers', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 13, 'GroupMembers', uaa_identity_zone[:id])
           end
 
           it 'has approvals link' do
-            check_filter_link('IdentityZones', 13, 'Approvals', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 14, 'Approvals', uaa_identity_zone[:id])
           end
         end
       end
@@ -6397,6 +6404,89 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has identity zones link' do
             check_filter_link('ServiceProviders', 0, 'IdentityZones', uaa_identity_zone[:id])
+          end
+        end
+      end
+
+      context 'MFA Providers' do
+        let(:tab_id) { 'MFAProviders' }
+
+        it 'has a table' do
+          config = Yajl::Parser.parse(uaa_mfa_provider[:config])
+          check_table_layout([
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='MFAProvidersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                 expected_length: 11,
+                                 labels:          ['Identity Zone', 'Type', 'Name', 'GUID', 'Created', 'Updated', 'Active', 'Issuer', 'Algorithm', 'Digits', 'Duration'],
+                                 colspans:        nil
+                               }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='MFAProvidersTable']/tbody/tr/td"),
+                           [
+                             uaa_identity_zone[:name],
+                             uaa_mfa_provider[:type],
+                             uaa_mfa_provider[:name],
+                             uaa_mfa_provider[:id],
+                             uaa_mfa_provider[:created].to_datetime.rfc3339,
+                             uaa_mfa_provider[:lastmodified].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatBoolean(#{uaa_mfa_provider[:active]})"),
+                             config['issuer'],
+                             config['algorithm'],
+                             @driver.execute_script("return Format.formatNumber(#{config['digits']})"),
+                             @driver.execute_script("return Format.formatNumber(#{config['duration']})")
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_MFAProvidersTable_0')
+        end
+
+        context 'manage MFA providers' do
+          context 'Standard buttons' do
+            let(:filename) { 'mfa_providers' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_MFAProvidersTable_0' }
+              let(:print_button_id) { 'Buttons_MFAProvidersTable_1' }
+              let(:save_button_id)  { 'Buttons_MFAProvidersTable_2' }
+              let(:csv_button_id)   { 'Buttons_MFAProvidersTable_3' }
+              let(:excel_button_id) { 'Buttons_MFAProvidersTable_4' }
+              let(:pdf_button_id)   { 'Buttons_MFAProvidersTable_5' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_MFAProvidersTable_6' }
+            end
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            config = Yajl::Parser.parse(uaa_mfa_provider[:config])
+            check_details([
+                            { label: 'Identity Zone',    tag:   'a', value: uaa_identity_zone[:name] },
+                            { label: 'Identity Zone ID', tag:   nil, value: uaa_identity_zone[:id] },
+                            { label: 'Type',             tag:   nil, value: uaa_mfa_provider[:type] },
+                            { label: 'Name',             tag: 'div', value: uaa_mfa_provider[:name] },
+                            { label: 'GUID',             tag:   nil, value: uaa_mfa_provider[:id] },
+                            { label: 'Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_mfa_provider[:created].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_mfa_provider[:lastmodified].to_datetime.rfc3339}\")") },
+                            { label: 'Active',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_mfa_provider[:active]})") },
+                            { label: 'Issuer',           tag:   nil, value: config['issuer'] },
+                            { label: 'Algorithm',        tag:   nil, value: config['algorithm'] },
+                            { label: 'Digits',           tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{config['digits']})") },
+                            { label: 'Duration',         tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{config['duration']})") },
+                            { label: 'Description',      tag:   nil, value: config['providerDescription'] }
+                          ])
+          end
+
+          it 'has identity zones link' do
+            check_filter_link('MFAProviders', 0, 'IdentityZones', uaa_identity_zone[:id])
           end
         end
       end

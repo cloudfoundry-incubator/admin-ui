@@ -2014,6 +2014,18 @@ describe AdminUI::Admin, type: :integration do
       it_behaves_like('retrieves view_model')
     end
 
+    context 'mfa_providers_view_model' do
+      let(:path)              { '/mfa_providers_view_model' }
+      let(:view_model_source) { view_models_mfa_providers }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'mfa_providers_view_model detail' do
+      let(:path)              { "/mfa_providers_view_model/#{uaa_mfa_provider[:id]}" }
+      let(:view_model_source) { view_models_mfa_providers_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
     shared_examples 'organizations' do
       context 'organizations_view_model' do
         let(:event_type)        { 'organization' }

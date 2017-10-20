@@ -15,6 +15,7 @@ module AdminUI
       group_membership   = @cc.group_membership
       groups             = @cc.groups
       identity_providers = @cc.identity_providers
+      mfa_providers      = @cc.mfa_providers
       service_providers  = @cc.service_providers
       users              = @cc.users_uaa
 
@@ -23,6 +24,7 @@ module AdminUI
       group_membership_connected   = group_membership['connected']
       groups_connected             = groups['connected']
       identity_providers_connected = identity_providers['connected']
+      mfa_providers_connected      = mfa_providers['connected']
       service_providers_connected  = service_providers['connected']
       users_connected              = users['connected']
 
@@ -81,6 +83,17 @@ module AdminUI
         identity_provider_counters[identity_zone_id] += 1
       end
 
+      mfa_provider_counters = {}
+      mfa_providers['items'].each do |mfa_provider|
+        return result unless @running
+        Thread.pass
+
+        identity_zone_id = mfa_provider[:identity_zone_id]
+        next if identity_zone_id.nil?
+        mfa_provider_counters[identity_zone_id] = 0 if mfa_provider_counters[identity_zone_id].nil?
+        mfa_provider_counters[identity_zone_id] += 1
+      end
+
       service_provider_counters = {}
       service_providers['items'].each do |service_provider|
         return result unless @running
@@ -117,6 +130,7 @@ module AdminUI
         group_counter             = group_counters[id]
         group_membership_counter  = group_membership_counters[id]
         identity_provider_counter = identity_provider_counters[id]
+        mfa_provider_counter      = mfa_provider_counters[id]
         service_provider_counter  = service_provider_counters[id]
         user_counter              = user_counters[id]
 
@@ -146,6 +160,14 @@ module AdminUI
         if service_provider_counter
           row.push(service_provider_counter)
         elsif service_providers_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
+        if mfa_provider_counter
+          row.push(mfa_provider_counter)
+        elsif mfa_providers_connected
           row.push(0)
         else
           row.push(nil)
@@ -198,7 +220,7 @@ module AdminUI
         hash[id] = identity_zone
       end
 
-      result(true, items, hash, (0..13).to_a, (0..4).to_a << 13)
+      result(true, items, hash, (0..14).to_a, (0..4).to_a << 14)
     end
   end
 end

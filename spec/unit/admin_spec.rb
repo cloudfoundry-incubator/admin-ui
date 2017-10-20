@@ -1531,6 +1531,14 @@ describe AdminUI::Admin do
         verify_connected_view_model_empty_items('/logs_view_model')
       end
 
+      it '/mfa_providers_view_model succeeds' do
+        verify_disconnected_view_model_items('/mfa_providers_view_model')
+      end
+
+      it '/mfa_providers_view_model/:id returns not found' do
+        verify_not_found('/mfa_providers_view_model/mfa_provider1')
+      end
+
       it '/organizations_isolation_segments_view_model succeeds' do
         verify_disconnected_view_model_items('/organizations_isolation_segments_view_model')
       end
@@ -1955,6 +1963,14 @@ describe AdminUI::Admin do
 
       it '/logs_view_model redirects as expected' do
         get_redirects_as_expected('/logs_view_model')
+      end
+
+      it '/mfa_providers_view_model redirects as expected' do
+        get_redirects_as_expected('/mfa_providers_view_model')
+      end
+
+      it '/mfa_providers_view_model/:id redirects as expected' do
+        get_redirects_as_expected('/mfa_providers_view_model/mfa_provider1')
       end
 
       it '/organization_roles_view_model redirects as expected' do
@@ -2439,6 +2455,10 @@ describe AdminUI::Admin do
 
       it 'posts /logs_view_model redirects as expected' do
         post_redirects_as_expected('/logs_view_model')
+      end
+
+      it 'posts /mfa_providers_view_model redirects as expected' do
+        post_redirects_as_expected('/mfa_providers_view_model')
       end
 
       it 'posts /organizations redirects as expected' do

@@ -22,6 +22,7 @@ require_relative 'view_models/identity_providers_view_model'
 require_relative 'view_models/identity_zones_view_model'
 require_relative 'view_models/isolation_segments_view_model'
 require_relative 'view_models/logs_view_model'
+require_relative 'view_models/mfa_providers_view_model'
 require_relative 'view_models/organization_roles_view_model'
 require_relative 'view_models/organizations_isolation_segments_view_model'
 require_relative 'view_models/organizations_view_model'
@@ -82,6 +83,7 @@ module AdminUI
           identity_zones:                   { clazz: AdminUI::IdentityZonesViewModel },
           isolation_segments:               { clazz: AdminUI::IsolationSegmentsViewModel },
           logs:                             { clazz: AdminUI::LogsViewModel },
+          mfa_providers:                    { clazz: AdminUI::MFAProvidersViewModel },
           organizations:                    { clazz: AdminUI::OrganizationsViewModel },
           organizations_isolation_segments: { clazz: AdminUI::OrganizationsIsolationSegmentsViewModel },
           organization_roles:               { clazz: AdminUI::OrganizationRolesViewModel },
@@ -481,6 +483,14 @@ module AdminUI
 
     def logs
       result_cache(:logs)
+    end
+
+    def mfa_provider(id)
+      details(:mfa_providers, id)
+    end
+
+    def mfa_providers
+      result_cache(:mfa_providers)
     end
 
     def organization(guid)

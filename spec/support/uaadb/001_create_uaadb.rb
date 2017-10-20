@@ -36,11 +36,12 @@ Sequel.migration do
       String :group_id, :size=>36, :null=>false
       String :member_id, :size=>36, :null=>false
       String :member_type, :default=>"USER", :size=>8, :null=>false
-      String :authorities, :default=>"READ", :size=>255, :null=>false
+      String :authorities, :default=>"READ", :size=>255
       DateTime :added, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       String :origin, :default=>"uaa", :size=>36, :null=>false
       String :identity_zone_id, :size=>36
       
+      index [:group_id], :name=>:group_membership_perf_group_idx
       index [:member_id, :group_id], :name=>:group_membership_unique_key, :unique=>true
     end
     
@@ -88,6 +89,19 @@ Sequel.migration do
       primary_key [:id]
       
       index [:subdomain], :name=>:subdomain, :unique=>true
+    end
+    
+    create_table(:mfa_providers) do
+      String :id, :size=>36, :null=>false
+      DateTime :created, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :lastmodified
+      String :identity_zone_id, :size=>36, :null=>false
+      String :name, :size=>255, :null=>false
+      String :type, :size=>255, :null=>false
+      String :config, :text=>true
+      TrueClass :active, :null=>false
+      
+      primary_key [:id]
     end
     
     create_table(:oauth_client_details) do

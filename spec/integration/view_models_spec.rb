@@ -434,6 +434,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval')
     end
 
+    context 'returns connected mfa_providers_view_model' do
+      let(:results)  { view_models.mfa_providers }
+      let(:expected) { view_models_mfa_providers }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected mfa_providers_view_model detail' do
+      let(:results)  { view_models.mfa_provider(uaa_mfa_provider[:id]) }
+      let(:expected) { view_models_mfa_providers_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     shared_examples 'organizations' do
       context 'returns connected organizations_view_model' do
         let(:event_type) { 'organization' }
