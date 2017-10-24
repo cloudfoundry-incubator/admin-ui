@@ -2779,6 +2779,23 @@ module CCHelper
       end
     end
 
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/Users/#{uaa_user[:id]}/status", AdminUI::Utils::HTTP_PATCH, anything, '{"locked":false}', anything, anything, anything) do
+      if @uaa_users_deleted
+        uaa_user_not_found
+      else
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/Users/#{uaa_user[:id]}/status", AdminUI::Utils::HTTP_PATCH, anything, '{"passwordChangeRequired":true}', anything, anything, anything) do
+      if @uaa_users_deleted
+        uaa_user_not_found
+      else
+        sql(config.uaadb_uri, "UPDATE users SET passwd_change_required = 'true' WHERE id = '#{uaa_user[:id]}'")
+        OK.new({})
+      end
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/Users/#{uaa_user[:id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @uaa_users_deleted
         uaa_user_not_found

@@ -1859,6 +1859,14 @@ describe AdminUI::Operation, type: :integration do
         operation.manage_user(uaa_user[:id], '{"verified":false}')
       end
 
+      def unlock_user
+        operation.manage_user_status(uaa_user[:id], '{"locked":false}')
+      end
+
+      def require_password_change_user
+        operation.manage_user_status(uaa_user[:id], '{"passwordChangeRequired":true}')
+      end
+
       def delete_user
         operation.delete_user(cc_user[:guid])
       end
@@ -1881,6 +1889,15 @@ describe AdminUI::Operation, type: :integration do
       it 'unverifies user' do
         verify_user
         expect { unverify_user }.to change { cc.users_uaa['items'][0][:verified] }.from(true).to(false)
+      end
+
+      it 'unverifies user' do
+        # No database modification to verify the change actually worked
+        unlock_user
+      end
+
+      it 'require password change user' do
+        expect { require_password_change_user }.to change { cc.users_uaa['items'][0][:passwd_change_required] }.from(false).to(true)
       end
 
       it 'deletes user' do
@@ -1918,6 +1935,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails unverifying deleted user' do
           expect { unverify_user }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_uaa_user_not_found(exception) }
+        end
+
+        it 'fails unlocking deleted user' do
+          expect { unlock_user }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_uaa_user_not_found(exception) }
+        end
+
+        it 'fails requiring password change for deleted user' do
+          expect { require_password_change_user }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_uaa_user_not_found(exception) }
         end
 
         it 'fails deleting deleted user' do

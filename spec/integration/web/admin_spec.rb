@@ -3704,7 +3704,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_UsersTable_5')
+          check_allowscriptaccess_attribute('Buttons_UsersTable_7')
         end
 
         it 'has a checkbox in the first column' do
@@ -3728,8 +3728,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_UsersTable_3').text).to eq('Unverify')
           end
 
+          it 'has an Unlock button' do
+            expect(@driver.find_element(id: 'Buttons_UsersTable_4').text).to eq('Unlock')
+          end
+
+          it 'has a Require Password Change button' do
+            expect(@driver.find_element(id: 'Buttons_UsersTable_5').text).to eq('Require Password Change')
+          end
+
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'Buttons_UsersTable_4').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_UsersTable_6').text).to eq('Delete')
           end
 
           context 'Activate button' do
@@ -3756,9 +3764,21 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Delete button' do
+          context 'Unlock button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_UsersTable_4' }
+            end
+          end
+
+          context 'Require Password Change button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_UsersTable_5' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_UsersTable_6' }
             end
           end
 
@@ -3830,9 +3850,36 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_user_verified('false')
           end
 
+          def unlock_user
+            manage_user(4)
+          end
+
+          it 'Unlocks the selected user' do
+            unlock_user
+          end
+
+          def require_password_change_user
+            manage_user(5)
+          end
+
+          def check_require_password_change_user(require_password_change)
+            begin
+              Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[10]").text == require_password_change }
+            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            end
+            expect(@driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[10]").text).to eq(require_password_change)
+          end
+
+          it 'Requires password change of the selected user' do
+            check_require_password_change_user('false')
+
+            require_password_change_user
+            check_require_password_change_user('true')
+          end
+
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_UsersTable_4' }
+              let(:button_id)       { 'Buttons_UsersTable_6' }
               let(:confirm_message) { 'Are you sure you want to delete the selected users?' }
             end
           end
@@ -3841,16 +3888,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             let(:filename) { 'users' }
 
             it_behaves_like('standard buttons') do
-              let(:copy_button_id)  { 'Buttons_UsersTable_5' }
-              let(:print_button_id) { 'Buttons_UsersTable_6' }
-              let(:save_button_id)  { 'Buttons_UsersTable_7' }
-              let(:csv_button_id)   { 'Buttons_UsersTable_8' }
-              let(:excel_button_id) { 'Buttons_UsersTable_9' }
-              let(:pdf_button_id)   { 'Buttons_UsersTable_10' }
+              let(:copy_button_id)  { 'Buttons_UsersTable_7' }
+              let(:print_button_id) { 'Buttons_UsersTable_8' }
+              let(:save_button_id)  { 'Buttons_UsersTable_9' }
+              let(:csv_button_id)   { 'Buttons_UsersTable_10' }
+              let(:excel_button_id) { 'Buttons_UsersTable_11' }
+              let(:pdf_button_id)   { 'Buttons_UsersTable_12' }
             end
 
             it_behaves_like('download button') do
-              let(:download_button_id) { 'Buttons_UsersTable_11' }
+              let(:download_button_id) { 'Buttons_UsersTable_13' }
             end
           end
         end

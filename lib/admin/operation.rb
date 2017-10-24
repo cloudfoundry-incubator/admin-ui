@@ -665,6 +665,14 @@ module AdminUI
       @view_models.invalidate_users
     end
 
+    def manage_user_status(user_guid, control_message)
+      url = "/Users/#{user_guid}/status"
+      @logger.debug("PATCH #{url}, #{control_message}")
+      @client.patch_uaa(url, control_message)
+      @cc.invalidate_users_uaa
+      @view_models.invalidate_users
+    end
+
     def remove_component(uri)
       @logger.debug("REMOVE component #{uri}")
       @varz.remove(uri)

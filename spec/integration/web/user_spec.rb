@@ -237,7 +237,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Users tab does not have activate, deactivate, verify, unverify or delete buttons' do
+    context 'Users tab does not have activate, deactivate, verify, unverify, unlock, require password change or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Users' }
         let(:page_id)   { 'UsersPage' }

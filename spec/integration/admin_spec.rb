@@ -1626,6 +1626,18 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['put', "/users/#{uaa_user[:id]}; body = {\"verified\":false}"]], true)
     end
 
+    def unlock_user
+      response = put_request("/users/#{uaa_user[:id]}/status", '{"locked":false}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/users/#{uaa_user[:id]}/status; body = {\"locked\":false}"]], true)
+    end
+
+    def require_password_change_user
+      response = put_request("/users/#{uaa_user[:id]}/status", '{"passwordChangeRequired":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/users/#{uaa_user[:id]}/status; body = {\"passwordChangeRequired\":true}"]], true)
+    end
+
     def delete_user
       response = delete_request("/users/#{uaa_user[:id]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -1654,6 +1666,15 @@ describe AdminUI::Admin, type: :integration do
     it 'unverifies a user' do
       verify_user
       expect { unverify_user }.to change { get_json('/users_view_model')['items']['items'][0][15] }.from(true).to(false)
+    end
+
+    it 'unlocks a user' do
+      # No database modification to verify the change actually worked
+      unlock_user
+    end
+
+    it 'requires password change for a user' do
+      expect { require_password_change_user }.to change { get_json('/users_view_model')['items']['items'][0][9] }.from(false).to(true)
     end
 
     it 'deletes a user' do

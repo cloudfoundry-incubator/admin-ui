@@ -1291,6 +1291,23 @@ describe AdminUI::Admin do
       it_behaves_like('common manage user')
     end
 
+    shared_examples 'common manage user status' do
+      it 'returns failure code due to disconnection' do
+        response = put('/users/user1/status', '{"locked":false}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'manage user status via http' do
+      it_behaves_like('common manage user status')
+    end
+
+    context 'manage user status via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common manage user status')
+    end
+
     shared_examples 'common restage application' do
       it 'returns failure code due to disconnection' do
         response = post('/applications/application1/restage', '{}')
@@ -2623,6 +2640,10 @@ describe AdminUI::Admin do
 
       it 'puts /users/:guid redirects as expected' do
         put_redirects_as_expected('/users/user1', '{"active":true}')
+      end
+
+      it 'puts /users/:guid/status redirects as expected' do
+        put_redirects_as_expected('/users/user1/status', '{"locked":false}')
       end
     end
 
