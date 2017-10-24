@@ -1,7 +1,6 @@
 require 'fileutils'
 require 'net/https'
 require 'openssl'
-require 'thread'
 require 'uri'
 require 'yajl'
 require_relative '../spec_helper'

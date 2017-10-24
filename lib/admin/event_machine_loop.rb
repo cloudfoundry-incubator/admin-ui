@@ -1,5 +1,4 @@
 require 'eventmachine'
-require 'thread'
 
 # Since both the NATS and WebSocket clients use the EventMachine, we need it running prior to those running.
 # If this is not done, when the NATS.stop call is made the EventMachine is potentially stopped.

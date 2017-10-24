@@ -1,6 +1,5 @@
 require 'logger'
 require 'openssl'
-require 'thread'
 require 'webrick/httprequest'
 require 'webrick/https'
 require_relative 'admin/config'

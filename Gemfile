@@ -10,7 +10,7 @@ gem 'parse-cron', '0.1.4'
 gem 'protobuf', '3.8.1'
 gem 'rack-ssl', '1.4.1'
 gem 'sequel', '5.1.0'
-gem 'sequel_pg', '1.7.1'
+gem 'sequel_pg', '1.8.0'
 gem 'sinatra', '2.0.0'
 gem 'sqlite3', '1.3.13'
 gem 'yajl-ruby', '1.3.0'
@@ -20,7 +20,7 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '0.50.0'
+  gem 'rubocop', '0.51.0'
 end
 
 group :test do

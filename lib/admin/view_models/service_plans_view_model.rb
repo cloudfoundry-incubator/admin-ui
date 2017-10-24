@@ -1,5 +1,4 @@
 require 'date'
-require 'thread'
 require 'yajl'
 require_relative 'base_view_model'
 

@@ -55,6 +55,9 @@ PerceivedComplexity:
 RescueWithoutErrorClass:
   Enabled: false
 
+Style/DateTime:
+  Enabled: false
+
 Style/SafeNavigation:
   Enabled: false
 

@@ -1,4 +1,3 @@
-require 'thread'
 require_relative 'base_view_model'
 
 module AdminUI

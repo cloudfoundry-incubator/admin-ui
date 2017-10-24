@@ -1,5 +1,4 @@
 require 'net/http'
-require 'thread'
 require 'yajl'
 
 module AdminUI

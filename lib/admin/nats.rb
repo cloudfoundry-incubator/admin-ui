@@ -1,5 +1,4 @@
 require 'nats/client'
-require 'thread'
 require 'uri'
 require 'yajl'
 

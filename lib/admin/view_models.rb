@@ -1,5 +1,4 @@
 require 'date'
-require 'thread'
 require_relative 'scheduled_thread_pool'
 require_relative 'view_models/application_instances_view_model'
 require_relative 'view_models/applications_view_model'

@@ -1,5 +1,4 @@
 require 'date'
-require 'thread'
 
 module AdminUI
   class ScheduledThreadPool

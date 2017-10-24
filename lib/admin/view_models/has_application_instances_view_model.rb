@@ -1,4 +1,3 @@
-require 'thread'
 require_relative 'has_applications_view_model'
 
 module AdminUI

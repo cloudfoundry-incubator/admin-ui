@@ -1,5 +1,4 @@
 require 'eventmachine'
-require 'thread'
 require 'yajl'
 
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), 'dropsonde_protocol')

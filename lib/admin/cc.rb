@@ -1,6 +1,5 @@
 require 'date'
 require 'sequel'
-require 'thread'
 require_relative 'scheduled_thread_pool'
 
 module AdminUI

@@ -1,6 +1,5 @@
 require 'date'
 require 'set'
-require 'thread'
 require_relative 'has_application_instances_view_model'
 require_relative '../utils'
 

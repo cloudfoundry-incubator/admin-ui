@@ -1,6 +1,5 @@
 require 'date'
 require 'set'
-require 'thread'
 require_relative 'base_view_model'
 
 module AdminUI

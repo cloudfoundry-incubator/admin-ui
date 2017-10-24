@@ -1,5 +1,4 @@
 require 'date'
-require 'thread'
 require 'uri'
 require_relative 'base_view_model'
 
