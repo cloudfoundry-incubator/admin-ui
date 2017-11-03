@@ -110,6 +110,14 @@ module AdminUI
       @view_models.invalidate_clients
     end
 
+    def delete_client_tokens(client_id)
+      url = "/oauth/token/revoke/client/#{URI.escape(client_id)}"
+      @logger.debug("GET #{url}")
+      @client.get_uaa(url)
+      @cc.invalidate_clients
+      @view_models.invalidate_clients
+    end
+
     def delete_domain(domain_guid, is_shared, recursive)
       url = is_shared ? "/v2/shared_domains/#{domain_guid}" : "/v2/private_domains/#{domain_guid}"
       url += '?recursive=true' if recursive
@@ -143,6 +151,38 @@ module AdminUI
       @client.delete_uaa(url)
       @cc.invalidate_group_membership
       @view_models.invalidate_group_members
+    end
+
+    def delete_identity_provider(identity_provider_id)
+      url = "/identity-providers/#{identity_provider_id}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_uaa(url)
+      @cc.invalidate_identity_providers
+      @view_models.invalidate_identity_providers
+    end
+
+    def delete_identity_zone(identity_zone_id)
+      url = "/identity-zones/#{URI.escape(identity_zone_id)}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_uaa(url)
+      @cc.invalidate_approvals
+      @cc.invalidate_clients
+      @cc.invalidate_group_membership
+      @cc.invalidate_groups
+      @cc.invalidate_identity_providers
+      @cc.invalidate_identity_zones
+      @cc.invalidate_mfa_providers
+      @cc.invalidate_service_providers
+      @cc.invalidate_users_uaa
+      @view_models.invalidate_approvals
+      @view_models.invalidate_clients
+      @view_models.invalidate_group_members
+      @view_models.invalidate_groups
+      @view_models.invalidate_identity_providers
+      @view_models.invalidate_identity_zones
+      @view_models.invalidate_mfa_providers
+      @view_models.invalidate_service_providers
+      @view_models.invalidate_users
     end
 
     def delete_isolation_segment(isolation_segment_guid)
@@ -517,6 +557,14 @@ module AdminUI
       end
     end
 
+    def delete_user_tokens(user_guid)
+      url = "/oauth/token/revoke/user/#{user_guid}"
+      @logger.debug("GET #{url}")
+      @client.get_uaa(url)
+      @cc.invalidate_users_uaa
+      @view_models.invalidate_users
+    end
+
     def manage_application(app_guid, control_message)
       url = "/v2/apps/#{app_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
@@ -544,6 +592,14 @@ module AdminUI
       @client.put_cc(url, control_message)
       @cc.invalidate_feature_flags
       @view_models.invalidate_feature_flags
+    end
+
+    def manage_identity_provider_status(identity_provider_id, control_message)
+      url = "/identity-providers/#{identity_provider_id}/status"
+      @logger.debug("PATCH #{url}, #{control_message}")
+      @client.patch_uaa(url, control_message)
+      @cc.invalidate_identity_providers
+      @view_models.invalidate_identity_providers
     end
 
     def manage_isolation_segment(isolation_segment_guid, control_message)

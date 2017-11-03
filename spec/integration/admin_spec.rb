@@ -418,6 +418,12 @@ describe AdminUI::Admin, type: :integration do
       expect(get_json('/clients_view_model')['items']['items'].length).to eq(1)
     end
 
+    def revoke_tokens
+      response = delete_request("/clients/#{uaa_client[:client_id]}/tokens")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/clients/#{uaa_client[:client_id]}/tokens"]])
+    end
+
     def delete_client
       response = delete_request("/clients/#{uaa_client[:client_id]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -426,6 +432,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'has user name and clients request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/clients_view_model']], true)
+    end
+
+    it 'revokes tokens' do
+      revoke_tokens
     end
 
     it 'deletes a client' do
@@ -646,6 +656,62 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a health manager' do
       expect { delete_health_manager("/doppler_components?uri=#{analyzer_envelope.origin}:#{analyzer_envelope.index}:#{analyzer_envelope.ip}") }.to change { get_json('/health_managers_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
+  context 'manage identity provider' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/identity_providers_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def require_password_change_identity_provider
+      response = put_request("/identity_providers/#{uaa_identity_provider[:id]}/status", '{"requirePasswordChange":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/identity_providers/#{uaa_identity_provider[:id]}/status; body = {\"requirePasswordChange\":true}"]], true)
+    end
+
+    def delete_identity_provider
+      response = delete_request("/identity_providers/#{uaa_identity_provider[:id]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/identity_providers/#{uaa_identity_provider[:id]}"]])
+    end
+
+    it 'has user name and identity providers request in the log file' do
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/identity_providers_view_model']], true)
+    end
+
+    it "requires password change for an identity provider's users" do
+      require_password_change_identity_provider
+    end
+
+    it 'deletes an identity provider' do
+      expect { delete_identity_provider }.to change { get_json('/identity_providers_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
+  context 'manage identity zone' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/identity_zones_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_identity_zone
+      response = delete_request("/identity_zones/#{uaa_identity_zone[:id]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/identity_zones/#{uaa_identity_zone[:id]}"]])
+    end
+
+    it 'has user name and identity zones request in the log file' do
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/identity_zones_view_model']], true)
+    end
+
+    it 'deletes an identity zone' do
+      expect { delete_identity_zone }.to change { get_json('/identity_zones_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -1638,6 +1704,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['put', "/users/#{uaa_user[:id]}/status; body = {\"passwordChangeRequired\":true}"]], true)
     end
 
+    def revoke_tokens
+      response = delete_request("/users/#{uaa_user[:id]}/tokens")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/users/#{uaa_user[:id]}/tokens"]])
+    end
+
     def delete_user
       response = delete_request("/users/#{uaa_user[:id]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -1675,6 +1747,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'requires password change for a user' do
       expect { require_password_change_user }.to change { get_json('/users_view_model')['items']['items'][0][9] }.from(false).to(true)
+    end
+
+    it 'revokes tokens' do
+      revoke_tokens
     end
 
     it 'deletes a user' do

@@ -580,6 +580,7 @@ module ViewModelsHelper
   def view_models_identity_providers
     [
       [
+        uaa_identity_provider[:id],
         uaa_identity_zone[:name],
         uaa_identity_provider[:name],
         uaa_identity_provider[:id],
@@ -603,6 +604,7 @@ module ViewModelsHelper
   def view_models_identity_zones
     [
       [
+        uaa_identity_zone[:id],
         uaa_identity_zone[:name],
         uaa_identity_zone[:id],
         uaa_identity_zone[:created].to_datetime.rfc3339,

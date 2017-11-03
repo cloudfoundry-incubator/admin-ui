@@ -436,8 +436,20 @@ module AdminUI
       invalidate_cache(:group_membership)
     end
 
+    def invalidate_identity_providers
+      invalidate_cache(:identity_providers)
+    end
+
+    def invalidate_identity_zones
+      invalidate_cache(:identity_zones)
+    end
+
     def invalidate_isolation_segments
       invalidate_cache(:isolation_segments)
+    end
+
+    def invalidate_mfa_providers
+      invalidate_cache(:mfa_providers)
     end
 
     def invalidate_organizations

@@ -229,7 +229,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Clients tab does not have delete button' do
+    context 'Clients tab does not have revoke tokens or delete button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Clients' }
         let(:page_id)   { 'ClientsPage' }
@@ -237,7 +237,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
-    context 'Users tab does not have activate, deactivate, verify, unverify, unlock, require password change or delete buttons' do
+    context 'Users tab does not have activate, deactivate, verify, unverify, unlock, require password change, revoke tokens or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Users' }
         let(:page_id)   { 'UsersPage' }
@@ -346,6 +346,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id)    { 'ServicePlanVisibilities' }
         let(:page_id)   { 'ServicePlanVisibilitiesPage' }
         let(:button_id) { 'Buttons_ServicePlanVisibilitiesTable_0' }
+      end
+    end
+
+    context 'Identity Zones tab does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'IdentityZones' }
+        let(:page_id)   { 'IdentityZonesPage' }
+        let(:button_id) { 'Buttons_IdentityZonesTable_0' }
+      end
+    end
+
+    context 'Identity Providers tab does not have require password change for users or delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'IdentityProviders' }
+        let(:page_id)   { 'IdentityProvidersPage' }
+        let(:button_id) { 'Buttons_IdentityProvidersTable_0' }
       end
     end
 

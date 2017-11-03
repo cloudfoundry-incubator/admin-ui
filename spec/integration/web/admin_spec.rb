@@ -3556,7 +3556,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ClientsTable_1')
+          check_allowscriptaccess_attribute('Buttons_ClientsTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -3564,19 +3564,37 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         context 'manage clients' do
-          it 'has a Delete button' do
-            expect(@driver.find_element(id: 'Buttons_ClientsTable_0').text).to eq('Delete')
+          it 'has a Revoke Tokens button' do
+            expect(@driver.find_element(id: 'Buttons_ClientsTable_0').text).to eq('Revoke Tokens')
           end
 
-          context 'Delete button' do
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_ClientsTable_1').text).to eq('Delete')
+          end
+
+          context 'Revoke Tokens button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_ClientsTable_0' }
             end
           end
 
           context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_ClientsTable_1' }
+            end
+          end
+
+          context 'Revoke Tokens button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_ClientsTable_0' }
+              let(:button_id)               { 'Buttons_ClientsTable_0' }
+              let(:check_no_data_available) { false }
+              let(:confirm_message)         { "Are you sure you want to revoke the selected clients' tokens?" }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_ClientsTable_1' }
               let(:confirm_message) { 'Are you sure you want to delete the selected clients?' }
             end
           end
@@ -3585,16 +3603,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             let(:filename) { 'clients' }
 
             it_behaves_like('standard buttons') do
-              let(:copy_button_id)  { 'Buttons_ClientsTable_1' }
-              let(:print_button_id) { 'Buttons_ClientsTable_2' }
-              let(:save_button_id)  { 'Buttons_ClientsTable_3' }
-              let(:csv_button_id)   { 'Buttons_ClientsTable_4' }
-              let(:excel_button_id) { 'Buttons_ClientsTable_5' }
-              let(:pdf_button_id)   { 'Buttons_ClientsTable_6' }
+              let(:copy_button_id)  { 'Buttons_ClientsTable_2' }
+              let(:print_button_id) { 'Buttons_ClientsTable_3' }
+              let(:save_button_id)  { 'Buttons_ClientsTable_4' }
+              let(:csv_button_id)   { 'Buttons_ClientsTable_5' }
+              let(:excel_button_id) { 'Buttons_ClientsTable_6' }
+              let(:pdf_button_id)   { 'Buttons_ClientsTable_7' }
             end
 
             it_behaves_like('download button') do
-              let(:download_button_id) { 'Buttons_ClientsTable_7' }
+              let(:download_button_id) { 'Buttons_ClientsTable_8' }
             end
           end
         end
@@ -3704,7 +3722,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_UsersTable_7')
+          check_allowscriptaccess_attribute('Buttons_UsersTable_8')
         end
 
         it 'has a checkbox in the first column' do
@@ -3736,8 +3754,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'Buttons_UsersTable_5').text).to eq('Require Password Change')
           end
 
+          it 'has a Revoke Tokens button' do
+            expect(@driver.find_element(id: 'Buttons_UsersTable_6').text).to eq('Revoke Tokens')
+          end
+
           it 'has a Delete button' do
-            expect(@driver.find_element(id: 'Buttons_UsersTable_6').text).to eq('Delete')
+            expect(@driver.find_element(id: 'Buttons_UsersTable_7').text).to eq('Delete')
           end
 
           context 'Activate button' do
@@ -3776,9 +3798,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          context 'Delete button' do
+          context 'Revoke Tokens button' do
             it_behaves_like('click button without selecting any rows') do
               let(:button_id) { 'Buttons_UsersTable_6' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_UsersTable_7' }
             end
           end
 
@@ -3877,9 +3905,17 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_require_password_change_user('true')
           end
 
+          context 'Revoke Tokens button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)               { 'Buttons_UsersTable_6' }
+              let(:check_no_data_available) { false }
+              let(:confirm_message)         { "Are you sure you want to revoke the selected users' tokens?" }
+            end
+          end
+
           context 'Delete button' do
             it_behaves_like('delete first row') do
-              let(:button_id)       { 'Buttons_UsersTable_6' }
+              let(:button_id)       { 'Buttons_UsersTable_7' }
               let(:confirm_message) { 'Are you sure you want to delete the selected users?' }
             end
           end
@@ -3888,16 +3924,16 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             let(:filename) { 'users' }
 
             it_behaves_like('standard buttons') do
-              let(:copy_button_id)  { 'Buttons_UsersTable_7' }
-              let(:print_button_id) { 'Buttons_UsersTable_8' }
-              let(:save_button_id)  { 'Buttons_UsersTable_9' }
-              let(:csv_button_id)   { 'Buttons_UsersTable_10' }
-              let(:excel_button_id) { 'Buttons_UsersTable_11' }
-              let(:pdf_button_id)   { 'Buttons_UsersTable_12' }
+              let(:copy_button_id)  { 'Buttons_UsersTable_8' }
+              let(:print_button_id) { 'Buttons_UsersTable_9' }
+              let(:save_button_id)  { 'Buttons_UsersTable_10' }
+              let(:csv_button_id)   { 'Buttons_UsersTable_11' }
+              let(:excel_button_id) { 'Buttons_UsersTable_12' }
+              let(:pdf_button_id)   { 'Buttons_UsersTable_13' }
             end
 
             it_behaves_like('download button') do
-              let(:download_button_id) { 'Buttons_UsersTable_13' }
+              let(:download_button_id) { 'Buttons_UsersTable_14' }
             end
           end
         end
@@ -6168,20 +6204,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       context 'Identity Zones' do
-        let(:tab_id) { 'IdentityZones' }
+        let(:tab_id)   { 'IdentityZones' }
+        let(:table_id) { 'IdentityZonesTable' }
 
         it 'has a table' do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='IdentityZonesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 15,
-                                 labels:          ['Name', 'ID', 'Created', 'Updated', 'Subdomain', 'Version', 'Identity Providers', 'SAML Providers', 'MFA Providers', 'Clients', 'Users', 'Groups', 'Group Members', 'Approvals', 'Description'],
+                                 expected_length: 16,
+                                 labels:          ['', 'Name', 'ID', 'Created', 'Updated', 'Subdomain', 'Version', 'Identity Providers', 'SAML Providers', 'MFA Providers', 'Clients', 'Users', 'Groups', 'Group Members', 'Approvals', 'Description'],
                                  colspans:        nil
                                }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='IdentityZonesTable']/tbody/tr/td"),
                            [
+                             '',
                              uaa_identity_zone[:name],
                              uaa_identity_zone[:id],
                              uaa_identity_zone[:created].to_datetime.rfc3339,
@@ -6201,24 +6239,41 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_IdentityZonesTable_0')
+          check_allowscriptaccess_attribute('Buttons_IdentityZonesTable_1')
         end
 
         context 'manage identity zones' do
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_IdentityZonesTable_0').text).to eq('Delete')
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_IdentityZonesTable_0' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_IdentityZonesTable_0' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected identity zones?' }
+            end
+          end
+
           context 'Standard buttons' do
             let(:filename) { 'identity_zones' }
 
             it_behaves_like('standard buttons') do
-              let(:copy_button_id)  { 'Buttons_IdentityZonesTable_0' }
-              let(:print_button_id) { 'Buttons_IdentityZonesTable_1' }
-              let(:save_button_id)  { 'Buttons_IdentityZonesTable_2' }
-              let(:csv_button_id)   { 'Buttons_IdentityZonesTable_3' }
-              let(:excel_button_id) { 'Buttons_IdentityZonesTable_4' }
-              let(:pdf_button_id)   { 'Buttons_IdentityZonesTable_5' }
+              let(:copy_button_id)  { 'Buttons_IdentityZonesTable_1' }
+              let(:print_button_id) { 'Buttons_IdentityZonesTable_2' }
+              let(:save_button_id)  { 'Buttons_IdentityZonesTable_3' }
+              let(:csv_button_id)   { 'Buttons_IdentityZonesTable_4' }
+              let(:excel_button_id) { 'Buttons_IdentityZonesTable_5' }
+              let(:pdf_button_id)   { 'Buttons_IdentityZonesTable_6' }
             end
 
             it_behaves_like('download button') do
-              let(:download_button_id) { 'Buttons_IdentityZonesTable_6' }
+              let(:download_button_id) { 'Buttons_IdentityZonesTable_7' }
             end
           end
         end
@@ -6283,20 +6338,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       context 'Identity Providers' do
-        let(:tab_id) { 'IdentityProviders' }
+        let(:tab_id)   { 'IdentityProviders' }
+        let(:table_id) { 'IdentityProvidersTable' }
 
         it 'has a table' do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='IdentityProvidersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 9,
-                                 labels:          ['Identity Zone', 'Name', 'GUID', 'Created', 'Updated', 'Origin Key', 'Type', 'Active', 'Version'],
+                                 expected_length: 10,
+                                 labels:          ['', 'Identity Zone', 'Name', 'GUID', 'Created', 'Updated', 'Origin Key', 'Type', 'Active', 'Version'],
                                  colspans:        nil
                                }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='IdentityProvidersTable']/tbody/tr/td"),
                            [
+                             '',
                              uaa_identity_zone[:name],
                              uaa_identity_provider[:name],
                              uaa_identity_provider[:id],
@@ -6310,24 +6367,69 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_IdentityProvidersTable_0')
+          check_allowscriptaccess_attribute('Buttons_IdentityProvidersTable_2')
         end
 
         context 'manage identity providers' do
+          it 'has a Require Password Change for Users button' do
+            expect(@driver.find_element(id: 'Buttons_IdentityProvidersTable_0').text).to eq('Require Password Change for Users')
+          end
+
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_IdentityProvidersTable_1').text).to eq('Delete')
+          end
+
+          context 'Require Password Change for Users button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_IdentityProvidersTable_0' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_IdentityProvidersTable_1' }
+            end
+          end
+
+          def manage_identity_provider(button_index)
+            check_first_row('IdentityProvidersTable')
+
+            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
+            # @driver.find_element(id: button_id).click
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_IdentityProvidersTable_' + button_index.to_s))
+
+            check_operation_result
+          end
+
+          def require_password_change_identity_provider
+            manage_identity_provider(0)
+          end
+
+          it 'Requires password change of the selected identity provider' do
+            require_password_change_identity_provider
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_IdentityProvidersTable_1' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected identity providers?' }
+            end
+          end
+
           context 'Standard buttons' do
             let(:filename) { 'identity_providers' }
 
             it_behaves_like('standard buttons') do
-              let(:copy_button_id)  { 'Buttons_IdentityProvidersTable_0' }
-              let(:print_button_id) { 'Buttons_IdentityProvidersTable_1' }
-              let(:save_button_id)  { 'Buttons_IdentityProvidersTable_2' }
-              let(:csv_button_id)   { 'Buttons_IdentityProvidersTable_3' }
-              let(:excel_button_id) { 'Buttons_IdentityProvidersTable_4' }
-              let(:pdf_button_id)   { 'Buttons_IdentityProvidersTable_5' }
+              let(:copy_button_id)  { 'Buttons_IdentityProvidersTable_2' }
+              let(:print_button_id) { 'Buttons_IdentityProvidersTable_3' }
+              let(:save_button_id)  { 'Buttons_IdentityProvidersTable_4' }
+              let(:csv_button_id)   { 'Buttons_IdentityProvidersTable_5' }
+              let(:excel_button_id) { 'Buttons_IdentityProvidersTable_6' }
+              let(:pdf_button_id)   { 'Buttons_IdentityProvidersTable_7' }
             end
 
             it_behaves_like('download button') do
-              let(:download_button_id) { 'Buttons_IdentityProvidersTable_6' }
+              let(:download_button_id) { 'Buttons_IdentityProvidersTable_8' }
             end
           end
         end

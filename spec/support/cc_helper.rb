@@ -93,6 +93,9 @@ module CCHelper
     @cc_users_deleted                            = false
     @uaa_groups_deleted                          = false
     @uaa_group_membership_deleted                = false
+    @uaa_identity_providers_deleted              = false
+    @uaa_identity_zones_deleted                  = false
+    @uaa_mfa_providers_deleted                   = false
     @uaa_service_providers_deleted               = false
     @uaa_users_deleted                           = false
     @uaa_clients_deleted                         = false
@@ -139,6 +142,8 @@ module CCHelper
     uaa_client_stubs(config)
     uaa_group_stubs(config)
     uaa_group_membership_stubs(config)
+    uaa_identity_provider_stubs(config)
+    uaa_identity_zone_stubs(config)
     uaa_service_provider_stubs(config)
     uaa_user_stubs(config)
   end
@@ -405,6 +410,31 @@ module CCHelper
     sql(config.uaadb_uri, 'DELETE FROM groups')
 
     @uaa_groups_deleted = true
+  end
+
+  def uaa_clear_identity_providers_cache_stub(config)
+    sql(config.uaadb_uri, 'DELETE FROM identity_provider')
+
+    @uaa_identity_providers_deleted = true
+  end
+
+  def uaa_clear_identity_zones_cache_stub(config)
+    uaa_clear_clients_cache_stub(config)
+    uaa_clear_groups_cache_stub(config)
+    uaa_clear_identity_providers_cache_stub(config)
+    uaa_clear_mfa_providers_cache_stub(config)
+    uaa_clear_service_providers_cache_stub(config)
+    uaa_clear_users_cache_stub(config)
+
+    sql(config.uaadb_uri, 'DELETE FROM identity_zone')
+
+    @uaa_identity_zones_deleted = true
+  end
+
+  def uaa_clear_mfa_providers_cache_stub(config)
+    sql(config.uaadb_uri, 'DELETE FROM mfa_providers')
+
+    @uaa_mfa_providers_deleted = true
   end
 
   def uaa_clear_service_providers_cache_stub(config)
@@ -2683,6 +2713,14 @@ module CCHelper
   end
 
   def uaa_client_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/oauth/token/revoke/client/#{uaa_client[:client_id]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
+      if @uaa_clients_deleted
+        uaa_client_not_found
+      else
+        OK.new({})
+      end
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/oauth/clients/#{uaa_client[:client_id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @uaa_clients_deleted
         uaa_client_not_found
@@ -2723,6 +2761,44 @@ module CCHelper
     end
   end
 
+  def uaa_identity_provider_not_found
+    NotFound.new('message' => 'Provider not found')
+  end
+
+  def uaa_identity_provider_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/identity-providers/#{uaa_identity_provider[:id]}/status", AdminUI::Utils::HTTP_PATCH, anything, '{"requirePasswordChange":true}', anything, anything, anything) do
+      if @uaa_identity_providers_deleted
+        uaa_identity_provider_not_found
+      else
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/identity-providers/#{uaa_identity_provider[:id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @uaa_identity_providers_deleted
+        uaa_identity_provider_not_found
+      else
+        uaa_clear_identity_providers_cache_stub(config)
+        OK.new({})
+      end
+    end
+  end
+
+  def uaa_identity_zone_not_found
+    NotFound.new('message' => 'Not Found')
+  end
+
+  def uaa_identity_zone_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/identity-zones/#{uaa_identity_zone[:id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @uaa_identity_zones_deleted
+        uaa_identity_zone_not_found
+      else
+        uaa_clear_identity_zones_cache_stub(config)
+        OK.new({})
+      end
+    end
+  end
+
   def uaa_service_provider_not_found
     NotFound.new('message' => 'Not Found')
   end
@@ -2743,6 +2819,14 @@ module CCHelper
   end
 
   def uaa_user_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/oauth/token/revoke/user/#{uaa_user[:id]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
+      if @uaa_users_deleted
+        uaa_user_not_found
+      else
+        OK.new({})
+      end
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/Users/#{uaa_user[:id]}", AdminUI::Utils::HTTP_PATCH, anything, '{"active":true}', anything, anything, anything) do
       if @uaa_users_deleted
         uaa_user_not_found

@@ -1221,6 +1221,24 @@ module AdminUI
       end
     end
 
+    put '/identity_providers/:identity_provider_id/status', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'put', "/identity_providers/#{params[:identity_provider_id]}/status; body = #{control_message}")
+        @operation.manage_identity_provider_status(params[:identity_provider_id], control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during update identity provider status: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during update identity provider status: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     put '/isolation_segments/:isolation_segment_guid', auth: [:admin] do
       begin
         control_message = request.body.read.to_s
@@ -1524,6 +1542,23 @@ module AdminUI
       end
     end
 
+    delete '/clients/:client_id/tokens', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/clients/#{params[:client_id]}/tokens")
+      begin
+        @operation.delete_client_tokens(params[:client_id])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete client tokens: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete client tokens: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/components', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/components?uri=#{params[:uri]}")
       begin
@@ -1614,6 +1649,40 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete group member: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/identity_providers/:id', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/identity_providers/#{params[:id]}")
+      begin
+        @operation.delete_identity_provider(params[:id])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete identity provider: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete identity provider: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/identity_zones/:id', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/identity_zones/#{params[:id]}")
+      begin
+        @operation.delete_identity_zone(params[:id])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete identity zone: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete identity zone: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end
@@ -2126,6 +2195,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete user: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/users/:user_guid/tokens', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/users/#{params[:user_guid]}/tokens")
+      begin
+        @operation.delete_user_tokens(params[:user_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete user tokens: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete user tokens: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

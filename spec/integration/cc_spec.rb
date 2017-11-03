@@ -105,11 +105,32 @@ describe AdminUI::CC, type: :integration do
       expect(cc.groups['items'].length).to eq(0)
     end
 
+    it 'clears the identity providers cache' do
+      expect(cc.identity_providers['items'].length).to eq(1)
+      uaa_clear_identity_providers_cache_stub(config)
+      cc.invalidate_identity_providers
+      expect(cc.identity_providers['items'].length).to eq(0)
+    end
+
+    it 'clears the identity zones cache' do
+      expect(cc.identity_zones['items'].length).to eq(1)
+      uaa_clear_identity_zones_cache_stub(config)
+      cc.invalidate_identity_zones
+      expect(cc.identity_zones['items'].length).to eq(0)
+    end
+
     it 'clears the isolation segments cache' do
       expect(cc.isolation_segments['items'].length).to eq(1)
       cc_clear_isolation_segments_cache_stub(config)
       cc.invalidate_isolation_segments
       expect(cc.isolation_segments['items'].length).to eq(0)
+    end
+
+    it 'clears the mfa providers cache' do
+      expect(cc.mfa_providers['items'].length).to eq(1)
+      uaa_clear_mfa_providers_cache_stub(config)
+      cc.invalidate_mfa_providers
+      expect(cc.mfa_providers['items'].length).to eq(0)
     end
 
     it 'clears the organizations cache' do

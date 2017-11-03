@@ -406,6 +406,22 @@ describe AdminUI::Admin do
       it_behaves_like('common delete client')
     end
 
+    shared_examples 'common delete client tokens' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/clients/client1/tokens')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete client tokens via http' do
+      it_behaves_like('common delete client tokens')
+    end
+
+    context 'delete client tokens via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete client tokens')
+    end
     shared_examples 'common delete domain' do
       it 'returns failure code due to disconnection' do
         response = delete('/domains/domain1/false')
@@ -489,6 +505,40 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete group member')
+    end
+
+    shared_examples 'common delete identity provider' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/identity_providers/identity_provider1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete identity provider via http' do
+      it_behaves_like('common delete identity provider')
+    end
+
+    context 'delete identity provider via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete identity provider')
+    end
+
+    shared_examples 'common delete identity zone' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/identity_zones/identity_zone1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete identity zone via http' do
+      it_behaves_like('common delete identity zone')
+    end
+
+    context 'delete identity zone via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete identity zone')
     end
 
     shared_examples 'common delete isolation segment' do
@@ -1069,6 +1119,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete user')
     end
 
+    shared_examples 'common delete user tokens' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/users/user1/tokens')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete user tokens via http' do
+      it_behaves_like('common delete user tokens')
+    end
+
+    context 'delete user tokens via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete user tokens')
+    end
+
     shared_examples 'common manage application' do
       it 'returns failure code due to disconnection' do
         response = put('/applications/application1', '{"state":"STARTED"}')
@@ -1118,6 +1185,23 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common manage feature flag')
+    end
+
+    shared_examples 'common manage identity provider status' do
+      it 'returns failure code due to disconnection' do
+        response = put('/identity_providers/identity_provider1/status', '{"requirePasswordChange":true}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'manage identity provider status via http' do
+      it_behaves_like('common manage identity provider status')
+    end
+
+    context 'manage identity provider status via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common manage identity provider status')
     end
 
     shared_examples 'common manage isolation segment' do
@@ -2217,6 +2301,10 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/clients/client1')
       end
 
+      it 'deletes /clients/:id/tokens redirects as expected' do
+        delete_redirects_as_expected('/clients/client1/tokens')
+      end
+
       it 'deletes /components/?uri redirects as expected' do
         delete_redirects_as_expected('/components?uri=uri1')
       end
@@ -2243,6 +2331,14 @@ describe AdminUI::Admin do
 
       it 'deletes /groups/:guid/:guid redirects as expected' do
         delete_redirects_as_expected('/groups/group1/member1')
+      end
+
+      it 'deletes /identity_providers/:guid redirects as expected' do
+        delete_redirects_as_expected('/identity_providers/identity_provider1')
+      end
+
+      it 'deletes /identity_zones/:guid redirects as expected' do
+        delete_redirects_as_expected('/identity_zones/identity_zone1')
       end
 
       it 'deletes /isolation_segments/:guid redirects as expected' do
@@ -2383,6 +2479,10 @@ describe AdminUI::Admin do
 
       it 'deletes /users/:guid redirects as expected' do
         delete_redirects_as_expected('/users/user1')
+      end
+
+      it 'deletes /users/:guid/tokens redirects as expected' do
+        delete_redirects_as_expected('/users/user1/tokens')
       end
 
       it 'posts /application_instances_view_model redirects as expected' do
@@ -2595,6 +2695,10 @@ describe AdminUI::Admin do
 
       it 'puts /feature_flags/:name redirects as expected' do
         put_redirects_as_expected('/feature_flags/name', '{"enabled":true}')
+      end
+
+      it 'puts /identity_providers/:guid/status redirects as expected' do
+        put_redirects_as_expected('/identity_providers/identity_provider1/status', '{"requirePasswordChange":true}')
       end
 
       it 'puts /isolation_segments/:guid redirects as expected' do

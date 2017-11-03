@@ -135,6 +135,7 @@ module AdminUI
 
         row = []
 
+        row.push(URI.escape(id))
         row.push(identity_zone[:name])
         row.push(id)
         row.push(identity_zone[:created].to_datetime.rfc3339)
@@ -219,7 +220,7 @@ module AdminUI
         hash[id] = identity_zone
       end
 
-      result(true, items, hash, (0..14).to_a, (0..4).to_a << 14)
+      result(true, items, hash, (1..15).to_a, (1..5).to_a << 15)
     end
   end
 end

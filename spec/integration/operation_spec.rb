@@ -379,8 +379,16 @@ describe AdminUI::Operation, type: :integration do
         expect(cc.clients['items'].length).to eq(1)
       end
 
+      def revoke_tokens
+        operation.delete_client_tokens(uaa_client[:client_id])
+      end
+
       def delete_client
         operation.delete_client(uaa_client[:client_id])
+      end
+
+      it 'revokes client tokens' do
+        revoke_tokens
       end
 
       it 'deletes client' do
@@ -397,6 +405,10 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_error_code).to eq(nil)
           expect(exception.http_code).to eq(404)
           expect(exception.message).to eq('Not Found')
+        end
+
+        it 'fails revoking tokens for deleted client' do
+          expect { revoke_tokens }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_client_not_found(exception) }
         end
 
         it 'fails deleting deleted client' do
@@ -551,6 +563,80 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting deleted group member' do
           expect { delete_group_member }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_group_member_not_found(exception) }
+        end
+      end
+    end
+
+    context 'manage identity provider' do
+      before do
+        expect(cc.identity_providers['items'].length).to eq(1)
+      end
+
+      def require_password_change_identity_provider
+        operation.manage_identity_provider_status(uaa_identity_provider[:id], '{"requirePasswordChange":true}')
+      end
+
+      def delete_identity_provider
+        operation.delete_identity_provider(uaa_identity_provider[:id])
+      end
+
+      it 'require password change identity provider' do
+        require_password_change_identity_provider
+      end
+
+      it 'deletes identity provider' do
+        expect { delete_identity_provider }.to change { cc.identity_providers['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_identity_provider
+        end
+
+        def verify_identity_provider_not_found(exception)
+          expect(exception.cf_code).to eq(nil)
+          expect(exception.cf_error_code).to eq(nil)
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq('Provider not found')
+        end
+
+        it 'fails requiring password change for deleted identity provider' do
+          expect { require_password_change_identity_provider }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_identity_provider_not_found(exception) }
+        end
+
+        it 'fails deleting deleted identity provider' do
+          expect { delete_identity_provider }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_identity_provider_not_found(exception) }
+        end
+      end
+    end
+
+    context 'manage identity zone' do
+      before do
+        expect(cc.identity_zones['items'].length).to eq(1)
+      end
+
+      def delete_identity_zone
+        operation.delete_identity_zone(uaa_identity_zone[:id])
+      end
+
+      it 'deletes identity zone' do
+        expect { delete_identity_zone }.to change { cc.identity_zones['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_identity_zone
+        end
+
+        def verify_identity_zone_not_found(exception)
+          expect(exception.cf_code).to eq(nil)
+          expect(exception.cf_error_code).to eq(nil)
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq('Not Found')
+        end
+
+        it 'fails deleting deleted identity zone' do
+          expect { delete_identity_zone }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_identity_zone_not_found(exception) }
         end
       end
     end
@@ -1867,6 +1953,10 @@ describe AdminUI::Operation, type: :integration do
         operation.manage_user_status(uaa_user[:id], '{"passwordChangeRequired":true}')
       end
 
+      def revoke_tokens
+        operation.delete_user_tokens(cc_user[:guid])
+      end
+
       def delete_user
         operation.delete_user(cc_user[:guid])
       end
@@ -1898,6 +1988,10 @@ describe AdminUI::Operation, type: :integration do
 
       it 'require password change user' do
         expect { require_password_change_user }.to change { cc.users_uaa['items'][0][:passwd_change_required] }.from(false).to(true)
+      end
+
+      it 'revokes user tokens' do
+        revoke_tokens
       end
 
       it 'deletes user' do
@@ -1943,6 +2037,10 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails requiring password change for deleted user' do
           expect { require_password_change_user }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_uaa_user_not_found(exception) }
+        end
+
+        it 'fails revoking tokens for deleted user' do
+          expect { revoke_tokens }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_uaa_user_not_found(exception) }
         end
 
         it 'fails deleting deleted user' do
