@@ -60,6 +60,7 @@
         <script src="js/app/tabs/organizationRolesTab.js"></script>
         <script src="js/app/tabs/organizationsTab.js"></script>
         <script src="js/app/tabs/quotasTab.js"></script>
+        <script src="js/app/tabs/revocableTokensTab.js"></script>
         <script src="js/app/tabs/routeBindingsTab.js"></script>
         <script src="js/app/tabs/routeMappingsTab.js"></script>
         <script src="js/app/tabs/routersTab.js"></script>
@@ -131,6 +132,7 @@
                 <span id="Groups" class="menuItem">Groups</span>
                 <span id="GroupMembers" class="menuItem">Group Members</span>
                 <span id="Approvals" class="menuItem">Approvals</span>
+                <span id="RevocableTokens" class="menuItem">Revocable Tokens</span>
                 <span id="Buildpacks" class="menuItem">Buildpacks</span>
                 <span id="Domains" class="menuItem">Domains</span>
                 <span id="FeatureFlags" class="menuItem">Feature Flags</span>
@@ -878,7 +880,7 @@
                         <thead>
                             <tr class="customTableHeaderGroup">
                                 <th colspan="1"> </th>
-                                <th colspan="19"> </th>
+                                <th colspan="20"> </th>
                                 <th colspan="2">Requests</th>
                                 <th colspan="5">Organization Roles</th>
                                 <th colspan="4">Space Roles</th>
@@ -906,6 +908,7 @@
                                 <th>Events</th>
                                 <th>Groups</th>
                                 <th>Approvals</th>
+                                <th>Revocable Tokens</th>
 
                                 <th>Count</th>
                                 <th>Expires</th>
@@ -1009,6 +1012,43 @@
                 <div class="verticalPageSection">
                     <div id="ApprovalsDetailsLabel" class="propertyLabel">Details</div>
                     <div id="ApprovalsPropertiesContainer"></div>
+                </div>
+            </div>
+
+            <div id="RevocableTokensPage" class="page hiddenPage">
+                <div id="RevocableTokensTableContainer" class="pageSection">
+                    <table id="RevocableTokensTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr class="customTableHeaderGroup">
+                                <th colspan="1"> </th>
+                                <th colspan="1"> </th>
+                                <th colspan="7"> </th>
+                                <th colspan="2">User</th>
+                            </tr>
+                            <tr>
+                                <th>Check</th>
+
+                                <th>Identity Zone</th>
+
+                                <th>GUID</th>
+                                <th>Issued</th>
+                                <th>Expires</th>
+                                <th>Format</th>
+                                <th>Response Type</th>
+                                <th>Scopes</th>
+                                <th>Client</th>
+
+                                <th>Name</th>
+                                <th>GUID</th>
+                            </tr>
+                        </thead>
+                        <tbody/>
+                    </table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="RevocableTokensDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="RevocableTokensPropertiesContainer"></div>
                 </div>
             </div>
 

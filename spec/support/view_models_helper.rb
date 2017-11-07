@@ -261,6 +261,7 @@ module ViewModelsHelper
         uaa_client[:refresh_token_validity],
         1,
         1,
+        1,
         cc_service_broker[:name]
       ]
     ]
@@ -836,6 +837,33 @@ module ViewModelsHelper
 
   def view_models_quotas_detail
     cc_quota_definition
+  end
+
+  def view_models_revocable_tokens
+    [
+      [
+        uaa_revocable_token[:token_id],
+        uaa_identity_zone[:name],
+        uaa_revocable_token[:token_id],
+        Time.at(uaa_revocable_token[:issued_at] / 1000.0).to_datetime.rfc3339,
+        Time.at(uaa_revocable_token[:expires_at] / 1000.0).to_datetime.rfc3339,
+        uaa_revocable_token[:format],
+        uaa_revocable_token[:response_type],
+        uaa_revocable_token[:scope][1...-1].split(', ').sort,
+        uaa_client[:client_id],
+        uaa_user[:username],
+        uaa_user[:id]
+      ]
+    ]
+  end
+
+  def view_models_revocable_tokens_detail
+    {
+      'client'          => uaa_client,
+      'identity_zone'   => uaa_identity_zone,
+      'revocable_token' => uaa_revocable_token,
+      'user_uaa'        => uaa_user
+    }
   end
 
   def view_models_routers
@@ -1639,6 +1667,7 @@ module ViewModelsHelper
         uaa_user[:active],
         uaa_user[:verified],
         uaa_user[:version],
+        1,
         1,
         1,
         1,

@@ -153,6 +153,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.quota_definitions)
     end
 
+    it 'returns zero revocable_tokens as expected' do
+      verify_disconnected_items(cc.revocable_tokens)
+    end
+
     it 'returns zero request_counts as expected' do
       verify_disconnected_items(cc.request_counts)
     end

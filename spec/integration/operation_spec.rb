@@ -389,6 +389,7 @@ describe AdminUI::Operation, type: :integration do
 
       it 'revokes client tokens' do
         revoke_tokens
+        expect(cc.revocable_tokens['items'].length).to eq(0)
       end
 
       it 'deletes client' do
@@ -1007,6 +1008,38 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting deleted quota definition' do
           expect { delete_quota_definition }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_quota_definition_not_found(exception) }
+        end
+      end
+    end
+
+    context 'manage revocable token' do
+      before do
+        expect(cc.revocable_tokens['items'].length).to eq(1)
+      end
+
+      def delete_revocable_token
+        operation.delete_revocable_token(uaa_revocable_token[:token_id])
+      end
+
+      it 'deletes revocable token' do
+        delete_revocable_token
+        expect(cc.revocable_tokens['items'].length).to eq(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_revocable_token
+        end
+
+        def verify_revocable_token_not_found(exception)
+          expect(exception.cf_code).to eq(nil)
+          expect(exception.cf_error_code).to eq(nil)
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq('Not Found')
+        end
+
+        it 'fails deleting deleted revocable token' do
+          expect { delete_revocable_token }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_revocable_token_not_found(exception) }
         end
       end
     end
@@ -1992,6 +2025,7 @@ describe AdminUI::Operation, type: :integration do
 
       it 'revokes user tokens' do
         revoke_tokens
+        expect(cc.revocable_tokens['items'].length).to eq(0)
       end
 
       it 'deletes user' do

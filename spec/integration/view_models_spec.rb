@@ -516,6 +516,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected revocable_tokens_view_model' do
+      let(:results)    { view_models.revocable_tokens }
+      let(:expected)   { view_models_revocable_tokens }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected revocable_tokens_view_model detail' do
+      let(:results)  { view_models.revocable_token(uaa_revocable_token[:token_id]) }
+      let(:expected) { view_models_revocable_tokens_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     shared_examples 'routers_view_model' do
       let(:results)  { view_models.routers }
       let(:expected) { view_models_routers }

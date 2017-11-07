@@ -203,6 +203,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.quota_definitions['items'].length).to eq(0)
     end
 
+    it 'clears the revocable tokens cache' do
+      expect(cc.revocable_tokens['items'].length).to eq(1)
+      uaa_clear_revocable_tokens_cache_stub(config)
+      cc.invalidate_revocable_tokens
+      expect(cc.revocable_tokens['items'].length).to eq(0)
+    end
+
     it 'clears the route cache' do
       expect(cc.routes['items'].length).to eq(1)
       cc_clear_routes_cache_stub(config)
@@ -567,6 +574,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected request counts' do
       let(:results)  { cc.request_counts }
       let(:expected) { cc_request_count }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected revocable tokens' do
+      let(:results)  { cc.revocable_tokens }
+      let(:expected) { uaa_revocable_token }
 
       it_behaves_like('common cc retrieval')
     end

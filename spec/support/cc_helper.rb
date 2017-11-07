@@ -96,6 +96,7 @@ module CCHelper
     @uaa_identity_providers_deleted              = false
     @uaa_identity_zones_deleted                  = false
     @uaa_mfa_providers_deleted                   = false
+    @uaa_revocable_tokens_deleted                = false
     @uaa_service_providers_deleted               = false
     @uaa_users_deleted                           = false
     @uaa_clients_deleted                         = false
@@ -144,6 +145,7 @@ module CCHelper
     uaa_group_membership_stubs(config)
     uaa_identity_provider_stubs(config)
     uaa_identity_zone_stubs(config)
+    uaa_revocable_token_stubs(config)
     uaa_service_provider_stubs(config)
     uaa_user_stubs(config)
   end
@@ -391,6 +393,7 @@ module CCHelper
 
   def uaa_clear_clients_cache_stub(config)
     uaa_clear_approvals_cache_stub(config)
+    uaa_clear_revocable_tokens_cache_stub(config)
 
     sql(config.uaadb_uri, 'DELETE FROM oauth_client_details')
 
@@ -437,6 +440,12 @@ module CCHelper
     @uaa_mfa_providers_deleted = true
   end
 
+  def uaa_clear_revocable_tokens_cache_stub(config)
+    sql(config.uaadb_uri, 'DELETE FROM revocable_tokens')
+
+    @uaa_revocable_tokens_deleted = true
+  end
+
   def uaa_clear_service_providers_cache_stub(config)
     sql(config.uaadb_uri, 'DELETE FROM service_provider')
 
@@ -446,6 +455,7 @@ module CCHelper
   def uaa_clear_users_cache_stub(config)
     uaa_clear_approvals_cache_stub(config)
     uaa_clear_group_membership_cache_stub(config)
+    uaa_clear_revocable_tokens_cache_stub(config)
 
     sql(config.uaadb_uri, 'DELETE FROM users')
 
@@ -1530,6 +1540,25 @@ module CCHelper
     }
   end
 
+  def uaa_revocable_token
+    {
+      client_id:        uaa_client[:client_id],
+      expires_at:       unique_time('uaa_revocable_token_expires_at').to_f * 1000,
+      format:           'JWT',
+      identity_zone_id: uaa_identity_zone[:id],
+      response_type:    'ACCESS_TOKEN',
+      issued_at:        unique_time('uaa_revocable_token_issued_at').to_f * 1000,
+      scope:            '[scope1]',
+      token_id:         'revocable_token1',
+      user_id:          uaa_user[:id]
+    }
+  end
+
+  # We do not retrieve data, but it is required for insert
+  def uaa_revocable_token_with_data
+    uaa_revocable_token.merge(data: '')
+  end
+
   def uaa_service_provider
     {
       active:              true,
@@ -1653,7 +1682,8 @@ module CCHelper
       [:users,                uaa_user_with_password],
       [:group_membership,     uaa_group_membership],
       [:oauth_client_details, uaa_client],
-      [:authz_approvals,      uaa_approval]
+      [:authz_approvals,      uaa_approval],
+      [:revocable_tokens,     uaa_revocable_token_with_data]
     ]
   end
 
@@ -2717,6 +2747,7 @@ module CCHelper
       if @uaa_clients_deleted
         uaa_client_not_found
       else
+        uaa_clear_revocable_tokens_cache_stub(config)
         OK.new({})
       end
     end
@@ -2799,6 +2830,21 @@ module CCHelper
     end
   end
 
+  def uaa_revocable_token_not_found
+    NotFound.new('message' => 'Not Found')
+  end
+
+  def uaa_revocable_token_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/oauth/token/revoke/#{uaa_revocable_token[:token_id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @uaa_revocable_tokens_deleted
+        uaa_revocable_token_not_found
+      else
+        uaa_clear_revocable_tokens_cache_stub(config)
+        OK.new({})
+      end
+    end
+  end
+
   def uaa_service_provider_not_found
     NotFound.new('message' => 'Not Found')
   end
@@ -2823,6 +2869,7 @@ module CCHelper
       if @uaa_users_deleted
         uaa_user_not_found
       else
+        uaa_clear_revocable_tokens_cache_stub(config)
         OK.new({})
       end
     end

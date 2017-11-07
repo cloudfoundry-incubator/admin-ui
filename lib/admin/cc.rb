@@ -173,6 +173,12 @@ module AdminUI
             table:   :quota_definitions,
             columns: %i[app_instance_limit app_task_limit created_at guid id instance_memory_limit memory_limit name non_basic_services_allowed total_private_domains total_reserved_route_ports total_routes total_services total_service_keys updated_at]
           },
+          revocable_tokens:
+          {
+            db_uri:  uaadb_uri,
+            table:   :revocable_tokens,
+            columns: %i[client_id expires_at format identity_zone_id issued_at response_type scope token_id user_id]
+          },
           route_bindings:
           {
             db_uri:  ccdb_uri,
@@ -488,6 +494,10 @@ module AdminUI
       invalidate_cache(:processes)
     end
 
+    def invalidate_revocable_tokens
+      invalidate_cache(:revocable_tokens)
+    end
+
     def invalidate_route_bindings
       invalidate_cache(:route_bindings)
     end
@@ -666,6 +676,10 @@ module AdminUI
 
     def request_counts
       result_cache(:request_counts)
+    end
+
+    def revocable_tokens
+      result_cache(:revocable_tokens)
     end
 
     def route_bindings

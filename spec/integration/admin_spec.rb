@@ -435,7 +435,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'revokes tokens' do
-      revoke_tokens
+      expect { revoke_tokens }.to change { get_json('/revocable_tokens_view_model')['items']['items'].length }.from(1).to(0)
     end
 
     it 'deletes a client' do
@@ -936,6 +936,29 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a quota' do
       expect { delete_quota }.to change { get_json('/quotas_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
+  context 'manage revocable token' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/revocable_tokens_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_revocable_token
+      response = delete_request("/revocable_tokens/#{uaa_revocable_token[:token_id]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/revocable_tokens/#{uaa_revocable_token[:token_id]}"]])
+    end
+
+    it 'has user name and clients request in the log file' do
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/revocable_tokens_view_model']], true)
+    end
+
+    it 'deletes a revocable token' do
+      expect { delete_revocable_token }.to change { get_json('/revocable_tokens_view_model')['items']['items'].length }.from(1).to(0)
     end
   end
 
@@ -1750,7 +1773,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'revokes tokens' do
-      revoke_tokens
+      expect { revoke_tokens }.to change { get_json('/revocable_tokens_view_model')['items']['items'].length }.from(1).to(0)
     end
 
     it 'deletes a user' do
@@ -2180,6 +2203,18 @@ describe AdminUI::Admin, type: :integration do
     context 'quotas_view_model detail' do
       let(:path)              { "/quotas_view_model/#{cc_quota_definition[:guid]}" }
       let(:view_model_source) { view_models_quotas_detail }
+      it_behaves_like('retrieves view_model detail')
+    end
+
+    context 'revocable_tokens_view_model' do
+      let(:path)              { '/revocable_tokens_view_model' }
+      let(:view_model_source) { view_models_revocable_tokens }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'revocable_tokens_view_model detail' do
+      let(:path)              { "/revocable_tokens_view_model/#{uaa_revocable_token[:token_id]}" }
+      let(:view_model_source) { view_models_revocable_tokens_detail }
       it_behaves_like('retrieves view_model detail')
     end
 

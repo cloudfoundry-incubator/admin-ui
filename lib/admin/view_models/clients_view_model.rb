@@ -12,11 +12,13 @@ module AdminUI
       approvals                 = @cc.approvals
       events                    = @cc.events
       identity_zones            = @cc.identity_zones
+      revocable_tokens          = @cc.revocable_tokens
       service_brokers           = @cc.service_brokers
       service_dashboard_clients = @cc.service_dashboard_clients
 
-      approvals_connected = approvals['connected']
-      events_connected    = events['connected']
+      approvals_connected        = approvals['connected']
+      events_connected           = events['connected']
+      revocable_tokens_connected = revocable_tokens['connected']
 
       identity_zone_hash            = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
       service_broker_hash           = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
@@ -51,6 +53,16 @@ module AdminUI
         approval_counters[client_id] += 1
       end
 
+      revocable_token_counters = {}
+      revocable_tokens['items'].each do |revocable_token|
+        return result unless @running
+        Thread.pass
+
+        client_id = revocable_token[:client_id]
+        revocable_token_counters[client_id] = 0 if revocable_token_counters[client_id].nil?
+        revocable_token_counters[client_id] += 1
+      end
+
       items = []
       hash  = {}
 
@@ -64,8 +76,9 @@ module AdminUI
         service_dashboard_client = service_dashboard_client_hash[client_id]
         service_broker           = service_dashboard_client.nil? ? nil : service_broker_hash[service_dashboard_client[:service_broker_id]]
 
-        approval_counter = approval_counters[client_id]
-        event_counter    = event_counters[client_id]
+        approval_counter        = approval_counters[client_id]
+        event_counter           = event_counters[client_id]
+        revocable_token_counter = revocable_token_counters[client_id]
 
         row = []
 
@@ -149,6 +162,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if revocable_token_counter
+          row.push(revocable_token_counter)
+        elsif revocable_tokens_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if service_broker
           row.push(service_broker[:name])
         else
@@ -165,7 +186,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..14).to_a, [1, 2, 3, 4, 5, 6, 7, 8, 9, 14])
+      result(true, items, hash, (1..15).to_a, [1, 2, 3, 4, 5, 6, 7, 8, 9, 15])
     end
   end
 end

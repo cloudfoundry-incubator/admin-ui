@@ -36,11 +36,13 @@ module AdminUI
       group_membership = @cc.group_membership
       identity_zones   = @cc.identity_zones
       request_counts   = @cc.request_counts
+      revocable_tokens = @cc.revocable_tokens
 
       approvals_connected        = approvals['connected']
       events_connected           = events['connected']
       group_membership_connected = group_membership['connected']
       request_counts_connected   = request_counts['connected']
+      revocable_tokens_connected = revocable_tokens['connected']
 
       identity_zone_hash = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
       organization_hash  = Hash[organizations['items'].map { |item| [item[:id], item] }]
@@ -81,6 +83,16 @@ module AdminUI
         approval_counters[user_id] += 1
       end
 
+      revocable_token_counters = {}
+      revocable_tokens['items'].each do |revocable_token|
+        return result unless @running
+        Thread.pass
+
+        user_id = revocable_token[:user_id]
+        revocable_token_counters[user_id] = 0 if revocable_token_counters[user_id].nil?
+        revocable_token_counters[user_id] += 1
+      end
+
       users_organizations_auditors         = {}
       users_organizations_billing_managers = {}
       users_organizations_managers         = {}
@@ -111,6 +123,7 @@ module AdminUI
         group_membership_counter = group_membership_counters[guid]
         identity_zone            = identity_zone_hash[user_uaa[:identity_zone_id]]
         request_count            = request_count_hash[guid]
+        revocable_token_counter  = revocable_token_counters[guid]
 
         row = []
 
@@ -188,6 +201,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if revocable_token_counter
+          row.push(revocable_token_counter)
+        elsif revocable_tokens_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if request_count
           row.push(request_count[:count])
           if request_count[:valid_until]
@@ -251,7 +272,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..31).to_a, (1..15).to_a << 31)
+      result(true, items, hash, (1..32).to_a, (1..15).to_a << 32)
     end
 
     private

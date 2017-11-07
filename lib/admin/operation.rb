@@ -107,7 +107,9 @@ module AdminUI
       @client.delete_uaa(url)
       @cc.invalidate_approvals
       @cc.invalidate_clients
+      @cc.invalidate_revocable_tokens
       @view_models.invalidate_clients
+      @view_models.invalidate_revocable_tokens
     end
 
     def delete_client_tokens(client_id)
@@ -115,7 +117,9 @@ module AdminUI
       @logger.debug("GET #{url}")
       @client.get_uaa(url)
       @cc.invalidate_clients
+      @cc.invalidate_revocable_tokens
       @view_models.invalidate_clients
+      @view_models.invalidate_revocable_tokens
     end
 
     def delete_domain(domain_guid, is_shared, recursive)
@@ -172,6 +176,7 @@ module AdminUI
       @cc.invalidate_identity_providers
       @cc.invalidate_identity_zones
       @cc.invalidate_mfa_providers
+      @cc.invalidate_revocable_tokens
       @cc.invalidate_service_providers
       @cc.invalidate_users_uaa
       @view_models.invalidate_approvals
@@ -181,6 +186,7 @@ module AdminUI
       @view_models.invalidate_identity_providers
       @view_models.invalidate_identity_zones
       @view_models.invalidate_mfa_providers
+      @view_models.invalidate_revocable_tokens
       @view_models.invalidate_service_providers
       @view_models.invalidate_users
     end
@@ -290,6 +296,14 @@ module AdminUI
       @client.delete_cc(url)
       @cc.invalidate_quota_definitions
       @view_models.invalidate_quotas
+    end
+
+    def delete_revocable_token(token_id)
+      url = "/oauth/token/revoke/#{token_id}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_uaa(url)
+      @cc.invalidate_revocable_tokens
+      @view_models.invalidate_revocable_tokens
     end
 
     def delete_route(route_guid, recursive)
@@ -548,8 +562,10 @@ module AdminUI
         @client.delete_uaa(url)
         @cc.invalidate_approvals
         @cc.invalidate_group_membership
+        @cc.invalidate_revocable_tokens
         @cc.invalidate_users_uaa
         @view_models.invalidate_group_members
+        @view_models.invalidate_revocable_tokens
         @view_models.invalidate_users
       rescue CCRestClientResponseError => error
         raise cc_error if error.http_code == '404' && cc_error
@@ -561,7 +577,9 @@ module AdminUI
       url = "/oauth/token/revoke/user/#{user_guid}"
       @logger.debug("GET #{url}")
       @client.get_uaa(url)
+      @cc.invalidate_revocable_tokens
       @cc.invalidate_users_uaa
+      @view_models.invalidate_revocable_tokens
       @view_models.invalidate_users
     end
 

@@ -76,6 +76,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('Groups').displayed?).to be(true)
       expect(scroll_tab_into_view('GroupMembers').displayed?).to be(true)
       expect(scroll_tab_into_view('Approvals').displayed?).to be(true)
+      expect(scroll_tab_into_view('RevocableTokens').displayed?).to be(true)
       expect(scroll_tab_into_view('Buildpacks').displayed?).to be(true)
       expect(scroll_tab_into_view('Domains').displayed?).to be(true)
       expect(scroll_tab_into_view('FeatureFlags').displayed?).to be(true)
@@ -3529,8 +3530,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ClientsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 15,
-                                 labels:          ['', 'Identity Zone', 'Identifier', 'Updated', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Required User Groups', 'Access Token Validity', 'Refresh Token Validity', 'Events', 'Approvals', 'Service Broker'],
+                                 expected_length: 16,
+                                 labels:          ['', 'Identity Zone', 'Identifier', 'Updated', 'Scopes', 'Authorized Grant Types', 'Redirect URIs', 'Authorities', 'Auto Approve', 'Required User Groups', 'Access Token Validity', 'Refresh Token Validity', 'Events', 'Approvals', 'Revocable Tokens', 'Service Broker'],
                                  colspans:        nil
                                }
                              ])
@@ -3549,6 +3550,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_client[:required_user_groups],
                              @driver.execute_script("return Format.formatNumber(#{uaa_client[:access_token_validity]})"),
                              @driver.execute_script("return Format.formatNumber(#{uaa_client[:refresh_token_validity]})"),
+                             '1',
                              '1',
                              '1',
                              cc_service_broker[:name]
@@ -3640,6 +3642,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'App Launch URL',         tag:   'a', value: uaa_client[:app_launch_url] },
                             { label: 'Events',                 tag:   'a', value: '1' },
                             { label: 'Approvals',              tag:   'a', value: '1' },
+                            { label: 'Revocable Tokens',       tag:   'a', value: '1' },
                             { label: 'Additional Information', tag:   nil, value: uaa_client[:additional_information] },
                             { label: 'Service Broker',         tag:   'a', value: cc_service_broker[:name] },
                             { label: 'Service Broker GUID',    tag:   nil, value: cc_service_broker[:guid] }
@@ -3658,8 +3661,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Clients', 15, 'Approvals', uaa_client[:client_id])
           end
 
+          it 'has revocable tokens link' do
+            check_filter_link('Clients', 16, 'RevocableTokens', uaa_client[:client_id])
+          end
+
           it 'has service brokers link' do
-            check_filter_link('Clients', 17, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Clients', 18, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end
@@ -3674,12 +3681,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 6,
                                  labels:          ['', '', 'Requests', 'Organization Roles', 'Space Roles', ''],
-                                 colspans:        %w[1 19 2 5 4 1]
+                                 colspans:        %w[1 20 2 5 4 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 32,
-                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Last Successful Logon', 'Previous Successful Logon', 'Password Updated', 'Password Change Required', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Verified', 'Version', 'Events', 'Groups', 'Approvals', 'Count', 'Valid Until', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
+                                 expected_length: 33,
+                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Last Successful Logon', 'Previous Successful Logon', 'Password Updated', 'Password Change Required', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Verified', 'Version', 'Events', 'Groups', 'Approvals', 'Revocable Tokens', 'Count', 'Valid Until', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
                                  colspans:        nil
                                }
                              ])
@@ -3703,6 +3710,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatBoolean(#{uaa_user[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{uaa_user[:verified]})"),
                              @driver.execute_script("return Format.formatNumber(#{uaa_user[:version]})"),
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -3965,6 +3973,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Events',                             tag:   'a', value: '1' },
                             { label: 'Groups',                             tag:   'a', value: '1' },
                             { label: 'Approvals',                          tag:   'a', value: '1' },
+                            { label: 'Revocable Tokens',                   tag:   'a', value: '1' },
                             { label: 'Requests Count',                     tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_request_count[:count]})") },
                             { label: 'Requests Count Valid Until',         tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_request_count[:valid_until].to_datetime.rfc3339}\")") },
                             { label: 'Organization Total Roles',           tag:   'a', value: '4' },
@@ -3999,20 +4008,24 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Users', 19, 'Approvals', uaa_user[:id])
           end
 
+          it 'has revocable tokens link' do
+            check_filter_link('Users', 20, 'RevocableTokens', uaa_user[:id])
+          end
+
           it 'has organization roles link' do
-            check_filter_link('Users', 22, 'OrganizationRoles', uaa_user[:id])
+            check_filter_link('Users', 23, 'OrganizationRoles', uaa_user[:id])
           end
 
           it 'has space roles link' do
-            check_filter_link('Users', 27, 'SpaceRoles', uaa_user[:id])
+            check_filter_link('Users', 28, 'SpaceRoles', uaa_user[:id])
           end
 
           it 'has spaces link' do
-            check_filter_link('Users', 31, 'Spaces', cc_space[:guid])
+            check_filter_link('Users', 32, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Users', 33, 'Organizations', cc_organization[:guid])
+            check_filter_link('Users', 34, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -4311,6 +4324,121 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has clients link' do
             check_filter_link('Approvals', 4, 'Clients', uaa_approval[:client_id])
+          end
+        end
+      end
+
+      context 'Revocable Tokens' do
+        let(:tab_id)     { 'RevocableTokens' }
+        let(:table_id)   { 'RevocableTokensTable' }
+
+        it 'has a table' do
+          check_table_layout([
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='RevocableTokensTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                 expected_length: 4,
+                                 labels:          ['', '', '', 'User'],
+                                 colspans:        %w[1 1 7 2]
+                               },
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='RevocableTokensTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
+                                 expected_length: 11,
+                                 labels:          ['', 'Identity Zone', 'GUID', 'Issued', 'Expires', 'Format', 'Response Type', 'Scopes', 'Client', 'Name', 'GUID'],
+                                 colspans:        nil
+                               }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='RevocableTokensTable']/tbody/tr/td"),
+                           [
+                             '',
+                             uaa_identity_zone[:name],
+                             uaa_revocable_token[:token_id],
+                             Time.at(uaa_revocable_token[:issued_at] / 1000.0).to_datetime.rfc3339,
+                             Time.at(uaa_revocable_token[:expires_at] / 1000.0).to_datetime.rfc3339,
+                             uaa_revocable_token[:format],
+                             uaa_revocable_token[:response_type],
+                             uaa_revocable_token[:scope][1...-1],
+                             uaa_revocable_token[:client_id],
+                             uaa_user[:username],
+                             uaa_revocable_token[:user_id]
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_RevocableTokensTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('RevocableTokensTable', uaa_revocable_token[:token_id])
+        end
+
+        context 'manage clients' do
+          it 'has a Revoke button' do
+            expect(@driver.find_element(id: 'Buttons_RevocableTokensTable_0').text).to eq('Revoke')
+          end
+
+          context 'Revoke button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_RevocableTokensTable_0' }
+            end
+          end
+
+          context 'Revoke button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_RevocableTokensTable_0' }
+              let(:confirm_message) { 'Are you sure you want to revoke the selected tokens?' }
+            end
+          end
+
+          context 'Standard buttons' do
+            let(:filename) { 'revocable_tokens' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_RevocableTokensTable_1' }
+              let(:print_button_id) { 'Buttons_RevocableTokensTable_2' }
+              let(:save_button_id)  { 'Buttons_RevocableTokensTable_3' }
+              let(:csv_button_id)   { 'Buttons_RevocableTokensTable_4' }
+              let(:excel_button_id) { 'Buttons_RevocableTokensTable_5' }
+              let(:pdf_button_id)   { 'Buttons_RevocableTokensTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_RevocableTokensTable_7' }
+            end
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([
+                            { label: 'Identity Zone',    tag:   'a', value: uaa_identity_zone[:name] },
+                            { label: 'Identity Zone ID', tag:   nil, value: uaa_revocable_token[:identity_zone_id] },
+                            { label: 'GUID',             tag: 'div', value: uaa_revocable_token[:token_id] },
+                            { label: 'Issued',           tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{uaa_revocable_token[:issued_at]})") },
+                            { label: 'Expires',          tag:   nil, value: @driver.execute_script("return Format.formatDateNumber(#{uaa_revocable_token[:expires_at]})") },
+                            { label: 'Format',           tag:   nil, value: uaa_revocable_token[:format] },
+                            { label: 'Response Type',    tag:   nil, value: uaa_revocable_token[:response_type] },
+                            { label: 'Scope',            tag:   nil, value: uaa_revocable_token[:scope][1...-1] },
+                            { label: 'Client',           tag:   'a', value: uaa_revocable_token[:client_id] },
+                            { label: 'User',             tag:   'a', value: uaa_user[:username] },
+                            { label: 'User GUID',        tag:   nil, value: uaa_revocable_token[:user_id] }
+                          ])
+          end
+
+          it 'has identity zones link' do
+            check_filter_link('RevocableTokens', 0, 'IdentityZones', uaa_identity_zone[:id])
+          end
+
+          it 'has clients link' do
+            check_filter_link('RevocableTokens', 8, 'Clients', uaa_revocable_token[:client_id])
+          end
+
+          it 'has users link' do
+            check_filter_link('RevocableTokens', 9, 'Users', uaa_revocable_token[:user_id])
           end
         end
       end

@@ -417,6 +417,18 @@ module AdminUI
       404
     end
 
+    get '/revocable_tokens_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/revocable_tokens_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.revocable_tokens, params).items)
+    end
+
+    get '/revocable_tokens_view_model/:token_id', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/revocable_tokens_view_model/#{params[:token_id]}")
+      result = @view_models.revocable_token(params[:token_id])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/routers_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/routers_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.routers, params).items)
@@ -797,7 +809,7 @@ module AdminUI
 
     post '/environment_groups_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'post', '/environment_groups_view_model')
-      file = Download.download(request.body.read, 'events', @view_models.environment_groups)
+      file = Download.download(request.body.read, 'environment_groups', @view_models.environment_groups)
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'environment_groups.csv')
@@ -959,6 +971,14 @@ module AdminUI
                 filename:    'quotas.csv')
     end
 
+    post '/revocable_tokens_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/revocable_tokens_view_model')
+      file = Download.download(request.body.read, 'revocable_tokens', @view_models.revocable_tokens)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'revocable_tokens.csv')
+    end
+
     post '/routers_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'post', '/routers_view_model')
       file = Download.download(request.body.read, 'routers', @view_models.routers)
@@ -977,7 +997,7 @@ module AdminUI
 
     post '/route_bindings_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'post', '/route_bindings_view_model')
-      file = Download.download(request.body.read, 'routes', @view_models.route_bindings)
+      file = Download.download(request.body.read, 'route_bindings', @view_models.route_bindings)
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'route_bindings.csv')
@@ -985,7 +1005,7 @@ module AdminUI
 
     post '/route_mappings_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'post', '/route_mappings_view_model')
-      file = Download.download(request.body.read, 'routes', @view_models.route_mappings)
+      file = Download.download(request.body.read, 'route_mappings', @view_models.route_mappings)
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'route_mappings.csv')
@@ -1057,7 +1077,7 @@ module AdminUI
 
     post '/service_providers_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'post', '/service_providers_view_model')
-      file = Download.download(request.body.read, 'service_plans', @view_models.service_providers)
+      file = Download.download(request.body.read, 'service_providers', @view_models.service_providers)
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'service_providers.csv')
@@ -1788,6 +1808,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete quota definition: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/revocable_tokens/:token_id', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/revocable_tokens/#{params[:token_id]}")
+      begin
+        @operation.delete_revocable_token(params[:token_id])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete revocable token: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete revocable token: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

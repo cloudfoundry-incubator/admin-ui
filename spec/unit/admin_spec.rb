@@ -660,6 +660,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete quota definition')
     end
 
+    shared_examples 'common delete revocable token' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/revocable_tokens/revocable_token1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete revocable token via http' do
+      it_behaves_like('common delete revocable token')
+    end
+
+    context 'delete revocable token via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete revocable token')
+    end
+
     shared_examples 'common delete route' do
       it 'returns failure code due to disconnection' do
         response = delete('/routes/route1')
@@ -1671,6 +1688,14 @@ describe AdminUI::Admin do
         verify_not_found('/quotas_view_model/quota1')
       end
 
+      it '/revocable_tokens_view_model succeeds' do
+        verify_disconnected_view_model_items('/revocable_tokens_view_model')
+      end
+
+      it '/revocable_tokens_view_model/:token_id returns not found' do
+        verify_not_found('/revocable_tokens_view_model/revocable_token1')
+      end
+
       it '/routers_view_model succeeds' do
         verify_disconnected_view_model_items('/routers_view_model')
       end
@@ -2105,6 +2130,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/quotas_view_model/quota1')
       end
 
+      it '/revocable_tokens_view_model redirects as expected' do
+        get_redirects_as_expected('/revocable_tokens_view_model')
+      end
+
+      it '/revocable_tokens_view_model/:token_id redirects as expected' do
+        get_redirects_as_expected('/revocable_tokens_view_model/revocable_token1')
+      end
+
       it '/routers_view_model redirects as expected' do
         get_redirects_as_expected('/routers_view_model')
       end
@@ -2369,6 +2402,10 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/quota_definitions/quota1')
       end
 
+      it 'deletes /revocable_tokens/:token_id redirects as expected' do
+        delete_redirects_as_expected('/revocable_tokens/revocable_token1')
+      end
+
       it 'deletes /route_bindings/:guid/:guid/:boolean redirects as expected' do
         delete_redirects_as_expected('/route_bindings/service_instance1/route1/true')
       end
@@ -2595,6 +2632,10 @@ describe AdminUI::Admin do
 
       it 'posts /quotas_view_model redirects as expected' do
         post_redirects_as_expected('/quotas_view_model')
+      end
+
+      it 'posts /revocable_tokens_view_model redirects as expected' do
+        post_redirects_as_expected('/revocable_tokens_view_model')
       end
 
       it 'posts /routers_view_model redirects as expected' do

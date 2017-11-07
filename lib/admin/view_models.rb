@@ -26,6 +26,7 @@ require_relative 'view_models/organization_roles_view_model'
 require_relative 'view_models/organizations_isolation_segments_view_model'
 require_relative 'view_models/organizations_view_model'
 require_relative 'view_models/quotas_view_model'
+require_relative 'view_models/revocable_tokens_view_model'
 require_relative 'view_models/routers_view_model'
 require_relative 'view_models/routes_view_model'
 require_relative 'view_models/route_bindings_view_model'
@@ -87,6 +88,7 @@ module AdminUI
           organizations_isolation_segments: { clazz: AdminUI::OrganizationsIsolationSegmentsViewModel },
           organization_roles:               { clazz: AdminUI::OrganizationRolesViewModel },
           quotas:                           { clazz: AdminUI::QuotasViewModel },
+          revocable_tokens:                 { clazz: AdminUI::RevocableTokensViewModel },
           routers:                          { clazz: AdminUI::RoutersViewModel },
           routes:                           { clazz: AdminUI::RoutesViewModel },
           route_bindings:                   { clazz: AdminUI::RouteBindingsViewModel },
@@ -219,6 +221,10 @@ module AdminUI
 
     def invalidate_quotas
       invalidate_cache(:quotas)
+    end
+
+    def invalidate_revocable_tokens
+      invalidate_cache(:revocable_tokens)
     end
 
     def invalidate_routers
@@ -534,6 +540,14 @@ module AdminUI
 
     def quotas
       result_cache(:quotas)
+    end
+
+    def revocable_token(token_id)
+      details(:revocable_tokens, token_id)
+    end
+
+    def revocable_tokens
+      result_cache(:revocable_tokens)
     end
 
     def router(name)

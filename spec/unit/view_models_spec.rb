@@ -268,6 +268,14 @@ describe AdminUI::ViewModels do
       verify_disconnected_items(view_models.quotas)
     end
 
+    it 'returns nil revocable_token as expected' do
+      expect(view_models.revocable_token('bogus')).to be_nil
+    end
+
+    it 'returns zero revocable_tokens as expected' do
+      verify_disconnected_items(view_models.revocable_tokens)
+    end
+
     it 'returns nil router as expected' do
       expect(view_models.router('bogus')).to be_nil
     end
