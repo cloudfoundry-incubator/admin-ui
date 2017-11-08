@@ -13,7 +13,7 @@ gem 'sequel', '5.2.0'
 gem 'sequel_pg', '1.8.0'
 gem 'sinatra', '2.0.0'
 gem 'sqlite3', '1.3.13'
-gem 'yajl-ruby', '1.3.0'
+gem 'yajl-ruby', '1.3.1'
 
 group :mysql do
   gem 'mysql2', '0.4.9'
@@ -25,5 +25,5 @@ end
 
 group :test do
   gem 'rspec', '3.7.0'
-  gem 'selenium-webdriver', '3.6.0'
+  gem 'selenium-webdriver', '3.7.0'
 end
