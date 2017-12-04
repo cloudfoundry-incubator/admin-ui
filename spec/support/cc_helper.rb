@@ -25,12 +25,12 @@ module CCHelper
     end
   end
 
-  # Workaround since I cannot instantiate Net::HTTPNotFound and have body() function successfully
+  # Workaround since I cannot instantiate Net::HTTPBadRequest and have body() function successfully
   # Failing with NoMethodError: undefined method `closed?
-  class NotFound < Net::HTTPNotFound
+  class Accepted < Net::HTTPAccepted
     attr_reader :body
     def initialize(hash)
-      super(1.0, 404, 'NotFound')
+      super(1.0, 202, 'Accepted')
       @body = Yajl::Encoder.encode(hash)
     end
   end
@@ -45,12 +45,22 @@ module CCHelper
     end
   end
 
-  # Workaround since I cannot instantiate Net::HTTPBadRequest and have body() function successfully
+  # Workaround since I cannot instantiate Net::HTTPNotFound and have body() function successfully
   # Failing with NoMethodError: undefined method `closed?
-  class Accepted < Net::HTTPAccepted
+  class NotFound < Net::HTTPNotFound
     attr_reader :body
     def initialize(hash)
-      super(1.0, 202, 'Accepted')
+      super(1.0, 404, 'NotFound')
+      @body = Yajl::Encoder.encode(hash)
+    end
+  end
+
+  # Workaround since I cannot instantiate Net::HTTPUnprocessableEntity and have body() function successfully
+  # Failing with NoMethodError: undefined method `closed?
+  class UnprocessableEntity < Net::HTTPUnprocessableEntity
+    attr_reader :body
+    def initialize(hash)
+      super(1.0, 422, 'UnprocessableEntity')
       @body = Yajl::Encoder.encode(hash)
     end
   end
@@ -82,6 +92,7 @@ module CCHelper
     @cc_service_bindings_deleted                 = false
     @cc_service_brokers_deleted                  = false
     @cc_service_instances_deleted                = false
+    @cc_service_instance_shares_deleted          = false
     @cc_service_keys_deleted                     = false
     @cc_service_plans_deleted                    = false
     @cc_service_plan_visibilities_deleted        = false
@@ -130,6 +141,7 @@ module CCHelper
     cc_service_binding_stubs(config)
     cc_service_broker_stubs(config)
     cc_service_instance_stubs(config)
+    cc_service_instance_share_stubs(config)
     cc_service_key_stubs(config)
     cc_service_plan_stubs(config)
     cc_service_plan_visibility_stubs(config)
@@ -296,12 +308,19 @@ module CCHelper
   def cc_clear_service_instances_cache_stub(config)
     cc_clear_route_bindings_cache_stub(config)
     cc_clear_service_bindings_cache_stub(config)
+    cc_clear_service_instance_shares_cache_stub(config)
     cc_clear_service_keys_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM service_instance_operations')
     sql(config.ccdb_uri, 'DELETE FROM service_instances')
 
     @cc_service_instances_deleted = true
+  end
+
+  def cc_clear_service_instance_shares_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM service_instance_shares')
+
+    @cc_service_instance_shares_deleted = true
   end
 
   def cc_clear_service_keys_cache_stub(config)
@@ -1148,6 +1167,7 @@ module CCHelper
       created_at:            unique_time('cc_service_binding_created'),
       guid:                  'service_binding1',
       id:                    unique_id('cc_service_binding'),
+      name:                  'TestServiceBinding',
       service_instance_guid: cc_service_instance[:guid],
       syslog_drain_url:      'http://service_binding_syslog_drain_url.com',
       updated_at:            unique_time('cc_service_binding_updated'),
@@ -1214,7 +1234,7 @@ module CCHelper
       gateway_data:       nil,
       gateway_name:       nil,
       is_gateway_service: true,
-      name:               'TestService-random',
+      name:               'TestServiceInstance',
       route_service_url:  'http://service_instance_route_service_url.com',
       service_plan_id:    cc_service_plan[:id],
       space_id:           cc_space[:id],
@@ -1236,7 +1256,7 @@ module CCHelper
   end
 
   def cc_service_instance_rename
-    'renamed_TestService-random'
+    'renamed_TestServiceInstance'
   end
 
   def cc_service_instance_operation
@@ -1251,6 +1271,13 @@ module CCHelper
       state:                     'succeeded',
       type:                      'create',
       updated_at:                unique_time('cc_service_instance_operation_updated')
+    }
+  end
+
+  def cc_service_instance_share
+    {
+      service_instance_guid: cc_service_instance[:guid],
+      target_space_guid:     cc_space[:guid]
     }
   end
 
@@ -1643,6 +1670,7 @@ module CCHelper
                [:spaces_managers,                  cc_space_manager],
                [:service_plans,                    cc_service_plan],
                [:service_instances,                cc_service_instance_with_credentials],
+               [:service_instance_shares,          cc_service_instance_share],
                [:service_plan_visibilities,        cc_service_plan_visibility],
                [:service_bindings,                 cc_service_binding_with_credentials],
                [:service_instance_operations,      cc_service_instance_operation],
@@ -2451,6 +2479,23 @@ module CCHelper
         cc_service_instance_not_found
       else
         cc_clear_service_instances_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+  end
+
+  def cc_service_instance_share_unprocessable_entity
+    UnprocessableEntity.new('code'        => 10_008,
+                            'description' => "Unable to unshare service instance from space #{cc_space[:guid]}. Ensure the space exists and the service instance has been shared to this space.",
+                            'error_code'  => 'CF-UnprocessableEntity')
+  end
+
+  def cc_service_instance_share_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_instances/#{cc_service_instance[:guid]}/relationships/shared_spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @cc_service_instance_shares_deleted
+        cc_service_instance_share_unprocessable_entity
+      else
+        cc_clear_service_instance_shares_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end

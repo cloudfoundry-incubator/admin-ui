@@ -966,6 +966,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete service provider')
     end
 
+    shared_examples 'common delete shared service instance' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/shared_service_instances/service_instance1/space1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete shared service instance via http' do
+      it_behaves_like('common delete shared service instance')
+    end
+
+    context 'delete shared service instance via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete shared service instance')
+    end
+
     shared_examples 'common delete space' do
       it 'returns failure code due to disconnection' do
         response = delete('/spaces/space1')
@@ -1808,6 +1825,14 @@ describe AdminUI::Admin do
         verify_not_found('/services_view_model/service1')
       end
 
+      it '/shared_service_instances_view_model succeeds' do
+        verify_disconnected_view_model_items('/shared_service_instances_view_model')
+      end
+
+      it '/shared_service_instances_view_model/:guid/:guid returns not found' do
+        verify_not_found('/shared_service_instances_view_model/service_instance1/space1')
+      end
+
       it '/space_quotas_view_model succeeds' do
         verify_disconnected_view_model_items('/space_quotas_view_model')
       end
@@ -2254,6 +2279,14 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/services_view_model/service1')
       end
 
+      it '/shared_service_instances_view_model redirects as expected' do
+        get_redirects_as_expected('/shared_service_instances_view_model')
+      end
+
+      it '/shared_service_instances_view_model/:guid/:guid redirects as expected' do
+        get_redirects_as_expected('/shared_service_instances_view_model/service_instance1/space1')
+      end
+
       it '/space_quotas_view_model redirects as expected' do
         get_redirects_as_expected('/space_quotas_view_model')
       end
@@ -2474,6 +2507,10 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/services/service1?purge=true')
       end
 
+      it 'deletes /shared_service_instances/:guid/:guid redirects as expected' do
+        delete_redirects_as_expected('/shared_service_instances/service_instance1/space1')
+      end
+
       it 'deletes /space_quota_definitions/:guid redirects as expected' do
         delete_redirects_as_expected('/space_quota_definitions/space_quota1')
       end
@@ -2692,6 +2729,10 @@ describe AdminUI::Admin do
 
       it 'posts /services_view_model redirects as expected' do
         post_redirects_as_expected('/services_view_model')
+      end
+
+      it 'posts /shared_service_instances_view_model redirects as expected' do
+        post_redirects_as_expected('/shared_service_instances_view_model')
       end
 
       it 'posts /space_quotas_view_model redirects as expected' do

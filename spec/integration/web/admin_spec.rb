@@ -65,6 +65,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       expect(scroll_tab_into_view('Routes').displayed?).to be(true)
       expect(scroll_tab_into_view('RouteMappings').displayed?).to be(true)
       expect(scroll_tab_into_view('ServiceInstances').displayed?).to be(true)
+      expect(scroll_tab_into_view('SharedServiceInstances').displayed?).to be(true)
       expect(scroll_tab_into_view('ServiceBindings').displayed?).to be(true)
       expect(scroll_tab_into_view('ServiceKeys').displayed?).to be(true)
       expect(scroll_tab_into_view('RouteBindings').displayed?).to be(true)
@@ -2278,12 +2279,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 7,
                                  labels:          ['', 'Service Instance', 'Service Instance Last Operation', 'Service Plan', 'Service', 'Service Broker', ''],
-                                 colspans:        %w[1 10 4 9 7 4 1]
+                                 colspans:        %w[1 11 4 9 7 4 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 36,
-                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'User Provided', 'Drain', 'Events', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Type', 'State', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Free', 'Active', 'Public', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
+                                 expected_length: 37,
+                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'User Provided', 'Drain', 'Events', 'Shares', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Type', 'State', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Free', 'Active', 'Public', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2297,6 +2298,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_instance[:updated_at].to_datetime.rfc3339,
                              @driver.execute_script("return Format.formatBoolean(#{!cc_service_instance[:is_gateway_service]})"),
                              @driver.execute_script("return Format.formatBoolean(#{!cc_service_instance[:syslog_drain_url].nil? && cc_service_instance[:syslog_drain_url].length.positive?})"),
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -2442,6 +2444,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Instance Syslog Drain URL',                         tag:   nil, value: cc_service_instance[:syslog_drain_url] },
                             { label: 'Service Instance Dashboard URL',                            tag:   'a', value: cc_service_instance[:dashboard_url] },
                             { label: 'Service Instance Events',                                   tag:   'a', value: '1' },
+                            { label: 'Service Instance Shares',                                   tag:   'a', value: '1' },
                             { label: 'Service Bindings',                                          tag:   'a', value: '1' },
                             { label: 'Service Keys',                                              tag:   'a', value: '1' },
                             { label: 'Route Bindings',                                            tag:   'a', value: '1' },
@@ -2518,36 +2521,214 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('ServiceInstances', 8, 'Events', cc_service_instance[:guid])
           end
 
+          it 'has shared service instances link' do
+            check_filter_link('ServiceInstances', 9, 'SharedServiceInstances', cc_service_instance[:guid])
+          end
+
           it 'has service bindings link' do
-            check_filter_link('ServiceInstances', 9, 'ServiceBindings', cc_service_instance[:guid])
+            check_filter_link('ServiceInstances', 10, 'ServiceBindings', cc_service_instance[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('ServiceInstances', 10, 'ServiceKeys', cc_service_instance[:guid])
+            check_filter_link('ServiceInstances', 11, 'ServiceKeys', cc_service_instance[:guid])
           end
 
           it 'has route bindings link' do
-            check_filter_link('ServiceInstances', 11, 'RouteBindings', cc_service_instance[:guid])
+            check_filter_link('ServiceInstances', 12, 'RouteBindings', cc_service_instance[:guid])
           end
 
           it 'has service plans link' do
-            check_filter_link('ServiceInstances', 20, 'ServicePlans', cc_service_plan[:guid])
+            check_filter_link('ServiceInstances', 21, 'ServicePlans', cc_service_plan[:guid])
           end
 
           it 'has services link' do
-            check_filter_link('ServiceInstances', 29, 'Services', cc_service[:guid])
+            check_filter_link('ServiceInstances', 30, 'Services', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('ServiceInstances', 36, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('ServiceInstances', 37, 'ServiceBrokers', cc_service_broker[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('ServiceInstances', 40, 'Spaces', cc_space[:guid])
+            check_filter_link('ServiceInstances', 41, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceInstances', 42, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceInstances', 43, 'Organizations', cc_organization[:guid])
+          end
+        end
+      end
+
+      context 'Shared Service Instances' do
+        let(:tab_id)     { 'SharedServiceInstances' }
+        let(:table_id)   { 'SharedServiceInstancesTable' }
+
+        it 'has a table' do
+          check_table_layout([
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='SharedServiceInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
+                                 expected_length: 6,
+                                 labels:          ['', 'Service Instance', 'Service Plan', 'Service', 'Service Broker', ''],
+                                 colspans:        %w[1 4 9 7 4 2]
+                               },
+                               {
+                                 columns:         @driver.find_elements(xpath: "//div[@id='SharedServiceInstancesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
+                                 expected_length: 27,
+                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Free', 'Active', 'Public', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Source', 'Target'],
+                                 colspans:        nil
+                               }
+                             ])
+
+          check_table_data(@driver.find_elements(xpath: "//table[@id='SharedServiceInstancesTable']/tbody/tr/td"),
+                           [
+                             '',
+                             cc_service_instance[:name],
+                             cc_service_instance[:guid],
+                             cc_service_instance[:created_at].to_datetime.rfc3339,
+                             cc_service_instance[:updated_at].to_datetime.rfc3339,
+                             cc_service_plan[:name],
+                             cc_service_plan[:guid],
+                             cc_service_plan[:unique_id],
+                             cc_service_plan[:created_at].to_datetime.rfc3339,
+                             cc_service_plan[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:bindable]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
+                             cc_service[:label],
+                             cc_service[:guid],
+                             cc_service[:unique_id],
+                             cc_service[:created_at].to_datetime.rfc3339,
+                             cc_service[:updated_at].to_datetime.rfc3339,
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
+                             cc_service_broker[:name],
+                             cc_service_broker[:guid],
+                             cc_service_broker[:created_at].to_datetime.rfc3339,
+                             cc_service_broker[:updated_at].to_datetime.rfc3339,
+                             "#{cc_organization[:name]}/#{cc_space[:name]}",
+                             "#{cc_organization[:name]}/#{cc_space[:name]}"
+                           ])
+        end
+
+        it 'has allowscriptaccess property set to sameDomain' do
+          check_allowscriptaccess_attribute('Buttons_SharedServiceInstancesTable_1')
+        end
+
+        it 'has a checkbox in the first column' do
+          check_checkbox_guid('SharedServiceInstancesTable', "#{cc_service_instance[:guid]}/#{cc_space[:guid]}")
+        end
+
+        context 'manage shared service instances' do
+          it 'has an Unshare button' do
+            expect(@driver.find_element(id: 'Buttons_SharedServiceInstancesTable_0').text).to eq('Unshare')
+          end
+
+          context 'Unshare button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_SharedServiceInstancesTable_0' }
+            end
+          end
+
+          context 'Unshare button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_SharedServiceInstancesTable_0' }
+              let(:confirm_message) { 'Are you sure you want to unshare the selected service instance shares?' }
+            end
+          end
+
+          context 'Standard buttons' do
+            let(:filename) { 'shared_service_instances' }
+
+            it_behaves_like('standard buttons') do
+              let(:copy_button_id)  { 'Buttons_SharedServiceInstancesTable_1' }
+              let(:print_button_id) { 'Buttons_SharedServiceInstancesTable_2' }
+              let(:save_button_id)  { 'Buttons_SharedServiceInstancesTable_3' }
+              let(:csv_button_id)   { 'Buttons_SharedServiceInstancesTable_4' }
+              let(:excel_button_id) { 'Buttons_SharedServiceInstancesTable_5' }
+              let(:pdf_button_id)   { 'Buttons_SharedServiceInstancesTable_6' }
+            end
+
+            it_behaves_like('download button') do
+              let(:download_button_id) { 'Buttons_SharedServiceInstancesTable_7' }
+            end
+          end
+        end
+
+        context 'selectable' do
+          before do
+            select_first_row
+          end
+
+          it 'has details' do
+            check_details([
+                            # rubocop:disable Layout/ExtraSpacing
+                            { label: 'Service Instance Name',    tag:   nil, value: cc_service_instance[:name] },
+                            # rubocop:enable Layout/ExtraSpacing
+                            { label: 'Service Instance GUID',    tag: 'div', value: cc_service_instance[:guid] },
+                            { label: 'Service Instance Created', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Instance Updated', tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_instance[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Plan Name',        tag:   'a', value: cc_service_plan[:name] },
+                            { label: 'Service Plan GUID',        tag:   nil, value: cc_service_plan[:guid] },
+                            { label: 'Service Plan Unique ID',   tag:   nil, value: cc_service_plan[:unique_id] },
+                            { label: 'Service Plan Created',     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Plan Updated',     tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Plan Bindable',    tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:bindable]})") },
+                            { label: 'Service Plan Free',        tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
+                            { label: 'Service Plan Active',      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
+                            { label: 'Service Plan Public',      tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
+                            { label: 'Service Label',            tag:   'a', value: cc_service[:label] },
+                            { label: 'Service GUID',             tag:   nil, value: cc_service[:guid] },
+                            { label: 'Service Unique ID',        tag:   nil, value: cc_service[:unique_id] },
+                            { label: 'Service Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Bindable',         tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindable]})") },
+                            { label: 'Service Active',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
+                            { label: 'Service Broker Name',      tag:   'a', value: cc_service_broker[:name] },
+                            { label: 'Service Broker GUID',      tag:   nil, value: cc_service_broker[:guid] },
+                            { label: 'Service Broker Created',   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Broker Updated',   tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Source Space',             tag:   'a', value: cc_space[:name] },
+                            { label: 'Source Space GUID',        tag:   nil, value: cc_space[:guid] },
+                            { label: 'Source Organization',      tag:   'a', value: cc_organization[:name] },
+                            { label: 'Source Organization GUID', tag:   nil, value: cc_organization[:guid] },
+                            { label: 'Target Space',             tag:   'a', value: cc_space[:name] },
+                            { label: 'Target Space GUID',        tag:   nil, value: cc_space[:guid] },
+                            { label: 'Target Organization',      tag:   'a', value: cc_organization[:name] },
+                            { label: 'Target Organization GUID', tag:   nil, value: cc_organization[:guid] }
+                          ])
+          end
+
+          it 'has service instances link' do
+            check_filter_link('SharedServiceInstances', 1, 'ServiceInstances', cc_service_instance[:guid])
+          end
+
+          it 'has service plans link' do
+            check_filter_link('SharedServiceInstances', 4, 'ServicePlans', cc_service_plan[:guid])
+          end
+
+          it 'has services link' do
+            check_filter_link('SharedServiceInstances', 13, 'Services', cc_service[:guid])
+          end
+
+          it 'has service brokers link' do
+            check_filter_link('SharedServiceInstances', 20, 'ServiceBrokers', cc_service_broker[:guid])
+          end
+
+          it 'has source spaces link' do
+            check_filter_link('SharedServiceInstances', 24, 'Spaces', cc_space[:guid])
+          end
+
+          it 'has source organizations link' do
+            check_filter_link('SharedServiceInstances', 26, 'Organizations', cc_organization[:guid])
+          end
+
+          it 'has target spaces link' do
+            check_filter_link('SharedServiceInstances', 28, 'Spaces', cc_space[:guid])
+          end
+
+          it 'has target organizations link' do
+            check_filter_link('SharedServiceInstances', 30, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -2563,12 +2744,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 8,
                                  labels:          ['', 'Service Binding', 'Application', 'Service Instance', 'Service Plan', 'Service', 'Service Broker', ''],
-                                 colspans:        %w[1 6 2 4 8 6 4 1]
+                                 colspans:        %w[1 7 2 4 8 6 4 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 32,
-                                 labels:          ['', 'GUID', 'Created', 'Updated', 'Drain', 'Volume Mounts', 'Events', 'Name', 'GUID', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Free', 'Active', 'Public', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
+                                 expected_length: 33,
+                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Drain', 'Volume Mounts', 'Events', 'Name', 'GUID', 'Name', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Free', 'Active', 'Public', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Active', 'Name', 'GUID', 'Created', 'Updated', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2576,6 +2757,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceBindingsTable']/tbody/tr/td"),
                            [
                              '',
+                             cc_service_binding[:name],
                              cc_service_binding[:guid],
                              cc_service_binding[:created_at].to_datetime.rfc3339,
                              cc_service_binding[:updated_at].to_datetime.rfc3339,
@@ -2661,6 +2843,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
+                            # rubocop:disable Layout/ExtraSpacing
+                            { label: 'Service Binding Name',             tag:   nil, value: cc_service_binding[:name] },
+                            # rubocop:enable Layout/ExtraSpacing
                             { label: 'Service Binding GUID',             tag: 'div', value: cc_service_binding[:guid] },
                             { label: 'Service Binding Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_binding[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Binding Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_binding[:updated_at].to_datetime.rfc3339}\")") },
@@ -2767,35 +2952,35 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events' do
-            check_filter_link('ServiceBindings', 4, 'Events', cc_service_binding[:guid])
+            check_filter_link('ServiceBindings', 5, 'Events', cc_service_binding[:guid])
           end
 
           it 'has applications link' do
-            check_filter_link('ServiceBindings', 5, 'Applications', cc_app[:guid])
+            check_filter_link('ServiceBindings', 6, 'Applications', cc_app[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('ServiceBindings', 7, 'ServiceInstances', cc_service_instance[:guid])
+            check_filter_link('ServiceBindings', 8, 'ServiceInstances', cc_service_instance[:guid])
           end
 
           it 'has service plans link' do
-            check_filter_link('ServiceBindings', 11, 'ServicePlans', cc_service_plan[:guid])
+            check_filter_link('ServiceBindings', 12, 'ServicePlans', cc_service_plan[:guid])
           end
 
           it 'has services link' do
-            check_filter_link('ServiceBindings', 19, 'Services', cc_service[:guid])
+            check_filter_link('ServiceBindings', 20, 'Services', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('ServiceBindings', 25, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('ServiceBindings', 26, 'ServiceBrokers', cc_service_broker[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('ServiceBindings', 29, 'Spaces', cc_space[:guid])
+            check_filter_link('ServiceBindings', 30, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceBindings', 31, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceBindings', 32, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -5601,8 +5786,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceBrokersTable_wrapper']/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 16,
-                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Events', 'Service Dashboard Client', 'Services', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Target'],
+                                 expected_length: 17,
+                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Events', 'Service Dashboard Client', 'Services', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Instance Shares', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -5616,6 +5801,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_broker[:updated_at].to_datetime.rfc3339,
                              '1',
                              uaa_client[:client_id],
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -5710,6 +5896,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Public Active Service Plans',  tag:   nil, value: '1' },
                             { label: 'Service Plan Visibilities',    tag:   'a', value: '1' },
                             { label: 'Service Instances',            tag:   'a', value: '1' },
+                            { label: 'Service Instance Shares',      tag:   'a', value: '1' },
                             { label: 'Service Bindings',             tag:   'a', value: '1' },
                             { label: 'Service Keys',                 tag:   'a', value: '1' },
                             { label: 'Route Bindings',               tag:   'a', value: '1' },
@@ -5744,24 +5931,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('ServiceBrokers', 12, 'ServiceInstances', cc_service_broker[:guid])
           end
 
+          it 'has shared service instances link' do
+            check_filter_link('ServiceBrokers', 13, 'SharedServiceInstances', cc_service_broker[:guid])
+          end
+
           it 'has service bindings link' do
-            check_filter_link('ServiceBrokers', 13, 'ServiceBindings', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 14, 'ServiceBindings', cc_service_broker[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('ServiceBrokers', 14, 'ServiceKeys', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 15, 'ServiceKeys', cc_service_broker[:guid])
           end
 
           it 'has route bindings link' do
-            check_filter_link('ServiceBrokers', 15, 'RouteBindings', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 16, 'RouteBindings', cc_service_broker[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('ServiceBrokers', 16, 'Spaces', cc_space[:guid])
+            check_filter_link('ServiceBrokers', 17, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceBrokers', 18, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceBrokers', 19, 'Organizations', cc_organization[:guid])
           end
         end
       end
@@ -5777,12 +5968,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 3,
                                  labels:          ['', 'Service', 'Service Broker'],
-                                 colspans:        %w[1 19 4]
+                                 colspans:        %w[1 20 4]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 24,
-                                 labels:          ['', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Plan Updateable', 'Active', 'Provider Display Name', 'Display Name', 'Requires', 'Events', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Name', 'GUID', 'Created', 'Updated'],
+                                 expected_length: 25,
+                                 labels:          ['', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Plan Updateable', 'Active', 'Provider Display Name', 'Display Name', 'Requires', 'Events', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Instance Shares', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Name', 'GUID', 'Created', 'Updated'],
                                  colspans:        nil
                                }
                              ])
@@ -5801,6 +5992,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_provider_display_name,
                              cc_service_display_name,
                              Yajl::Parser.parse(cc_service[:requires]).sort.join("\n"),
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -5912,6 +6104,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Public Active Service Plans',   tag:   nil, value: '1' },
                             { label: 'Service Plan Visibilities',     tag:   'a', value: '1' },
                             { label: 'Service Instances',             tag:   'a', value: '1' },
+                            { label: 'Service Instance Shares',       tag:   'a', value: '1' },
                             { label: 'Service Bindings',              tag:   'a', value: '1' },
                             { label: 'Service Keys',                  tag:   'a', value: '1' },
                             { label: 'Route Bindings',                tag:   'a', value: '1' },
@@ -5938,20 +6131,24 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('Services', 24, 'ServiceInstances', cc_service[:guid])
           end
 
+          it 'has shared service instances link' do
+            check_filter_link('Services', 25, 'SharedServiceInstances', cc_service[:guid])
+          end
+
           it 'has service bindings link' do
-            check_filter_link('Services', 25, 'ServiceBindings', cc_service[:guid])
+            check_filter_link('Services', 26, 'ServiceBindings', cc_service[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('Services', 26, 'ServiceKeys', cc_service[:guid])
+            check_filter_link('Services', 27, 'ServiceKeys', cc_service[:guid])
           end
 
           it 'has route bindings link' do
-            check_filter_link('Services', 27, 'RouteBindings', cc_service[:guid])
+            check_filter_link('Services', 28, 'RouteBindings', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Services', 28, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Services', 29, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end
@@ -5967,12 +6164,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Service Plan', 'Service', 'Service Broker'],
-                                 colspans:        %w[1 16 7 4]
+                                 colspans:        %w[1 17 7 4]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 28,
-                                 labels:          ['', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Free', 'Active', 'Public', 'Display Name', 'Events', 'Visible Organizations', 'Service Instances', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Active', 'Name', 'GUID', 'Created', 'Updated'],
+                                 expected_length: 29,
+                                 labels:          ['', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Free', 'Active', 'Public', 'Display Name', 'Events', 'Visible Organizations', 'Service Instances', 'Service Instance Shares', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Active', 'Name', 'GUID', 'Created', 'Updated'],
                                  colspans:        nil
                                }
                              ])
@@ -5990,6 +6187,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
                              cc_service_plan_display_name,
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -6121,6 +6319,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Plan Events',                 tag:   'a', value: '1' },
                             { label: 'Service Plan Visibilities',           tag:   'a', value: '1' },
                             { label: 'Service Instances',                   tag:   'a', value: '1' },
+                            { label: 'Service Instance Shares',             tag:   'a', value: '1' },
                             { label: 'Service Bindings',                    tag:   'a', value: '1' },
                             { label: 'Service Keys',                        tag:   'a', value: '1' },
                             { label: 'Route Bindings',                      tag:   'a', value: '1' },
@@ -6150,24 +6349,28 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_filter_link('ServicePlans', 18, 'ServiceInstances', cc_service_plan[:guid])
           end
 
+          it 'has shared service instances link' do
+            check_filter_link('ServicePlans', 19, 'SharedServiceInstances', cc_service_plan[:guid])
+          end
+
           it 'has service bindings link' do
-            check_filter_link('ServicePlans', 19, 'ServiceBindings', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 20, 'ServiceBindings', cc_service_plan[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('ServicePlans', 20, 'ServiceKeys', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 21, 'ServiceKeys', cc_service_plan[:guid])
           end
 
           it 'has route bindings link' do
-            check_filter_link('ServicePlans', 21, 'RouteBindings', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 22, 'RouteBindings', cc_service_plan[:guid])
           end
 
           it 'has services link' do
-            check_filter_link('ServicePlans', 22, 'Services', cc_service[:guid])
+            check_filter_link('ServicePlans', 23, 'Services', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('ServicePlans', 29, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('ServicePlans', 30, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end

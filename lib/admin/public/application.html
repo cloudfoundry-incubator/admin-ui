@@ -75,6 +75,7 @@
         <script src="js/app/tabs/servicePlanVisibilitiesTab.js"></script>
         <script src="js/app/tabs/serviceProvidersTab.js"></script>
         <script src="js/app/tabs/servicesTab.js"></script>
+        <script src="js/app/tabs/sharedServiceInstancesTab.js"></script>
         <script src="js/app/tabs/spaceQuotasTab.js"></script>
         <script src="js/app/tabs/spaceRolesTab.js"></script>
         <script src="js/app/tabs/spacesTab.js"></script>
@@ -121,6 +122,7 @@
                 <span id="Routes" class="menuItem">Routes</span>
                 <span id="RouteMappings" class="menuItem">Route Mappings</span>
                 <span id="ServiceInstances" class="menuItem">Service Instances</span>
+                <span id="SharedServiceInstances" class="menuItem">Shared Service Instances</span>
                 <span id="ServiceBindings" class="menuItem">Service Bindings</span>
                 <span id="ServiceKeys" class="menuItem">Service Keys</span>
                 <span id="RouteBindings" class="menuItem">Route Bindings</span>
@@ -482,7 +484,7 @@
                         <thead>
                             <tr class="customTableHeaderGroup">
                                 <th colspan="1"> </th>
-                                <th colspan="10">Service Instance</th>
+                                <th colspan="11">Service Instance</th>
                                 <th colspan="4">Service Instance Last Operation</th>
                                 <th colspan="9">Service Plan</th>
                                 <th colspan="7">Service</th>
@@ -499,6 +501,7 @@
                                 <th>User Provided</th>
                                 <th>Drain</th>
                                 <th>Events</th>
+                                <th>Shares</th>
                                 <th>Service Bindings</th>
                                 <th>Service Keys</th>
                                 <th>Route Bindings</th>
@@ -551,13 +554,70 @@
                 </div>
            </div>
 
+           <div id="SharedServiceInstancesPage" class="page hiddenPage">
+                <div id="SharedServiceInstancesTableContainer" class="pageSection">
+                    <table id="SharedServiceInstancesTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
+                        <thead>
+                            <tr class="customTableHeaderGroup">
+                                <th colspan="1"> </th>
+                                <th colspan="4">Service Instance</th>
+                                <th colspan="9">Service Plan</th>
+                                <th colspan="7">Service</th>
+                                <th colspan="4">Service Broker</th>
+                                <th colspan="2"> </th>
+                            </tr>
+                            <tr>
+                                <th>Check</th>
+
+                                <th>Name</th>
+                                <th>GUID</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+
+                                <th>Name</th>
+                                <th>GUID</th>
+                                <th>Unique ID</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Bindable</th>
+                                <th>Free</th>
+                                <th>Active</th>
+                                <th>Public</th>
+
+                                <th>Label</th>
+                                <th>GUID</th>
+                                <th>Unique ID</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+                                <th>Bindable</th>
+                                <th>Active</th>
+
+                                <th>Name</th>
+                                <th>GUID</th>
+                                <th>Created</th>
+                                <th>Updated</th>
+
+                                <th>Source</th>
+                                <th>Target</th>
+                            </tr>
+                        </thead>
+                        <tbody/>
+                    </table>
+                </div>
+
+                <div class="verticalPageSection">
+                    <div id="SharedServiceInstancesDetailsLabel" class="propertyLabel">Details</div>
+                    <div id="SharedServiceInstancesPropertiesContainer"></div>
+                </div>
+           </div>
+
            <div id="ServiceBindingsPage" class="page hiddenPage">
                 <div id="ServiceBindingsTableContainer" class="pageSection">
                     <table id="ServiceBindingsTable" cellpadding="0" cellspacing="0" border="0" class="customTable">
                         <thead>
                             <tr class="customTableHeaderGroup">
                                 <th colspan="1"> </th>
-                                <th colspan="6">Service Binding</th>
+                                <th colspan="7">Service Binding</th>
                                 <th colspan="2">Application</th>
                                 <th colspan="4">Service Instance</th>
                                 <th colspan="8">Service Plan</th>
@@ -568,6 +628,7 @@
                             <tr>
                                 <th>Check</th>
 
+                                <th>Name</th>
                                 <th>GUID</th>
                                 <th>Created</th>
                                 <th>Updated</th>
@@ -1209,7 +1270,7 @@
                         <thead>
                             <tr class="customTableHeaderGroup">
                                 <th colspan="1"> </th>
-                                <th colspan="19">Service</th>
+                                <th colspan="20">Service</th>
                                 <th colspan="4">Service Broker</th>
                             </tr>
                             <tr>
@@ -1231,6 +1292,7 @@
                                 <th>Public Active Service Plans</th>
                                 <th>Service Plan Visibilities</th>
                                 <th>Service Instances</th>
+                                <th>Service Instance Shares</th>
                                 <th>Service Bindings</th>
                                 <th>Service Keys</th>
                                 <th>Route Bindings</th>
@@ -1257,7 +1319,7 @@
                         <thead>
                             <tr class="customTableHeaderGroup">
                                 <th colspan="1"> </th>
-                                <th colspan="16">Service Plan</th>
+                                <th colspan="17">Service Plan</th>
                                 <th colspan="7">Service</th>
                                 <th colspan="4">Service Broker</th>
                             </tr>
@@ -1277,6 +1339,7 @@
                                 <th>Events</th>
                                 <th>Visible Organizations</th>
                                 <th>Service Instances</th>
+                                <th>Service Instance Shares</th>
                                 <th>Service Bindings</th>
                                 <th>Service Keys</th>
                                 <th>Route Bindings</th>

@@ -41,6 +41,7 @@ require_relative 'view_models/service_plans_view_model'
 require_relative 'view_models/service_plan_visibilities_view_model'
 require_relative 'view_models/service_providers_view_model'
 require_relative 'view_models/services_view_model'
+require_relative 'view_models/shared_service_instances_view_model'
 require_relative 'view_models/space_quotas_view_model'
 require_relative 'view_models/space_roles_view_model'
 require_relative 'view_models/spaces_view_model'
@@ -103,6 +104,7 @@ module AdminUI
           service_plans:                    { clazz: AdminUI::ServicePlansViewModel },
           service_plan_visibilities:        { clazz: AdminUI::ServicePlanVisibilitiesViewModel },
           service_providers:                { clazz: AdminUI::ServiceProvidersViewModel },
+          shared_service_instances:         { clazz: AdminUI::SharedServiceInstancesViewModel },
           space_quotas:                     { clazz: AdminUI::SpaceQuotasViewModel },
           space_roles:                      { clazz: AdminUI::SpaceRolesViewModel },
           spaces:                           { clazz: AdminUI::SpacesViewModel },
@@ -281,6 +283,10 @@ module AdminUI
 
     def invalidate_services
       invalidate_cache(:services)
+    end
+
+    def invalidate_shared_service_instances
+      invalidate_cache(:shared_service_instances)
     end
 
     def invalidate_space_quotas
@@ -698,6 +704,14 @@ module AdminUI
 
     def services
       result_cache(:services)
+    end
+
+    def shared_service_instance(service_instance_guid, target_space_guid)
+      details(:shared_service_instances, "#{service_instance_guid}/#{target_space_guid}")
+    end
+
+    def shared_service_instances
+      result_cache(:shared_service_instances)
     end
 
     def shutdown

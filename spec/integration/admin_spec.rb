@@ -1429,6 +1429,29 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage shared service instance' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/shared_service_instances_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_shared_service_instance
+      response = delete_request("/shared_service_instances/#{cc_service_instance[:guid]}/#{cc_space[:guid]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/shared_service_instances/#{cc_service_instance[:guid]}/#{cc_space[:guid]}"]])
+    end
+
+    it 'has user name and shared service instances request in the log file' do
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/shared_service_instances_view_model']], true)
+    end
+
+    it 'deletes a shared service instance' do
+      expect { delete_shared_service_instance }.to change { get_json('/shared_service_instances_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage space' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }
@@ -2424,6 +2447,18 @@ describe AdminUI::Admin, type: :integration do
                                 'table_page_size'      => table_page_size,
                                 'user'                 => LoginHelper::LOGIN_ADMIN)
       end
+    end
+
+    context 'shared_service_instances_view_model' do
+      let(:path)              { '/shared_service_instances_view_model' }
+      let(:view_model_source) { view_models_shared_service_instances }
+      it_behaves_like('retrieves view_model')
+    end
+
+    context 'shared_service_instances_view_model detail' do
+      let(:path)              { "/shared_service_instances_view_model/#{cc_service_instance[:guid]}/#{cc_space[:guid]}" }
+      let(:view_model_source) { view_models_shared_service_instances_detail }
+      it_behaves_like('retrieves view_model detail')
     end
 
     context 'space_quotas_view_model' do

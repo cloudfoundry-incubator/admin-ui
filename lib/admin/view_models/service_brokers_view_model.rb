@@ -15,6 +15,7 @@ module AdminUI
       service_bindings          = @cc.service_bindings
       service_dashboard_clients = @cc.service_dashboard_clients
       service_instances         = @cc.service_instances
+      service_instance_shares   = @cc.service_instance_shares
       service_keys              = @cc.service_keys
       service_plans             = @cc.service_plans
       service_plan_visibilities = @cc.service_plan_visibilities
@@ -25,6 +26,7 @@ module AdminUI
       route_bindings_connected            = route_bindings['connected']
       service_bindings_connected          = service_bindings['connected']
       service_instances_connected         = service_instances['connected']
+      service_instance_shares_connected   = service_instance_shares['connected']
       service_keys_connected              = service_keys['connected']
       service_plans_connected             = service_plans['connected']
       service_plan_visibilities_connected = service_plan_visibilities['connected']
@@ -117,6 +119,27 @@ module AdminUI
         service_instance_counters[service_broker_id] += 1
       end
 
+      service_instance_share_counters = {}
+      service_instance_shares['items'].each do |service_instance_share|
+        return result unless @running
+        Thread.pass
+
+        service_instance_guid = service_instance_share[:service_instance_guid]
+        next if service_instance_guid.nil?
+        service_instance = service_instance_guid_hash[service_instance_guid]
+        next if service_instance.nil?
+        service_plan_id = service_instance[:service_plan_id]
+        next if service_plan_id.nil?
+        service_plan = service_plan_hash[service_plan_id]
+        next if service_plan.nil?
+        service = service_hash[service_plan[:service_id]]
+        next if service.nil?
+        service_broker_id = service[:service_broker_id]
+        next if service_broker_id.nil?
+        service_instance_share_counters[service_broker_id] = 0 if service_instance_share_counters[service_broker_id].nil?
+        service_instance_share_counters[service_broker_id] += 1
+      end
+
       service_binding_counters = {}
       service_bindings['items'].each do |service_binding|
         return result unless @running
@@ -199,6 +222,7 @@ module AdminUI
         service_binding_counter            = service_binding_counters[id]
         service_counter                    = service_counters[id]
         service_instance_counter           = service_instance_counters[id]
+        service_instance_share_counter     = service_instance_share_counters[id]
         service_key_counter                = service_key_counters[id]
         service_plan_counter               = service_plan_counters[id]
         service_plan_public_active_counter = service_plan_public_active_counters[id]
@@ -271,6 +295,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if service_instance_share_counter
+          row.push(service_instance_share_counter)
+        elsif service_instance_shares_connected && service_instances_connected && service_plans_connected && services_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if service_binding_counter
           row.push(service_binding_counter)
         elsif service_bindings_connected && service_instances_connected && service_plans_connected && services_connected
@@ -311,7 +343,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..15).to_a, [1, 2, 3, 4, 6, 15])
+      result(true, items, hash, (1..16).to_a, [1, 2, 3, 4, 6, 16])
     end
   end
 end

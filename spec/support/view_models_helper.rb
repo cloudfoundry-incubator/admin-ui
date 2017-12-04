@@ -1086,6 +1086,7 @@ module ViewModelsHelper
     [
       [
         cc_service_binding[:guid],
+        cc_service_binding[:name],
         cc_service_binding[:guid],
         cc_service_binding[:created_at].to_datetime.rfc3339,
         cc_service_binding[:updated_at].to_datetime.rfc3339,
@@ -1154,6 +1155,7 @@ module ViewModelsHelper
         1,
         1,
         1,
+        1,
         "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
@@ -1177,6 +1179,7 @@ module ViewModelsHelper
         cc_service_instance[:updated_at].to_datetime.rfc3339,
         !cc_service_instance[:is_gateway_service],
         !cc_service_instance[:syslog_drain_url].nil? && cc_service_instance[:syslog_drain_url].length.positive?,
+        1,
         1,
         1,
         1,
@@ -1286,6 +1289,7 @@ module ViewModelsHelper
         cc_service_plan[:active],
         cc_service_plan[:public],
         cc_service_plan_display_name,
+        1,
         1,
         1,
         1,
@@ -1407,6 +1411,7 @@ module ViewModelsHelper
         1,
         1,
         1,
+        1,
         cc_service_broker[:name],
         cc_service_broker[:guid],
         cc_service_broker[:created_at].to_datetime.rfc3339,
@@ -1419,6 +1424,54 @@ module ViewModelsHelper
     {
       'service'        => cc_service,
       'service_broker' => cc_service_broker
+    }
+  end
+
+  def view_models_shared_service_instances
+    [
+      [
+        "#{cc_service_instance[:guid]}/#{cc_space[:guid]}",
+        cc_service_instance[:name],
+        cc_service_instance[:guid],
+        cc_service_instance[:created_at].to_datetime.rfc3339,
+        cc_service_instance[:updated_at].to_datetime.rfc3339,
+        cc_service_plan[:name],
+        cc_service_plan[:guid],
+        cc_service_plan[:unique_id],
+        cc_service_plan[:created_at].to_datetime.rfc3339,
+        cc_service_plan[:updated_at].to_datetime.rfc3339,
+        cc_service_plan[:bindable],
+        cc_service_plan[:free],
+        cc_service_plan[:active],
+        cc_service_plan[:public],
+        cc_service[:label],
+        cc_service[:guid],
+        cc_service[:unique_id],
+        cc_service[:created_at].to_datetime.rfc3339,
+        cc_service[:updated_at].to_datetime.rfc3339,
+        cc_service[:bindable],
+        cc_service[:active],
+        cc_service_broker[:name],
+        cc_service_broker[:guid],
+        cc_service_broker[:created_at].to_datetime.rfc3339,
+        cc_service_broker[:updated_at].to_datetime.rfc3339,
+        "#{cc_organization[:name]}/#{cc_space[:name]}",
+        "#{cc_organization[:name]}/#{cc_space[:name]}"
+      ]
+    ]
+  end
+
+  def view_models_shared_service_instances_detail
+    {
+      'service'                => cc_service,
+      'service_broker'         => cc_service_broker,
+      'service_instance'       => cc_service_instance,
+      'service_instance_share' => cc_service_instance_share,
+      'service_plan'           => cc_service_plan,
+      'source_organization'    => cc_organization,
+      'source_space'           => cc_space,
+      'target_organization'    => cc_organization,
+      'target_space'           => cc_space
     }
   end
 

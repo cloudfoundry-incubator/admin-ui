@@ -608,6 +608,18 @@ module AdminUI
       404
     end
 
+    get '/shared_service_instances_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'get', '/shared_service_instances_view_model')
+      Yajl::Encoder.encode(AllActions.new(@logger, @view_models.shared_service_instances, params).items)
+    end
+
+    get '/shared_service_instances_view_model/:service_instance_guid/:target_space_guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/shared_service_instances_view_model/#{params[:service_instance_guid]}/#{params[:target_space_guid]}")
+      result = @view_models.shared_service_instance(params[:service_instance_guid], params[:target_space_guid])
+      return Yajl::Encoder.encode(result) if result
+      404
+    end
+
     get '/space_quotas_view_model', auth: [:user] do
       @logger.info_user(session[:username], 'get', '/space_quotas_view_model')
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.space_quotas, params).items)
@@ -1089,6 +1101,14 @@ module AdminUI
       send_file(file.path,
                 disposition: 'attachment',
                 filename:    'services.csv')
+    end
+
+    post '/shared_service_instances_view_model', auth: [:user] do
+      @logger.info_user(session[:username], 'post', '/shared_service_instances_view_model')
+      file = Download.download(request.body.read, 'shared_service_instances', @view_models.shared_service_instances)
+      send_file(file.path,
+                disposition: 'attachment',
+                filename:    'shared_service_instances.csv')
     end
 
     post '/space_quotas_view_model', auth: [:user] do
@@ -2059,6 +2079,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete service: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/shared_service_instances/:service_instance_guid/:target_space_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/shared_service_instances/#{params[:service_instance_guid]}/#{params[:target_space_guid]}")
+      begin
+        @operation.delete_shared_service_instance(params[:service_instance_guid], params[:target_space_guid])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete shared service instance: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete shared service instance: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

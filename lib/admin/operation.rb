@@ -450,6 +450,14 @@ module AdminUI
       @view_models.invalidate_service_providers
     end
 
+    def delete_shared_service_instance(service_instance_guid, target_space_guid)
+      url = "/v3/service_instances/#{service_instance_guid}/relationships/shared_spaces/#{target_space_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_service_instance_shares
+      @view_models.invalidate_shared_service_instances
+    end
+
     def delete_space(space_guid, recursive)
       url = "/v2/spaces/#{space_guid}"
       url += '?recursive=true' if recursive

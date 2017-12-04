@@ -388,6 +388,14 @@ describe AdminUI::ViewModels do
       verify_disconnected_items(view_models.services)
     end
 
+    it 'returns nil shared_service_instance as expected' do
+      expect(view_models.shared_service_instance('bogus', 'bogus')).to be_nil
+    end
+
+    it 'returns zero shared_service_instances as expected' do
+      verify_disconnected_items(view_models.shared_service_instances)
+    end
+
     it 'returns nil space as expected' do
       expect(view_models.space('bogus')).to be_nil
     end

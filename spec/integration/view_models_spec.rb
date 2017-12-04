@@ -752,6 +752,20 @@ describe AdminUI::ViewModels, type: :integration do
       it_behaves_like('common view model retrieval detail')
     end
 
+    context 'returns connected shared_service_instances_view_model' do
+      let(:results)  { view_models.shared_service_instances }
+      let(:expected) { view_models_shared_service_instances }
+
+      it_behaves_like('common view model retrieval')
+    end
+
+    context 'returns connected shared_service_instances_view_model detail' do
+      let(:results)  { view_models.shared_service_instance(cc_service_instance[:guid], cc_space[:guid]) }
+      let(:expected) { view_models_shared_service_instances_detail }
+
+      it_behaves_like('common view model retrieval detail')
+    end
+
     context 'returns connected space_quotas_view_model' do
       let(:results)  { view_models.space_quotas }
       let(:expected) { view_models_space_quotas }

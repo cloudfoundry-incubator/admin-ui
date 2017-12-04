@@ -14,6 +14,7 @@ module AdminUI
         private_domain_creation:              true,
         route_creation:                       true,
         service_instance_creation:            true,
+        service_instance_sharing:             false, # Added in cf-release 280
         set_roles_by_username:                true, # Added in cf_release 218
         space_developer_env_var_visibility:   true, # Added in cf_release 232
         space_scoped_private_broker_creation: true, # Added in cf release 231

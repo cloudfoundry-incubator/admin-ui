@@ -154,6 +154,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Shared Service Instances tab does not have unshare button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'SharedServiceInstances' }
+        let(:page_id)   { 'SharedServiceInstancesPage' }
+        let(:button_id) { 'Buttons_SharedServiceInstancesTable_0' }
+      end
+    end
+
     context 'Service Bindings tab does not have delete button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'ServiceBindings' }

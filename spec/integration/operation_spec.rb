@@ -1609,6 +1609,37 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage shared service instance' do
+      before do
+        expect(cc.service_instance_shares['items'].length).to eq(1)
+      end
+
+      def delete_shared_service_instance
+        operation.delete_shared_service_instance(cc_service_instance[:guid], cc_space[:guid])
+      end
+
+      it 'deletes shared service instance' do
+        expect { delete_shared_service_instance }.to change { cc.service_instance_shares['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_shared_service_instance
+        end
+
+        def verify_shared_service_instance_unprocessable_entity(exception)
+          expect(exception.cf_code).to eq(10_008)
+          expect(exception.cf_error_code).to eq('CF-UnprocessableEntity')
+          expect(exception.http_code).to eq(422)
+          expect(exception.message).to eq("Unable to unshare service instance from space #{cc_space[:guid]}. Ensure the space exists and the service instance has been shared to this space.")
+        end
+
+        it 'fails deleting deleted shared service instance' do
+          expect { delete_shared_service_instance }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_shared_service_instance_unprocessable_entity(exception) }
+        end
+      end
+    end
+
     context 'manage space' do
       before do
         expect(cc.spaces['items'].length).to eq(1)

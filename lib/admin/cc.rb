@@ -219,7 +219,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_bindings,
-            columns: %i[app_guid created_at guid id service_instance_guid syslog_drain_url updated_at volume_mounts_salt]
+            columns: %i[app_guid created_at guid id name service_instance_guid syslog_drain_url updated_at volume_mounts_salt]
           },
           service_brokers:
           {
@@ -244,6 +244,12 @@ module AdminUI
             db_uri:  ccdb_uri,
             table:   :service_instance_operations,
             columns: %i[broker_provided_operation created_at description guid id proposed_changes service_instance_id state type updated_at]
+          },
+          service_instance_shares:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_instance_shares,
+            columns: %i[service_instance_guid target_space_guid]
           },
           service_keys:
           {
@@ -534,6 +540,10 @@ module AdminUI
       invalidate_cache(:service_instances)
     end
 
+    def invalidate_service_instance_shares
+      invalidate_cache(:service_instance_shares)
+    end
+
     def invalidate_service_keys
       invalidate_cache(:service_keys)
     end
@@ -716,6 +726,10 @@ module AdminUI
 
     def service_instance_operations
       result_cache(:service_instance_operations)
+    end
+
+    def service_instance_shares
+      result_cache(:service_instance_shares)
     end
 
     def service_instances

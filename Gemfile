@@ -16,7 +16,7 @@ gem 'sqlite3', '1.3.13'
 gem 'yajl-ruby', '1.3.1'
 
 group :mysql do
-  gem 'mysql2', '0.4.9'
+  gem 'mysql2', '0.4.10'
 end
 
 group :development do

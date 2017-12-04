@@ -725,10 +725,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :label, :null=>false
-      String :provider, :default=>"", :null=>false
-      String :url, :text=>true
       String :description, :text=>true, :null=>false
-      String :version, :text=>true
       String :info_url, :text=>true
       String :acls, :text=>true
       Integer :timeout
@@ -747,7 +744,6 @@ Sequel.migration do
       index [:created_at]
       index [:guid], :unique=>true
       index [:label]
-      index [:label, :provider], :unique=>true
       index [:unique_id], :unique=>true
       index [:updated_at]
     end
@@ -865,12 +861,14 @@ Sequel.migration do
       foreign_key :app_guid, :apps, :type=>String, :text=>true, :null=>false, :key=>[:guid]
       foreign_key :service_instance_guid, :service_instances, :type=>String, :text=>true, :null=>false, :key=>[:guid]
       String :type, :text=>true
+      String :name, :size=>255
       
       index [:created_at], :name=>:sb_created_at_index
       index [:guid], :name=>:sb_guid_index, :unique=>true
       index [:updated_at], :name=>:sb_updated_at_index
       index [:app_guid]
       index [:service_instance_guid]
+      index [:app_guid, :name], :name=>:unique_service_binding_app_guid_name, :unique=>true
     end
     
     create_table(:service_instance_operations, :ignore_index_errors=>true) do
@@ -889,6 +887,13 @@ Sequel.migration do
       index [:guid], :name=>:svc_inst_op_guid_index, :unique=>true
       index [:updated_at], :name=>:svc_inst_op_updated_at_index
       index [:service_instance_id], :name=>:svc_instance_id_index
+    end
+    
+    create_table(:service_instance_shares) do
+      foreign_key :service_instance_guid, :service_instances, :type=>String, :size=>255, :null=>false, :key=>[:guid], :on_delete=>:cascade
+      foreign_key :target_space_guid, :spaces, :type=>String, :size=>255, :null=>false, :key=>[:guid], :on_delete=>:cascade
+      
+      primary_key [:service_instance_guid, :target_space_guid]
     end
     
     create_table(:service_keys, :ignore_index_errors=>true) do

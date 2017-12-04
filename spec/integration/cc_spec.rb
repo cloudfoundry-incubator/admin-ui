@@ -273,6 +273,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.service_instances['items'].length).to eq(0)
     end
 
+    it 'clears the service instance share cache' do
+      expect(cc.service_instance_shares['items'].length).to eq(1)
+      cc_clear_service_instance_shares_cache_stub(config)
+      cc.invalidate_service_instance_shares
+      expect(cc.service_instance_shares['items'].length).to eq(0)
+    end
+
     it 'clears the service key cache' do
       expect(cc.service_keys['items'].length).to eq(1)
       cc_clear_service_keys_cache_stub(config)
@@ -644,6 +651,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected service instance operations' do
       let(:results)  { cc.service_instance_operations }
       let(:expected) { cc_service_instance_operation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected service instance shares' do
+      let(:results)  { cc.service_instance_shares }
+      let(:expected) { cc_service_instance_share }
 
       it_behaves_like('common cc retrieval')
     end

@@ -61,6 +61,7 @@ module AdminUI
         row = []
 
         row.push(guid)
+        row.push(service_binding[:name])
         row.push(guid)
         row.push(service_binding[:created_at].to_datetime.rfc3339)
 
@@ -173,7 +174,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..31).to_a, (1..31).to_a - [6])
+      result(true, items, hash, (1..32).to_a, (1..32).to_a - [7])
     end
   end
 end
