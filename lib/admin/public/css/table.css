@@ -120,11 +120,13 @@
     cursor: default;
 }
 
-button.dt_button, div.dt-button, a.dt-button 
+button.dt_button, div.dt-button, button.dt-button 
 {
     border-radius: 3px;
     font-size: .75em;
     margin-top: 3px;
+    margin-right: 0px;
+    line-height: 1.2em;
     padding: 3px 9px;
 }
 
