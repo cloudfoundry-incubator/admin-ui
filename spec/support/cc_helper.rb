@@ -77,6 +77,7 @@ module CCHelper
     @cc_apps_deleted                             = false
     @cc_apps_environment_variables_deleted       = false
     @cc_buildpacks_deleted                       = false
+    @cc_buildpack_lifecycle_data_deleted         = false
     @cc_domains_deleted                          = false
     @cc_feature_flags_deleted                    = false
     @cc_isolation_segments_deleted               = false
@@ -166,6 +167,7 @@ module CCHelper
     cc_clear_service_bindings_cache_stub(config)
     cc_clear_route_mappings_cache_stub(config)
     cc_clear_tasks_cache_stub(config)
+    cc_clear_buildpack_lifecycle_data_cache_stub(config)
     cc_clear_droplets_cache_stub(config)
     cc_clear_packages_cache_stub(config)
     cc_clear_processes_cache_stub(config)
@@ -179,6 +181,12 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM buildpacks')
 
     @cc_buildpacks_deleted = true
+  end
+
+  def cc_clear_buildpack_lifecycle_data_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM buildpack_lifecycle_data')
+
+    @cc_buildpack_lifecycle_data_deleted = true
   end
 
   def cc_clear_domains_cache_stub(config)
@@ -375,6 +383,8 @@ module CCHelper
   end
 
   def cc_clear_stacks_cache_stub(config)
+    cc_clear_buildpack_lifecycle_data_cache_stub(config)
+
     sql(config.ccdb_uri, 'DELETE from stacks')
 
     @cc_stacks_deleted = true
@@ -530,6 +540,16 @@ module CCHelper
     'renamed Node.js'
   end
 
+  def cc_buildpack_lifecycle_data
+    {
+      app_guid:   cc_app[:guid],
+      created_at: unique_time('cc_buildpack_lifecycle_data_created'),
+      guid:       'buildpack_lifecycle_data1',
+      id:         unique_id('cc_buildpack_lifecycle_data'),
+      stack:      cc_stack[:name]
+    }
+  end
+
   def cc_domain
     {
       created_at:             unique_time('cc_domain_created'),
@@ -551,7 +571,6 @@ module CCHelper
       buildpack_receipt_detect_output:  'node.js',
       buildpack_receipt_buildpack:      cc_buildpack[:name],
       buildpack_receipt_buildpack_guid: cc_buildpack[:guid],
-      buildpack_receipt_stack_name:     cc_stack[:name],
       created_at:                       unique_time('cc_droplet_created'),
       droplet_hash:                     'droplet_hash1',
       error_description:                'An app was not successfully detected by any available buildpack',
@@ -1656,6 +1675,7 @@ module CCHelper
                [:processes,                        cc_process],
                [:packages,                         cc_package],
                [:droplets,                         cc_droplet],
+               [:buildpack_lifecycle_data,         cc_buildpack_lifecycle_data],
                [:routes,                           cc_route],
                [:service_brokers,                  cc_service_broker_with_password],
                [:users,                            cc_user],

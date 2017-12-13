@@ -1,26 +1,24 @@
 require 'date'
-require_relative 'has_applications_view_model'
+require_relative 'base_view_model'
 
 module AdminUI
-  class StacksViewModel < AdminUI::HasApplicationsViewModel
+  class StacksViewModel < AdminUI::BaseViewModel
     def do_items
       stacks = @cc.stacks
 
       # stacks have to exist. Other record types are optional
       return result unless stacks['connected']
 
-      applications = @cc.applications
-      droplets     = @cc.droplets
-      processes    = @cc.processes
+      applications             = @cc.applications
+      buildpack_lifecycle_data = @cc.buildpack_lifecycle_data
+      processes                = @cc.processes
 
-      applications_connected = applications['connected']
-      droplets_connected     = droplets['connected']
-      processes_connected    = processes['connected']
+      applications_connected             = applications['connected']
+      buildpack_lifecycle_data_connected = buildpack_lifecycle_data['connected']
+      processes_connected                = processes['connected']
 
-      droplet_hash     = Hash[droplets['items'].map { |item| [item[:guid], item] }]
-      process_app_hash = Hash[processes['items'].map { |item| [item[:app_guid], item] }]
-
-      latest_droplets = latest_app_guid_hash(droplets['items'])
+      buildpack_lifecycle_data_hash = Hash[buildpack_lifecycle_data['items'].map { |item| [item[:app_guid], item] }]
+      process_app_hash              = Hash[processes['items'].map { |item| [item[:app_guid], item] }]
 
       application_counters = {}
 
@@ -28,12 +26,11 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        droplet_guid = application[:droplet_guid]
-        droplet      = droplet_guid.nil? ? nil : droplet_hash[droplet_guid]
-        droplet      = latest_droplets[application[:guid]] if droplet.nil?
-        next if droplet.nil?
+        application_guid         = application[:guid]
+        buildpack_lifecycle_data = buildpack_lifecycle_data_hash[application_guid]
+        next if buildpack_lifecycle_data.nil?
 
-        stack_name = droplet[:buildpack_receipt_stack_name]
+        stack_name = buildpack_lifecycle_data[:stack]
         next if stack_name.nil?
 
         application_counter = application_counters[stack_name]
@@ -48,7 +45,7 @@ module AdminUI
 
         application_counter['applications'] += 1
 
-        process = process_app_hash[application[:guid]]
+        process = process_app_hash[application_guid]
         next if process.nil?
 
         application_counter['instances'] += process[:instances] unless process[:instances].nil?
@@ -87,7 +84,7 @@ module AdminUI
           else
             row.push(nil)
           end
-        elsif applications_connected && droplets_connected
+        elsif applications_connected && buildpack_lifecycle_data_connected
           row.push(0)
           if processes_connected
             row.push(0)

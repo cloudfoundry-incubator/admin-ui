@@ -40,6 +40,12 @@ module AdminUI
             table:   :buildpacks,
             columns: %i[created_at enabled filename guid id key locked name position updated_at]
           },
+          buildpack_lifecycle_data:
+          {
+            db_uri:  ccdb_uri,
+            table:   :buildpack_lifecycle_data,
+            columns: %i[app_guid created_at guid id stack]
+          },
           clients:
           {
             db_uri:  uaadb_uri,
@@ -56,7 +62,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :droplets,
-            columns: %i[app_guid buildpack_receipt_detect_output buildpack_receipt_buildpack buildpack_receipt_buildpack_guid buildpack_receipt_stack_name created_at droplet_hash error_description error_id execution_metadata guid id package_guid process_types staging_disk_in_mb staging_memory_in_mb state updated_at]
+            columns: %i[app_guid buildpack_receipt_detect_output buildpack_receipt_buildpack buildpack_receipt_buildpack_guid created_at droplet_hash error_description error_id execution_metadata guid id package_guid process_types staging_disk_in_mb staging_memory_in_mb state updated_at]
           },
           env_groups:
           {
@@ -370,6 +376,10 @@ module AdminUI
 
     def buildpacks
       result_cache(:buildpacks)
+    end
+
+    def buildpack_lifecycle_data
+      result_cache(:buildpack_lifecycle_data)
     end
 
     def clients

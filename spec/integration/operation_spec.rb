@@ -2045,7 +2045,7 @@ describe AdminUI::Operation, type: :integration do
         expect { unverify_user }.to change { cc.users_uaa['items'][0][:verified] }.from(true).to(false)
       end
 
-      it 'unverifies user' do
+      it 'unlocks user' do
         # No database modification to verify the change actually worked
         unlock_user
       end

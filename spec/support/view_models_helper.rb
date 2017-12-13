@@ -108,13 +108,13 @@ module ViewModelsHelper
     end
 
     {
-      'application'  => cc_app,
-      'container'    => container,
-      'droplet'      => cc_droplet,
-      'organization' => cc_organization,
-      'process'      => cc_process,
-      'space'        => cc_space,
-      'stack'        => cc_stack
+      'application'              => cc_app,
+      'buildpack_lifecycle_data' => cc_buildpack_lifecycle_data,
+      'container'                => container,
+      'organization'             => cc_organization,
+      'process'                  => cc_process,
+      'space'                    => cc_space,
+      'stack'                    => cc_stack
     }
   end
 
@@ -153,16 +153,17 @@ module ViewModelsHelper
 
   def view_models_applications_detail
     {
-      'application'           => cc_app,
-      'current_droplet'       => cc_droplet,
-      'current_package'       => cc_package,
-      'environment_variables' => cc_app_environment_variable,
-      'latest_droplet'        => cc_droplet,
-      'latest_package'        => cc_package,
-      'organization'          => cc_organization,
-      'process'               => cc_process,
-      'space'                 => cc_space,
-      'stack'                 => cc_stack
+      'application'              => cc_app,
+      'buildpack_lifecycle_data' => cc_buildpack_lifecycle_data,
+      'current_droplet'          => cc_droplet,
+      'current_package'          => cc_package,
+      'environment_variables'    => cc_app_environment_variable,
+      'latest_droplet'           => cc_droplet,
+      'latest_package'           => cc_package,
+      'organization'             => cc_organization,
+      'process'                  => cc_process,
+      'space'                    => cc_space,
+      'stack'                    => cc_stack
     }
   end
 

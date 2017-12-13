@@ -13,15 +13,16 @@ module AdminUI
                            droplets['connected'] &&
                            packages['connected']
 
-      containers       = @doppler.containers
-      events           = @cc.events
-      organizations    = @cc.organizations
-      processes        = @cc.processes
-      route_mappings   = @cc.route_mappings
-      service_bindings = @cc.service_bindings
-      spaces           = @cc.spaces
-      stacks           = @cc.stacks
-      tasks            = @cc.tasks
+      buildpack_lifecycle_data = @cc.buildpack_lifecycle_data
+      containers               = @doppler.containers
+      events                   = @cc.events
+      organizations            = @cc.organizations
+      processes                = @cc.processes
+      route_mappings           = @cc.route_mappings
+      service_bindings         = @cc.service_bindings
+      spaces                   = @cc.spaces
+      stacks                   = @cc.stacks
+      tasks                    = @cc.tasks
 
       events_connected           = events['connected']
       processes_connected        = processes['connected']
@@ -29,12 +30,13 @@ module AdminUI
       service_bindings_connected = service_bindings['connected']
       tasks_connected            = tasks['connected']
 
-      droplet_hash      = Hash[droplets['items'].map { |item| [item[:guid], item] }]
-      organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      package_hash      = Hash[packages['items'].map { |item| [item[:guid], item] }]
-      process_app_hash  = Hash[processes['items'].map { |item| [item[:app_guid], item] }]
-      space_hash        = Hash[spaces['items'].map { |item| [item[:guid], item] }]
-      stack_hash        = Hash[stacks['items'].map { |item| [item[:name], item] }]
+      buildpack_lifecycle_data_hash = Hash[buildpack_lifecycle_data['items'].map { |item| [item[:app_guid], item] }]
+      droplet_hash                  = Hash[droplets['items'].map { |item| [item[:guid], item] }]
+      organization_hash             = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      package_hash                  = Hash[packages['items'].map { |item| [item[:guid], item] }]
+      process_app_hash              = Hash[processes['items'].map { |item| [item[:app_guid], item] }]
+      space_hash                    = Hash[spaces['items'].map { |item| [item[:guid], item] }]
+      stack_hash                    = Hash[stacks['items'].map { |item| [item[:name], item] }]
 
       latest_droplets = latest_app_guid_hash(droplets['items'])
       latest_packages = latest_app_guid_hash(packages['items'])
@@ -114,17 +116,19 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        guid                 = application[:guid]
-        process              = process_app_hash[guid]
-        current_droplet_guid = application[:droplet_guid]
-        current_droplet      = current_droplet_guid.nil? ? nil : droplet_hash[current_droplet_guid]
-        current_package_guid = current_droplet.nil? ? nil : current_droplet[:package_guid]
-        current_package      = current_package_guid.nil? ? nil : package_hash[current_package_guid]
-        latest_droplet       = latest_droplets[guid]
-        latest_package       = latest_packages[guid]
-        space                = space_hash[application[:space_guid]]
-        organization         = space.nil? ? nil : organization_hash[space[:organization_id]]
-        stack                = nil
+        guid                     = application[:guid]
+        process                  = process_app_hash[guid]
+        current_droplet_guid     = application[:droplet_guid]
+        current_droplet          = current_droplet_guid.nil? ? nil : droplet_hash[current_droplet_guid]
+        current_package_guid     = current_droplet.nil? ? nil : current_droplet[:package_guid]
+        current_package          = current_package_guid.nil? ? nil : package_hash[current_package_guid]
+        latest_droplet           = latest_droplets[guid]
+        latest_package           = latest_packages[guid]
+        space                    = space_hash[application[:space_guid]]
+        organization             = space.nil? ? nil : organization_hash[space[:organization_id]]
+        buildpack_lifecycle_data = buildpack_lifecycle_data_hash[guid]
+        stack_name               = buildpack_lifecycle_data.nil? ? nil : buildpack_lifecycle_data[:stack]
+        stack                    = stack_name.nil? ? nil : stack_hash[stack_name]
 
         droplet = current_droplet
         droplet = latest_droplet if droplet.nil?
@@ -191,11 +195,6 @@ module AdminUI
           row.push(false)
         end
 
-        stack_name = nil
-        if droplet
-          stack_name = droplet[:buildpack_receipt_stack_name]
-          stack = stack_hash[stack_name] if stack_name
-        end
         row.push(stack_name)
 
         if droplet
@@ -270,15 +269,16 @@ module AdminUI
 
         hash[guid] =
           {
-            'application'     => application,
-            'current_droplet' => current_droplet,
-            'current_package' => current_package,
-            'latest_droplet'  => latest_droplet,
-            'latest_package'  => latest_package,
-            'organization'    => organization,
-            'process'         => process,
-            'space'           => space,
-            'stack'           => stack
+            'application'              => application,
+            'buildpack_lifecycle_data' => buildpack_lifecycle_data,
+            'current_droplet'          => current_droplet,
+            'current_package'          => current_package,
+            'latest_droplet'           => latest_droplet,
+            'latest_package'           => latest_package,
+            'organization'             => organization,
+            'process'                  => process,
+            'space'                    => space,
+            'stack'                    => stack
           }
       end
 

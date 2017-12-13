@@ -412,6 +412,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected buildpack_lifecycle_data' do
+      let(:results)  { cc.buildpack_lifecycle_data }
+      let(:expected) { cc_buildpack_lifecycle_data }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected clients' do
       let(:results)  { cc.clients }
       let(:expected) { uaa_client }

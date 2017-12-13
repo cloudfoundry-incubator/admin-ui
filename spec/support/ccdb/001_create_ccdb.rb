@@ -414,7 +414,6 @@ Sequel.migration do
       String :salt, :text=>true
       Integer :staging_memory_in_mb
       Integer :staging_disk_in_mb
-      String :buildpack_receipt_stack_name, :text=>true
       String :buildpack_receipt_buildpack, :text=>true
       String :buildpack_receipt_buildpack_guid, :text=>true
       String :buildpack_receipt_detect_output, :text=>true
@@ -867,6 +866,7 @@ Sequel.migration do
       index [:guid], :name=>:sb_guid_index, :unique=>true
       index [:updated_at], :name=>:sb_updated_at_index
       index [:app_guid]
+      index [:name]
       index [:service_instance_guid]
       index [:app_guid, :name], :name=>:unique_service_binding_app_guid_name, :unique=>true
     end
