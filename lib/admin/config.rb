@@ -10,6 +10,7 @@ module AdminUI
         cloud_controller_discovery_interval:                300,
         cloud_controller_ssl_verify_none:                 false,
         component_connection_retries:                         2,
+        cookie_secret:                                'mysecre',
         display_encrypted_values:                          true,
         doppler_reconnect_delay:                            300,
         doppler_rollup_interval:                             30,
@@ -27,7 +28,6 @@ module AdminUI
         stats_retry_interval:                               300,
         table_height:                                   '287px',
         table_page_size:                                     10,
-        cookie_secure:                                     true,
         uaa_groups_admin:                    ['admin_ui.admin'],
         uaa_groups_user:                      ['admin_ui.user'],
         varz_discovery_interval:                             30
@@ -43,6 +43,7 @@ module AdminUI
             optional(:cloud_controller_ssl_verify_none)    => bool,
             cloud_controller_uri:                             %r{(http[s]?://[^\r\n\t]+)},
             optional(:component_connection_retries)        => Integer,
+            optional(:cookie_secret)                       => /[^\r\n\t]+/,
             data_file:                                        /[^\r\n\t]+/,
             db_uri:                                           /[^\r\n\t]+/,
             optional(:display_encrypted_values)            => bool,
@@ -85,9 +86,6 @@ module AdminUI
             optional(:stats_retry_interval)                => Integer,
             optional(:table_height)                        => /[^\r\n\t]+/,
             optional(:table_page_size)                     => enum(5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10_000),
-            cookie_secure:                                 bool,
-            cookie_secret:                                 /[^\r\n\t]+/,
-            optional
             uaa_client:
             {
               id:     /[^\r\n\t]+/,
@@ -131,12 +129,17 @@ module AdminUI
         config_instance.stats_refresh_schedules.push("#{Utils.minutes_in_an_hour(stats_refresh_time)} #{Utils.hours_in_a_day(stats_refresh_time).positive? ? Utils.hours_in_a_day(stats_refresh_time) : '*'} * * *")
       end
 
-      # In order to allow class load of SecureWeb to use this value, it has to be static
+      # In order to allow class load of Web and SecureWeb to use these values, they have to be static
       # rubocop:disable Style/ClassVars
+      @@cookie_secret               = config_instance.cookie_secret
       @@ssl_max_session_idle_length = config_instance.ssl_max_session_idle_length
       # rubocop:enable Style/ClassVars
 
       config_instance
+    end
+
+    def self.cookie_secret
+      @@cookie_secret
     end
 
     def self.ssl_max_session_idle_length
@@ -169,6 +172,10 @@ module AdminUI
 
     def component_connection_retries
       @config[:component_connection_retries]
+    end
+
+    def cookie_secret
+      @config[:cookie_secret]
     end
 
     def data_file
@@ -319,14 +326,6 @@ module AdminUI
 
     def table_page_size
       @config[:table_page_size]
-    end
-
-    def cookie_secure
-      @config[:cookie_secure]
-    end
-
-    def cookie_secret
-      @config[:cookie_secret]
     end
 
     def uaa_client_id

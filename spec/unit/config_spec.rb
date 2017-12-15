@@ -45,6 +45,12 @@ describe AdminUI::Config do
         expect(config.component_connection_retries).to eq(component_connection_retries)
       end
 
+      it 'cookie_secret' do
+        cookie_secret = 'mytestingsecret'
+        config = AdminUI::Config.load('cookie_secret' => cookie_secret)
+        expect(config.cookie_secret).to eq(cookie_secret)
+      end
+
       it 'data_file' do
         data_file = 'data.json'
         config = AdminUI::Config.load('data_file' => data_file)
@@ -380,6 +386,10 @@ describe AdminUI::Config do
         expect(config.component_connection_retries).to eq(2)
       end
 
+      it 'cookie_secret' do
+        expect(config.cookie_secret).to eq('mysecre')
+      end
+
       it 'data_file' do
         expect(config.data_file).to be_nil
       end
@@ -599,6 +609,10 @@ describe AdminUI::Config do
 
       it 'component_connection_retries' do
         expect { AdminUI::Config.load(config.merge(component_connection_retries: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'cookie_secret' do
+        expect { AdminUI::Config.load(config.merge(cookie_secret: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'data_file' do

@@ -183,6 +183,14 @@ The number of times to try to talk to a varz component before considered failing
 Example: <code>2</code>
 </dd>
 <dt>
+<code>cookie_secret</code>
+</dt>
+<dd>
+The secret used for the session cookie.
+<br>
+Example: <code>mysecret</code>
+</dd>
+<dt>
 <code>data_file</code>
 </dt>
 <dd>

@@ -17,7 +17,6 @@ require_relative 'admin/operation'
 require_relative 'admin/stats'
 require_relative 'admin/varz'
 require_relative 'admin/view_models'
-require_relative 'admin/web'
 
 module AdminUI
   class Admin
@@ -179,6 +178,9 @@ module AdminUI
 
         web_class = AdminUI::SecureWeb
       else
+        # Delay this require until after config is loaded
+        require_relative 'admin/web'
+
         web_class = AdminUI::Web
       end
 
