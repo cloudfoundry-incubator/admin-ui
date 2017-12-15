@@ -10,12 +10,11 @@ module AdminUI
     end
 
     configure do
-      enable :sessions
+      set :sessions, :secure => true, :expire_after => Config.ssl_max_session_idle_length
       set :static_cache_control, :no_cache
       set :environment, :production
       set :show_exceptions, false
       use Rack::SSL, exclude: ->(env) { env['RACK_ENV'] != 'production' }
-      use Rack::Session::Cookie, secure: true, expire_after: Config.ssl_max_session_idle_length, secret: Config.cookie_secret
     end
   end
 end

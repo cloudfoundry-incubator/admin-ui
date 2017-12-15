@@ -45,6 +45,12 @@ describe AdminUI::Config do
         expect(config.component_connection_retries).to eq(component_connection_retries)
       end
 
+      it 'cookie_secure' do
+        cookie_secure = true
+        config = AdminUI::Config.load('cookie_secure' => cookie_secure)
+        expect(config.cookie_secure).to eq(cookie_secure)
+      end
+
       it 'cookie_secret' do
         cookie_secret = 'mytestingsecret'
         config = AdminUI::Config.load('cookie_secret' => cookie_secret)
@@ -384,6 +390,10 @@ describe AdminUI::Config do
 
       it 'component_connection_retries' do
         expect(config.component_connection_retries).to eq(2)
+      end
+
+      it 'cookie_secure' do
+        expect(config.cookie_secure).to eq(true)
       end
 
       it 'cookie_secret' do
