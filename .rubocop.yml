@@ -52,10 +52,10 @@ ParameterLists:
 PerceivedComplexity:
   Enabled: false
 
-RescueWithoutErrorClass:
+Style/DateTime:
   Enabled: false
 
-Style/DateTime:
+Style/RescueStandardError:
   Enabled: false
 
 Style/SafeNavigation:
