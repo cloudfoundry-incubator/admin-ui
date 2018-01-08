@@ -10,7 +10,7 @@ module AdminUI
         cloud_controller_discovery_interval:                300,
         cloud_controller_ssl_verify_none:                 false,
         component_connection_retries:                         2,
-        cookie_secure:                                     true,
+        cookie_secure:                                    false,
         cookie_secret:                                'mysecre',
         display_encrypted_values:                          true,
         doppler_reconnect_delay:                            300,
