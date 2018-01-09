@@ -25,7 +25,7 @@ module AdminUI
     end
 
     configure do
-      set :sessions, :secure => Config.cookie_secure, :secret => Config.cookie_secret
+      set :sessions, secure: Config.cookie_secure, secret: Config.cookie_secret
       set :static_cache_control, :no_cache
       set :environment, :production
       set :show_exceptions, false

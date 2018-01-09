@@ -191,6 +191,14 @@ The secret used for the session cookie.
 Example: <code>mysecret</code>
 </dd>
 <dt>
+<code>cookie_secure</code>
+</dt>
+<dd>
+Whether the session cookie is secure or not.
+<br>
+Example: <code>true</code>
+</dd>
+<dt>
 <code>data_file</code>
 </dt>
 <dd>

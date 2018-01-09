@@ -10,7 +10,7 @@ module AdminUI
     end
 
     configure do
-      set :sessions, :secure => true, :expire_after => Config.ssl_max_session_idle_length
+      set :sessions, secure: true, expire_after: Config.ssl_max_session_idle_length
       set :static_cache_control, :no_cache
       set :environment, :production
       set :show_exceptions, false

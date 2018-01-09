@@ -10,8 +10,8 @@ module AdminUI
         cloud_controller_discovery_interval:                300,
         cloud_controller_ssl_verify_none:                 false,
         component_connection_retries:                         2,
-        cookie_secure:                                    false,
         cookie_secret:                                'mysecre',
+        cookie_secure:                                    false,
         display_encrypted_values:                          true,
         doppler_reconnect_delay:                            300,
         doppler_rollup_interval:                             30,
@@ -44,8 +44,8 @@ module AdminUI
             optional(:cloud_controller_ssl_verify_none)    => bool,
             cloud_controller_uri:                             %r{(http[s]?://[^\r\n\t]+)},
             optional(:component_connection_retries)        => Integer,
-            optional(:cookie_secure)                       => bool,
             optional(:cookie_secret)                       => /[^\r\n\t]+/,
+            optional(:cookie_secure)                       => bool,
             data_file:                                        /[^\r\n\t]+/,
             db_uri:                                           /[^\r\n\t]+/,
             optional(:display_encrypted_values)            => bool,
@@ -133,20 +133,20 @@ module AdminUI
 
       # In order to allow class load of Web and SecureWeb to use these values, they have to be static
       # rubocop:disable Style/ClassVars
-      @@cookie_secure               = config_instance.cookie_secure
       @@cookie_secret               = config_instance.cookie_secret
+      @@cookie_secure               = config_instance.cookie_secure
       @@ssl_max_session_idle_length = config_instance.ssl_max_session_idle_length
       # rubocop:enable Style/ClassVars
 
       config_instance
     end
 
-    def self.cookie_secure
-      @@cookie_secure
-    end
-
     def self.cookie_secret
       @@cookie_secret
+    end
+
+    def self.cookie_secure
+      @@cookie_secure
     end
 
     def self.ssl_max_session_idle_length
@@ -181,12 +181,12 @@ module AdminUI
       @config[:component_connection_retries]
     end
 
-    def cookie_secure
-      @config[:cookie_secure]
-    end
-
     def cookie_secret
       @config[:cookie_secret]
+    end
+
+    def cookie_secure
+      @config[:cookie_secure]
     end
 
     def data_file
