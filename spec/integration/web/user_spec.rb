@@ -19,17 +19,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
     shared_examples 'verifies first button is copy button' do
       it 'verifies first button is copy button' do
-        begin
-          Selenium::WebDriver::Wait.new(timeout: 5).until do
-            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
-            # scroll_tab_into_view(tab_id, true).click
-            @driver.execute_script('arguments[0].click();', scroll_tab_into_view(tab_id, true))
-
-            @driver.find_element(class_name: 'menuItemSelected').attribute('id') == tab_id
-          end
-        rescue Selenium::WebDriver::Error::TimeOutError
-        end
-        expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq(tab_id)
+        click_tab(tab_id, true)
 
         begin
           Selenium::WebDriver::Wait.new(timeout: 5).until do
@@ -53,17 +43,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
     shared_examples 'verifies subtable is not shown' do
       it 'verifies subtable is not shown' do
-        begin
-          Selenium::WebDriver::Wait.new(timeout: 5).until do
-            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
-            # scroll_tab_into_view(tab_id, true).click
-            @driver.execute_script('arguments[0].click();', scroll_tab_into_view(tab_id, true))
-
-            @driver.find_element(class_name: 'menuItemSelected').attribute('id') == tab_id
-          end
-        rescue Selenium::WebDriver::Error::TimeOutError
-        end
-        expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq(tab_id)
+        click_tab(tab_id, true)
 
         begin
           Selenium::WebDriver::Wait.new(timeout: 5).until do

@@ -222,4 +222,31 @@ shared_context :web_context do
     end
     element
   end
+
+  def click_tab(id, verify_deas_tab_selected = false)
+    if verify_deas_tab_selected
+      begin
+        Selenium::WebDriver::Wait.new(timeout: 5).until do
+          @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'DEAs'
+        end
+      rescue Selenium::WebDriver::Error::TimeOutError
+      end
+      expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('DEAs')
+    end
+
+    element = @driver.find_element(id: id)
+    expect(element).to_not be_nil
+
+    # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
+    # element.click
+    @driver.execute_script('arguments[0].click();', element)
+
+    begin
+      Selenium::WebDriver::Wait.new(timeout: 5).until do
+        @driver.find_element(class_name: 'menuItemSelected').attribute('id') == tab_id
+      end
+    rescue Selenium::WebDriver::Error::TimeOutError
+    end
+    expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq(tab_id)
+  end
 end

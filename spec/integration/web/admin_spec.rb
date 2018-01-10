@@ -230,22 +230,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
     end
 
     context 'tabs' do
-      let(:table_has_data) { true }
-
       before do
         # First, make sure the DEA tab shows
         # Second select the desired tab via scrolling
-        begin
-          Selenium::WebDriver::Wait.new(timeout: 5).until do
-            # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
-            # scroll_tab_into_view(tab_id, true).click
-            @driver.execute_script('arguments[0].click();', scroll_tab_into_view(tab_id, true))
-
-            @driver.find_element(class_name: 'menuItemSelected').attribute('id') == tab_id
-          end
-        rescue Selenium::WebDriver::Error::TimeOutError
-        end
-        expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq(tab_id)
+        click_tab(tab_id, true) # Not scrolling tab into view here since tested above in 'has tabs'
 
         # Third, wait until the desired page has been rendered
         begin
@@ -254,14 +242,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
         expect(@driver.find_element(id: "#{tab_id}Page").displayed?).to eq(true)
 
-        if table_has_data
-          # Fourth, wait until the table on the desired page has data
-          begin
-            Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(xpath: "//table[@id='#{tab_id}Table']/tbody/tr").text != 'No data available in table' }
-          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
-          end
-          expect(@driver.find_element(xpath: "//table[@id='#{tab_id}Table']/tbody/tr").text).not_to eq('No data available in table')
+        # Fourth, wait until the table on the desired page has data
+        begin
+          Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(xpath: "//table[@id='#{tab_id}Table']/tbody/tr").text != 'No data available in table' }
+        rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
         end
+        expect(@driver.find_element(xpath: "//table[@id='#{tab_id}Table']/tbody/tr").text).not_to eq('No data available in table')
       end
 
       def check_checkbox_guid(table_id, guid)
