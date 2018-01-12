@@ -1,3 +1,4 @@
+require 'rack/ssl'
 require 'sinatra'
 require 'yajl'
 require_relative 'cc_rest_client'
@@ -25,10 +26,16 @@ module AdminUI
     end
 
     configure do
-      set :sessions, secure: Config.cookie_secure, secret: Config.cookie_secret
       set :static_cache_control, :no_cache
       set :environment, :production
       set :show_exceptions, false
+
+      if Config.secured_client_connection
+        set :sessions, secure: true, secret: Config.cookie_secret, expire_after: Config.ssl_max_session_idle_length
+        use Rack::SSL, exclude: ->(env) { env['RACK_ENV'] != 'production' }
+      else
+        set :sessions, secure: Config.cookie_secure, secret: Config.cookie_secret
+      end
     end
 
     set(:auth) do |*roles|

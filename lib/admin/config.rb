@@ -131,10 +131,11 @@ module AdminUI
         config_instance.stats_refresh_schedules.push("#{Utils.minutes_in_an_hour(stats_refresh_time)} #{Utils.hours_in_a_day(stats_refresh_time).positive? ? Utils.hours_in_a_day(stats_refresh_time) : '*'} * * *")
       end
 
-      # In order to allow class load of Web and SecureWeb to use these values, they have to be static
+      # In order to allow class load of Web to use these values, they have to be static
       # rubocop:disable Style/ClassVars
       @@cookie_secret               = config_instance.cookie_secret
       @@cookie_secure               = config_instance.cookie_secure
+      @@secured_client_connection   = config_instance.secured_client_connection
       @@ssl_max_session_idle_length = config_instance.ssl_max_session_idle_length
       # rubocop:enable Style/ClassVars
 
@@ -147,6 +148,10 @@ module AdminUI
 
     def self.cookie_secure
       @@cookie_secure
+    end
+
+    def self.secured_client_connection
+      @@secured_client_connection
     end
 
     def self.ssl_max_session_idle_length

@@ -162,6 +162,8 @@ module AdminUI
 
       web_hash[:StartCallback] = @start_callback if @start_callback
 
+      @logger.debug("config.secured_client_connection: #{@config.secured_client_connection}")
+
       if @config.secured_client_connection
         pkey  = OpenSSL::PKey::RSA.new(File.open(@config.ssl_private_key_file_path).read, @config.ssl_private_key_pass_phrase)
         cert  = OpenSSL::X509::Certificate.new(File.open(@config.ssl_certificate_file_path).read)
@@ -172,29 +174,22 @@ module AdminUI
         web_hash[:SSLEnable]       = true
         web_hash[:SSLPrivateKey]   = pkey
         web_hash[:SSLVerifyClient] = OpenSSL::SSL::VERIFY_NONE
-
-        # Delay this require until after config is loaded
-        require_relative 'admin/secure_web'
-
-        web_class = AdminUI::SecureWeb
-      else
-        # Delay this require until after config is loaded
-        require_relative 'admin/web'
-
-        web_class = AdminUI::Web
       end
 
-      web = web_class.new(@config,
-                          @logger,
-                          @cc,
-                          @client,
-                          @doppler,
-                          @login,
-                          @log_files,
-                          @operation,
-                          @stats,
-                          @varz,
-                          @view_models)
+      # Delay this require until after config is loaded
+      require_relative 'admin/web'
+
+      web = Web.new(@config,
+                    @logger,
+                    @cc,
+                    @client,
+                    @doppler,
+                    @login,
+                    @log_files,
+                    @operation,
+                    @stats,
+                    @varz,
+                    @view_models)
 
       Rack::Handler::WEBrick.run(web, web_hash)
     end
