@@ -1752,6 +1752,23 @@ module AdminUI
       end
     end
 
+    delete '/mfa_providers/:id', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/mfa_providers/#{params[:id]}")
+      begin
+        @operation.delete_mfa_provider(params[:id])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete MFA provider: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete MFA provider: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/organizations/:organization_guid', auth: [:admin] do
       recursive = params[:recursive] == 'true'
       url = "/organizations/#{params[:organization_guid]}"

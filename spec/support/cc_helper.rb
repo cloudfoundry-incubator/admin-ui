@@ -158,6 +158,7 @@ module CCHelper
     uaa_group_membership_stubs(config)
     uaa_identity_provider_stubs(config)
     uaa_identity_zone_stubs(config)
+    uaa_mfa_provider_stubs(config)
     uaa_revocable_token_stubs(config)
     uaa_service_provider_stubs(config)
     uaa_user_stubs(config)
@@ -1575,7 +1576,6 @@ module CCHelper
 
   def uaa_mfa_provider
     {
-      active:           true,
       config:           '{"algorithm":"SHA256","digits":6,"duration":30,"issuer":"uaa","providerDescription":"Test MFA for default zone"}',
       created:          unique_time('uaa_mfa_provider_created'),
       id:               'mfa_provider1',
@@ -2890,6 +2890,21 @@ module CCHelper
         uaa_identity_zone_not_found
       else
         uaa_clear_identity_zones_cache_stub(config)
+        OK.new({})
+      end
+    end
+  end
+
+  def uaa_mfa_provider_not_found
+    NotFound.new('message' => 'Not Found')
+  end
+
+  def uaa_mfa_provider_stubs(config)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/mfa-providers/#{uaa_mfa_provider[:id]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @uaa_mfa_providers_deleted
+        uaa_mfa_provider_not_found
+      else
+        uaa_clear_mfa_providers_cache_stub(config)
         OK.new({})
       end
     end

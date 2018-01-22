@@ -201,6 +201,14 @@ module AdminUI
       @view_models.invalidate_organizations_isolation_segments
     end
 
+    def delete_mfa_provider(mfa_provider_id)
+      url = "/mfa-providers/#{mfa_provider_id}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_uaa(url)
+      @cc.invalidate_mfa_providers
+      @view_models.invalidate_mfa_providers
+    end
+
     def delete_organization(organization_guid, recursive)
       url = "/v2/organizations/#{organization_guid}"
       url += '?recursive=true' if recursive

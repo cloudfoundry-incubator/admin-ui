@@ -558,6 +558,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete isolation segment')
     end
 
+    shared_examples 'common delete MFA provider' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/mfa_providers/mfa_provider1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete MFA provider via http' do
+      it_behaves_like('common delete MFA provider')
+    end
+
+    context 'delete MFA provider via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete MFA provider')
+    end
+
     shared_examples 'common delete organization' do
       it 'returns failure code due to disconnection' do
         response = delete('/organizations/organization1')
@@ -2409,6 +2426,10 @@ describe AdminUI::Admin do
 
       it 'deletes /isolation_segments/:guid redirects as expected' do
         delete_redirects_as_expected('/isolation_segments/isolation_segment1')
+      end
+
+      it 'deletes /mfa_providers/:guid redirects as expected' do
+        delete_redirects_as_expected('/mfa_providers/mfa_provider1')
       end
 
       it 'deletes /organizations/:guid redirects as expected' do

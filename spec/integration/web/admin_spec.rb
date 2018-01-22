@@ -6875,7 +6875,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       context 'MFA Providers' do
-        let(:tab_id) { 'MFAProviders' }
+        let(:tab_id)   { 'MFAProviders' }
+        let(:table_id) { 'MFAProvidersTable' }
 
         it 'has a table' do
           config = Yajl::Parser.parse(uaa_mfa_provider[:config])
@@ -6883,20 +6884,20 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='MFAProvidersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 11,
-                                 labels:          ['Identity Zone', 'Type', 'Name', 'GUID', 'Created', 'Updated', 'Active', 'Issuer', 'Algorithm', 'Digits', 'Duration'],
+                                 labels:          ['', 'Identity Zone', 'Type', 'Name', 'GUID', 'Created', 'Updated', 'Issuer', 'Algorithm', 'Digits', 'Duration'],
                                  colspans:        nil
                                }
                              ])
 
           check_table_data(@driver.find_elements(xpath: "//table[@id='MFAProvidersTable']/tbody/tr/td"),
                            [
+                             '',
                              uaa_identity_zone[:name],
                              uaa_mfa_provider[:type],
                              uaa_mfa_provider[:name],
                              uaa_mfa_provider[:id],
                              uaa_mfa_provider[:created].to_datetime.rfc3339,
                              uaa_mfa_provider[:lastmodified].to_datetime.rfc3339,
-                             @driver.execute_script("return Format.formatBoolean(#{uaa_mfa_provider[:active]})"),
                              config['issuer'],
                              config['algorithm'],
                              @driver.execute_script("return Format.formatNumber(#{config['digits']})"),
@@ -6905,24 +6906,41 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_MFAProvidersTable_0')
+          check_allowscriptaccess_attribute('Buttons_MFAProvidersTable_1')
         end
 
         context 'manage MFA providers' do
+          it 'has a Delete button' do
+            expect(@driver.find_element(id: 'Buttons_MFAProvidersTable_0').text).to eq('Delete')
+          end
+
+          context 'Delete button' do
+            it_behaves_like('click button without selecting any rows') do
+              let(:button_id) { 'Buttons_MFAProvidersTable_0' }
+            end
+          end
+
+          context 'Delete button' do
+            it_behaves_like('delete first row') do
+              let(:button_id)       { 'Buttons_MFAProvidersTable_0' }
+              let(:confirm_message) { 'Are you sure you want to delete the selected MFA providers?' }
+            end
+          end
+
           context 'Standard buttons' do
             let(:filename) { 'mfa_providers' }
 
             it_behaves_like('standard buttons') do
-              let(:copy_button_id)  { 'Buttons_MFAProvidersTable_0' }
-              let(:print_button_id) { 'Buttons_MFAProvidersTable_1' }
-              let(:save_button_id)  { 'Buttons_MFAProvidersTable_2' }
-              let(:csv_button_id)   { 'Buttons_MFAProvidersTable_3' }
-              let(:excel_button_id) { 'Buttons_MFAProvidersTable_4' }
-              let(:pdf_button_id)   { 'Buttons_MFAProvidersTable_5' }
+              let(:copy_button_id)  { 'Buttons_MFAProvidersTable_1' }
+              let(:print_button_id) { 'Buttons_MFAProvidersTable_2' }
+              let(:save_button_id)  { 'Buttons_MFAProvidersTable_3' }
+              let(:csv_button_id)   { 'Buttons_MFAProvidersTable_4' }
+              let(:excel_button_id) { 'Buttons_MFAProvidersTable_5' }
+              let(:pdf_button_id)   { 'Buttons_MFAProvidersTable_6' }
             end
 
             it_behaves_like('download button') do
-              let(:download_button_id) { 'Buttons_MFAProvidersTable_6' }
+              let(:download_button_id) { 'Buttons_MFAProvidersTable_7' }
             end
           end
         end
@@ -6942,7 +6960,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'GUID',             tag:   nil, value: uaa_mfa_provider[:id] },
                             { label: 'Created',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_mfa_provider[:created].to_datetime.rfc3339}\")") },
                             { label: 'Updated',          tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_mfa_provider[:lastmodified].to_datetime.rfc3339}\")") },
-                            { label: 'Active',           tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_mfa_provider[:active]})") },
                             { label: 'Issuer',           tag:   nil, value: config['issuer'] },
                             { label: 'Algorithm',        tag:   nil, value: config['algorithm'] },
                             { label: 'Digits',           tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{config['digits']})") },

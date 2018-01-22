@@ -669,13 +669,13 @@ module ViewModelsHelper
 
     [
       [
+        uaa_mfa_provider[:id],
         uaa_identity_zone[:name],
         uaa_mfa_provider[:type],
         uaa_mfa_provider[:name],
         uaa_mfa_provider[:id],
         uaa_mfa_provider[:created].to_datetime.rfc3339,
         uaa_mfa_provider[:lastmodified].to_datetime.rfc3339,
-        uaa_mfa_provider[:active],
         config['issuer'],
         config['algorithm'],
         config['digits'],

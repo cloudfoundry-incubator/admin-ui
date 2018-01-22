@@ -117,7 +117,7 @@ module AdminUI
           {
             db_uri:  uaadb_uri,
             table:   :mfa_providers,
-            columns: %i[active config created id identity_zone_id lastmodified name type]
+            columns: %i[config created id identity_zone_id lastmodified name type]
           },
           organizations:
           {

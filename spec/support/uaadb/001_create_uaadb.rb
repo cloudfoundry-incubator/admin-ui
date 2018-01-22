@@ -99,7 +99,6 @@ Sequel.migration do
       String :name, :size=>255, :null=>false
       String :type, :size=>255, :null=>false
       String :config, :text=>true
-      TrueClass :active, :null=>false
       
       primary_key [:id]
     end
@@ -205,6 +204,17 @@ Sequel.migration do
       primary_key [:id]
       
       index [:identity_zone_id, :entity_id], :name=>:entity_in_zone, :unique=>true
+    end
+    
+    create_table(:user_google_mfa_credentials) do
+      String :user_id, :size=>36, :null=>false
+      String :secret_key, :size=>255, :null=>false
+      Integer :validation_code, :null=>false
+      String :scratch_codes, :size=>255, :null=>false
+      String :mfa_provider_id, :size=>36, :fixed=>true, :null=>false
+      String :zone_id, :size=>36, :fixed=>true, :null=>false
+      
+      primary_key [:user_id, :mfa_provider_id]
     end
     
     create_table(:user_info) do

@@ -759,6 +759,29 @@ describe AdminUI::Admin, type: :integration do
     end
   end
 
+  context 'manage MFA provider' do
+    let(:http)   { create_http }
+    let(:cookie) { login_and_return_cookie(http) }
+
+    before do
+      expect(get_json('/mfa_providers_view_model')['items']['items'].length).to eq(1)
+    end
+
+    def delete_mfa_provider
+      response = delete_request("/mfa_providers/#{uaa_mfa_provider[:id]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/mfa_providers/#{uaa_mfa_provider[:id]}"]])
+    end
+
+    it 'has user name and identity providers request in the log file' do
+      verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/mfa_providers_view_model']], true)
+    end
+
+    it 'deletes an MFA provider' do
+      expect { delete_mfa_provider }.to change { get_json('/mfa_providers_view_model')['items']['items'].length }.from(1).to(0)
+    end
+  end
+
   context 'manage organization' do
     let(:http)   { create_http }
     let(:cookie) { login_and_return_cookie(http) }

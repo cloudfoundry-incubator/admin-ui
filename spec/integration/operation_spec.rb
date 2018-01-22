@@ -713,6 +713,37 @@ describe AdminUI::Operation, type: :integration do
       end
     end
 
+    context 'manage mfa provider' do
+      before do
+        expect(cc.mfa_providers['items'].length).to eq(1)
+      end
+
+      def delete_mfa_provider
+        operation.delete_mfa_provider(uaa_mfa_provider[:id])
+      end
+
+      it 'deletes MFA provider' do
+        expect { delete_mfa_provider }.to change { cc.mfa_providers['items'].length }.from(1).to(0)
+      end
+
+      context 'errors' do
+        before do
+          delete_mfa_provider
+        end
+
+        def verify_mfa_provider_not_found(exception)
+          expect(exception.cf_code).to eq(nil)
+          expect(exception.cf_error_code).to eq(nil)
+          expect(exception.http_code).to eq(404)
+          expect(exception.message).to eq('Not Found')
+        end
+
+        it 'fails deleting deleted MFA provider' do
+          expect { delete_mfa_provider }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_mfa_provider_not_found(exception) }
+        end
+      end
+    end
+
     context 'manage organization' do
       before do
         expect(cc.organizations['items'].length).to eq(1)
