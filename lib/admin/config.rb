@@ -10,6 +10,7 @@ module AdminUI
         cloud_controller_discovery_interval:                300,
         cloud_controller_ssl_verify_none:                 false,
         component_connection_retries:                         2,
+        cookie_key:                              'rack.session',
         cookie_secret:                                'mysecre',
         cookie_secure:                                    false,
         display_encrypted_values:                          true,
@@ -44,6 +45,7 @@ module AdminUI
             optional(:cloud_controller_ssl_verify_none)    => bool,
             cloud_controller_uri:                             %r{(http[s]?://[^\r\n\t]+)},
             optional(:component_connection_retries)        => Integer,
+            optional(:cookie_key)                          => /[^\r\n\t]+/,
             optional(:cookie_secret)                       => /[^\r\n\t]+/,
             optional(:cookie_secure)                       => bool,
             data_file:                                        /[^\r\n\t]+/,
@@ -133,6 +135,7 @@ module AdminUI
 
       # In order to allow class load of Web to use these values, they have to be static
       # rubocop:disable Style/ClassVars
+      @@cookie_key                  = config_instance.cookie_key
       @@cookie_secret               = config_instance.cookie_secret
       @@cookie_secure               = config_instance.cookie_secure
       @@secured_client_connection   = config_instance.secured_client_connection
@@ -140,6 +143,10 @@ module AdminUI
       # rubocop:enable Style/ClassVars
 
       config_instance
+    end
+
+    def self.cookie_key
+      @@cookie_key
     end
 
     def self.cookie_secret
@@ -184,6 +191,10 @@ module AdminUI
 
     def component_connection_retries
       @config[:component_connection_retries]
+    end
+
+    def cookie_key
+      @config[:cookie_key]
     end
 
     def cookie_secret

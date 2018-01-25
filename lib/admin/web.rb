@@ -31,10 +31,10 @@ module AdminUI
       set :show_exceptions, false
 
       if Config.secured_client_connection
-        set :sessions, secure: true, secret: Config.cookie_secret, expire_after: Config.ssl_max_session_idle_length
+        set :sessions, key: Config.cookie_key, secure: true, secret: Config.cookie_secret, expire_after: Config.ssl_max_session_idle_length
         use Rack::SSL, exclude: ->(env) { env['RACK_ENV'] != 'production' }
       else
-        set :sessions, secure: Config.cookie_secure, secret: Config.cookie_secret
+        set :sessions, key: Config.cookie_key, secure: Config.cookie_secure, secret: Config.cookie_secret
       end
     end
 
