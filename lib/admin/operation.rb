@@ -451,7 +451,7 @@ module AdminUI
     end
 
     def delete_service_provider(service_provider_id)
-      url = "saml/service-providers/#{service_provider_id}"
+      url = "/saml/service-providers/#{service_provider_id}"
       @logger.debug("DELETE #{url}")
       @client.delete_uaa(url)
       @cc.invalidate_service_providers
