@@ -42,6 +42,7 @@ Sequel.migration do
       String :encrypted_buildpack_url_salt, :text=>true
       String :admin_buildpack_name, :text=>true
       String :build_guid, :text=>true
+      String :encryption_key_label, :size=>255
       
       index [:droplet_guid], :name=>:bp_lifecycle_data_droplet_guid
       index [:admin_buildpack_name]
@@ -111,6 +112,7 @@ Sequel.migration do
       String :name, :text=>true, :null=>false
       String :environment_json, :text=>true
       String :salt, :text=>true
+      String :encryption_key_label, :size=>255
       
       index [:name], :unique=>true
       index [:created_at], :name=>:evg_created_at_index
@@ -330,6 +332,7 @@ Sequel.migration do
       String :encrypted_buildpack_url, :size=>16000
       String :encrypted_buildpack_url_salt, :text=>true
       foreign_key :buildpack_lifecycle_data_guid, :buildpack_lifecycle_data, :type=>String, :text=>true, :key=>[:guid]
+      String :encryption_key_label, :size=>255
       
       index [:buildpack_lifecycle_data_guid], :name=>:bl_buildpack_bldata_guid_index
       index [:created_at]
@@ -369,6 +372,7 @@ Sequel.migration do
       Integer :max_task_sequence_id, :default=>1
       String :buildpack_cache_sha256_checksum, :text=>true
       TrueClass :enable_ssh
+      String :encryption_key_label, :size=>255
       
       index [:droplet_guid], :name=>:apps_desired_droplet_guid
       index [:created_at], :name=>:apps_v3_created_at_index
@@ -425,6 +429,7 @@ Sequel.migration do
       String :docker_receipt_username, :text=>true
       String :docker_receipt_password_salt, :text=>true
       String :encrypted_docker_receipt_password, :text=>true
+      String :encryption_key_label, :size=>255
       
       index [:app_guid], :name=>:droplet_app_guid_index
       index [:build_guid], :name=>:droplet_build_guid_index
@@ -453,6 +458,7 @@ Sequel.migration do
       String :docker_username, :text=>true
       String :docker_password_salt, :text=>true
       String :encrypted_docker_password, :size=>16000
+      String :encryption_key_label, :size=>255
       
       index [:app_guid], :name=>:package_app_guid_index
       index [:created_at]
@@ -512,6 +518,7 @@ Sequel.migration do
       String :droplet_guid, :text=>true, :null=>false
       Integer :sequence_id
       Integer :disk_in_mb
+      String :encryption_key_label, :size=>255
       
       index [:app_guid]
       index [:created_at]
@@ -644,6 +651,7 @@ Sequel.migration do
       String :salt, :text=>true
       String :auth_username, :text=>true
       foreign_key :space_id, :spaces, :key=>[:id]
+      String :encryption_key_label, :size=>255
       
       index [:broker_url], :name=>:sb_broker_url_index, :unique=>true
       index [:created_at], :name=>:sbrokers_created_at_index
@@ -810,6 +818,7 @@ Sequel.migration do
       String :syslog_drain_url, :text=>true
       String :tags, :text=>true
       String :route_service_url, :text=>true
+      String :encryption_key_label, :size=>255
       
       index [:name]
       index [:created_at], :name=>:si_created_at_index
@@ -861,6 +870,7 @@ Sequel.migration do
       foreign_key :service_instance_guid, :service_instances, :type=>String, :text=>true, :null=>false, :key=>[:guid]
       String :type, :text=>true
       String :name, :size=>255
+      String :encryption_key_label, :size=>255
       
       index [:created_at], :name=>:sb_created_at_index
       index [:guid], :name=>:sb_guid_index, :unique=>true
@@ -905,6 +915,7 @@ Sequel.migration do
       String :salt, :text=>true
       String :credentials, :text=>true, :null=>false
       foreign_key :service_instance_id, :service_instances, :null=>false, :key=>[:id]
+      String :encryption_key_label, :size=>255
       
       index [:created_at], :name=>:sk_created_at_index
       index [:guid], :name=>:sk_guid_index, :unique=>true
