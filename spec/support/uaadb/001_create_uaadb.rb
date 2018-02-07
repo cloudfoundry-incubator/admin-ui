@@ -107,10 +107,10 @@ Sequel.migration do
       String :client_id, :size=>255, :null=>false
       String :resource_ids, :size=>1024
       String :client_secret, :size=>256
-      String :scope, :size=>4000
+      String :scope, :text=>true
       String :authorized_grant_types, :size=>256
       String :web_server_redirect_uri, :size=>1024
-      String :authorities, :size=>4000
+      String :authorities, :text=>true
       Integer :access_token_validity
       Integer :refresh_token_validity, :default=>0
       String :additional_information, :size=>4096
@@ -147,7 +147,7 @@ Sequel.migration do
       String :response_type, :size=>25, :null=>false
       Bignum :issued_at, :null=>false
       Bignum :expires_at, :null=>false
-      String :scope, :size=>4000
+      String :scope, :text=>true
       String :data, :text=>true, :null=>false
       String :identity_zone_id, :default=>"uaa", :size=>36, :null=>false
       
