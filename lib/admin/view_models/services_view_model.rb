@@ -197,21 +197,28 @@ module AdminUI
 
         row.push(service[:bindable])
         row.push(service[:plan_updateable])
-        row.push(service[:active])
 
+        shareable             = nil
         provider_display_name = nil
         display_name          = nil
         if service[:extra]
           begin
             json = Yajl::Parser.parse(service[:extra])
 
+            shareable             = json['shareable']
             provider_display_name = json['providerDisplayName']
             display_name          = json['displayName']
+
+            shareable = false if shareable.nil?
           rescue
+            shareable             = nil
             provider_display_name = nil
             display_name          = nil
           end
         end
+
+        row.push(shareable)
+        row.push(service[:active])
         row.push(provider_display_name, display_name)
 
         requires = nil
@@ -324,7 +331,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..24).to_a, (1..24).to_a - [12, 13, 14, 15, 16, 17, 18, 19, 20])
+      result(true, items, hash, (1..25).to_a, (1..25).to_a - [13, 14, 15, 16, 17, 18, 19, 20, 21])
     end
   end
 end

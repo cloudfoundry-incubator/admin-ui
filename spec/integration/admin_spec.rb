@@ -528,7 +528,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'unshares a private domain' do
-      expect { unshare_private_domain }.to change { get_json('/domains_view_model')['items']['items'][0][7] }.from(1).to(0)
+      expect { unshare_private_domain }.to change { get_json('/domains_view_model')['items']['items'][0][8] }.from(1).to(0)
     end
   end
 

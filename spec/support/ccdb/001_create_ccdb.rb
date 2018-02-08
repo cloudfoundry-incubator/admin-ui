@@ -538,6 +538,7 @@ Sequel.migration do
       TrueClass :wildcard, :default=>true, :null=>false
       Integer :owning_organization_id
       String :router_group_guid, :text=>true
+      TrueClass :internal, :default=>false
       
       index [:created_at]
       index [:guid], :unique=>true

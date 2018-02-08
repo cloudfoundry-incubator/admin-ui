@@ -56,7 +56,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :domains,
-            columns: %i[created_at guid id name owning_organization_id updated_at]
+            columns: %i[created_at guid id internal name owning_organization_id updated_at]
           },
           droplets:
           {

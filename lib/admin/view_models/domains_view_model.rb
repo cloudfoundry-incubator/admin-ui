@@ -75,6 +75,7 @@ module AdminUI
           row.push(nil)
         end
 
+        row.push(domain[:internal])
         row.push(shared)
 
         if organization
@@ -109,7 +110,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..8).to_a, (1..6).to_a)
+      result(true, items, hash, (1..9).to_a, (1..7).to_a)
     end
   end
 end

@@ -556,6 +556,7 @@ module CCHelper
       created_at:             unique_time('cc_domain_created'),
       guid:                   'domain1',
       id:                     unique_id('cc_domain'),
+      internal:               false,
       name:                   'test_domain',
       owning_organization_id: cc_organization[:id],
       updated_at:             unique_time('cc_domain_updated')
@@ -1161,13 +1162,17 @@ module CCHelper
     'TestService prov display name'
   end
 
+  def cc_service_shareable
+    true
+  end
+
   def cc_service
     {
       active:            true,
       bindable:          true,
       created_at:        unique_time('cc_service_created'),
       description:       'TestService description',
-      extra:             "{\"displayName\":\"#{cc_service_display_name}\",\"documentationUrl\":\"http://documentationUrl.com\",\"imageUrl\":\"http://docs.cloudfoundry.com/images/favicon.ico\",\"longDescription\":\"long description\",\"providerDisplayName\":\"#{cc_service_provider_display_name}\",\"supportUrl\":\"http://supportUrl.com\"}",
+      extra:             "{\"displayName\":\"#{cc_service_display_name}\",\"documentationUrl\":\"http://documentationUrl.com\",\"imageUrl\":\"http://docs.cloudfoundry.com/images/favicon.ico\",\"longDescription\":\"long description\",\"providerDisplayName\":\"#{cc_service_provider_display_name}\",\"shareable\":#{cc_service_shareable},\"supportUrl\":\"http://supportUrl.com\"}",
       guid:              'service1',
       id:                unique_id('cc_service'),
       label:             'TestService',
