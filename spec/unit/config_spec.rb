@@ -163,6 +163,15 @@ describe AdminUI::Config do
         port = 55
         config = AdminUI::Config.load('port' => port)
         expect(config.port).to eq(port)
+
+        # PORT environment variable testing
+        env = '54'
+        ENV['PORT'] = env
+        expect(config.port).to eq(env)
+
+        # Unset PORT environment variable testing
+        ENV['PORT'] = nil
+        expect(config.port).to eq(port)
       end
 
       it 'receiver_emails' do
