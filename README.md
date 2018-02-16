@@ -358,7 +358,7 @@ Example: <code>10</code>
 <code>port</code>
 </dt>
 <dd>
-Port for the Administration UI web server. 
+Port for the Administration UI web server. If the environment variable PORT is set, that value will be respected. This allows the Administration UI to run as a Cloud Foundry application.
 <br>
 Example: <code>8070</code>
 </dd>

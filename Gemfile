@@ -24,6 +24,7 @@ group :development do
 end
 
 group :test do
+  gem 'ffi', '1.9.18' # Lock ffi at 1.9.18 since 1.9.21 will not install
   gem 'rspec', '3.7.0'
-  gem 'selenium-webdriver', '3.8.0'
+  gem 'selenium-webdriver', '3.9.0'
 end
