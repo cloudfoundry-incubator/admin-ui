@@ -2,6 +2,7 @@ require 'logger'
 require 'openssl'
 require 'webrick/httprequest'
 require 'webrick/https'
+require 'webrick/version'
 require_relative 'admin/config'
 require_relative 'admin/cc'
 require_relative 'admin/cc_rest_client'
@@ -157,7 +158,8 @@ module AdminUI
           Host:               @config.bind_address, # Newer Rack::Handler::WEBrick requires Host
           DoNotReverseLookup: true,
           Logger:             error_logger,
-          Port:               @config.port
+          Port:               @config.port,
+          ServerSoftware:     "WEBrick/#{WEBrick::VERSION} (Ruby/#{RUBY_VERSION}/#{RUBY_RELEASE_DATE})" # Default value includes OpenSSL version which is a security exposure
         }
 
       web_hash[:StartCallback] = @start_callback if @start_callback
