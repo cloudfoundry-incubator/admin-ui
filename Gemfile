@@ -11,7 +11,7 @@ gem 'protobuf', '3.8.1'
 gem 'rack-ssl', '1.4.1'
 gem 'sequel', '5.5.0'
 gem 'sequel_pg', '1.8.1'
-gem 'sinatra', '2.0.0'
+gem 'sinatra', '2.0.1'
 gem 'sqlite3', '1.3.13'
 gem 'yajl-ruby', '1.3.1'
 
