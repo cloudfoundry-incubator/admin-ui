@@ -9,7 +9,7 @@ require_relative '../lib/admin/operation'
 require_relative '../lib/admin/utils'
 require_relative '../lib/admin/varz'
 
-Dir[File.expand_path('../support/**/*.rb', __FILE__)].each { |file| require file }
+Dir[File.expand_path('support/**/*.rb', __dir__)].each { |file| require file }
 
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib', 'admin', 'dropsonde_protocol')
 require 'envelope.pb.rb'

@@ -61,5 +61,8 @@ Style/RescueStandardError:
 Style/SafeNavigation:
   Enabled: false
 
+UncommunicativeMethodParamName:
+  Enabled: false
+
 UriEscapeUnescape:
   Enabled: false

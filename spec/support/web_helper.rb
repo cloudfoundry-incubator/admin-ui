@@ -53,10 +53,10 @@ shared_context :web_context do
       url = "http://#{username}:#{access_key}@localhost:4445/wd/hub"
       client = Selenium::WebDriver::Remote::Http::Default.new
       client.timeout = 600
-      return Selenium::WebDriver.for(:remote,
-                                     http_client:          client,
-                                     desired_capabilities: caps,
-                                     url:                  url)
+      Selenium::WebDriver.for(:remote,
+                              http_client:          client,
+                              desired_capabilities: caps,
+                              url:                  url)
     else
       profile = Selenium::WebDriver::Firefox::Profile.new
       profile['browser.download.dir']                     = directory
@@ -69,7 +69,7 @@ shared_context :web_context do
       options = Selenium::WebDriver::Firefox::Options.new
       options.profile = profile
 
-      return Selenium::WebDriver.for(:firefox, marionette: true, options: options)
+      Selenium::WebDriver.for(:firefox, marionette: true, options: options)
     end
   rescue => error
     unless url.nil?
