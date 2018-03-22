@@ -1168,21 +1168,23 @@ module CCHelper
 
   def cc_service
     {
-      active:            true,
-      bindable:          true,
-      created_at:        unique_time('cc_service_created'),
-      description:       'TestService description',
-      extra:             "{\"displayName\":\"#{cc_service_display_name}\",\"documentationUrl\":\"http://documentationUrl.com\",\"imageUrl\":\"http://docs.cloudfoundry.com/images/favicon.ico\",\"longDescription\":\"long description\",\"providerDisplayName\":\"#{cc_service_provider_display_name}\",\"shareable\":#{cc_service_shareable},\"supportUrl\":\"http://supportUrl.com\"}",
-      guid:              'service1',
-      id:                unique_id('cc_service'),
-      label:             'TestService',
-      plan_updateable:   true,
-      purging:           false,
-      requires:          '["syslog_drain", "route_forwarding", "volume_mount"]',
-      service_broker_id: cc_service_broker[:id],
-      tags:              '["service_tag1", "service_tag2"]',
-      unique_id:         'service_unique_id',
-      updated_at:        unique_time('cc_service_updated')
+      active:                true,
+      bindable:              true,
+      bindings_retrievable:  true,
+      created_at:            unique_time('cc_service_created'),
+      description:           'TestService description',
+      extra:                 "{\"displayName\":\"#{cc_service_display_name}\",\"documentationUrl\":\"http://documentationUrl.com\",\"imageUrl\":\"http://docs.cloudfoundry.com/images/favicon.ico\",\"longDescription\":\"long description\",\"providerDisplayName\":\"#{cc_service_provider_display_name}\",\"shareable\":#{cc_service_shareable},\"supportUrl\":\"http://supportUrl.com\"}",
+      guid:                  'service1',
+      id:                    unique_id('cc_service'),
+      instances_retrievable: true,
+      label:                 'TestService',
+      plan_updateable:       true,
+      purging:               false,
+      requires:              '["syslog_drain", "route_forwarding", "volume_mount"]',
+      service_broker_id:     cc_service_broker[:id],
+      tags:                  '["service_tag1", "service_tag2"]',
+      unique_id:             'service_unique_id',
+      updated_at:            unique_time('cc_service_updated')
     }
   end
 

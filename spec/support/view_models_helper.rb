@@ -1401,6 +1401,8 @@ module ViewModelsHelper
         cc_service[:updated_at].to_datetime.rfc3339,
         cc_service[:bindable],
         cc_service[:plan_updateable],
+        cc_service[:instances_retrievable],
+        cc_service[:bindings_retrievable],
         cc_service_shareable,
         cc_service[:active],
         cc_service_provider_display_name,

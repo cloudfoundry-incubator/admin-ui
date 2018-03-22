@@ -285,7 +285,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :services,
-            columns: %i[active bindable created_at description extra guid id label plan_updateable purging requires service_broker_id tags unique_id updated_at]
+            columns: %i[active bindable bindings_retrievable created_at description extra guid id instances_retrievable label plan_updateable purging requires service_broker_id tags unique_id updated_at]
           },
           space_quota_definitions:
           {

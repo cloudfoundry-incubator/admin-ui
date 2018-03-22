@@ -197,6 +197,8 @@ module AdminUI
 
         row.push(service[:bindable])
         row.push(service[:plan_updateable])
+        row.push(service[:instances_retrievable])
+        row.push(service[:bindings_retrievable])
 
         shareable             = nil
         provider_display_name = nil
@@ -219,7 +221,8 @@ module AdminUI
 
         row.push(shareable)
         row.push(service[:active])
-        row.push(provider_display_name, display_name)
+        row.push(provider_display_name)
+        row.push(display_name)
 
         requires = nil
         if service[:requires]
@@ -331,7 +334,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..25).to_a, (1..25).to_a - [13, 14, 15, 16, 17, 18, 19, 20, 21])
+      result(true, items, hash, (1..27).to_a, (1..27).to_a - [15, 16, 17, 18, 19, 20, 21, 22, 23])
     end
   end
 end

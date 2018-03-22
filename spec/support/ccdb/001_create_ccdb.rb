@@ -400,6 +400,7 @@ Sequel.migration do
       index [:app_guid]
       index [:created_at]
       index [:guid], :unique=>true
+      index [:state]
       index [:updated_at]
     end
     
@@ -748,6 +749,8 @@ Sequel.migration do
       String :requires, :text=>true
       TrueClass :purging, :default=>false, :null=>false
       TrueClass :plan_updateable, :default=>false
+      TrueClass :bindings_retrievable, :default=>false, :null=>false
+      TrueClass :instances_retrievable, :default=>false, :null=>false
       
       index [:created_at]
       index [:guid], :unique=>true
