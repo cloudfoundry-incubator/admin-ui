@@ -574,6 +574,7 @@ Sequel.migration do
     create_table(:organizations_private_domains, :ignore_index_errors=>true) do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :private_domain_id, :domains, :null=>false, :key=>[:id]
+      primary_key :organizations_private_domains_pk, :keep_order=>true
       
       index [:organization_id, :private_domain_id], :name=>:orgs_pd_ids, :unique=>true
     end
@@ -638,6 +639,7 @@ Sequel.migration do
     create_table(:security_groups_spaces, :ignore_index_errors=>true) do
       foreign_key :security_group_id, :security_groups, :null=>false, :key=>[:id]
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
+      primary_key :security_groups_spaces_pk, :keep_order=>true
       
       index [:security_group_id, :space_id], :name=>:sgs_spaces_ids
     end
@@ -665,6 +667,7 @@ Sequel.migration do
     create_table(:staging_security_groups_spaces, :ignore_index_errors=>true) do
       foreign_key :staging_security_group_id, :security_groups, :null=>false, :key=>[:id]
       foreign_key :staging_space_id, :spaces, :null=>false, :key=>[:id]
+      primary_key :staging_security_groups_spaces_pk, :keep_order=>true
       
       index [:staging_security_group_id, :staging_space_id], :name=>:staging_security_groups_spaces_ids, :unique=>true
     end
@@ -686,6 +689,7 @@ Sequel.migration do
     create_table(:organizations_auditors, :ignore_index_errors=>true) do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
+      primary_key :organizations_auditors_pk, :keep_order=>true
       
       index [:organization_id, :user_id], :name=>:org_auditors_idx, :unique=>true
     end
@@ -693,6 +697,7 @@ Sequel.migration do
     create_table(:organizations_billing_managers, :ignore_index_errors=>true) do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
+      primary_key :organizations_billing_managers_pk, :keep_order=>true
       
       index [:organization_id, :user_id], :name=>:org_billing_managers_idx, :unique=>true
     end
@@ -700,6 +705,7 @@ Sequel.migration do
     create_table(:organizations_managers, :ignore_index_errors=>true) do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
+      primary_key :organizations_managers_pk, :keep_order=>true
       
       index [:organization_id, :user_id], :name=>:org_managers_idx, :unique=>true
     end
@@ -707,6 +713,7 @@ Sequel.migration do
     create_table(:organizations_users, :ignore_index_errors=>true) do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
+      primary_key :organizations_users_pk, :keep_order=>true
       
       index [:organization_id, :user_id], :name=>:org_users_idx, :unique=>true
     end
@@ -762,6 +769,7 @@ Sequel.migration do
     create_table(:spaces_auditors, :ignore_index_errors=>true) do
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
+      primary_key :spaces_auditors_pk, :keep_order=>true
       
       index [:space_id, :user_id], :name=>:space_auditors_idx, :unique=>true
     end
@@ -769,6 +777,7 @@ Sequel.migration do
     create_table(:spaces_developers, :ignore_index_errors=>true) do
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
+      primary_key :spaces_developers_pk, :keep_order=>true
       
       index [:space_id, :user_id], :name=>:space_developers_idx, :unique=>true
     end
@@ -776,6 +785,7 @@ Sequel.migration do
     create_table(:spaces_managers, :ignore_index_errors=>true) do
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
+      primary_key :spaces_managers_pk, :keep_order=>true
       
       index [:space_id, :user_id], :name=>:space_managers_idx, :unique=>true
     end

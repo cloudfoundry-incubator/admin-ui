@@ -955,15 +955,17 @@ module CCHelper
 
   def cc_organization_auditor
     {
-      organization_id: cc_organization[:id],
-      user_id:         cc_user[:id]
+      organizations_auditors_pk: unique_id('cc_organization_auditor'),
+      organization_id:           cc_organization[:id],
+      user_id:                   cc_user[:id]
     }
   end
 
   def cc_organization_billing_manager
     {
-      organization_id: cc_organization[:id],
-      user_id:         cc_user[:id]
+      organizations_billing_managers_pk: unique_id('cc_organization_billing_manager'),
+      organization_id:                   cc_organization[:id],
+      user_id:                           cc_user[:id]
     }
   end
 
@@ -976,22 +978,25 @@ module CCHelper
 
   def cc_organization_manager
     {
-      organization_id: cc_organization[:id],
-      user_id:         cc_user[:id]
+      organizations_managers_pk: unique_id('cc_organization_manager'),
+      organization_id:           cc_organization[:id],
+      user_id:                   cc_user[:id]
     }
   end
 
   def cc_organization_private_domain
     {
-      organization_id:   cc_organization[:id],
-      private_domain_id: cc_domain[:id]
+      organizations_private_domains_pk: unique_id('cc_organization_private_domain'),
+      organization_id:                  cc_organization[:id],
+      private_domain_id:                cc_domain[:id]
     }
   end
 
   def cc_organization_user
     {
-      organization_id: cc_organization[:id],
-      user_id:         cc_user[:id]
+      organizations_users_pk: unique_id('cc_organization_user'),
+      organization_id:        cc_organization[:id],
+      user_id:                cc_user[:id]
     }
   end
 
@@ -1149,8 +1154,9 @@ module CCHelper
 
   def cc_security_group_space
     {
-      security_group_id: cc_security_group[:id],
-      space_id:          cc_space[:id]
+      security_groups_spaces_pk: unique_id('cc_security_group_space'),
+      security_group_id:         cc_security_group[:id],
+      space_id:                  cc_space[:id]
     }
   end
 
@@ -1386,22 +1392,25 @@ module CCHelper
 
   def cc_space_auditor
     {
-      space_id: cc_space[:id],
-      user_id:  cc_user[:id]
+      spaces_auditors_pk: unique_id('cc_space_auditor'),
+      space_id:           cc_space[:id],
+      user_id:            cc_user[:id]
     }
   end
 
   def cc_space_developer
     {
-      space_id: cc_space[:id],
-      user_id:  cc_user[:id]
+      spaces_developers_pk: unique_id('cc_space_developer'),
+      space_id:             cc_space[:id],
+      user_id:              cc_user[:id]
     }
   end
 
   def cc_space_manager
     {
-      space_id: cc_space[:id],
-      user_id:  cc_user[:id]
+      spaces_managers_pk: unique_id('cc_space_manager'),
+      space_id:           cc_space[:id],
+      user_id:            cc_user[:id]
     }
   end
 
@@ -1462,8 +1471,9 @@ module CCHelper
 
   def cc_staging_security_group_space
     {
-      staging_security_group_id: cc_security_group[:id],
-      staging_space_id:          cc_space[:id]
+      staging_security_groups_spaces_pk: unique_id('cc_staging_security_group_space'),
+      staging_security_group_id:         cc_security_group[:id],
+      staging_space_id:                  cc_space[:id]
     }
   end
 
