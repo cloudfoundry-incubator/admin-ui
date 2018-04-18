@@ -28,6 +28,7 @@ Sequel.migration do
       DateTime :added, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       String :origin, :size=>36
       String :identity_zone_id, :size=>36
+      primary_key :id, :keep_order=>true
       
       index [:origin, :external_group, :group_id], :name=>:external_group_unique_key, :unique=>true
     end
@@ -40,6 +41,7 @@ Sequel.migration do
       DateTime :added, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       String :origin, :default=>"uaa", :size=>36, :null=>false
       String :identity_zone_id, :size=>36
+      primary_key :id, :keep_order=>true
       
       index [:group_id], :name=>:group_membership_perf_group_idx
       index [:member_id, :group_id], :name=>:group_membership_unique_key, :unique=>true
@@ -73,6 +75,7 @@ Sequel.migration do
       
       primary_key [:id]
       
+      index [:identity_zone_id, :active], :name=>:active_in_zone
       index [:identity_zone_id, :origin_key], :name=>:key_in_zone, :unique=>true
     end
     
@@ -134,6 +137,7 @@ Sequel.migration do
       String :user_id, :size=>36
       String :client_id, :size=>255
       String :identity_zone_id, :size=>36
+      primary_key :id, :keep_order=>true
       
       index [:expiresat], :name=>:oauth_code_expiresat_idx
       index [:code], :name=>:oauth_code_uq_idx, :unique=>true
@@ -183,6 +187,7 @@ Sequel.migration do
       String :event_data, :size=>255
       DateTime :created, :default=>Sequel::CURRENT_TIMESTAMP
       String :identity_zone_id, :default=>"uaa", :size=>36
+      primary_key :id, :keep_order=>true
       
       index [:created], :name=>:audit_created
       index [:principal_id], :name=>:audit_principal

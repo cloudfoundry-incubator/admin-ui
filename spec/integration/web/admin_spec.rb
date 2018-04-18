@@ -4543,7 +4543,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_checkbox_guid('RevocableTokensTable', uaa_revocable_token[:token_id])
         end
 
-        context 'manage clients' do
+        context 'manage revocable tokens' do
           it 'has a Revoke button' do
             expect(@driver.find_element(id: 'Buttons_RevocableTokensTable_0').text).to eq('Revoke')
           end
@@ -4650,7 +4650,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_checkbox_guid('BuildpacksTable', cc_buildpack[:guid])
         end
 
-        context 'manage buildpack' do
+        context 'manage buildpacks' do
           def manage_buildpack(button_index)
             check_first_row('BuildpacksTable')
 
@@ -5032,7 +5032,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_checkbox_guid('FeatureFlagsTable', cc_feature_flag[:name])
         end
 
-        context 'manage feature flag' do
+        context 'manage feature flags' do
           def manage_feature_flag(button_index)
             check_first_row('FeatureFlagsTable')
 

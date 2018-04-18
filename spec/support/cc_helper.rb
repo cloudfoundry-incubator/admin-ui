@@ -1558,6 +1558,7 @@ module CCHelper
     {
       added:            unique_time('uaa_group_membership_added'),
       group_id:         uaa_group[:id],
+      id:               unique_id('uaa_group_membership'),
       identity_zone_id: uaa_identity_zone[:id],
       member_id:        uaa_user[:id]
     }
