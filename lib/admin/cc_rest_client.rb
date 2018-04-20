@@ -119,6 +119,11 @@ module AdminUI
       nil
     end
 
+    def uaa_version
+      info
+      @uaa_version
+    end
+
     private
 
     def cf_request(url, method, body = nil, content_type = nil, if_match = nil)
@@ -175,39 +180,61 @@ module AdminUI
     end
 
     def info
-      return unless @token_endpoint.nil?
+      return unless @uaa_version.nil?
+
+      cc_v2_info_url = get_cc_url('/v2/info')
 
       response = nil
       begin
-        response = Utils.http_request(@config, get_cc_url('/v2/info'), Utils::HTTP_GET)
+        response = Utils.http_request(@config, cc_v2_info_url, Utils::HTTP_GET)
       rescue => error
-        @logger.error("Error fetching #{get_cc_url('/v2/info')}: #{error.inspect}")
+        @logger.error("Error fetching #{cc_v2_info_url}: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
-        raise "Unable to fetch from #{get_cc_url('/v2/info')}"
+        raise "Unable to fetch from #{cc_v2_info_url}"
       end
 
-      raise "Unable to fetch from #{get_cc_url('/v2/info')}" unless response.is_a?(Net::HTTPOK)
+      raise "Unable to fetch from #{cc_v2_info_url}" unless response.is_a?(Net::HTTPOK)
 
       body_json = Yajl::Parser.parse(response.body)
 
       @api_version = body_json['api_version']
-      raise "Information retrieved from #{get_cc_url('/v2/info')} does not include api_version" if @api_version.nil?
+      raise "Information retrieved from #{cc_v2_info_url} does not include api_version" if @api_version.nil?
 
       @build = body_json['build']
-      raise "Information retrieved from #{get_cc_url('/v2/info')} does not include build" if @build.nil?
+      raise "Information retrieved from #{cc_v2_info_url} does not include build" if @build.nil?
 
       @authorization_endpoint = body_json['authorization_endpoint']
-      raise "Information retrieved from #{get_cc_url('/v2/info')} does not include authorization_endpoint" if @authorization_endpoint.nil?
+      raise "Information retrieved from #{cc_v2_info_url} does not include authorization_endpoint" if @authorization_endpoint.nil?
 
       if @config.doppler_logging_endpoint_override.nil?
         @doppler_logging_endpoint = body_json['doppler_logging_endpoint']
-        @logger.warn("Information retrieved from #{get_cc_url('/v2/info')} does not include doppler_logging_endpoint") if @doppler_logging_endpoint.nil?
+        @logger.warn("Information retrieved from #{cc_v2_info_url} does not include doppler_logging_endpoint") if @doppler_logging_endpoint.nil?
       else
         @doppler_logging_endpoint = @config.doppler_logging_endpoint_override
       end
 
       @token_endpoint = body_json['token_endpoint']
-      raise "Information retrieved from #{get_cc_url('/v2/info')} does not include token_endpoint" if @token_endpoint.nil?
+      raise "Information retrieved from #{cc_v2_info_url} does not include token_endpoint" if @token_endpoint.nil?
+
+      uaa_info_url = "#{@token_endpoint}/info"
+
+      begin
+        response = Utils.http_request(@config, uaa_info_url, Utils::HTTP_GET)
+      rescue => error
+        @logger.error("Error fetching #{uaa_info_url}: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        raise "Unable to fetch from #{uaa_info_url}"
+      end
+
+      raise "Unable to fetch from #{uaa_info_url}" unless response.is_a?(Net::HTTPOK)
+
+      body_json = Yajl::Parser.parse(response.body)
+
+      app = body_json['app']
+      raise "Information retrieved from #{uaa_info_url} does not include app" if app.nil?
+
+      @uaa_version = app['version']
+      raise "Information retrieved from #{uaa_info_url} does not include app.version" if @uaa_version.nil?
     end
   end
 end

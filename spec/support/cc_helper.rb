@@ -870,7 +870,7 @@ module CCHelper
   end
 
   def cc_info_api_version
-    '2.90.0'
+    '2.107.0'
   end
 
   def cc_info_build
@@ -1592,6 +1592,20 @@ module CCHelper
     }
   end
 
+  def uaa_info_app_version
+    '4.12.0'
+  end
+
+  # /info returned from the UAA system is not symbols
+  def uaa_info
+    {
+      'app' =>
+      {
+        'version' => uaa_info_app_version
+      }
+    }
+  end
+
   def uaa_mfa_provider
     {
       config:           '{"algorithm":"SHA256","digits":6,"duration":30,"issuer":"uaa","providerDescription":"Test MFA for default zone"}',
@@ -2092,6 +2106,10 @@ module CCHelper
   def cc_login_stubs(config)
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/info", AdminUI::Utils::HTTP_GET) do
       OK.new(cc_info)
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/info", AdminUI::Utils::HTTP_GET) do
+      OK.new(uaa_info)
     end
 
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{cc_info_token_endpoint}/oauth/token", AdminUI::Utils::HTTP_POST, anything, anything, anything, anything) do

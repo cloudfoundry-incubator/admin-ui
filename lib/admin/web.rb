@@ -516,6 +516,7 @@ module AdminUI
                            cloud_controller_uri: @config.cloud_controller_uri,
                            table_height:         @config.table_height,
                            table_page_size:      @config.table_page_size,
+                           uaa_version:          @client.uaa_version,
                            user:                 session[:username])
     end
 

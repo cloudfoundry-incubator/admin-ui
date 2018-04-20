@@ -2468,6 +2468,7 @@ describe AdminUI::Admin, type: :integration do
                                 'cloud_controller_uri' => cloud_controller_uri,
                                 'table_height'         => table_height,
                                 'table_page_size'      => table_page_size,
+                                'uaa_version'          => uaa_info_app_version,
                                 'user'                 => LoginHelper::LOGIN_ADMIN)
       end
     end

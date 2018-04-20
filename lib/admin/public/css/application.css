@@ -55,6 +55,13 @@ html.waiting *
     font-size: .8em;
 }
 
+.uaaVersion
+{
+    float: left;
+    padding: 7px 10px 0px 0px;
+    font-size: .8em;
+}
+
 .userContainer
 {
     float: right;
