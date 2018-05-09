@@ -171,7 +171,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :processes,
-            columns: %i[app_guid command created_at detected_buildpack diego disk_quota enable_ssh file_descriptors guid health_check_http_endpoint health_check_timeout health_check_type id instances memory metadata package_updated_at ports production state type updated_at version]
+            columns: %i[app_guid command created_at detected_buildpack diego disk_quota enable_ssh file_descriptors guid health_check_http_endpoint health_check_invocation_timeout health_check_timeout health_check_type id instances memory metadata package_updated_at ports production state type updated_at version]
           },
           quota_definitions:
           {

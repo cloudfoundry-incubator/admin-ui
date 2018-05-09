@@ -495,6 +495,7 @@ Sequel.migration do
       String :docker_salt, :text=>true
       String :ports, :text=>true
       String :health_check_http_endpoint, :text=>true
+      Integer :health_check_invocation_timeout
       
       index [:created_at], :name=>:apps_created_at_index
       index [:diego], :name=>:apps_diego_index

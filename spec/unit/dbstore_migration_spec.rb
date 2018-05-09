@@ -57,7 +57,7 @@ describe AdminUI::DBStoreMigration do
 
     @pid = Process.spawn({}, "ruby bin/admin -c #{config_file}", spawn_opts)
 
-    sleep(1)
+    sleep(2)
   end
 
   def stop_admin_daemon
