@@ -333,6 +333,8 @@ Sequel.migration do
       String :encrypted_buildpack_url_salt, :text=>true
       foreign_key :buildpack_lifecycle_data_guid, :buildpack_lifecycle_data, :type=>String, :text=>true, :key=>[:guid]
       String :encryption_key_label, :size=>255
+      String :version, :size=>255
+      String :buildpack_name, :size=>2047
       
       index [:buildpack_lifecycle_data_guid], :name=>:bl_buildpack_bldata_guid_index
       index [:created_at]
@@ -401,6 +403,21 @@ Sequel.migration do
       index [:created_at]
       index [:guid], :unique=>true
       index [:state]
+      index [:updated_at]
+    end
+    
+    create_table(:deployments, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :state, :size=>255
+      foreign_key :app_guid, :apps, :type=>String, :size=>255, :key=>[:guid]
+      String :droplet_guid, :size=>255
+      
+      index [:app_guid]
+      index [:created_at]
+      index [:guid], :unique=>true
       index [:updated_at]
     end
     
