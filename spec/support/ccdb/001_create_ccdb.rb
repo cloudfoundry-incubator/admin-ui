@@ -956,19 +956,19 @@ Sequel.migration do
     end
     
     alter_table(:app_events) do
-      add_foreign_key [:app_id], :processes, :name=>:fk_app_events_app_id, :key=>[:id]
+      add_foreign_key [:app_id], :processes, :name=>:fk_app_events_app_id, :key=>[:id], :schema=>:public
     end
     
     alter_table(:apps) do
-      add_foreign_key [:space_guid], :spaces, :name=>:fk_apps_space_guid, :key=>[:guid]
+      add_foreign_key [:space_guid], :spaces, :name=>:fk_apps_space_guid, :key=>[:guid], :schema=>:public
     end
     
     alter_table(:domains) do
-      add_foreign_key [:owning_organization_id], :organizations, :name=>:fk_domains_owning_org_id, :key=>[:id]
+      add_foreign_key [:owning_organization_id], :organizations, :name=>:fk_domains_owning_org_id, :key=>[:id], :schema=>:public
     end
     
     alter_table(:organizations) do
-      add_foreign_key [:guid, :default_isolation_segment_guid], :organizations_isolation_segments, :name=>:organizations_isolation_segments_pk, :key=>[:organization_guid, :isolation_segment_guid]
+      add_foreign_key [:guid, :default_isolation_segment_guid], :organizations_isolation_segments, :name=>:organizations_isolation_segments_pk, :key=>[:organization_guid, :isolation_segment_guid], :schema=>:public
     end
   end
 end

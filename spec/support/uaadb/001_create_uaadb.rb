@@ -214,10 +214,12 @@ Sequel.migration do
     create_table(:user_google_mfa_credentials) do
       String :user_id, :size=>36, :null=>false
       String :secret_key, :size=>255, :null=>false
-      Integer :validation_code, :null=>false
+      Integer :validation_code
       String :scratch_codes, :size=>255, :null=>false
       String :mfa_provider_id, :size=>36, :fixed=>true, :null=>false
       String :zone_id, :size=>36, :fixed=>true, :null=>false
+      String :encryption_key_label, :size=>255
+      String :encrypted_validation_code, :size=>255
       
       primary_key [:user_id, :mfa_provider_id]
     end
