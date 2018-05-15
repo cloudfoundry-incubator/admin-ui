@@ -28,18 +28,9 @@ CyclomaticComplexity:
 Documentation:
   Enabled: false
 
-Encoding:
-  Enabled: false
-
 FrozenStringLiteralComment:
   Enabled: false
 
-IndentArray:
-  EnforcedStyle: align_brackets
-  
-IndentHash:
-  EnforcedStyle: align_braces
-  
 LineLength:
   Enabled: false
 

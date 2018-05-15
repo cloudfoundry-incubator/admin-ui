@@ -20,7 +20,7 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '0.55.0'
+  gem 'rubocop', '0.56.0'
 end
 
 group :test do

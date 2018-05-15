@@ -3,3 +3,12 @@ inherit_from:
 
 HandleExceptions:
   Enabled: false
+
+IndentArray:
+  EnforcedStyle: align_brackets
+
+IndentHash:
+  EnforcedStyle: align_braces
+
+Style/Lambda:
+  Enabled: false
