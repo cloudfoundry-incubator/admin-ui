@@ -11,11 +11,13 @@ module AdminUI
 
       applications = @cc.applications
       droplets     = @cc.droplets
+      stacks       = @cc.stacks
 
       applications_connected = applications['connected']
       droplets_connected     = droplets['connected']
 
       droplet_hash = Hash[droplets['items'].map { |item| [item[:guid], item] }]
+      stack_hash   = Hash[stacks['items'].map { |item| [item[:name], item] }]
 
       latest_droplets = latest_app_guid_hash(droplets['items'])
 
@@ -40,13 +42,16 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        guid = buildpack[:guid]
+        guid       = buildpack[:guid]
+        stack_name = buildpack[:stack]
 
         application_counter = application_counters[guid]
+        stack               = stack_name.nil? ? nil : stack_hash[stack_name]
 
         row = []
 
         row.push(guid)
+        row.push(stack_name)
         row.push(buildpack[:name])
         row.push(guid)
 
@@ -72,10 +77,14 @@ module AdminUI
 
         items.push(row)
 
-        hash[guid] = buildpack
+        hash[guid] =
+          {
+            'buildpack' => buildpack,
+            'stack'     => stack
+          }
       end
 
-      result(true, items, hash, (1..8).to_a, [1, 2, 3, 4, 6, 7])
+      result(true, items, hash, (1..9).to_a, [1, 2, 3, 4, 5, 7, 8])
     end
   end
 end

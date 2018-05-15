@@ -195,6 +195,7 @@ module ViewModelsHelper
     [
       [
         cc_buildpack[:guid],
+        cc_stack[:name],
         cc_buildpack[:name],
         cc_buildpack[:guid],
         cc_buildpack[:created_at].to_datetime.rfc3339,
@@ -208,7 +209,10 @@ module ViewModelsHelper
   end
 
   def view_models_buildpacks_detail
-    cc_buildpack
+    {
+      'buildpack' => cc_buildpack,
+      'stack'     => cc_stack
+    }
   end
 
   def view_models_cells
@@ -1613,6 +1617,7 @@ module ViewModelsHelper
         cc_stack[:guid],
         cc_stack[:created_at].to_datetime.rfc3339,
         cc_stack[:updated_at].to_datetime.rfc3339,
+        1,
         1,
         cc_process[:instances],
         cc_stack[:description]

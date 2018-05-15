@@ -38,7 +38,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :buildpacks,
-            columns: %i[created_at enabled filename guid id key locked name position updated_at]
+            columns: %i[created_at enabled filename guid id key locked name position stack updated_at]
           },
           buildpack_lifecycle_data:
           {

@@ -11,17 +11,29 @@ module AdminUI
 
       applications             = @cc.applications
       buildpack_lifecycle_data = @cc.buildpack_lifecycle_data
+      buildpacks               = @cc.buildpacks
       processes                = @cc.processes
 
       applications_connected             = applications['connected']
       buildpack_lifecycle_data_connected = buildpack_lifecycle_data['connected']
+      buildpacks_connected               = buildpacks['connected']
       processes_connected                = processes['connected']
 
       buildpack_lifecycle_data_hash = Hash[buildpack_lifecycle_data['items'].map { |item| [item[:app_guid], item] }]
       process_app_hash              = Hash[processes['items'].map { |item| [item[:app_guid], item] }]
 
-      application_counters = {}
+      buildpack_counters = {}
+      buildpacks['items'].each do |buildpack|
+        return result unless @running
+        Thread.pass
 
+        stack_name = buildpack[:stack]
+        next if stack_name.nil?
+        buildpack_counters[stack_name] = 0 if buildpack_counters[stack_name].nil?
+        buildpack_counters[stack_name] += 1
+      end
+
+      application_counters = {}
       applications['items'].each do |application|
         return result unless @running
         Thread.pass
@@ -62,6 +74,7 @@ module AdminUI
         name = stack[:name]
 
         application_counter = application_counters[name]
+        buildpack_counter   = buildpack_counters[name]
 
         row = []
 
@@ -73,6 +86,14 @@ module AdminUI
 
         if stack[:updated_at]
           row.push(stack[:updated_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
+        if buildpack_counter
+          row.push(buildpack_counter)
+        elsif buildpacks_connected
+          row.push(0)
         else
           row.push(nil)
         end
@@ -102,7 +123,7 @@ module AdminUI
         hash[guid] = stack
       end
 
-      result(true, items, hash, (1..7).to_a, [1, 2, 3, 4, 7])
+      result(true, items, hash, (1..8).to_a, [1, 2, 3, 4, 8])
     end
   end
 end

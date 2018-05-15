@@ -65,12 +65,13 @@ Sequel.migration do
       TrueClass :locked, :default=>false
       String :filename, :text=>true
       String :sha256_checksum, :text=>true
+      String :stack, :size=>255
       
       index [:created_at]
       index [:guid], :unique=>true
       index [:key]
-      index [:name], :unique=>true
       index [:updated_at]
+      index [:name, :stack], :name=>:unique_name_and_stack, :unique=>true
     end
     
     create_table(:clock_jobs, :ignore_index_errors=>true) do
@@ -481,6 +482,7 @@ Sequel.migration do
       index [:app_guid], :name=>:package_app_guid_index
       index [:created_at]
       index [:guid], :unique=>true
+      index [:state]
       index [:type]
       index [:updated_at]
     end

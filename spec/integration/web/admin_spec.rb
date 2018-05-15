@@ -298,6 +298,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
 
       shared_examples 'rename first row' do
+        let(:rename_column) { 2 }
         it 'renames the first row of the table' do
           check_first_row(table_id)
           @driver.find_element(id: button_id).click
@@ -321,10 +322,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_operation_result
 
           begin
-            Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='#{table_id}']/tbody/tr/td[2]").text == object_rename }
+            Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='#{table_id}']/tbody/tr/td[#{rename_column}]").text == object_rename }
           rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
-          expect(@driver.find_element(xpath: "//table[@id='#{table_id}']/tbody/tr/td[2]").text).to eq(object_rename)
+          expect(@driver.find_element(xpath: "//table[@id='#{table_id}']/tbody/tr/td[#{rename_column}]").text).to eq(object_rename)
         end
       end
 
@@ -4623,8 +4624,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='BuildpacksTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 9,
-                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Position', 'Enabled', 'Locked', 'Applications'],
+                                 expected_length: 10,
+                                 labels:          ['', 'Stack', 'Name', 'GUID', 'Created', 'Updated', 'Position', 'Enabled', 'Locked', 'Applications'],
                                  colspans:        nil
                                }
                              ])
@@ -4632,6 +4633,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td"),
                            [
                              '',
+                             cc_stack[:name],
                              cc_buildpack[:name],
                              cc_buildpack[:guid],
                              cc_buildpack[:created_at].to_datetime.rfc3339,
@@ -4664,18 +4666,18 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           def check_buildpack_enabled(enabled)
             begin
-              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[7]").text == enabled }
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[8]").text == enabled }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[7]").text).to eq(enabled)
+            expect(@driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[8]").text).to eq(enabled)
           end
 
           def check_buildpack_locked(locked)
             begin
-              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[8]").text == locked }
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[9]").text == locked }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[8]").text).to eq(locked)
+            expect(@driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[9]").text).to eq(locked)
           end
 
           it 'has a Rename button' do
@@ -4743,6 +4745,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               let(:button_id)     { 'Buttons_BuildpacksTable_0' }
               let(:title_text)    { 'Rename Buildpack' }
               let(:object_rename) { cc_buildpack_rename }
+              let(:rename_column) { 3 }
             end
           end
 
@@ -4802,6 +4805,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
+                            { label: 'Stack',        tag:   'a', value: cc_stack[:name] },
+                            { label: 'Stack GUID',   tag:   nil, value: cc_stack[:guid] },
                             { label: 'Name',         tag: 'div', value: cc_buildpack[:name] },
                             { label: 'GUID',         tag:   nil, value: cc_buildpack[:guid] },
                             { label: 'Created',      tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_buildpack[:created_at].to_datetime.rfc3339}\")") },
@@ -4815,8 +4820,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
+          it 'has stack link' do
+            check_filter_link('Buildpacks', 0, 'Stacks', cc_stack[:guid])
+          end
+
           it 'has applications link' do
-            check_filter_link('Buildpacks', 9, 'Applications', cc_buildpack[:guid])
+            check_filter_link('Buildpacks', 11, 'Applications', cc_buildpack[:guid])
           end
         end
       end
@@ -5396,8 +5405,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='StacksTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 8,
-                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Applications', 'Application Instances', 'Description'],
+                                 expected_length: 9,
+                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Buildpacks', 'Applications', 'Application Instances', 'Description'],
                                  colspans:        nil
                                }
                              ])
@@ -5409,6 +5418,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_stack[:guid],
                              cc_stack[:created_at].to_datetime.rfc3339,
                              cc_stack[:updated_at].to_datetime.rfc3339,
+                             '1',
                              '1',
                              @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})"),
                              cc_stack[:description]
@@ -5471,17 +5481,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Created',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_stack[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Updated',               tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_stack[:updated_at].to_datetime.rfc3339}\")") },
                             { label: 'Description',           tag:   nil, value: cc_stack[:description] },
+                            { label: 'Buildpacks',            tag:   'a', value: '1' },
                             { label: 'Applications',          tag:   'a', value: '1' },
                             { label: 'Application Instances', tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})") }
                           ])
           end
 
+          it 'has buildpacks link' do
+            check_filter_link('Stacks', 5, 'Buildpacks', cc_stack[:name])
+          end
+
           it 'has applications link' do
-            check_filter_link('Stacks', 5, 'Applications', cc_stack[:name])
+            check_filter_link('Stacks', 6, 'Applications', cc_stack[:name])
           end
 
           it 'has application instances link' do
-            check_filter_link('Stacks', 6, 'ApplicationInstances', cc_stack[:name])
+            check_filter_link('Stacks', 7, 'ApplicationInstances', cc_stack[:name])
           end
         end
       end

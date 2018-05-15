@@ -358,27 +358,27 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'renames a buildpack' do
-      expect { rename_buildpack }.to change { get_json('/buildpacks_view_model')['items']['items'][0][1] }.from(cc_buildpack[:name]).to(cc_buildpack_rename)
+      expect { rename_buildpack }.to change { get_json('/buildpacks_view_model')['items']['items'][0][2] }.from(cc_buildpack[:name]).to(cc_buildpack_rename)
     end
 
     it 'disables buildpack' do
       make_buildpack_enabled
-      expect { make_buildpack_disabled }.to change { get_json('/buildpacks_view_model')['items']['items'][0][6] }.from(true).to(false)
+      expect { make_buildpack_disabled }.to change { get_json('/buildpacks_view_model')['items']['items'][0][7] }.from(true).to(false)
     end
 
     it 'enables buildpack' do
       make_buildpack_disabled
-      expect { make_buildpack_enabled }.to change { get_json('/buildpacks_view_model')['items']['items'][0][6] }.from(false).to(true)
+      expect { make_buildpack_enabled }.to change { get_json('/buildpacks_view_model')['items']['items'][0][7] }.from(false).to(true)
     end
 
     it 'locks buildpack' do
       make_buildpack_unlocked
-      expect { make_buildpack_locked }.to change { get_json('/buildpacks_view_model')['items']['items'][0][7] }.from(false).to(true)
+      expect { make_buildpack_locked }.to change { get_json('/buildpacks_view_model')['items']['items'][0][8] }.from(false).to(true)
     end
 
     it 'unlocks buildpack' do
       make_buildpack_locked
-      expect { make_buildpack_unlocked }.to change { get_json('/buildpacks_view_model')['items']['items'][0][7] }.from(true).to(false)
+      expect { make_buildpack_unlocked }.to change { get_json('/buildpacks_view_model')['items']['items'][0][8] }.from(true).to(false)
     end
 
     it 'deletes a buildpack' do

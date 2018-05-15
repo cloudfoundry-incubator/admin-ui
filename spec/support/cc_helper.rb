@@ -533,6 +533,7 @@ module CCHelper
       locked:     false,
       name:       'Node.js',
       position:   1,
+      stack:      cc_stack[:name],
       updated_at: unique_time('cc_buildpack_updated')
     }
   end
@@ -870,7 +871,7 @@ module CCHelper
   end
 
   def cc_info_api_version
-    '2.107.0'
+    '2.110.0'
   end
 
   def cc_info_build
@@ -1465,7 +1466,7 @@ module CCHelper
       description: 'TestStack description',
       guid:        'stack1',
       id:          unique_id('cc_stack'),
-      name:        'lucid64',
+      name:        'cflinuxfs2',
       updated_at:  unique_time('cc_stack_updated')
     }
   end
@@ -1594,7 +1595,7 @@ module CCHelper
   end
 
   def uaa_info_app_version
-    '4.12.0'
+    '4.13.4'
   end
 
   # /info returned from the UAA system is not symbols
