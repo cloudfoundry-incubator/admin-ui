@@ -300,6 +300,7 @@ module CCHelper
   end
 
   def cc_clear_service_bindings_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM service_binding_operations')
     sql(config.ccdb_uri, 'DELETE FROM service_bindings')
 
     @cc_service_bindings_deleted = true
@@ -1231,6 +1232,19 @@ module CCHelper
     ]
   end
 
+  def cc_service_binding_operation
+    {
+      broker_provided_operation: 'TestServiceBindingOperation broker operation',
+      created_at:                unique_time('cc_service_binding_operation_created'),
+      description:               'TestServiceBindingOperation description',
+      id:                        unique_id('cc_service_binding_operation'),
+      service_binding_id:        cc_service_binding[:id],
+      state:                     'succeeded',
+      type:                      'create',
+      updated_at:                unique_time('cc_service_binding_operation_updated')
+    }
+  end
+
   def cc_service_broker
     {
       auth_username: 'username',
@@ -1728,6 +1742,7 @@ module CCHelper
                [:service_plan_visibilities,        cc_service_plan_visibility],
                [:service_bindings,                 cc_service_binding_with_credentials],
                [:service_instance_operations,      cc_service_instance_operation],
+               [:service_binding_operations,       cc_service_binding_operation],
                [:service_keys,                     cc_service_key_with_credentials],
                [:tasks,                            cc_task]
              ]

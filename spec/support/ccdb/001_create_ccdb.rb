@@ -957,6 +957,21 @@ Sequel.migration do
       index [:name, :service_instance_id], :name=>:svc_key_name_instance_id_index, :unique=>true
     end
     
+    create_table(:service_binding_operations, :ignore_index_errors=>true) do
+      primary_key :id
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :service_binding_id, :service_bindings, :key=>[:id], :on_delete=>:cascade
+      String :state, :size=>255, :null=>false
+      String :type, :size=>255, :null=>false
+      String :description, :size=>10000
+      String :broker_provided_operation, :size=>10000
+      
+      index [:created_at]
+      index [:updated_at]
+      index [:service_binding_id], :name=>:svc_binding_id_index, :unique=>true
+    end
+    
     alter_table(:app_events) do
       add_foreign_key [:app_id], :processes, :name=>:fk_app_events_app_id, :key=>[:id], :schema=>:public
     end

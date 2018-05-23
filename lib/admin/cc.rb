@@ -227,6 +227,12 @@ module AdminUI
             table:   :service_bindings,
             columns: %i[app_guid created_at guid id name service_instance_guid syslog_drain_url updated_at volume_mounts_salt]
           },
+          service_binding_operations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_binding_operations,
+            columns: %i[broker_provided_operation created_at description id service_binding_id state type updated_at]
+          },
           service_brokers:
           {
             db_uri:  ccdb_uri,
@@ -720,6 +726,10 @@ module AdminUI
 
     def security_groups_spaces
       result_cache(:security_groups_spaces)
+    end
+
+    def service_binding_operations
+      result_cache(:service_binding_operations)
     end
 
     def service_bindings

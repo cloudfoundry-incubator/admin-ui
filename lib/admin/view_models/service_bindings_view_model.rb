@@ -9,24 +9,26 @@ module AdminUI
       # service_bindings have to exist. Other record types are optional
       return result unless service_bindings['connected']
 
-      applications      = @cc.applications
-      events            = @cc.events
-      organizations     = @cc.organizations
-      service_brokers   = @cc.service_brokers
-      service_instances = @cc.service_instances
-      service_plans     = @cc.service_plans
-      services          = @cc.services
-      spaces            = @cc.spaces
+      applications               = @cc.applications
+      events                     = @cc.events
+      organizations              = @cc.organizations
+      service_binding_operations = @cc.service_binding_operations
+      service_brokers            = @cc.service_brokers
+      service_instances          = @cc.service_instances
+      service_plans              = @cc.service_plans
+      services                   = @cc.services
+      spaces                     = @cc.spaces
 
       events_connected = events['connected']
 
-      application_hash      = Hash[applications['items'].map { |item| [item[:guid], item] }]
-      organization_hash     = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      service_broker_hash   = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
-      service_instance_hash = Hash[service_instances['items'].map { |item| [item[:guid], item] }]
-      service_plan_hash     = Hash[service_plans['items'].map { |item| [item[:id], item] }]
-      service_hash          = Hash[services['items'].map { |item| [item[:id], item] }]
-      space_hash            = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      application_hash               = Hash[applications['items'].map { |item| [item[:guid], item] }]
+      organization_hash              = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      service_binding_operation_hash = Hash[service_binding_operations['items'].map { |item| [item[:service_binding_id], item] }]
+      service_broker_hash            = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
+      service_instance_hash          = Hash[service_instances['items'].map { |item| [item[:guid], item] }]
+      service_plan_hash              = Hash[service_plans['items'].map { |item| [item[:id], item] }]
+      service_hash                   = Hash[services['items'].map { |item| [item[:id], item] }]
+      space_hash                     = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
       event_counters = {}
       events['items'].each do |event|
@@ -46,15 +48,17 @@ module AdminUI
         return result unless @running
         Thread.pass
 
-        guid             = service_binding[:guid]
-        application      = application_hash[service_binding[:app_guid]]
-        service_instance = service_instance_hash[service_binding[:service_instance_guid]]
-        service_plan_id  = service_instance.nil? ? nil : service_instance[:service_plan_id]
-        service_plan     = service_plan_id.nil? ? nil : service_plan_hash[service_plan_id]
-        service          = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
-        service_broker   = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
-        space            = service_instance.nil? ? nil : space_hash[service_instance[:space_id]]
-        organization     = space.nil? ? nil : organization_hash[space[:organization_id]]
+        guid                      = service_binding[:guid]
+        id                        = service_binding[:id]
+        application               = application_hash[service_binding[:app_guid]]
+        service_binding_operation = service_binding_operation_hash[id]
+        service_instance          = service_instance_hash[service_binding[:service_instance_guid]]
+        service_plan_id           = service_instance.nil? ? nil : service_instance[:service_plan_id]
+        service_plan              = service_plan_id.nil? ? nil : service_plan_hash[service_plan_id]
+        service                   = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
+        service_broker            = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
+        space                     = service_instance.nil? ? nil : space_hash[service_instance[:space_id]]
+        organization              = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         event_counter = event_counters[guid]
 
@@ -80,6 +84,20 @@ module AdminUI
           row.push(0)
         else
           row.push(nil)
+        end
+
+        if service_binding_operation
+          row.push(service_binding_operation[:type])
+          row.push(service_binding_operation[:state])
+          row.push(service_binding_operation[:created_at].to_datetime.rfc3339)
+
+          if service_binding_operation[:updated_at]
+            row.push(service_binding_operation[:updated_at].to_datetime.rfc3339)
+          else
+            row.push(nil)
+          end
+        else
+          row.push(nil, nil, nil, nil)
         end
 
         if application
@@ -163,18 +181,19 @@ module AdminUI
 
         hash[guid] =
           {
-            'application'      => application,
-            'organization'     => organization,
-            'service'          => service,
-            'service_binding'  => service_binding.reject { |key, _| key == :volume_mounts_salt },
-            'service_broker'   => service_broker,
-            'service_instance' => service_instance,
-            'service_plan'     => service_plan,
-            'space'            => space
+            'application'               => application,
+            'organization'              => organization,
+            'service'                   => service,
+            'service_binding'           => service_binding.reject { |key, _| key == :volume_mounts_salt },
+            'service_binding_operation' => service_binding_operation,
+            'service_broker'            => service_broker,
+            'service_instance'          => service_instance,
+            'service_plan'              => service_plan,
+            'space'                     => space
           }
       end
 
-      result(true, items, hash, (1..32).to_a, (1..32).to_a - [7])
+      result(true, items, hash, (1..36).to_a, (1..36).to_a - [7])
     end
   end
 end

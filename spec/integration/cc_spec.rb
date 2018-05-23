@@ -634,6 +634,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected service binding operations' do
+      let(:results)  { cc.service_binding_operations }
+      let(:expected) { cc_service_binding_operation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected service bindings' do
       let(:results)  { cc.service_bindings }
       let(:expected) { cc_service_binding }
