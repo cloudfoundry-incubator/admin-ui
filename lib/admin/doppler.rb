@@ -417,7 +417,7 @@ module AdminUI
 
           update_connection_status('doppler_logging_endpoint',
                                    'doppler_logging_endpoint',
-                                   @doppler_uri ? @doppler_uri : 'unknown',
+                                   @doppler_uri || 'unknown',
                                    @components['connected'],
                                    disconnected)
 
