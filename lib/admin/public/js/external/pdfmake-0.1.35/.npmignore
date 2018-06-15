@@ -1,9 +1,0 @@
-.git*
-docs/
-examples/
-tests/
-test-env/
-yarn.lock
-composer.json
-bower.json
-.travis.yml
