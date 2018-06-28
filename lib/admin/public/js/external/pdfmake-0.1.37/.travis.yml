@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - 6
+  - 8
+  - node
+
+os:
+  - linux
+  - osx
+
+sudo: false
+
+cache:
+  directories:
+    - node_modules
