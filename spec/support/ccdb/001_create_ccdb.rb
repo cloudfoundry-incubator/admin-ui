@@ -415,7 +415,7 @@ Sequel.migration do
       String :state, :size=>255
       foreign_key :app_guid, :apps, :type=>String, :size=>255, :key=>[:guid]
       String :droplet_guid, :size=>255
-      String :webish_process_guid, :size=>255
+      String :deploying_web_process_guid, :size=>255
       
       index [:app_guid]
       index [:created_at]
