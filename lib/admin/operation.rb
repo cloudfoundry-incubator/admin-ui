@@ -383,7 +383,7 @@ module AdminUI
     end
 
     def delete_service_binding(service_binding_guid)
-      url = "/v2/service_bindings/#{service_binding_guid}"
+      url = "/v2/service_bindings/#{service_binding_guid}?accepts_incomplete=true"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_bindings
@@ -425,7 +425,7 @@ module AdminUI
     end
 
     def delete_service_key(service_key_guid)
-      url = "/v2/service_keys/#{service_key_guid}"
+      url = "/v2/service_keys/#{service_key_guid}?accepts_incomplete=true"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_keys
