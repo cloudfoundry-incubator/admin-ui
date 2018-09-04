@@ -52,6 +52,8 @@ module AdminUI
           row.push(nil)
         end
 
+        row.push(route_mapping[:weight])
+
         if application
           row.push(application[:name])
           row.push(application[:guid])
@@ -99,7 +101,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..8).to_a, (1..8))
+      result(true, items, hash, (1..9).to_a, [1, 2, 3, 5, 6, 7, 8, 9])
     end
   end
 end

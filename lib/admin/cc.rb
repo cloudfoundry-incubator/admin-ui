@@ -201,7 +201,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :route_mappings,
-            columns: %i[app_guid app_port created_at guid id process_type route_guid updated_at]
+            columns: %i[app_guid app_port created_at guid id process_type route_guid updated_at weight]
           },
           routes:
           {

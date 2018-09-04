@@ -448,7 +448,7 @@ Sequel.migration do
       String :build_guid, :text=>true
       String :docker_receipt_username, :text=>true
       String :docker_receipt_password_salt, :text=>true
-      String :encrypted_docker_receipt_password, :text=>true
+      String :encrypted_docker_receipt_password, :size=>16000
       String :encryption_key_label, :size=>255
       
       index [:app_guid], :name=>:droplet_app_guid_index
@@ -748,6 +748,7 @@ Sequel.migration do
       foreign_key :app_guid, :apps, :type=>String, :text=>true, :null=>false, :key=>[:guid]
       foreign_key :route_guid, :routes, :type=>String, :text=>true, :null=>false, :key=>[:guid]
       String :process_type, :text=>true
+      Integer :weight, :default=>1
       
       index [:created_at], :name=>:apps_routes_created_at_index
       index [:guid], :name=>:apps_routes_guid_index, :unique=>true

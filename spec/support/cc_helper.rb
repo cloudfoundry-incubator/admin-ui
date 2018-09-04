@@ -1134,7 +1134,8 @@ module CCHelper
       id:           unique_id('cc_route_mapping'),
       process_type: 'web',
       route_guid:   cc_route[:guid],
-      updated_at:   unique_time('cc_route_mapping_updated')
+      updated_at:   unique_time('cc_route_mapping_updated'),
+      weight:       1
     }
   end
 
