@@ -569,6 +569,7 @@ module AdminUI
       rescue CCRestClientResponseError => error
         # If we receive a 404 since the user is not within the CC, it still might be in UAA
         raise unless error.http_code == '404'
+
         cc_error = error
       end
 
@@ -585,6 +586,7 @@ module AdminUI
         @view_models.invalidate_users
       rescue CCRestClientResponseError => error
         raise cc_error if error.http_code == '404' && cc_error
+
         raise error
       end
     end

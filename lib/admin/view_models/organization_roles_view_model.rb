@@ -42,6 +42,7 @@ module AdminUI
     def add_rows(organization_role_array, path_role, human_role, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
       organization_role_array['items'].each do |organization_role|
         return result unless @running
+
         Thread.pass
 
         row = []

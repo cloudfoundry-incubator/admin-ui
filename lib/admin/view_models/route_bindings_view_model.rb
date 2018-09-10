@@ -34,6 +34,7 @@ module AdminUI
 
       route_bindings['items'].each do |route_binding|
         return result unless @running
+
         Thread.pass
 
         route            = route_hash[route_binding[:route_id]]

@@ -44,6 +44,7 @@ module AdminUI
       event_counters = {}
       events['items'].each do |event|
         return result unless @running
+
         Thread.pass
 
         if event[:actee_type] == 'app'
@@ -60,6 +61,7 @@ module AdminUI
       route_mapping_counters = {}
       route_mappings['items'].each do |route_mapping|
         return result unless @running
+
         Thread.pass
 
         app_guid = route_mapping[:app_guid]
@@ -70,6 +72,7 @@ module AdminUI
       service_binding_counters = {}
       service_bindings['items'].each do |service_binding|
         return result unless @running
+
         Thread.pass
 
         app_guid = service_binding[:app_guid]
@@ -80,6 +83,7 @@ module AdminUI
       application_usage_counters_hash = {}
       containers['items'].each_value do |container|
         return result unless @running
+
         Thread.pass
 
         application_guid = container[:application_id]
@@ -102,6 +106,7 @@ module AdminUI
       task_counters = {}
       tasks['items'].each do |task|
         return result unless @running
+
         Thread.pass
 
         app_guid = task[:app_guid]
@@ -114,6 +119,7 @@ module AdminUI
 
       applications['items'].each do |application|
         return result unless @running
+
         Thread.pass
 
         guid                     = application[:guid]

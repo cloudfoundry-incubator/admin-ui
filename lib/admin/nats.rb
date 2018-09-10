@@ -32,6 +32,7 @@ module AdminUI
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @testing && @running && @cache['items'].nil?
         return disconnected_result if @cache['items'].nil?
+
         @cache.clone
       end
     end
@@ -183,6 +184,7 @@ module AdminUI
               if parsed.key?('connected')
                 if parsed.key?('items')
                   return parsed if parsed.key?('notified')
+
                   @logger.error("Error during NATS parse data: 'notified' key not present")
                 else
                   @logger.error("Error during NATS parse data: 'items' key not present")
@@ -259,6 +261,7 @@ module AdminUI
 
     def send_email(disconnected)
       return unless @email.configured? && !disconnected.empty?
+
       thread = Thread.new do
         begin
           @email.send_email(disconnected)
@@ -273,6 +276,7 @@ module AdminUI
 
     def update_connection_status(type, uri, connected, disconnected_list)
       return unless monitored?(type)
+
       if connected
         @cache['notified'].delete(uri)
       else

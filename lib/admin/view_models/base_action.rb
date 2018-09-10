@@ -12,6 +12,7 @@ module AdminUI
     def items
       return @source unless @source[:connected]
       return @source if @source[:items].empty?
+
       super
     end
   end

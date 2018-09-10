@@ -20,6 +20,7 @@ module AdminUI
 
       spaces['items'].each do |space|
         return result unless @running
+
         Thread.pass
 
         space_quota_definition_id = space[:space_quota_definition_id]
@@ -32,6 +33,7 @@ module AdminUI
 
       space_quota_definitions['items'].each do |space_quota_definition|
         return result unless @running
+
         Thread.pass
 
         guid          = space_quota_definition[:guid]

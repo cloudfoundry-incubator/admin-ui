@@ -27,9 +27,11 @@ module AdminUI
       event_counters = {}
       events['items'].each do |event|
         return result unless @running
+
         Thread.pass
 
         next unless event[:actee_type] == 'route'
+
         actee = event[:actee]
         event_counters[actee] = 0 if event_counters[actee].nil?
         event_counters[actee] += 1
@@ -38,6 +40,7 @@ module AdminUI
       app_counters = {}
       route_mappings['items'].each do |route_mapping|
         return result unless @running
+
         Thread.pass
 
         route_guid = route_mapping[:route_guid]
@@ -48,6 +51,7 @@ module AdminUI
       binding_counters = {}
       route_bindings['items'].each do |route_binding|
         return result unless @running
+
         Thread.pass
 
         route_id = route_binding[:route_id]
@@ -60,6 +64,7 @@ module AdminUI
 
       routes['items'].each do |route|
         return result unless @running
+
         Thread.pass
 
         guid         = route[:guid]

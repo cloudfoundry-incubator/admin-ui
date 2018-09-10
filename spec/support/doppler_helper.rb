@@ -104,6 +104,7 @@ module DopplerHelper
 
     allow_any_instance_of(MockWebSocketClient).to receive(:close) do
       return unless @close_blk
+
       EventMachine.next_tick { @close_blk.call(Faye::WebSocket::API::Event.create('close', code: 1006, reason: 'no reason')) }
     end
 

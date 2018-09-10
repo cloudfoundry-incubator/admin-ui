@@ -19,6 +19,7 @@ module AdminUI
       group_membership_counters = {}
       group_membership['items'].each do |group_membership_entry|
         return result unless @running
+
         Thread.pass
 
         group_id = group_membership_entry[:group_id]
@@ -31,6 +32,7 @@ module AdminUI
 
       groups['items'].each do |group|
         return result unless @running
+
         Thread.pass
 
         guid = group[:id]

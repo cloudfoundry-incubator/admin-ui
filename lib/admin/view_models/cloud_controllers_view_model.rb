@@ -14,6 +14,7 @@ module AdminUI
 
       cloud_controllers['items'].each do |cloud_controller|
         return result unless @running
+
         Thread.pass
 
         row = []

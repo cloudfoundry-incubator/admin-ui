@@ -48,6 +48,7 @@ module AdminUI
       @components_semaphore.synchronize do
         @components_condition.wait(@components_semaphore) while @testing && @running && @components['items'].nil?
         return { 'connected' => false, 'items' => {} } if @components['items'].nil?
+
         { 'connected' => @components['connected'], 'items' => @components['items'].clone }
       end
     end
@@ -56,6 +57,7 @@ module AdminUI
       @containers_semaphore.synchronize do
         @containers_condition.wait(@containers_semaphore) while @testing && @running && @containers['items'].nil?
         return { 'connected' => false, 'items' => {} } if @containers['items'].nil?
+
         { 'connected' => @containers['connected'], 'items' => @containers['items'].clone }
       end
     end
@@ -71,6 +73,7 @@ module AdminUI
     def deas_count
       hash = filter_components('DEA')
       return nil unless hash['connected']
+
       hash['items'].length
     end
 
@@ -85,6 +88,7 @@ module AdminUI
     def reps_count
       hash = filter_components('rep')
       return nil unless hash['connected']
+
       hash['items'].length
     end
 
@@ -214,12 +218,14 @@ module AdminUI
 
     def cancel_connect_timer
       return unless @connect_timer
+
       EventMachine.cancel_timer(@connect_timer)
       @connect_timer = nil
     end
 
     def cancel_rollup_interval_timer
       return unless @rollup_interval_timer
+
       EventMachine.cancel_timer(@rollup_interval_timer)
       @rollup_interval_timer = nil
     end
@@ -441,6 +447,7 @@ module AdminUI
 
     def send_email(disconnected)
       return unless @email.configured? && !disconnected.empty?
+
       thread = Thread.new do
         begin
           @email.send_email(disconnected)
@@ -464,6 +471,7 @@ module AdminUI
               if parsed.key?('connected')
                 if parsed.key?('items')
                   return parsed if parsed.key?('notified')
+
                   @logger.error("Error during doppler parse data: 'notified' key not present")
                 else
                   @logger.error("Error during doppler parse data: 'items' key not present")
@@ -517,6 +525,7 @@ module AdminUI
     # The call to this method must be in a synchronized block
     def update_connection_status(key, origin, uri, connected, disconnected_list)
       return unless monitored?(origin)
+
       if connected
         @components['notified'].delete(key)
       else

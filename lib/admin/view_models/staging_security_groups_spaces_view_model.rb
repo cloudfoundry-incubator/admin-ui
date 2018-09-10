@@ -24,6 +24,7 @@ module AdminUI
 
       staging_security_groups_spaces['items'].each do |staging_security_group_space|
         return result unless @running
+
         Thread.pass
 
         row = []

@@ -21,6 +21,7 @@ module AdminUI
       return 'PENDING' if current_droplet.nil?
       return 'PENDING' if latest_droplet[:id] != current_droplet[:id]
       return 'STAGED' if current_droplet[:state] == 'STAGED'
+
       'PENDING'
     end
   end

@@ -25,10 +25,12 @@ module AdminUI
       buildpack_counters = {}
       buildpacks['items'].each do |buildpack|
         return result unless @running
+
         Thread.pass
 
         stack_name = buildpack[:stack]
         next if stack_name.nil?
+
         buildpack_counters[stack_name] = 0 if buildpack_counters[stack_name].nil?
         buildpack_counters[stack_name] += 1
       end
@@ -36,6 +38,7 @@ module AdminUI
       application_counters = {}
       applications['items'].each do |application|
         return result unless @running
+
         Thread.pass
 
         application_guid         = application[:guid]
@@ -68,6 +71,7 @@ module AdminUI
 
       stacks['items'].each do |stack|
         return result unless @running
+
         Thread.pass
 
         guid = stack[:guid]

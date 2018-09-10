@@ -14,6 +14,7 @@ module AdminUI
 
       env_groups['items'].each do |env_group|
         return result unless @running
+
         Thread.pass
 
         name = env_group[:name]

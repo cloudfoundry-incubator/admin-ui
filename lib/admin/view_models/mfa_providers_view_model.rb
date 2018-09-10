@@ -18,6 +18,7 @@ module AdminUI
 
       mfa_providers['items'].each do |mfa_provider|
         return result unless @running
+
         Thread.pass
 
         mfa_provider_id = mfa_provider[:id]

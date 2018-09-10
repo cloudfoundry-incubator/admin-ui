@@ -121,6 +121,7 @@ module AdminUI
 
     def display_files
       return if @testing
+
       puts "\n\n"
       puts 'AdminUI...'
 

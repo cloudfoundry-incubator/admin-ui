@@ -29,6 +29,7 @@ module AdminUI
 
       route_mappings['items'].each do |route_mapping|
         return result unless @running
+
         Thread.pass
 
         guid        = route_mapping[:guid]

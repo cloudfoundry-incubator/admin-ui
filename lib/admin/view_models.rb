@@ -857,6 +857,7 @@ module AdminUI
       cache[:semaphore].synchronize do
         cache[:condition].wait(cache[:semaphore]) while @testing && @running && cache[:result].nil?
         return disconnected_result if cache[:result].nil?
+
         cache[:result]
       end
     end

@@ -92,6 +92,7 @@ module AdminUI
       @semaphore.synchronize do
         @condition.wait(@semaphore) while @testing && @running && @cache.nil?
         return { 'connected' => false, 'items' => [] } if @cache.nil?
+
         cache = @cache.clone
       end
 
@@ -101,6 +102,7 @@ module AdminUI
       cache['items'].each_value do |item|
         type_pattern_index = item['type'] =~ type_pattern
         next if type_pattern_index.nil?
+
         result_item = item.clone
         item_name = type_pattern_index.zero? ? item['host'] : item['type'].sub(type_pattern, '')
         result_item['name'] = item_name unless item_name.nil?
@@ -123,6 +125,7 @@ module AdminUI
 
         nats_result['items'].each_pair do |uri, item|
           break unless @running
+
           Thread.pass
 
           item_hash[uri] = item_result(uri, item)

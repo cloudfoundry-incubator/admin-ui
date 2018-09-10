@@ -25,6 +25,7 @@ module AdminUI
       if varz_routers['connected']
         varz_routers['items'].each do |router|
           return result unless @running
+
           Thread.pass
 
           row = []
@@ -97,6 +98,7 @@ module AdminUI
       if doppler_gorouters['connected']
         doppler_gorouters['items'].each_pair do |key, router|
           return result unless @running
+
           Thread.pass
 
           name = "#{router['ip']}:#{router['index']}"

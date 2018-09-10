@@ -17,6 +17,7 @@ module AdminUI
       if varz_components['connected']
         varz_components['items'].each do |component|
           return result unless @running
+
           Thread.pass
 
           row = []
@@ -55,6 +56,7 @@ module AdminUI
       if doppler_components['connected']
         doppler_components['items'].each_pair do |key, component|
           return result unless @running
+
           Thread.pass
 
           name = "#{component['ip']}:#{component['index']}"

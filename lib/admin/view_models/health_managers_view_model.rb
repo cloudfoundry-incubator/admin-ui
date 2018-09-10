@@ -15,6 +15,7 @@ module AdminUI
 
       doppler_analyzers['items'].each_pair do |key, doppler_analyzer|
         return result unless @running
+
         Thread.pass
 
         name = "#{doppler_analyzer['ip']}:#{doppler_analyzer['index']}"

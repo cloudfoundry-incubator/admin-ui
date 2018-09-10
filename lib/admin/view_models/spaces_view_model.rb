@@ -62,6 +62,7 @@ module AdminUI
       event_target_counters = {}
       events['items'].each do |event|
         return result unless @running
+
         Thread.pass
 
         if event[:actee_type] == 'space'
@@ -72,6 +73,7 @@ module AdminUI
 
         space_guid = event[:space_guid]
         next if space_guid.nil?
+
         event_target_counters[space_guid] = 0 if event_target_counters[space_guid].nil?
         event_target_counters[space_guid] += 1
       end
@@ -93,26 +95,31 @@ module AdminUI
 
       users['items'].each do |user|
         return result unless @running
+
         Thread.pass
 
         default_space_id = user[:default_space_id]
         next if default_space_id.nil?
+
         space_default_user_counters[default_space_id] = 0 if space_default_user_counters[default_space_id].nil?
         space_default_user_counters[default_space_id] += 1
       end
 
       service_brokers['items'].each do |service_broker|
         return result unless @running
+
         Thread.pass
 
         space_id = service_broker[:space_id]
         next if space_id.nil?
+
         space_service_broker_counters[space_id] = 0 if space_service_broker_counters[space_id].nil?
         space_service_broker_counters[space_id] += 1
       end
 
       service_instances['items'].each do |service_instance|
         return result unless @running
+
         Thread.pass
 
         space_id = service_instance[:space_id]
@@ -122,6 +129,7 @@ module AdminUI
 
       security_groups_spaces['items'].each do |security_group_space|
         return result unless @running
+
         Thread.pass
 
         space_id = security_group_space[:space_id]
@@ -131,6 +139,7 @@ module AdminUI
 
       staging_security_groups_spaces['items'].each do |staging_security_group_space|
         return result unless @running
+
         Thread.pass
 
         staging_space_id = staging_security_group_space[:staging_space_id]
@@ -140,6 +149,7 @@ module AdminUI
 
       routes['items'].each do |route|
         return result unless @running
+
         Thread.pass
 
         space_id = route[:space_id]
@@ -163,6 +173,7 @@ module AdminUI
 
       applications['items'].each do |application|
         return result unless @running
+
         Thread.pass
 
         space_guid = application[:space_guid]
@@ -183,11 +194,13 @@ module AdminUI
 
       processes['items'].each do |process|
         return result unless @running
+
         Thread.pass
 
         application_guid = process[:app_guid]
         application = applications_hash[application_guid]
         next if application.nil?
+
         space_guid = application[:space_guid]
         space_process_counters = space_process_counters_hash[space_guid]
 
@@ -206,11 +219,13 @@ module AdminUI
 
       tasks['items'].each do |task|
         return result unless @running
+
         Thread.pass
 
         application_guid = task[:app_guid]
         application = applications_hash[application_guid]
         next if application.nil?
+
         space_guid = application[:space_guid]
         space_task_counters[space_guid] = 0 if space_task_counters[space_guid].nil?
         space_task_counters[space_guid] += 1
@@ -221,6 +236,7 @@ module AdminUI
 
       spaces['items'].each do |space|
         return result unless @running
+
         Thread.pass
 
         space_id   = space[:id]

@@ -14,6 +14,7 @@ module AdminUI
 
       gateways['items'].each do |gateway|
         return result unless @running
+
         Thread.pass
 
         row = []

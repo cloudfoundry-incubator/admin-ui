@@ -54,6 +54,7 @@ module AdminUI
 
       combined_feature_flags.each do |feature_flag|
         return result unless @running
+
         Thread.pass
 
         name = feature_flag[:name]

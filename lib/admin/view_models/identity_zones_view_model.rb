@@ -30,10 +30,12 @@ module AdminUI
       approval_counters = {}
       approvals['items'].each do |approval|
         return result unless @running
+
         Thread.pass
 
         identity_zone_id = approval[:identity_zone_id]
         next if identity_zone_id.nil?
+
         approval_counters[identity_zone_id] = 0 if approval_counters[identity_zone_id].nil?
         approval_counters[identity_zone_id] += 1
       end
@@ -41,10 +43,12 @@ module AdminUI
       client_counters = {}
       clients['items'].each do |client|
         return result unless @running
+
         Thread.pass
 
         identity_zone_id = client[:identity_zone_id]
         next if identity_zone_id.nil?
+
         client_counters[identity_zone_id] = 0 if client_counters[identity_zone_id].nil?
         client_counters[identity_zone_id] += 1
       end
@@ -52,10 +56,12 @@ module AdminUI
       group_counters = {}
       groups['items'].each do |group|
         return result unless @running
+
         Thread.pass
 
         identity_zone_id = group[:identity_zone_id]
         next if identity_zone_id.nil?
+
         group_counters[identity_zone_id] = 0 if group_counters[identity_zone_id].nil?
         group_counters[identity_zone_id] += 1
       end
@@ -63,10 +69,12 @@ module AdminUI
       group_membership_counters = {}
       group_membership['items'].each do |group_membership_entry|
         return result unless @running
+
         Thread.pass
 
         identity_zone_id = group_membership_entry[:identity_zone_id]
         next if identity_zone_id.nil?
+
         group_membership_counters[identity_zone_id] = 0 if group_membership_counters[identity_zone_id].nil?
         group_membership_counters[identity_zone_id] += 1
       end
@@ -74,10 +82,12 @@ module AdminUI
       identity_provider_counters = {}
       identity_providers['items'].each do |identity_provider|
         return result unless @running
+
         Thread.pass
 
         identity_zone_id = identity_provider[:identity_zone_id]
         next if identity_zone_id.nil?
+
         identity_provider_counters[identity_zone_id] = 0 if identity_provider_counters[identity_zone_id].nil?
         identity_provider_counters[identity_zone_id] += 1
       end
@@ -85,10 +95,12 @@ module AdminUI
       mfa_provider_counters = {}
       mfa_providers['items'].each do |mfa_provider|
         return result unless @running
+
         Thread.pass
 
         identity_zone_id = mfa_provider[:identity_zone_id]
         next if identity_zone_id.nil?
+
         mfa_provider_counters[identity_zone_id] = 0 if mfa_provider_counters[identity_zone_id].nil?
         mfa_provider_counters[identity_zone_id] += 1
       end
@@ -96,10 +108,12 @@ module AdminUI
       service_provider_counters = {}
       service_providers['items'].each do |service_provider|
         return result unless @running
+
         Thread.pass
 
         identity_zone_id = service_provider[:identity_zone_id]
         next if identity_zone_id.nil?
+
         service_provider_counters[identity_zone_id] = 0 if service_provider_counters[identity_zone_id].nil?
         service_provider_counters[identity_zone_id] += 1
       end
@@ -107,10 +121,12 @@ module AdminUI
       user_counters = {}
       users['items'].each do |user|
         return result unless @running
+
         Thread.pass
 
         identity_zone_id = user[:identity_zone_id]
         next if identity_zone_id.nil?
+
         user_counters[identity_zone_id] = 0 if user_counters[identity_zone_id].nil?
         user_counters[identity_zone_id] += 1
       end
@@ -120,6 +136,7 @@ module AdminUI
 
       identity_zones['items'].each do |identity_zone|
         return result unless @running
+
         Thread.pass
 
         id = identity_zone[:id]

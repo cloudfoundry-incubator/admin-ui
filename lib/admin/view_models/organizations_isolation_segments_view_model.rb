@@ -21,6 +21,7 @@ module AdminUI
 
       organizations_isolation_segments['items'].each do |organization_isolation_segment|
         return result unless @running
+
         Thread.pass
 
         isolation_segment_guid = organization_isolation_segment[:isolation_segment_guid]

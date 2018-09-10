@@ -115,6 +115,7 @@ module AdminUI
                                     nil,
                                     'application/x-www-form-urlencoded')
       return Yajl::Parser.parse(response.body) if response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated)
+
       @logger.error("Unexpected response code from sso_login_token_json is #{response.code}, message #{response.message}, body #{response.body}")
       nil
     end
@@ -151,12 +152,14 @@ module AdminUI
 
     def get_cc_url(path)
       return "#{@config.cloud_controller_uri}#{path}" if path && path[0] == '/'
+
       "#{@config.cloud_controller_uri}/#{path}"
     end
 
     def get_uaa_token_endpoint_url(path)
       info
       return "#{@token_endpoint}#{path}" if path && path[0] == '/'
+
       "#{@token_endpoint}/#{path}"
     end
 

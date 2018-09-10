@@ -24,6 +24,7 @@ module AdminUI
 
       group_membership['items'].each do |group_member|
         return result unless @running
+
         Thread.pass
 
         group_id  = group_member[:group_id]

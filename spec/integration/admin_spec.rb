@@ -25,6 +25,7 @@ describe AdminUI::Admin, type: :integration do
       cookie = all_cookies.last.split('; ')[0] unless all_cookies.nil? || all_cookies.empty?
 
       break unless response['location']
+
       uri = URI.parse(response['location'])
     end
 
@@ -56,12 +57,14 @@ describe AdminUI::Admin, type: :integration do
     File.readlines(log_file).each do |line|
       line.chomp!
       next unless line.match?(/\[ admin \] : \[ /)
+
       operations_msgs.each do |op_msg|
         op  = op_msg[0]
         msg = op_msg[1]
         esmsg = msg
         esmsg = Regexp.escape(msg) if escapes
         next unless line.match?(/\[ admin \] : \[ #{op} \] : #{esmsg}/)
+
         found_match += 1
         break
       end

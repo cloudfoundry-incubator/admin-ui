@@ -22,6 +22,7 @@ module AdminUI
 
       approvals['items'].each do |approval|
         return result unless @running
+
         Thread.pass
 
         user = user_hash[approval[:user_id]]

@@ -33,9 +33,11 @@ module AdminUI
       event_counters = {}
       events['items'].each do |event|
         return result unless @running
+
         Thread.pass
 
         next unless event[:actee_type] == 'service_binding'
+
         actee = event[:actee]
         event_counters[actee] = 0 if event_counters[actee].nil?
         event_counters[actee] += 1
@@ -46,6 +48,7 @@ module AdminUI
 
       service_bindings['items'].each do |service_binding|
         return result unless @running
+
         Thread.pass
 
         guid                      = service_binding[:guid]

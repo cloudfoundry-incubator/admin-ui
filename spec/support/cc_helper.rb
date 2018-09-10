@@ -514,6 +514,7 @@ module CCHelper
 
   def cc_app_environment_variable
     return {} if @cc_apps_environment_variables_deleted
+
     {
       cc_app_environment_variable_name => 'app_env_value'
     }
@@ -3107,6 +3108,7 @@ module CCHelper
   def unique_id(key)
     result = @unique_ids[key]
     return result unless result.nil?
+
     @last_unique_id += 1
     @unique_ids[key] = @last_unique_id
     @last_unique_id
@@ -3115,6 +3117,7 @@ module CCHelper
   def unique_time(key)
     result = @unique_times[key]
     return result unless result.nil?
+
     @last_unique_time += 1
     @unique_times[key] = @last_unique_time
     @last_unique_time

@@ -13,6 +13,7 @@ module AdminUI
         does_schema_exist = connection.table_exists? :schema_migrations
         Sequel::Migrator.apply(connection, 'db/migrations')
         return if @config.stats_file.nil?
+
         file_path = @config.stats_file
         if File.exist?(file_path) && !does_schema_exist
           @logger.debug('AdminUI::DBStoreMigration.migrate_to_db: found stats_file. Prepare for data migration from stats_file to database.')

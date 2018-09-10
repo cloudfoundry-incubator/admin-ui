@@ -29,6 +29,7 @@ module AdminUI
 
       service_instance_shares['items'].each do |service_instance_share|
         return result unless @running
+
         Thread.pass
 
         service_instance_guid = service_instance_share[:service_instance_guid]

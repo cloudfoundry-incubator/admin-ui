@@ -16,6 +16,7 @@ module AdminUI
 
     def send_email(disconnected)
       return unless configured? && !disconnected.empty?
+
       recipients = @config.receiver_emails.join(', ')
       title      = email_title(disconnected)
       email      = email_content(recipients,

@@ -64,6 +64,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/application_instances_view_model/#{params[:app_guid]}/#{params[:instance_index]}")
       result = @view_models.application_instance(params[:app_guid], params[:instance_index])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -76,6 +77,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/applications_view_model/#{params[:guid]}")
       result = @view_models.application(params[:guid], session[:role] == 'admin')
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -88,6 +90,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/approvals_view_model/#{params[:user_id]}/#{params[:client_id]}/#{params[:scope]}")
       result = @view_models.approval(params[:user_id], params[:client_id], params[:scope])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -100,6 +103,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/buildpacks_view_model/#{params[:guid]}")
       result = @view_models.buildpack(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -112,6 +116,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/cells_view_model/#{params[:key]}")
       result = @view_models.cell(params[:key])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -124,6 +129,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/clients_view_model/#{params[:id]}")
       result = @view_models.client(params[:id])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -136,6 +142,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/cloud_controllers_view_model/#{params[:name]}")
       result = @view_models.cloud_controller(params[:name])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -148,6 +155,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/components_view_model/#{params[:name]}")
       result = @view_models.component(params[:name])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -165,6 +173,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/deas_view_model/#{params[:name]}")
       result = @view_models.dea(params[:name])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -177,6 +186,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/domains_view_model/#{params[:guid]}/#{params[:is_shared]}")
       result = @view_models.domain(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -201,6 +211,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/environment_groups_view_model/#{params[:name]}")
       result = @view_models.environment_group(params[:name])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -213,6 +224,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/events_view_model/#{params[:guid]}")
       result = @view_models.event(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -228,6 +240,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/feature_flags_view_model/#{params[:name]}")
       result = @view_models.feature_flag(params[:name])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -240,6 +253,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/gateways_view_model/#{params[:name]}")
       result = @view_models.gateway(params[:name])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -252,6 +266,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/group_members_view_model/#{params[:group_id]}/#{params[:member_id]}")
       result = @view_models.group_member(params[:group_id], params[:member_id])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -264,6 +279,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/groups_view_model/#{params[:guid]}")
       result = @view_models.group(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -279,6 +295,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/health_managers_view_model/#{params[:name]}")
       result = @view_models.health_manager(params[:name])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -291,6 +308,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/identity_providers_view_model/#{params[:guid]}")
       result = @view_models.identity_provider(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -303,6 +321,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/identity_zones_view_model/#{params[:id]}")
       result = @view_models.identity_zone(params[:id])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -315,6 +334,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/isolation_segments_view_model/#{params[:guid]}")
       result = @view_models.isolation_segment(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -373,6 +393,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/mfa_providers_view_model/#{params[:id]}")
       result = @view_models.mfa_provider(params[:id])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -385,6 +406,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/organizations_isolation_segments_view_model/#{params[:organization_guid]}/#{params[:isolation_segment_guid]}")
       result = @view_models.organization_isolation_segment(params[:organization_guid], params[:isolation_segment_guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -397,6 +419,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/organizations_view_model/#{params[:guid]}")
       result = @view_models.organization(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -409,6 +432,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/organization_roles_view_model/#{params[:organization_guid]}/#{params[:role]}/#{params[:user_guid]}")
       result = @view_models.organization_role(params[:organization_guid], params[:role], params[:user_guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -421,6 +445,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/quotas_view_model/#{params[:guid]}")
       result = @view_models.quota(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -433,6 +458,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/revocable_tokens_view_model/#{params[:token_id]}")
       result = @view_models.revocable_token(params[:token_id])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -445,6 +471,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/routers_view_model/#{params[:name]}")
       result = @view_models.router(params[:name])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -457,6 +484,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/routes_view_model/#{params[:guid]}")
       result = @view_models.route(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -469,6 +497,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/route_bindings_view_model/#{params[:guid]}")
       result = @view_models.route_binding(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -481,6 +510,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/route_mappings_view_model/#{params[:guid]}")
       result = @view_models.route_mapping(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -493,6 +523,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/security_groups_spaces_view_model/#{params[:security_group_guid]}/#{params[:space_guid]}")
       result = @view_models.security_group_space(params[:security_group_guid], params[:space_guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -505,6 +536,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/security_groups_view_model/#{params[:guid]}")
       result = @view_models.security_group(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -529,6 +561,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/service_bindings_view_model/#{params[:guid]}")
       result = @view_models.service_binding(params[:guid], session[:role] == 'admin')
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -541,6 +574,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/service_brokers_view_model/#{params[:guid]}")
       result = @view_models.service_broker(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -553,6 +587,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/service_instances_view_model/#{params[:guid]}/#{params[:is_gateway_service]}")
       result = @view_models.service_instance(params[:guid], params[:is_gateway_service] == 'true', session[:role] == 'admin')
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -565,6 +600,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/service_keys_view_model/#{params[:guid]}")
       result = @view_models.service_key(params[:guid], session[:role] == 'admin')
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -577,6 +613,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/service_plans_view_model/#{params[:guid]}")
       result = @view_models.service_plan(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -589,6 +626,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/service_plan_visibilities_view_model/#{params[:guid]}")
       result = @view_models.service_plan_visibility(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -601,6 +639,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/service_providers_view_model/#{params[:id]}")
       result = @view_models.service_provider(params[:id])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -613,6 +652,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/services_view_model/#{params[:guid]}")
       result = @view_models.service(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -625,6 +665,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/shared_service_instances_view_model/#{params[:service_instance_guid]}/#{params[:target_space_guid]}")
       result = @view_models.shared_service_instance(params[:service_instance_guid], params[:target_space_guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -637,6 +678,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/space_quotas_view_model/#{params[:guid]}")
       result = @view_models.space_quota(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -649,6 +691,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/space_roles_view_model/#{params[:space_guid]}/#{params[:role]}/#{params[:user_guid]}")
       result = @view_models.space_role(params[:space_guid], params[:role], params[:user_guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -661,6 +704,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/spaces_view_model/#{params[:guid]}")
       result = @view_models.space(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -673,6 +717,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/stacks_view_model/#{params[:guid]}")
       result = @view_models.stack(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -685,6 +730,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/staging_security_groups_spaces_view_model/#{params[:staging_security_group_guid]}/#{params[:staging_space_guid]}")
       result = @view_models.staging_security_group_space(params[:staging_security_group_guid], params[:staging_space_guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -715,6 +761,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/tasks_view_model/#{params[:guid]}")
       result = @view_models.task(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 
@@ -727,6 +774,7 @@ module AdminUI
       @logger.info_user(session[:username], 'get', "/users_view_model/#{params[:guid]}")
       result = @view_models.user(params[:guid])
       return Yajl::Encoder.encode(result) if result
+
       404
     end
 

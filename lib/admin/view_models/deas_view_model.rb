@@ -19,6 +19,7 @@ module AdminUI
       if containers_connected
         containers['items'].each_value do |container|
           return result unless @running
+
           Thread.pass
 
           origin = container[:origin]
@@ -52,6 +53,7 @@ module AdminUI
 
       doppler_deas['items'].each_pair do |key, dea|
         return result unless @running
+
         Thread.pass
 
         name = "#{dea['ip']}:#{dea['index']}"

@@ -14,6 +14,7 @@ module AdminUI
 
       statistics.each do |statistic|
         return result unless @running
+
         Thread.pass
 
         items.push(to_row(Utils.symbolize_keys(statistic)))

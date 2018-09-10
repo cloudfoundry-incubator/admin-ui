@@ -22,6 +22,7 @@ module AdminUI
 
       events['items'].each do |event|
         return result unless @running
+
         Thread.pass
 
         space        = space_id_hash[event[:space_id]]

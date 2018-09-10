@@ -29,6 +29,7 @@ module AdminUI
 
       containers['items'].each_value do |container|
         return result unless @running
+
         Thread.pass
 
         application_guid         = container[:application_id]

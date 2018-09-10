@@ -53,11 +53,13 @@ module AdminUI
       event_counters = {}
       events['items'].each do |event|
         return result unless @running
+
         Thread.pass
 
         next unless event[:actor_type] == 'user'
         # A user actor_type is used for a client. But, the actor_name is nil in this case
         next if event[:actor_name].nil?
+
         actor = event[:actor]
         event_counters[actor] = 0 if event_counters[actor].nil?
         event_counters[actor] += 1
@@ -66,6 +68,7 @@ module AdminUI
       group_membership_counters = {}
       group_membership['items'].each do |group_membership_entry|
         return result unless @running
+
         Thread.pass
 
         user_id = group_membership_entry[:member_id]
@@ -76,6 +79,7 @@ module AdminUI
       approval_counters = {}
       approvals['items'].each do |approval|
         return result unless @running
+
         Thread.pass
 
         user_id = approval[:user_id]
@@ -86,6 +90,7 @@ module AdminUI
       revocable_token_counters = {}
       revocable_tokens['items'].each do |revocable_token|
         return result unless @running
+
         Thread.pass
 
         user_id = revocable_token[:user_id]
@@ -114,6 +119,7 @@ module AdminUI
 
       users_uaa['items'].each do |user_uaa|
         return result unless @running
+
         Thread.pass
 
         guid = user_uaa[:id]

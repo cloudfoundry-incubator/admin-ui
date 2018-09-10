@@ -17,6 +17,7 @@ module AdminUI
 
       organizations['items'].each do |organization|
         return result unless @running
+
         Thread.pass
 
         quota_definition_id = organization[:quota_definition_id]
@@ -29,6 +30,7 @@ module AdminUI
 
       quota_definitions['items'].each do |quota_definition|
         return result unless @running
+
         Thread.pass
 
         row = []

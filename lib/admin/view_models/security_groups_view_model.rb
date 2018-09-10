@@ -20,6 +20,7 @@ module AdminUI
 
       security_groups_spaces['items'].each do |security_group_space|
         return result unless @running
+
         Thread.pass
 
         security_group_id = security_group_space[:security_group_id]
@@ -29,6 +30,7 @@ module AdminUI
 
       staging_security_groups_spaces['items'].each do |staging_security_group_space|
         return result unless @running
+
         Thread.pass
 
         staging_security_group_id = staging_security_group_space[:staging_security_group_id]
@@ -41,6 +43,7 @@ module AdminUI
 
       security_groups['items'].each do |security_group|
         return result unless @running
+
         Thread.pass
 
         guid = security_group[:guid]

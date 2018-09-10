@@ -29,9 +29,11 @@ module AdminUI
       event_counters = {}
       events['items'].each do |event|
         return result unless @running
+
         Thread.pass
 
         next unless event[:actee_type] == 'service_key'
+
         actee = event[:actee]
         event_counters[actee] = 0 if event_counters[actee].nil?
         event_counters[actee] += 1
@@ -42,6 +44,7 @@ module AdminUI
 
       service_keys['items'].each do |service_key|
         return result unless @running
+
         Thread.pass
 
         guid             = service_key[:guid]

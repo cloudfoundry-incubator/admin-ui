@@ -22,6 +22,7 @@ module AdminUI
           value = row[column]
           next if value.nil?
           next unless value.to_s.downcase.include?(downcase_search_value)
+
           included = true
           break
         end

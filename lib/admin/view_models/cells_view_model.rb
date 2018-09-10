@@ -15,6 +15,7 @@ module AdminUI
 
       reps['items'].each_pair do |key, rep|
         return result unless @running
+
         Thread.pass
 
         name = "#{rep['ip']}:#{rep['index']}"

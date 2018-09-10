@@ -126,6 +126,7 @@ describe AdminUI::Admin do
       cookie = all_cookies.last.split('; ')[0] unless all_cookies.nil? || all_cookies.empty?
 
       break unless response['location']
+
       uri = URI.parse(response['location'])
     end
 

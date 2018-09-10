@@ -210,6 +210,7 @@ shared_context :web_context do
     element = @driver.find_element(id: id)
     expect(element).to_not be_nil
     return element if element.displayed?
+
     left = @driver.find_element(id: 'MenuButtonLeft')
     10.times do
       left.click

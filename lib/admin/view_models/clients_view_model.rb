@@ -27,6 +27,7 @@ module AdminUI
       event_counters = {}
       events['items'].each do |event|
         return result unless @running
+
         Thread.pass
 
         if event[:actee_type] == 'service_dashboard_client'
@@ -37,6 +38,7 @@ module AdminUI
           next unless event[:actor_type] == 'user'
           # A user actor_type is used for a client. But, the actor_name is nil in this case
           next unless event[:actor_name].nil?
+
           actor = event[:actor]
           event_counters[actor] = 0 if event_counters[actor].nil?
           event_counters[actor] += 1
@@ -46,6 +48,7 @@ module AdminUI
       approval_counters = {}
       approvals['items'].each do |approval|
         return result unless @running
+
         Thread.pass
 
         client_id = approval[:client_id]
@@ -56,6 +59,7 @@ module AdminUI
       revocable_token_counters = {}
       revocable_tokens['items'].each do |revocable_token|
         return result unless @running
+
         Thread.pass
 
         client_id = revocable_token[:client_id]
@@ -68,6 +72,7 @@ module AdminUI
 
       clients['items'].each do |client|
         return result unless @running
+
         Thread.pass
 
         client_id = client[:client_id]

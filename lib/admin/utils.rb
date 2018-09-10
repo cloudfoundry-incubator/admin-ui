@@ -54,6 +54,7 @@ module AdminUI
           return http.request(request)
         rescue EOFError, Timeout::Error
           raise if retries_remaining < 1
+
           retries_remaining -= 1
         end
       end

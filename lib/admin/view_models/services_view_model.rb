@@ -37,9 +37,11 @@ module AdminUI
       event_counters = {}
       events['items'].each do |event|
         return result unless @running
+
         Thread.pass
 
         next unless event[:actee_type] == 'service'
+
         actee = event[:actee]
         event_counters[actee] = 0 if event_counters[actee].nil?
         event_counters[actee] += 1
@@ -49,6 +51,7 @@ module AdminUI
       service_plan_public_active_counters = {}
       service_plans['items'].each do |service_plan|
         return result unless @running
+
         Thread.pass
 
         service_id = service_plan[:service_id]
@@ -56,6 +59,7 @@ module AdminUI
         service_plan_counters[service_id] += 1
 
         next unless service_plan[:public] && service_plan[:active]
+
         service_plan_public_active_counters[service_id] = 0 if service_plan_public_active_counters[service_id].nil?
         service_plan_public_active_counters[service_id] += 1
       end
@@ -63,12 +67,15 @@ module AdminUI
       service_plan_visibility_counters = {}
       service_plan_visibilities['items'].each do |service_plan_visibility|
         return result unless @running
+
         Thread.pass
 
         service_plan_id = service_plan_visibility[:service_plan_id]
         next if service_plan_id.nil?
+
         service_plan = service_plan_hash[service_plan_id]
         next if service_plan.nil?
+
         service_id = service_plan[:service_id]
         service_plan_visibility_counters[service_id] = 0 if service_plan_visibility_counters[service_id].nil?
         service_plan_visibility_counters[service_id] += 1
@@ -77,12 +84,15 @@ module AdminUI
       service_instance_counters = {}
       service_instances['items'].each do |service_instance|
         return result unless @running
+
         Thread.pass
 
         service_plan_id = service_instance[:service_plan_id]
         next if service_plan_id.nil?
+
         service_plan = service_plan_hash[service_plan_id]
         next if service_plan.nil?
+
         service_id = service_plan[:service_id]
         service_instance_counters[service_id] = 0 if service_instance_counters[service_id].nil?
         service_instance_counters[service_id] += 1
@@ -91,16 +101,21 @@ module AdminUI
       service_instance_share_counters = {}
       service_instance_shares['items'].each do |service_instance_share|
         return result unless @running
+
         Thread.pass
 
         service_instance_guid = service_instance_share[:service_instance_guid]
         next if service_instance_guid.nil?
+
         service_instance = service_instance_guid_hash[service_instance_guid]
         next if service_instance.nil?
+
         service_plan_id = service_instance[:service_plan_id]
         next if service_plan_id.nil?
+
         service_plan = service_plan_hash[service_plan_id]
         next if service_plan.nil?
+
         service_id = service_plan[:service_id]
         service_instance_share_counters[service_id] = 0 if service_instance_share_counters[service_id].nil?
         service_instance_share_counters[service_id] += 1
@@ -109,16 +124,21 @@ module AdminUI
       service_binding_counters = {}
       service_bindings['items'].each do |service_binding|
         return result unless @running
+
         Thread.pass
 
         service_instance_guid = service_binding[:service_instance_guid]
         next if service_instance_guid.nil?
+
         service_instance = service_instance_guid_hash[service_instance_guid]
         next if service_instance.nil?
+
         service_plan_id = service_instance[:service_plan_id]
         next if service_plan_id.nil?
+
         service_plan = service_plan_hash[service_plan_id]
         next if service_plan.nil?
+
         service_id = service_plan[:service_id]
         service_binding_counters[service_id] = 0 if service_binding_counters[service_id].nil?
         service_binding_counters[service_id] += 1
@@ -127,16 +147,21 @@ module AdminUI
       service_key_counters = {}
       service_keys['items'].each do |service_key|
         return result unless @running
+
         Thread.pass
 
         service_instance_id = service_key[:service_instance_id]
         next if service_instance_id.nil?
+
         service_instance = service_instance_id_hash[service_instance_id]
         next if service_instance.nil?
+
         service_plan_id = service_instance[:service_plan_id]
         next if service_plan_id.nil?
+
         service_plan = service_plan_hash[service_plan_id]
         next if service_plan.nil?
+
         service_id = service_plan[:service_id]
         service_key_counters[service_id] = 0 if service_key_counters[service_id].nil?
         service_key_counters[service_id] += 1
@@ -145,16 +170,21 @@ module AdminUI
       route_binding_counters = {}
       route_bindings['items'].each do |route_binding|
         return result unless @running
+
         Thread.pass
 
         service_instance_id = route_binding[:service_instance_id]
         next if service_instance_id.nil?
+
         service_instance = service_instance_id_hash[service_instance_id]
         next if service_instance.nil?
+
         service_plan_id = service_instance[:service_plan_id]
         next if service_plan_id.nil?
+
         service_plan = service_plan_hash[service_plan_id]
         next if service_plan.nil?
+
         service_id = service_plan[:service_id]
         route_binding_counters[service_id] = 0 if route_binding_counters[service_id].nil?
         route_binding_counters[service_id] += 1
@@ -165,6 +195,7 @@ module AdminUI
 
       services['items'].each do |service|
         return result unless @running
+
         Thread.pass
 
         guid           = service[:guid]

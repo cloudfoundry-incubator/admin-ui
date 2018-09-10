@@ -14,16 +14,20 @@ module AdminUI
     def content(path, start)
       @last_infos = infos if @last_infos.nil?
       return nil if @last_infos.index { |last_info| last_info[:path] == path }.nil?
+
       handler = handler_factory(path)
       return nil if handler.nil?
+
       handler.content(start)
     end
 
     def file(path)
       @last_infos = infos if @last_infos.nil?
       return nil if @last_infos.index { |last_info| last_info[:path] == path }.nil?
+
       handler = handler_factory(path)
       return nil if handler.nil?
+
       handler.file
     end
 
@@ -44,6 +48,7 @@ module AdminUI
     def handler_factory(path)
       return FileHandler.new(@config, @logger, path) if FileHandler.qualifies?(path)
       return SFTPHandler.new(@config, @logger, path) if SFTPHandler.qualifies?(path)
+
       nil
     end
 

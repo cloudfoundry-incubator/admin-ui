@@ -40,6 +40,7 @@ module AdminUI
 
       buildpacks['items'].each do |buildpack|
         return result unless @running
+
         Thread.pass
 
         guid       = buildpack[:guid]

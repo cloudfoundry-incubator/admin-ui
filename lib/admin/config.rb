@@ -284,51 +284,61 @@ module AdminUI
 
     def sender_email_account
       return nil if @config[:sender_email].nil?
+
       @config[:sender_email][:account]
     end
 
     def sender_email_authtype
       return nil if @config[:sender_email].nil?
+
       @config[:sender_email][:authtype]&.to_sym
     end
 
     def sender_email_domain
       return nil if @config[:sender_email].nil?
+
       @config[:sender_email][:domain] || 'localhost'
     end
 
     def sender_email_port
       return nil if @config[:sender_email].nil?
+
       @config[:sender_email][:port] || 25
     end
 
     def sender_email_secret
       return nil if @config[:sender_email].nil?
+
       @config[:sender_email][:secret]
     end
 
     def sender_email_server
       return nil if @config[:sender_email].nil?
+
       @config[:sender_email][:server]
     end
 
     def ssl_certificate_file_path
       return nil if @config[:ssl].nil?
+
       @config[:ssl][:certificate_file_path]
     end
 
     def ssl_max_session_idle_length
       return nil if @config[:ssl].nil?
+
       @config[:ssl][:max_session_idle_length]
     end
 
     def ssl_private_key_file_path
       return nil if @config[:ssl].nil?
+
       @config[:ssl][:private_key_file_path]
     end
 
     def ssl_private_key_pass_phrase
       return nil if @config[:ssl].nil?
+
       @config[:ssl][:private_key_pass_phrase]
     end
 
@@ -358,11 +368,13 @@ module AdminUI
 
     def uaa_client_id
       return nil if @config[:uaa_client].nil?
+
       @config[:uaa_client][:id]
     end
 
     def uaa_client_secret
       return nil if @config[:uaa_client].nil?
+
       @config[:uaa_client][:secret]
     end
 

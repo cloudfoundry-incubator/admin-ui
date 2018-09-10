@@ -22,6 +22,7 @@ module AdminUI
 
       tasks['items'].each do |task|
         return result unless @running
+
         Thread.pass
 
         application_guid = task[:app_guid]

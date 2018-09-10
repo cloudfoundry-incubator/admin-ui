@@ -373,6 +373,7 @@ module AdminUI
     def applications_count
       hash = applications
       return nil unless hash['connected']
+
       hash['items'].length
     end
 
@@ -643,6 +644,7 @@ module AdminUI
     def organizations_count
       hash = organizations
       return nil unless hash['connected']
+
       hash['items'].length
     end
 
@@ -673,9 +675,11 @@ module AdminUI
     def processes_running_instances
       hash = processes
       return nil unless hash['connected']
+
       instances = 0
       hash['items'].each do |process|
         break unless @running
+
         Thread.pass
 
         instances += process[:instances] if process[:state] == 'STARTED'
@@ -686,9 +690,11 @@ module AdminUI
     def processes_total_instances
       hash = processes
       return nil unless hash['connected']
+
       instances = 0
       hash['items'].each do |process|
         break unless @running
+
         Thread.pass
 
         instances += process[:instances]
@@ -805,6 +811,7 @@ module AdminUI
     def spaces_count
       hash = spaces
       return nil unless hash['connected']
+
       hash['items'].length
     end
 
@@ -839,6 +846,7 @@ module AdminUI
     def users_count
       hash = users_uaa
       return nil unless hash['connected']
+
       hash['items'].length
     end
 
@@ -894,6 +902,7 @@ module AdminUI
       cache[:semaphore].synchronize do
         cache[:condition].wait(cache[:semaphore]) while @testing && @running && cache[:result].nil?
         return result if cache[:result].nil?
+
         cache[:result]
       end
     end
@@ -955,6 +964,7 @@ module AdminUI
             items = []
             connection.fetch(cache[:select]) do |row|
               return result unless @running
+
               Thread.pass
 
               items.push(row)

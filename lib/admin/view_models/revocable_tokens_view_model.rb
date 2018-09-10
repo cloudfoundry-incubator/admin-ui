@@ -23,6 +23,7 @@ module AdminUI
 
       revocable_tokens['items'].each do |revocable_token|
         return result unless @running
+
         Thread.pass
 
         token_id  = revocable_token[:token_id]

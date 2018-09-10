@@ -18,6 +18,7 @@ module AdminUI
 
       service_providers['items'].each do |service_provider|
         return result unless @running
+
         Thread.pass
 
         id            = service_provider[:id]

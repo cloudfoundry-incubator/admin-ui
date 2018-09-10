@@ -18,6 +18,7 @@ module AdminUI
 
       identity_providers['items'].each do |identity_provider|
         return result unless @running
+
         Thread.pass
 
         id            = identity_provider[:id]

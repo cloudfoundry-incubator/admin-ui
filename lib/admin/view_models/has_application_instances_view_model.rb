@@ -39,6 +39,7 @@ module AdminUI
       counters_hash[state] += 1
       return unless state == 'STARTED'
       return if process[:instances].nil?
+
       counters_hash['reserved_memory'] += process[:memory] * process[:instances] unless process[:memory].nil?
       counters_hash['reserved_disk'] += process[:disk_quota] * process[:instances] unless process[:disk_quota].nil?
     end

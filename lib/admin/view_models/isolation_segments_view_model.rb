@@ -57,6 +57,7 @@ module AdminUI
 
       isolation_segments['items'].each do |isolation_segment|
         return result unless @running
+
         Thread.pass
 
         guid = isolation_segment[:guid]

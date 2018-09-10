@@ -23,6 +23,7 @@ module AdminUI
       if organizations_connected && organizations_private_domains_connected
         organizations_private_domains['items'].each do |organization_private_domain|
           return result unless @running
+
           Thread.pass
 
           domain_id = organization_private_domain[:private_domain_id]
@@ -41,6 +42,7 @@ module AdminUI
       domain_route_counters = {}
       routes['items'].each do |route|
         return result unless @running
+
         Thread.pass
 
         domain_id = route[:domain_id]
@@ -53,6 +55,7 @@ module AdminUI
 
       domains['items'].each do |domain|
         return result unless @running
+
         Thread.pass
 
         domain_id                  = domain[:id]

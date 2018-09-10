@@ -13,6 +13,7 @@ module AdminUI
 
       logs.each do |log|
         return result unless @running
+
         Thread.pass
 
         row = []

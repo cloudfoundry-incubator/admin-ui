@@ -42,6 +42,7 @@ module AdminUI
 
       return [user_name, LOGIN_ADMIN] unless (scopes & @config.uaa_groups_admin).empty?
       return [user_name, LOGIN_USER] unless (scopes & @config.uaa_groups_user).empty?
+
       @logger.error("Login without proper group for user #{user_name}")
       [user_name, nil]
     end

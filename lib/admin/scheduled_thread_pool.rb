@@ -45,10 +45,12 @@ module AdminUI
 
     def schedule(key, time, &block)
       return if !@running || key.nil? || time.nil? || block.nil?
+
       @mutex.synchronize do
         index = @queue.index { |entry| key == entry[:key] }
         if index
           return if @queue.at(index)[:time] <= time
+
           @queue.delete_at(index)
         end
 
