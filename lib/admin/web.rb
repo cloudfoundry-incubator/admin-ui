@@ -546,6 +546,8 @@ module AdminUI
                            api_version:          @client.api_version,
                            build:                @client.build,
                            cloud_controller_uri: @config.cloud_controller_uri,
+                           name:                 @client.name,
+                           osbapi_version:       @client.osbapi_version,
                            table_height:         @config.table_height,
                            table_page_size:      @config.table_page_size,
                            uaa_version:          @client.uaa_version,

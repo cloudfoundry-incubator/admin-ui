@@ -75,6 +75,16 @@ module AdminUI
       cf_request(get_uaa_token_endpoint_url(path), Utils::HTTP_GET)
     end
 
+    def name
+      info
+      @name
+    end
+
+    def osbapi_version
+      info
+      @osbapi_version
+    end
+
     def patch_cc(path, body)
       cf_request(get_cc_url(path), Utils::HTTP_PATCH, body, 'application/json')
     end
@@ -205,6 +215,14 @@ module AdminUI
 
       @build = body_json['build']
       raise "Information retrieved from #{cc_v2_info_url} does not include build" if @build.nil?
+
+      @name = body_json['name']
+      raise "Information retrieved from #{cc_v2_info_url} does not include name" if @name.nil?
+
+      @osbapi_version = body_json['osbapi_version']
+      if @osbapi_version.nil?
+        @logger.warn("Information retrieved from #{cc_v2_info_url} does not include osbapi_version") if @osbapi_version.nil?
+      end
 
       @authorization_endpoint = body_json['authorization_endpoint']
       raise "Information retrieved from #{cc_v2_info_url} does not include authorization_endpoint" if @authorization_endpoint.nil?

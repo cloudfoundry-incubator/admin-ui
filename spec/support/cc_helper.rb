@@ -873,11 +873,19 @@ module CCHelper
   end
 
   def cc_info_api_version
-    '2.110.0'
+    '2.122.0'
   end
 
   def cc_info_build
     '2222'
+  end
+
+  def cc_info_name
+    'Cloud Foundry'
+  end
+
+  def cc_info_osbapi_version
+    '2.14'
   end
 
   def cc_info_token_endpoint
@@ -891,6 +899,8 @@ module CCHelper
       'authorization_endpoint'   => 'http://authorization_endpoint.com',
       'build'                    => cc_info_build,
       'doppler_logging_endpoint' => 'wss://doppler_logging_endpoint.com',
+      'name'                     => cc_info_name,
+      'osbapi_version'           => cc_info_osbapi_version,
       'token_endpoint'           => cc_info_token_endpoint
     }
   end
@@ -1611,7 +1621,7 @@ module CCHelper
   end
 
   def uaa_info_app_version
-    '4.13.4'
+    '4.120.0'
   end
 
   # /info returned from the UAA system is not symbols

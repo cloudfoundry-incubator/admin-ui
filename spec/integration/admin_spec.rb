@@ -2469,6 +2469,8 @@ describe AdminUI::Admin, type: :integration do
                                 'api_version'          => cc_info_api_version,
                                 'build'                => cc_info_build,
                                 'cloud_controller_uri' => cloud_controller_uri,
+                                'name'                 => cc_info_name,
+                                'osbapi_version'       => cc_info_osbapi_version,
                                 'table_height'         => table_height,
                                 'table_page_size'      => table_page_size,
                                 'uaa_version'          => uaa_info_app_version,

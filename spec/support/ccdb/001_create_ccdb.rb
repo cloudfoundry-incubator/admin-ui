@@ -416,10 +416,13 @@ Sequel.migration do
       foreign_key :app_guid, :apps, :type=>String, :size=>255, :key=>[:guid]
       String :droplet_guid, :size=>255
       String :deploying_web_process_guid, :size=>255
+      String :previous_droplet_guid, :size=>255
+      Integer :original_web_process_instance_count, :null=>false
       
       index [:app_guid]
       index [:created_at]
       index [:guid], :unique=>true
+      index [:state]
       index [:updated_at]
     end
     
