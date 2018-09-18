@@ -11,7 +11,7 @@ gem 'protobuf', '3.8.4'
 gem 'rack-ssl', '1.4.1'
 gem 'sequel', '5.12.0'
 gem 'sequel_pg', '1.11.0'
-gem 'sinatra', '2.0.3'
+gem 'sinatra', '2.0.4'
 gem 'sqlite3', '1.3.13'
 gem 'yajl-ruby', '1.4.1'
 
@@ -20,7 +20,7 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '0.59.0'
+  gem 'rubocop', '0.59.1'
 end
 
 group :test do
