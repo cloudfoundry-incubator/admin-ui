@@ -105,6 +105,22 @@ Sequel.migration do
       index [:updated_at], :name=>:dj_updated_at_index
     end
     
+    create_table(:encryption_key_sentinels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :expected_value, :size=>255
+      String :encrypted_value, :size=>255
+      String :encryption_key_label, :size=>255
+      String :salt, :size=>255
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:encryption_key_label], :name=>:encryption_key_sentinels_label_index, :unique=>true
+      index [:updated_at]
+    end
+    
     create_table(:env_groups, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
