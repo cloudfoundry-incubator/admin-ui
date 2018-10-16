@@ -7,20 +7,21 @@ module AdminUI
     # DEFAULT_FLAGS from https://github.com/cloudfoundry/cloud_controller_ng/blob/master/app/models/runtime/feature_flag.rb
     DEFAULT_FLAGS =
       {
-        app_bits_upload:                      true,
-        app_scaling:                          true,
-        diego_docker:                         false, # Added in cf_release 213
-        env_var_visibility:                   true, # Added in cf-release 238
-        private_domain_creation:              true,
-        route_creation:                       true,
-        service_instance_creation:            true,
-        service_instance_sharing:             false, # Added in cf-release 280
-        set_roles_by_username:                true, # Added in cf_release 218
-        space_developer_env_var_visibility:   true, # Added in cf_release 232
-        space_scoped_private_broker_creation: true, # Added in cf release 231
-        # task_creation:                      false, # Added in cf_release 228 as false, but changed in cf_release 253 (API version 2.75.0) to true. Determined via code below
-        unset_roles_by_username:              true, # Added in cf_release 218
-        user_org_creation:                    false
+        app_bits_upload:                             true,
+        app_scaling:                                 true,
+        diego_docker:                                false, # Added in cf_release 213
+        env_var_visibility:                          true, # Added in cf-release 238
+        hide_marketplace_from_unauthenticated_users: false, # Added in cf-deployment 5.1.0
+        private_domain_creation:                     true,
+        route_creation:                              true,
+        service_instance_creation:                   true,
+        service_instance_sharing:                    false, # Added in cf-release 280
+        set_roles_by_username:                       true, # Added in cf_release 218
+        space_developer_env_var_visibility:          true, # Added in cf_release 232
+        space_scoped_private_broker_creation:        true, # Added in cf release 231
+        # task_creation:                             false, # Added in cf_release 228 as false, but changed in cf_release 253 (API version 2.75.0) to true. Determined via code below
+        unset_roles_by_username:                     true, # Added in cf_release 218
+        user_org_creation:                           false
       }.freeze
 
     def do_items
