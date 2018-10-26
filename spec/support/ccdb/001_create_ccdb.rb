@@ -319,6 +319,8 @@ Sequel.migration do
       String :service_plan_name, :text=>true
       String :service_guid, :text=>true
       String :service_label, :text=>true
+      String :service_broker_name, :text=>true
+      String :service_broker_guid, :size=>255
       
       index [:created_at], :name=>:created_at_index
       index [:service_guid]
@@ -570,6 +572,21 @@ Sequel.migration do
       index [:app_guid, :sequence_id], :name=>:unique_task_app_guid_sequence_id, :unique=>true
     end
     
+    create_table(:deployment_processes, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :process_guid, :size=>255
+      String :process_type, :size=>255
+      foreign_key :deployment_guid, :deployments, :type=>String, :size=>255, :key=>[:guid]
+      
+      index [:created_at]
+      index [:deployment_guid]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
     create_table(:domains, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -697,7 +714,7 @@ Sequel.migration do
       foreign_key :space_id, :spaces, :key=>[:id]
       String :encryption_key_label, :size=>255
       
-      index [:broker_url], :name=>:sb_broker_url_index, :unique=>true
+      index [:broker_url], :name=>:sb_broker_url_index
       index [:created_at], :name=>:sbrokers_created_at_index
       index [:guid], :name=>:sbrokers_guid_index, :unique=>true
       index [:updated_at], :name=>:sbrokers_updated_at_index
@@ -803,7 +820,7 @@ Sequel.migration do
       index [:created_at]
       index [:guid], :unique=>true
       index [:label]
-      index [:unique_id], :unique=>true
+      index [:unique_id]
       index [:updated_at]
     end
     
@@ -851,7 +868,7 @@ Sequel.migration do
       
       index [:created_at]
       index [:guid], :unique=>true
-      index [:unique_id], :unique=>true
+      index [:unique_id]
       index [:updated_at]
       index [:service_id, :name], :name=>:svc_plan_svc_id_name_index, :unique=>true
     end
