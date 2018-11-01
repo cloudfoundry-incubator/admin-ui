@@ -617,6 +617,7 @@ module ViewModelsHelper
         uaa_identity_zone[:created].to_datetime.rfc3339,
         uaa_identity_zone[:lastmodified].to_datetime.rfc3339,
         uaa_identity_zone[:subdomain],
+        uaa_identity_zone[:active],
         uaa_identity_zone[:version],
         1,
         1,

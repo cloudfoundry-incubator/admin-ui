@@ -1609,6 +1609,7 @@ module CCHelper
 
   def uaa_identity_zone
     {
+      active:       true,
       config:       '{"tokenPolicy":{"accessTokenValidity":43200,"refreshTokenValidity":2592000,"keys":{}},"samlConfig":{"requestSigned":false,"wantAssertionSigned":false,"certificate":null,"privateKey":null}}',
       created:      unique_time('uaa_identity_zone_created'),
       description:  'Identity zone description',

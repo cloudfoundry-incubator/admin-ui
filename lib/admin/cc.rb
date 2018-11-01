@@ -105,7 +105,7 @@ module AdminUI
           {
             db_uri:  uaadb_uri,
             table:   :identity_zone,
-            columns: %i[config created description id lastmodified name subdomain version]
+            columns: %i[active config created description id lastmodified name subdomain version]
           },
           isolation_segments:
           {

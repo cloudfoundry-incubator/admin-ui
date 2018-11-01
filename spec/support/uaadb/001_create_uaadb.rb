@@ -88,6 +88,7 @@ Sequel.migration do
       String :name, :size=>255, :null=>false
       String :description, :text=>true
       String :config, :text=>true
+      TrueClass :active, :default=>true, :null=>false
       
       primary_key [:id]
       

@@ -6566,8 +6566,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='IdentityZonesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 16,
-                                 labels:          ['', 'Name', 'ID', 'Created', 'Updated', 'Subdomain', 'Version', 'Identity Providers', 'SAML Providers', 'MFA Providers', 'Clients', 'Users', 'Groups', 'Group Members', 'Approvals', 'Description'],
+                                 expected_length: 17,
+                                 labels:          ['', 'Name', 'ID', 'Created', 'Updated', 'Subdomain', 'Active', 'Version', 'Identity Providers', 'SAML Providers', 'MFA Providers', 'Clients', 'Users', 'Groups', 'Group Members', 'Approvals', 'Description'],
                                  colspans:        nil
                                }
                              ])
@@ -6580,6 +6580,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_identity_zone[:created].to_datetime.rfc3339,
                              uaa_identity_zone[:lastmodified].to_datetime.rfc3339,
                              uaa_identity_zone[:subdomain],
+                             @driver.execute_script("return Format.formatBoolean(#{uaa_identity_zone[:active]})"),
                              @driver.execute_script("return Format.formatNumber(#{uaa_identity_zone[:version]})"),
                              '1',
                              '1',
@@ -6645,6 +6646,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Created',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_identity_zone[:created].to_datetime.rfc3339}\")") },
                             { label: 'Updated',            tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{uaa_identity_zone[:lastmodified].to_datetime.rfc3339}\")") },
                             { label: 'Subdomain',          tag:   nil, value: uaa_identity_zone[:subdomain] },
+                            { label: 'Active',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{uaa_identity_zone[:active]})") },
                             { label: 'Version',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{uaa_identity_zone[:version]})") },
                             { label: 'Description',        tag:   nil, value: uaa_identity_zone[:description] },
                             { label: 'Identity Providers', tag:   'a', value: '1' },
@@ -6659,35 +6661,35 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has identity providers link' do
-            check_filter_link('IdentityZones', 7, 'IdentityProviders', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 8, 'IdentityProviders', uaa_identity_zone[:id])
           end
 
           it 'has service providers link' do
-            check_filter_link('IdentityZones', 8, 'ServiceProviders', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 9, 'ServiceProviders', uaa_identity_zone[:id])
           end
 
           it 'has MFA providers link' do
-            check_filter_link('IdentityZones', 9, 'MFAProviders', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 10, 'MFAProviders', uaa_identity_zone[:id])
           end
 
           it 'has clients link' do
-            check_filter_link('IdentityZones', 10, 'Clients', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 11, 'Clients', uaa_identity_zone[:id])
           end
 
           it 'has users link' do
-            check_filter_link('IdentityZones', 11, 'Users', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 12, 'Users', uaa_identity_zone[:id])
           end
 
           it 'has groups link' do
-            check_filter_link('IdentityZones', 12, 'Groups', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 13, 'Groups', uaa_identity_zone[:id])
           end
 
           it 'has group members link' do
-            check_filter_link('IdentityZones', 13, 'GroupMembers', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 14, 'GroupMembers', uaa_identity_zone[:id])
           end
 
           it 'has approvals link' do
-            check_filter_link('IdentityZones', 14, 'Approvals', uaa_identity_zone[:id])
+            check_filter_link('IdentityZones', 15, 'Approvals', uaa_identity_zone[:id])
           end
         end
       end

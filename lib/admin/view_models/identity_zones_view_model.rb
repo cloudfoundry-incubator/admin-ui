@@ -164,6 +164,7 @@ module AdminUI
         end
 
         row.push(identity_zone[:subdomain])
+        row.push(identity_zone[:active])
         row.push(identity_zone[:version])
 
         if identity_provider_counter
@@ -237,7 +238,7 @@ module AdminUI
         hash[id] = identity_zone
       end
 
-      result(true, items, hash, (1..15).to_a, (1..5).to_a << 15)
+      result(true, items, hash, (1..16).to_a, (1..6).to_a << 16)
     end
   end
 end
