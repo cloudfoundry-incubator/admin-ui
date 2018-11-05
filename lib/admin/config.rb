@@ -6,6 +6,7 @@ module AdminUI
   class Config
     DEFAULTS_CONFIG =
       {
+        # rubocop:disable Layout/AlignHash
         bind_address:                                 '0.0.0.0',
         cloud_controller_discovery_interval:                300,
         cloud_controller_ssl_verify_none:                 false,
@@ -33,6 +34,7 @@ module AdminUI
         uaa_groups_admin:                    ['admin_ui.admin'],
         uaa_groups_user:                      ['admin_ui.user'],
         varz_discovery_interval:                             30
+        # rubocop:enable Layout/AlignHash
       }.freeze
 
     def self.schema

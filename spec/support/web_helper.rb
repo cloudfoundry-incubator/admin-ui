@@ -173,9 +173,7 @@ shared_context :web_context do
     column_index = 0
     while column_index < head_row[:expected_length]
       expect(head_row[:columns][column_index].text).to eq(head_row[:labels][column_index])
-      unless head_row[:colspans].nil?
-        expect(head_row[:columns][column_index].attribute('colspan')).to eq(head_row[:colspans][column_index])
-      end
+      expect(head_row[:columns][column_index].attribute('colspan')).to eq(head_row[:colspans][column_index]) unless head_row[:colspans].nil?
       column_index += 1
     end
   end

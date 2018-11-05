@@ -22,9 +22,7 @@ module ViewModelsHelper
     @used_disk_in_bytes = determine_used_disk(application_instance_source)
     @computed_pcpu = determine_used_cpu(application_instance_source)
 
-    @dea_identity = if application_instance_source == :doppler_dea
-                      "#{dea_envelope.ip}:#{dea_envelope.index}"
-                    end
+    @dea_identity = "#{dea_envelope.ip}:#{dea_envelope.index}" if application_instance_source == :doppler_dea
   end
 
   def determine_used_cpu(application_instance_source)

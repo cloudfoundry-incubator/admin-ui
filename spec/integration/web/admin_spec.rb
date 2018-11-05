@@ -8198,9 +8198,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         before do
           @capacity = 0
           varz_provisioner['nodes'].each do |node|
-            unless node[1]['available_capacity'].nil?
-              @capacity += node[1]['available_capacity']
-            end
+            @capacity += node[1]['available_capacity'] unless node[1]['available_capacity'].nil?
           end
         end
 

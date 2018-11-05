@@ -274,9 +274,7 @@ module AdminUI
 
         entries.each do |entry|
           attributes = entry.attributes
-          if attributes.file?
-            results.push(create_info_result(uri, "#{base_path}/#{entry.name}", attributes.size, attributes.mtime))
-          end
+          results.push(create_info_result(uri, "#{base_path}/#{entry.name}", attributes.size, attributes.mtime)) if attributes.file?
         end
 
         results

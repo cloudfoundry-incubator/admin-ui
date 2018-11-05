@@ -86,9 +86,7 @@ module AdminUI
       @data_collection_schedulers.each do |scheduler|
         begin
           refresh_time = scheduler.next(init_time)
-          if target_time == init_time || target_time > refresh_time
-            target_time = refresh_time
-          end
+          target_time = refresh_time if target_time == init_time || target_time > refresh_time
         rescue => error
           @logger.error("AdminUI::Stats.calculate_time_until_generate_stats: Error detected in the #{spec} of stats_refresh_schedule property as specified in config/default.yml")
           @logger.error(error.backtrace.join("\n"))
