@@ -234,6 +234,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/environment_variables/#{cc_app_environment_variable_name}"]])
     end
 
+    def delete_app_label
+      response = delete_request("/applications/#{cc_app[:guid]}/labels/#{cc_app_label[:key_prefix]}/#{cc_app_label[:key_name]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/labels/#{cc_app_label[:key_prefix]}/#{cc_app_label[:key_name]}"]])
+    end
+
     it 'has user name and applications in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/applications_view_model']], true)
     end
@@ -286,6 +292,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes an application environment_variable' do
       expect { delete_app_environment_variable }.to change { get_json("/applications_view_model/#{cc_app[:guid]}")['environment_variables'].keys.length }.from(1).to(0)
+    end
+
+    it 'deletes an application label' do
+      expect { delete_app_label }.to change { get_json("/applications_view_model/#{cc_app[:guid]}")['labels'].length }.from(1).to(0)
     end
   end
 
@@ -841,6 +851,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}?recursive=true"]], true)
     end
 
+    def delete_organization_label
+      response = delete_request("/organizations/#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_prefix]}/#{cc_organization_label[:key_name]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_prefix]}/#{cc_organization_label[:key_name]}"]])
+    end
+
     it 'has user name and organizations request in the log file' do
       verify_sys_log_entries([['get', '/organizations_view_model']])
     end
@@ -883,6 +899,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes an organization recursive' do
       expect { delete_organization_recursive }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes an organization label' do
+      expect { delete_organization_label }.to change { get_json("/organizations_view_model/#{cc_organization[:guid]}")['labels'].length }.from(1).to(0)
     end
   end
 
@@ -1528,6 +1548,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}?recursive=true"]], true)
     end
 
+    def delete_space_label
+      response = delete_request("/spaces/#{cc_space[:guid]}/labels/#{cc_space_label[:key_prefix]}/#{cc_space_label[:key_name]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/labels/#{cc_space_label[:key_prefix]}/#{cc_space_label[:key_name]}"]])
+    end
+
     it 'has user name and space request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/spaces_view_model']], true)
     end
@@ -1566,6 +1592,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a space recursive' do
       expect { delete_space_recursive }.to change { get_json('/spaces_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes a  space label' do
+      expect { delete_space_label }.to change { get_json("/spaces_view_model/#{cc_space[:guid]}")['labels'].length }.from(1).to(0)
     end
   end
 

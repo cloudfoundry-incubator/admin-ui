@@ -1606,6 +1606,23 @@ module AdminUI
       end
     end
 
+    delete '/applications/:app_guid/labels/:prefix/:name', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/applications/#{params[:app_guid]}/labels/#{params[:prefix]}/#{params[:name]}")
+      begin
+        @operation.delete_application_label(params[:app_guid], params[:prefix], params[:name])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete application label: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete application label: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/buildpacks/:buildpack_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/buildpacks/#{params[:buildpack_guid]}")
       begin
@@ -1869,6 +1886,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during delete organization isolation segment: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/organizations/:organization_guid/labels/:prefix/:name', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/labels/#{params[:prefix]}/#{params[:name]}")
+      begin
+        @operation.delete_organization_label(params[:organization_guid], params[:prefix], params[:name])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete organization label: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete organization label: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end
@@ -2242,6 +2276,23 @@ module AdminUI
         body(Yajl::Encoder.encode(error.to_h))
       rescue => error
         @logger.error("Error during remove space isolation segment: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/spaces/:space_guid/labels/:prefix/:name', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/labels/#{params[:prefix]}/#{params[:name]}")
+      begin
+        @operation.delete_space_label(params[:space_guid], params[:prefix], params[:name])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete space label: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete space label: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
         500
       end

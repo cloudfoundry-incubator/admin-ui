@@ -23,6 +23,12 @@ module AdminUI
       # rubocop:disable Layout/AlignHash
       @caches =
         {
+          application_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :app_labels,
+            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+          },
           applications:
           {
             db_uri:  ccdb_uri,
@@ -119,6 +125,12 @@ module AdminUI
             db_uri:  uaadb_uri,
             table:   :mfa_providers,
             columns: %i[config created id identity_zone_id lastmodified name type]
+          },
+          organization_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :organization_labels,
+            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
           },
           organizations:
           {
@@ -294,6 +306,12 @@ module AdminUI
             table:   :services,
             columns: %i[active bindable bindings_retrievable created_at description extra guid id instances_retrievable label plan_updateable purging requires service_broker_id tags unique_id updated_at]
           },
+          space_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :space_labels,
+            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+          },
           space_quota_definitions:
           {
             db_uri:  ccdb_uri,
@@ -368,6 +386,10 @@ module AdminUI
       end
     end
 
+    def application_labels
+      result_cache(:application_labels)
+    end
+
     def applications
       result_cache(:applications)
     end
@@ -431,6 +453,10 @@ module AdminUI
       result_cache(:identity_zones)
     end
 
+    def invalidate_application_labels
+      invalidate_cache(:application_labels)
+    end
+
     def invalidate_applications
       invalidate_cache(:applications)
     end
@@ -481,6 +507,10 @@ module AdminUI
 
     def invalidate_mfa_providers
       invalidate_cache(:mfa_providers)
+    end
+
+    def invalidate_organization_labels
+      invalidate_cache(:organization_labels)
     end
 
     def invalidate_organizations
@@ -587,6 +617,10 @@ module AdminUI
       invalidate_cache(:space_quota_definitions)
     end
 
+    def invalidate_space_labels
+      invalidate_cache(:space_labels)
+    end
+
     def invalidate_spaces
       invalidate_cache(:spaces)
     end
@@ -629,6 +663,10 @@ module AdminUI
 
     def mfa_providers
       result_cache(:mfa_providers)
+    end
+
+    def organization_labels
+      result_cache(:organization_labels)
     end
 
     def organizations
@@ -804,6 +842,10 @@ module AdminUI
 
     def space_quota_definitions
       result_cache(:space_quota_definitions)
+    end
+
+    def space_labels
+      result_cache(:space_labels)
     end
 
     def spaces

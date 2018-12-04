@@ -49,6 +49,14 @@ module ViewModelsHelper
     end
   end
 
+  def label_rfc3339(label)
+    {
+      label:              label,
+      created_at_rfc3339: label[:created_at].to_datetime.rfc3339,
+      updated_at_rfc3339: label[:updated_at].to_datetime.rfc3339
+    }
+  end
+
   def view_models_application_instances
     [
       [
@@ -156,6 +164,7 @@ module ViewModelsHelper
       'current_droplet'          => cc_droplet,
       'current_package'          => cc_package,
       'environment_variables'    => cc_app_environment_variable,
+      'labels'                   => [label_rfc3339(cc_app_label)],
       'latest_droplet'           => cc_droplet,
       'latest_package'           => cc_package,
       'organization'             => cc_organization,
@@ -792,6 +801,7 @@ module ViewModelsHelper
   def view_models_organizations_detail
     {
       'default_isolation_segment' => cc_isolation_segment,
+      'labels'                    => [label_rfc3339(cc_organization_label)],
       'organization'              => cc_organization,
       'quota_definition'          => cc_quota_definition
     }
@@ -1608,6 +1618,7 @@ module ViewModelsHelper
   def view_models_spaces_detail
     {
       'isolation_segment'      => cc_isolation_segment,
+      'labels'                 => [label_rfc3339(cc_space_label)],
       'organization'           => cc_organization,
       'space'                  => cc_space,
       'space_quota_definition' => cc_space_quota_definition

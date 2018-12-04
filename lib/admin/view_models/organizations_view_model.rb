@@ -17,6 +17,7 @@ module AdminUI
       droplets                         = @cc.droplets
       events                           = @cc.events
       isolation_segments               = @cc.isolation_segments
+      organization_labels              = @cc.organization_labels
       organizations_auditors           = @cc.organizations_auditors
       organizations_billing_managers   = @cc.organizations_billing_managers
       organizations_isolation_segments = @cc.organizations_isolation_segments
@@ -73,6 +74,7 @@ module AdminUI
       latest_droplets = latest_app_guid_hash(droplets['items'])
       latest_packages = latest_app_guid_hash(packages['items'])
 
+      organization_labels_hash                      = {}
       event_counters                                = {}
       event_target_counters                         = {}
       organization_space_counters                   = {}
@@ -91,6 +93,29 @@ module AdminUI
       space_role_counters                           = {}
       organization_isolation_segment_counters       = {}
       organization_task_counters                    = {}
+
+      organization_labels['items'].each do |organization_label|
+        return result unless @running
+
+        Thread.pass
+
+        organization_guid = organization_label[:resource_guid]
+        organization_labels_array = organization_labels_hash[organization_guid]
+        if organization_labels_array.nil?
+          organization_labels_array = []
+          organization_labels_hash[organization_guid] = organization_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              organization_label,
+            created_at_rfc3339: organization_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: organization_label[:updated_at].nil? ? nil : organization_label[:updated_at].to_datetime.rfc3339
+          }
+
+        organization_labels_array.push(wrapper)
+      end
 
       events['items'].each do |event|
         return result unless @running
@@ -358,6 +383,7 @@ module AdminUI
         default_isolation_segment_guid = organization[:default_isolation_segment_guid]
         default_isolation_segment      = default_isolation_segment_guid.nil? ? nil : isolation_segments_hash[default_isolation_segment_guid]
 
+        organization_label_array                     = organization_labels_hash[organization_guid] || []
         event_counter                                = event_counters[organization_guid]
         event_target_counter                         = event_target_counters[organization_guid]
         organization_default_user_counter            = organization_default_user_counters[organization_id]
@@ -607,6 +633,7 @@ module AdminUI
         hash[organization_guid] =
           {
             'default_isolation_segment' => default_isolation_segment,
+            'labels'                    => organization_label_array,
             'organization'              => organization,
             'quota_definition'          => quota
           }

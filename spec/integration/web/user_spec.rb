@@ -68,6 +68,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Organizations tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Organizations' }
+        let(:page_id)   { 'OrganizationsPage' }
+        let(:button_id) { 'Buttons_OrganizationsLabelsTable_0' }
+      end
+    end
+
     context 'Spaces tab does not have rename, allow ssh, disallow ssh, remove isolation segment, delete unmapped routes or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Spaces' }
@@ -76,11 +84,27 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Spaces tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Spaces' }
+        let(:page_id)   { 'SpacesPage' }
+        let(:button_id) { 'Buttons_SpacesLabelsTable_0' }
+      end
+    end
+
     context 'Applications tab does not have rename, start, stop, restage, enable diego, disable diego, enable ssh, disable ssh or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Applications' }
         let(:page_id)   { 'ApplicationsPage' }
         let(:button_id) { 'Buttons_ApplicationsTable_0' }
+      end
+    end
+
+    context 'Applications tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Applications' }
+        let(:page_id)   { 'ApplicationsPage' }
+        let(:button_id) { 'Buttons_ApplicationsLabelsTable_0' }
       end
     end
 

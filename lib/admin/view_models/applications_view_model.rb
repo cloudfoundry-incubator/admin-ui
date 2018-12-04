@@ -13,6 +13,7 @@ module AdminUI
                            droplets['connected'] &&
                            packages['connected']
 
+      application_labels       = @cc.application_labels
       buildpack_lifecycle_data = @cc.buildpack_lifecycle_data
       containers               = @doppler.containers
       events                   = @cc.events
@@ -40,6 +41,30 @@ module AdminUI
 
       latest_droplets = latest_app_guid_hash(droplets['items'])
       latest_packages = latest_app_guid_hash(packages['items'])
+
+      application_labels_hash = {}
+      application_labels['items'].each do |application_label|
+        return result unless @running
+
+        Thread.pass
+
+        application_guid = application_label[:resource_guid]
+        application_labels_array = application_labels_hash[application_guid]
+        if application_labels_array.nil?
+          application_labels_array = []
+          application_labels_hash[application_guid] = application_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              application_label,
+            created_at_rfc3339: application_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: application_label[:updated_at].nil? ? nil : application_label[:updated_at].to_datetime.rfc3339
+          }
+
+        application_labels_array.push(wrapper)
+      end
 
       event_counters = {}
       events['items'].each do |event|
@@ -142,6 +167,7 @@ module AdminUI
         package = current_package
         package = latest_package if package.nil?
 
+        application_label_array    = application_labels_hash[guid] || []
         application_usage_counters = application_usage_counters_hash[guid]
         event_counter              = event_counters[guid]
         route_mapping_counter      = route_mapping_counters[guid]
@@ -279,6 +305,7 @@ module AdminUI
             'buildpack_lifecycle_data' => buildpack_lifecycle_data,
             'current_droplet'          => current_droplet,
             'current_package'          => current_package,
+            'labels'                   => application_label_array,
             'latest_droplet'           => latest_droplet,
             'latest_package'           => latest_package,
             'organization'             => organization,

@@ -849,6 +849,68 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('has organization details')
           end
 
+          it 'has labels' do
+            expect(@driver.find_element(id: 'OrganizationsLabelsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='OrganizationsLabelsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_organization_label[:key_prefix],
+                               cc_organization_label[:key_name],
+                               cc_organization_label[:guid],
+                               cc_organization_label[:created_at].to_datetime.rfc3339,
+                               cc_organization_label[:updated_at].to_datetime.rfc3339,
+                               cc_organization_label[:value]
+                             ])
+          end
+
+          it 'labels subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_OrganizationsLabelsTable_1')
+          end
+
+          it 'has a checkbox in the first column' do
+            check_checkbox_guid('OrganizationsLabelsTable', "#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_prefix]}/#{cc_organization_label[:key_name]}")
+          end
+
+          context 'manage labels subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_OrganizationsLabelsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_OrganizationsLabelsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'OrganizationsLabelsTable' }
+                let(:button_id)               { 'Buttons_OrganizationsLabelsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the organization's selected labels?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'organization_labels' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_OrganizationsLabelsTable_1' }
+                let(:print_button_id) { 'Buttons_OrganizationsLabelsTable_2' }
+                let(:save_button_id)  { 'Buttons_OrganizationsLabelsTable_3' }
+                let(:csv_button_id)   { 'Buttons_OrganizationsLabelsTable_4' }
+                let(:excel_button_id) { 'Buttons_OrganizationsLabelsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_OrganizationsLabelsTable_6' }
+              end
+            end
+          end
+
           it 'has events link' do
             check_filter_link('Organizations', 6, 'Events', cc_organization[:guid])
           end
@@ -1267,6 +1329,68 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'doppler dea' do
             it_behaves_like('has space details')
+          end
+
+          it 'has labels' do
+            expect(@driver.find_element(id: 'SpacesLabelsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='SpacesLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='SpacesLabelsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_space_label[:key_prefix],
+                               cc_space_label[:key_name],
+                               cc_space_label[:guid],
+                               cc_space_label[:created_at].to_datetime.rfc3339,
+                               cc_space_label[:updated_at].to_datetime.rfc3339,
+                               cc_space_label[:value]
+                             ])
+          end
+
+          it 'labels subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_SpacesLabelsTable_1')
+          end
+
+          it 'has a checkbox in the first column' do
+            check_checkbox_guid('SpacesLabelsTable', "#{cc_space[:guid]}/labels/#{cc_space_label[:key_prefix]}/#{cc_space_label[:key_name]}")
+          end
+
+          context 'manage labels subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_SpacesLabelsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_SpacesLabelsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'SpacesLabelsTable' }
+                let(:button_id)               { 'Buttons_SpacesLabelsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the space's selected labels?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'space_labels' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_SpacesLabelsTable_1' }
+                let(:print_button_id) { 'Buttons_SpacesLabelsTable_2' }
+                let(:save_button_id)  { 'Buttons_SpacesLabelsTable_3' }
+                let(:csv_button_id)   { 'Buttons_SpacesLabelsTable_4' }
+                let(:excel_button_id) { 'Buttons_SpacesLabelsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_SpacesLabelsTable_6' }
+              end
+            end
           end
 
           it 'has organizations link' do
@@ -1692,6 +1816,68 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'doppler dea' do
             it_behaves_like('has application details')
+          end
+
+          it 'has labels' do
+            expect(@driver.find_element(id: 'ApplicationsLabelsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ApplicationsLabelsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_app_label[:key_prefix],
+                               cc_app_label[:key_name],
+                               cc_app_label[:guid],
+                               cc_app_label[:created_at].to_datetime.rfc3339,
+                               cc_app_label[:updated_at].to_datetime.rfc3339,
+                               cc_app_label[:value]
+                             ])
+          end
+
+          it 'labels subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ApplicationsLabelsTable_1')
+          end
+
+          it 'has a checkbox in the first column' do
+            check_checkbox_guid('ApplicationsLabelsTable', "#{cc_app[:guid]}/labels/#{cc_app_label[:key_prefix]}/#{cc_app_label[:key_name]}")
+          end
+
+          context 'manage labels subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_ApplicationsLabelsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_ApplicationsLabelsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'ApplicationsLabelsTable' }
+                let(:button_id)               { 'Buttons_ApplicationsLabelsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the application's selected labels?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'application_labels' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ApplicationsLabelsTable_1' }
+                let(:print_button_id) { 'Buttons_ApplicationsLabelsTable_2' }
+                let(:save_button_id)  { 'Buttons_ApplicationsLabelsTable_3' }
+                let(:csv_button_id)   { 'Buttons_ApplicationsLabelsTable_4' }
+                let(:excel_button_id) { 'Buttons_ApplicationsLabelsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_ApplicationsLabelsTable_6' }
+              end
+            end
           end
 
           it 'has environment variables' do

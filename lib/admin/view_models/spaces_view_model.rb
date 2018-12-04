@@ -24,6 +24,7 @@ module AdminUI
       security_groups_spaces         = @cc.security_groups_spaces
       service_brokers                = @cc.service_brokers
       service_instances              = @cc.service_instances
+      space_labels                   = @cc.space_labels
       space_quotas                   = @cc.space_quota_definitions
       spaces_auditors                = @cc.spaces_auditors
       spaces_developers              = @cc.spaces_developers
@@ -57,6 +58,30 @@ module AdminUI
 
       latest_droplets = latest_app_guid_hash(droplets['items'])
       latest_packages = latest_app_guid_hash(packages['items'])
+
+      space_labels_hash = {}
+      space_labels['items'].each do |space_label|
+        return result unless @running
+
+        Thread.pass
+
+        space_guid = space_label[:resource_guid]
+        space_labels_array = space_labels_hash[space_guid]
+        if space_labels_array.nil?
+          space_labels_array = []
+          space_labels_hash[space_guid] = space_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              space_label,
+            created_at_rfc3339: space_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: space_label[:updated_at].nil? ? nil : space_label[:updated_at].to_datetime.rfc3339
+          }
+
+        space_labels_array.push(wrapper)
+      end
 
       event_counters        = {}
       event_target_counters = {}
@@ -246,6 +271,7 @@ module AdminUI
         isolation_segment_guid = space[:isolation_segment_guid]
         isolation_segment      = isolation_segment_guid.nil? ? nil : isolation_segments_hash[isolation_segment_guid]
 
+        space_label_array                     = space_labels_hash[space_guid] || []
         event_counter                         = event_counters[space_guid]
         event_target_counter                  = event_target_counters[space_guid]
         space_quota                           = space_quota_hash[space[:space_quota_definition_id]]
@@ -454,6 +480,7 @@ module AdminUI
         hash[space_guid] =
           {
             'isolation_segment'      => isolation_segment,
+            'labels'                 => space_label_array,
             'organization'           => organization,
             'space'                  => space,
             'space_quota_definition' => space_quota

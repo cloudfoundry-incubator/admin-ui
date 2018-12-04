@@ -379,6 +379,23 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:app_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :resource_guid, :size=>255
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:key_prefix, :key_name, :value], :name=>:app_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+      index [:resource_guid], :name=>:fk_app_labels_resource_guid_index
+    end
+    
     create_table(:apps, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -604,6 +621,23 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:organization_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :resource_guid, :size=>255
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_organization_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:organization_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
     create_table(:organizations, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -719,6 +753,23 @@ Sequel.migration do
       index [:guid], :name=>:sbrokers_guid_index, :unique=>true
       index [:updated_at], :name=>:sbrokers_updated_at_index
       index [:name], :unique=>true
+    end
+    
+    create_table(:space_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :spaces, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_space_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:space_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
     
     create_table(:staging_security_groups_spaces, :ignore_index_errors=>true) do
@@ -1014,12 +1065,20 @@ Sequel.migration do
       add_foreign_key [:app_id], :processes, :name=>:fk_app_events_app_id, :key=>[:id], :schema=>:public
     end
     
+    alter_table(:app_labels) do
+      add_foreign_key [:resource_guid], :apps, :name=>:fk_app_labels_resource_guid, :key=>[:guid], :schema=>:public
+    end
+    
     alter_table(:apps) do
       add_foreign_key [:space_guid], :spaces, :name=>:fk_apps_space_guid, :key=>[:guid], :schema=>:public
     end
     
     alter_table(:domains) do
       add_foreign_key [:owning_organization_id], :organizations, :name=>:fk_domains_owning_org_id, :key=>[:id], :schema=>:public
+    end
+    
+    alter_table(:organization_labels) do
+      add_foreign_key [:resource_guid], :organizations, :name=>:fk_organization_labels_resource_guid, :key=>[:guid], :schema=>:public
     end
     
     alter_table(:organizations) do

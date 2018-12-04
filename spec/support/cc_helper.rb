@@ -173,6 +173,7 @@ module CCHelper
     cc_clear_packages_cache_stub(config)
     cc_clear_processes_cache_stub(config)
 
+    sql(config.ccdb_uri, 'DELETE FROM app_labels')
     sql(config.ccdb_uri, 'DELETE FROM apps')
 
     @cc_apps_deleted = true
@@ -229,6 +230,7 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM organizations_billing_managers')
     sql(config.ccdb_uri, 'DELETE FROM organizations_managers')
     sql(config.ccdb_uri, 'DELETE FROM organizations_users')
+    sql(config.ccdb_uri, 'DELETE FROM organization_labels')
     sql(config.ccdb_uri, 'DELETE FROM organizations')
 
     @cc_organizations_deleted = true
@@ -379,6 +381,7 @@ module CCHelper
     cc_clear_apps_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM events')
+    sql(config.ccdb_uri, 'DELETE FROM space_labels')
     sql(config.ccdb_uri, 'DELETE FROM spaces')
 
     @cc_spaces_deleted = true
@@ -517,6 +520,19 @@ module CCHelper
 
     {
       cc_app_environment_variable_name => 'app_env_value'
+    }
+  end
+
+  def cc_app_label
+    {
+      created_at:    unique_time('cc_app_label_created'),
+      guid:          'applabel1',
+      id:            unique_id('cc_app_label'),
+      key_name:      'applabelkeyname',
+      key_prefix:    'applabelkeyprefix.com',
+      resource_guid: cc_app[:guid],
+      updated_at:    unique_time('cc_app_label_updated'),
+      value:         'applabelvalue'
     }
   end
 
@@ -989,6 +1005,19 @@ module CCHelper
     }
   end
 
+  def cc_organization_label
+    {
+      created_at:    unique_time('cc_organization_label_created'),
+      guid:          'orglabel1',
+      id:            unique_id('cc_organization_label'),
+      key_name:      'orglabelkeyname',
+      key_prefix:    'orglabelkeyprefix.com',
+      resource_guid: cc_organization[:guid],
+      updated_at:    unique_time('cc_organization_label_updated'),
+      value:         'orglabelvalue'
+    }
+  end
+
   def cc_organization_manager
     {
       organizations_managers_pk: unique_id('cc_organization_manager'),
@@ -1434,6 +1463,19 @@ module CCHelper
     }
   end
 
+  def cc_space_label
+    {
+      created_at:    unique_time('cc_space_label_created'),
+      guid:          'spacelabel1',
+      id:            unique_id('cc_space_label'),
+      key_name:      'spacelabelkeyname',
+      key_prefix:    'spacelabelkeyprefix.com',
+      resource_guid: cc_space[:guid],
+      updated_at:    unique_time('cc_space_label_updated'),
+      value:         'spacelabelvalue'
+    }
+  end
+
   def cc_space_manager
     {
       spaces_managers_pk: unique_id('cc_space_manager'),
@@ -1725,14 +1767,17 @@ module CCHelper
                [:stacks,                           cc_stack],
                [:isolation_segments,               cc_isolation_segment],
                [:organizations,                    cc_organization_without_default_isolation_segment_guid],
+               [:organization_labels,              cc_organization_label],
                [:organizations_isolation_segments, cc_organization_isolation_segment],
                [:domains,                          cc_domain],
                [:space_quota_definitions,          cc_space_quota_definition],
                [:organizations_private_domains,    cc_organization_private_domain],
                [:spaces,                           cc_space],
+               [:space_labels,                     cc_space_label],
                [:security_groups_spaces,           cc_security_group_space],
                [:staging_security_groups_spaces,   cc_staging_security_group_space],
                [:apps,                             cc_app],
+               [:app_labels,                       cc_app_label],
                [:processes,                        cc_process],
                [:packages,                         cc_package],
                [:droplets,                         cc_droplet],
@@ -1810,6 +1855,16 @@ module CCHelper
   def cc_app_stubs(config)
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
       OK.new('entity' => { 'environment_json' => cc_app_environment_variable })
+    end
+
+    # Remove label
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        cc_clear_apps_cache_stub(config)
+        OK.new({})
+      end
     end
 
     # Since set of environment variable not supported, assuming PATCH is to delete
@@ -2214,6 +2269,16 @@ module CCHelper
       else
         sql(config.ccdb_uri, "UPDATE organizations SET status = 'active' WHERE guid = '#{cc_organization[:guid]}'")
         Created.new
+      end
+    end
+
+    # Remove label
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        cc_clear_organizations_cache_stub(config)
+        OK.new({})
       end
     end
 
@@ -2691,6 +2756,16 @@ module CCHelper
       else
         sql(config.ccdb_uri, "UPDATE spaces SET allow_ssh = 'false' WHERE guid = '#{cc_space[:guid]}'")
         Created.new
+      end
+    end
+
+    # Remove label
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        cc_clear_spaces_cache_stub(config)
+        OK.new({})
       end
     end
 

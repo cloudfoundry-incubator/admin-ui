@@ -49,6 +49,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.applications['items'].length).to eq(0)
     end
 
+    it 'clears the application label cache' do
+      expect(cc.application_labels['items'].length).to eq(1)
+      cc_clear_apps_cache_stub(config)
+      cc.invalidate_application_labels
+      expect(cc.application_labels['items'].length).to eq(0)
+    end
+
     it 'clears the approval cache' do
       expect(cc.approvals['items'].length).to eq(1)
       uaa_clear_approvals_cache_stub(config)
@@ -180,6 +187,13 @@ describe AdminUI::CC, type: :integration do
       cc_clear_organizations_cache_stub(config)
       cc.invalidate_organizations_users
       expect(cc.organizations_users['items'].length).to eq(0)
+    end
+
+    it 'clears the organization labels cache' do
+      expect(cc.organization_labels['items'].length).to eq(1)
+      cc_clear_organizations_cache_stub(config)
+      cc.invalidate_organization_labels
+      expect(cc.organization_labels['items'].length).to eq(0)
     end
 
     it 'clears the package cache' do
@@ -343,6 +357,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.spaces_managers['items'].length).to eq(0)
     end
 
+    it 'clears the space labels cache' do
+      expect(cc.space_labels['items'].length).to eq(1)
+      cc_clear_spaces_cache_stub(config)
+      cc.invalidate_space_labels
+      expect(cc.space_labels['items'].length).to eq(0)
+    end
+
     it 'clears the stacks cache' do
       expect(cc.stacks['items'].length).to eq(1)
       cc_clear_stacks_cache_stub(config)
@@ -396,6 +417,13 @@ describe AdminUI::CC, type: :integration do
 
     it 'returns applications count' do
       expect(cc.applications_count).to be(1)
+    end
+
+    context 'returns connected application labels' do
+      let(:results)  { cc.application_labels }
+      let(:expected) { cc_app_label }
+
+      it_behaves_like('common cc retrieval')
     end
 
     context 'returns connected approvals' do
@@ -552,6 +580,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected organizations users' do
       let(:results)  { cc.organizations_users }
       let(:expected) { cc_organization_user }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected organization labels' do
+      let(:results)  { cc.organization_labels }
+      let(:expected) { cc_organization_label }
 
       it_behaves_like('common cc retrieval')
     end
@@ -753,6 +788,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected spaces managers' do
       let(:results)  { cc.spaces_managers }
       let(:expected) { cc_space_manager }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected space labels' do
+      let(:results)  { cc.space_labels }
+      let(:expected) { cc_space_label }
 
       it_behaves_like('common cc retrieval')
     end

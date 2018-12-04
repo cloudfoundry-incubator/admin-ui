@@ -45,6 +45,10 @@ describe AdminUI::CC do
       expect(cc.applications_count).to be_nil
     end
 
+    it 'returns zero application labels as expected' do
+      verify_disconnected_items(cc.application_labels)
+    end
+
     it 'returns zero approvals as expected' do
       verify_disconnected_items(cc.approvals)
     end
@@ -135,6 +139,10 @@ describe AdminUI::CC do
 
     it 'returns zero organizations_users as expected' do
       verify_disconnected_items(cc.organizations_users)
+    end
+
+    it 'returns zero organization_labels as expected' do
+      verify_disconnected_items(cc.organization_labels)
     end
 
     it 'returns zero packages as expected' do
@@ -255,6 +263,10 @@ describe AdminUI::CC do
 
     it 'returns zero spaces_managers as expected' do
       verify_disconnected_items(cc.spaces_managers)
+    end
+
+    it 'returns zero space_labels as expected' do
+      verify_disconnected_items(cc.space_labels)
     end
 
     it 'returns zero stacks as expected' do

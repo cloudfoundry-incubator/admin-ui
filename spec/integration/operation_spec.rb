@@ -112,6 +112,10 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_application_environment_variable(cc_app[:guid], cc_app_environment_variable_name)
       end
 
+      def delete_application_label
+        operation.delete_application_label(cc_app[:guid], cc_app_label[:key_prefix], cc_app_label[:key_name])
+      end
+
       def restage_application
         operation.restage_application(cc_app[:guid])
       end
@@ -190,6 +194,10 @@ describe AdminUI::Operation, type: :integration do
         expect { delete_application_environment_variable }.to change { cc_app_environment_variable.keys.length }.from(1).to(0)
       end
 
+      it 'deletes the application label' do
+        expect { delete_application_label }.to change { cc.application_labels['items'].length }.from(1).to(0)
+      end
+
       context 'errors' do
         before do
           delete_application
@@ -244,6 +252,10 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting environment variable on deleted app' do
           expect { delete_application_environment_variable }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted app' do
+          expect { delete_application_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
         end
       end
     end
@@ -781,6 +793,10 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_organization(cc_organization[:guid], true)
       end
 
+      def delete_organization_label
+        operation.delete_organization_label(cc_organization[:guid], cc_organization_label[:key_prefix], cc_organization_label[:key_name])
+      end
+
       it 'creates a new organization' do
         expect { create_organization }.to change { cc.organizations['items'].length }.from(1).to(2)
         expect(cc.organizations['items'][1][:name]).to eq(cc_organization2[:name])
@@ -817,6 +833,10 @@ describe AdminUI::Operation, type: :integration do
 
       it 'deletes organization recursive' do
         expect { delete_organization_recursive }.to change { cc.organizations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes organization label' do
+        expect { delete_organization_label }.to change { cc.organization_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -861,6 +881,10 @@ describe AdminUI::Operation, type: :integration do
 
           it 'fails deleting recursive deleted organization' do
             expect { delete_organization_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_not_found(exception) }
+          end
+
+          it 'fails deleting label on deleted organization' do
+            expect { delete_organization_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_not_found(exception) }
           end
         end
 
@@ -1704,6 +1728,10 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_space(cc_space[:guid], true)
       end
 
+      def delete_space_label
+        operation.delete_space_label(cc_space[:guid], cc_space_label[:key_prefix], cc_space_label[:key_name])
+      end
+
       it 'renames the space' do
         expect { rename_space }.to change { cc.spaces['items'][0][:name] }.from(cc_space[:name]).to(cc_space_rename)
       end
@@ -1736,6 +1764,10 @@ describe AdminUI::Operation, type: :integration do
 
       it 'deletes space recursive' do
         expect { delete_space_recursive }.to change { cc.spaces['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes space label' do
+        expect { delete_space_label }.to change { cc.space_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -1776,6 +1808,10 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting recursive deleted space' do
           expect { delete_space_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted space' do
+          expect { delete_space_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
         end
       end
     end

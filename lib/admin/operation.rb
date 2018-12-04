@@ -62,6 +62,7 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_applications
+      @cc.invalidate_application_labels
       @cc.invalidate_droplets
       @cc.invalidate_packages
       @cc.invalidate_processes
@@ -77,8 +78,11 @@ module AdminUI
     end
 
     def delete_application_environment_variable(app_guid, environment_variable)
+      api_version = @client.api_version
+      new_protocol = Gem::Version.new(api_version) >= Gem::Version.new('2.92.0')
       url = "/v3/apps/#{app_guid}/environment_variables"
       body = "{\"#{environment_variable}\":null}"
+      body = "{\"var\":#{body}" if new_protocol
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
       # Since the application environment variables are fetched on a per-application-retrieval basis, no reason to invalidate.
@@ -91,6 +95,15 @@ module AdminUI
       @doppler.testing_remove_container_metric(app_guid, instance_index) if @testing
       @varz.invalidate
       @view_models.invalidate_application_instances
+    end
+
+    def delete_application_label(application_guid, prefix, name)
+      url = "/v3/apps/#{application_guid}"
+      body = "{\"metadata\":{\"labels\":{\"#{prefix}/#{name}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_application_labels
+      @view_models.invalidate_applications
     end
 
     def delete_buildpack(buildpack_guid)
@@ -219,6 +232,7 @@ module AdminUI
       @cc.invalidate_organizations_billing_managers
       @cc.invalidate_organizations_managers
       @cc.invalidate_organizations_users
+      @cc.invalidate_organization_labels
       @cc.invalidate_service_plan_visibilities
       if recursive
         @cc.invalidate_applications
@@ -277,6 +291,15 @@ module AdminUI
 
       @cc.invalidate_organizations_isolation_segments
       @view_models.invalidate_organizations_isolation_segments
+    end
+
+    def delete_organization_label(organization_guid, prefix, name)
+      url = "/v3/organizations/#{organization_guid}"
+      body = "{\"metadata\":{\"labels\":{\"#{prefix}/#{name}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_organization_labels
+      @view_models.invalidate_organizations
     end
 
     def delete_organization_private_domain(organization_guid, domain_guid)
@@ -476,6 +499,7 @@ module AdminUI
       @cc.invalidate_spaces_auditors
       @cc.invalidate_spaces_developers
       @cc.invalidate_spaces_managers
+      @cc.invalidate_space_labels
       @cc.invalidate_staging_security_groups_spaces
       if recursive
         @cc.invalidate_applications
@@ -504,6 +528,15 @@ module AdminUI
       @view_models.invalidate_spaces
       @view_models.invalidate_space_roles
       @view_models.invalidate_staging_security_groups_spaces
+    end
+
+    def delete_space_label(space_guid, prefix, name)
+      url = "/v3/spaces/#{space_guid}"
+      body = "{\"metadata\":{\"labels\":{\"#{prefix}/#{name}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_space_labels
+      @view_models.invalidate_spaces
     end
 
     def delete_space_quota_definition(space_quota_definition_guid)
