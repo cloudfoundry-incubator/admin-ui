@@ -49,6 +49,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.applications['items'].length).to eq(0)
     end
 
+    it 'clears the application annotation cache' do
+      expect(cc.application_annotations['items'].length).to eq(1)
+      cc_clear_apps_cache_stub(config)
+      cc.invalidate_application_annotations
+      expect(cc.application_annotations['items'].length).to eq(0)
+    end
+
     it 'clears the application label cache' do
       expect(cc.application_labels['items'].length).to eq(1)
       cc_clear_apps_cache_stub(config)
@@ -411,6 +418,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected applications' do
       let(:results)  { cc.applications }
       let(:expected) { cc_app }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected application annotations' do
+      let(:results)  { cc.application_annotations }
+      let(:expected) { cc_app_annotation }
 
       it_behaves_like('common cc retrieval')
     end

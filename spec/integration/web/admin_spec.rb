@@ -849,7 +849,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('has organization details')
           end
 
-          it 'has labels' do
+          it 'has labels subtable' do
             expect(@driver.find_element(id: 'OrganizationsLabelsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
@@ -873,7 +873,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_allowscriptaccess_attribute('Buttons_OrganizationsLabelsTable_1')
           end
 
-          it 'has a checkbox in the first column' do
+          it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('OrganizationsLabelsTable', "#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_prefix]}/#{cc_organization_label[:key_name]}")
           end
 
@@ -1331,7 +1331,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('has space details')
           end
 
-          it 'has labels' do
+          it 'has labels subtable' do
             expect(@driver.find_element(id: 'SpacesLabelsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='SpacesLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
@@ -1355,7 +1355,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_allowscriptaccess_attribute('Buttons_SpacesLabelsTable_1')
           end
 
-          it 'has a checkbox in the first column' do
+          it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('SpacesLabelsTable', "#{cc_space[:guid]}/labels/#{cc_space_label[:key_prefix]}/#{cc_space_label[:key_name]}")
           end
 
@@ -1818,7 +1818,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             it_behaves_like('has application details')
           end
 
-          it 'has labels' do
+          it 'has labels subtable' do
             expect(@driver.find_element(id: 'ApplicationsLabelsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
@@ -1842,7 +1842,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_allowscriptaccess_attribute('Buttons_ApplicationsLabelsTable_1')
           end
 
-          it 'has a checkbox in the first column' do
+          it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('ApplicationsLabelsTable', "#{cc_app[:guid]}/labels/#{cc_app_label[:key_prefix]}/#{cc_app_label[:key_name]}")
           end
 
@@ -1880,7 +1880,68 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          it 'has environment variables' do
+          it 'has annotations subtable' do
+            expect(@driver.find_element(id: 'ApplicationsAnnotationsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 6,
+                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ApplicationsAnnotationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_app_annotation[:key],
+                               cc_app_annotation[:guid],
+                               cc_app_annotation[:created_at].to_datetime.rfc3339,
+                               cc_app_annotation[:updated_at].to_datetime.rfc3339,
+                               cc_app_annotation[:value]
+                             ])
+          end
+
+          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ApplicationsAnnotationsTable_1')
+          end
+
+          it 'annotations subtable has a checkbox in the first column' do
+            check_checkbox_guid('ApplicationsAnnotationsTable', "#{cc_app[:guid]}/annotations/#{cc_app_annotation[:key]}")
+          end
+
+          context 'manage annotations subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_ApplicationsAnnotationsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_ApplicationsAnnotationsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'ApplicationsAnnotationsTable' }
+                let(:button_id)               { 'Buttons_ApplicationsAnnotationsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the application's selected annotations?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'application_annotations' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ApplicationsAnnotationsTable_1' }
+                let(:print_button_id) { 'Buttons_ApplicationsAnnotationsTable_2' }
+                let(:save_button_id)  { 'Buttons_ApplicationsAnnotationsTable_3' }
+                let(:csv_button_id)   { 'Buttons_ApplicationsAnnotationsTable_4' }
+                let(:excel_button_id) { 'Buttons_ApplicationsAnnotationsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_ApplicationsAnnotationsTable_6' }
+              end
+            end
+          end
+
+          it 'has environment variables subtable' do
             expect(@driver.find_element(id: 'ApplicationsEnvironmentVariablesDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsEnvironmentVariablesTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
@@ -1900,7 +1961,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             check_allowscriptaccess_attribute('Buttons_ApplicationsEnvironmentVariablesTable_1')
           end
 
-          it 'has a checkbox in the first column' do
+          it 'environment variables subtable has a checkbox in the first column' do
             check_checkbox_guid('ApplicationsEnvironmentVariablesTable', "#{cc_app[:guid]}/environment_variables/#{cc_app_environment_variable_name}")
           end
 
@@ -2661,7 +2722,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
-          it 'has credentials' do
+          it 'has credentials subtable' do
             expect(@driver.find_element(id: 'ServiceInstancesCredentialsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesCredentialsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
@@ -3070,7 +3131,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
-          it 'has credentials' do
+          it 'has credentials subtable' do
             expect(@driver.find_element(id: 'ServiceBindingsCredentialsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsCredentialsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
@@ -3104,7 +3165,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
-          it 'has volume mounts' do
+          it 'has volume mounts subtable' do
             expect(@driver.find_element(id: 'ServiceBindingsVolumeMountsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceBindingsVolumeMountsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
@@ -3313,7 +3374,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
-          it 'has credentials' do
+          it 'has credentials subtable' do
             expect(@driver.find_element(id: 'ServiceKeysCredentialsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceKeysCredentialsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
@@ -6374,12 +6435,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
                                  labels:          ['', 'Service Plan', 'Service', 'Service Broker'],
-                                 colspans:        %w[1 17 7 4]
+                                 colspans:        %w[1 18 7 4]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicePlansTable_wrapper']/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 29,
-                                 labels:          ['', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Free', 'Active', 'Public', 'Display Name', 'Events', 'Visible Organizations', 'Service Instances', 'Service Instance Shares', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Active', 'Name', 'GUID', 'Created', 'Updated'],
+                                 expected_length: 30,
+                                 labels:          ['', 'Name', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Plan Updateable', 'Free', 'Active', 'Public', 'Display Name', 'Events', 'Visible Organizations', 'Service Instances', 'Service Instance Shares', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Active', 'Name', 'GUID', 'Created', 'Updated'],
                                  colspans:        nil
                                }
                              ])
@@ -6393,6 +6454,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_plan[:created_at].to_datetime.rfc3339,
                              cc_service_plan[:updated_at].to_datetime.rfc3339,
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:bindable]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:plan_updateable]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})"),
@@ -6435,10 +6497,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           def check_service_plan_state(expect_state)
             begin
-              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[8]").text == expect_state }
+              Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[9]").text == expect_state }
             rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
-            expect(@driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[10]").text).to eq(expect_state)
+            expect(@driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[11]").text).to eq(expect_state)
           end
 
           it 'has a Public button' do
@@ -6516,6 +6578,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Plan Created',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Plan Updated',                tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_plan[:updated_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Plan Bindable',               tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:bindable]})") },
+                            { label: 'Service Plan Plan Updateable',        tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:plan_updateable]})") },
                             { label: 'Service Plan Free',                   tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:free]})") },
                             { label: 'Service Plan Active',                 tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:active]})") },
                             { label: 'Service Plan Public',                 tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_plan[:public]})") },
@@ -6548,39 +6611,39 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('ServicePlans', 16, 'Events', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 17, 'Events', cc_service_plan[:guid])
           end
 
           it 'has service plan visibilities link' do
-            check_filter_link('ServicePlans', 17, 'ServicePlanVisibilities', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 18, 'ServicePlanVisibilities', cc_service_plan[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('ServicePlans', 18, 'ServiceInstances', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 19, 'ServiceInstances', cc_service_plan[:guid])
           end
 
           it 'has shared service instances link' do
-            check_filter_link('ServicePlans', 19, 'SharedServiceInstances', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 20, 'SharedServiceInstances', cc_service_plan[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('ServicePlans', 20, 'ServiceBindings', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 21, 'ServiceBindings', cc_service_plan[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('ServicePlans', 21, 'ServiceKeys', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 22, 'ServiceKeys', cc_service_plan[:guid])
           end
 
           it 'has route bindings link' do
-            check_filter_link('ServicePlans', 22, 'RouteBindings', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 23, 'RouteBindings', cc_service_plan[:guid])
           end
 
           it 'has services link' do
-            check_filter_link('ServicePlans', 23, 'Services', cc_service[:guid])
+            check_filter_link('ServicePlans', 24, 'Services', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('ServicePlans', 30, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('ServicePlans', 31, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end
@@ -7414,7 +7477,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
-          it 'has rules' do
+          it 'has rules subtable' do
             expect(@driver.find_element(id: 'SecurityGroupsRulesDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='SecurityGroupsRulesTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
@@ -8000,7 +8063,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
-          it 'has variables' do
+          it 'has variables subtable' do
             expect(@driver.find_element(id: 'EnvironmentGroupsVariablesDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='EnvironmentGroupsVariablesTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
@@ -8458,7 +8521,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
-          it 'has nodes' do
+          it 'has nodes subtable' do
             expect(@driver.find_element(id: 'GatewaysNodesDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='GatewaysNodesTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
@@ -8600,7 +8663,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             ])
             end
 
-            it 'has top10 applications' do
+            it 'has top10 applications subtable' do
               expect(@driver.find_element(id: 'RoutersTop10ApplicationsDetailsLabel').displayed?).to be(true)
 
               check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='RoutersTop10ApplicationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),

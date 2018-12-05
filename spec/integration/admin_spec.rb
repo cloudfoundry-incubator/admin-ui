@@ -228,6 +228,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}?recursive=true"]], true)
     end
 
+    def delete_app_annotation
+      response = delete_request("/applications/#{cc_app[:guid]}/annotations/#{cc_app_annotation[:key]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/annotations/#{cc_app_annotation[:key]}"]])
+    end
+
     def delete_app_environment_variable
       response = delete_request("/applications/#{cc_app[:guid]}/environment_variables/#{cc_app_environment_variable_name}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -288,6 +294,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes an application recursive' do
       expect { delete_app_recursive }.to change { get_json('/applications_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes an application annotation' do
+      expect { delete_app_annotation }.to change { get_json("/applications_view_model/#{cc_app[:guid]}")['annotations'].length }.from(1).to(0)
     end
 
     it 'deletes an application environment_variable' do
@@ -1416,12 +1426,12 @@ describe AdminUI::Admin, type: :integration do
 
     it 'makes service plan private' do
       make_service_plan_public
-      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][9] }.from(true).to(false)
+      expect { make_service_plan_private }.to change { get_json('/service_plans_view_model')['items']['items'][0][10] }.from(true).to(false)
     end
 
     it 'makes service plan public' do
       make_service_plan_private
-      expect { make_service_plan_public }.to change { get_json('/service_plans_view_model')['items']['items'][0][9] }.from(false).to(true)
+      expect { make_service_plan_public }.to change { get_json('/service_plans_view_model')['items']['items'][0][10] }.from(false).to(true)
     end
 
     it 'deletes a service plan' do

@@ -23,6 +23,12 @@ module AdminUI
       # rubocop:disable Layout/AlignHash
       @caches =
         {
+          application_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :app_annotations,
+            columns: %i[created_at guid id key resource_guid updated_at value]
+          },
           application_labels:
           {
             db_uri:  ccdb_uri,
@@ -286,7 +292,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_plans,
-            columns: %i[active bindable created_at create_binding_schema create_instance_schema description extra free guid id name public service_id unique_id updated_at update_instance_schema]
+            columns: %i[active bindable created_at create_binding_schema create_instance_schema description extra free guid id name plan_updateable public service_id unique_id updated_at update_instance_schema]
           },
           service_plan_visibilities:
           {
@@ -386,6 +392,10 @@ module AdminUI
       end
     end
 
+    def application_annotations
+      result_cache(:application_annotations)
+    end
+
     def application_labels
       result_cache(:application_labels)
     end
@@ -451,6 +461,10 @@ module AdminUI
 
     def identity_zones
       result_cache(:identity_zones)
+    end
+
+    def invalidate_application_annotations
+      invalidate_cache(:application_annotations)
     end
 
     def invalidate_application_labels

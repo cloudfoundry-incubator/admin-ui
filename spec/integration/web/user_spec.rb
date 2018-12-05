@@ -108,6 +108,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Applications tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Applications' }
+        let(:page_id)   { 'ApplicationsPage' }
+        let(:button_id) { 'Buttons_ApplicationsAnnotationsTable_0' }
+      end
+    end
+
     context 'Applications tab does not have environment variables subtable' do
       it_behaves_like('verifies subtable is not shown') do
         let(:tab_id)         { 'Applications' }

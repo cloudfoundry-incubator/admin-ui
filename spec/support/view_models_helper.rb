@@ -49,6 +49,14 @@ module ViewModelsHelper
     end
   end
 
+  def annotation_rfc3339(annotation)
+    {
+      annotation:         annotation,
+      created_at_rfc3339: annotation[:created_at].to_datetime.rfc3339,
+      updated_at_rfc3339: annotation[:updated_at].to_datetime.rfc3339
+    }
+  end
+
   def label_rfc3339(label)
     {
       label:              label,
@@ -159,6 +167,7 @@ module ViewModelsHelper
 
   def view_models_applications_detail
     {
+      'annotations'              => [annotation_rfc3339(cc_app_annotation)],
       'application'              => cc_app,
       'buildpack_lifecycle_data' => cc_buildpack_lifecycle_data,
       'current_droplet'          => cc_droplet,
@@ -1306,6 +1315,7 @@ module ViewModelsHelper
         cc_service_plan[:created_at].to_datetime.rfc3339,
         cc_service_plan[:updated_at].to_datetime.rfc3339,
         cc_service_plan[:bindable],
+        cc_service_plan[:plan_updateable],
         cc_service_plan[:free],
         cc_service_plan[:active],
         cc_service_plan[:public],

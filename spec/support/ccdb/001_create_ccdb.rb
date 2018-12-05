@@ -361,6 +361,21 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:app_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :resource_guid, :size=>253
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+      index [:resource_guid], :name=>:fk_app_annotations_resource_guid_index
+    end
+    
     create_table(:app_events, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -453,6 +468,8 @@ Sequel.migration do
       String :deploying_web_process_guid, :size=>255
       String :previous_droplet_guid, :size=>255
       Integer :original_web_process_instance_count, :null=>false
+      String :revision_guid, :size=>255
+      Integer :revision_version
       
       index [:app_guid]
       index [:created_at]
@@ -554,12 +571,27 @@ Sequel.migration do
       String :ports, :text=>true
       String :health_check_http_endpoint, :text=>true
       Integer :health_check_invocation_timeout
+      String :revision_guid, :size=>255
       
       index [:created_at], :name=>:apps_created_at_index
       index [:diego], :name=>:apps_diego_index
       index [:guid], :name=>:apps_guid_index, :unique=>true
       index [:updated_at], :name=>:apps_updated_at_index
       index [:app_guid]
+    end
+    
+    create_table(:revisions, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :app_guid, :apps, :type=>String, :size=>255, :key=>[:guid]
+      Integer :version, :default=>1
+      
+      index [:app_guid], :name=>:fk_revision_app_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
     
     create_table(:tasks, :ignore_index_errors=>true) do
@@ -916,6 +948,7 @@ Sequel.migration do
       String :create_instance_schema, :text=>true
       String :update_instance_schema, :text=>true
       String :create_binding_schema, :text=>true
+      TrueClass :plan_updateable
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -1059,6 +1092,10 @@ Sequel.migration do
       index [:created_at]
       index [:updated_at]
       index [:service_binding_id], :name=>:svc_binding_id_index, :unique=>true
+    end
+    
+    alter_table(:app_annotations) do
+      add_foreign_key [:resource_guid], :apps, :name=>:fk_app_annotations_resource_guid, :key=>[:guid], :schema=>:public
     end
     
     alter_table(:app_events) do

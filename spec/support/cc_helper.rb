@@ -173,6 +173,7 @@ module CCHelper
     cc_clear_packages_cache_stub(config)
     cc_clear_processes_cache_stub(config)
 
+    sql(config.ccdb_uri, 'DELETE FROM app_annotations')
     sql(config.ccdb_uri, 'DELETE FROM app_labels')
     sql(config.ccdb_uri, 'DELETE FROM apps')
 
@@ -508,6 +509,18 @@ module CCHelper
       name:                 'test',
       space_guid:           cc_space[:guid],
       updated_at:           unique_time('cc_app_updated')
+    }
+  end
+
+  def cc_app_annotation
+    {
+      created_at:    unique_time('cc_app_annotation_created'),
+      guid:          'appannotation1',
+      id:            unique_id('cc_app_annotation'),
+      key:           'appannotationkey',
+      resource_guid: cc_app[:guid],
+      updated_at:    unique_time('cc_app_annotation_updated'),
+      value:         'appannotationvalue'
     }
   end
 
@@ -1410,6 +1423,7 @@ module CCHelper
       guid:                   'service_plan1',
       id:                     unique_id('cc_service_plan'),
       name:                   'TestServicePlan',
+      plan_updateable:        true,
       public:                 true,
       service_id:             cc_service[:id],
       unique_id:              'service_plan_unique_id1',
@@ -1777,6 +1791,7 @@ module CCHelper
                [:security_groups_spaces,           cc_security_group_space],
                [:staging_security_groups_spaces,   cc_staging_security_group_space],
                [:apps,                             cc_app],
+               [:app_annotations,                  cc_app_annotation],
                [:app_labels,                       cc_app_label],
                [:processes,                        cc_process],
                [:packages,                         cc_package],
@@ -1857,7 +1872,7 @@ module CCHelper
       OK.new('entity' => { 'environment_json' => cc_app_environment_variable })
     end
 
-    # Remove label
+    # Remove metadata
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
       if @cc_apps_deleted
         cc_app_not_found

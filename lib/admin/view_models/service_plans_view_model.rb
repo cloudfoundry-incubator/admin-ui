@@ -184,6 +184,7 @@ module AdminUI
         end
 
         row.push(service_plan[:bindable])
+        row.push(service_plan[:plan_updateable])
         row.push(service_plan[:free])
         row.push(service_plan[:active])
         row.push(service_plan[:public])
@@ -298,7 +299,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..28).to_a, (1..28).to_a - [11, 12, 13, 14, 15, 16, 17])
+      result(true, items, hash, (1..29).to_a, (1..29).to_a - [12, 13, 14, 15, 16, 17, 18])
     end
   end
 end

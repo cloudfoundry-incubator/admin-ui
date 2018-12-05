@@ -41,6 +41,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.applications)
     end
 
+    it 'returns zero application annotations as expected' do
+      verify_disconnected_items(cc.application_annotations)
+    end
+
     it 'returns nil application count as expected' do
       expect(cc.applications_count).to be_nil
     end

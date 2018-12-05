@@ -62,6 +62,7 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_applications
+      @cc.invalidate_application_annotations
       @cc.invalidate_application_labels
       @cc.invalidate_droplets
       @cc.invalidate_packages
@@ -95,6 +96,15 @@ module AdminUI
       @doppler.testing_remove_container_metric(app_guid, instance_index) if @testing
       @varz.invalidate
       @view_models.invalidate_application_instances
+    end
+
+    def delete_application_annotation(application_guid, key)
+      url = "/v3/apps/#{application_guid}"
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_application_annotations
+      @view_models.invalidate_applications
     end
 
     def delete_application_label(application_guid, prefix, name)

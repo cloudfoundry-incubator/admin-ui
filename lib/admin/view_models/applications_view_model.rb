@@ -13,6 +13,7 @@ module AdminUI
                            droplets['connected'] &&
                            packages['connected']
 
+      application_annotations  = @cc.application_annotations
       application_labels       = @cc.application_labels
       buildpack_lifecycle_data = @cc.buildpack_lifecycle_data
       containers               = @doppler.containers
@@ -41,6 +42,30 @@ module AdminUI
 
       latest_droplets = latest_app_guid_hash(droplets['items'])
       latest_packages = latest_app_guid_hash(packages['items'])
+
+      application_annotations_hash = {}
+      application_annotations['items'].each do |application_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        application_guid = application_annotation[:resource_guid]
+        application_annotations_array = application_annotations_hash[application_guid]
+        if application_annotations_array.nil?
+          application_annotations_array = []
+          application_annotations_hash[application_guid] = application_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         application_annotation,
+            created_at_rfc3339: application_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: application_annotation[:updated_at].nil? ? nil : application_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        application_annotations_array.push(wrapper)
+      end
 
       application_labels_hash = {}
       application_labels['items'].each do |application_label|
@@ -167,12 +192,13 @@ module AdminUI
         package = current_package
         package = latest_package if package.nil?
 
-        application_label_array    = application_labels_hash[guid] || []
-        application_usage_counters = application_usage_counters_hash[guid]
-        event_counter              = event_counters[guid]
-        route_mapping_counter      = route_mapping_counters[guid]
-        service_binding_counter    = service_binding_counters[guid]
-        task_counter               = task_counters[guid]
+        application_annotation_array = application_annotations_hash[guid] || []
+        application_label_array      = application_labels_hash[guid] || []
+        application_usage_counters   = application_usage_counters_hash[guid]
+        event_counter                = event_counters[guid]
+        route_mapping_counter        = route_mapping_counters[guid]
+        service_binding_counter      = service_binding_counters[guid]
+        task_counter                 = task_counters[guid]
 
         row = []
 
@@ -301,6 +327,7 @@ module AdminUI
 
         hash[guid] =
           {
+            'annotations'              => application_annotation_array,
             'application'              => application,
             'buildpack_lifecycle_data' => buildpack_lifecycle_data,
             'current_droplet'          => current_droplet,
