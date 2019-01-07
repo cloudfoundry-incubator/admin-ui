@@ -1,0 +1,12 @@
+.git*
+CONTRIBUTING.md
+dev-playground/
+docs/
+examples/
+tests/
+yarn.lock
+composer.json
+bower.json
+.editorconfig
+.eslintrc.json
+.travis.yml
