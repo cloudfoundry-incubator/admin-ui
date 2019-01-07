@@ -15,8 +15,8 @@ GEM
     faye-websocket (0.10.7)
       eventmachine (>= 0.12.0)
       websocket-driver (>= 0.5.1)
-    ffi (1.9.25)
-    i18n (1.4.0)
+    ffi (1.10.0)
+    i18n (1.5.1)
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.2)
     membrane (1.1.0)
@@ -118,4 +118,4 @@ RUBY VERSION
    ruby 2.4.2p198
 
 BUNDLED WITH
-   2.0.1
+   1.17.3
