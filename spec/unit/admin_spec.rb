@@ -322,6 +322,40 @@ describe AdminUI::Admin do
       it_behaves_like('common delete application')
     end
 
+    shared_examples 'common delete application recursive' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/applications/application1?recursive=true')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete application recursive via http' do
+      it_behaves_like('common delete application recursive')
+    end
+
+    context 'delete application recursive via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete application recursive')
+    end
+
+    shared_examples 'common delete application annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/applications/application1/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete application annotation via http' do
+      it_behaves_like('common delete application annotation')
+    end
+
+    context 'delete application annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete application annotation')
+    end
+
     shared_examples 'common delete application environment variable' do
       it 'returns failure code due to disconnection' do
         response = delete('/applications/application1/environment_variables/environment_variable1')
@@ -356,21 +390,38 @@ describe AdminUI::Admin do
       it_behaves_like('common delete application instance')
     end
 
-    shared_examples 'common delete application recursive' do
+    shared_examples 'common delete application label' do
       it 'returns failure code due to disconnection' do
-        response = delete('/applications/application1?recursive=true')
+        response = delete('/applications/application1/labels/label1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
 
-    context 'delete application recursive via http' do
-      it_behaves_like('common delete application recursive')
+    context 'delete application label via http' do
+      it_behaves_like('common delete application label')
     end
 
-    context 'delete application recursive via https' do
+    context 'delete application label via https' do
       let(:secured_client_connection) { true }
 
-      it_behaves_like('common delete application recursive')
+      it_behaves_like('common delete application label')
+    end
+
+    shared_examples 'common delete application label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/applications/application1/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete application label with prefix via http' do
+      it_behaves_like('common delete application label with prefix')
+    end
+
+    context 'delete application label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete application label with prefix')
     end
 
     shared_examples 'common delete buildpack' do
@@ -388,6 +439,57 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete buildpack')
+    end
+
+    shared_examples 'common delete buildpack annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/buildpacks/buildpack1/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete buildpack annotation via http' do
+      it_behaves_like('common delete buildpack annotation')
+    end
+
+    context 'delete buildpack annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete buildpack annotation')
+    end
+
+    shared_examples 'common delete buildpack label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/buildpacks/buildpack1/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete buildpack label via http' do
+      it_behaves_like('common delete buildpack label')
+    end
+
+    context 'delete buildpack label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete buildpack label')
+    end
+
+    shared_examples 'common delete buildpack label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/buildpacks/buildpack1/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete buildpack label with prefix via http' do
+      it_behaves_like('common delete buildpack label with prefix')
+    end
+
+    context 'delete buildpack label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete buildpack label with prefix')
     end
 
     shared_examples 'common delete client' do
@@ -559,6 +661,57 @@ describe AdminUI::Admin do
       it_behaves_like('common delete isolation segment')
     end
 
+    shared_examples 'common delete isolation segment annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/isolation_segments/isolation_segment1/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete isolation segment annotation via http' do
+      it_behaves_like('common delete isolation segment annotation')
+    end
+
+    context 'delete isolation segment annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete isolation segment annotation')
+    end
+
+    shared_examples 'common delete isolation segment label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/isolation_segments/isolation_segment1/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete isolation segment label via http' do
+      it_behaves_like('common delete isolation segment label')
+    end
+
+    context 'delete isolation segment label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete isolation segment label')
+    end
+
+    shared_examples 'common delete isolation segment label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/isolation_segments/isolation_segment1/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete isolation segment label with prefix via http' do
+      it_behaves_like('common delete isolation segment label with prefix')
+    end
+
+    context 'delete isolation segment label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete isolation segment label with prefix')
+    end
+
     shared_examples 'common delete MFA provider' do
       it 'returns failure code due to disconnection' do
         response = delete('/mfa_providers/mfa_provider1')
@@ -610,6 +763,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete organization recursive')
     end
 
+    shared_examples 'common delete organization annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/organizations/organization1/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete organization annotation via http' do
+      it_behaves_like('common delete organization annotation')
+    end
+
+    context 'delete organization annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete organization annotation')
+    end
+
     shared_examples 'common delete organization default isolation segment' do
       it 'returns failure code due to disconnection' do
         response = delete('/organizations/organization1/default_isolation_segment')
@@ -642,6 +812,40 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete organization isolation segment')
+    end
+
+    shared_examples 'common delete organization label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/organizations/organization1/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete organization label via http' do
+      it_behaves_like('common delete organization label')
+    end
+
+    context 'delete organization label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete organization label')
+    end
+
+    shared_examples 'common delete organization label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/organizations/organization1/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete organization label with prefix via http' do
+      it_behaves_like('common delete organization label with prefix')
+    end
+
+    context 'delete organization label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete organization label with prefix')
     end
 
     shared_examples 'common delete organization role' do
@@ -1035,6 +1239,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete space recursive')
     end
 
+    shared_examples 'common delete space annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/spaces/space1/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete space annotation via http' do
+      it_behaves_like('common delete space annotation')
+    end
+
+    context 'delete space annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete space annotation')
+    end
+
     shared_examples 'common delete space isolation segment' do
       it 'returns failure code due to disconnection' do
         response = delete('/spaces/space1/isolation_segment')
@@ -1050,6 +1271,40 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete space isolation segment')
+    end
+
+    shared_examples 'common delete space label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/spaces/space1/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete space label via http' do
+      it_behaves_like('common delete space label')
+    end
+
+    context 'delete space label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete space label')
+    end
+
+    shared_examples 'common delete space label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/spaces/space1/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete space label with prefix via http' do
+      it_behaves_like('common delete space label with prefix')
+    end
+
+    context 'delete space label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete space label with prefix')
     end
 
     shared_examples 'common delete space unmapped routes' do
@@ -1137,6 +1392,57 @@ describe AdminUI::Admin do
       it_behaves_like('common delete stack')
     end
 
+    shared_examples 'common delete stack annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/stacks/stack1/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete stack annotation via http' do
+      it_behaves_like('common delete stack annotation')
+    end
+
+    context 'delete stack annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete stack annotation')
+    end
+
+    shared_examples 'common delete stack label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/stacks/stack1/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete stack label via http' do
+      it_behaves_like('common delete stack label')
+    end
+
+    context 'delete stack label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete stack label')
+    end
+
+    shared_examples 'common delete stack label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/stacks/stack1/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete stack label with prefix via http' do
+      it_behaves_like('common delete stack label with prefix')
+    end
+
+    context 'delete stack label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete stack label with prefix')
+    end
+
     shared_examples 'common delete staging security group space' do
       it 'returns failure code due to disconnection' do
         response = delete('/staging_security_groups/security_group1/space1')
@@ -1152,6 +1458,57 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete staging security group space')
+    end
+
+    shared_examples 'common delete task annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/tasks/task1/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete task annotation via http' do
+      it_behaves_like('common delete task annotation')
+    end
+
+    context 'delete task annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete task annotation')
+    end
+
+    shared_examples 'common delete task label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/tasks/task1/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete task label via http' do
+      it_behaves_like('common delete task label')
+    end
+
+    context 'delete task label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete task label')
+    end
+
+    shared_examples 'common delete task label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/tasks/task1/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete task label with prefix via http' do
+      it_behaves_like('common delete task label with prefix')
+    end
+
+    context 'delete task label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete task label with prefix')
     end
 
     shared_examples 'common delete user' do
@@ -1523,7 +1880,7 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/application_instances_view_model')
       end
 
-      it '/application_instances_view_model/:app_guid/:instance_index returns not found' do
+      it '/application_instances_view_model/:guid/:instance_index returns not found' do
         verify_not_found('/application_instances_view_model/application1/0')
       end
 
@@ -1965,7 +2322,7 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/application_instances_view_model')
       end
 
-      it '/application_instances_view_model/:app_guid/:instance_index redirects as expected' do
+      it '/application_instances_view_model/:guid/:instance_index redirects as expected' do
         get_redirects_as_expected('/application_instances_view_model/application1/0')
       end
 
@@ -2369,16 +2726,40 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/applications/application1?recursive=true')
       end
 
-      it 'deletes /applications/:app_guid/environment_variables/:environment_variable redirects as expected' do
+      it 'deletes /applications/:guid/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/applications/application1/annotations/annotation1')
+      end
+
+      it 'deletes /applications/:guid/environment_variables/:environment_variable redirects as expected' do
         delete_redirects_as_expected('/applications/application1/environment_variables/environment_variable1')
       end
 
-      it 'deletes /applications/:app_guid/:index redirects as expected' do
+      it 'deletes /applications/:guid/:index redirects as expected' do
         delete_redirects_as_expected('/applications/application1/index0')
+      end
+
+      it 'deletes /applications/:guid/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/applications/application1/labels/label1')
+      end
+
+      it 'deletes /applications/:guid/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/applications/application1/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /buildpacks/:guid redirects as expected' do
         delete_redirects_as_expected('/buildpacks/buildpack1')
+      end
+
+      it 'deletes /buildpacks/:guid/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/buildpacks/buildpack1/annotations/annotation1')
+      end
+
+      it 'deletes /buildpacks/:guid/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/buildpacks/buildpack1/labels/label1')
+      end
+
+      it 'deletes /buildpacks/:guid/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/buildpacks/buildpack1/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /clients/:id redirects as expected' do
@@ -2429,6 +2810,18 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/isolation_segments/isolation_segment1')
       end
 
+      it 'deletes /isolation_segments/:guid/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/isolation_segments/isolation_segment1/annotations/annotation1')
+      end
+
+      it 'deletes /isolation_segments/:guid/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/isolation_segments/isolation_segment1/labels/label1')
+      end
+
+      it 'deletes /isolation_segments/:guid/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/isolation_segments/isolation_segment1/labels/label1?prefix=bogus.com')
+      end
+
       it 'deletes /mfa_providers/:guid redirects as expected' do
         delete_redirects_as_expected('/mfa_providers/mfa_provider1')
       end
@@ -2441,8 +2834,20 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/organizations/organization1?recursive=true')
       end
 
+      it 'deletes /organizations/:guid/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/organizations/organization1/annotations/annotation1')
+      end
+
       it 'deletes /organizations/:guid/default_isolation_segment redirects as expected' do
         delete_redirects_as_expected('/organizations/organization1/default_isolation_segment')
+      end
+
+      it 'deletes /organizations/:guid/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/organizations/organization1/labels/label1')
+      end
+
+      it 'deletes /organizations/:guid/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/organizations/organization1/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /organizations/:guid/:guid redirects as expected' do
@@ -2549,8 +2954,20 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/spaces/space1?recursive=true')
       end
 
+      it 'deletes /spaces/:guid/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/spaces/space1/annotations/annotation1')
+      end
+
       it 'deletes /spaces/:guid/isolation_segment redirects as expected' do
         delete_redirects_as_expected('/spaces/space1/isolation_segment')
+      end
+
+      it 'deletes /spaces/:guid/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/spaces/space1/labels/label1')
+      end
+
+      it 'deletes /spaces/:guid/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/spaces/space1/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /spaces/:guid/unmapped_routes redirects as expected' do
@@ -2565,12 +2982,36 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/stacks/stack1')
       end
 
+      it 'deletes /stacks/:guid/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/stacks/stack1/annotations/annotation1')
+      end
+
+      it 'deletes /stacks/:guid/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/stacks/stack1/labels/label1')
+      end
+
+      it 'deletes /stacks/:guid/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/stacks/stack1/labels/label1?prefix=bogus.com')
+      end
+
       it 'deletes /staging_security_groups/:guid/:guid redirects as expected' do
         delete_redirects_as_expected('/staging_security_groups/security_group1/space1')
       end
 
       it 'deletes /tasks/:guid/cancel redirects as expected' do
         delete_redirects_as_expected('/tasks/task1/cancel')
+      end
+
+      it 'deletes /tasks/:guid/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/tasks/task1/annotations/annotation1')
+      end
+
+      it 'deletes /tasks/:guid/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/tasks/task1/labels/label1')
+      end
+
+      it 'deletes /tasks/:guid/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/tasks/task1/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /users/:guid redirects as expected' do

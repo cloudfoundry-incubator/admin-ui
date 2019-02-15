@@ -241,9 +241,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_app_label
-      response = delete_request("/applications/#{cc_app[:guid]}/labels/#{cc_app_label[:key_prefix]}/#{cc_app_label[:key_name]}")
+      response = delete_request("/applications/#{cc_app[:guid]}/labels/#{cc_app_label[:key_name]}?prefix=#{cc_app_label[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/labels/#{cc_app_label[:key_prefix]}/#{cc_app_label[:key_name]}"]])
+      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/labels/#{cc_app_label[:key_name]}?prefix=#{cc_app_label[:key_prefix]}"]], true)
     end
 
     it 'has user name and applications in the log file' do
@@ -376,6 +376,18 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/buildpacks/#{cc_buildpack[:guid]}"]])
     end
 
+    def delete_buildpack_annotation
+      response = delete_request("/buildpacks/#{cc_buildpack[:guid]}/annotations/#{cc_buildpack_annotation[:key]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/buildpacks/#{cc_buildpack[:guid]}/annotations/#{cc_buildpack_annotation[:key]}"]])
+    end
+
+    def delete_buildpack_label
+      response = delete_request("/buildpacks/#{cc_buildpack[:guid]}/labels/#{cc_buildpack_label[:key_name]}?prefix=#{cc_buildpack_label[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/buildpacks/#{cc_buildpack[:guid]}/labels/#{cc_buildpack_label[:key_name]}?prefix=#{cc_buildpack_label[:key_prefix]}"]], true)
+    end
+
     it 'has user name and buildpack request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/buildpacks_view_model']], true)
     end
@@ -406,6 +418,14 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a buildpack' do
       expect { delete_buildpack }.to change { get_json('/buildpacks_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes a buildpack annotation' do
+      expect { delete_buildpack_annotation }.to change { get_json("/buildpacks_view_model/#{cc_buildpack[:guid]}")['annotations'].length }.from(1).to(0)
+    end
+
+    it 'deletes a buildpack label' do
+      expect { delete_buildpack_label }.to change { get_json("/buildpacks_view_model/#{cc_buildpack[:guid]}")['labels'].length }.from(1).to(0)
     end
   end
 
@@ -764,6 +784,18 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/isolation_segments/#{cc_isolation_segment[:guid]}"]])
     end
 
+    def delete_isolation_segment_annotation
+      response = delete_request("/isolation_segments/#{cc_isolation_segment[:guid]}/annotations/#{cc_isolation_segment_annotation[:key]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/isolation_segments/#{cc_isolation_segment[:guid]}/annotations/#{cc_isolation_segment_annotation[:key]}"]])
+    end
+
+    def delete_isolation_segment_label
+      response = delete_request("/isolation_segments/#{cc_isolation_segment[:guid]}/labels/#{cc_isolation_segment_label[:key_name]}?prefix=#{cc_isolation_segment_label[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/isolation_segments/#{cc_isolation_segment[:guid]}/labels/#{cc_isolation_segment_label[:key_name]}?prefix=#{cc_isolation_segment_label[:key_prefix]}"]], true)
+    end
+
     it 'has user name and isolation segments request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/isolation_segments_view_model']], true)
     end
@@ -779,6 +811,14 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes an isolation segment' do
       expect { delete_isolation_segment }.to change { get_json('/isolation_segments_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes an isolation segment annotation' do
+      expect { delete_isolation_segment_annotation }.to change { get_json("/isolation_segments_view_model/#{cc_isolation_segment[:guid]}")['annotations'].length }.from(1).to(0)
+    end
+
+    it 'deletes an isolation segment label' do
+      expect { delete_isolation_segment_label }.to change { get_json("/isolation_segments_view_model/#{cc_isolation_segment[:guid]}")['labels'].length }.from(1).to(0)
     end
   end
 
@@ -861,10 +901,16 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}?recursive=true"]], true)
     end
 
-    def delete_organization_label
-      response = delete_request("/organizations/#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_prefix]}/#{cc_organization_label[:key_name]}")
+    def delete_organization_annotation
+      response = delete_request("/organizations/#{cc_organization[:guid]}/annotations/#{cc_organization_annotation[:key]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_prefix]}/#{cc_organization_label[:key_name]}"]])
+      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/annotations/#{cc_organization_annotation[:key]}"]])
+    end
+
+    def delete_organization_label
+      response = delete_request("/organizations/#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_name]}?prefix=#{cc_organization_label[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_name]}?prefix=#{cc_organization_label[:key_prefix]}"]], true)
     end
 
     it 'has user name and organizations request in the log file' do
@@ -909,6 +955,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes an organization recursive' do
       expect { delete_organization_recursive }.to change { get_json('/organizations_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes an organization annotation' do
+      expect { delete_organization_annotation }.to change { get_json("/organizations_view_model/#{cc_organization[:guid]}")['annotations'].length }.from(1).to(0)
     end
 
     it 'deletes an organization label' do
@@ -1558,10 +1608,16 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}?recursive=true"]], true)
     end
 
-    def delete_space_label
-      response = delete_request("/spaces/#{cc_space[:guid]}/labels/#{cc_space_label[:key_prefix]}/#{cc_space_label[:key_name]}")
+    def delete_space_annotation
+      response = delete_request("/spaces/#{cc_space[:guid]}/annotations/#{cc_space_annotation[:key]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/labels/#{cc_space_label[:key_prefix]}/#{cc_space_label[:key_name]}"]])
+      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/annotations/#{cc_space_annotation[:key]}"]])
+    end
+
+    def delete_space_label
+      response = delete_request("/spaces/#{cc_space[:guid]}/labels/#{cc_space_label[:key_name]}?prefix=#{cc_space_label[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/labels/#{cc_space_label[:key_name]}?prefix=#{cc_space_label[:key_prefix]}"]], true)
     end
 
     it 'has user name and space request in the log file' do
@@ -1604,7 +1660,11 @@ describe AdminUI::Admin, type: :integration do
       expect { delete_space_recursive }.to change { get_json('/spaces_view_model')['items']['items'].length }.from(1).to(0)
     end
 
-    it 'deletes a  space label' do
+    it 'deletes a space annotation' do
+      expect { delete_space_annotation }.to change { get_json("/spaces_view_model/#{cc_space[:guid]}")['annotations'].length }.from(1).to(0)
+    end
+
+    it 'deletes a space label' do
       expect { delete_space_label }.to change { get_json("/spaces_view_model/#{cc_space[:guid]}")['labels'].length }.from(1).to(0)
     end
   end
@@ -1717,12 +1777,32 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/stacks/#{cc_stack[:guid]}"]])
     end
 
+    def delete_stack_annotation
+      response = delete_request("/stacks/#{cc_stack[:guid]}/annotations/#{cc_stack_annotation[:key]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/stacks/#{cc_stack[:guid]}/annotations/#{cc_stack_annotation[:key]}"]])
+    end
+
+    def delete_stack_label
+      response = delete_request("/stacks/#{cc_stack[:guid]}/labels/#{cc_stack_label[:key_name]}?prefix=#{cc_stack_label[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/stacks/#{cc_stack[:guid]}/labels/#{cc_stack_label[:key_name]}?prefix=#{cc_stack_label[:key_prefix]}"]], true)
+    end
+
     it 'has user name and stacks request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/stacks_view_model']], true)
     end
 
     it 'deletes a stack' do
       expect { delete_stack }.to change { get_json('/stacks_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes a stack annotation' do
+      expect { delete_stack_annotation }.to change { get_json("/stacks_view_model/#{cc_stack[:guid]}")['annotations'].length }.from(1).to(0)
+    end
+
+    it 'deletes a stack label' do
+      expect { delete_stack_label }.to change { get_json("/stacks_view_model/#{cc_stack[:guid]}")['labels'].length }.from(1).to(0)
     end
   end
 
@@ -1763,12 +1843,32 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/tasks/#{cc_task[:guid]}/cancel"]])
     end
 
+    def delete_task_annotation
+      response = delete_request("/tasks/#{cc_task[:guid]}/annotations/#{cc_task_annotation[:key]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/tasks/#{cc_task[:guid]}/annotations/#{cc_task_annotation[:key]}"]])
+    end
+
+    def delete_task_label
+      response = delete_request("/tasks/#{cc_task[:guid]}/labels/#{cc_task_label[:key_name]}?prefix=#{cc_task_label[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/tasks/#{cc_task[:guid]}/labels/#{cc_task_label[:key_name]}?prefix=#{cc_task_label[:key_prefix]}"]], true)
+    end
+
     it 'has user name and tasks request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/tasks_view_model']], true)
     end
 
     it 'cancels a task' do
       expect { cancel_task }.to change { get_json('/tasks_view_model')['items']['items'][0][3] }.from(cc_task[:state]).to('FAILED')
+    end
+
+    it 'deletes a task annotation' do
+      expect { delete_task_annotation }.to change { get_json("/tasks_view_model/#{cc_task[:guid]}")['annotations'].length }.from(1).to(0)
+    end
+
+    it 'deletes a task label' do
+      expect { delete_task_label }.to change { get_json("/tasks_view_model/#{cc_task[:guid]}")['labels'].length }.from(1).to(0)
     end
   end
 

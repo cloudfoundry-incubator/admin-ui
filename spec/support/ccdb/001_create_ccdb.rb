@@ -342,6 +342,38 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:buildpack_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :buildpacks, :type=>String, :size=>255, :key=>[:guid]
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+      index [:resource_guid], :name=>:fk_buildpack_annotations_resource_guid_index
+    end
+    
+    create_table(:buildpack_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :buildpacks, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:key_prefix, :key_name, :value], :name=>:buildpack_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+      index [:resource_guid], :name=>:fk_buildpack_labels_resource_guid_index
+    end
+    
     create_table(:buildpack_lifecycle_buildpacks, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -361,12 +393,76 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:isolation_segment_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :isolation_segments, :type=>String, :size=>255, :key=>[:guid]
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_isolation_segment_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:isolation_segment_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :isolation_segments, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_isolation_segment_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:isolation_segment_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:stack_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :stacks, :type=>String, :size=>255, :key=>[:guid]
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_stack_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:stack_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :stacks, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_stack_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:stack_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
     create_table(:app_annotations, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
-      String :resource_guid, :size=>253
+      String :resource_guid, :size=>255
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -426,6 +522,7 @@ Sequel.migration do
       String :buildpack_cache_sha256_checksum, :text=>true
       TrueClass :enable_ssh
       String :encryption_key_label, :size=>255
+      TrueClass :revisions_enabled, :default=>false
       
       index [:droplet_guid], :name=>:apps_desired_droplet_guid
       index [:created_at], :name=>:apps_v3_created_at_index
@@ -587,6 +684,10 @@ Sequel.migration do
       DateTime :updated_at
       foreign_key :app_guid, :apps, :type=>String, :size=>255, :key=>[:guid]
       Integer :version, :default=>1
+      String :droplet_guid, :size=>255
+      String :encrypted_environment_variables, :size=>16000
+      String :salt, :size=>255
+      String :encryption_key_label, :size=>255
       
       index [:app_guid], :name=>:fk_revision_app_guid_index
       index [:created_at]
@@ -621,6 +722,70 @@ Sequel.migration do
       index [:app_guid, :sequence_id], :name=>:unique_task_app_guid_sequence_id, :unique=>true
     end
     
+    create_table(:build_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :builds, :type=>String, :size=>255, :key=>[:guid]
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+      index [:resource_guid], :name=>:fk_build_annotations_resource_guid_index
+    end
+    
+    create_table(:build_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :builds, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:key_prefix, :key_name, :value], :name=>:build_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+      index [:resource_guid], :name=>:fk_build_labels_resource_guid_index
+    end
+    
+    create_table(:deployment_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :deployments, :type=>String, :size=>255, :key=>[:guid]
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+      index [:resource_guid], :name=>:fk_deployment_annotations_resource_guid_index
+    end
+    
+    create_table(:deployment_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :deployments, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:key_prefix, :key_name, :value], :name=>:deployment_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+      index [:resource_guid], :name=>:fk_deployment_labels_resource_guid_index
+    end
+    
     create_table(:deployment_processes, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -632,6 +797,166 @@ Sequel.migration do
       
       index [:created_at]
       index [:deployment_guid]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:droplet_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :droplets, :type=>String, :size=>255, :key=>[:guid]
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+      index [:resource_guid], :name=>:fk_droplet_annotations_resource_guid_index
+    end
+    
+    create_table(:droplet_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :droplets, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:key_prefix, :key_name, :value], :name=>:droplet_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+      index [:resource_guid], :name=>:fk_droplet_labels_resource_guid_index
+    end
+    
+    create_table(:package_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :packages, :type=>String, :size=>255, :key=>[:guid]
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_package_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:package_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :packages, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_package_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:package_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:process_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :processes, :type=>String, :size=>255, :key=>[:guid]
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_process_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:process_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :processes, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_process_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:process_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:revision_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :revisions, :type=>String, :size=>255, :key=>[:guid]
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_revision_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:revision_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :revisions, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_revision_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:revision_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:task_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :tasks, :type=>String, :size=>255, :key=>[:guid]
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_task_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:task_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :tasks, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_task_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:task_labels_compound_index
+      index [:created_at]
       index [:guid], :unique=>true
       index [:updated_at]
     end
@@ -650,6 +975,21 @@ Sequel.migration do
       index [:created_at]
       index [:guid], :unique=>true
       index [:name], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:organization_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :resource_guid, :size=>255
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_organization_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
       index [:updated_at]
     end
     
@@ -752,11 +1092,13 @@ Sequel.migration do
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       String :path, :default=>"", :null=>false
       Integer :port, :default=>0, :null=>false
+      Integer :vip_offset
       
       index [:created_at]
       index [:guid], :unique=>true
       index [:host, :domain_id, :path, :port], :unique=>true
       index [:updated_at]
+      index [:vip_offset], :unique=>true
     end
     
     create_table(:security_groups_spaces, :ignore_index_errors=>true) do
@@ -785,6 +1127,21 @@ Sequel.migration do
       index [:guid], :name=>:sbrokers_guid_index, :unique=>true
       index [:updated_at], :name=>:sbrokers_updated_at_index
       index [:name], :unique=>true
+    end
+    
+    create_table(:space_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :spaces, :type=>String, :size=>255, :key=>[:guid]
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_space_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
     
     create_table(:space_labels, :ignore_index_errors=>true) do
@@ -1112,6 +1469,10 @@ Sequel.migration do
     
     alter_table(:domains) do
       add_foreign_key [:owning_organization_id], :organizations, :name=>:fk_domains_owning_org_id, :key=>[:id], :schema=>:public
+    end
+    
+    alter_table(:organization_annotations) do
+      add_foreign_key [:resource_guid], :organizations, :name=>:fk_organization_annotations_resource_guid, :key=>[:guid], :schema=>:public
     end
     
     alter_table(:organization_labels) do

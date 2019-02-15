@@ -76,6 +76,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Organizations tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Organizations' }
+        let(:page_id)   { 'OrganizationsPage' }
+        let(:button_id) { 'Buttons_OrganizationsAnnotationsTable_0' }
+      end
+    end
+
     context 'Spaces tab does not have rename, allow ssh, disallow ssh, remove isolation segment, delete unmapped routes or delete buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Spaces' }
@@ -89,6 +97,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id)    { 'Spaces' }
         let(:page_id)   { 'SpacesPage' }
         let(:button_id) { 'Buttons_SpacesLabelsTable_0' }
+      end
+    end
+
+    context 'Spaces tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Spaces' }
+        let(:page_id)   { 'SpacesPage' }
+        let(:button_id) { 'Buttons_SpacesAnnotationsTable_0' }
       end
     end
 
@@ -233,6 +249,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Tasks tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Tasks' }
+        let(:page_id)   { 'TasksPage' }
+        let(:button_id) { 'Buttons_TasksLabelsTable_0' }
+      end
+    end
+
+    context 'Tasks tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Tasks' }
+        let(:page_id)   { 'TasksPage' }
+        let(:button_id) { 'Buttons_TasksAnnotationsTable_0' }
+      end
+    end
+
     context 'Organization Roles tab does not have delete button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'OrganizationRoles' }
@@ -297,6 +329,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Buildpacks tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Buildpacks' }
+        let(:page_id)   { 'BuildpacksPage' }
+        let(:button_id) { 'Buttons_BuildpacksLabelsTable_0' }
+      end
+    end
+
+    context 'Buildpacks tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Buildpacks' }
+        let(:page_id)   { 'BuildpacksPage' }
+        let(:button_id) { 'Buttons_BuildpacksAnnotationsTable_0' }
+      end
+    end
+
     context 'Domains tab does not have delete button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Domains' }
@@ -342,6 +390,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id)    { 'Stacks' }
         let(:page_id)   { 'StacksPage' }
         let(:button_id) { 'Buttons_StacksTable_0' }
+      end
+    end
+
+    context 'Stacks tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Stacks' }
+        let(:page_id)   { 'StacksPage' }
+        let(:button_id) { 'Buttons_StacksLabelsTable_0' }
+      end
+    end
+
+    context 'Stacks tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Stacks' }
+        let(:page_id)   { 'StacksPage' }
+        let(:button_id) { 'Buttons_StacksAnnotationsTable_0' }
       end
     end
 
@@ -438,6 +502,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id)    { 'IsolationSegments' }
         let(:page_id)   { 'IsolationSegmentsPage' }
         let(:button_id) { 'Buttons_IsolationSegmentsTable_0' }
+      end
+    end
+
+    context 'Isolation Segments tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'IsolationSegments' }
+        let(:page_id)   { 'IsolationSegmentsPage' }
+        let(:button_id) { 'Buttons_IsolationSegmentsLabelsTable_0' }
+      end
+    end
+
+    context 'Isolation Segments tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'IsolationSegments' }
+        let(:page_id)   { 'IsolationSegmentsPage' }
+        let(:button_id) { 'Buttons_IsolationSegmentsAnnotationsTable_0' }
       end
     end
 

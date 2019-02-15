@@ -61,6 +61,14 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.buildpacks)
     end
 
+    it 'returns zero buildpack annotations as expected' do
+      verify_disconnected_items(cc.buildpack_annotations)
+    end
+
+    it 'returns zero buildpack labels as expected' do
+      verify_disconnected_items(cc.buildpack_labels)
+    end
+
     it 'returns zero buildpack_lifecycle_data as expected' do
       verify_disconnected_items(cc.buildpack_lifecycle_data)
     end
@@ -109,6 +117,14 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.isolation_segments)
     end
 
+    it 'returns zero isolation segment annotations as expected' do
+      verify_disconnected_items(cc.isolation_segment_annotations)
+    end
+
+    it 'returns zero isolation segment labels as expected' do
+      verify_disconnected_items(cc.isolation_segment_labels)
+    end
+
     it 'returns zero mfa_providers as expected' do
       verify_disconnected_items(cc.mfa_providers)
     end
@@ -143,6 +159,10 @@ describe AdminUI::CC do
 
     it 'returns zero organizations_users as expected' do
       verify_disconnected_items(cc.organizations_users)
+    end
+
+    it 'returns zero organization annotations as expected' do
+      verify_disconnected_items(cc.organization_annotations)
     end
 
     it 'returns zero organization_labels as expected' do
@@ -269,6 +289,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.spaces_managers)
     end
 
+    it 'returns zero space annotations as expected' do
+      verify_disconnected_items(cc.space_annotations)
+    end
+
     it 'returns zero space_labels as expected' do
       verify_disconnected_items(cc.space_labels)
     end
@@ -277,12 +301,28 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.stacks)
     end
 
+    it 'returns zero stack annotations as expected' do
+      verify_disconnected_items(cc.stack_annotations)
+    end
+
+    it 'returns zero stack labels as expected' do
+      verify_disconnected_items(cc.stack_labels)
+    end
+
     it 'returns zero staging_security_groups_spaces as expected' do
       verify_disconnected_items(cc.staging_security_groups_spaces)
     end
 
     it 'returns zero tasks as expected' do
       verify_disconnected_items(cc.tasks)
+    end
+
+    it 'returns zero task annotations as expected' do
+      verify_disconnected_items(cc.task_annotations)
+    end
+
+    it 'returns zero task labels as expected' do
+      verify_disconnected_items(cc.task_labels)
     end
 
     it 'returns zero users_cc as expected' do

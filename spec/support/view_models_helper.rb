@@ -226,8 +226,10 @@ module ViewModelsHelper
 
   def view_models_buildpacks_detail
     {
-      'buildpack' => cc_buildpack,
-      'stack'     => cc_stack
+      'annotations' => [annotation_rfc3339(cc_buildpack_annotation)],
+      'buildpack'   => cc_buildpack,
+      'labels'      => [label_rfc3339(cc_buildpack_label)],
+      'stack'       => cc_stack
     }
   end
 
@@ -668,7 +670,11 @@ module ViewModelsHelper
   end
 
   def view_models_isolation_segments_detail
-    cc_isolation_segment
+    {
+      'annotations'       => [annotation_rfc3339(cc_isolation_segment_annotation)],
+      'isolation_segment' => cc_isolation_segment,
+      'labels'            => [label_rfc3339(cc_isolation_segment_label)]
+    }
   end
 
   def view_models_logs(log_file_displayed, log_file_displayed_contents_length, log_file_displayed_modified_milliseconds)
@@ -809,6 +815,7 @@ module ViewModelsHelper
 
   def view_models_organizations_detail
     {
+      'annotations'               => [annotation_rfc3339(cc_organization_annotation)],
       'default_isolation_segment' => cc_isolation_segment,
       'labels'                    => [label_rfc3339(cc_organization_label)],
       'organization'              => cc_organization,
@@ -1627,6 +1634,7 @@ module ViewModelsHelper
 
   def view_models_spaces_detail
     {
+      'annotations'            => [annotation_rfc3339(cc_space_annotation)],
       'isolation_segment'      => cc_isolation_segment,
       'labels'                 => [label_rfc3339(cc_space_label)],
       'organization'           => cc_organization,
@@ -1652,7 +1660,11 @@ module ViewModelsHelper
   end
 
   def view_models_stacks_detail
-    cc_stack
+    {
+      'annotations' => [annotation_rfc3339(cc_stack_annotation)],
+      'labels'      => [label_rfc3339(cc_stack_label)],
+      'stack'       => cc_stack
+    }
   end
 
   def view_models_staging_security_groups_spaces
@@ -1729,7 +1741,9 @@ module ViewModelsHelper
 
   def view_models_tasks_detail
     {
+      'annotations'  => [annotation_rfc3339(cc_task_annotation)],
       'application'  => cc_app,
+      'labels'       => [label_rfc3339(cc_task_label)],
       'organization' => cc_organization,
       'space'        => cc_space,
       'task'         => cc_task

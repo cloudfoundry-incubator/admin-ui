@@ -32,20 +32,20 @@ module AdminUI
       @view_models.invalidate_tasks
     end
 
-    def create_organization(control_message)
-      url = '/v2/organizations'
-      @logger.debug("POST #{url}, #{control_message}")
-      @client.post_cc(url, control_message)
-      @cc.invalidate_organizations
-      @view_models.invalidate_organizations
-    end
-
     def create_isolation_segment(control_message)
       url = '/v3/isolation_segments'
       @logger.debug("POST #{url}, #{control_message}")
       @client.post_cc(url, control_message)
       @cc.invalidate_isolation_segments
       @view_models.invalidate_isolation_segments
+    end
+
+    def create_organization(control_message)
+      url = '/v2/organizations'
+      @logger.debug("POST #{url}, #{control_message}")
+      @client.post_cc(url, control_message)
+      @cc.invalidate_organizations
+      @view_models.invalidate_organizations
     end
 
     def create_space_quota_definition_space(space_quota_definition_guid, space_guid)
@@ -78,6 +78,15 @@ module AdminUI
       @view_models.invalidate_tasks
     end
 
+    def delete_application_annotation(application_guid, key)
+      url = "/v3/apps/#{application_guid}"
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_application_annotations
+      @view_models.invalidate_applications
+    end
+
     def delete_application_environment_variable(app_guid, environment_variable)
       api_version = @client.api_version
       new_protocol = Gem::Version.new(api_version) >= Gem::Version.new('2.92.0')
@@ -98,18 +107,11 @@ module AdminUI
       @view_models.invalidate_application_instances
     end
 
-    def delete_application_annotation(application_guid, key)
-      url = "/v3/apps/#{application_guid}"
-      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
-      @logger.debug("PATCH #{url}, #{body}")
-      @client.patch_cc(url, body)
-      @cc.invalidate_application_annotations
-      @view_models.invalidate_applications
-    end
-
     def delete_application_label(application_guid, prefix, name)
       url = "/v3/apps/#{application_guid}"
-      body = "{\"metadata\":{\"labels\":{\"#{prefix}/#{name}\":null}}}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
       @cc.invalidate_application_labels
@@ -121,6 +123,26 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_buildpacks
+      @view_models.invalidate_buildpacks
+    end
+
+    def delete_buildpack_annotation(buildpack_guid, key)
+      url = "/v3/buildpacks/#{buildpack_guid}"
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_buildpack_annotations
+      @view_models.invalidate_buildpacks
+    end
+
+    def delete_buildpack_label(buildpack_guid, prefix, name)
+      url = "/v3/buildpacks/#{buildpack_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_buildpack_labels
       @view_models.invalidate_buildpacks
     end
 
@@ -224,6 +246,26 @@ module AdminUI
       @view_models.invalidate_organizations_isolation_segments
     end
 
+    def delete_isolation_segment_annotation(isolation_segment_guid, key)
+      url = "/v3/isolation_segments/#{isolation_segment_guid}"
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_isolation_segment_annotations
+      @view_models.invalidate_isolation_segments
+    end
+
+    def delete_isolation_segment_label(isolation_segment_guid, prefix, name)
+      url = "/v3/isolation_segments/#{isolation_segment_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_isolation_segment_labels
+      @view_models.invalidate_isolation_segments
+    end
+
     def delete_mfa_provider(mfa_provider_id)
       url = "/mfa-providers/#{mfa_provider_id}"
       @logger.debug("DELETE #{url}")
@@ -242,6 +284,7 @@ module AdminUI
       @cc.invalidate_organizations_billing_managers
       @cc.invalidate_organizations_managers
       @cc.invalidate_organizations_users
+      @cc.invalidate_organization_annotations
       @cc.invalidate_organization_labels
       @cc.invalidate_service_plan_visibilities
       if recursive
@@ -284,6 +327,15 @@ module AdminUI
       @view_models.invalidate_service_plan_visibilities
     end
 
+    def delete_organization_annotation(organization_guid, key)
+      url = "/v3/organizations/#{organization_guid}"
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_organization_annotations
+      @view_models.invalidate_organizations
+    end
+
     def delete_organization_isolation_segment(organization_guid, isolation_segment_guid)
       # As of cf-release 252 (API version 2.74.0), the protocol to delete an organization isolation segment changed
       api_version = @client.api_version
@@ -305,7 +357,9 @@ module AdminUI
 
     def delete_organization_label(organization_guid, prefix, name)
       url = "/v3/organizations/#{organization_guid}"
-      body = "{\"metadata\":{\"labels\":{\"#{prefix}/#{name}\":null}}}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
       @cc.invalidate_organization_labels
@@ -540,9 +594,20 @@ module AdminUI
       @view_models.invalidate_staging_security_groups_spaces
     end
 
+    def delete_space_annotation(space_guid, key)
+      url = "/v3/spaces/#{space_guid}"
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_space_annotations
+      @view_models.invalidate_spaces
+    end
+
     def delete_space_label(space_guid, prefix, name)
       url = "/v3/spaces/#{space_guid}"
-      body = "{\"metadata\":{\"labels\":{\"#{prefix}/#{name}\":null}}}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
       @cc.invalidate_space_labels
@@ -593,12 +658,52 @@ module AdminUI
       @view_models.invalidate_stacks
     end
 
+    def delete_stack_annotation(stack_guid, key)
+      url = "/v3/stacks/#{stack_guid}"
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_stack_annotations
+      @view_models.invalidate_stacks
+    end
+
+    def delete_stack_label(stack_guid, prefix, name)
+      url = "/v3/stacks/#{stack_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_stack_labels
+      @view_models.invalidate_stacks
+    end
+
     def delete_staging_security_group_space(staging_security_group_guid, staging_space_guid)
       url = "/v2/security_groups/#{staging_security_group_guid}/staging_spaces/#{staging_space_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_staging_security_groups_spaces
       @view_models.invalidate_staging_security_groups_spaces
+    end
+
+    def delete_task_annotation(task_guid, key)
+      url = "/v3/tasks/#{task_guid}"
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_task_annotations
+      @view_models.invalidate_tasks
+    end
+
+    def delete_task_label(task_guid, prefix, name)
+      url = "/v3/tasks/#{task_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_task_labels
+      @view_models.invalidate_tasks
     end
 
     def delete_user(user_guid)

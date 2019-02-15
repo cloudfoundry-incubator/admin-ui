@@ -42,56 +42,70 @@ describe AdminUI::CC, type: :integration do
   end
 
   context 'Stubbed' do
-    it 'clears the application cache' do
+    it 'clears the applications cache' do
       expect(cc.applications['items'].length).to eq(1)
       cc_clear_apps_cache_stub(config)
       cc.invalidate_applications
       expect(cc.applications['items'].length).to eq(0)
     end
 
-    it 'clears the application annotation cache' do
+    it 'clears the application annotations cache' do
       expect(cc.application_annotations['items'].length).to eq(1)
       cc_clear_apps_cache_stub(config)
       cc.invalidate_application_annotations
       expect(cc.application_annotations['items'].length).to eq(0)
     end
 
-    it 'clears the application label cache' do
+    it 'clears the application labels cache' do
       expect(cc.application_labels['items'].length).to eq(1)
       cc_clear_apps_cache_stub(config)
       cc.invalidate_application_labels
       expect(cc.application_labels['items'].length).to eq(0)
     end
 
-    it 'clears the approval cache' do
+    it 'clears the approvals cache' do
       expect(cc.approvals['items'].length).to eq(1)
       uaa_clear_approvals_cache_stub(config)
       cc.invalidate_approvals
       expect(cc.approvals['items'].length).to eq(0)
     end
 
-    it 'clears the buildpack cache' do
+    it 'clears the buildpacks cache' do
       expect(cc.buildpacks['items'].length).to eq(1)
       cc_clear_buildpacks_cache_stub(config)
       cc.invalidate_buildpacks
       expect(cc.buildpacks['items'].length).to eq(0)
     end
 
-    it 'clears the client cache' do
+    it 'clears the buildpack annotations cache' do
+      expect(cc.buildpack_annotations['items'].length).to eq(1)
+      cc_clear_buildpacks_cache_stub(config)
+      cc.invalidate_buildpack_annotations
+      expect(cc.buildpack_annotations['items'].length).to eq(0)
+    end
+
+    it 'clears the buildpack labels cache' do
+      expect(cc.buildpack_labels['items'].length).to eq(1)
+      cc_clear_buildpacks_cache_stub(config)
+      cc.invalidate_buildpack_labels
+      expect(cc.buildpack_labels['items'].length).to eq(0)
+    end
+
+    it 'clears the clients cache' do
       expect(cc.clients['items'].length).to eq(1)
       uaa_clear_clients_cache_stub(config)
       cc.invalidate_clients
       expect(cc.clients['items'].length).to eq(0)
     end
 
-    it 'clears the domain cache' do
+    it 'clears the domains cache' do
       expect(cc.domains['items'].length).to eq(1)
       cc_clear_domains_cache_stub(config)
       cc.invalidate_domains
       expect(cc.domains['items'].length).to eq(0)
     end
 
-    it 'clears the droplet cache' do
+    it 'clears the droplets cache' do
       expect(cc.droplets['items'].length).to eq(1)
       cc_clear_droplets_cache_stub(config)
       cc.invalidate_droplets
@@ -138,6 +152,20 @@ describe AdminUI::CC, type: :integration do
       cc_clear_isolation_segments_cache_stub(config)
       cc.invalidate_isolation_segments
       expect(cc.isolation_segments['items'].length).to eq(0)
+    end
+
+    it 'clears the isolation segment annotations cache' do
+      expect(cc.isolation_segment_annotations['items'].length).to eq(1)
+      cc_clear_isolation_segments_cache_stub(config)
+      cc.invalidate_isolation_segment_annotations
+      expect(cc.isolation_segment_annotations['items'].length).to eq(0)
+    end
+
+    it 'clears the isolation segment labels cache' do
+      expect(cc.isolation_segment_labels['items'].length).to eq(1)
+      cc_clear_isolation_segments_cache_stub(config)
+      cc.invalidate_isolation_segment_labels
+      expect(cc.isolation_segment_labels['items'].length).to eq(0)
     end
 
     it 'clears the mfa providers cache' do
@@ -196,6 +224,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.organizations_users['items'].length).to eq(0)
     end
 
+    it 'clears the organization annotations cache' do
+      expect(cc.organization_annotations['items'].length).to eq(1)
+      cc_clear_organizations_cache_stub(config)
+      cc.invalidate_organization_annotations
+      expect(cc.organization_annotations['items'].length).to eq(0)
+    end
+
     it 'clears the organization labels cache' do
       expect(cc.organization_labels['items'].length).to eq(1)
       cc_clear_organizations_cache_stub(config)
@@ -203,21 +238,21 @@ describe AdminUI::CC, type: :integration do
       expect(cc.organization_labels['items'].length).to eq(0)
     end
 
-    it 'clears the package cache' do
+    it 'clears the packages cache' do
       expect(cc.packages['items'].length).to eq(1)
       cc_clear_packages_cache_stub(config)
       cc.invalidate_packages
       expect(cc.packages['items'].length).to eq(0)
     end
 
-    it 'clears the process cache' do
+    it 'clears the processes cache' do
       expect(cc.processes['items'].length).to eq(1)
       cc_clear_processes_cache_stub(config)
       cc.invalidate_processes
       expect(cc.processes['items'].length).to eq(0)
     end
 
-    it 'clears the quota definition cache' do
+    it 'clears the quota definitions cache' do
       expect(cc.quota_definitions['items'].length).to eq(1)
       cc_clear_quota_definitions_cache_stub(config)
       cc.invalidate_quota_definitions
@@ -231,7 +266,7 @@ describe AdminUI::CC, type: :integration do
       expect(cc.revocable_tokens['items'].length).to eq(0)
     end
 
-    it 'clears the route cache' do
+    it 'clears the routes cache' do
       expect(cc.routes['items'].length).to eq(1)
       cc_clear_routes_cache_stub(config)
       cc.invalidate_routes
@@ -252,7 +287,7 @@ describe AdminUI::CC, type: :integration do
       expect(cc.route_mappings['items'].length).to eq(0)
     end
 
-    it 'clears the security group cache' do
+    it 'clears the security groups cache' do
       expect(cc.security_groups['items'].length).to eq(1)
       cc_clear_security_groups_cache_stub(config)
       cc.invalidate_security_groups
@@ -266,7 +301,7 @@ describe AdminUI::CC, type: :integration do
       expect(cc.security_groups_spaces['items'].length).to eq(0)
     end
 
-    it 'clears the service cache' do
+    it 'clears the services cache' do
       expect(cc.services['items'].length).to eq(1)
       cc_clear_services_cache_stub(config)
       cc.invalidate_services
@@ -280,56 +315,56 @@ describe AdminUI::CC, type: :integration do
       expect(cc.service_bindings['items'].length).to eq(0)
     end
 
-    it 'clears the service broker cache' do
+    it 'clears the service brokers cache' do
       expect(cc.service_brokers['items'].length).to eq(1)
       cc_clear_service_brokers_cache_stub(config)
       cc.invalidate_service_brokers
       expect(cc.service_brokers['items'].length).to eq(0)
     end
 
-    it 'clears the service instance cache' do
+    it 'clears the service instances cache' do
       expect(cc.service_instances['items'].length).to eq(1)
       cc_clear_service_instances_cache_stub(config)
       cc.invalidate_service_instances
       expect(cc.service_instances['items'].length).to eq(0)
     end
 
-    it 'clears the service instance share cache' do
+    it 'clears the service instance shares cache' do
       expect(cc.service_instance_shares['items'].length).to eq(1)
       cc_clear_service_instance_shares_cache_stub(config)
       cc.invalidate_service_instance_shares
       expect(cc.service_instance_shares['items'].length).to eq(0)
     end
 
-    it 'clears the service key cache' do
+    it 'clears the service keys cache' do
       expect(cc.service_keys['items'].length).to eq(1)
       cc_clear_service_keys_cache_stub(config)
       cc.invalidate_service_keys
       expect(cc.service_keys['items'].length).to eq(0)
     end
 
-    it 'clears the service plan cache' do
+    it 'clears the service plans cache' do
       expect(cc.service_plans['items'].length).to eq(1)
       cc_clear_service_plans_cache_stub(config)
       cc.invalidate_service_plans
       expect(cc.service_plans['items'].length).to eq(0)
     end
 
-    it 'clears the service plan visibility cache' do
+    it 'clears the service plan visibilities cache' do
       expect(cc.service_plan_visibilities['items'].length).to eq(1)
       cc_clear_service_plan_visibilities_cache_stub(config)
       cc.invalidate_service_plan_visibilities
       expect(cc.service_plan_visibilities['items'].length).to eq(0)
     end
 
-    it 'clears the service provider cache' do
+    it 'clears the service providers cache' do
       expect(cc.service_providers['items'].length).to eq(1)
       uaa_clear_service_providers_cache_stub(config)
       cc.invalidate_service_providers
       expect(cc.service_providers['items'].length).to eq(0)
     end
 
-    it 'clears the space quota definition cache' do
+    it 'clears the space quota definitions cache' do
       expect(cc.space_quota_definitions['items'].length).to eq(1)
       cc_clear_space_quota_definitions_cache_stub(config)
       cc.invalidate_space_quota_definitions
@@ -364,6 +399,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.spaces_managers['items'].length).to eq(0)
     end
 
+    it 'clears the space annotations cache' do
+      expect(cc.space_annotations['items'].length).to eq(1)
+      cc_clear_spaces_cache_stub(config)
+      cc.invalidate_space_annotations
+      expect(cc.space_annotations['items'].length).to eq(0)
+    end
+
     it 'clears the space labels cache' do
       expect(cc.space_labels['items'].length).to eq(1)
       cc_clear_spaces_cache_stub(config)
@@ -378,6 +420,20 @@ describe AdminUI::CC, type: :integration do
       expect(cc.stacks['items'].length).to eq(0)
     end
 
+    it 'clears the stack annotations cache' do
+      expect(cc.stack_annotations['items'].length).to eq(1)
+      cc_clear_stacks_cache_stub(config)
+      cc.invalidate_stack_annotations
+      expect(cc.stack_annotations['items'].length).to eq(0)
+    end
+
+    it 'clears the stack labels cache' do
+      expect(cc.stack_labels['items'].length).to eq(1)
+      cc_clear_stacks_cache_stub(config)
+      cc.invalidate_stack_labels
+      expect(cc.stack_labels['items'].length).to eq(0)
+    end
+
     it 'clears the staging security group spaces cache' do
       expect(cc.staging_security_groups_spaces['items'].length).to eq(1)
       cc_clear_staging_security_groups_spaces_cache_stub(config)
@@ -390,6 +446,20 @@ describe AdminUI::CC, type: :integration do
       cc_clear_tasks_cache_stub(config)
       cc.invalidate_tasks
       expect(cc.tasks['items'].length).to eq(0)
+    end
+
+    it 'clears the task annotations cache' do
+      expect(cc.task_annotations['items'].length).to eq(1)
+      cc_clear_tasks_cache_stub(config)
+      cc.invalidate_task_annotations
+      expect(cc.task_annotations['items'].length).to eq(0)
+    end
+
+    it 'clears the task labels cache' do
+      expect(cc.task_labels['items'].length).to eq(1)
+      cc_clear_tasks_cache_stub(config)
+      cc.invalidate_task_labels
+      expect(cc.task_labels['items'].length).to eq(0)
     end
 
     it 'clears the users cc cache' do
@@ -450,6 +520,20 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected buildpacks' do
       let(:results)  { cc.buildpacks }
       let(:expected) { cc_buildpack }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected buildpack annotations' do
+      let(:results)  { cc.buildpack_annotations }
+      let(:expected) { cc_buildpack_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected buildpack labels' do
+      let(:results)  { cc.buildpack_labels }
+      let(:expected) { cc_buildpack_label }
 
       it_behaves_like('common cc retrieval')
     end
@@ -538,6 +622,20 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected isolation segment annotations' do
+      let(:results)  { cc.isolation_segment_annotations }
+      let(:expected) { cc_isolation_segment_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected isolation segment labels' do
+      let(:results)  { cc.isolation_segment_labels }
+      let(:expected) { cc_isolation_segment_label }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected mfa providers' do
       let(:results)  { cc.mfa_providers }
       let(:expected) { uaa_mfa_provider }
@@ -594,6 +692,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected organizations users' do
       let(:results)  { cc.organizations_users }
       let(:expected) { cc_organization_user }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected organization annotations' do
+      let(:results)  { cc.organization_annotations }
+      let(:expected) { cc_organization_annotation }
 
       it_behaves_like('common cc retrieval')
     end
@@ -806,6 +911,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected space annotations' do
+      let(:results)  { cc.space_annotations }
+      let(:expected) { cc_space_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected space labels' do
       let(:results)  { cc.space_labels }
       let(:expected) { cc_space_label }
@@ -820,6 +932,20 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected stack annotations' do
+      let(:results)  { cc.stack_annotations }
+      let(:expected) { cc_stack_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected stack labels' do
+      let(:results)  { cc.stack_labels }
+      let(:expected) { cc_stack_label }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected staging security groups spaces' do
       let(:results)  { cc.staging_security_groups_spaces }
       let(:expected) { cc_staging_security_group_space }
@@ -830,6 +956,20 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected tasks' do
       let(:results)  { cc.tasks }
       let(:expected) { cc_task }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected task annotations' do
+      let(:results)  { cc.task_annotations }
+      let(:expected) { cc_task_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected task labels' do
+      let(:results)  { cc.task_labels }
+      let(:expected) { cc_task_label }
 
       it_behaves_like('common cc retrieval')
     end

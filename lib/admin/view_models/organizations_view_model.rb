@@ -17,6 +17,7 @@ module AdminUI
       droplets                         = @cc.droplets
       events                           = @cc.events
       isolation_segments               = @cc.isolation_segments
+      organization_annotations         = @cc.organization_annotations
       organization_labels              = @cc.organization_labels
       organizations_auditors           = @cc.organizations_auditors
       organizations_billing_managers   = @cc.organizations_billing_managers
@@ -74,6 +75,7 @@ module AdminUI
       latest_droplets = latest_app_guid_hash(droplets['items'])
       latest_packages = latest_app_guid_hash(packages['items'])
 
+      organization_annotations_hash                 = {}
       organization_labels_hash                      = {}
       event_counters                                = {}
       event_target_counters                         = {}
@@ -93,6 +95,29 @@ module AdminUI
       space_role_counters                           = {}
       organization_isolation_segment_counters       = {}
       organization_task_counters                    = {}
+
+      organization_annotations['items'].each do |organization_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        organization_guid = organization_annotation[:resource_guid]
+        organization_annotations_array = organization_annotations_hash[organization_guid]
+        if organization_annotations_array.nil?
+          organization_annotations_array = []
+          organization_annotations_hash[organization_guid] = organization_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         organization_annotation,
+            created_at_rfc3339: organization_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: organization_annotation[:updated_at].nil? ? nil : organization_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        organization_annotations_array.push(wrapper)
+      end
 
       organization_labels['items'].each do |organization_label|
         return result unless @running
@@ -383,6 +408,7 @@ module AdminUI
         default_isolation_segment_guid = organization[:default_isolation_segment_guid]
         default_isolation_segment      = default_isolation_segment_guid.nil? ? nil : isolation_segments_hash[default_isolation_segment_guid]
 
+        organization_annotation_array                = organization_annotations_hash[organization_guid] || []
         organization_label_array                     = organization_labels_hash[organization_guid] || []
         event_counter                                = event_counters[organization_guid]
         event_target_counter                         = event_target_counters[organization_guid]
@@ -632,6 +658,7 @@ module AdminUI
 
         hash[organization_guid] =
           {
+            'annotations'               => organization_annotation_array,
             'default_isolation_segment' => default_isolation_segment,
             'labels'                    => organization_label_array,
             'organization'              => organization,

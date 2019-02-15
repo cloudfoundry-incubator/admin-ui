@@ -39,13 +39,25 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :apps,
-            columns: %i[created_at desired_state droplet_guid enable_ssh guid id max_task_sequence_id name space_guid updated_at]
+            columns: %i[created_at desired_state droplet_guid enable_ssh guid id max_task_sequence_id name revisions_enabled space_guid updated_at]
           },
           approvals:
           {
             db_uri:  uaadb_uri,
             table:   :authz_approvals,
             columns: %i[client_id expiresat identity_zone_id lastmodifiedat scope status user_id]
+          },
+          buildpack_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :buildpack_annotations,
+            columns: %i[created_at guid id key resource_guid updated_at value]
+          },
+          buildpack_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :buildpack_labels,
+            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
           },
           buildpacks:
           {
@@ -120,6 +132,18 @@ module AdminUI
             table:   :identity_zone,
             columns: %i[active config created description id lastmodified name subdomain version]
           },
+          isolation_segment_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :isolation_segment_annotations,
+            columns: %i[created_at guid id key resource_guid updated_at value]
+          },
+          isolation_segment_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :isolation_segment_labels,
+            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+          },
           isolation_segments:
           {
             db_uri:  ccdb_uri,
@@ -131,6 +155,12 @@ module AdminUI
             db_uri:  uaadb_uri,
             table:   :mfa_providers,
             columns: %i[config created id identity_zone_id lastmodified name type]
+          },
+          organization_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :organization_annotations,
+            columns: %i[created_at guid id key resource_guid updated_at value]
           },
           organization_labels:
           {
@@ -312,6 +342,12 @@ module AdminUI
             table:   :services,
             columns: %i[active bindable bindings_retrievable created_at description extra guid id instances_retrievable label plan_updateable purging requires service_broker_id tags unique_id updated_at]
           },
+          space_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :space_annotations,
+            columns: %i[created_at guid id key resource_guid updated_at value]
+          },
           space_labels:
           {
             db_uri:  ccdb_uri,
@@ -348,6 +384,18 @@ module AdminUI
             table:   :spaces_managers,
             columns: %i[spaces_managers_pk space_id user_id]
           },
+          stack_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :stack_annotations,
+            columns: %i[created_at guid id key resource_guid updated_at value]
+          },
+          stack_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :stack_labels,
+            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+          },
           stacks:
           {
             db_uri:  ccdb_uri,
@@ -359,6 +407,18 @@ module AdminUI
             db_uri:  ccdb_uri,
             table:   :staging_security_groups_spaces,
             columns: %i[staging_security_groups_spaces_pk staging_security_group_id staging_space_id]
+          },
+          task_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :task_annotations,
+            columns: %i[created_at guid id key resource_guid updated_at value]
+          },
+          task_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :task_labels,
+            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
           },
           tasks:
           {
@@ -413,6 +473,14 @@ module AdminUI
 
     def approvals
       result_cache(:approvals)
+    end
+
+    def buildpack_annotations
+      result_cache(:buildpack_annotations)
+    end
+
+    def buildpack_labels
+      result_cache(:buildpack_labels)
     end
 
     def buildpacks
@@ -479,6 +547,14 @@ module AdminUI
       invalidate_cache(:approvals)
     end
 
+    def invalidate_buildpack_annotations
+      invalidate_cache(:buildpack_annotations)
+    end
+
+    def invalidate_buildpack_labels
+      invalidate_cache(:buildpack_labels)
+    end
+
     def invalidate_buildpacks
       invalidate_cache(:buildpacks)
     end
@@ -515,12 +591,24 @@ module AdminUI
       invalidate_cache(:identity_zones)
     end
 
+    def invalidate_isolation_segment_annotations
+      invalidate_cache(:isolation_segment_annotations)
+    end
+
+    def invalidate_isolation_segment_labels
+      invalidate_cache(:isolation_segment_labels)
+    end
+
     def invalidate_isolation_segments
       invalidate_cache(:isolation_segments)
     end
 
     def invalidate_mfa_providers
       invalidate_cache(:mfa_providers)
+    end
+
+    def invalidate_organization_annotations
+      invalidate_cache(:organization_annotations)
     end
 
     def invalidate_organization_labels
@@ -627,12 +715,16 @@ module AdminUI
       invalidate_cache(:service_plan_visibilities)
     end
 
-    def invalidate_space_quota_definitions
-      invalidate_cache(:space_quota_definitions)
+    def invalidate_space_annotations
+      invalidate_cache(:space_annotations)
     end
 
     def invalidate_space_labels
       invalidate_cache(:space_labels)
+    end
+
+    def invalidate_space_quota_definitions
+      invalidate_cache(:space_quota_definitions)
     end
 
     def invalidate_spaces
@@ -651,12 +743,28 @@ module AdminUI
       invalidate_cache(:spaces_managers)
     end
 
+    def invalidate_stack_annotations
+      invalidate_cache(:stack_annotations)
+    end
+
+    def invalidate_stack_labels
+      invalidate_cache(:stack_labels)
+    end
+
     def invalidate_stacks
       invalidate_cache(:stacks)
     end
 
     def invalidate_staging_security_groups_spaces
       invalidate_cache(:staging_security_groups_spaces)
+    end
+
+    def invalidate_task_annotations
+      invalidate_cache(:task_annotations)
+    end
+
+    def invalidate_task_labels
+      invalidate_cache(:task_labels)
     end
 
     def invalidate_tasks
@@ -671,12 +779,24 @@ module AdminUI
       invalidate_cache(:users_uaa)
     end
 
+    def isolation_segment_annotations
+      result_cache(:isolation_segment_annotations)
+    end
+
+    def isolation_segment_labels
+      result_cache(:isolation_segment_labels)
+    end
+
     def isolation_segments
       result_cache(:isolation_segments)
     end
 
     def mfa_providers
       result_cache(:mfa_providers)
+    end
+
+    def organization_annotations
+      result_cache(:organization_annotations)
     end
 
     def organization_labels
@@ -854,12 +974,16 @@ module AdminUI
       @pool.join
     end
 
-    def space_quota_definitions
-      result_cache(:space_quota_definitions)
+    def space_annotations
+      result_cache(:space_annotations)
     end
 
     def space_labels
       result_cache(:space_labels)
+    end
+
+    def space_quota_definitions
+      result_cache(:space_quota_definitions)
     end
 
     def spaces
@@ -885,12 +1009,28 @@ module AdminUI
       result_cache(:spaces_managers)
     end
 
+    def stack_annotations
+      result_cache(:stack_annotations)
+    end
+
+    def stack_labels
+      result_cache(:stack_labels)
+    end
+
     def stacks
       result_cache(:stacks)
     end
 
     def staging_security_groups_spaces
       result_cache(:staging_security_groups_spaces)
+    end
+
+    def task_annotations
+      result_cache(:task_annotations)
+    end
+
+    def task_labels
+      result_cache(:task_labels)
     end
 
     def tasks

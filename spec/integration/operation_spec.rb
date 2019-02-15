@@ -316,6 +316,14 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_buildpack(cc_buildpack[:guid])
       end
 
+      def delete_buildpack_annotation
+        operation.delete_buildpack_annotation(cc_buildpack[:guid], cc_buildpack_annotation[:key])
+      end
+
+      def delete_buildpack_label
+        operation.delete_buildpack_label(cc_buildpack[:guid], cc_buildpack_label[:key_prefix], cc_buildpack_label[:key_name])
+      end
+
       def disable_buildpack
         operation.manage_buildpack(cc_buildpack[:guid], '{"enabled":false}')
       end
@@ -360,6 +368,14 @@ describe AdminUI::Operation, type: :integration do
         expect { delete_buildpack }.to change { cc.buildpacks['items'].length }.from(1).to(0)
       end
 
+      it 'deletes the buildpack annotation' do
+        expect { delete_buildpack_annotation }.to change { cc.buildpack_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the buildpack label' do
+        expect { delete_buildpack_label }.to change { cc.buildpack_labels['items'].length }.from(1).to(0)
+      end
+
       context 'errors' do
         before do
           delete_buildpack
@@ -394,6 +410,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting deleted buildpack' do
           expect { delete_buildpack }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_buildpack_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted buildpack' do
+          expect { delete_buildpack_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_buildpack_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted buildpack' do
+          expect { delete_buildpack_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_buildpack_not_found(exception) }
         end
       end
     end
@@ -683,6 +707,14 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_isolation_segment(cc_isolation_segment[:guid])
       end
 
+      def delete_isolation_segment_annotation
+        operation.delete_isolation_segment_annotation(cc_isolation_segment[:guid], cc_isolation_segment_annotation[:key])
+      end
+
+      def delete_isolation_segment_label
+        operation.delete_isolation_segment_label(cc_isolation_segment[:guid], cc_isolation_segment_label[:key_prefix], cc_isolation_segment_label[:key_name])
+      end
+
       it 'creates a new isolation segment' do
         expect { create_isolation_segment }.to change { cc.isolation_segments['items'].length }.from(1).to(2)
         expect(cc.isolation_segments['items'][1][:name]).to eq(cc_isolation_segment2[:name])
@@ -694,6 +726,14 @@ describe AdminUI::Operation, type: :integration do
 
       it 'deletes isolation segment' do
         expect { delete_isolation_segment }.to change { cc.isolation_segments['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the isolation segment annotation' do
+        expect { delete_isolation_segment_annotation }.to change { cc.isolation_segment_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the isolation segment label' do
+        expect { delete_isolation_segment_label }.to change { cc.isolation_segment_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -715,6 +755,14 @@ describe AdminUI::Operation, type: :integration do
 
           it 'fails deleting deleted isolation segment' do
             expect { delete_isolation_segment }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_isolation_segment_not_found(exception) }
+          end
+
+          it 'fails deleting annotation on deleted isolation segment' do
+            expect { delete_isolation_segment_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_isolation_segment_not_found(exception) }
+          end
+
+          it 'fails deleting label on deleted isolation segment' do
+            expect { delete_isolation_segment_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_isolation_segment_not_found(exception) }
           end
         end
 
@@ -805,6 +853,10 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_organization(cc_organization[:guid], true)
       end
 
+      def delete_organization_annotation
+        operation.delete_organization_annotation(cc_organization[:guid], cc_organization_annotation[:key])
+      end
+
       def delete_organization_label
         operation.delete_organization_label(cc_organization[:guid], cc_organization_label[:key_prefix], cc_organization_label[:key_name])
       end
@@ -845,6 +897,10 @@ describe AdminUI::Operation, type: :integration do
 
       it 'deletes organization recursive' do
         expect { delete_organization_recursive }.to change { cc.organizations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the organization annotation' do
+        expect { delete_organization_annotation }.to change { cc.organization_annotations['items'].length }.from(1).to(0)
       end
 
       it 'deletes organization label' do
@@ -893,6 +949,10 @@ describe AdminUI::Operation, type: :integration do
 
           it 'fails deleting recursive deleted organization' do
             expect { delete_organization_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_not_found(exception) }
+          end
+
+          it 'fails deleting annotation on deleted organization' do
+            expect { delete_organization_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_organization_not_found(exception) }
           end
 
           it 'fails deleting label on deleted organization' do
@@ -1740,6 +1800,10 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_space(cc_space[:guid], true)
       end
 
+      def delete_space_annotation
+        operation.delete_space_annotation(cc_space[:guid], cc_space_annotation[:key])
+      end
+
       def delete_space_label
         operation.delete_space_label(cc_space[:guid], cc_space_label[:key_prefix], cc_space_label[:key_name])
       end
@@ -1776,6 +1840,10 @@ describe AdminUI::Operation, type: :integration do
 
       it 'deletes space recursive' do
         expect { delete_space_recursive }.to change { cc.spaces['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the space annotation' do
+        expect { delete_space_annotation }.to change { cc.space_annotations['items'].length }.from(1).to(0)
       end
 
       it 'deletes space label' do
@@ -1820,6 +1888,10 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting recursive deleted space' do
           expect { delete_space_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted space' do
+          expect { delete_space_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
         end
 
         it 'fails deleting label on deleted space' do
@@ -1980,8 +2052,24 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_stack(cc_stack[:guid])
       end
 
+      def delete_stack_annotation
+        operation.delete_stack_annotation(cc_stack[:guid], cc_stack_annotation[:key])
+      end
+
+      def delete_stack_label
+        operation.delete_stack_label(cc_stack[:guid], cc_stack_label[:key_prefix], cc_stack_label[:key_name])
+      end
+
       it 'deletes stack' do
         expect { delete_stack }.to change { cc.stacks['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the stack annotation' do
+        expect { delete_stack_annotation }.to change { cc.stack_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the stack label' do
+        expect { delete_stack_label }.to change { cc.stack_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -1998,6 +2086,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting deleted stack' do
           expect { delete_stack }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_stack_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted stack' do
+          expect { delete_stack_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_stack_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted stack' do
+          expect { delete_stack_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_stack_not_found(exception) }
         end
       end
     end
@@ -2042,8 +2138,24 @@ describe AdminUI::Operation, type: :integration do
         operation.cancel_task(cc_task[:guid])
       end
 
+      def delete_task_annotation
+        operation.delete_task_annotation(cc_task[:guid], cc_task_annotation[:key])
+      end
+
+      def delete_task_label
+        operation.delete_task_label(cc_task[:guid], cc_task_label[:key_prefix], cc_task_label[:key_name])
+      end
+
       it 'cancels the task' do
         expect { cancel_task }.to change { cc.tasks['items'][0][:state] }.from(cc_task[:state]).to('FAILED')
+      end
+
+      it 'deletes the task annotation' do
+        expect { delete_task_annotation }.to change { cc.task_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the task label' do
+        expect { delete_task_label }.to change { cc.task_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -2061,6 +2173,14 @@ describe AdminUI::Operation, type: :integration do
 
           it 'fails canceling deleted task' do
             expect { cancel_task }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_task_not_found(exception) }
+          end
+
+          it 'fails deleting annotation on deleted task' do
+            expect { delete_task_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_task_not_found(exception) }
+          end
+
+          it 'fails deleting label on deleted task' do
+            expect { delete_task_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_task_not_found(exception) }
           end
         end
       end

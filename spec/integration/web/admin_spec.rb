@@ -874,7 +874,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'labels subtable has a checkbox in the first column' do
-            check_checkbox_guid('OrganizationsLabelsTable', "#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_prefix]}/#{cc_organization_label[:key_name]}")
+            check_checkbox_guid('OrganizationsLabelsTable', "#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_name]}?prefix=#{cc_organization_label[:key_prefix]}")
           end
 
           context 'manage labels subtable' do
@@ -907,6 +907,67 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                 let(:csv_button_id)   { 'Buttons_OrganizationsLabelsTable_4' }
                 let(:excel_button_id) { 'Buttons_OrganizationsLabelsTable_5' }
                 let(:pdf_button_id)   { 'Buttons_OrganizationsLabelsTable_6' }
+              end
+            end
+          end
+
+          it 'has annotations subtable' do
+            expect(@driver.find_element(id: 'OrganizationsAnnotationsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 6,
+                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='OrganizationsAnnotationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_organization_annotation[:key],
+                               cc_organization_annotation[:guid],
+                               cc_organization_annotation[:created_at].to_datetime.rfc3339,
+                               cc_organization_annotation[:updated_at].to_datetime.rfc3339,
+                               cc_organization_annotation[:value]
+                             ])
+          end
+
+          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_OrganizationsAnnotationsTable_1')
+          end
+
+          it 'annotations subtable has a checkbox in the first column' do
+            check_checkbox_guid('OrganizationsAnnotationsTable', "#{cc_organization[:guid]}/annotations/#{cc_organization_annotation[:key]}")
+          end
+
+          context 'manage annotations subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_OrganizationsAnnotationsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_OrganizationsAnnotationsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'OrganizationsAnnotationsTable' }
+                let(:button_id)               { 'Buttons_OrganizationsAnnotationsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the organization's selected annotations?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'organization_annotations' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_OrganizationsAnnotationsTable_1' }
+                let(:print_button_id) { 'Buttons_OrganizationsAnnotationsTable_2' }
+                let(:save_button_id)  { 'Buttons_OrganizationsAnnotationsTable_3' }
+                let(:csv_button_id)   { 'Buttons_OrganizationsAnnotationsTable_4' }
+                let(:excel_button_id) { 'Buttons_OrganizationsAnnotationsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_OrganizationsAnnotationsTable_6' }
               end
             end
           end
@@ -1356,7 +1417,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'labels subtable has a checkbox in the first column' do
-            check_checkbox_guid('SpacesLabelsTable', "#{cc_space[:guid]}/labels/#{cc_space_label[:key_prefix]}/#{cc_space_label[:key_name]}")
+            check_checkbox_guid('SpacesLabelsTable', "#{cc_space[:guid]}/labels/#{cc_space_label[:key_name]}?prefix=#{cc_space_label[:key_prefix]}")
           end
 
           context 'manage labels subtable' do
@@ -1389,6 +1450,67 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                 let(:csv_button_id)   { 'Buttons_SpacesLabelsTable_4' }
                 let(:excel_button_id) { 'Buttons_SpacesLabelsTable_5' }
                 let(:pdf_button_id)   { 'Buttons_SpacesLabelsTable_6' }
+              end
+            end
+          end
+
+          it 'has annotations subtable' do
+            expect(@driver.find_element(id: 'SpacesAnnotationsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='SpacesAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 6,
+                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='SpacesAnnotationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_space_annotation[:key],
+                               cc_space_annotation[:guid],
+                               cc_space_annotation[:created_at].to_datetime.rfc3339,
+                               cc_space_annotation[:updated_at].to_datetime.rfc3339,
+                               cc_space_annotation[:value]
+                             ])
+          end
+
+          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_SpacesAnnotationsTable_1')
+          end
+
+          it 'annotations subtable has a checkbox in the first column' do
+            check_checkbox_guid('SpacesAnnotationsTable', "#{cc_space[:guid]}/annotations/#{cc_space_annotation[:key]}")
+          end
+
+          context 'manage annotations subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_SpacesAnnotationsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_SpacesAnnotationsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'SpacesAnnotationsTable' }
+                let(:button_id)               { 'Buttons_SpacesAnnotationsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the space's selected annotations?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'space_annotations' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_SpacesAnnotationsTable_1' }
+                let(:print_button_id) { 'Buttons_SpacesAnnotationsTable_2' }
+                let(:save_button_id)  { 'Buttons_SpacesAnnotationsTable_3' }
+                let(:csv_button_id)   { 'Buttons_SpacesAnnotationsTable_4' }
+                let(:excel_button_id) { 'Buttons_SpacesAnnotationsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_SpacesAnnotationsTable_6' }
               end
             end
           end
@@ -1843,7 +1965,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'labels subtable has a checkbox in the first column' do
-            check_checkbox_guid('ApplicationsLabelsTable', "#{cc_app[:guid]}/labels/#{cc_app_label[:key_prefix]}/#{cc_app_label[:key_name]}")
+            check_checkbox_guid('ApplicationsLabelsTable', "#{cc_app[:guid]}/labels/#{cc_app_label[:key_name]}?prefix=#{cc_app_label[:key_prefix]}")
           end
 
           context 'manage labels subtable' do
@@ -3732,6 +3854,129 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
+          it 'has labels subtable' do
+            expect(@driver.find_element(id: 'TasksLabelsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='TasksLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='TasksLabelsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_task_label[:key_prefix],
+                               cc_task_label[:key_name],
+                               cc_task_label[:guid],
+                               cc_task_label[:created_at].to_datetime.rfc3339,
+                               cc_task_label[:updated_at].to_datetime.rfc3339,
+                               cc_task_label[:value]
+                             ])
+          end
+
+          it 'labels subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_TasksLabelsTable_1')
+          end
+
+          it 'labels subtable has a checkbox in the first column' do
+            check_checkbox_guid('TasksLabelsTable', "#{cc_task[:guid]}/labels/#{cc_task_label[:key_name]}?prefix=#{cc_task_label[:key_prefix]}")
+          end
+
+          context 'manage labels subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_TasksLabelsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_TasksLabelsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'TasksLabelsTable' }
+                let(:button_id)               { 'Buttons_TasksLabelsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the task's selected labels?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'task_labels' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_TasksLabelsTable_1' }
+                let(:print_button_id) { 'Buttons_TasksLabelsTable_2' }
+                let(:save_button_id)  { 'Buttons_TasksLabelsTable_3' }
+                let(:csv_button_id)   { 'Buttons_TasksLabelsTable_4' }
+                let(:excel_button_id) { 'Buttons_TasksLabelsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_TasksLabelsTable_6' }
+              end
+            end
+          end
+
+          it 'has annotations subtable' do
+            expect(@driver.find_element(id: 'TasksAnnotationsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='TasksAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 6,
+                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='TasksAnnotationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_task_annotation[:key],
+                               cc_task_annotation[:guid],
+                               cc_task_annotation[:created_at].to_datetime.rfc3339,
+                               cc_task_annotation[:updated_at].to_datetime.rfc3339,
+                               cc_task_annotation[:value]
+                             ])
+          end
+
+          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_TasksAnnotationsTable_1')
+          end
+
+          it 'annotations subtable has a checkbox in the first column' do
+            check_checkbox_guid('TasksAnnotationsTable', "#{cc_task[:guid]}/annotations/#{cc_task_annotation[:key]}")
+          end
+
+          context 'manage annotations subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_TasksAnnotationsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_TasksAnnotationsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'TasksAnnotationsTable' }
+                let(:button_id)               { 'Buttons_TasksAnnotationsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the task's selected annotations?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'task_annotations' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_TasksAnnotationsTable_1' }
+                let(:print_button_id) { 'Buttons_TasksAnnotationsTable_2' }
+                let(:save_button_id)  { 'Buttons_TasksAnnotationsTable_3' }
+                let(:csv_button_id)   { 'Buttons_TasksAnnotationsTable_4' }
+                let(:excel_button_id) { 'Buttons_TasksAnnotationsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_TasksAnnotationsTable_6' }
+              end
+            end
+          end
+
           it 'has applications link' do
             check_filter_link('Tasks', 9, 'Applications', cc_task[:app_guid])
           end
@@ -5081,6 +5326,129 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
+          it 'has labels subtable' do
+            expect(@driver.find_element(id: 'BuildpacksLabelsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='BuildpacksLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='BuildpacksLabelsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_buildpack_label[:key_prefix],
+                               cc_buildpack_label[:key_name],
+                               cc_buildpack_label[:guid],
+                               cc_buildpack_label[:created_at].to_datetime.rfc3339,
+                               cc_buildpack_label[:updated_at].to_datetime.rfc3339,
+                               cc_buildpack_label[:value]
+                             ])
+          end
+
+          it 'labels subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_BuildpacksLabelsTable_1')
+          end
+
+          it 'labels subtable has a checkbox in the first column' do
+            check_checkbox_guid('BuildpacksLabelsTable', "#{cc_buildpack[:guid]}/labels/#{cc_buildpack_label[:key_name]}?prefix=#{cc_buildpack_label[:key_prefix]}")
+          end
+
+          context 'manage labels subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_BuildpacksLabelsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_BuildpacksLabelsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'BuildpacksLabelsTable' }
+                let(:button_id)               { 'Buttons_BuildpacksLabelsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the buildpack's selected labels?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'buildpack_labels' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_BuildpacksLabelsTable_1' }
+                let(:print_button_id) { 'Buttons_BuildpacksLabelsTable_2' }
+                let(:save_button_id)  { 'Buttons_BuildpacksLabelsTable_3' }
+                let(:csv_button_id)   { 'Buttons_BuildpacksLabelsTable_4' }
+                let(:excel_button_id) { 'Buttons_BuildpacksLabelsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_BuildpacksLabelsTable_6' }
+              end
+            end
+          end
+
+          it 'has annotations subtable' do
+            expect(@driver.find_element(id: 'BuildpacksAnnotationsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='BuildpacksAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 6,
+                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='BuildpacksAnnotationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_buildpack_annotation[:key],
+                               cc_buildpack_annotation[:guid],
+                               cc_buildpack_annotation[:created_at].to_datetime.rfc3339,
+                               cc_buildpack_annotation[:updated_at].to_datetime.rfc3339,
+                               cc_buildpack_annotation[:value]
+                             ])
+          end
+
+          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_BuildpacksAnnotationsTable_1')
+          end
+
+          it 'annotations subtable has a checkbox in the first column' do
+            check_checkbox_guid('BuildpacksAnnotationsTable', "#{cc_buildpack[:guid]}/annotations/#{cc_buildpack_annotation[:key]}")
+          end
+
+          context 'manage annotations subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_BuildpacksAnnotationsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_BuildpacksAnnotationsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'BuildpacksAnnotationsTable' }
+                let(:button_id)               { 'Buttons_BuildpacksAnnotationsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the buildpack's selected annotations?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'buildpack_annotations' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_BuildpacksAnnotationsTable_1' }
+                let(:print_button_id) { 'Buttons_BuildpacksAnnotationsTable_2' }
+                let(:save_button_id)  { 'Buttons_BuildpacksAnnotationsTable_3' }
+                let(:csv_button_id)   { 'Buttons_BuildpacksAnnotationsTable_4' }
+                let(:excel_button_id) { 'Buttons_BuildpacksAnnotationsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_BuildpacksAnnotationsTable_6' }
+              end
+            end
+          end
+
           it 'has stack link' do
             check_filter_link('Buildpacks', 0, 'Stacks', cc_stack[:guid])
           end
@@ -5746,6 +6114,129 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Applications',          tag:   'a', value: '1' },
                             { label: 'Application Instances', tag:   'a', value: @driver.execute_script("return Format.formatNumber(#{cc_process[:instances]})") }
                           ])
+          end
+
+          it 'has labels subtable' do
+            expect(@driver.find_element(id: 'StacksLabelsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='StacksLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='StacksLabelsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_stack_label[:key_prefix],
+                               cc_stack_label[:key_name],
+                               cc_stack_label[:guid],
+                               cc_stack_label[:created_at].to_datetime.rfc3339,
+                               cc_stack_label[:updated_at].to_datetime.rfc3339,
+                               cc_stack_label[:value]
+                             ])
+          end
+
+          it 'labels subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_StacksLabelsTable_1')
+          end
+
+          it 'labels subtable has a checkbox in the first column' do
+            check_checkbox_guid('StacksLabelsTable', "#{cc_stack[:guid]}/labels/#{cc_stack_label[:key_name]}?prefix=#{cc_stack_label[:key_prefix]}")
+          end
+
+          context 'manage labels subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_StacksLabelsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_StacksLabelsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'StacksLabelsTable' }
+                let(:button_id)               { 'Buttons_StacksLabelsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the stack's selected labels?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'stack_labels' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_StacksLabelsTable_1' }
+                let(:print_button_id) { 'Buttons_StacksLabelsTable_2' }
+                let(:save_button_id)  { 'Buttons_StacksLabelsTable_3' }
+                let(:csv_button_id)   { 'Buttons_StacksLabelsTable_4' }
+                let(:excel_button_id) { 'Buttons_StacksLabelsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_StacksLabelsTable_6' }
+              end
+            end
+          end
+
+          it 'has annotations subtable' do
+            expect(@driver.find_element(id: 'StacksAnnotationsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='StacksAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 6,
+                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='StacksAnnotationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_stack_annotation[:key],
+                               cc_stack_annotation[:guid],
+                               cc_stack_annotation[:created_at].to_datetime.rfc3339,
+                               cc_stack_annotation[:updated_at].to_datetime.rfc3339,
+                               cc_stack_annotation[:value]
+                             ])
+          end
+
+          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_StacksAnnotationsTable_1')
+          end
+
+          it 'annotations subtable has a checkbox in the first column' do
+            check_checkbox_guid('StacksAnnotationsTable', "#{cc_stack[:guid]}/annotations/#{cc_stack_annotation[:key]}")
+          end
+
+          context 'manage annotations subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_StacksAnnotationsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_StacksAnnotationsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'StacksAnnotationsTable' }
+                let(:button_id)               { 'Buttons_StacksAnnotationsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the stack's selected annotations?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'stack_annotations' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_StacksAnnotationsTable_1' }
+                let(:print_button_id) { 'Buttons_StacksAnnotationsTable_2' }
+                let(:save_button_id)  { 'Buttons_StacksAnnotationsTable_3' }
+                let(:csv_button_id)   { 'Buttons_StacksAnnotationsTable_4' }
+                let(:excel_button_id) { 'Buttons_StacksAnnotationsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_StacksAnnotationsTable_6' }
+              end
+            end
           end
 
           it 'has buildpacks link' do
@@ -7889,6 +8380,129 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Default Organizations', tag:   nil, value: '1' },
                             { label: 'Spaces',                tag:   'a', value: '1' }
                           ])
+          end
+
+          it 'has labels subtable' do
+            expect(@driver.find_element(id: 'IsolationSegmentsLabelsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='IsolationSegmentsLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='IsolationSegmentsLabelsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_isolation_segment_label[:key_prefix],
+                               cc_isolation_segment_label[:key_name],
+                               cc_isolation_segment_label[:guid],
+                               cc_isolation_segment_label[:created_at].to_datetime.rfc3339,
+                               cc_isolation_segment_label[:updated_at].to_datetime.rfc3339,
+                               cc_isolation_segment_label[:value]
+                             ])
+          end
+
+          it 'labels subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_IsolationSegmentsLabelsTable_1')
+          end
+
+          it 'labels subtable has a checkbox in the first column' do
+            check_checkbox_guid('IsolationSegmentsLabelsTable', "#{cc_isolation_segment[:guid]}/labels/#{cc_isolation_segment_label[:key_name]}?prefix=#{cc_isolation_segment_label[:key_prefix]}")
+          end
+
+          context 'manage labels subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_IsolationSegmentsLabelsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_IsolationSegmentsLabelsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'IsolationSegmentsLabelsTable' }
+                let(:button_id)               { 'Buttons_IsolationSegmentsLabelsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the isolation segment's selected labels?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'isolation_segment_labels' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_IsolationSegmentsLabelsTable_1' }
+                let(:print_button_id) { 'Buttons_IsolationSegmentsLabelsTable_2' }
+                let(:save_button_id)  { 'Buttons_IsolationSegmentsLabelsTable_3' }
+                let(:csv_button_id)   { 'Buttons_IsolationSegmentsLabelsTable_4' }
+                let(:excel_button_id) { 'Buttons_IsolationSegmentsLabelsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_IsolationSegmentsLabelsTable_6' }
+              end
+            end
+          end
+
+          it 'has annotations subtable' do
+            expect(@driver.find_element(id: 'IsolationSegmentsAnnotationsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='IsolationSegmentsAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 6,
+                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='IsolationSegmentsAnnotationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_isolation_segment_annotation[:key],
+                               cc_isolation_segment_annotation[:guid],
+                               cc_isolation_segment_annotation[:created_at].to_datetime.rfc3339,
+                               cc_isolation_segment_annotation[:updated_at].to_datetime.rfc3339,
+                               cc_isolation_segment_annotation[:value]
+                             ])
+          end
+
+          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_IsolationSegmentsAnnotationsTable_1')
+          end
+
+          it 'annotations subtable has a checkbox in the first column' do
+            check_checkbox_guid('IsolationSegmentsAnnotationsTable', "#{cc_isolation_segment[:guid]}/annotations/#{cc_isolation_segment_annotation[:key]}")
+          end
+
+          context 'manage annotations subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_IsolationSegmentsAnnotationsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_IsolationSegmentsAnnotationsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'IsolationSegmentsAnnotationsTable' }
+                let(:button_id)               { 'Buttons_IsolationSegmentsAnnotationsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the isolation segment's selected annotations?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'isolation_segment_annotations' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_IsolationSegmentsAnnotationsTable_1' }
+                let(:print_button_id) { 'Buttons_IsolationSegmentsAnnotationsTable_2' }
+                let(:save_button_id)  { 'Buttons_IsolationSegmentsAnnotationsTable_3' }
+                let(:csv_button_id)   { 'Buttons_IsolationSegmentsAnnotationsTable_4' }
+                let(:excel_button_id) { 'Buttons_IsolationSegmentsAnnotationsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_IsolationSegmentsAnnotationsTable_6' }
+              end
+            end
           end
 
           it 'has organizations isolation segments link' do

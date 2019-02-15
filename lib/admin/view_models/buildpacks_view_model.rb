@@ -9,9 +9,11 @@ module AdminUI
       # buildpacks have to exist. Other record types are optional
       return result unless buildpacks['connected']
 
-      applications = @cc.applications
-      droplets     = @cc.droplets
-      stacks       = @cc.stacks
+      applications          = @cc.applications
+      buildpack_annotations = @cc.buildpack_annotations
+      buildpack_labels      = @cc.buildpack_labels
+      droplets              = @cc.droplets
+      stacks                = @cc.stacks
 
       applications_connected = applications['connected']
       droplets_connected     = droplets['connected']
@@ -20,6 +22,54 @@ module AdminUI
       stack_hash   = Hash[stacks['items'].map { |item| [item[:name], item] }]
 
       latest_droplets = latest_app_guid_hash(droplets['items'])
+
+      buildpack_annotations_hash = {}
+      buildpack_annotations['items'].each do |buildpack_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        buildpack_guid = buildpack_annotation[:resource_guid]
+        buildpack_annotations_array = buildpack_annotations_hash[buildpack_guid]
+        if buildpack_annotations_array.nil?
+          buildpack_annotations_array = []
+          buildpack_annotations_hash[buildpack_guid] = buildpack_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         buildpack_annotation,
+            created_at_rfc3339: buildpack_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: buildpack_annotation[:updated_at].nil? ? nil : buildpack_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        buildpack_annotations_array.push(wrapper)
+      end
+
+      buildpack_labels_hash = {}
+      buildpack_labels['items'].each do |buildpack_label|
+        return result unless @running
+
+        Thread.pass
+
+        buildpack_guid = buildpack_label[:resource_guid]
+        buildpack_labels_array = buildpack_labels_hash[buildpack_guid]
+        if buildpack_labels_array.nil?
+          buildpack_labels_array = []
+          buildpack_labels_hash[buildpack_guid] = buildpack_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              buildpack_label,
+            created_at_rfc3339: buildpack_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: buildpack_label[:updated_at].nil? ? nil : buildpack_label[:updated_at].to_datetime.rfc3339
+          }
+
+        buildpack_labels_array.push(wrapper)
+      end
 
       application_counters = {}
       applications['items'].each do |application|
@@ -46,8 +96,10 @@ module AdminUI
         guid       = buildpack[:guid]
         stack_name = buildpack[:stack]
 
-        application_counter = application_counters[guid]
-        stack               = stack_name.nil? ? nil : stack_hash[stack_name]
+        application_counter        = application_counters[guid]
+        buildpack_annotation_array = buildpack_annotations_hash[guid] || []
+        buildpack_label_array      = buildpack_labels_hash[guid] || []
+        stack                      = stack_name.nil? ? nil : stack_hash[stack_name]
 
         row = []
 
@@ -80,8 +132,10 @@ module AdminUI
 
         hash[guid] =
           {
-            'buildpack' => buildpack,
-            'stack'     => stack
+            'annotations' => buildpack_annotation_array,
+            'buildpack'   => buildpack,
+            'labels'      => buildpack_label_array,
+            'stack'       => stack
           }
       end
 

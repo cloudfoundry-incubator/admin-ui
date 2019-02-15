@@ -181,6 +181,8 @@ module CCHelper
   end
 
   def cc_clear_buildpacks_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM buildpack_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM buildpack_labels')
     sql(config.ccdb_uri, 'DELETE FROM buildpacks')
 
     @cc_buildpacks_deleted = true
@@ -214,6 +216,8 @@ module CCHelper
   def cc_clear_isolation_segments_cache_stub(config)
     cc_clear_organizations_isolation_segments_cache_stub(config)
 
+    sql(config.ccdb_uri, 'DELETE FROM isolation_segment_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM isolation_segment_labels')
     sql(config.ccdb_uri, 'DELETE from isolation_segments')
 
     @cc_isolation_segments_deleted = true
@@ -227,11 +231,12 @@ module CCHelper
     cc_clear_organizations_isolation_segments_cache_stub(config)
     cc_clear_organizations_private_domains_cache_stub(config)
 
+    sql(config.ccdb_uri, 'DELETE FROM organization_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM organization_labels')
     sql(config.ccdb_uri, 'DELETE FROM organizations_auditors')
     sql(config.ccdb_uri, 'DELETE FROM organizations_billing_managers')
     sql(config.ccdb_uri, 'DELETE FROM organizations_managers')
     sql(config.ccdb_uri, 'DELETE FROM organizations_users')
-    sql(config.ccdb_uri, 'DELETE FROM organization_labels')
     sql(config.ccdb_uri, 'DELETE FROM organizations')
 
     @cc_organizations_deleted = true
@@ -382,6 +387,7 @@ module CCHelper
     cc_clear_apps_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM events')
+    sql(config.ccdb_uri, 'DELETE FROM space_annotations')
     sql(config.ccdb_uri, 'DELETE FROM space_labels')
     sql(config.ccdb_uri, 'DELETE FROM spaces')
 
@@ -391,6 +397,8 @@ module CCHelper
   def cc_clear_stacks_cache_stub(config)
     cc_clear_buildpack_lifecycle_data_cache_stub(config)
 
+    sql(config.ccdb_uri, 'DELETE FROM stack_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM stack_labels')
     sql(config.ccdb_uri, 'DELETE from stacks')
 
     @cc_stacks_deleted = true
@@ -403,6 +411,8 @@ module CCHelper
   end
 
   def cc_clear_tasks_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM task_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM task_labels')
     sql(config.ccdb_uri, 'DELETE from tasks')
 
     @cc_tasks_deleted = true
@@ -507,15 +517,20 @@ module CCHelper
       id:                   unique_id('cc_app'),
       max_task_sequence_id: 1,
       name:                 'test',
+      revisions_enabled:    false,
       space_guid:           cc_space[:guid],
       updated_at:           unique_time('cc_app_updated')
     }
   end
 
+  def cc_app_rename
+    'renamed_test'
+  end
+
   def cc_app_annotation
     {
       created_at:    unique_time('cc_app_annotation_created'),
-      guid:          'appannotation1',
+      guid:          'app_annotation1',
       id:            unique_id('cc_app_annotation'),
       key:           'appannotationkey',
       resource_guid: cc_app[:guid],
@@ -539,7 +554,7 @@ module CCHelper
   def cc_app_label
     {
       created_at:    unique_time('cc_app_label_created'),
-      guid:          'applabel1',
+      guid:          'app_label1',
       id:            unique_id('cc_app_label'),
       key_name:      'applabelkeyname',
       key_prefix:    'applabelkeyprefix.com',
@@ -547,10 +562,6 @@ module CCHelper
       updated_at:    unique_time('cc_app_label_updated'),
       value:         'applabelvalue'
     }
-  end
-
-  def cc_app_rename
-    'renamed_test'
   end
 
   def cc_buildpack
@@ -571,6 +582,31 @@ module CCHelper
 
   def cc_buildpack_rename
     'renamed Node.js'
+  end
+
+  def cc_buildpack_annotation
+    {
+      created_at:    unique_time('cc_buildpack_annotation_created'),
+      guid:          'buildpack_annotation1',
+      id:            unique_id('cc_buildpack_annotation'),
+      key:           'bpannotationkey',
+      resource_guid: cc_buildpack[:guid],
+      updated_at:    unique_time('cc_buildpack_annotation_updated'),
+      value:         'bpannotationvalue'
+    }
+  end
+
+  def cc_buildpack_label
+    {
+      created_at:    unique_time('cc_buildpack_label_created'),
+      guid:          'buildpack_label1',
+      id:            unique_id('cc_buildpack_label'),
+      key_name:      'bplabelkeyname',
+      key_prefix:    'bplabelkeyprefix.com',
+      resource_guid: cc_buildpack[:guid],
+      updated_at:    unique_time('cc_buildpack_label_updated'),
+      value:         'bplabelvalue'
+    }
   end
 
   def cc_buildpack_lifecycle_data
@@ -958,6 +994,31 @@ module CCHelper
     }
   end
 
+  def cc_isolation_segment_annotation
+    {
+      created_at:    unique_time('cc_isolation_segment_annotation_created'),
+      guid:          'isolation_segment_annotation1',
+      id:            unique_id('cc_isolation_segment_annotation'),
+      key:           'isannotationkey',
+      resource_guid: cc_isolation_segment[:guid],
+      updated_at:    unique_time('cc_isolation_segment_annotation_updated'),
+      value:         'isannotationvalue'
+    }
+  end
+
+  def cc_isolation_segment_label
+    {
+      created_at:    unique_time('cc_isolation_segment_label_created'),
+      guid:          'isolation_segment_label1',
+      id:            unique_id('cc_isolation_segment_label'),
+      key_name:      'islabelkeyname',
+      key_prefix:    'islabelkeyprefix.com',
+      resource_guid: cc_isolation_segment[:guid],
+      updated_at:    unique_time('cc_isolation_segment_label_updated'),
+      value:         'islabelvalue'
+    }
+  end
+
   # We cannot initially insert organization with default_isolation_segment_guid due to foreign keys.
   def cc_organization_without_default_isolation_segment_guid
     {
@@ -995,6 +1056,18 @@ module CCHelper
     }
   end
 
+  def cc_organization_annotation
+    {
+      created_at:    unique_time('cc_organization_annotation_created'),
+      guid:          'organization_annotation1',
+      id:            unique_id('cc_organization_annotation'),
+      key:           'organnotationkey',
+      resource_guid: cc_organization[:guid],
+      updated_at:    unique_time('cc_organization_annotation_updated'),
+      value:         'organnotationvalue'
+    }
+  end
+
   def cc_organization_auditor
     {
       organizations_auditors_pk: unique_id('cc_organization_auditor'),
@@ -1021,7 +1094,7 @@ module CCHelper
   def cc_organization_label
     {
       created_at:    unique_time('cc_organization_label_created'),
-      guid:          'orglabel1',
+      guid:          'organization_label1',
       id:            unique_id('cc_organization_label'),
       key_name:      'orglabelkeyname',
       key_prefix:    'orglabelkeyprefix.com',
@@ -1461,6 +1534,18 @@ module CCHelper
     'renamed_test_space'
   end
 
+  def cc_space_annotation
+    {
+      created_at:    unique_time('cc_space_annotation_created'),
+      guid:          'space_annotation1',
+      id:            unique_id('cc_space_annotation'),
+      key:           'spaceannotationkey',
+      resource_guid: cc_space[:guid],
+      updated_at:    unique_time('cc_space_annotation_updated'),
+      value:         'spaceannotationvalue'
+    }
+  end
+
   def cc_space_auditor
     {
       spaces_auditors_pk: unique_id('cc_space_auditor'),
@@ -1480,7 +1565,7 @@ module CCHelper
   def cc_space_label
     {
       created_at:    unique_time('cc_space_label_created'),
-      guid:          'spacelabel1',
+      guid:          'space_label1',
       id:            unique_id('cc_space_label'),
       key_name:      'spacelabelkeyname',
       key_prefix:    'spacelabelkeyprefix.com',
@@ -1553,6 +1638,31 @@ module CCHelper
     }
   end
 
+  def cc_stack_annotation
+    {
+      created_at:    unique_time('cc_stack_annotation_created'),
+      guid:          'stack_annotation1',
+      id:            unique_id('cc_stack_annotation'),
+      key:           'stackannotationkey',
+      resource_guid: cc_stack[:guid],
+      updated_at:    unique_time('cc_stack_annotation_updated'),
+      value:         'stackannotationvalue'
+    }
+  end
+
+  def cc_stack_label
+    {
+      created_at:    unique_time('cc_stack_label_created'),
+      guid:          'stack_label1',
+      id:            unique_id('cc_stack_label'),
+      key_name:      'stacklabelkeyname',
+      key_prefix:    'stacklabelkeyprefix.com',
+      resource_guid: cc_stack[:guid],
+      updated_at:    unique_time('cc_stack_label_updated'),
+      value:         'stacklabelvalue'
+    }
+  end
+
   def cc_staging_security_group_space
     {
       staging_security_groups_spaces_pk: unique_id('cc_staging_security_group_space'),
@@ -1576,6 +1686,31 @@ module CCHelper
       sequence_id:    4,
       state:          'RUNNING',
       updated_at:     unique_time('cc_task_updated')
+    }
+  end
+
+  def cc_task_annotation
+    {
+      created_at:    unique_time('cc_task_annotation_created'),
+      guid:          'task_annotation1',
+      id:            unique_id('cc_task_annotation'),
+      key:           'taskannotationkey',
+      resource_guid: cc_task[:guid],
+      updated_at:    unique_time('cc_task_annotation_updated'),
+      value:         'taskannotationvalue'
+    }
+  end
+
+  def cc_task_label
+    {
+      created_at:    unique_time('cc_task_label_created'),
+      guid:          'task_label1',
+      id:            unique_id('cc_task_label'),
+      key_name:      'tasklabelkeyname',
+      key_prefix:    'tasklabelkeyprefix.com',
+      resource_guid: cc_task[:guid],
+      updated_at:    unique_time('cc_task_label_updated'),
+      value:         'tasklabelvalue'
     }
   end
 
@@ -1773,20 +1908,28 @@ module CCHelper
   def ccdb_inserts(insert_second_quota_definition, event_type, use_route)
     result = [
                [:buildpacks,                       cc_buildpack],
+               [:buildpack_annotations,            cc_buildpack_annotation],
+               [:buildpack_labels,                 cc_buildpack_label],
                [:env_groups,                       cc_env_group],
                [:feature_flags,                    cc_feature_flag],
                [:quota_definitions,                cc_quota_definition],
                [:security_groups,                  cc_security_group],
                [:service_dashboard_clients,        cc_service_dashboard_client],
                [:stacks,                           cc_stack],
+               [:stack_annotations,                cc_stack_annotation],
+               [:stack_labels,                     cc_stack_label],
                [:isolation_segments,               cc_isolation_segment],
+               [:isolation_segment_annotations,    cc_isolation_segment_annotation],
+               [:isolation_segment_labels,         cc_isolation_segment_label],
                [:organizations,                    cc_organization_without_default_isolation_segment_guid],
+               [:organization_annotations,         cc_organization_annotation],
                [:organization_labels,              cc_organization_label],
                [:organizations_isolation_segments, cc_organization_isolation_segment],
                [:domains,                          cc_domain],
                [:space_quota_definitions,          cc_space_quota_definition],
                [:organizations_private_domains,    cc_organization_private_domain],
                [:spaces,                           cc_space],
+               [:space_annotations,                cc_space_annotation],
                [:space_labels,                     cc_space_label],
                [:security_groups_spaces,           cc_security_group_space],
                [:staging_security_groups_spaces,   cc_staging_security_group_space],
@@ -1817,7 +1960,9 @@ module CCHelper
                [:service_instance_operations,      cc_service_instance_operation],
                [:service_binding_operations,       cc_service_binding_operation],
                [:service_keys,                     cc_service_key_with_credentials],
-               [:tasks,                            cc_task]
+               [:tasks,                            cc_task],
+               [:task_annotations,                 cc_task_annotation],
+               [:task_labels,                      cc_task_label]
              ]
 
     result << [:route_bindings, cc_route_binding] if use_route
@@ -1870,26 +2015,6 @@ module CCHelper
   def cc_app_stubs(config)
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
       OK.new('entity' => { 'environment_json' => cc_app_environment_variable })
-    end
-
-    # Remove metadata
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
-      if @cc_apps_deleted
-        cc_app_not_found
-      else
-        cc_clear_apps_cache_stub(config)
-        OK.new({})
-      end
-    end
-
-    # Since set of environment variable not supported, assuming PATCH is to delete
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}/environment_variables", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
-      if @cc_apps_deleted
-        cc_app_not_found
-      else
-        @cc_apps_environment_variables_deleted = true
-        OK.new({})
-      end
     end
 
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}/restage", AdminUI::Utils::HTTP_POST, anything, anything, anything, anything, anything) do
@@ -1983,6 +2108,26 @@ module CCHelper
       end
     end
 
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        cc_clear_apps_cache_stub(config)
+        OK.new({})
+      end
+    end
+
+    # Since set of environment variable not supported, assuming PATCH is to delete
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}/environment_variables", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        @cc_apps_environment_variables_deleted = true
+        OK.new({})
+      end
+    end
+
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}/instances/#{cc_app_instance_index}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_apps_deleted
         cc_app_not_found
@@ -2055,6 +2200,16 @@ module CCHelper
       else
         cc_clear_buildpacks_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        cc_clear_buildpacks_cache_stub(config)
+        OK.new({})
       end
     end
   end
@@ -2166,6 +2321,16 @@ module CCHelper
       NotFound.new('code'        => 10_000,
                    'description' => 'Unknown request',
                    'error_code'  => 'CF-NotFound')
+    end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/isolation_segments/#{cc_isolation_segment[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_isolation_segments_deleted
+        cc_isolation_segment_not_found
+      else
+        cc_clear_isolation_segments_cache_stub(config)
+        OK.new({})
+      end
     end
 
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/isolation_segments/#{cc_isolation_segment[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, "{\"name\":\"#{cc_isolation_segment_rename}\"}", anything, anything, anything) do
@@ -2287,7 +2452,7 @@ module CCHelper
       end
     end
 
-    # Remove label
+    # Remove metadata
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
       if @cc_organizations_deleted
         cc_organization_not_found
@@ -2774,16 +2939,6 @@ module CCHelper
       end
     end
 
-    # Remove label
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
-      if @cc_spaces_deleted
-        cc_space_not_found
-      else
-        cc_clear_spaces_cache_stub(config)
-        OK.new({})
-      end
-    end
-
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_spaces_deleted
         cc_space_not_found
@@ -2799,6 +2954,16 @@ module CCHelper
       else
         cc_clear_spaces_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        cc_clear_spaces_cache_stub(config)
+        OK.new({})
       end
     end
 
@@ -2907,6 +3072,16 @@ module CCHelper
         OK.new({})
       end
     end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/stacks/#{cc_stack[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_stacks_deleted
+        cc_stack_not_found
+      else
+        cc_clear_stacks_cache_stub(config)
+        OK.new({})
+      end
+    end
   end
 
   def cc_staging_security_group_space_stubs(config)
@@ -2938,6 +3113,16 @@ module CCHelper
       else
         sql(config.ccdb_uri, "UPDATE tasks SET state = 'FAILED' WHERE guid = '#{cc_task[:guid]}'")
         Accepted.new({})
+      end
+    end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/tasks/#{cc_task[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_tasks_deleted
+        cc_task_not_found
+      else
+        cc_clear_tasks_cache_stub(config)
+        OK.new({})
       end
     end
   end
