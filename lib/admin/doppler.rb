@@ -36,7 +36,7 @@ module AdminUI
       @value_metrics_semaphore = Mutex.new
 
       # We can reuse the envelope if we clear it and retrieve fields from it
-      @envelope = Events::Envelope.new.freeze
+      @envelope = Events::Envelope.new
 
       # This will use the main EventMachine loop
       @thread = Thread.new do
