@@ -762,6 +762,14 @@ module AdminUI
       @view_models.invalidate_application_instances
     end
 
+    def manage_application_feature(app_guid, feature, control_message)
+      url = "/v3/apps/#{app_guid}/features/#{feature}"
+      @logger.debug("PATCH #{url}, #{control_message}")
+      @client.patch_cc(url, control_message)
+      @cc.invalidate_applications
+      @view_models.invalidate_applications
+    end
+
     def manage_buildpack(buildpack_guid, control_message)
       url = "/v2/buildpacks/#{buildpack_guid}"
       @logger.debug("PUT #{url}, #{control_message}")

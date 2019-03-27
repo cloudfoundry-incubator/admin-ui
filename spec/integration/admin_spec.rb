@@ -216,6 +216,18 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"enable_ssh\":true}"]], true)
     end
 
+    def disable_app_revisions
+      response = put_request("/applications/#{cc_app[:guid]}/features/revisions", '{"enabled":false}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}/features/revisions; body = {\"enabled\":false}"]], true)
+    end
+
+    def enable_app_revisions
+      response = put_request("/applications/#{cc_app[:guid]}/features/revisions", '{"enabled":true}')
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}/features/revisions; body = {\"enabled\":true}"]], true)
+    end
+
     def delete_app
       response = delete_request("/applications/#{cc_app[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -286,6 +298,16 @@ describe AdminUI::Admin, type: :integration do
     it 'disables the application ssh' do
       enable_app_ssh
       expect { disable_app_ssh }.to change { get_json('/applications_view_model')['items']['items'][0][10] }.from(true).to(false)
+    end
+
+    it 'enables the application revisions' do
+      disable_app_revisions
+      expect { enable_app_revisions }.to change { get_json('/applications_view_model')['items']['items'][0][11] }.from(false).to(true)
+    end
+
+    it 'disables the application revisions' do
+      enable_app_revisions
+      expect { disable_app_revisions }.to change { get_json('/applications_view_model')['items']['items'][0][11] }.from(true).to(false)
     end
 
     it 'deletes an application' do

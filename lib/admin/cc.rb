@@ -256,7 +256,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :routes,
-            columns: %i[created_at domain_id guid host id path port space_id updated_at]
+            columns: %i[created_at domain_id guid host id path port space_id updated_at vip_offset]
           },
           security_groups:
           {
@@ -274,7 +274,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_bindings,
-            columns: %i[app_guid created_at guid id name service_instance_guid syslog_drain_url updated_at volume_mounts_salt]
+            columns: %i[app_guid created_at guid id name service_instance_guid syslog_drain_url updated_at]
           },
           service_binding_operations:
           {
@@ -322,7 +322,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_plans,
-            columns: %i[active bindable created_at create_binding_schema create_instance_schema description extra free guid id name plan_updateable public service_id unique_id updated_at update_instance_schema]
+            columns: %i[active bindable created_at create_binding_schema create_instance_schema description extra free guid id maximum_polling_duration name plan_updateable public service_id unique_id updated_at update_instance_schema]
           },
           service_plan_visibilities:
           {

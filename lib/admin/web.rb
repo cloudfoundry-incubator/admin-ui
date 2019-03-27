@@ -1283,6 +1283,24 @@ module AdminUI
       end
     end
 
+    put '/applications/:app_guid/features/:feature', auth: [:admin] do
+      begin
+        control_message = request.body.read.to_s
+        @logger.info_user(session[:username], 'put', "/applications/#{params[:app_guid]}/features/#{params[:feature]}; body = #{control_message}")
+        @operation.manage_application_feature(params[:app_guid], params[:feature], control_message)
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during update application feature: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during update application feature: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     put '/buildpacks/:buildpack_guid', auth: [:admin] do
       begin
         control_message = request.body.read.to_s

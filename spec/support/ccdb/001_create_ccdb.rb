@@ -43,6 +43,7 @@ Sequel.migration do
       String :admin_buildpack_name, :text=>true
       String :build_guid, :text=>true
       String :encryption_key_label, :size=>255
+      Integer :encryption_iterations, :default=>2048, :null=>false
       
       index [:droplet_guid], :name=>:bp_lifecycle_data_droplet_guid
       index [:admin_buildpack_name]
@@ -114,6 +115,7 @@ Sequel.migration do
       String :encrypted_value, :size=>255
       String :encryption_key_label, :size=>255
       String :salt, :size=>255
+      Integer :encryption_iterations, :default=>2048, :null=>false
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -130,6 +132,7 @@ Sequel.migration do
       String :environment_json, :text=>true
       String :salt, :text=>true
       String :encryption_key_label, :size=>255
+      Integer :encryption_iterations, :default=>2048, :null=>false
       
       index [:name], :unique=>true
       index [:created_at], :name=>:evg_created_at_index
@@ -386,6 +389,7 @@ Sequel.migration do
       String :encryption_key_label, :size=>255
       String :version, :size=>255
       String :buildpack_name, :size=>2047
+      Integer :encryption_iterations, :default=>2048, :null=>false
       
       index [:buildpack_lifecycle_data_guid], :name=>:bl_buildpack_bldata_guid_index
       index [:created_at]
@@ -523,6 +527,7 @@ Sequel.migration do
       TrueClass :enable_ssh
       String :encryption_key_label, :size=>255
       TrueClass :revisions_enabled, :default=>false
+      Integer :encryption_iterations, :default=>2048, :null=>false
       
       index [:droplet_guid], :name=>:apps_desired_droplet_guid
       index [:created_at], :name=>:apps_v3_created_at_index
@@ -602,6 +607,7 @@ Sequel.migration do
       String :docker_receipt_password_salt, :text=>true
       String :encrypted_docker_receipt_password, :size=>16000
       String :encryption_key_label, :size=>255
+      Integer :encryption_iterations, :default=>2048, :null=>false
       
       index [:app_guid], :name=>:droplet_app_guid_index
       index [:build_guid], :name=>:droplet_build_guid_index
@@ -631,6 +637,7 @@ Sequel.migration do
       String :docker_password_salt, :text=>true
       String :encrypted_docker_password, :size=>16000
       String :encryption_key_label, :size=>255
+      Integer :encryption_iterations, :default=>2048, :null=>false
       
       index [:app_guid], :name=>:package_app_guid_index
       index [:created_at]
@@ -688,6 +695,8 @@ Sequel.migration do
       String :encrypted_environment_variables, :size=>16000
       String :salt, :size=>255
       String :encryption_key_label, :size=>255
+      Integer :encryption_iterations, :default=>2048, :null=>false
+      String :description, :default=>"N/A", :text=>true, :null=>false
       
       index [:app_guid], :name=>:fk_revision_app_guid_index
       index [:created_at]
@@ -712,6 +721,7 @@ Sequel.migration do
       Integer :sequence_id
       Integer :disk_in_mb
       String :encryption_key_label, :size=>255
+      Integer :encryption_iterations, :default=>2048, :null=>false
       
       index [:app_guid]
       index [:created_at]
@@ -929,6 +939,21 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:revision_process_commands, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :revision_guid, :revisions, :type=>String, :size=>255, :null=>false, :key=>[:guid]
+      String :process_type, :size=>255, :null=>false
+      String :process_command, :size=>4096
+      
+      index [:revision_guid], :name=>:rev_commands_revision_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
     create_table(:task_annotations, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -1121,6 +1146,7 @@ Sequel.migration do
       String :auth_username, :text=>true
       foreign_key :space_id, :spaces, :key=>[:id]
       String :encryption_key_label, :size=>255
+      Integer :encryption_iterations, :default=>2048, :null=>false
       
       index [:broker_url], :name=>:sb_broker_url_index
       index [:created_at], :name=>:sbrokers_created_at_index
@@ -1306,6 +1332,7 @@ Sequel.migration do
       String :update_instance_schema, :text=>true
       String :create_binding_schema, :text=>true
       TrueClass :plan_updateable
+      Integer :maximum_polling_duration
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -1332,6 +1359,7 @@ Sequel.migration do
       String :tags, :text=>true
       String :route_service_url, :text=>true
       String :encryption_key_label, :size=>255
+      Integer :encryption_iterations, :default=>2048, :null=>false
       
       index [:name]
       index [:created_at], :name=>:si_created_at_index
@@ -1384,6 +1412,7 @@ Sequel.migration do
       String :type, :text=>true
       String :name, :size=>255
       String :encryption_key_label, :size=>255
+      Integer :encryption_iterations, :default=>2048, :null=>false
       
       index [:created_at], :name=>:sb_created_at_index
       index [:guid], :name=>:sb_guid_index, :unique=>true
@@ -1429,6 +1458,7 @@ Sequel.migration do
       String :credentials, :text=>true, :null=>false
       foreign_key :service_instance_id, :service_instances, :null=>false, :key=>[:id]
       String :encryption_key_label, :size=>255
+      Integer :encryption_iterations, :default=>2048, :null=>false
       
       index [:created_at], :name=>:sk_created_at_index
       index [:guid], :name=>:sk_guid_index, :unique=>true

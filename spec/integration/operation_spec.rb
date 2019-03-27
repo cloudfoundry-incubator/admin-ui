@@ -148,6 +148,14 @@ describe AdminUI::Operation, type: :integration do
         operation.manage_application(cc_app[:guid], '{"enable_ssh":false}')
       end
 
+      def enable_revisions_application
+        operation.manage_application_feature(cc_app[:guid], 'revisions', '{"enabled":true}')
+      end
+
+      def disable_revisions_application
+        operation.manage_application_feature(cc_app[:guid], 'revisions', '{"enabled":false}')
+      end
+
       it 'renames the application' do
         expect { rename_application }.to change { cc.applications['items'][0][:name] }.from(cc_app[:name]).to(cc_app_rename)
       end
@@ -184,6 +192,16 @@ describe AdminUI::Operation, type: :integration do
       it 'disables application ssh' do
         enable_ssh_application
         expect { disable_ssh_application }.to change { cc.applications['items'][0][:enable_ssh] }.from(true).to(false)
+      end
+
+      it 'enables application revisions' do
+        disable_revisions_application
+        expect { enable_revisions_application }.to change { cc.applications['items'][0][:revisions_enabled] }.from(false).to(true)
+      end
+
+      it 'disables application revisions' do
+        enable_revisions_application
+        expect { disable_revisions_application }.to change { cc.applications['items'][0][:revisions_enabled] }.from(true).to(false)
       end
 
       it 'deletes the application' do
@@ -248,6 +266,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails disabling ssh on deleted app' do
           expect { disable_ssh_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
+        end
+
+        it 'fails enabling revisions on deleted app' do
+          expect { enable_revisions_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
+        end
+
+        it 'fails disabling revisions on deleted app' do
+          expect { disable_revisions_application }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_app_not_found(exception) }
         end
 
         it 'fails deleting deleted app' do

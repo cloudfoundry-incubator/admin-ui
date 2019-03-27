@@ -517,7 +517,7 @@ module CCHelper
       id:                   unique_id('cc_app'),
       max_task_sequence_id: 1,
       name:                 'test',
-      revisions_enabled:    false,
+      revisions_enabled:    true,
       space_guid:           cc_space[:guid],
       updated_at:           unique_time('cc_app_updated')
     }
@@ -1235,7 +1235,8 @@ module CCHelper
       path:       '/path1',
       port:       0,
       space_id:   cc_space[:id],
-      updated_at: unique_time('cc_route_updated')
+      updated_at: unique_time('cc_route_updated'),
+      vip_offset: 1
     }
   end
 
@@ -1333,8 +1334,7 @@ module CCHelper
       name:                  'TestServiceBinding',
       service_instance_guid: cc_service_instance[:guid],
       syslog_drain_url:      'http://service_binding_syslog_drain_url.com',
-      updated_at:            unique_time('cc_service_binding_updated'),
-      volume_mounts_salt:    'non-empty'
+      updated_at:            unique_time('cc_service_binding_updated')
     }
   end
 
@@ -1485,23 +1485,24 @@ module CCHelper
 
   def cc_service_plan
     {
-      active:                 true,
-      bindable:               true,
-      created_at:             unique_time('cc_service_plan_created'),
-      create_binding_schema:  '{"key":"value"}',
-      create_instance_schema: '{"key2":"value2"}',
-      description:            'TestServicePlan description',
-      extra:                  "{\"displayName\":\"#{cc_service_plan_display_name}\",\"bullets\":[\"bullet1\",\"bullet2\"]}",
-      free:                   true,
-      guid:                   'service_plan1',
-      id:                     unique_id('cc_service_plan'),
-      name:                   'TestServicePlan',
-      plan_updateable:        true,
-      public:                 true,
-      service_id:             cc_service[:id],
-      unique_id:              'service_plan_unique_id1',
-      update_instance_schema: '{"key3":"value3"}',
-      updated_at:             unique_time('cc_service_plan_updated')
+      active:                   true,
+      bindable:                 true,
+      created_at:               unique_time('cc_service_plan_created'),
+      create_binding_schema:    '{"key":"value"}',
+      create_instance_schema:   '{"key2":"value2"}',
+      description:              'TestServicePlan description',
+      extra:                    "{\"displayName\":\"#{cc_service_plan_display_name}\",\"bullets\":[\"bullet1\",\"bullet2\"]}",
+      free:                     true,
+      guid:                     'service_plan1',
+      id:                       unique_id('cc_service_plan'),
+      maximum_polling_duration: 1234,
+      name:                     'TestServicePlan',
+      plan_updateable:          true,
+      public:                   true,
+      service_id:               cc_service[:id],
+      unique_id:                'service_plan_unique_id1',
+      update_instance_schema:   '{"key3":"value3"}',
+      updated_at:               unique_time('cc_service_plan_updated')
     }
   end
 
@@ -2086,6 +2087,24 @@ module CCHelper
         cc_app_not_found
       else
         sql(config.ccdb_uri, "UPDATE apps SET enable_ssh = 'false' WHERE guid = '#{cc_app[:guid]}'")
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}/features/revisions", AdminUI::Utils::HTTP_PATCH, anything, '{"enabled":true}', anything, anything, anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE apps SET revisions_enabled = 'true' WHERE guid = '#{cc_app[:guid]}'")
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}/features/revisions", AdminUI::Utils::HTTP_PATCH, anything, '{"enabled":false}', anything, anything, anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE apps SET revisions_enabled = 'false' WHERE guid = '#{cc_app[:guid]}'")
         Created.new
       end
     end

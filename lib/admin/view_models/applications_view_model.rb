@@ -247,6 +247,8 @@ module AdminUI
           row.push(application[:enable_ssh])
         end
 
+        row.push(application[:revisions_enabled])
+
         if package
           row.push(!package[:docker_image].nil?)
         else
@@ -342,7 +344,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..25).to_a, (1..14).to_a << 25)
+      result(true, items, hash, (1..26).to_a, (1..15).to_a << 26)
     end
   end
 end

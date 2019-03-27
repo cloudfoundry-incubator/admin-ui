@@ -1562,6 +1562,23 @@ describe AdminUI::Admin do
       it_behaves_like('common manage application')
     end
 
+    shared_examples 'common manage application feature' do
+      it 'returns failure code due to disconnection' do
+        response = put('/applications/application1/features/revisions', '{"enabled":true}')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'manage application feature via http' do
+      it_behaves_like('common manage application feature')
+    end
+
+    context 'manage application feature via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common manage application feature')
+    end
+
     shared_examples 'common manage buildpack' do
       it 'returns failure code due to disconnection' do
         response = put('/buildpacks/buildpack1', '{"enabled":true}')
@@ -3232,6 +3249,10 @@ describe AdminUI::Admin do
 
       it 'puts /applications/:guid redirects as expected' do
         put_redirects_as_expected('/applications/application1', '{"state":"STARTED"}')
+      end
+
+      it 'puts /applications/:guid/features/:feature redirects as expected' do
+        put_redirects_as_expected('/applications/application1/features/revisions', '{"enabled":true}')
       end
 
       it 'puts /buildpacks/:guid redirects as expected' do

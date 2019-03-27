@@ -115,7 +115,7 @@ module AdminUI
         end
 
         row.push(route[:path])
-
+        row.push(route[:vip_offset])
         row.push(guid)
         row.push(route[:created_at].to_datetime.rfc3339)
 
@@ -166,7 +166,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..12).to_a, [1, 2, 3, 5, 6, 7, 8, 12])
+      result(true, items, hash, (1..13).to_a, [1, 2, 3, 5, 7, 8, 9, 13])
     end
   end
 end
