@@ -1,3 +1,5 @@
+require: rubocop-performance
+
 AllCops:
   Exclude:
     - '.bundle/**/*'
@@ -42,6 +44,9 @@ ParameterLists:
   Enabled: false
 
 PerceivedComplexity:
+  Enabled: false
+
+RescuedExceptionsVariableName:
   Enabled: false
 
 Style/DateTime:
