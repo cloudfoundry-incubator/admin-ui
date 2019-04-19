@@ -2896,6 +2896,129 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
+          it 'has labels subtable' do
+            expect(@driver.find_element(id: 'ServiceInstancesLabelsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceInstancesLabelsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_service_instance_label[:key_prefix],
+                               cc_service_instance_label[:key_name],
+                               cc_service_instance_label[:guid],
+                               cc_service_instance_label[:created_at].to_datetime.rfc3339,
+                               cc_service_instance_label[:updated_at].to_datetime.rfc3339,
+                               cc_service_instance_label[:value]
+                             ])
+          end
+
+          it 'labels subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ServiceInstancesLabelsTable_1')
+          end
+
+          it 'labels subtable has a checkbox in the first column' do
+            check_checkbox_guid('ServiceInstancesLabelsTable', "#{cc_service_instance[:guid]}/labels/#{cc_service_instance_label[:key_name]}?prefix=#{cc_service_instance_label[:key_prefix]}")
+          end
+
+          context 'manage labels subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_ServiceInstancesLabelsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_ServiceInstancesLabelsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'ServiceInstancesLabelsTable' }
+                let(:button_id)               { 'Buttons_ServiceInstancesLabelsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the service instance's selected labels?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'service_instance_labels' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ServiceInstancesLabelsTable_1' }
+                let(:print_button_id) { 'Buttons_ServiceInstancesLabelsTable_2' }
+                let(:save_button_id)  { 'Buttons_ServiceInstancesLabelsTable_3' }
+                let(:csv_button_id)   { 'Buttons_ServiceInstancesLabelsTable_4' }
+                let(:excel_button_id) { 'Buttons_ServiceInstancesLabelsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_ServiceInstancesLabelsTable_6' }
+              end
+            end
+          end
+
+          it 'has annotations subtable' do
+            expect(@driver.find_element(id: 'ServiceInstancesAnnotationsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 6,
+                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceInstancesAnnotationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_service_instance_annotation[:key],
+                               cc_service_instance_annotation[:guid],
+                               cc_service_instance_annotation[:created_at].to_datetime.rfc3339,
+                               cc_service_instance_annotation[:updated_at].to_datetime.rfc3339,
+                               cc_service_instance_annotation[:value]
+                             ])
+          end
+
+          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ServiceInstancesAnnotationsTable_1')
+          end
+
+          it 'annotations subtable has a checkbox in the first column' do
+            check_checkbox_guid('ServiceInstancesAnnotationsTable', "#{cc_service_instance[:guid]}/annotations/#{cc_service_instance_annotation[:key]}")
+          end
+
+          context 'manage annotations subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_ServiceInstancesAnnotationsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_ServiceInstancesAnnotationsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'ServiceInstancesAnnotationsTable' }
+                let(:button_id)               { 'Buttons_ServiceInstancesAnnotationsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the service instance's selected annotations?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'service_instance_annotations' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ServiceInstancesAnnotationsTable_1' }
+                let(:print_button_id) { 'Buttons_ServiceInstancesAnnotationsTable_2' }
+                let(:save_button_id)  { 'Buttons_ServiceInstancesAnnotationsTable_3' }
+                let(:csv_button_id)   { 'Buttons_ServiceInstancesAnnotationsTable_4' }
+                let(:excel_button_id) { 'Buttons_ServiceInstancesAnnotationsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_ServiceInstancesAnnotationsTable_6' }
+              end
+            end
+          end
+
           it 'has credentials subtable' do
             expect(@driver.find_element(id: 'ServiceInstancesCredentialsDetailsLabel').displayed?).to be(true)
 
@@ -6775,12 +6898,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 3,
                                  labels:          ['', 'Service', 'Service Broker'],
-                                 colspans:        %w[1 23 4]
+                                 colspans:        %w[1 24 4]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServicesTable_wrapper']/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 28,
-                                 labels:          ['', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Plan Updateable', 'Instances Retrievable', 'Bindings Retrievable', 'Shareable', 'Active', 'Provider Display Name', 'Display Name', 'Requires', 'Events', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Instance Shares', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Name', 'GUID', 'Created', 'Updated'],
+                                 expected_length: 29,
+                                 labels:          ['', 'Label', 'GUID', 'Unique ID', 'Created', 'Updated', 'Bindable', 'Plan Updateable', 'Instances Retrievable', 'Bindings Retrievable', 'Allow Context Updates', 'Shareable', 'Active', 'Provider Display Name', 'Display Name', 'Requires', 'Events', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Instance Shares', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Name', 'GUID', 'Created', 'Updated'],
                                  colspans:        nil
                                }
                              ])
@@ -6797,6 +6920,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatBoolean(#{cc_service[:plan_updateable]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service[:instances_retrievable]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindings_retrievable]})"),
+                             @driver.execute_script("return Format.formatBoolean(#{cc_service[:allow_context_updates]})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service_shareable})"),
                              @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})"),
                              cc_service_provider_display_name,
@@ -6898,6 +7022,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Plan Updateable',       tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:plan_updateable]})") },
                             { label: 'Service Instances Retrievable', tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:instances_retrievable]})") },
                             { label: 'Service Bindings Retrievable',  tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:bindings_retrievable]})") },
+                            { label: 'Service Allow Context Updates', tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:allow_context_updates]})") },
                             { label: 'Service Shareable',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service_shareable})") },
                             { label: 'Service Active',                tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_service[:active]})") },
                             { label: 'Service Description',           tag:   nil, value: cc_service[:description] },
@@ -6929,39 +7054,39 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('Services', 23, 'Events', cc_service[:guid])
+            check_filter_link('Services', 24, 'Events', cc_service[:guid])
           end
 
           it 'has service plans link' do
-            check_filter_link('Services', 24, 'ServicePlans', cc_service[:guid])
+            check_filter_link('Services', 25, 'ServicePlans', cc_service[:guid])
           end
 
           it 'has service plan visibilities link' do
-            check_filter_link('Services', 26, 'ServicePlanVisibilities', cc_service[:guid])
+            check_filter_link('Services', 27, 'ServicePlanVisibilities', cc_service[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('Services', 27, 'ServiceInstances', cc_service[:guid])
+            check_filter_link('Services', 28, 'ServiceInstances', cc_service[:guid])
           end
 
           it 'has shared service instances link' do
-            check_filter_link('Services', 28, 'SharedServiceInstances', cc_service[:guid])
+            check_filter_link('Services', 29, 'SharedServiceInstances', cc_service[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('Services', 29, 'ServiceBindings', cc_service[:guid])
+            check_filter_link('Services', 30, 'ServiceBindings', cc_service[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('Services', 30, 'ServiceKeys', cc_service[:guid])
+            check_filter_link('Services', 31, 'ServiceKeys', cc_service[:guid])
           end
 
           it 'has route bindings link' do
-            check_filter_link('Services', 31, 'RouteBindings', cc_service[:guid])
+            check_filter_link('Services', 32, 'RouteBindings', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('Services', 32, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('Services', 33, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end

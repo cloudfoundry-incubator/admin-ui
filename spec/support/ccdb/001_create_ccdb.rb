@@ -704,6 +704,21 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:sidecars, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :name, :size=>255, :null=>false
+      String :command, :size=>4096, :null=>false
+      foreign_key :app_guid, :apps, :type=>String, :size=>255, :null=>false, :key=>[:guid]
+      
+      index [:app_guid], :name=>:fk_sidecar_app_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
     create_table(:tasks, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -949,6 +964,21 @@ Sequel.migration do
       String :process_command, :size=>4096
       
       index [:revision_guid], :name=>:rev_commands_revision_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:sidecar_process_types, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :type, :size=>255, :null=>false
+      foreign_key :sidecar_guid, :sidecars, :type=>String, :size=>255, :null=>false, :key=>[:guid]
+      String :app_guid, :size=>255, :null=>false
+      
+      index [:sidecar_guid], :name=>:fk_sidecar_proc_type_sidecar_guid_index
       index [:created_at]
       index [:guid], :unique=>true
       index [:updated_at]
@@ -1282,6 +1312,7 @@ Sequel.migration do
       TrueClass :plan_updateable, :default=>false
       TrueClass :bindings_retrievable, :default=>false, :null=>false
       TrueClass :instances_retrievable, :default=>false, :null=>false
+      TrueClass :allow_context_updates, :default=>false, :null=>false
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -1421,6 +1452,38 @@ Sequel.migration do
       index [:name]
       index [:service_instance_guid]
       index [:app_guid, :name], :name=>:unique_service_binding_app_guid_name, :unique=>true
+    end
+    
+    create_table(:service_instance_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :service_instances, :type=>String, :size=>255, :key=>[:guid]
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_service_instance_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:service_instance_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :service_instances, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_service_instance_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:service_instance_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
     
     create_table(:service_instance_operations, :ignore_index_errors=>true) do

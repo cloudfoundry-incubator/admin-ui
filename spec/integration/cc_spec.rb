@@ -329,6 +329,20 @@ describe AdminUI::CC, type: :integration do
       expect(cc.service_instances['items'].length).to eq(0)
     end
 
+    it 'clears the service instance annotations cache' do
+      expect(cc.service_instance_annotations['items'].length).to eq(1)
+      cc_clear_service_instances_cache_stub(config)
+      cc.invalidate_service_instance_annotations
+      expect(cc.service_instance_annotations['items'].length).to eq(0)
+    end
+
+    it 'clears the service instance labels cache' do
+      expect(cc.service_instance_labels['items'].length).to eq(1)
+      cc_clear_service_instances_cache_stub(config)
+      cc.invalidate_service_instance_labels
+      expect(cc.service_instance_labels['items'].length).to eq(0)
+    end
+
     it 'clears the service instance shares cache' do
       expect(cc.service_instance_shares['items'].length).to eq(1)
       cc_clear_service_instance_shares_cache_stub(config)
@@ -812,6 +826,20 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected service dashboard clients' do
       let(:results)  { cc.service_dashboard_clients }
       let(:expected) { cc_service_dashboard_client }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected service instance annotations' do
+      let(:results)  { cc.service_instance_annotations }
+      let(:expected) { cc_service_instance_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected service instance labels' do
+      let(:results)  { cc.service_instance_labels }
+      let(:expected) { cc_service_instance_label }
 
       it_behaves_like('common cc retrieval')
     end

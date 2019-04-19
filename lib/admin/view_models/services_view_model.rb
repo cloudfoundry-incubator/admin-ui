@@ -230,6 +230,7 @@ module AdminUI
         row.push(service[:plan_updateable])
         row.push(service[:instances_retrievable])
         row.push(service[:bindings_retrievable])
+        row.push(service[:allow_context_updates])
 
         shareable             = nil
         provider_display_name = nil
@@ -365,7 +366,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..27).to_a, (1..27).to_a - [15, 16, 17, 18, 19, 20, 21, 22, 23])
+      result(true, items, hash, (1..28).to_a, (1..28).to_a - [16, 17, 18, 19, 20, 21, 22, 23, 24])
     end
   end
 end

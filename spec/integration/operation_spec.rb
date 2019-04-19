@@ -1566,6 +1566,14 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_service_instance(cc_service_instance[:guid], cc_service_instance[:is_gateway_service], true, true)
       end
 
+      def delete_service_instance_annotation
+        operation.delete_service_instance_annotation(cc_service_instance[:guid], cc_service_instance_annotation[:key])
+      end
+
+      def delete_service_instance_label
+        operation.delete_service_instance_label(cc_service_instance[:guid], cc_service_instance_label[:key_prefix], cc_service_instance_label[:key_name])
+      end
+
       it 'renames the service instance' do
         expect { rename_service_instance }.to change { cc.service_instances['items'][0][:name] }.from(cc_service_instance[:name]).to(cc_service_instance_rename)
       end
@@ -1580,6 +1588,14 @@ describe AdminUI::Operation, type: :integration do
 
       it 'deletes service instance recursive purge' do
         expect { delete_service_instance_recursive_purge }.to change { cc.service_instances['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the service instance annotation' do
+        expect { delete_service_instance_annotation }.to change { cc.service_instance_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the service instance label' do
+        expect { delete_service_instance_label }.to change { cc.service_instance_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -1608,6 +1624,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting recursive purge deleted service instance' do
           expect { delete_service_instance_recursive_purge }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_instance_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted service instance' do
+          expect { delete_service_instance_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_instance_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted service instance' do
+          expect { delete_service_instance_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_instance_not_found(exception) }
         end
       end
     end

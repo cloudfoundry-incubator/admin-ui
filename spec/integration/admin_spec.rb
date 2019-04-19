@@ -1422,6 +1422,18 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/#{cc_service_instance[:is_gateway_service]}?recursive=true&purge=true"]], true)
     end
 
+    def delete_service_instance_annotation
+      response = delete_request("/service_instances/#{cc_service_instance[:guid]}/annotations/#{cc_service_instance_annotation[:key]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/annotations/#{cc_service_instance_annotation[:key]}"]])
+    end
+
+    def delete_service_instance_label
+      response = delete_request("/service_instances/#{cc_service_instance[:guid]}/labels/#{cc_service_instance_label[:key_name]}?prefix=#{cc_service_instance_label[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/labels/#{cc_service_instance_label[:key_name]}?prefix=#{cc_service_instance_label[:key_prefix]}"]], true)
+    end
+
     it 'has user name and service instances request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/service_instances_view_model']], true)
     end
@@ -1440,6 +1452,14 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a service instance recursive purge' do
       expect { delete_service_instance_recursive_purge }.to change { get_json('/service_instances_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes a service instance annotation' do
+      expect { delete_service_instance_annotation }.to change { get_json("/service_instances_view_model/#{cc_service_instance[:guid]}/true")['annotations'].length }.from(1).to(0)
+    end
+
+    it 'deletes a service instance label' do
+      expect { delete_service_instance_label }.to change { get_json("/service_instances_view_model/#{cc_service_instance[:guid]}/true")['labels'].length }.from(1).to(0)
     end
   end
 

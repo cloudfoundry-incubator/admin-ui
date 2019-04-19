@@ -329,6 +329,8 @@ module CCHelper
     cc_clear_service_instance_shares_cache_stub(config)
     cc_clear_service_keys_cache_stub(config)
 
+    sql(config.ccdb_uri, 'DELETE FROM service_instance_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM service_instance_labels')
     sql(config.ccdb_uri, 'DELETE FROM service_instance_operations')
     sql(config.ccdb_uri, 'DELETE FROM service_instances')
 
@@ -1306,6 +1308,7 @@ module CCHelper
   def cc_service
     {
       active:                true,
+      allow_context_updates: true,
       bindable:              true,
       bindings_retrievable:  true,
       created_at:            unique_time('cc_service_created'),
@@ -1433,6 +1436,31 @@ module CCHelper
 
   def cc_service_instance_rename
     'renamed_TestServiceInstance'
+  end
+
+  def cc_service_instance_annotation
+    {
+      created_at:    unique_time('cc_service_instance_annotation_created'),
+      guid:          'service_instance_annotation1',
+      id:            unique_id('cc_service_instance_annotation'),
+      key:           'siannotationkey',
+      resource_guid: cc_service_instance[:guid],
+      updated_at:    unique_time('cc_service_instance_annotation_updated'),
+      value:         'siannotationvalue'
+    }
+  end
+
+  def cc_service_instance_label
+    {
+      created_at:    unique_time('cc_service_instance_label_created'),
+      guid:          'service_instance_label1',
+      id:            unique_id('cc_service_instance_label'),
+      key_name:      'silabelkeyname',
+      key_prefix:    'silabelkeyprefix.com',
+      resource_guid: cc_service_instance[:guid],
+      updated_at:    unique_time('cc_service_instance_label_updated'),
+      value:         'silabelvalue'
+    }
   end
 
   def cc_service_instance_operation
@@ -1955,6 +1983,8 @@ module CCHelper
                [:spaces_managers,                  cc_space_manager],
                [:service_plans,                    cc_service_plan],
                [:service_instances,                cc_service_instance_with_credentials],
+               [:service_instance_annotations,     cc_service_instance_annotation],
+               [:service_instance_labels,          cc_service_instance_label],
                [:service_instance_shares,          cc_service_instance_share],
                [:service_plan_visibilities,        cc_service_plan_visibility],
                [:service_bindings,                 cc_service_binding_with_credentials],
@@ -2830,6 +2860,16 @@ module CCHelper
       else
         cc_clear_service_instances_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_instances/#{cc_service_instance[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_service_instances_deleted
+        cc_service_instance_not_found
+      else
+        cc_clear_service_instances_cache_stub(config)
+        OK.new({})
       end
     end
   end

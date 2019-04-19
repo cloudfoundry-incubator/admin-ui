@@ -1120,6 +1120,57 @@ describe AdminUI::Admin do
       it_behaves_like('common delete service instance recursive purge')
     end
 
+    shared_examples 'common delete service instance annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_instances/service_instance1/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service instance annotation via http' do
+      it_behaves_like('common delete service instance annotation')
+    end
+
+    context 'delete service instance annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service instance annotation')
+    end
+
+    shared_examples 'common delete service instance label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_instances/service_instance1/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service instance label via http' do
+      it_behaves_like('common delete service instance label')
+    end
+
+    context 'delete service instance label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service instance label')
+    end
+
+    shared_examples 'common delete service instance label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_instances/service_instance1/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service instance label with prefix via http' do
+      it_behaves_like('common delete service instance label with prefix')
+    end
+
+    context 'delete service instance label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service instance label with prefix')
+    end
+
     shared_examples 'common delete service key' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_keys/service_key1')
@@ -2925,6 +2976,18 @@ describe AdminUI::Admin do
 
       it 'deletes /service_instances/:guid/:boolean?recursive=true&purge=true redirects as expected' do
         delete_redirects_as_expected('/service_instances/service_instance1/true?recursive=true&purge=true')
+      end
+
+      it 'deletes /service_instances/:guid/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/service_instances/service_instance1/annotations/annotation1')
+      end
+
+      it 'deletes /service_instances/:guid/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/service_instances/service_instance1/labels/label1')
+      end
+
+      it 'deletes /service_instances/:guid/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/service_instances/service_instance1/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /service_keys/:guid redirects as expected' do

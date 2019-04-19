@@ -511,6 +511,26 @@ module AdminUI
       @view_models.invalidate_service_instances
     end
 
+    def delete_service_instance_annotation(service_instance_guid, key)
+      url = "/v3/service_instances/#{service_instance_guid}"
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_service_instance_annotations
+      @view_models.invalidate_service_instances
+    end
+
+    def delete_service_instance_label(service_instance_guid, prefix, name)
+      url = "/v3/service_instances/#{service_instance_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_service_instance_labels
+      @view_models.invalidate_service_instances
+    end
+
     def delete_service_key(service_key_guid)
       url = "/v2/service_keys/#{service_key_guid}?accepts_incomplete=true"
       @logger.debug("DELETE #{url}")

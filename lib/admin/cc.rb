@@ -300,6 +300,18 @@ module AdminUI
             table:   :service_instances,
             columns: %i[created_at dashboard_url gateway_name gateway_data guid id is_gateway_service name route_service_url service_plan_id space_id syslog_drain_url tags updated_at]
           },
+          service_instance_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_instance_annotations,
+            columns: %i[created_at guid id key resource_guid updated_at value]
+          },
+          service_instance_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_instance_labels,
+            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+          },
           service_instance_operations:
           {
             db_uri:  ccdb_uri,
@@ -340,7 +352,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :services,
-            columns: %i[active bindable bindings_retrievable created_at description extra guid id instances_retrievable label plan_updateable purging requires service_broker_id tags unique_id updated_at]
+            columns: %i[active allow_context_updates bindable bindings_retrievable created_at description extra guid id instances_retrievable label plan_updateable purging requires service_broker_id tags unique_id updated_at]
           },
           space_annotations:
           {
@@ -691,6 +703,14 @@ module AdminUI
       invalidate_cache(:service_instances)
     end
 
+    def invalidate_service_instance_annotations
+      invalidate_cache(:service_instance_annotations)
+    end
+
+    def invalidate_service_instance_labels
+      invalidate_cache(:service_instance_labels)
+    end
+
     def invalidate_service_instance_shares
       invalidate_cache(:service_instance_shares)
     end
@@ -922,6 +942,14 @@ module AdminUI
 
     def service_dashboard_clients
       result_cache(:service_dashboard_clients)
+    end
+
+    def service_instance_annotations
+      result_cache(:service_instance_annotations)
+    end
+
+    def service_instance_labels
+      result_cache(:service_instance_labels)
     end
 
     def service_instance_operations

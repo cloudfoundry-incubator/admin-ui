@@ -1253,7 +1253,9 @@ module ViewModelsHelper
 
   def view_models_service_instances_detail
     {
+      'annotations'                => [annotation_rfc3339(cc_service_instance_annotation)],
       'credentials'                => cc_service_instance_credential,
+      'labels'                     => [label_rfc3339(cc_service_instance_label)],
       'organization'               => cc_organization,
       'service'                    => cc_service,
       'service_broker'             => cc_service_broker,
@@ -1440,6 +1442,7 @@ module ViewModelsHelper
         cc_service[:plan_updateable],
         cc_service[:instances_retrievable],
         cc_service[:bindings_retrievable],
+        cc_service[:allow_context_updates],
         cc_service_shareable,
         cc_service[:active],
         cc_service_provider_display_name,

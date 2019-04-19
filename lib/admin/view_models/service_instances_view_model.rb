@@ -9,17 +9,19 @@ module AdminUI
       # service_instances have to exist. Other record types are optional
       return result unless service_instances['connected']
 
-      events                      = @cc.events
-      organizations               = @cc.organizations
-      route_bindings              = @cc.route_bindings
-      service_brokers             = @cc.service_brokers
-      service_bindings            = @cc.service_bindings
-      service_instance_operations = @cc.service_instance_operations
-      service_instance_shares     = @cc.service_instance_shares
-      service_keys                = @cc.service_keys
-      service_plans               = @cc.service_plans
-      services                    = @cc.services
-      spaces                      = @cc.spaces
+      events                       = @cc.events
+      organizations                = @cc.organizations
+      route_bindings               = @cc.route_bindings
+      service_brokers              = @cc.service_brokers
+      service_bindings             = @cc.service_bindings
+      service_instance_annotations = @cc.service_instance_annotations
+      service_instance_labels      = @cc.service_instance_labels
+      service_instance_operations  = @cc.service_instance_operations
+      service_instance_shares      = @cc.service_instance_shares
+      service_keys                 = @cc.service_keys
+      service_plans                = @cc.service_plans
+      services                     = @cc.services
+      spaces                       = @cc.spaces
 
       events_connected                  = events['connected']
       route_bindings_connected          = route_bindings['connected']
@@ -33,6 +35,54 @@ module AdminUI
       service_plan_hash               = Hash[service_plans['items'].map { |item| [item[:id], item] }]
       service_hash                    = Hash[services['items'].map { |item| [item[:id], item] }]
       space_hash                      = Hash[spaces['items'].map { |item| [item[:id], item] }]
+
+      service_instance_annotations_hash = {}
+      service_instance_annotations['items'].each do |service_instance_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        service_instance_guid = service_instance_annotation[:resource_guid]
+        service_instance_annotations_array = service_instance_annotations_hash[service_instance_guid]
+        if service_instance_annotations_array.nil?
+          service_instance_annotations_array = []
+          service_instance_annotations_hash[service_instance_guid] = service_instance_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         service_instance_annotation,
+            created_at_rfc3339: service_instance_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: service_instance_annotation[:updated_at].nil? ? nil : service_instance_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        service_instance_annotations_array.push(wrapper)
+      end
+
+      service_instance_labels_hash = {}
+      service_instance_labels['items'].each do |service_instance_label|
+        return result unless @running
+
+        Thread.pass
+
+        service_instance_guid = service_instance_label[:resource_guid]
+        service_instance_labels_array = service_instance_labels_hash[service_instance_guid]
+        if service_instance_labels_array.nil?
+          service_instance_labels_array = []
+          service_instance_labels_hash[service_instance_guid] = service_instance_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              service_instance_label,
+            created_at_rfc3339: service_instance_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: service_instance_label[:updated_at].nil? ? nil : service_instance_label[:updated_at].to_datetime.rfc3339
+          }
+
+        service_instance_labels_array.push(wrapper)
+      end
 
       event_counters = {}
       events['items'].each do |event|
@@ -119,11 +169,13 @@ module AdminUI
         space                      = space_hash[service_instance[:space_id]]
         organization               = space.nil? ? nil : organization_hash[space[:organization_id]]
 
-        event_counter                  = event_counters[guid]
-        route_binding_counter          = route_binding_counters[id]
-        service_binding_counter        = service_binding_counters[guid]
-        service_instance_share_counter = service_instance_share_counters[guid]
-        service_key_counter            = service_key_counters[id]
+        event_counter                     = event_counters[guid]
+        route_binding_counter             = route_binding_counters[id]
+        service_binding_counter           = service_binding_counters[guid]
+        service_instance_annotation_array = service_instance_annotations_hash[guid] || []
+        service_instance_label_array      = service_instance_labels_hash[guid] || []
+        service_instance_share_counter    = service_instance_share_counters[guid]
+        service_key_counter               = service_key_counters[id]
 
         row = []
 
@@ -258,6 +310,8 @@ module AdminUI
 
         hash[guid] =
           {
+            'annotations'                => service_instance_annotation_array,
+            'labels'                     => service_instance_label_array,
             'organization'               => organization,
             'service'                    => service,
             'service_broker'             => service_broker,

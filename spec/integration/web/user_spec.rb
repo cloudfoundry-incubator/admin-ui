@@ -173,6 +173,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Service Instances tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceInstances' }
+        let(:page_id)   { 'ServiceInstancesPage' }
+        let(:button_id) { 'Buttons_ServiceInstancesLabelsTable_0' }
+      end
+    end
+
+    context 'Service Instances tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceInstances' }
+        let(:page_id)   { 'ServiceInstancesPage' }
+        let(:button_id) { 'Buttons_ServiceInstancesAnnotationsTable_0' }
+      end
+    end
+
     context 'Service Instances tab does not have credentials subtable' do
       it_behaves_like('verifies subtable is not shown') do
         let(:tab_id)         { 'ServiceInstances' }

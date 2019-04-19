@@ -2237,6 +2237,43 @@ module AdminUI
       end
     end
 
+    delete '/service_instances/:service_instance_guid/annotations/:key', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/service_instances/#{params[:service_instance_guid]}/annotations/#{params[:key]}")
+      begin
+        @operation.delete_service_instance_annotation(params[:service_instance_guid], params[:key])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete service instance annotation: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete service instance annotation: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
+    delete '/service_instances/:service_instance_guid/labels/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/service_instances/#{params[:service_instance_guid]}/labels/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      begin
+        @operation.delete_service_instance_label(params[:service_instance_guid], prefix, params[:name])
+        204
+      rescue CCRestClientResponseError => error
+        @logger.error("Error during delete service instance label: #{error.to_h}")
+        content_type(:json)
+        status(error.http_code)
+        body(Yajl::Encoder.encode(error.to_h))
+      rescue => error
+        @logger.error("Error during delete service instance label: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
+        500
+      end
+    end
+
     delete '/service_keys/:service_key_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/service_keys/#{params[:service_key_guid]}")
       begin
