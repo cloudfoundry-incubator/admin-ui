@@ -1523,6 +1523,7 @@ module CCHelper
       free:                     true,
       guid:                     'service_plan1',
       id:                       unique_id('cc_service_plan'),
+      maintenance_info:         '{"version":"1.2.3.4"}',
       maximum_polling_duration: 1234,
       name:                     'TestServicePlan',
       plan_updateable:          true,

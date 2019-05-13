@@ -1233,6 +1233,7 @@ Sequel.migration do
       foreign_key :default_space_id, :spaces, :key=>[:id]
       TrueClass :admin, :default=>false
       TrueClass :active, :default=>false
+      TrueClass :is_oauth_client
       
       index [:created_at]
       index [:guid], :unique=>true
@@ -1364,6 +1365,7 @@ Sequel.migration do
       String :create_binding_schema, :text=>true
       TrueClass :plan_updateable
       Integer :maximum_polling_duration
+      String :maintenance_info, :text=>true
       
       index [:created_at]
       index [:guid], :unique=>true

@@ -7237,7 +7237,9 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has details' do
-            service_plan_extra_json = Yajl::Parser.parse(cc_service_plan[:extra])
+            service_plan_extra_json            = Yajl::Parser.parse(cc_service_plan[:extra])
+            service_plan_maintenance_info_json = Yajl::Parser.parse(cc_service_plan[:maintenance_info])
+
             check_details([
                             { label: 'Service Plan Name',                     tag: 'div', value: cc_service_plan[:name] },
                             { label: 'Service Plan GUID',                     tag:   nil, value: cc_service_plan[:guid] },
@@ -7254,6 +7256,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Plan Display Name',             tag:   nil, value: service_plan_extra_json['displayName'] },
                             { label: 'Service Plan Bullet',                   tag:   nil, value: service_plan_extra_json['bullets'][0] },
                             { label: 'Service Plan Bullet',                   tag:   nil, value: service_plan_extra_json['bullets'][1] },
+                            { label: 'Service Plan Maintenance Info Version', tag:   nil, value: service_plan_maintenance_info_json['version'] },
                             { label: 'Service Plan Create Instance Schema',   tag: 'div', value: cc_service_plan[:create_instance_schema] },
                             { label: 'Service Plan Update Instance Schema',   tag: 'div', value: cc_service_plan[:update_instance_schema] },
                             { label: 'Service Plan Create Binding Schema',    tag: 'div', value: cc_service_plan[:create_binding_schema] },
@@ -7279,39 +7282,39 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('ServicePlans', 18, 'Events', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 19, 'Events', cc_service_plan[:guid])
           end
 
           it 'has service plan visibilities link' do
-            check_filter_link('ServicePlans', 19, 'ServicePlanVisibilities', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 20, 'ServicePlanVisibilities', cc_service_plan[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('ServicePlans', 20, 'ServiceInstances', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 21, 'ServiceInstances', cc_service_plan[:guid])
           end
 
           it 'has shared service instances link' do
-            check_filter_link('ServicePlans', 21, 'SharedServiceInstances', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 22, 'SharedServiceInstances', cc_service_plan[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('ServicePlans', 22, 'ServiceBindings', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 23, 'ServiceBindings', cc_service_plan[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('ServicePlans', 23, 'ServiceKeys', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 24, 'ServiceKeys', cc_service_plan[:guid])
           end
 
           it 'has route bindings link' do
-            check_filter_link('ServicePlans', 24, 'RouteBindings', cc_service_plan[:guid])
+            check_filter_link('ServicePlans', 25, 'RouteBindings', cc_service_plan[:guid])
           end
 
           it 'has services link' do
-            check_filter_link('ServicePlans', 25, 'Services', cc_service[:guid])
+            check_filter_link('ServicePlans', 26, 'Services', cc_service[:guid])
           end
 
           it 'has service brokers link' do
-            check_filter_link('ServicePlans', 32, 'ServiceBrokers', cc_service_broker[:guid])
+            check_filter_link('ServicePlans', 33, 'ServiceBrokers', cc_service_broker[:guid])
           end
         end
       end
