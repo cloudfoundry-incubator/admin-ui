@@ -4,10 +4,10 @@ inherit_from:
 HandleExceptions:
   Enabled: false
 
-IndentArray:
+IndentFirstArrayElement:
   EnforcedStyle: align_brackets
 
-IndentHash:
+IndentFirstHashElement:
   EnforcedStyle: align_braces
 
 Style/Lambda:
