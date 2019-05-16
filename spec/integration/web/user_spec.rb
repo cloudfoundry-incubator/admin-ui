@@ -25,7 +25,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           Selenium::WebDriver::Wait.new(timeout: 5).until do
             @driver.find_element(id: page_id).displayed?
           end
-        rescue Selenium::WebDriver::Error::TimeOutError
+        rescue Selenium::WebDriver::Error::TimeoutError
         end
         expect(@driver.find_element(id: page_id).displayed?).to eq(true)
 
@@ -35,7 +35,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           Selenium::WebDriver::Wait.new(timeout: 5).until do
             @driver.find_element(id: button_id).text == 'Copy'
           end
-        rescue Selenium::WebDriver::Error::TimeOutError
+        rescue Selenium::WebDriver::Error::TimeoutError
         end
         expect(@driver.find_element(id: button_id).text).to eq('Copy')
       end
@@ -49,7 +49,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           Selenium::WebDriver::Wait.new(timeout: 5).until do
             @driver.find_element(id: page_id).displayed?
           end
-        rescue Selenium::WebDriver::Error::TimeOutError
+        rescue Selenium::WebDriver::Error::TimeoutError
         end
         expect(@driver.find_element(id: page_id).displayed?).to eq(true)
 

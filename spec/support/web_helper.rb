@@ -114,7 +114,7 @@ shared_context :web_context do
   def check_stats_chart(id)
     begin
       Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{id}Chart").displayed? }
-    rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+    rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
     end
     chart = @driver.find_element(id: "#{id}Chart")
     expect(chart.displayed?).to be(true)
@@ -200,7 +200,7 @@ shared_context :web_context do
         Selenium::WebDriver::Wait.new(timeout: 5).until do
           @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'DEAs'
         end
-      rescue Selenium::WebDriver::Error::TimeOutError
+      rescue Selenium::WebDriver::Error::TimeoutError
       end
       expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('DEAs')
     end
@@ -228,7 +228,7 @@ shared_context :web_context do
         Selenium::WebDriver::Wait.new(timeout: 5).until do
           @driver.find_element(class_name: 'menuItemSelected').attribute('id') == 'DEAs'
         end
-      rescue Selenium::WebDriver::Error::TimeOutError
+      rescue Selenium::WebDriver::Error::TimeoutError
       end
       expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('DEAs')
     end
@@ -244,7 +244,7 @@ shared_context :web_context do
       Selenium::WebDriver::Wait.new(timeout: 5).until do
         @driver.find_element(class_name: 'menuItemSelected').attribute('id') == tab_id
       end
-    rescue Selenium::WebDriver::Error::TimeOutError
+    rescue Selenium::WebDriver::Error::TimeoutError
     end
     expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq(tab_id)
   end

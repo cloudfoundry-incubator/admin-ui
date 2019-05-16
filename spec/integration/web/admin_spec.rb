@@ -50,7 +50,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       # Need to wait until the page has been rendered
       begin
         Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(class_name: 'cloudControllerText').text == cloud_controller_uri }
-      rescue Selenium::WebDriver::Error::TimeOutError
+      rescue Selenium::WebDriver::Error::TimeoutError
       end
       expect(@driver.find_element(class_name: 'cloudControllerText').text).to eq(cloud_controller_uri)
       expect(@driver.find_element(class_name: 'name').text).to eq(cc_info_name)
@@ -241,14 +241,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         # Third, wait until the desired page has been rendered
         begin
           Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(id: "#{tab_id}Page").displayed? }
-        rescue Selenium::WebDriver::Error::TimeOutError
+        rescue Selenium::WebDriver::Error::TimeoutError
         end
         expect(@driver.find_element(id: "#{tab_id}Page").displayed?).to eq(true)
 
         # Fourth, wait until the table on the desired page has data
         begin
           Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.find_element(xpath: "//table[@id='#{tab_id}Table']/tbody/tr").text != 'No data available in table' }
-        rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+        rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
         end
         expect(@driver.find_element(xpath: "//table[@id='#{tab_id}Table']/tbody/tr").text).not_to eq('No data available in table')
       end
@@ -325,7 +325,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           begin
             Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='#{table_id}']/tbody/tr/td[#{rename_column}]").text == object_rename }
-          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+          rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
           expect(@driver.find_element(xpath: "//table[@id='#{table_id}']/tbody/tr/td[#{rename_column}]").text).to eq(object_rename)
         end
@@ -344,7 +344,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           if check_no_data_available
             begin
               Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='#{table_id}']/tbody/tr").text == 'No data available in table' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='#{table_id}']/tbody/tr").text).to eq('No data available in table')
           end
@@ -370,7 +370,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               files = Dir.glob("#{directory}/*")
               files.empty? == false && File.size(files.first) > 0
             end
-          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+          rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
 
           files = Dir.glob("#{directory}/*")
@@ -403,7 +403,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
               element = @driver.find_element(id: 'datatables_buttons_info')
               !element.nil? && element.displayed?
             end
-          rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+          rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
           end
 
           element = @driver.find_element(id: 'datatables_buttons_info')
@@ -450,7 +450,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                 files = Dir.glob("#{directory}/*")
                 files.empty? == false && File.size(files.first) > 0
               end
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
 
             files = Dir.glob("#{directory}/*")
@@ -606,7 +606,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             begin
               Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text == cc_organization2[:name] }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr[1]/td[2]").text).to eq(cc_organization2[:name])
           end
@@ -690,7 +690,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
               begin
                 Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[13]").text == cc_quota_definition2[:name] }
-              rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+              rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
               end
               expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[13]").text).to eq(cc_quota_definition2[:name])
             end
@@ -717,7 +717,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_organization_status(status)
             begin
               Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text == status }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[4]").text).to eq(status)
           end
@@ -725,7 +725,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_organization_default_isolation_segment
             begin
               Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[39]").text == '' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='OrganizationsTable']/tbody/tr/td[39]").text).to eq('')
           end
@@ -1240,7 +1240,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_space_ssh(ssh)
             begin
               Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[7]").text == ssh }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[7]").text).to eq(ssh)
           end
@@ -1248,7 +1248,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_space_isolation_segment
             begin
               Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[35]").text == '' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[35]").text).to eq('')
           end
@@ -1256,7 +1256,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_space_unused_routes(expected_value)
             begin
               Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[18]").text == expected_value }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='SpacesTable']/tbody/tr/td[18]").text).to eq(expected_value)
           end
@@ -1665,7 +1665,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_app_state(expect_state)
             begin
               Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[5]").text == expect_state }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[5]").text).to eq(expect_state)
           end
@@ -1673,7 +1673,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_app_diego(diego)
             begin
               Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[10]").text == diego }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[10]").text).to eq(diego)
           end
@@ -1681,7 +1681,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_app_ssh(ssh)
             begin
               Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[11]").text == ssh }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[11]").text).to eq(ssh)
           end
@@ -1689,7 +1689,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_app_revisions(revisions)
             begin
               Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[12]").text == revisions }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='ApplicationsTable']/tbody/tr/td[12]").text).to eq(revisions)
           end
@@ -3959,7 +3959,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_task_canceled
             begin
               Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='TasksTable']/tbody/tr/td[4]").text == 'FAILED' }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='TasksTable']/tbody/tr/td[4]").text).to eq('FAILED')
           end
@@ -4692,7 +4692,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_user_active(active)
             begin
               Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[15]").text == active }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[15]").text).to eq(active)
           end
@@ -4721,7 +4721,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_user_verified(verified)
             begin
               Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[16]").text == verified }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[16]").text).to eq(verified)
           end
@@ -4754,7 +4754,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_require_password_change_user(require_password_change)
             begin
               Selenium::WebDriver::Wait.new(timeout: 10).until { refresh_button && @driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[10]").text == require_password_change }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='UsersTable']/tbody/tr/td[10]").text).to eq(require_password_change)
           end
@@ -5347,7 +5347,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_buildpack_enabled(enabled)
             begin
               Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[8]").text == enabled }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[8]").text).to eq(enabled)
           end
@@ -5355,7 +5355,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_buildpack_locked(locked)
             begin
               Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[9]").text == locked }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='BuildpacksTable']/tbody/tr/td[9]").text).to eq(locked)
           end
@@ -5859,7 +5859,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_feature_flag_enabled(enabled)
             begin
               Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='FeatureFlagsTable']/tbody/tr/td[6]").text == enabled }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='FeatureFlagsTable']/tbody/tr/td[6]").text).to eq(enabled)
           end
@@ -7165,7 +7165,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_service_plan_state(expect_state)
             begin
               Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[9]").text == expect_state }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='ServicePlansTable']/tbody/tr/td[11]").text).to eq(expect_state)
           end
@@ -7984,7 +7984,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_running_default(running)
             begin
               Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='SecurityGroupsTable']/tbody/tr/td[7]").text == running }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='SecurityGroupsTable']/tbody/tr/td[7]").text).to eq(running)
           end
@@ -7992,7 +7992,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           def check_staging_default(staging)
             begin
               Selenium::WebDriver::Wait.new(timeout: 20).until { refresh_button && @driver.find_element(xpath: "//table[@id='SecurityGroupsTable']/tbody/tr/td[6]").text == staging }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='SecurityGroupsTable']/tbody/tr/td[6]").text).to eq(staging)
           end
@@ -8495,7 +8495,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             begin
               Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_element(xpath: "//table[@id='IsolationSegmentsTable']/tbody/tr[1]/td[2]").text == cc_isolation_segment2[:name] }
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError
             end
             expect(@driver.find_element(xpath: "//table[@id='IsolationSegmentsTable']/tbody/tr[1]/td[2]").text).to eq(cc_isolation_segment2[:name])
           end
@@ -9767,7 +9767,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             begin
               check_table_data(Selenium::WebDriver::Wait.new(timeout: 5).until { refresh_button && @driver.find_elements(xpath: "//table[@id='StatsTable']/tbody/tr/td") }, stats_table_data)
-            rescue Selenium::WebDriver::Error::TimeOutError, Selenium::WebDriver::Error::StaleElementReferenceError, Timeout::Error
+            rescue Selenium::WebDriver::Error::TimeoutError, Selenium::WebDriver::Error::StaleElementReferenceError, Timeout::Error
             end
             check_table_data(@driver.find_elements(xpath: "//table[@id='StatsTable']/tbody/tr/td"), stats_table_data)
           end

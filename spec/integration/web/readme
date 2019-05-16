@@ -5,7 +5,7 @@ begin
     Selenium::WebDriver::Wait.new(:timeout => 5).until do
         # Write a boolean expression as a test body
     end
-rescue Selenium::WebDriver::Error::TimeOutError
+rescue Selenium::WebDriver::Error::TimeoutError
 end
 # Re-do the test using rspec style expectations, this will help to provide more detail information in case the test is failed.
 expect(....).to eq(...)
