@@ -94,27 +94,25 @@ module AdminUI
 
     def remove_component(key_parameter)
       @components_semaphore.synchronize do
-        begin
-          local_components = @components['items'].nil? ? read_or_initialize_components : @components
-          keys = []
-          if key_parameter.nil?
-            local_components['items'].each_pair do |key, value|
-              keys.push(key) unless value['connected']
-            end
-          else
-            keys.push(key_parameter)
+        local_components = @components['items'].nil? ? read_or_initialize_components : @components
+        keys = []
+        if key_parameter.nil?
+          local_components['items'].each_pair do |key, value|
+            keys.push(key) unless value['connected']
           end
-
-          removed = false
-          keys.each do |key|
-            removed = true unless local_components['items'].delete(key).nil?
-            removed = true unless local_components['notified'].delete(key).nil?
-          end
-
-          write_components(local_components) if removed
-        ensure
-          @components_condition.broadcast
+        else
+          keys.push(key_parameter)
         end
+
+        removed = false
+        keys.each do |key|
+          removed = true unless local_components['items'].delete(key).nil?
+          removed = true unless local_components['notified'].delete(key).nil?
+        end
+
+        write_components(local_components) if removed
+      ensure
+        @components_condition.broadcast
       end
     end
 
@@ -405,40 +403,38 @@ module AdminUI
       end
 
       @components_semaphore.synchronize do
-        begin
-          @components = read_or_initialize_components
+        @components = read_or_initialize_components
 
-          # Remove all old references which also have new references prior to merge.
-          @components['items'].each_key do |key|
-            if sorted_local_value_metrics.key?(key)
-              @components['items'].delete(key)
-              @components['notified'].delete(key)
-            else
-              @components['items'][key]['connected'] = false
-            end
+        # Remove all old references which also have new references prior to merge.
+        @components['items'].each_key do |key|
+          if sorted_local_value_metrics.key?(key)
+            @components['items'].delete(key)
+            @components['notified'].delete(key)
+          else
+            @components['items'][key]['connected'] = false
           end
-
-          @components['connected'] = !sorted_local_value_metrics.empty?
-          @components['items'].merge!(sorted_local_value_metrics)
-
-          update_connection_status('doppler_logging_endpoint',
-                                   'doppler_logging_endpoint',
-                                   @doppler_uri || 'unknown',
-                                   @components['connected'],
-                                   disconnected)
-
-          @components['items'].each_pair do |key, item|
-            update_connection_status(key,
-                                     item['origin'],
-                                     item['ip'],
-                                     item['connected'],
-                                     disconnected)
-          end
-
-          write_components(@components)
-        ensure
-          @components_condition.broadcast
         end
+
+        @components['connected'] = !sorted_local_value_metrics.empty?
+        @components['items'].merge!(sorted_local_value_metrics)
+
+        update_connection_status('doppler_logging_endpoint',
+                                 'doppler_logging_endpoint',
+                                 @doppler_uri || 'unknown',
+                                 @components['connected'],
+                                 disconnected)
+
+        @components['items'].each_pair do |key, item|
+          update_connection_status(key,
+                                   item['origin'],
+                                   item['ip'],
+                                   item['connected'],
+                                   disconnected)
+        end
+
+        write_components(@components)
+      ensure
+        @components_condition.broadcast
       end
     rescue => error
       @logger.error("Error during doppler save data: #{error.inspect}")
@@ -449,12 +445,10 @@ module AdminUI
       return unless @email.configured? && !disconnected.empty?
 
       thread = Thread.new do
-        begin
-          @email.send_email(disconnected)
-        rescue => error
-          @logger.error("Error during doppler send_email: #{error.inspect}")
-          @logger.error(error.backtrace.join("\n"))
-        end
+        @email.send_email(disconnected)
+      rescue => error
+        @logger.error("Error during doppler send_email: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
       end
 
       thread.priority = -2

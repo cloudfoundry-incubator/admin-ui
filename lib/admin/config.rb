@@ -104,11 +104,9 @@ module AdminUI
           }
 
         schema[:stats_refresh_schedules]&.each do |spec|
-          begin
-            CronParser.new(spec)
-          rescue => error
-            raise Membrane::SchemaValidationError, error.inspect
-          end
+          CronParser.new(spec)
+        rescue => error
+          raise Membrane::SchemaValidationError, error.inspect
         end
         schema
       end

@@ -349,34 +349,30 @@ module AdminUI
     end
 
     get '/login' do
-      begin
-        code = params['code']
-        user_name, user_type = @login.login_user(code, local_redirect_uri(request))
+      code = params['code']
+      user_name, user_type = @login.login_user(code, local_redirect_uri(request))
 
-        if AdminUI::Login::LOGIN_ADMIN == user_type
-          authenticated(user_name, 'admin', true)
-        elsif AdminUI::Login::LOGIN_USER == user_type
-          authenticated(user_name, 'user', true)
-        else
-          authenticated(user_name, 'anyone', false)
-        end
-      rescue => error
-        @logger.error("Error during /login: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        halt 500, error.message
+      if AdminUI::Login::LOGIN_ADMIN == user_type
+        authenticated(user_name, 'admin', true)
+      elsif AdminUI::Login::LOGIN_USER == user_type
+        authenticated(user_name, 'user', true)
+      else
+        authenticated(user_name, 'anyone', false)
       end
+    rescue => error
+      @logger.error("Error during /login: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      halt 500, error.message
     end
 
     get '/logout', auth: [:anyone] do
-      begin
-        @logger.info_user(session[:username], 'get', '/logout')
-        session.destroy
-        Yajl::Encoder.encode('redirect' => @login.logout(request.base_url))
-      rescue => error
-        @logger.error("Error during /logout: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        halt 500, error.message
-      end
+      @logger.info_user(session[:username], 'get', '/logout')
+      session.destroy
+      Yajl::Encoder.encode('redirect' => @login.logout(request.base_url))
+    rescue => error
+      @logger.error("Error during /logout: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      halt 500, error.message
     end
 
     get '/logs_view_model', auth: [:user] do
@@ -789,20 +785,18 @@ module AdminUI
     end
 
     post '/applications/:app_guid/restage', auth: [:admin] do
-      begin
-        @logger.info_user(session[:username], 'post', "/applications/#{params[:app_guid]}/restage")
-        @operation.restage_application(params[:app_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during restage application: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during restage application: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @logger.info_user(session[:username], 'post', "/applications/#{params[:app_guid]}/restage")
+      @operation.restage_application(params[:app_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during restage application: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during restage application: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     post '/applications_view_model', auth: [:user] do
@@ -950,21 +944,19 @@ module AdminUI
     end
 
     post '/isolation_segments', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'post', "/isolation_segments; body = #{control_message}")
-        @operation.create_isolation_segment(control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during create isolation segment: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during create isolation segment: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'post', "/isolation_segments; body = #{control_message}")
+      @operation.create_isolation_segment(control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during create isolation segment: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during create isolation segment: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     post '/isolation_segments_view_model', auth: [:user] do
@@ -992,21 +984,19 @@ module AdminUI
     end
 
     post '/organizations', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'post', "/organizations; body = #{control_message}")
-        @operation.create_organization(control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during create organization: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during create organization: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'post', "/organizations; body = #{control_message}")
+      @operation.create_organization(control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during create organization: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during create organization: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     post '/organizations_isolation_segments_view_model', auth: [:user] do
@@ -1266,308 +1256,274 @@ module AdminUI
     end
 
     put '/applications/:app_guid', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/applications/#{params[:app_guid]}; body = #{control_message}")
-        @operation.manage_application(params[:app_guid], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update application: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update application: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/applications/#{params[:app_guid]}; body = #{control_message}")
+      @operation.manage_application(params[:app_guid], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update application: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update application: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/applications/:app_guid/features/:feature', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/applications/#{params[:app_guid]}/features/#{params[:feature]}; body = #{control_message}")
-        @operation.manage_application_feature(params[:app_guid], params[:feature], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update application feature: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update application feature: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/applications/#{params[:app_guid]}/features/#{params[:feature]}; body = #{control_message}")
+      @operation.manage_application_feature(params[:app_guid], params[:feature], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update application feature: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update application feature: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/buildpacks/:buildpack_guid', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/buildpacks/#{params[:buildpack_guid]}; body = #{control_message}")
-        @operation.manage_buildpack(params[:buildpack_guid], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update buildpack: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update buildpack: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/buildpacks/#{params[:buildpack_guid]}; body = #{control_message}")
+      @operation.manage_buildpack(params[:buildpack_guid], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update buildpack: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update buildpack: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/feature_flags/:feature_flag_name', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/feature_flags/#{params[:feature_flag_name]}; body = #{control_message}")
-        @operation.manage_feature_flag(params[:feature_flag_name], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update feature flag: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update feature flag: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/feature_flags/#{params[:feature_flag_name]}; body = #{control_message}")
+      @operation.manage_feature_flag(params[:feature_flag_name], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update feature flag: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update feature flag: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/identity_providers/:identity_provider_id/status', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/identity_providers/#{params[:identity_provider_id]}/status; body = #{control_message}")
-        @operation.manage_identity_provider_status(params[:identity_provider_id], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update identity provider status: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update identity provider status: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/identity_providers/#{params[:identity_provider_id]}/status; body = #{control_message}")
+      @operation.manage_identity_provider_status(params[:identity_provider_id], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update identity provider status: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update identity provider status: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/isolation_segments/:isolation_segment_guid', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/isolation_segments/#{params[:isolation_segment_guid]}; body = #{control_message}")
-        @operation.manage_isolation_segment(params[:isolation_segment_guid], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update isolation segment: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update isolation segment: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/isolation_segments/#{params[:isolation_segment_guid]}; body = #{control_message}")
+      @operation.manage_isolation_segment(params[:isolation_segment_guid], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update isolation segment: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update isolation segment: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/organizations/:organization_guid', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/organizations/#{params[:organization_guid]}; body = #{control_message}")
-        @operation.manage_organization(params[:organization_guid], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update organization: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update organization: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/organizations/#{params[:organization_guid]}; body = #{control_message}")
+      @operation.manage_organization(params[:organization_guid], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update organization: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update organization: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/quota_definitions/:quota_definition_guid', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/quota_definitions/#{params[:quota_definition_guid]}; body = #{control_message}")
-        @operation.manage_quota_definition(params[:quota_definition_guid], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update quota definition: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update quota definition: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/quota_definitions/#{params[:quota_definition_guid]}; body = #{control_message}")
+      @operation.manage_quota_definition(params[:quota_definition_guid], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update quota definition: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update quota definition: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/security_groups/:security_group_guid', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/security_groups/#{params[:security_group_guid]}; body = #{control_message}")
-        @operation.manage_security_group(params[:security_group_guid], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update security group: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update security group: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/security_groups/#{params[:security_group_guid]}; body = #{control_message}")
+      @operation.manage_security_group(params[:security_group_guid], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update security group: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update security group: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/service_brokers/:service_broker_guid', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/service_brokers/#{params[:service_broker_guid]}; body = #{control_message}")
-        @operation.manage_service_broker(params[:service_broker_guid], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update service broker: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update service broker: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/service_brokers/#{params[:service_broker_guid]}; body = #{control_message}")
+      @operation.manage_service_broker(params[:service_broker_guid], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update service broker: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update service broker: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/service_instances/:service_instance_guid/:is_gateway_service', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/service_instances/#{params[:service_instance_guid]}/#{params[:is_gateway_service]}; body = #{control_message}")
-        @operation.manage_service_instance(params[:service_instance_guid], params[:is_gateway_service] == 'true', control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update service instance: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update service instance: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/service_instances/#{params[:service_instance_guid]}/#{params[:is_gateway_service]}; body = #{control_message}")
+      @operation.manage_service_instance(params[:service_instance_guid], params[:is_gateway_service] == 'true', control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update service instance: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update service instance: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/service_plans/:service_plan_guid', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/service_plans/#{params[:service_plan_guid]}; body = #{control_message}")
-        @operation.manage_service_plan(params[:service_plan_guid], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update service plan: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update service plan: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/service_plans/#{params[:service_plan_guid]}; body = #{control_message}")
+      @operation.manage_service_plan(params[:service_plan_guid], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update service plan: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update service plan: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/spaces/:space_guid', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/spaces/#{params[:space_guid]}; body = #{control_message}")
-        @operation.manage_space(params[:space_guid], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update space: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update space: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/spaces/#{params[:space_guid]}; body = #{control_message}")
+      @operation.manage_space(params[:space_guid], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update space: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update space: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/space_quota_definitions/:space_quota_definition_guid', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/space_quota_definitions/#{params[:space_quota_definition_guid]}; body = #{control_message}")
-        @operation.manage_space_quota_definition(params[:space_quota_definition_guid], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update space quota definition: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update space quota definition: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/space_quota_definitions/#{params[:space_quota_definition_guid]}; body = #{control_message}")
+      @operation.manage_space_quota_definition(params[:space_quota_definition_guid], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update space quota definition: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update space quota definition: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/space_quota_definitions/:space_quota_definition_guid/spaces/:space_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'put', "/space_quota_definitions/#{params[:space_quota_definition_guid]}/spaces/#{params[:space_guid]}")
-      begin
-        @operation.create_space_quota_definition_space(params[:space_quota_definition_guid], params[:space_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during put space quota definition space: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during put space quota definition space: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.create_space_quota_definition_space(params[:space_quota_definition_guid], params[:space_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during put space quota definition space: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during put space quota definition space: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/users/:user_guid', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/users/#{params[:user_guid]}; body = #{control_message}")
-        @operation.manage_user(params[:user_guid], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update user: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update user: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/users/#{params[:user_guid]}; body = #{control_message}")
+      @operation.manage_user(params[:user_guid], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update user: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update user: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     put '/users/:user_guid/status', auth: [:admin] do
-      begin
-        control_message = request.body.read.to_s
-        @logger.info_user(session[:username], 'put', "/users/#{params[:user_guid]}/status; body = #{control_message}")
-        @operation.manage_user_status(params[:user_guid], control_message)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during update user status: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during update user status: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      control_message = request.body.read.to_s
+      @logger.info_user(session[:username], 'put', "/users/#{params[:user_guid]}/status; body = #{control_message}")
+      @operation.manage_user_status(params[:user_guid], control_message)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during update user status: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during update user status: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/applications/:app_guid', auth: [:admin] do
@@ -1575,70 +1531,62 @@ module AdminUI
       url = "/applications/#{params[:app_guid]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_application(params[:app_guid], recursive)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete application: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete application: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_application(params[:app_guid], recursive)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete application: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete application: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/applications/:app_guid/annotations/:key', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/applications/#{params[:app_guid]}/annotations/#{params[:key]}")
-      begin
-        @operation.delete_application_annotation(params[:app_guid], params[:key])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete application annotation: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete application annotation: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_application_annotation(params[:app_guid], params[:key])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete application annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete application annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/applications/:app_guid/environment_variables/:environment_variable', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/applications/#{params[:app_guid]}/environment_variables/#{params[:environment_variable]}")
-      begin
-        @operation.delete_application_environment_variable(params[:app_guid], params[:environment_variable])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete application environment variable: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete application environment variable: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_application_environment_variable(params[:app_guid], params[:environment_variable])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete application environment variable: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete application environment variable: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/applications/:app_guid/:instance_index', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/applications/#{params[:app_guid]}/#{params[:instance_index]}")
-      begin
-        @operation.delete_application_instance(params[:app_guid], params[:instance_index])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete application instance: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete application instance: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_application_instance(params[:app_guid], params[:instance_index])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete application instance: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete application instance: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/applications/:app_guid/labels/:name', auth: [:admin] do
@@ -1646,53 +1594,47 @@ module AdminUI
       url = "/applications/#{params[:app_guid]}/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_application_label(params[:app_guid], prefix, params[:name])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete application label: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete application label: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_application_label(params[:app_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete application label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete application label: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/buildpacks/:buildpack_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/buildpacks/#{params[:buildpack_guid]}")
-      begin
-        @operation.delete_buildpack(params[:buildpack_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete buildpack: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete buildpack: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_buildpack(params[:buildpack_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete buildpack: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete buildpack: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/buildpacks/:buildpack_guid/annotations/:key', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/buildpacks/#{params[:buildpack_guid]}/annotations/#{params[:key]}")
-      begin
-        @operation.delete_buildpack_annotation(params[:buildpack_guid], params[:key])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete buildpack annotation: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete buildpack annotation: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_buildpack_annotation(params[:buildpack_guid], params[:key])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete buildpack annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete buildpack annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/buildpacks/:buildpack_guid/labels/:name', auth: [:admin] do
@@ -1700,65 +1642,57 @@ module AdminUI
       url = "/buildpacks/#{params[:buildpack_guid]}/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_buildpack_label(params[:buildpack_guid], prefix, params[:name])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete buildpack label: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete buildpack label: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_buildpack_label(params[:buildpack_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete buildpack label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete buildpack label: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/clients/:client_id', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/clients/#{params[:client_id]}")
-      begin
-        @operation.delete_client(params[:client_id])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete client: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete client: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_client(params[:client_id])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete client: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete client: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/clients/:client_id/tokens', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/clients/#{params[:client_id]}/tokens")
-      begin
-        @operation.delete_client_tokens(params[:client_id])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete client tokens: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete client tokens: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_client_tokens(params[:client_id])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete client tokens: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete client tokens: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/components', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/components?uri=#{params[:uri]}")
-      begin
-        @operation.remove_component(params[:uri])
-        204
-      rescue => error
-        @logger.error("Error during removing component: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.remove_component(params[:uri])
+      204
+    rescue => error
+      @logger.error("Error during removing component: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/domains/:domain_guid/:is_shared', auth: [:admin] do
@@ -1766,150 +1700,132 @@ module AdminUI
       url = "/domains/#{params[:domain_guid]}/#{params[:is_shared]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_domain(params[:domain_guid], params[:is_shared] == 'true', recursive)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete domain: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete domain: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_domain(params[:domain_guid], params[:is_shared] == 'true', recursive)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete domain: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete domain: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/domains/:domain_guid/:is_shared/:organization_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/domains/#{params[:domain_guid]}/#{params[:is_shared]}/#{params[:organization_guid]}")
-      begin
-        @operation.delete_organization_private_domain(params[:organization_guid], params[:domain_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete domain organization: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete domain organization: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_organization_private_domain(params[:organization_guid], params[:domain_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete domain organization: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete domain organization: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/doppler_components', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/doppler_components?uri=#{params[:uri]}")
-      begin
-        @operation.remove_doppler_component(params[:uri])
-        204
-      rescue => error
-        @logger.error("Error during removing doppler component: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.remove_doppler_component(params[:uri])
+      204
+    rescue => error
+      @logger.error("Error during removing doppler component: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/groups/:group_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/groups/#{params[:group_guid]}")
-      begin
-        @operation.delete_group(params[:group_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete group: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete group: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_group(params[:group_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete group: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete group: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/groups/:group_guid/:member_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/groups/#{params[:group_guid]}/#{params[:member_guid]}")
-      begin
-        @operation.delete_group_member(params[:group_guid], params[:member_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete group member: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete group member: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_group_member(params[:group_guid], params[:member_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete group member: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete group member: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/identity_providers/:id', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/identity_providers/#{params[:id]}")
-      begin
-        @operation.delete_identity_provider(params[:id])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete identity provider: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete identity provider: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_identity_provider(params[:id])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete identity provider: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete identity provider: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/identity_zones/:id', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/identity_zones/#{params[:id]}")
-      begin
-        @operation.delete_identity_zone(params[:id])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete identity zone: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete identity zone: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_identity_zone(params[:id])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete identity zone: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete identity zone: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/isolation_segments/:isolation_segment_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/isolation_segments/#{params[:isolation_segment_guid]}")
-      begin
-        @operation.delete_isolation_segment(params[:isolation_segment_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete isolation segment: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete isolation segment: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_isolation_segment(params[:isolation_segment_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete isolation segment: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete isolation segment: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/isolation_segments/:isolation_segment_guid/annotations/:key', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/isolation_segments/#{params[:isolation_segment_guid]}/annotations/#{params[:key]}")
-      begin
-        @operation.delete_isolation_segment_annotation(params[:isolation_segment_guid], params[:key])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete isolation_segment annotation: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete isolation_segment annotation: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_isolation_segment_annotation(params[:isolation_segment_guid], params[:key])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete isolation_segment annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete isolation_segment annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/isolation_segments/:isolation_segment_guid/labels/:name', auth: [:admin] do
@@ -1917,36 +1833,32 @@ module AdminUI
       url = "/isolation_segments/#{params[:isolation_segment_guid]}/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_isolation_segment_label(params[:isolation_segment_guid], prefix, params[:name])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete isolation_segment label: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete isolation_segment label: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_isolation_segment_label(params[:isolation_segment_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete isolation_segment label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete isolation_segment label: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/mfa_providers/:id', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/mfa_providers/#{params[:id]}")
-      begin
-        @operation.delete_mfa_provider(params[:id])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete MFA provider: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete MFA provider: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_mfa_provider(params[:id])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete MFA provider: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete MFA provider: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/organizations/:organization_guid', auth: [:admin] do
@@ -1954,70 +1866,62 @@ module AdminUI
       url = "/organizations/#{params[:organization_guid]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_organization(params[:organization_guid], recursive)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete organization: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete organization: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_organization(params[:organization_guid], recursive)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete organization: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete organization: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/organizations/:organization_guid/annotations/:key', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/annotations/#{params[:key]}")
-      begin
-        @operation.delete_organization_annotation(params[:organization_guid], params[:key])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete organization annotation: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete organization annotation: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_organization_annotation(params[:organization_guid], params[:key])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete organization annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete organization annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/organizations/:organization_guid/default_isolation_segment', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/default_isolation_segment")
-      begin
-        @operation.remove_organization_default_isolation_segment(params[:organization_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during remove organization default isolation segment: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during remove organization default isolation segment: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.remove_organization_default_isolation_segment(params[:organization_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during remove organization default isolation segment: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during remove organization default isolation segment: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/organizations/:organization_guid/:isolation_segment_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/#{params[:isolation_segment_guid]}")
-      begin
-        @operation.delete_organization_isolation_segment(params[:organization_guid], params[:isolation_segment_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete organization isolation segment: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete organization isolation segment: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_organization_isolation_segment(params[:organization_guid], params[:isolation_segment_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete organization isolation segment: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete organization isolation segment: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/organizations/:organization_guid/labels/:name', auth: [:admin] do
@@ -2025,70 +1929,62 @@ module AdminUI
       url = "/organizations/#{params[:organization_guid]}/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_organization_label(params[:organization_guid], prefix, params[:name])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete organization label: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete organization label: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_organization_label(params[:organization_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete organization label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete organization label: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/organizations/:organization_guid/:role/:user_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/#{params[:role]}/#{params[:user_guid]}")
-      begin
-        @operation.delete_organization_role(params[:organization_guid], params[:role], params[:user_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete organization role: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete organization role: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_organization_role(params[:organization_guid], params[:role], params[:user_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete organization role: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete organization role: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/quota_definitions/:quota_definition_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/quota_definitions/#{params[:quota_definition_guid]}")
-      begin
-        @operation.delete_quota_definition(params[:quota_definition_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete quota definition: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete quota definition: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_quota_definition(params[:quota_definition_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete quota definition: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete quota definition: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/revocable_tokens/:token_id', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/revocable_tokens/#{params[:token_id]}")
-      begin
-        @operation.delete_revocable_token(params[:token_id])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete revocable token: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete revocable token: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_revocable_token(params[:token_id])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete revocable token: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete revocable token: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/routes/:route_guid', auth: [:admin] do
@@ -2096,121 +1992,107 @@ module AdminUI
       url = "/routes/#{params[:route_guid]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_route(params[:route_guid], recursive)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete route: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete route: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_route(params[:route_guid], recursive)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete route: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete route: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/route_bindings/:service_instance_guid/:route_guid/:is_gateway_service', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/route_bindings/#{params[:service_instance_guid]}/#{params[:route_guid]}/#{params[:is_gateway_service]}")
-      begin
-        @operation.delete_route_binding(params[:service_instance_guid], params[:route_guid], params[:is_gateway_service] == 'true')
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete route binding: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete route binding: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_route_binding(params[:service_instance_guid], params[:route_guid], params[:is_gateway_service] == 'true')
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete route binding: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete route binding: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/route_mappings/:route_mapping_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/route_mappings/#{params[:route_mapping_guid]}")
-      begin
-        @operation.delete_route_mapping(params[:route_mapping_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete route mapping: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete route mapping: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_route_mapping(params[:route_mapping_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete route mapping: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete route mapping: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/security_groups/:security_group_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/security_groups/#{params[:security_group_guid]}")
-      begin
-        @operation.delete_security_group(params[:security_group_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete security group: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete security group: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_security_group(params[:security_group_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete security group: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete security group: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/security_groups/:security_group_guid/:space_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/security_groups/#{params[:security_group_guid]}/#{params[:space_guid]}")
-      begin
-        @operation.delete_security_group_space(params[:security_group_guid], params[:space_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete security group space: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete security group space: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_security_group_space(params[:security_group_guid], params[:space_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete security group space: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete security group space: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/service_bindings/:service_binding_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/service_bindings/#{params[:service_binding_guid]}")
-      begin
-        @operation.delete_service_binding(params[:service_binding_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete service binding: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete service binding: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_service_binding(params[:service_binding_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service binding: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service binding: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/service_brokers/:service_broker_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/service_brokers/#{params[:service_broker_guid]}")
-      begin
-        @operation.delete_service_broker(params[:service_broker_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete service broker: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete service broker: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_service_broker(params[:service_broker_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service broker: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service broker: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/service_instances/:service_instance_guid/:is_gateway_service', auth: [:admin] do
@@ -2222,36 +2104,32 @@ module AdminUI
         url += '&purge=true' if purge
       end
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_service_instance(params[:service_instance_guid], params[:is_gateway_service] == 'true', recursive, purge)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete service instance: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete service instance: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_service_instance(params[:service_instance_guid], params[:is_gateway_service] == 'true', recursive, purge)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service instance: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service instance: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/service_instances/:service_instance_guid/annotations/:key', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/service_instances/#{params[:service_instance_guid]}/annotations/#{params[:key]}")
-      begin
-        @operation.delete_service_instance_annotation(params[:service_instance_guid], params[:key])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete service instance annotation: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete service instance annotation: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_service_instance_annotation(params[:service_instance_guid], params[:key])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service instance annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service instance annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/service_instances/:service_instance_guid/labels/:name', auth: [:admin] do
@@ -2259,87 +2137,77 @@ module AdminUI
       url = "/service_instances/#{params[:service_instance_guid]}/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_service_instance_label(params[:service_instance_guid], prefix, params[:name])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete service instance label: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete service instance label: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_service_instance_label(params[:service_instance_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service instance label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service instance label: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/service_keys/:service_key_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/service_keys/#{params[:service_key_guid]}")
-      begin
-        @operation.delete_service_key(params[:service_key_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete service key: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete service key: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_service_key(params[:service_key_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service key: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service key: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/service_plans/:service_plan_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/service_plans/#{params[:service_plan_guid]}")
-      begin
-        @operation.delete_service_plan(params[:service_plan_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete service plan: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete service plan: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_service_plan(params[:service_plan_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service plan: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service plan: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/service_plan_visibilities/:service_plan_visibility_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/service_plan_visibilities/#{params[:service_plan_visibility_guid]}")
-      begin
-        @operation.delete_service_plan_visibility(params[:service_plan_visibility_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete service plan visibility: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete service plan visibility: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_service_plan_visibility(params[:service_plan_visibility_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service plan visibility: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service plan visibility: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/service_providers/:service_provider_id', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/service_providers/#{params[:service_provider_id]}")
-      begin
-        @operation.delete_service_provider(params[:service_provider_id])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete service provider: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete service provider: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_service_provider(params[:service_provider_id])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service provider: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service provider: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/services/:service_guid', auth: [:admin] do
@@ -2347,70 +2215,62 @@ module AdminUI
       url = "/services/#{params[:service_guid]}"
       url += '?purge=true' if purge
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_service(params[:service_guid], purge)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete service: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete service: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_service(params[:service_guid], purge)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/shared_service_instances/:service_instance_guid/:target_space_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/shared_service_instances/#{params[:service_instance_guid]}/#{params[:target_space_guid]}")
-      begin
-        @operation.delete_shared_service_instance(params[:service_instance_guid], params[:target_space_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete shared service instance: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete shared service instance: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_shared_service_instance(params[:service_instance_guid], params[:target_space_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete shared service instance: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete shared service instance: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/space_quota_definitions/:space_quota_definition_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/space_quota_definitions/#{params[:space_quota_definition_guid]}")
-      begin
-        @operation.delete_space_quota_definition(params[:space_quota_definition_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete space quota definition: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete space quota definition: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_space_quota_definition(params[:space_quota_definition_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete space quota definition: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete space quota definition: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/space_quota_definitions/:space_quota_definition_guid/spaces/:space_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/space_quota_definitions/#{params[:space_quota_definition_guid]}/spaces/#{params[:space_guid]}")
-      begin
-        @operation.delete_space_quota_definition_space(params[:space_quota_definition_guid], params[:space_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete space quota definition space: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete space quota definition space: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_space_quota_definition_space(params[:space_quota_definition_guid], params[:space_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete space quota definition space: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete space quota definition space: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/spaces/:space_guid', auth: [:admin] do
@@ -2418,53 +2278,47 @@ module AdminUI
       url = "/spaces/#{params[:space_guid]}"
       url += '?recursive=true' if recursive
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_space(params[:space_guid], recursive)
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete space: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete space: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_space(params[:space_guid], recursive)
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete space: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete space: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/spaces/:space_guid/annotations/:key', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/annotations/#{params[:key]}")
-      begin
-        @operation.delete_space_annotation(params[:space_guid], params[:key])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete space annotation: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete space annotation: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_space_annotation(params[:space_guid], params[:key])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete space annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete space annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/spaces/:space_guid/isolation_segment', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/isolation_segment")
-      begin
-        @operation.remove_space_isolation_segment(params[:space_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during remove space isolation segment: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during remove space isolation segment: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.remove_space_isolation_segment(params[:space_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during remove space isolation segment: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during remove space isolation segment: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/spaces/:space_guid/labels/:name', auth: [:admin] do
@@ -2472,87 +2326,77 @@ module AdminUI
       url = "/spaces/#{params[:space_guid]}/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_space_label(params[:space_guid], prefix, params[:name])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete space label: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete space label: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_space_label(params[:space_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete space label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete space label: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/spaces/:space_guid/:role/:user_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/#{params[:role]}/#{params[:user_guid]}")
-      begin
-        @operation.delete_space_role(params[:space_guid], params[:role], params[:user_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete space role: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete space role: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_space_role(params[:space_guid], params[:role], params[:user_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete space role: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete space role: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/spaces/:space_guid/unmapped_routes', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/unmapped_routes")
-      begin
-        @operation.delete_space_unmapped_routes(params[:space_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete space unmapped routes: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete space unmapped_routes: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_space_unmapped_routes(params[:space_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete space unmapped routes: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete space unmapped_routes: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/stacks/:stack_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/stacks/#{params[:stack_guid]}")
-      begin
-        @operation.delete_stack(params[:stack_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete stack: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete stack: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_stack(params[:stack_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete stack: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete stack: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/stacks/:stack_guid/annotations/:key', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/stacks/#{params[:stack_guid]}/annotations/#{params[:key]}")
-      begin
-        @operation.delete_stack_annotation(params[:stack_guid], params[:key])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete stack annotation: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete stack annotation: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_stack_annotation(params[:stack_guid], params[:key])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete stack annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete stack annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/stacks/:stack_guid/labels/:name', auth: [:admin] do
@@ -2560,70 +2404,62 @@ module AdminUI
       url = "/stacks/#{params[:stack_guid]}/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_stack_label(params[:stack_guid], prefix, params[:name])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete stack label: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete stack label: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_stack_label(params[:stack_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete stack label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete stack label: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/staging_security_groups/:staging_security_group_guid/:staging_space_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/staging_security_groups/#{params[:staging_security_group_guid]}/#{params[:staging_space_guid]}")
-      begin
-        @operation.delete_staging_security_group_space(params[:staging_security_group_guid], params[:staging_space_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete staging security group space: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete staging security group space: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_staging_security_group_space(params[:staging_security_group_guid], params[:staging_space_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete staging security group space: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete staging security group space: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/tasks/:task_guid/cancel', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/tasks/#{params[:task_guid]}/cancel")
-      begin
-        @operation.cancel_task(params[:task_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during cancel task: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during cancel task: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.cancel_task(params[:task_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during cancel task: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during cancel task: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/tasks/:task_guid/annotations/:key', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/tasks/#{params[:task_guid]}/annotations/#{params[:key]}")
-      begin
-        @operation.delete_task_annotation(params[:task_guid], params[:key])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete task annotation: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete task annotation: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_task_annotation(params[:task_guid], params[:key])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete task annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete task annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/tasks/:task_guid/labels/:name', auth: [:admin] do
@@ -2631,53 +2467,47 @@ module AdminUI
       url = "/tasks/#{params[:task_guid]}/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
-      begin
-        @operation.delete_task_label(params[:task_guid], prefix, params[:name])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete task label: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete task label: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_task_label(params[:task_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete task label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete task label: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/users/:user_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/users/#{params[:user_guid]}")
-      begin
-        @operation.delete_user(params[:user_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete user: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete user: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_user(params[:user_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete user: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete user: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     delete '/users/:user_guid/tokens', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/users/#{params[:user_guid]}/tokens")
-      begin
-        @operation.delete_user_tokens(params[:user_guid])
-        204
-      rescue CCRestClientResponseError => error
-        @logger.error("Error during delete user tokens: #{error.to_h}")
-        content_type(:json)
-        status(error.http_code)
-        body(Yajl::Encoder.encode(error.to_h))
-      rescue => error
-        @logger.error("Error during delete user tokens: #{error.inspect}")
-        @logger.error(error.backtrace.join("\n"))
-        500
-      end
+      @operation.delete_user_tokens(params[:user_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete user tokens: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete user tokens: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
     end
 
     def route_missing

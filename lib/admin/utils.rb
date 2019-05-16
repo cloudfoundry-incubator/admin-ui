@@ -50,13 +50,11 @@ module AdminUI
 
       retries_remaining = 2
       loop do
-        begin
-          return http.request(request)
-        rescue EOFError, Timeout::Error
-          raise if retries_remaining < 1
+        return http.request(request)
+      rescue EOFError, Timeout::Error
+        raise if retries_remaining < 1
 
-          retries_remaining -= 1
-        end
+        retries_remaining -= 1
       end
     end
 

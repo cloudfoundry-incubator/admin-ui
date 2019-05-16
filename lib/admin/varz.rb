@@ -48,26 +48,24 @@ module AdminUI
 
     def remove(uri_parameter)
       @semaphore.synchronize do
-        begin
-          unless @cache.nil?
-            uris = []
-            if uri_parameter.nil?
-              @cache['items'].each_pair do |uri, item|
-                uris.push(uri) unless item['connected']
-              end
-            else
-              uris.push(uri_parameter)
+        unless @cache.nil?
+          uris = []
+          if uri_parameter.nil?
+            @cache['items'].each_pair do |uri, item|
+              uris.push(uri) unless item['connected']
             end
-
-            @nats.remove(uris)
-
-            uris.each do |uri|
-              @cache['items'].delete(uri)
-            end
+          else
+            uris.push(uri_parameter)
           end
-        ensure
-          @condition.broadcast
+
+          @nats.remove(uris)
+
+          uris.each do |uri|
+            @cache['items'].delete(uri)
+          end
         end
+      ensure
+        @condition.broadcast
       end
     end
 

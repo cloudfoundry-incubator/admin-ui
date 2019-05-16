@@ -2352,13 +2352,11 @@ module CCHelper
         Sequel.connect(config.ccdb_uri, single_threaded: true, max_connections: 1, timeout: 1) do |connection|
           items = connection[:isolation_segments]
           loop do
-            begin
-              items.insert(cc_isolation_segment2)
-              break
-            rescue Sequel::DatabaseError => error
-              wrapped_exception = error.wrapped_exception
-              raise unless wrapped_exception && wrapped_exception.instance_of?(SQLite3::BusyException)
-            end
+            items.insert(cc_isolation_segment2)
+            break
+          rescue Sequel::DatabaseError => error
+            wrapped_exception = error.wrapped_exception
+            raise unless wrapped_exception && wrapped_exception.instance_of?(SQLite3::BusyException)
           end
         end
         @cc_isolation_segment_created = true
@@ -2452,13 +2450,11 @@ module CCHelper
         Sequel.connect(config.ccdb_uri, single_threaded: true, max_connections: 1, timeout: 1) do |connection|
           items = connection[:organizations]
           loop do
-            begin
-              items.insert(cc_organization2)
-              break
-            rescue Sequel::DatabaseError => error
-              wrapped_exception = error.wrapped_exception
-              raise unless wrapped_exception && wrapped_exception.instance_of?(SQLite3::BusyException)
-            end
+            items.insert(cc_organization2)
+            break
+          rescue Sequel::DatabaseError => error
+            wrapped_exception = error.wrapped_exception
+            raise unless wrapped_exception && wrapped_exception.instance_of?(SQLite3::BusyException)
           end
         end
         @cc_organization_created = true
@@ -3425,13 +3421,11 @@ module CCHelper
       ordered_inserts.each do |entry|
         items = connection[entry[0]]
         loop do
-          begin
-            items.insert(entry[1])
-            break
-          rescue Sequel::DatabaseError => error
-            wrapped_exception = error.wrapped_exception
-            raise unless wrapped_exception && wrapped_exception.instance_of?(SQLite3::BusyException)
-          end
+          items.insert(entry[1])
+          break
+        rescue Sequel::DatabaseError => error
+          wrapped_exception = error.wrapped_exception
+          raise unless wrapped_exception && wrapped_exception.instance_of?(SQLite3::BusyException)
         end
       end
     end
@@ -3440,13 +3434,11 @@ module CCHelper
   def sql(uri, sql)
     Sequel.connect(uri, single_threaded: true, max_connections: 1, timeout: 1) do |connection|
       loop do
-        begin
-          connection.run(sql)
-          break
-        rescue Sequel::DatabaseError => error
-          wrapped_exception = error.wrapped_exception
-          raise unless wrapped_exception && wrapped_exception.instance_of?(SQLite3::BusyException)
-        end
+        connection.run(sql)
+        break
+      rescue Sequel::DatabaseError => error
+        wrapped_exception = error.wrapped_exception
+        raise unless wrapped_exception && wrapped_exception.instance_of?(SQLite3::BusyException)
       end
     end
   end

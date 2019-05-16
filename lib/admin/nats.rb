@@ -39,19 +39,17 @@ module AdminUI
 
     def remove(uris)
       @semaphore.synchronize do
-        begin
-          @cache = read_or_initialize_cache
+        @cache = read_or_initialize_cache
 
-          removed = false
-          uris.each do |uri|
-            removed = true unless @cache['items'].delete(uri).nil?
-            removed = true unless @cache['notified'].delete(uri).nil?
-          end
-
-          write_cache if removed
-        ensure
-          @condition.broadcast
+        removed = false
+        uris.each do |uri|
+          removed = true unless @cache['items'].delete(uri).nil?
+          removed = true unless @cache['notified'].delete(uri).nil?
         end
+
+        write_cache if removed
+      ensure
+        @condition.broadcast
       end
     end
 
@@ -85,15 +83,13 @@ module AdminUI
       disconnected = []
 
       @semaphore.synchronize do
-        begin
-          if @running
-            save_data(nats_discovery_results, disconnected)
-            send_email(disconnected)
-          end
-        ensure
-          @condition.broadcast
-          @condition.wait(@semaphore, @config.nats_discovery_interval) if @running
+        if @running
+          save_data(nats_discovery_results, disconnected)
+          send_email(disconnected)
         end
+      ensure
+        @condition.broadcast
+        @condition.wait(@semaphore, @config.nats_discovery_interval) if @running
       end
     end
 
@@ -109,46 +105,38 @@ module AdminUI
         @last_discovery_time = 0
 
         EventMachine.next_tick do
-          begin
-            ::NATS.on_error do |error|
-              begin
-                result['connected'] = false
-                @logger.error("Error during NATS discovery reported to NATS.on_error: #{error.inspect}")
+          ::NATS.on_error do |error|
+            result['connected'] = false
+            @logger.error("Error during NATS discovery reported to NATS.on_error: #{error.inspect}")
 
-                error_received = true
+            error_received = true
 
-                @semaphore.synchronize do
-                  @condition.broadcast
-                end
-              rescue => error
-                @logger.error("Error during NATS.on_error callback: #{error.inspect}")
-                @logger.error(error.backtrace.join("\n"))
-              end
-            end
-
-            ::NATS.start(uri: @config.mbus, ping_interval: @config.nats_discovery_timeout) do
-              begin
-                result['connected'] = true
-
-                ::NATS.request('vcap.component.discover') do |item|
-                  begin
-                    @last_discovery_time = Time.now.to_f
-                    item_json = Yajl::Parser.parse(item)
-                    result['items'][item_uri(item_json)] = item_json.keep_if { |key, _value| NATS_COMMON_KEYS.include?(key) }
-                  rescue => error
-                    @logger.error("Error during NATS.request callback: #{error.inspect}")
-                    @logger.error(error.backtrace.join("\n"))
-                  end
-                end
-              rescue => error
-                @logger.error("Error during NATS.start callback: #{error.inspect}")
-                @logger.error(error.backtrace.join("\n"))
-              end
+            @semaphore.synchronize do
+              @condition.broadcast
             end
           rescue => error
-            @logger.error("Error within NATS next_tick for start: #{error.inspect}")
+            @logger.error("Error during NATS.on_error callback: #{error.inspect}")
             @logger.error(error.backtrace.join("\n"))
           end
+
+          ::NATS.start(uri: @config.mbus, ping_interval: @config.nats_discovery_timeout) do
+            result['connected'] = true
+
+            ::NATS.request('vcap.component.discover') do |item|
+              @last_discovery_time = Time.now.to_f
+              item_json = Yajl::Parser.parse(item)
+              result['items'][item_uri(item_json)] = item_json.keep_if { |key, _value| NATS_COMMON_KEYS.include?(key) }
+            rescue => error
+              @logger.error("Error during NATS.request callback: #{error.inspect}")
+              @logger.error(error.backtrace.join("\n"))
+            end
+          rescue => error
+            @logger.error("Error during NATS.start callback: #{error.inspect}")
+            @logger.error(error.backtrace.join("\n"))
+          end
+        rescue => error
+          @logger.error("Error within NATS next_tick for start: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
         end
 
         # Wait for discovery to be complete since the NATS.start does not block since EventMachine loop already running
@@ -157,12 +145,10 @@ module AdminUI
         end
 
         EventMachine.next_tick do
-          begin
-            ::NATS.stop
-          rescue => error
-            @logger.error("Error during NATS next_tick for stop: #{error.inspect}")
-            @logger.error(error.backtrace.join("\n"))
-          end
+          ::NATS.stop
+        rescue => error
+          @logger.error("Error during NATS next_tick for stop: #{error.inspect}")
+          @logger.error(error.backtrace.join("\n"))
         end
       rescue => error
         result['connected'] = false
@@ -263,12 +249,10 @@ module AdminUI
       return unless @email.configured? && !disconnected.empty?
 
       thread = Thread.new do
-        begin
-          @email.send_email(disconnected)
-        rescue => error
-          @logger.error("Error during send email: #{error.inspect}")
-          @logger.error(error.backtrace.join("\n"))
-        end
+        @email.send_email(disconnected)
+      rescue => error
+        @logger.error("Error during send email: #{error.inspect}")
+        @logger.error(error.backtrace.join("\n"))
       end
 
       thread.priority = -2
