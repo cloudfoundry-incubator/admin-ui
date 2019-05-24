@@ -105,6 +105,20 @@ describe AdminUI::CC, type: :integration do
       expect(cc.domains['items'].length).to eq(0)
     end
 
+    it 'clears the domain annotations cache' do
+      expect(cc.domain_annotations['items'].length).to eq(1)
+      cc_clear_domains_cache_stub(config)
+      cc.invalidate_domain_annotations
+      expect(cc.domain_annotations['items'].length).to eq(0)
+    end
+
+    it 'clears the domain labels cache' do
+      expect(cc.domain_labels['items'].length).to eq(1)
+      cc_clear_domains_cache_stub(config)
+      cc.invalidate_domain_labels
+      expect(cc.domain_labels['items'].length).to eq(0)
+    end
+
     it 'clears the droplets cache' do
       expect(cc.droplets['items'].length).to eq(1)
       cc_clear_droplets_cache_stub(config)
@@ -569,6 +583,20 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected domains' do
       let(:results)  { cc.domains }
       let(:expected) { cc_domain }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected domain annotations' do
+      let(:results)  { cc.domain_annotations }
+      let(:expected) { cc_domain_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected domain labels' do
+      let(:results)  { cc.domain_labels }
+      let(:expected) { cc_domain_label }
 
       it_behaves_like('common cc retrieval')
     end

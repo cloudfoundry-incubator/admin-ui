@@ -9,6 +9,8 @@ module AdminUI
       # domains have to exist. Other record types are optional
       return result unless domains['connected']
 
+      domain_annotations            = @cc.domain_annotations
+      domain_labels                 = @cc.domain_labels
       organizations                 = @cc.organizations
       organizations_private_domains = @cc.organizations_private_domains
       routes                        = @cc.routes
@@ -18,6 +20,54 @@ module AdminUI
       routes_connected                        = routes['connected']
 
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
+
+      domain_annotations_hash = {}
+      domain_annotations['items'].each do |domain_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        domain_guid = domain_annotation[:resource_guid]
+        domain_annotations_array = domain_annotations_hash[domain_guid]
+        if domain_annotations_array.nil?
+          domain_annotations_array = []
+          domain_annotations_hash[domain_guid] = domain_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         domain_annotation,
+            created_at_rfc3339: domain_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: domain_annotation[:updated_at].nil? ? nil : domain_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        domain_annotations_array.push(wrapper)
+      end
+
+      domain_labels_hash = {}
+      domain_labels['items'].each do |domain_label|
+        return result unless @running
+
+        Thread.pass
+
+        domain_guid = domain_label[:resource_guid]
+        domain_labels_array = domain_labels_hash[domain_guid]
+        if domain_labels_array.nil?
+          domain_labels_array = []
+          domain_labels_hash[domain_guid] = domain_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              domain_label,
+            created_at_rfc3339: domain_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: domain_label[:updated_at].nil? ? nil : domain_label[:updated_at].to_datetime.rfc3339
+          }
+
+        domain_labels_array.push(wrapper)
+      end
 
       domains_organizations_hash = {}
       if organizations_connected && organizations_private_domains_connected
@@ -58,18 +108,22 @@ module AdminUI
 
         Thread.pass
 
-        domain_id                  = domain[:id]
-        owning_organization_id     = domain[:owning_organization_id]
-        shared                     = owning_organization_id.nil?
-        organization               = shared ? nil : organization_hash[owning_organization_id]
+        guid                   = domain[:guid]
+        domain_id              = domain[:id]
+        owning_organization_id = domain[:owning_organization_id]
+        shared                 = owning_organization_id.nil?
+        organization           = shared ? nil : organization_hash[owning_organization_id]
+
+        domain_annotation_array    = domain_annotations_hash[guid] || []
+        domain_label_array         = domain_labels_hash[guid] || []
         domain_organizations_array = domains_organizations_hash[domain_id]
         domain_route_counter       = domain_route_counters[domain_id]
 
         row = []
 
-        row.push("#{domain[:guid]}/#{shared}")
+        row.push("#{guid}/#{shared}")
         row.push(domain[:name])
-        row.push(domain[:guid])
+        row.push(guid)
         row.push(domain[:created_at].to_datetime.rfc3339)
 
         if domain[:updated_at]
@@ -105,9 +159,11 @@ module AdminUI
 
         items.push(row)
 
-        hash[domain[:guid]] =
+        hash[guid] =
           {
+            'annotations'                  => domain_annotation_array,
             'domain'                       => domain,
+            'labels'                       => domain_label_array,
             'owning_organization'          => organization,
             'private_shared_organizations' => domain_organizations_array
           }

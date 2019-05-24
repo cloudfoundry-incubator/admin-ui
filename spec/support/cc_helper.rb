@@ -198,6 +198,8 @@ module CCHelper
     cc_clear_organizations_private_domains_cache_stub(config)
     cc_clear_routes_cache_stub(config)
 
+    sql(config.ccdb_uri, 'DELETE FROM domain_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM domain_labels')
     sql(config.ccdb_uri, 'DELETE FROM domains')
 
     @cc_domains_deleted = true
@@ -630,6 +632,31 @@ module CCHelper
       name:                   'test_domain',
       owning_organization_id: cc_organization[:id],
       updated_at:             unique_time('cc_domain_updated')
+    }
+  end
+
+  def cc_domain_annotation
+    {
+      created_at:    unique_time('cc_domain_annotation_created'),
+      guid:          'domain_annotation1',
+      id:            unique_id('cc_domain_annotation'),
+      key:           'dmannotationkey',
+      resource_guid: cc_domain[:guid],
+      updated_at:    unique_time('cc_domain_annotation_updated'),
+      value:         'dmannotationvalue'
+    }
+  end
+
+  def cc_domain_label
+    {
+      created_at:    unique_time('cc_domain_label_created'),
+      guid:          'domain_label1',
+      id:            unique_id('cc_domain_label'),
+      key_name:      'dmlabelkeyname',
+      key_prefix:    'dmlabelkeyprefix.com',
+      resource_guid: cc_domain[:guid],
+      updated_at:    unique_time('cc_domain_label_updated'),
+      value:         'dmlabelvalue'
     }
   end
 
@@ -1956,6 +1983,8 @@ module CCHelper
                [:organization_labels,              cc_organization_label],
                [:organizations_isolation_segments, cc_organization_isolation_segment],
                [:domains,                          cc_domain],
+               [:domain_annotations,               cc_domain_annotation],
+               [:domain_labels,                    cc_domain_label],
                [:space_quota_definitions,          cc_space_quota_definition],
                [:organizations_private_domains,    cc_organization_private_domain],
                [:spaces,                           cc_space],
@@ -2286,6 +2315,15 @@ module CCHelper
       else
         cc_clear_domains_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/domains/#{cc_domain[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_domains_deleted
+        cc_domain_not_found
+      else
+        cc_clear_domains_cache_stub(config)
+        OK.new({})
       end
     end
   end

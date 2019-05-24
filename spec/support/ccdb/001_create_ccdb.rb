@@ -572,6 +572,7 @@ Sequel.migration do
       Integer :original_web_process_instance_count, :null=>false
       String :revision_guid, :size=>255
       Integer :revision_version
+      DateTime :last_healthy_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       
       index [:app_guid]
       index [:created_at]
@@ -1014,6 +1015,38 @@ Sequel.migration do
       index [:created_at]
       index [:guid], :unique=>true
       index [:updated_at]
+    end
+    
+    create_table(:domain_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :resource_guid, :size=>255
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+      index [:resource_guid], :name=>:fk_domain_annotations_resource_guid_index
+    end
+    
+    create_table(:domain_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      String :resource_guid, :size=>255
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:key_prefix, :key_name, :value], :name=>:domain_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+      index [:resource_guid], :name=>:fk_domain_labels_resource_guid_index
     end
     
     create_table(:domains, :ignore_index_errors=>true) do
@@ -1560,6 +1593,14 @@ Sequel.migration do
     
     alter_table(:apps) do
       add_foreign_key [:space_guid], :spaces, :name=>:fk_apps_space_guid, :key=>[:guid], :schema=>:public
+    end
+    
+    alter_table(:domain_annotations) do
+      add_foreign_key [:resource_guid], :domains, :name=>:fk_domain_annotations_resource_guid, :key=>[:guid], :schema=>:public
+    end
+    
+    alter_table(:domain_labels) do
+      add_foreign_key [:resource_guid], :domains, :name=>:fk_domain_labels_resource_guid, :key=>[:guid], :schema=>:public
     end
     
     alter_table(:domains) do

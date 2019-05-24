@@ -341,7 +341,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete application annotation' do
       it 'returns failure code due to disconnection' do
-        response = delete('/applications/application1/annotations/annotation1')
+        response = delete('/applications/application1/metadata/annotations/annotation1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -392,7 +392,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete application label' do
       it 'returns failure code due to disconnection' do
-        response = delete('/applications/application1/labels/label1')
+        response = delete('/applications/application1/metadata/labels/label1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -409,7 +409,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete application label with prefix' do
       it 'returns failure code due to disconnection' do
-        response = delete('/applications/application1/labels/label1?prefix=bogus.com')
+        response = delete('/applications/application1/metadata/labels/label1?prefix=bogus.com')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -443,7 +443,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete buildpack annotation' do
       it 'returns failure code due to disconnection' do
-        response = delete('/buildpacks/buildpack1/annotations/annotation1')
+        response = delete('/buildpacks/buildpack1/metadata/annotations/annotation1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -460,7 +460,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete buildpack label' do
       it 'returns failure code due to disconnection' do
-        response = delete('/buildpacks/buildpack1/labels/label1')
+        response = delete('/buildpacks/buildpack1/metadata/labels/label1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -477,7 +477,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete buildpack label with prefix' do
       it 'returns failure code due to disconnection' do
-        response = delete('/buildpacks/buildpack1/labels/label1?prefix=bogus.com')
+        response = delete('/buildpacks/buildpack1/metadata/labels/label1?prefix=bogus.com')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -557,6 +557,57 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete domain recursive')
+    end
+
+    shared_examples 'common delete domain annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/domains/domain1/metadata/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete domain annotation via http' do
+      it_behaves_like('common delete domain annotation')
+    end
+
+    context 'delete domain annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete domain annotation')
+    end
+
+    shared_examples 'common delete domain label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/domains/domain1/metadata/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete domain label via http' do
+      it_behaves_like('common delete domain label')
+    end
+
+    context 'delete domain label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete domain label')
+    end
+
+    shared_examples 'common delete domain label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/domains/domain1/metadata/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete domain label with prefix via http' do
+      it_behaves_like('common delete domain label with prefix')
+    end
+
+    context 'delete domain label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete domain label with prefix')
     end
 
     shared_examples 'common delete domain organization' do
@@ -663,7 +714,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete isolation segment annotation' do
       it 'returns failure code due to disconnection' do
-        response = delete('/isolation_segments/isolation_segment1/annotations/annotation1')
+        response = delete('/isolation_segments/isolation_segment1/metadata/annotations/annotation1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -680,7 +731,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete isolation segment label' do
       it 'returns failure code due to disconnection' do
-        response = delete('/isolation_segments/isolation_segment1/labels/label1')
+        response = delete('/isolation_segments/isolation_segment1/metadata/labels/label1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -697,7 +748,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete isolation segment label with prefix' do
       it 'returns failure code due to disconnection' do
-        response = delete('/isolation_segments/isolation_segment1/labels/label1?prefix=bogus.com')
+        response = delete('/isolation_segments/isolation_segment1/metadata/labels/label1?prefix=bogus.com')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -765,7 +816,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete organization annotation' do
       it 'returns failure code due to disconnection' do
-        response = delete('/organizations/organization1/annotations/annotation1')
+        response = delete('/organizations/organization1/metadata/annotations/annotation1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -816,7 +867,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete organization label' do
       it 'returns failure code due to disconnection' do
-        response = delete('/organizations/organization1/labels/label1')
+        response = delete('/organizations/organization1/metadata/labels/label1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -833,7 +884,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete organization label with prefix' do
       it 'returns failure code due to disconnection' do
-        response = delete('/organizations/organization1/labels/label1?prefix=bogus.com')
+        response = delete('/organizations/organization1/metadata/labels/label1?prefix=bogus.com')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1122,7 +1173,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete service instance annotation' do
       it 'returns failure code due to disconnection' do
-        response = delete('/service_instances/service_instance1/annotations/annotation1')
+        response = delete('/service_instances/service_instance1/metadata/annotations/annotation1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1139,7 +1190,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete service instance label' do
       it 'returns failure code due to disconnection' do
-        response = delete('/service_instances/service_instance1/labels/label1')
+        response = delete('/service_instances/service_instance1/metadata/labels/label1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1156,7 +1207,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete service instance label with prefix' do
       it 'returns failure code due to disconnection' do
-        response = delete('/service_instances/service_instance1/labels/label1?prefix=bogus.com')
+        response = delete('/service_instances/service_instance1/metadata/labels/label1?prefix=bogus.com')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1292,7 +1343,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete space annotation' do
       it 'returns failure code due to disconnection' do
-        response = delete('/spaces/space1/annotations/annotation1')
+        response = delete('/spaces/space1/metadata/annotations/annotation1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1326,7 +1377,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete space label' do
       it 'returns failure code due to disconnection' do
-        response = delete('/spaces/space1/labels/label1')
+        response = delete('/spaces/space1/metadata/labels/label1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1343,7 +1394,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete space label with prefix' do
       it 'returns failure code due to disconnection' do
-        response = delete('/spaces/space1/labels/label1?prefix=bogus.com')
+        response = delete('/spaces/space1/metadata/labels/label1?prefix=bogus.com')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1445,7 +1496,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete stack annotation' do
       it 'returns failure code due to disconnection' do
-        response = delete('/stacks/stack1/annotations/annotation1')
+        response = delete('/stacks/stack1/metadata/annotations/annotation1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1462,7 +1513,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete stack label' do
       it 'returns failure code due to disconnection' do
-        response = delete('/stacks/stack1/labels/label1')
+        response = delete('/stacks/stack1/metadata/labels/label1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1479,7 +1530,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete stack label with prefix' do
       it 'returns failure code due to disconnection' do
-        response = delete('/stacks/stack1/labels/label1?prefix=bogus.com')
+        response = delete('/stacks/stack1/metadata/labels/label1?prefix=bogus.com')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1513,7 +1564,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete task annotation' do
       it 'returns failure code due to disconnection' do
-        response = delete('/tasks/task1/annotations/annotation1')
+        response = delete('/tasks/task1/metadata/annotations/annotation1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1530,7 +1581,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete task label' do
       it 'returns failure code due to disconnection' do
-        response = delete('/tasks/task1/labels/label1')
+        response = delete('/tasks/task1/metadata/labels/label1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1547,7 +1598,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete task label with prefix' do
       it 'returns failure code due to disconnection' do
-        response = delete('/tasks/task1/labels/label1?prefix=bogus.com')
+        response = delete('/tasks/task1/metadata/labels/label1?prefix=bogus.com')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -2794,8 +2845,8 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/applications/application1?recursive=true')
       end
 
-      it 'deletes /applications/:guid/annotations/:annotation redirects as expected' do
-        delete_redirects_as_expected('/applications/application1/annotations/annotation1')
+      it 'deletes /applications/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/applications/application1/metadata/annotations/annotation1')
       end
 
       it 'deletes /applications/:guid/environment_variables/:environment_variable redirects as expected' do
@@ -2806,28 +2857,28 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/applications/application1/index0')
       end
 
-      it 'deletes /applications/:guid/labels/:label redirects as expected' do
-        delete_redirects_as_expected('/applications/application1/labels/label1')
+      it 'deletes /applications/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/applications/application1/metadata/labels/label1')
       end
 
-      it 'deletes /applications/:guid/labels/:label?prefix=:prefix redirects as expected' do
-        delete_redirects_as_expected('/applications/application1/labels/label1?prefix=bogus.com')
+      it 'deletes /applications/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/applications/application1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /buildpacks/:guid redirects as expected' do
         delete_redirects_as_expected('/buildpacks/buildpack1')
       end
 
-      it 'deletes /buildpacks/:guid/annotations/:annotation redirects as expected' do
-        delete_redirects_as_expected('/buildpacks/buildpack1/annotations/annotation1')
+      it 'deletes /buildpacks/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/buildpacks/buildpack1/metadata/annotations/annotation1')
       end
 
-      it 'deletes /buildpacks/:guid/labels/:label redirects as expected' do
-        delete_redirects_as_expected('/buildpacks/buildpack1/labels/label1')
+      it 'deletes /buildpacks/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/buildpacks/buildpack1/metadata/labels/label1')
       end
 
-      it 'deletes /buildpacks/:guid/labels/:label?prefix=:prefix redirects as expected' do
-        delete_redirects_as_expected('/buildpacks/buildpack1/labels/label1?prefix=bogus.com')
+      it 'deletes /buildpacks/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/buildpacks/buildpack1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /clients/:id redirects as expected' do
@@ -2848,6 +2899,18 @@ describe AdminUI::Admin do
 
       it 'deletes /domains/:guid/:boolean?recursive=true redirects as expected' do
         delete_redirects_as_expected('/domains/domain1/false?recursive=true')
+      end
+
+      it 'deletes /domains/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/domains/domain1/metadata/annotations/annotation1')
+      end
+
+      it 'deletes /domains/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/domains/domain1/metadata/labels/label1')
+      end
+
+      it 'deletes /domains/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/domains/domain1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /domains/:guid/:boolean/:guid redirects as expected' do
@@ -2878,16 +2941,16 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/isolation_segments/isolation_segment1')
       end
 
-      it 'deletes /isolation_segments/:guid/annotations/:annotation redirects as expected' do
-        delete_redirects_as_expected('/isolation_segments/isolation_segment1/annotations/annotation1')
+      it 'deletes /isolation_segments/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/isolation_segments/isolation_segment1/metadata/annotations/annotation1')
       end
 
-      it 'deletes /isolation_segments/:guid/labels/:label redirects as expected' do
-        delete_redirects_as_expected('/isolation_segments/isolation_segment1/labels/label1')
+      it 'deletes /isolation_segments/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/isolation_segments/isolation_segment1/metadata/labels/label1')
       end
 
-      it 'deletes /isolation_segments/:guid/labels/:label?prefix=:prefix redirects as expected' do
-        delete_redirects_as_expected('/isolation_segments/isolation_segment1/labels/label1?prefix=bogus.com')
+      it 'deletes /isolation_segments/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/isolation_segments/isolation_segment1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /mfa_providers/:guid redirects as expected' do
@@ -2902,20 +2965,20 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/organizations/organization1?recursive=true')
       end
 
-      it 'deletes /organizations/:guid/annotations/:annotation redirects as expected' do
-        delete_redirects_as_expected('/organizations/organization1/annotations/annotation1')
+      it 'deletes /organizations/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/organizations/organization1/metadata/annotations/annotation1')
       end
 
       it 'deletes /organizations/:guid/default_isolation_segment redirects as expected' do
         delete_redirects_as_expected('/organizations/organization1/default_isolation_segment')
       end
 
-      it 'deletes /organizations/:guid/labels/:label redirects as expected' do
-        delete_redirects_as_expected('/organizations/organization1/labels/label1')
+      it 'deletes /organizations/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/organizations/organization1/metadata/labels/label1')
       end
 
-      it 'deletes /organizations/:guid/labels/:label?prefix=:prefix redirects as expected' do
-        delete_redirects_as_expected('/organizations/organization1/labels/label1?prefix=bogus.com')
+      it 'deletes /organizations/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/organizations/organization1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /organizations/:guid/:guid redirects as expected' do
@@ -2978,16 +3041,16 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/service_instances/service_instance1/true?recursive=true&purge=true')
       end
 
-      it 'deletes /service_instances/:guid/annotations/:annotation redirects as expected' do
-        delete_redirects_as_expected('/service_instances/service_instance1/annotations/annotation1')
+      it 'deletes /service_instances/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/service_instances/service_instance1/metadata/annotations/annotation1')
       end
 
-      it 'deletes /service_instances/:guid/labels/:label redirects as expected' do
-        delete_redirects_as_expected('/service_instances/service_instance1/labels/label1')
+      it 'deletes /service_instances/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/service_instances/service_instance1/metadata/labels/label1')
       end
 
-      it 'deletes /service_instances/:guid/labels/:label?prefix=:prefix redirects as expected' do
-        delete_redirects_as_expected('/service_instances/service_instance1/labels/label1?prefix=bogus.com')
+      it 'deletes /service_instances/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/service_instances/service_instance1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /service_keys/:guid redirects as expected' do
@@ -3034,20 +3097,20 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/spaces/space1?recursive=true')
       end
 
-      it 'deletes /spaces/:guid/annotations/:annotation redirects as expected' do
-        delete_redirects_as_expected('/spaces/space1/annotations/annotation1')
+      it 'deletes /spaces/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/spaces/space1/metadata/annotations/annotation1')
       end
 
       it 'deletes /spaces/:guid/isolation_segment redirects as expected' do
         delete_redirects_as_expected('/spaces/space1/isolation_segment')
       end
 
-      it 'deletes /spaces/:guid/labels/:label redirects as expected' do
-        delete_redirects_as_expected('/spaces/space1/labels/label1')
+      it 'deletes /spaces/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/spaces/space1/metadata/labels/label1')
       end
 
-      it 'deletes /spaces/:guid/labels/:label?prefix=:prefix redirects as expected' do
-        delete_redirects_as_expected('/spaces/space1/labels/label1?prefix=bogus.com')
+      it 'deletes /spaces/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/spaces/space1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /spaces/:guid/unmapped_routes redirects as expected' do
@@ -3062,16 +3125,16 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/stacks/stack1')
       end
 
-      it 'deletes /stacks/:guid/annotations/:annotation redirects as expected' do
-        delete_redirects_as_expected('/stacks/stack1/annotations/annotation1')
+      it 'deletes /stacks/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/stacks/stack1/metadata/annotations/annotation1')
       end
 
-      it 'deletes /stacks/:guid/labels/:label redirects as expected' do
-        delete_redirects_as_expected('/stacks/stack1/labels/label1')
+      it 'deletes /stacks/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/stacks/stack1/metadata/labels/label1')
       end
 
-      it 'deletes /stacks/:guid/labels/:label?prefix=:prefix redirects as expected' do
-        delete_redirects_as_expected('/stacks/stack1/labels/label1?prefix=bogus.com')
+      it 'deletes /stacks/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/stacks/stack1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /staging_security_groups/:guid/:guid redirects as expected' do
@@ -3082,16 +3145,16 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/tasks/task1/cancel')
       end
 
-      it 'deletes /tasks/:guid/annotations/:annotation redirects as expected' do
-        delete_redirects_as_expected('/tasks/task1/annotations/annotation1')
+      it 'deletes /tasks/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/tasks/task1/metadata/annotations/annotation1')
       end
 
-      it 'deletes /tasks/:guid/labels/:label redirects as expected' do
-        delete_redirects_as_expected('/tasks/task1/labels/label1')
+      it 'deletes /tasks/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/tasks/task1/metadata/labels/label1')
       end
 
-      it 'deletes /tasks/:guid/labels/:label?prefix=:prefix redirects as expected' do
-        delete_redirects_as_expected('/tasks/task1/labels/label1?prefix=bogus.com')
+      it 'deletes /tasks/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/tasks/task1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /users/:guid redirects as expected' do

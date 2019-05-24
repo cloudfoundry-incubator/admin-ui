@@ -874,7 +874,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'labels subtable has a checkbox in the first column' do
-            check_checkbox_guid('OrganizationsLabelsTable', "#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_name]}?prefix=#{cc_organization_label[:key_prefix]}")
+            check_checkbox_guid('OrganizationsLabelsTable', "#{cc_organization[:guid]}/metadata/labels/#{cc_organization_label[:key_name]}?prefix=#{cc_organization_label[:key_prefix]}")
           end
 
           context 'manage labels subtable' do
@@ -935,7 +935,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('OrganizationsAnnotationsTable', "#{cc_organization[:guid]}/annotations/#{cc_organization_annotation[:key]}")
+            check_checkbox_guid('OrganizationsAnnotationsTable', "#{cc_organization[:guid]}/metadata/annotations/#{cc_organization_annotation[:key]}")
           end
 
           context 'manage annotations subtable' do
@@ -1417,7 +1417,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'labels subtable has a checkbox in the first column' do
-            check_checkbox_guid('SpacesLabelsTable', "#{cc_space[:guid]}/labels/#{cc_space_label[:key_name]}?prefix=#{cc_space_label[:key_prefix]}")
+            check_checkbox_guid('SpacesLabelsTable', "#{cc_space[:guid]}/metadata/labels/#{cc_space_label[:key_name]}?prefix=#{cc_space_label[:key_prefix]}")
           end
 
           context 'manage labels subtable' do
@@ -1478,7 +1478,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('SpacesAnnotationsTable', "#{cc_space[:guid]}/annotations/#{cc_space_annotation[:key]}")
+            check_checkbox_guid('SpacesAnnotationsTable', "#{cc_space[:guid]}/metadata/annotations/#{cc_space_annotation[:key]}")
           end
 
           context 'manage annotations subtable' do
@@ -2015,7 +2015,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'labels subtable has a checkbox in the first column' do
-            check_checkbox_guid('ApplicationsLabelsTable', "#{cc_app[:guid]}/labels/#{cc_app_label[:key_name]}?prefix=#{cc_app_label[:key_prefix]}")
+            check_checkbox_guid('ApplicationsLabelsTable', "#{cc_app[:guid]}/metadata/labels/#{cc_app_label[:key_name]}?prefix=#{cc_app_label[:key_prefix]}")
           end
 
           context 'manage labels subtable' do
@@ -2076,7 +2076,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('ApplicationsAnnotationsTable', "#{cc_app[:guid]}/annotations/#{cc_app_annotation[:key]}")
+            check_checkbox_guid('ApplicationsAnnotationsTable', "#{cc_app[:guid]}/metadata/annotations/#{cc_app_annotation[:key]}")
           end
 
           context 'manage annotations subtable' do
@@ -2921,7 +2921,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'labels subtable has a checkbox in the first column' do
-            check_checkbox_guid('ServiceInstancesLabelsTable', "#{cc_service_instance[:guid]}/labels/#{cc_service_instance_label[:key_name]}?prefix=#{cc_service_instance_label[:key_prefix]}")
+            check_checkbox_guid('ServiceInstancesLabelsTable', "#{cc_service_instance[:guid]}/metadata/labels/#{cc_service_instance_label[:key_name]}?prefix=#{cc_service_instance_label[:key_prefix]}")
           end
 
           context 'manage labels subtable' do
@@ -2982,7 +2982,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('ServiceInstancesAnnotationsTable', "#{cc_service_instance[:guid]}/annotations/#{cc_service_instance_annotation[:key]}")
+            check_checkbox_guid('ServiceInstancesAnnotationsTable', "#{cc_service_instance[:guid]}/metadata/annotations/#{cc_service_instance_annotation[:key]}")
           end
 
           context 'manage annotations subtable' do
@@ -4053,7 +4053,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'labels subtable has a checkbox in the first column' do
-            check_checkbox_guid('TasksLabelsTable', "#{cc_task[:guid]}/labels/#{cc_task_label[:key_name]}?prefix=#{cc_task_label[:key_prefix]}")
+            check_checkbox_guid('TasksLabelsTable', "#{cc_task[:guid]}/metadata/labels/#{cc_task_label[:key_name]}?prefix=#{cc_task_label[:key_prefix]}")
           end
 
           context 'manage labels subtable' do
@@ -4114,7 +4114,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('TasksAnnotationsTable', "#{cc_task[:guid]}/annotations/#{cc_task_annotation[:key]}")
+            check_checkbox_guid('TasksAnnotationsTable', "#{cc_task[:guid]}/metadata/annotations/#{cc_task_annotation[:key]}")
           end
 
           context 'manage annotations subtable' do
@@ -5525,7 +5525,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'labels subtable has a checkbox in the first column' do
-            check_checkbox_guid('BuildpacksLabelsTable', "#{cc_buildpack[:guid]}/labels/#{cc_buildpack_label[:key_name]}?prefix=#{cc_buildpack_label[:key_prefix]}")
+            check_checkbox_guid('BuildpacksLabelsTable', "#{cc_buildpack[:guid]}/metadata/labels/#{cc_buildpack_label[:key_name]}?prefix=#{cc_buildpack_label[:key_prefix]}")
           end
 
           context 'manage labels subtable' do
@@ -5586,7 +5586,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('BuildpacksAnnotationsTable', "#{cc_buildpack[:guid]}/annotations/#{cc_buildpack_annotation[:key]}")
+            check_checkbox_guid('BuildpacksAnnotationsTable', "#{cc_buildpack[:guid]}/metadata/annotations/#{cc_buildpack_annotation[:key]}")
           end
 
           context 'manage annotations subtable' do
@@ -5740,6 +5740,129 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Owning Organization GUID', tag:   nil, value: cc_organization[:guid] },
                             { label: 'Routes',                   tag:   'a', value: '1' }
                           ])
+          end
+
+          it 'has labels subtable' do
+            expect(@driver.find_element(id: 'DomainsLabelsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='DomainsLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='DomainsLabelsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_domain_label[:key_prefix],
+                               cc_domain_label[:key_name],
+                               cc_domain_label[:guid],
+                               cc_domain_label[:created_at].to_datetime.rfc3339,
+                               cc_domain_label[:updated_at].to_datetime.rfc3339,
+                               cc_domain_label[:value]
+                             ])
+          end
+
+          it 'labels subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_DomainsLabelsTable_1')
+          end
+
+          it 'labels subtable has a checkbox in the first column' do
+            check_checkbox_guid('DomainsLabelsTable', "#{cc_domain[:guid]}/metadata/labels/#{cc_domain_label[:key_name]}?prefix=#{cc_domain_label[:key_prefix]}")
+          end
+
+          context 'manage labels subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_DomainsLabelsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_DomainsLabelsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'DomainsLabelsTable' }
+                let(:button_id)               { 'Buttons_DomainsLabelsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the domain's selected labels?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'domain_labels' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_DomainsLabelsTable_1' }
+                let(:print_button_id) { 'Buttons_DomainsLabelsTable_2' }
+                let(:save_button_id)  { 'Buttons_DomainsLabelsTable_3' }
+                let(:csv_button_id)   { 'Buttons_DomainsLabelsTable_4' }
+                let(:excel_button_id) { 'Buttons_DomainsLabelsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_DomainsLabelsTable_6' }
+              end
+            end
+          end
+
+          it 'has annotations subtable' do
+            expect(@driver.find_element(id: 'DomainsAnnotationsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='DomainsAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 6,
+                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='DomainsAnnotationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_domain_annotation[:key],
+                               cc_domain_annotation[:guid],
+                               cc_domain_annotation[:created_at].to_datetime.rfc3339,
+                               cc_domain_annotation[:updated_at].to_datetime.rfc3339,
+                               cc_domain_annotation[:value]
+                             ])
+          end
+
+          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_DomainsAnnotationsTable_1')
+          end
+
+          it 'annotations subtable has a checkbox in the first column' do
+            check_checkbox_guid('DomainsAnnotationsTable', "#{cc_domain[:guid]}/metadata/annotations/#{cc_domain_annotation[:key]}")
+          end
+
+          context 'manage annotations subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_DomainsAnnotationsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_DomainsAnnotationsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'DomainsAnnotationsTable' }
+                let(:button_id)               { 'Buttons_DomainsAnnotationsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the domain's selected annotations?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'domain_annotations' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_DomainsAnnotationsTable_1' }
+                let(:print_button_id) { 'Buttons_DomainsAnnotationsTable_2' }
+                let(:save_button_id)  { 'Buttons_DomainsAnnotationsTable_3' }
+                let(:csv_button_id)   { 'Buttons_DomainsAnnotationsTable_4' }
+                let(:excel_button_id) { 'Buttons_DomainsAnnotationsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_DomainsAnnotationsTable_6' }
+              end
+            end
           end
 
           context 'private shared organizations' do
@@ -6315,7 +6438,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'labels subtable has a checkbox in the first column' do
-            check_checkbox_guid('StacksLabelsTable', "#{cc_stack[:guid]}/labels/#{cc_stack_label[:key_name]}?prefix=#{cc_stack_label[:key_prefix]}")
+            check_checkbox_guid('StacksLabelsTable', "#{cc_stack[:guid]}/metadata/labels/#{cc_stack_label[:key_name]}?prefix=#{cc_stack_label[:key_prefix]}")
           end
 
           context 'manage labels subtable' do
@@ -6376,7 +6499,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('StacksAnnotationsTable', "#{cc_stack[:guid]}/annotations/#{cc_stack_annotation[:key]}")
+            check_checkbox_guid('StacksAnnotationsTable', "#{cc_stack[:guid]}/metadata/annotations/#{cc_stack_annotation[:key]}")
           end
 
           context 'manage annotations subtable' do
@@ -8587,7 +8710,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'labels subtable has a checkbox in the first column' do
-            check_checkbox_guid('IsolationSegmentsLabelsTable', "#{cc_isolation_segment[:guid]}/labels/#{cc_isolation_segment_label[:key_name]}?prefix=#{cc_isolation_segment_label[:key_prefix]}")
+            check_checkbox_guid('IsolationSegmentsLabelsTable', "#{cc_isolation_segment[:guid]}/metadata/labels/#{cc_isolation_segment_label[:key_name]}?prefix=#{cc_isolation_segment_label[:key_prefix]}")
           end
 
           context 'manage labels subtable' do
@@ -8648,7 +8771,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('IsolationSegmentsAnnotationsTable', "#{cc_isolation_segment[:guid]}/annotations/#{cc_isolation_segment_annotation[:key]}")
+            check_checkbox_guid('IsolationSegmentsAnnotationsTable', "#{cc_isolation_segment[:guid]}/metadata/annotations/#{cc_isolation_segment_annotation[:key]}")
           end
 
           context 'manage annotations subtable' do

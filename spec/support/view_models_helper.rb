@@ -442,7 +442,9 @@ module ViewModelsHelper
 
   def view_models_domains_detail
     {
+      'annotations'                  => [annotation_rfc3339(cc_domain_annotation)],
       'domain'                       => cc_domain,
+      'labels'                       => [label_rfc3339(cc_domain_label)],
       'owning_organization'          => cc_organization,
       'private_shared_organizations' => [cc_organization]
     }

@@ -81,6 +81,14 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.domains)
     end
 
+    it 'returns zero domain annotations as expected' do
+      verify_disconnected_items(cc.domain_annotations)
+    end
+
+    it 'returns zero domain labels as expected' do
+      verify_disconnected_items(cc.domain_labels)
+    end
+
     it 'returns zero droplets as expected' do
       verify_disconnected_items(cc.droplets)
     end

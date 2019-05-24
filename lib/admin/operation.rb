@@ -182,6 +182,26 @@ module AdminUI
       @view_models.invalidate_domains
     end
 
+    def delete_domain_annotation(domain_guid, key)
+      url = "/v3/domains/#{domain_guid}"
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_domain_annotations
+      @view_models.invalidate_domains
+    end
+
+    def delete_domain_label(domain_guid, prefix, name)
+      url = "/v3/domains/#{domain_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_domain_labels
+      @view_models.invalidate_domains
+    end
+
     def delete_group(group_guid)
       url = "/Groups/#{group_guid}"
       @logger.debug("DELETE #{url}")

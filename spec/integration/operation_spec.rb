@@ -505,12 +505,28 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_domain(cc_domain[:guid], false, true)
       end
 
+      def delete_domain_annotation
+        operation.delete_domain_annotation(cc_domain[:guid], cc_domain_annotation[:key])
+      end
+
+      def delete_domain_label
+        operation.delete_domain_label(cc_domain[:guid], cc_domain_label[:key_prefix], cc_domain_label[:key_name])
+      end
+
       it 'deletes domain' do
         expect { delete_domain }.to change { cc.domains['items'].length }.from(1).to(0)
       end
 
       it 'deletes domain recursive' do
         expect { delete_domain_recursive }.to change { cc.domains['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the domain annotation' do
+        expect { delete_domain_annotation }.to change { cc.domain_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the domain label' do
+        expect { delete_domain_label }.to change { cc.domain_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -531,6 +547,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting recursive deleted domain' do
           expect { delete_domain_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_domain_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted domain' do
+          expect { delete_domain_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_domain_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted domain' do
+          expect { delete_domain_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_domain_not_found(exception) }
         end
       end
     end

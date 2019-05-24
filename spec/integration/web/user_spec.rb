@@ -369,6 +369,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Domains tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Domains' }
+        let(:page_id)   { 'DomainsPage' }
+        let(:button_id) { 'Buttons_DomainsLabelsTable_0' }
+      end
+    end
+
+    context 'Domains tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Domains' }
+        let(:page_id)   { 'DomainsPage' }
+        let(:button_id) { 'Buttons_DomainsAnnotationsTable_0' }
+      end
+    end
+
     context 'Domains tab Shared organizations does not have unshare button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Domains' }

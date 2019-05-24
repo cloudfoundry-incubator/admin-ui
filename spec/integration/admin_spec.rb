@@ -241,9 +241,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_app_annotation
-      response = delete_request("/applications/#{cc_app[:guid]}/annotations/#{cc_app_annotation[:key]}")
+      response = delete_request("/applications/#{cc_app[:guid]}/metadata/annotations/#{cc_app_annotation[:key]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/annotations/#{cc_app_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/metadata/annotations/#{cc_app_annotation[:key]}"]])
     end
 
     def delete_app_environment_variable
@@ -253,9 +253,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_app_label
-      response = delete_request("/applications/#{cc_app[:guid]}/labels/#{cc_app_label[:key_name]}?prefix=#{cc_app_label[:key_prefix]}")
+      response = delete_request("/applications/#{cc_app[:guid]}/metadata/labels/#{cc_app_label[:key_name]}?prefix=#{cc_app_label[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/labels/#{cc_app_label[:key_name]}?prefix=#{cc_app_label[:key_prefix]}"]], true)
+      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/metadata/labels/#{cc_app_label[:key_name]}?prefix=#{cc_app_label[:key_prefix]}"]], true)
     end
 
     it 'has user name and applications in the log file' do
@@ -399,15 +399,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_buildpack_annotation
-      response = delete_request("/buildpacks/#{cc_buildpack[:guid]}/annotations/#{cc_buildpack_annotation[:key]}")
+      response = delete_request("/buildpacks/#{cc_buildpack[:guid]}/metadata/annotations/#{cc_buildpack_annotation[:key]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/buildpacks/#{cc_buildpack[:guid]}/annotations/#{cc_buildpack_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/buildpacks/#{cc_buildpack[:guid]}/metadata/annotations/#{cc_buildpack_annotation[:key]}"]])
     end
 
     def delete_buildpack_label
-      response = delete_request("/buildpacks/#{cc_buildpack[:guid]}/labels/#{cc_buildpack_label[:key_name]}?prefix=#{cc_buildpack_label[:key_prefix]}")
+      response = delete_request("/buildpacks/#{cc_buildpack[:guid]}/metadata/labels/#{cc_buildpack_label[:key_name]}?prefix=#{cc_buildpack_label[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/buildpacks/#{cc_buildpack[:guid]}/labels/#{cc_buildpack_label[:key_name]}?prefix=#{cc_buildpack_label[:key_prefix]}"]], true)
+      verify_sys_log_entries([['delete', "/buildpacks/#{cc_buildpack[:guid]}/metadata/labels/#{cc_buildpack_label[:key_name]}?prefix=#{cc_buildpack_label[:key_prefix]}"]], true)
     end
 
     it 'has user name and buildpack request in the log file' do
@@ -574,6 +574,18 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}/false?recursive=true"]], true)
     end
 
+    def delete_domain_annotation
+      response = delete_request("/domains/#{cc_domain[:guid]}/metadata/annotations/#{cc_domain_annotation[:key]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}/metadata/annotations/#{cc_domain_annotation[:key]}"]])
+    end
+
+    def delete_domain_label
+      response = delete_request("/domains/#{cc_domain[:guid]}/metadata/labels/#{cc_domain_label[:key_name]}?prefix=#{cc_domain_label[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}/metadata/labels/#{cc_domain_label[:key_name]}?prefix=#{cc_domain_label[:key_prefix]}"]], true)
+    end
+
     def unshare_private_domain
       response = delete_request("/domains/#{cc_domain[:guid]}/false/#{cc_organization[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
@@ -590,6 +602,14 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a domain recursive' do
       expect { delete_domain_recursive }.to change { get_json('/domains_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes a domain annotation' do
+      expect { delete_domain_annotation }.to change { get_json("/domains_view_model/#{cc_domain[:guid]}/false")['annotations'].length }.from(1).to(0)
+    end
+
+    it 'deletes a domain label' do
+      expect { delete_domain_label }.to change { get_json("/domains_view_model/#{cc_domain[:guid]}/false")['labels'].length }.from(1).to(0)
     end
 
     it 'unshares a private domain' do
@@ -807,15 +827,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_isolation_segment_annotation
-      response = delete_request("/isolation_segments/#{cc_isolation_segment[:guid]}/annotations/#{cc_isolation_segment_annotation[:key]}")
+      response = delete_request("/isolation_segments/#{cc_isolation_segment[:guid]}/metadata/annotations/#{cc_isolation_segment_annotation[:key]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/isolation_segments/#{cc_isolation_segment[:guid]}/annotations/#{cc_isolation_segment_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/isolation_segments/#{cc_isolation_segment[:guid]}/metadata/annotations/#{cc_isolation_segment_annotation[:key]}"]])
     end
 
     def delete_isolation_segment_label
-      response = delete_request("/isolation_segments/#{cc_isolation_segment[:guid]}/labels/#{cc_isolation_segment_label[:key_name]}?prefix=#{cc_isolation_segment_label[:key_prefix]}")
+      response = delete_request("/isolation_segments/#{cc_isolation_segment[:guid]}/metadata/labels/#{cc_isolation_segment_label[:key_name]}?prefix=#{cc_isolation_segment_label[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/isolation_segments/#{cc_isolation_segment[:guid]}/labels/#{cc_isolation_segment_label[:key_name]}?prefix=#{cc_isolation_segment_label[:key_prefix]}"]], true)
+      verify_sys_log_entries([['delete', "/isolation_segments/#{cc_isolation_segment[:guid]}/metadata/labels/#{cc_isolation_segment_label[:key_name]}?prefix=#{cc_isolation_segment_label[:key_prefix]}"]], true)
     end
 
     it 'has user name and isolation segments request in the log file' do
@@ -924,15 +944,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_organization_annotation
-      response = delete_request("/organizations/#{cc_organization[:guid]}/annotations/#{cc_organization_annotation[:key]}")
+      response = delete_request("/organizations/#{cc_organization[:guid]}/metadata/annotations/#{cc_organization_annotation[:key]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/annotations/#{cc_organization_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/metadata/annotations/#{cc_organization_annotation[:key]}"]])
     end
 
     def delete_organization_label
-      response = delete_request("/organizations/#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_name]}?prefix=#{cc_organization_label[:key_prefix]}")
+      response = delete_request("/organizations/#{cc_organization[:guid]}/metadata/labels/#{cc_organization_label[:key_name]}?prefix=#{cc_organization_label[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/labels/#{cc_organization_label[:key_name]}?prefix=#{cc_organization_label[:key_prefix]}"]], true)
+      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/metadata/labels/#{cc_organization_label[:key_name]}?prefix=#{cc_organization_label[:key_prefix]}"]], true)
     end
 
     it 'has user name and organizations request in the log file' do
@@ -1423,15 +1443,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_service_instance_annotation
-      response = delete_request("/service_instances/#{cc_service_instance[:guid]}/annotations/#{cc_service_instance_annotation[:key]}")
+      response = delete_request("/service_instances/#{cc_service_instance[:guid]}/metadata/annotations/#{cc_service_instance_annotation[:key]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/annotations/#{cc_service_instance_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/metadata/annotations/#{cc_service_instance_annotation[:key]}"]])
     end
 
     def delete_service_instance_label
-      response = delete_request("/service_instances/#{cc_service_instance[:guid]}/labels/#{cc_service_instance_label[:key_name]}?prefix=#{cc_service_instance_label[:key_prefix]}")
+      response = delete_request("/service_instances/#{cc_service_instance[:guid]}/metadata/labels/#{cc_service_instance_label[:key_name]}?prefix=#{cc_service_instance_label[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/labels/#{cc_service_instance_label[:key_name]}?prefix=#{cc_service_instance_label[:key_prefix]}"]], true)
+      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/metadata/labels/#{cc_service_instance_label[:key_name]}?prefix=#{cc_service_instance_label[:key_prefix]}"]], true)
     end
 
     it 'has user name and service instances request in the log file' do
@@ -1651,15 +1671,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_space_annotation
-      response = delete_request("/spaces/#{cc_space[:guid]}/annotations/#{cc_space_annotation[:key]}")
+      response = delete_request("/spaces/#{cc_space[:guid]}/metadata/annotations/#{cc_space_annotation[:key]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/annotations/#{cc_space_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/metadata/annotations/#{cc_space_annotation[:key]}"]])
     end
 
     def delete_space_label
-      response = delete_request("/spaces/#{cc_space[:guid]}/labels/#{cc_space_label[:key_name]}?prefix=#{cc_space_label[:key_prefix]}")
+      response = delete_request("/spaces/#{cc_space[:guid]}/metadata/labels/#{cc_space_label[:key_name]}?prefix=#{cc_space_label[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/labels/#{cc_space_label[:key_name]}?prefix=#{cc_space_label[:key_prefix]}"]], true)
+      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/metadata/labels/#{cc_space_label[:key_name]}?prefix=#{cc_space_label[:key_prefix]}"]], true)
     end
 
     it 'has user name and space request in the log file' do
@@ -1820,15 +1840,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_stack_annotation
-      response = delete_request("/stacks/#{cc_stack[:guid]}/annotations/#{cc_stack_annotation[:key]}")
+      response = delete_request("/stacks/#{cc_stack[:guid]}/metadata/annotations/#{cc_stack_annotation[:key]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/stacks/#{cc_stack[:guid]}/annotations/#{cc_stack_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/stacks/#{cc_stack[:guid]}/metadata/annotations/#{cc_stack_annotation[:key]}"]])
     end
 
     def delete_stack_label
-      response = delete_request("/stacks/#{cc_stack[:guid]}/labels/#{cc_stack_label[:key_name]}?prefix=#{cc_stack_label[:key_prefix]}")
+      response = delete_request("/stacks/#{cc_stack[:guid]}/metadata/labels/#{cc_stack_label[:key_name]}?prefix=#{cc_stack_label[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/stacks/#{cc_stack[:guid]}/labels/#{cc_stack_label[:key_name]}?prefix=#{cc_stack_label[:key_prefix]}"]], true)
+      verify_sys_log_entries([['delete', "/stacks/#{cc_stack[:guid]}/metadata/labels/#{cc_stack_label[:key_name]}?prefix=#{cc_stack_label[:key_prefix]}"]], true)
     end
 
     it 'has user name and stacks request in the log file' do
@@ -1886,15 +1906,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_task_annotation
-      response = delete_request("/tasks/#{cc_task[:guid]}/annotations/#{cc_task_annotation[:key]}")
+      response = delete_request("/tasks/#{cc_task[:guid]}/metadata/annotations/#{cc_task_annotation[:key]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/tasks/#{cc_task[:guid]}/annotations/#{cc_task_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/tasks/#{cc_task[:guid]}/metadata/annotations/#{cc_task_annotation[:key]}"]])
     end
 
     def delete_task_label
-      response = delete_request("/tasks/#{cc_task[:guid]}/labels/#{cc_task_label[:key_name]}?prefix=#{cc_task_label[:key_prefix]}")
+      response = delete_request("/tasks/#{cc_task[:guid]}/metadata/labels/#{cc_task_label[:key_name]}?prefix=#{cc_task_label[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/tasks/#{cc_task[:guid]}/labels/#{cc_task_label[:key_name]}?prefix=#{cc_task_label[:key_prefix]}"]], true)
+      verify_sys_log_entries([['delete', "/tasks/#{cc_task[:guid]}/metadata/labels/#{cc_task_label[:key_name]}?prefix=#{cc_task_label[:key_prefix]}"]], true)
     end
 
     it 'has user name and tasks request in the log file' do

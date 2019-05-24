@@ -77,6 +77,18 @@ module AdminUI
             table:   :oauth_client_details,
             columns: %i[access_token_validity additional_information app_launch_url authorities authorized_grant_types autoapprove client_id identity_zone_id lastmodified refresh_token_validity required_user_groups scope show_on_home_page web_server_redirect_uri]
           },
+          domain_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :domain_annotations,
+            columns: %i[created_at guid id key resource_guid updated_at value]
+          },
+          domain_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :domain_labels,
+            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+          },
           domains:
           {
             db_uri:  ccdb_uri,
@@ -507,6 +519,14 @@ module AdminUI
       result_cache(:clients)
     end
 
+    def domain_annotations
+      result_cache(:domain_annotations)
+    end
+
+    def domain_labels
+      result_cache(:domain_labels)
+    end
+
     def domains
       result_cache(:domains)
     end
@@ -573,6 +593,14 @@ module AdminUI
 
     def invalidate_clients
       invalidate_cache(:clients)
+    end
+
+    def invalidate_domain_annotations
+      invalidate_cache(:domain_annotations)
+    end
+
+    def invalidate_domain_labels
+      invalidate_cache(:domain_labels)
     end
 
     def invalidate_domains

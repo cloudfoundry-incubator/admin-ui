@@ -1544,21 +1544,6 @@ module AdminUI
       500
     end
 
-    delete '/applications/:app_guid/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/applications/#{params[:app_guid]}/annotations/#{params[:key]}")
-      @operation.delete_application_annotation(params[:app_guid], params[:key])
-      204
-    rescue CCRestClientResponseError => error
-      @logger.error("Error during delete application annotation: #{error.to_h}")
-      content_type(:json)
-      status(error.http_code)
-      body(Yajl::Encoder.encode(error.to_h))
-    rescue => error
-      @logger.error("Error during delete application annotation: #{error.inspect}")
-      @logger.error(error.backtrace.join("\n"))
-      500
-    end
-
     delete '/applications/:app_guid/environment_variables/:environment_variable', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/applications/#{params[:app_guid]}/environment_variables/#{params[:environment_variable]}")
       @operation.delete_application_environment_variable(params[:app_guid], params[:environment_variable])
@@ -1589,9 +1574,24 @@ module AdminUI
       500
     end
 
-    delete '/applications/:app_guid/labels/:name', auth: [:admin] do
+    delete '/applications/:app_guid/metadata/annotations/:key', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/applications/#{params[:app_guid]}/metadata/annotations/#{params[:key]}")
+      @operation.delete_application_annotation(params[:app_guid], params[:key])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete application annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete application annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
+    delete '/applications/:app_guid/metadata/labels/:name', auth: [:admin] do
       prefix = params[:prefix]
-      url = "/applications/#{params[:app_guid]}/labels/#{params[:name]}"
+      url = "/applications/#{params[:app_guid]}/metadata/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
       @operation.delete_application_label(params[:app_guid], prefix, params[:name])
@@ -1622,8 +1622,8 @@ module AdminUI
       500
     end
 
-    delete '/buildpacks/:buildpack_guid/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/buildpacks/#{params[:buildpack_guid]}/annotations/#{params[:key]}")
+    delete '/buildpacks/:buildpack_guid/metadata/annotations/:key', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/buildpacks/#{params[:buildpack_guid]}/metadata/annotations/#{params[:key]}")
       @operation.delete_buildpack_annotation(params[:buildpack_guid], params[:key])
       204
     rescue CCRestClientResponseError => error
@@ -1637,9 +1637,9 @@ module AdminUI
       500
     end
 
-    delete '/buildpacks/:buildpack_guid/labels/:name', auth: [:admin] do
+    delete '/buildpacks/:buildpack_guid/metadata/labels/:name', auth: [:admin] do
       prefix = params[:prefix]
-      url = "/buildpacks/#{params[:buildpack_guid]}/labels/#{params[:name]}"
+      url = "/buildpacks/#{params[:buildpack_guid]}/metadata/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
       @operation.delete_buildpack_label(params[:buildpack_guid], prefix, params[:name])
@@ -1724,6 +1724,39 @@ module AdminUI
       body(Yajl::Encoder.encode(error.to_h))
     rescue => error
       @logger.error("Error during delete domain organization: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
+    delete '/domains/:domain_guid/metadata/annotations/:key', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/domains/#{params[:domain_guid]}/metadata/annotations/#{params[:key]}")
+      @operation.delete_domain_annotation(params[:domain_guid], params[:key])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete domain annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete domain annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
+    delete '/domains/:domain_guid/metadata/labels/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/domains/#{params[:domain_guid]}/metadata/labels/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_domain_label(params[:domain_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete domain label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete domain label: #{error.inspect}")
       @logger.error(error.backtrace.join("\n"))
       500
     end
@@ -1813,8 +1846,8 @@ module AdminUI
       500
     end
 
-    delete '/isolation_segments/:isolation_segment_guid/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/isolation_segments/#{params[:isolation_segment_guid]}/annotations/#{params[:key]}")
+    delete '/isolation_segments/:isolation_segment_guid/metadata/annotations/:key', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/isolation_segments/#{params[:isolation_segment_guid]}/metadata/annotations/#{params[:key]}")
       @operation.delete_isolation_segment_annotation(params[:isolation_segment_guid], params[:key])
       204
     rescue CCRestClientResponseError => error
@@ -1828,9 +1861,9 @@ module AdminUI
       500
     end
 
-    delete '/isolation_segments/:isolation_segment_guid/labels/:name', auth: [:admin] do
+    delete '/isolation_segments/:isolation_segment_guid/metadata/labels/:name', auth: [:admin] do
       prefix = params[:prefix]
-      url = "/isolation_segments/#{params[:isolation_segment_guid]}/labels/#{params[:name]}"
+      url = "/isolation_segments/#{params[:isolation_segment_guid]}/metadata/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
       @operation.delete_isolation_segment_label(params[:isolation_segment_guid], prefix, params[:name])
@@ -1879,21 +1912,6 @@ module AdminUI
       500
     end
 
-    delete '/organizations/:organization_guid/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/annotations/#{params[:key]}")
-      @operation.delete_organization_annotation(params[:organization_guid], params[:key])
-      204
-    rescue CCRestClientResponseError => error
-      @logger.error("Error during delete organization annotation: #{error.to_h}")
-      content_type(:json)
-      status(error.http_code)
-      body(Yajl::Encoder.encode(error.to_h))
-    rescue => error
-      @logger.error("Error during delete organization annotation: #{error.inspect}")
-      @logger.error(error.backtrace.join("\n"))
-      500
-    end
-
     delete '/organizations/:organization_guid/default_isolation_segment', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/default_isolation_segment")
       @operation.remove_organization_default_isolation_segment(params[:organization_guid])
@@ -1924,9 +1942,24 @@ module AdminUI
       500
     end
 
-    delete '/organizations/:organization_guid/labels/:name', auth: [:admin] do
+    delete '/organizations/:organization_guid/metadata/annotations/:key', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/metadata/annotations/#{params[:key]}")
+      @operation.delete_organization_annotation(params[:organization_guid], params[:key])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete organization annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete organization annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
+    delete '/organizations/:organization_guid/metadata/labels/:name', auth: [:admin] do
       prefix = params[:prefix]
-      url = "/organizations/#{params[:organization_guid]}/labels/#{params[:name]}"
+      url = "/organizations/#{params[:organization_guid]}/metadata/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
       @operation.delete_organization_label(params[:organization_guid], prefix, params[:name])
@@ -2117,8 +2150,8 @@ module AdminUI
       500
     end
 
-    delete '/service_instances/:service_instance_guid/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/service_instances/#{params[:service_instance_guid]}/annotations/#{params[:key]}")
+    delete '/service_instances/:service_instance_guid/metadata/annotations/:key', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/service_instances/#{params[:service_instance_guid]}/metadata/annotations/#{params[:key]}")
       @operation.delete_service_instance_annotation(params[:service_instance_guid], params[:key])
       204
     rescue CCRestClientResponseError => error
@@ -2132,9 +2165,9 @@ module AdminUI
       500
     end
 
-    delete '/service_instances/:service_instance_guid/labels/:name', auth: [:admin] do
+    delete '/service_instances/:service_instance_guid/metadata/labels/:name', auth: [:admin] do
       prefix = params[:prefix]
-      url = "/service_instances/#{params[:service_instance_guid]}/labels/#{params[:name]}"
+      url = "/service_instances/#{params[:service_instance_guid]}/metadata/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
       @operation.delete_service_instance_label(params[:service_instance_guid], prefix, params[:name])
@@ -2291,21 +2324,6 @@ module AdminUI
       500
     end
 
-    delete '/spaces/:space_guid/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/annotations/#{params[:key]}")
-      @operation.delete_space_annotation(params[:space_guid], params[:key])
-      204
-    rescue CCRestClientResponseError => error
-      @logger.error("Error during delete space annotation: #{error.to_h}")
-      content_type(:json)
-      status(error.http_code)
-      body(Yajl::Encoder.encode(error.to_h))
-    rescue => error
-      @logger.error("Error during delete space annotation: #{error.inspect}")
-      @logger.error(error.backtrace.join("\n"))
-      500
-    end
-
     delete '/spaces/:space_guid/isolation_segment', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/isolation_segment")
       @operation.remove_space_isolation_segment(params[:space_guid])
@@ -2321,9 +2339,24 @@ module AdminUI
       500
     end
 
-    delete '/spaces/:space_guid/labels/:name', auth: [:admin] do
+    delete '/spaces/:space_guid/metadata/annotations/:key', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/metadata/annotations/#{params[:key]}")
+      @operation.delete_space_annotation(params[:space_guid], params[:key])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete space annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete space annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
+    delete '/spaces/:space_guid/metadata/labels/:name', auth: [:admin] do
       prefix = params[:prefix]
-      url = "/spaces/#{params[:space_guid]}/labels/#{params[:name]}"
+      url = "/spaces/#{params[:space_guid]}/metadata/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
       @operation.delete_space_label(params[:space_guid], prefix, params[:name])
@@ -2384,8 +2417,8 @@ module AdminUI
       500
     end
 
-    delete '/stacks/:stack_guid/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/stacks/#{params[:stack_guid]}/annotations/#{params[:key]}")
+    delete '/stacks/:stack_guid/metadata/annotations/:key', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/stacks/#{params[:stack_guid]}/metadata/annotations/#{params[:key]}")
       @operation.delete_stack_annotation(params[:stack_guid], params[:key])
       204
     rescue CCRestClientResponseError => error
@@ -2399,9 +2432,9 @@ module AdminUI
       500
     end
 
-    delete '/stacks/:stack_guid/labels/:name', auth: [:admin] do
+    delete '/stacks/:stack_guid/metadata/labels/:name', auth: [:admin] do
       prefix = params[:prefix]
-      url = "/stacks/#{params[:stack_guid]}/labels/#{params[:name]}"
+      url = "/stacks/#{params[:stack_guid]}/metadata/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
       @operation.delete_stack_label(params[:stack_guid], prefix, params[:name])
@@ -2447,8 +2480,8 @@ module AdminUI
       500
     end
 
-    delete '/tasks/:task_guid/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/tasks/#{params[:task_guid]}/annotations/#{params[:key]}")
+    delete '/tasks/:task_guid/metadata/annotations/:key', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/tasks/#{params[:task_guid]}/metadata/annotations/#{params[:key]}")
       @operation.delete_task_annotation(params[:task_guid], params[:key])
       204
     rescue CCRestClientResponseError => error
@@ -2462,9 +2495,9 @@ module AdminUI
       500
     end
 
-    delete '/tasks/:task_guid/labels/:name', auth: [:admin] do
+    delete '/tasks/:task_guid/metadata/labels/:name', auth: [:admin] do
       prefix = params[:prefix]
-      url = "/tasks/#{params[:task_guid]}/labels/#{params[:name]}"
+      url = "/tasks/#{params[:task_guid]}/metadata/labels/#{params[:name]}"
       url += "?prefix=#{prefix}" if prefix
       @logger.info_user(session[:username], 'delete', url)
       @operation.delete_task_label(params[:task_guid], prefix, params[:name])
