@@ -1,4 +1,6 @@
-require: rubocop-performance
+require:
+- rubocop-performance
+- rubocop-rails
 
 AllCops:
   Exclude:
@@ -44,6 +46,15 @@ ParameterLists:
   Enabled: false
 
 PerceivedComplexity:
+  Enabled: false
+
+Rails/Exit:
+  Enabled: false
+
+Rails/Output:
+  Enabled: false
+
+Rails/TimeZone:
   Enabled: false
 
 RescuedExceptionsVariableName:

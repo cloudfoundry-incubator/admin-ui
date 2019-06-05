@@ -123,7 +123,7 @@ describe AdminUI::Admin do
       response = http.request(request)
 
       all_cookies = response.get_fields('set-cookie')
-      cookie = all_cookies.last.split('; ')[0] unless all_cookies.nil? || all_cookies.empty?
+      cookie = all_cookies.last.split('; ')[0] if all_cookies.present?
 
       break unless response['location']
 
