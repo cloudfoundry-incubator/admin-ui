@@ -1426,6 +1426,7 @@ Sequel.migration do
       String :route_service_url, :text=>true
       String :encryption_key_label, :size=>255
       Integer :encryption_iterations, :default=>2048, :null=>false
+      String :maintenance_info, :text=>true
       
       index [:name]
       index [:created_at], :name=>:si_created_at_index

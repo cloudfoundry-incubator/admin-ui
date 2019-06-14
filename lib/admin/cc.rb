@@ -310,7 +310,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_instances,
-            columns: %i[created_at dashboard_url gateway_name gateway_data guid id is_gateway_service name route_service_url service_plan_id space_id syslog_drain_url tags updated_at]
+            columns: %i[created_at dashboard_url gateway_name gateway_data guid id is_gateway_service maintenance_info name route_service_url service_plan_id space_id syslog_drain_url tags updated_at]
           },
           service_instance_annotations:
           {
