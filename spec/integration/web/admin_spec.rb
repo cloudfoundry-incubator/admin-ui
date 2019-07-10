@@ -915,13 +915,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'OrganizationsAnnotationsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='OrganizationsAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
-                                expected_length: 6,
-                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='OrganizationsAnnotationsTable']/tbody/tr/td"),
                              [
                                '',
+                               cc_organization_annotation[:key_prefix],
                                cc_organization_annotation[:key],
                                cc_organization_annotation[:guid],
                                cc_organization_annotation[:created_at].to_datetime.rfc3339,
@@ -935,7 +936,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('OrganizationsAnnotationsTable', "#{cc_organization[:guid]}/metadata/annotations/#{cc_organization_annotation[:key]}")
+            check_checkbox_guid('OrganizationsAnnotationsTable', "#{cc_organization[:guid]}/metadata/annotations/#{cc_organization_annotation[:key]}?prefix=#{cc_organization_annotation[:key_prefix]}")
           end
 
           context 'manage annotations subtable' do
@@ -1458,13 +1459,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'SpacesAnnotationsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='SpacesAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
-                                expected_length: 6,
-                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='SpacesAnnotationsTable']/tbody/tr/td"),
                              [
                                '',
+                               cc_space_annotation[:key_prefix],
                                cc_space_annotation[:key],
                                cc_space_annotation[:guid],
                                cc_space_annotation[:created_at].to_datetime.rfc3339,
@@ -1478,7 +1480,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('SpacesAnnotationsTable', "#{cc_space[:guid]}/metadata/annotations/#{cc_space_annotation[:key]}")
+            check_checkbox_guid('SpacesAnnotationsTable', "#{cc_space[:guid]}/metadata/annotations/#{cc_space_annotation[:key]}?prefix=#{cc_space_annotation[:key_prefix]}")
           end
 
           context 'manage annotations subtable' do
@@ -2056,13 +2058,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ApplicationsAnnotationsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ApplicationsAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
-                                expected_length: 6,
-                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='ApplicationsAnnotationsTable']/tbody/tr/td"),
                              [
                                '',
+                               cc_app_annotation[:key_prefix],
                                cc_app_annotation[:key],
                                cc_app_annotation[:guid],
                                cc_app_annotation[:created_at].to_datetime.rfc3339,
@@ -2076,7 +2079,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('ApplicationsAnnotationsTable', "#{cc_app[:guid]}/metadata/annotations/#{cc_app_annotation[:key]}")
+            check_checkbox_guid('ApplicationsAnnotationsTable', "#{cc_app[:guid]}/metadata/annotations/#{cc_app_annotation[:key]}?prefix=#{cc_app_annotation[:key_prefix]}")
           end
 
           context 'manage annotations subtable' do
@@ -2965,13 +2968,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'ServiceInstancesAnnotationsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceInstancesAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
-                                expected_length: 6,
-                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceInstancesAnnotationsTable']/tbody/tr/td"),
                              [
                                '',
+                               cc_service_instance_annotation[:key_prefix],
                                cc_service_instance_annotation[:key],
                                cc_service_instance_annotation[:guid],
                                cc_service_instance_annotation[:created_at].to_datetime.rfc3339,
@@ -2985,7 +2989,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('ServiceInstancesAnnotationsTable', "#{cc_service_instance[:guid]}/metadata/annotations/#{cc_service_instance_annotation[:key]}")
+            check_checkbox_guid('ServiceInstancesAnnotationsTable', "#{cc_service_instance[:guid]}/metadata/annotations/#{cc_service_instance_annotation[:key]}?prefix=#{cc_service_instance_annotation[:key_prefix]}")
           end
 
           context 'manage annotations subtable' do
@@ -4097,13 +4101,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'TasksAnnotationsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='TasksAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
-                                expected_length: 6,
-                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='TasksAnnotationsTable']/tbody/tr/td"),
                              [
                                '',
+                               cc_task_annotation[:key_prefix],
                                cc_task_annotation[:key],
                                cc_task_annotation[:guid],
                                cc_task_annotation[:created_at].to_datetime.rfc3339,
@@ -4117,7 +4122,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('TasksAnnotationsTable', "#{cc_task[:guid]}/metadata/annotations/#{cc_task_annotation[:key]}")
+            check_checkbox_guid('TasksAnnotationsTable', "#{cc_task[:guid]}/metadata/annotations/#{cc_task_annotation[:key]}?prefix=#{cc_task_annotation[:key_prefix]}")
           end
 
           context 'manage annotations subtable' do
@@ -5569,13 +5574,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'BuildpacksAnnotationsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='BuildpacksAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
-                                expected_length: 6,
-                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='BuildpacksAnnotationsTable']/tbody/tr/td"),
                              [
                                '',
+                               cc_buildpack_annotation[:key_prefix],
                                cc_buildpack_annotation[:key],
                                cc_buildpack_annotation[:guid],
                                cc_buildpack_annotation[:created_at].to_datetime.rfc3339,
@@ -5589,7 +5595,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('BuildpacksAnnotationsTable', "#{cc_buildpack[:guid]}/metadata/annotations/#{cc_buildpack_annotation[:key]}")
+            check_checkbox_guid('BuildpacksAnnotationsTable', "#{cc_buildpack[:guid]}/metadata/annotations/#{cc_buildpack_annotation[:key]}?prefix=#{cc_buildpack_annotation[:key_prefix]}")
           end
 
           context 'manage annotations subtable' do
@@ -5811,13 +5817,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'DomainsAnnotationsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='DomainsAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
-                                expected_length: 6,
-                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='DomainsAnnotationsTable']/tbody/tr/td"),
                              [
                                '',
+                               cc_domain_annotation[:key_prefix],
                                cc_domain_annotation[:key],
                                cc_domain_annotation[:guid],
                                cc_domain_annotation[:created_at].to_datetime.rfc3339,
@@ -5831,7 +5838,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('DomainsAnnotationsTable', "#{cc_domain[:guid]}/metadata/annotations/#{cc_domain_annotation[:key]}")
+            check_checkbox_guid('DomainsAnnotationsTable', "#{cc_domain[:guid]}/metadata/annotations/#{cc_domain_annotation[:key]}?prefix=#{cc_domain_annotation[:key_prefix]}")
           end
 
           context 'manage annotations subtable' do
@@ -6482,13 +6489,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'StacksAnnotationsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='StacksAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
-                                expected_length: 6,
-                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='StacksAnnotationsTable']/tbody/tr/td"),
                              [
                                '',
+                               cc_stack_annotation[:key_prefix],
                                cc_stack_annotation[:key],
                                cc_stack_annotation[:guid],
                                cc_stack_annotation[:created_at].to_datetime.rfc3339,
@@ -6502,7 +6510,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('StacksAnnotationsTable', "#{cc_stack[:guid]}/metadata/annotations/#{cc_stack_annotation[:key]}")
+            check_checkbox_guid('StacksAnnotationsTable', "#{cc_stack[:guid]}/metadata/annotations/#{cc_stack_annotation[:key]}?prefix=#{cc_stack_annotation[:key_prefix]}")
           end
 
           context 'manage annotations subtable' do
@@ -8755,13 +8763,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             expect(@driver.find_element(id: 'IsolationSegmentsAnnotationsDetailsLabel').displayed?).to be(true)
 
             check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='IsolationSegmentsAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
-                                expected_length: 6,
-                                labels:          ['', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
                                 colspans:        nil)
 
             check_table_data(@driver.find_elements(xpath: "//table[@id='IsolationSegmentsAnnotationsTable']/tbody/tr/td"),
                              [
                                '',
+                               cc_isolation_segment_annotation[:key_prefix],
                                cc_isolation_segment_annotation[:key],
                                cc_isolation_segment_annotation[:guid],
                                cc_isolation_segment_annotation[:created_at].to_datetime.rfc3339,
@@ -8775,7 +8784,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'annotations subtable has a checkbox in the first column' do
-            check_checkbox_guid('IsolationSegmentsAnnotationsTable', "#{cc_isolation_segment[:guid]}/metadata/annotations/#{cc_isolation_segment_annotation[:key]}")
+            check_checkbox_guid('IsolationSegmentsAnnotationsTable', "#{cc_isolation_segment[:guid]}/metadata/annotations/#{cc_isolation_segment_annotation[:key]}?prefix=#{cc_isolation_segment_annotation[:key_prefix]}")
           end
 
           context 'manage annotations subtable' do

@@ -351,6 +351,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :resource_guid, :buildpacks, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -403,6 +404,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :resource_guid, :isolation_segments, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -435,6 +437,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :resource_guid, :stacks, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -467,6 +470,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :resource_guid, :size=>255
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -754,6 +758,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :resource_guid, :builds, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -786,6 +791,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :resource_guid, :deployments, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -833,6 +839,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :resource_guid, :droplets, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -865,6 +872,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :resource_guid, :packages, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -897,6 +905,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :resource_guid, :processes, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -929,6 +938,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :resource_guid, :revisions, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -991,6 +1001,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :resource_guid, :tasks, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -1023,6 +1034,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :resource_guid, :size=>255
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -1072,6 +1084,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       String :resource_guid, :size=>255
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -1224,6 +1237,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :resource_guid, :spaces, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       
@@ -1303,6 +1317,39 @@ Sequel.migration do
       primary_key :organizations_users_pk, :keep_order=>true
       
       index [:organization_id, :user_id], :name=>:org_users_idx, :unique=>true
+    end
+    
+    create_table(:route_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :routes, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_route_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:route_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :routes, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_route_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:route_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
     
     create_table(:route_mappings, :ignore_index_errors=>true) do
@@ -1496,6 +1543,7 @@ Sequel.migration do
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
       foreign_key :resource_guid, :service_instances, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
       String :key, :size=>1000
       String :value, :size=>5000
       

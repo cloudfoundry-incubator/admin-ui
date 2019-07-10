@@ -1574,9 +1574,12 @@ module AdminUI
       500
     end
 
-    delete '/applications/:app_guid/metadata/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/applications/#{params[:app_guid]}/metadata/annotations/#{params[:key]}")
-      @operation.delete_application_annotation(params[:app_guid], params[:key])
+    delete '/applications/:app_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/applications/#{params[:app_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_application_annotation(params[:app_guid], prefix, params[:name])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete application annotation: #{error.to_h}")
@@ -1622,9 +1625,12 @@ module AdminUI
       500
     end
 
-    delete '/buildpacks/:buildpack_guid/metadata/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/buildpacks/#{params[:buildpack_guid]}/metadata/annotations/#{params[:key]}")
-      @operation.delete_buildpack_annotation(params[:buildpack_guid], params[:key])
+    delete '/buildpacks/:buildpack_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/buildpacks/#{params[:buildpack_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_buildpack_annotation(params[:buildpack_guid], prefix, params[:name])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete buildpack annotation: #{error.to_h}")
@@ -1728,9 +1734,12 @@ module AdminUI
       500
     end
 
-    delete '/domains/:domain_guid/metadata/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/domains/#{params[:domain_guid]}/metadata/annotations/#{params[:key]}")
-      @operation.delete_domain_annotation(params[:domain_guid], params[:key])
+    delete '/domains/:domain_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/domains/#{params[:domain_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_domain_annotation(params[:domain_guid], prefix, params[:name])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete domain annotation: #{error.to_h}")
@@ -1846,9 +1855,12 @@ module AdminUI
       500
     end
 
-    delete '/isolation_segments/:isolation_segment_guid/metadata/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/isolation_segments/#{params[:isolation_segment_guid]}/metadata/annotations/#{params[:key]}")
-      @operation.delete_isolation_segment_annotation(params[:isolation_segment_guid], params[:key])
+    delete '/isolation_segments/:isolation_segment_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/isolation_segments/#{params[:isolation_segment_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_isolation_segment_annotation(params[:isolation_segment_guid], prefix, params[:name])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete isolation_segment annotation: #{error.to_h}")
@@ -1942,9 +1954,12 @@ module AdminUI
       500
     end
 
-    delete '/organizations/:organization_guid/metadata/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/metadata/annotations/#{params[:key]}")
-      @operation.delete_organization_annotation(params[:organization_guid], params[:key])
+    delete '/organizations/:organization_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/organizations/#{params[:organization_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_organization_annotation(params[:organization_guid], prefix, params[:name])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete organization annotation: #{error.to_h}")
@@ -2150,9 +2165,12 @@ module AdminUI
       500
     end
 
-    delete '/service_instances/:service_instance_guid/metadata/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/service_instances/#{params[:service_instance_guid]}/metadata/annotations/#{params[:key]}")
-      @operation.delete_service_instance_annotation(params[:service_instance_guid], params[:key])
+    delete '/service_instances/:service_instance_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/service_instances/#{params[:service_instance_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_service_instance_annotation(params[:service_instance_guid], prefix, params[:name])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete service instance annotation: #{error.to_h}")
@@ -2339,9 +2357,12 @@ module AdminUI
       500
     end
 
-    delete '/spaces/:space_guid/metadata/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/metadata/annotations/#{params[:key]}")
-      @operation.delete_space_annotation(params[:space_guid], params[:key])
+    delete '/spaces/:space_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/spaces/#{params[:space_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_space_annotation(params[:space_guid], prefix, params[:name])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete space annotation: #{error.to_h}")
@@ -2417,9 +2438,12 @@ module AdminUI
       500
     end
 
-    delete '/stacks/:stack_guid/metadata/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/stacks/#{params[:stack_guid]}/metadata/annotations/#{params[:key]}")
-      @operation.delete_stack_annotation(params[:stack_guid], params[:key])
+    delete '/stacks/:stack_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/stacks/#{params[:stack_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_stack_annotation(params[:stack_guid], prefix, params[:name])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete stack annotation: #{error.to_h}")
@@ -2480,9 +2504,12 @@ module AdminUI
       500
     end
 
-    delete '/tasks/:task_guid/metadata/annotations/:key', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/tasks/#{params[:task_guid]}/metadata/annotations/#{params[:key]}")
-      @operation.delete_task_annotation(params[:task_guid], params[:key])
+    delete '/tasks/:task_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/tasks/#{params[:task_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_task_annotation(params[:task_guid], prefix, params[:name])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete task annotation: #{error.to_h}")

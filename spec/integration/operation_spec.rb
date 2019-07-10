@@ -109,7 +109,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_application_annotation
-        operation.delete_application_annotation(cc_app[:guid], cc_app_annotation[:key])
+        operation.delete_application_annotation(cc_app[:guid], cc_app_annotation[:key_prefix], cc_app_annotation[:key])
       end
 
       def delete_application_environment_variable
@@ -343,7 +343,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_buildpack_annotation
-        operation.delete_buildpack_annotation(cc_buildpack[:guid], cc_buildpack_annotation[:key])
+        operation.delete_buildpack_annotation(cc_buildpack[:guid], cc_buildpack_annotation[:key_prefix], cc_buildpack_annotation[:key])
       end
 
       def delete_buildpack_label
@@ -506,7 +506,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_domain_annotation
-        operation.delete_domain_annotation(cc_domain[:guid], cc_domain_annotation[:key])
+        operation.delete_domain_annotation(cc_domain[:guid], cc_domain_annotation[:key_prefix], cc_domain_annotation[:key])
       end
 
       def delete_domain_label
@@ -758,7 +758,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_isolation_segment_annotation
-        operation.delete_isolation_segment_annotation(cc_isolation_segment[:guid], cc_isolation_segment_annotation[:key])
+        operation.delete_isolation_segment_annotation(cc_isolation_segment[:guid], cc_isolation_segment_annotation[:key_prefix], cc_isolation_segment_annotation[:key])
       end
 
       def delete_isolation_segment_label
@@ -904,7 +904,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_organization_annotation
-        operation.delete_organization_annotation(cc_organization[:guid], cc_organization_annotation[:key])
+        operation.delete_organization_annotation(cc_organization[:guid], cc_organization_annotation[:key_prefix], cc_organization_annotation[:key])
       end
 
       def delete_organization_label
@@ -1591,7 +1591,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_service_instance_annotation
-        operation.delete_service_instance_annotation(cc_service_instance[:guid], cc_service_instance_annotation[:key])
+        operation.delete_service_instance_annotation(cc_service_instance[:guid], cc_service_instance_annotation[:key_prefix], cc_service_instance_annotation[:key])
       end
 
       def delete_service_instance_label
@@ -1875,7 +1875,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_space_annotation
-        operation.delete_space_annotation(cc_space[:guid], cc_space_annotation[:key])
+        operation.delete_space_annotation(cc_space[:guid], cc_space_annotation[:key_prefix], cc_space_annotation[:key])
       end
 
       def delete_space_label
@@ -2127,7 +2127,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_stack_annotation
-        operation.delete_stack_annotation(cc_stack[:guid], cc_stack_annotation[:key])
+        operation.delete_stack_annotation(cc_stack[:guid], cc_stack_annotation[:key_prefix], cc_stack_annotation[:key])
       end
 
       def delete_stack_label
@@ -2213,7 +2213,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_task_annotation
-        operation.delete_task_annotation(cc_task[:guid], cc_task_annotation[:key])
+        operation.delete_task_annotation(cc_task[:guid], cc_task_annotation[:key_prefix], cc_task_annotation[:key])
       end
 
       def delete_task_label

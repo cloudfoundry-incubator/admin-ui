@@ -27,13 +27,13 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :app_annotations,
-            columns: %i[created_at guid id key resource_guid updated_at value]
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
           },
           application_labels:
           {
             db_uri:  ccdb_uri,
             table:   :app_labels,
-            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
           },
           applications:
           {
@@ -51,13 +51,13 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :buildpack_annotations,
-            columns: %i[created_at guid id key resource_guid updated_at value]
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
           },
           buildpack_labels:
           {
             db_uri:  ccdb_uri,
             table:   :buildpack_labels,
-            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
           },
           buildpacks:
           {
@@ -81,13 +81,13 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :domain_annotations,
-            columns: %i[created_at guid id key resource_guid updated_at value]
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
           },
           domain_labels:
           {
             db_uri:  ccdb_uri,
             table:   :domain_labels,
-            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
           },
           domains:
           {
@@ -148,13 +148,13 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :isolation_segment_annotations,
-            columns: %i[created_at guid id key resource_guid updated_at value]
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
           },
           isolation_segment_labels:
           {
             db_uri:  ccdb_uri,
             table:   :isolation_segment_labels,
-            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
           },
           isolation_segments:
           {
@@ -172,13 +172,13 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :organization_annotations,
-            columns: %i[created_at guid id key resource_guid updated_at value]
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
           },
           organization_labels:
           {
             db_uri:  ccdb_uri,
             table:   :organization_labels,
-            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
           },
           organizations:
           {
@@ -316,13 +316,13 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_instance_annotations,
-            columns: %i[created_at guid id key resource_guid updated_at value]
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
           },
           service_instance_labels:
           {
             db_uri:  ccdb_uri,
             table:   :service_instance_labels,
-            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
           },
           service_instance_operations:
           {
@@ -370,13 +370,13 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :space_annotations,
-            columns: %i[created_at guid id key resource_guid updated_at value]
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
           },
           space_labels:
           {
             db_uri:  ccdb_uri,
             table:   :space_labels,
-            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
           },
           space_quota_definitions:
           {
@@ -412,13 +412,13 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :stack_annotations,
-            columns: %i[created_at guid id key resource_guid updated_at value]
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
           },
           stack_labels:
           {
             db_uri:  ccdb_uri,
             table:   :stack_labels,
-            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
           },
           stacks:
           {
@@ -436,13 +436,13 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :task_annotations,
-            columns: %i[created_at guid id key resource_guid updated_at value]
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
           },
           task_labels:
           {
             db_uri:  ccdb_uri,
             table:   :task_labels,
-            columns: %i[created_at guid id key_prefix key_name resource_guid updated_at value]
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
           },
           tasks:
           {

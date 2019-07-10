@@ -537,6 +537,7 @@ module CCHelper
       guid:          'app_annotation1',
       id:            unique_id('cc_app_annotation'),
       key:           'appannotationkey',
+      key_prefix:    'appannotationkeyprefix.com',
       resource_guid: cc_app[:guid],
       updated_at:    unique_time('cc_app_annotation_updated'),
       value:         'appannotationvalue'
@@ -594,6 +595,7 @@ module CCHelper
       guid:          'buildpack_annotation1',
       id:            unique_id('cc_buildpack_annotation'),
       key:           'bpannotationkey',
+      key_prefix:    'bpannotationkeyprefix.com',
       resource_guid: cc_buildpack[:guid],
       updated_at:    unique_time('cc_buildpack_annotation_updated'),
       value:         'bpannotationvalue'
@@ -641,6 +643,7 @@ module CCHelper
       guid:          'domain_annotation1',
       id:            unique_id('cc_domain_annotation'),
       key:           'dmannotationkey',
+      key_prefix:    'dmannotationkeyprefix.com',
       resource_guid: cc_domain[:guid],
       updated_at:    unique_time('cc_domain_annotation_updated'),
       value:         'dmannotationvalue'
@@ -1029,6 +1032,7 @@ module CCHelper
       guid:          'isolation_segment_annotation1',
       id:            unique_id('cc_isolation_segment_annotation'),
       key:           'isannotationkey',
+      key_prefix:    'isannotationkeyprefix.com',
       resource_guid: cc_isolation_segment[:guid],
       updated_at:    unique_time('cc_isolation_segment_annotation_updated'),
       value:         'isannotationvalue'
@@ -1091,6 +1095,7 @@ module CCHelper
       guid:          'organization_annotation1',
       id:            unique_id('cc_organization_annotation'),
       key:           'organnotationkey',
+      key_prefix:    'organnotationkeyprefix.com',
       resource_guid: cc_organization[:guid],
       updated_at:    unique_time('cc_organization_annotation_updated'),
       value:         'organnotationvalue'
@@ -1472,6 +1477,7 @@ module CCHelper
       guid:          'service_instance_annotation1',
       id:            unique_id('cc_service_instance_annotation'),
       key:           'siannotationkey',
+      key_prefix:    'siannotationkeyprefix.com',
       resource_guid: cc_service_instance[:guid],
       updated_at:    unique_time('cc_service_instance_annotation_updated'),
       value:         'siannotationvalue'
@@ -1598,6 +1604,7 @@ module CCHelper
       guid:          'space_annotation1',
       id:            unique_id('cc_space_annotation'),
       key:           'spaceannotationkey',
+      key_prefix:    'spaceannotationkeyprefix.com',
       resource_guid: cc_space[:guid],
       updated_at:    unique_time('cc_space_annotation_updated'),
       value:         'spaceannotationvalue'
@@ -1702,6 +1709,7 @@ module CCHelper
       guid:          'stack_annotation1',
       id:            unique_id('cc_stack_annotation'),
       key:           'stackannotationkey',
+      key_prefix:    'stackannotationkeyprefix.com',
       resource_guid: cc_stack[:guid],
       updated_at:    unique_time('cc_stack_annotation_updated'),
       value:         'stackannotationvalue'
@@ -1753,6 +1761,7 @@ module CCHelper
       guid:          'task_annotation1',
       id:            unique_id('cc_task_annotation'),
       key:           'taskannotationkey',
+      key_prefix:    'taskannotationkeyprefix.com',
       resource_guid: cc_task[:guid],
       updated_at:    unique_time('cc_task_annotation_updated'),
       value:         'taskannotationvalue'

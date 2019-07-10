@@ -241,9 +241,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_app_annotation
-      response = delete_request("/applications/#{cc_app[:guid]}/metadata/annotations/#{cc_app_annotation[:key]}")
+      response = delete_request("/applications/#{cc_app[:guid]}/metadata/annotations/#{cc_app_annotation[:key]}?prefix=#{cc_app_annotation[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/metadata/annotations/#{cc_app_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/applications/#{cc_app[:guid]}/metadata/annotations/#{cc_app_annotation[:key]}?prefix=#{cc_app_annotation[:key_prefix]}"]], true)
     end
 
     def delete_app_environment_variable
@@ -399,9 +399,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_buildpack_annotation
-      response = delete_request("/buildpacks/#{cc_buildpack[:guid]}/metadata/annotations/#{cc_buildpack_annotation[:key]}")
+      response = delete_request("/buildpacks/#{cc_buildpack[:guid]}/metadata/annotations/#{cc_buildpack_annotation[:key]}?prefix=#{cc_buildpack_annotation[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/buildpacks/#{cc_buildpack[:guid]}/metadata/annotations/#{cc_buildpack_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/buildpacks/#{cc_buildpack[:guid]}/metadata/annotations/#{cc_buildpack_annotation[:key]}?prefix=#{cc_buildpack_annotation[:key_prefix]}"]], true)
     end
 
     def delete_buildpack_label
@@ -575,9 +575,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_domain_annotation
-      response = delete_request("/domains/#{cc_domain[:guid]}/metadata/annotations/#{cc_domain_annotation[:key]}")
+      response = delete_request("/domains/#{cc_domain[:guid]}/metadata/annotations/#{cc_domain_annotation[:key]}?prefix=#{cc_domain_annotation[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}/metadata/annotations/#{cc_domain_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/domains/#{cc_domain[:guid]}/metadata/annotations/#{cc_domain_annotation[:key]}?prefix=#{cc_domain_annotation[:key_prefix]}"]], true)
     end
 
     def delete_domain_label
@@ -827,9 +827,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_isolation_segment_annotation
-      response = delete_request("/isolation_segments/#{cc_isolation_segment[:guid]}/metadata/annotations/#{cc_isolation_segment_annotation[:key]}")
+      response = delete_request("/isolation_segments/#{cc_isolation_segment[:guid]}/metadata/annotations/#{cc_isolation_segment_annotation[:key]}?prefix=#{cc_isolation_segment_annotation[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/isolation_segments/#{cc_isolation_segment[:guid]}/metadata/annotations/#{cc_isolation_segment_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/isolation_segments/#{cc_isolation_segment[:guid]}/metadata/annotations/#{cc_isolation_segment_annotation[:key]}?prefix=#{cc_isolation_segment_annotation[:key_prefix]}"]], true)
     end
 
     def delete_isolation_segment_label
@@ -944,9 +944,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_organization_annotation
-      response = delete_request("/organizations/#{cc_organization[:guid]}/metadata/annotations/#{cc_organization_annotation[:key]}")
+      response = delete_request("/organizations/#{cc_organization[:guid]}/metadata/annotations/#{cc_organization_annotation[:key]}?prefix=#{cc_organization_annotation[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/metadata/annotations/#{cc_organization_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/metadata/annotations/#{cc_organization_annotation[:key]}?prefix=#{cc_organization_annotation[:key_prefix]}"]], true)
     end
 
     def delete_organization_label
@@ -1443,9 +1443,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_service_instance_annotation
-      response = delete_request("/service_instances/#{cc_service_instance[:guid]}/metadata/annotations/#{cc_service_instance_annotation[:key]}")
+      response = delete_request("/service_instances/#{cc_service_instance[:guid]}/metadata/annotations/#{cc_service_instance_annotation[:key]}?prefix=#{cc_service_instance_annotation[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/metadata/annotations/#{cc_service_instance_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/service_instances/#{cc_service_instance[:guid]}/metadata/annotations/#{cc_service_instance_annotation[:key]}?prefix=#{cc_service_instance_annotation[:key_prefix]}"]], true)
     end
 
     def delete_service_instance_label
@@ -1671,9 +1671,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_space_annotation
-      response = delete_request("/spaces/#{cc_space[:guid]}/metadata/annotations/#{cc_space_annotation[:key]}")
+      response = delete_request("/spaces/#{cc_space[:guid]}/metadata/annotations/#{cc_space_annotation[:key]}?prefix=#{cc_space_annotation[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/metadata/annotations/#{cc_space_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/metadata/annotations/#{cc_space_annotation[:key]}?prefix=#{cc_space_annotation[:key_prefix]}"]], true)
     end
 
     def delete_space_label
@@ -1840,9 +1840,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_stack_annotation
-      response = delete_request("/stacks/#{cc_stack[:guid]}/metadata/annotations/#{cc_stack_annotation[:key]}")
+      response = delete_request("/stacks/#{cc_stack[:guid]}/metadata/annotations/#{cc_stack_annotation[:key]}?prefix=#{cc_stack_annotation[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/stacks/#{cc_stack[:guid]}/metadata/annotations/#{cc_stack_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/stacks/#{cc_stack[:guid]}/metadata/annotations/#{cc_stack_annotation[:key]}?prefix=#{cc_stack_annotation[:key_prefix]}"]], true)
     end
 
     def delete_stack_label
@@ -1906,9 +1906,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_task_annotation
-      response = delete_request("/tasks/#{cc_task[:guid]}/metadata/annotations/#{cc_task_annotation[:key]}")
+      response = delete_request("/tasks/#{cc_task[:guid]}/metadata/annotations/#{cc_task_annotation[:key]}?prefix=#{cc_task_annotation[:key_prefix]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/tasks/#{cc_task[:guid]}/metadata/annotations/#{cc_task_annotation[:key]}"]])
+      verify_sys_log_entries([['delete', "/tasks/#{cc_task[:guid]}/metadata/annotations/#{cc_task_annotation[:key]}?prefix=#{cc_task_annotation[:key_prefix]}"]], true)
     end
 
     def delete_task_label

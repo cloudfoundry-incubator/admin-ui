@@ -78,8 +78,10 @@ module AdminUI
       @view_models.invalidate_tasks
     end
 
-    def delete_application_annotation(application_guid, key)
+    def delete_application_annotation(application_guid, prefix, name)
       url = "/v3/apps/#{application_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
       body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
@@ -126,8 +128,10 @@ module AdminUI
       @view_models.invalidate_buildpacks
     end
 
-    def delete_buildpack_annotation(buildpack_guid, key)
+    def delete_buildpack_annotation(buildpack_guid, prefix, name)
       url = "/v3/buildpacks/#{buildpack_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
       body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
@@ -182,8 +186,10 @@ module AdminUI
       @view_models.invalidate_domains
     end
 
-    def delete_domain_annotation(domain_guid, key)
+    def delete_domain_annotation(domain_guid, prefix, name)
       url = "/v3/domains/#{domain_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
       body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
@@ -266,8 +272,10 @@ module AdminUI
       @view_models.invalidate_organizations_isolation_segments
     end
 
-    def delete_isolation_segment_annotation(isolation_segment_guid, key)
+    def delete_isolation_segment_annotation(isolation_segment_guid, prefix, name)
       url = "/v3/isolation_segments/#{isolation_segment_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
       body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
@@ -347,8 +355,10 @@ module AdminUI
       @view_models.invalidate_service_plan_visibilities
     end
 
-    def delete_organization_annotation(organization_guid, key)
+    def delete_organization_annotation(organization_guid, prefix, name)
       url = "/v3/organizations/#{organization_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
       body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
@@ -531,8 +541,10 @@ module AdminUI
       @view_models.invalidate_service_instances
     end
 
-    def delete_service_instance_annotation(service_instance_guid, key)
+    def delete_service_instance_annotation(service_instance_guid, prefix, name)
       url = "/v3/service_instances/#{service_instance_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
       body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
@@ -634,8 +646,10 @@ module AdminUI
       @view_models.invalidate_staging_security_groups_spaces
     end
 
-    def delete_space_annotation(space_guid, key)
+    def delete_space_annotation(space_guid, prefix, name)
       url = "/v3/spaces/#{space_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
       body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
@@ -698,8 +712,10 @@ module AdminUI
       @view_models.invalidate_stacks
     end
 
-    def delete_stack_annotation(stack_guid, key)
+    def delete_stack_annotation(stack_guid, prefix, name)
       url = "/v3/stacks/#{stack_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
       body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
@@ -726,8 +742,10 @@ module AdminUI
       @view_models.invalidate_staging_security_groups_spaces
     end
 
-    def delete_task_annotation(task_guid, key)
+    def delete_task_annotation(task_guid, prefix, name)
       url = "/v3/tasks/#{task_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
       body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
