@@ -984,6 +984,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete route recursive')
     end
 
+    shared_examples 'common delete route annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/routes/route1/metadata/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete route annotation via http' do
+      it_behaves_like('common delete route annotation')
+    end
+
+    context 'delete route annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete route annotation')
+    end
+
     shared_examples 'common delete route binding' do
       it 'returns failure code due to disconnection' do
         response = delete('/route_bindings/service_instance1/route1/true')
@@ -999,6 +1016,40 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete route binding')
+    end
+
+    shared_examples 'common delete route label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/routes/route1/metadata/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete route label via http' do
+      it_behaves_like('common delete route label')
+    end
+
+    context 'delete route label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete route label')
+    end
+
+    shared_examples 'common delete route label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/routes/route1/metadata/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete route label with prefix via http' do
+      it_behaves_like('common delete route label with prefix')
+    end
+
+    context 'delete route label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete route label with prefix')
     end
 
     shared_examples 'common delete route mapping' do
@@ -3011,6 +3062,18 @@ describe AdminUI::Admin do
 
       it 'deletes /routes/:guid?recursive=true redirects as expected' do
         delete_redirects_as_expected('/routes/route1?recursive=true')
+      end
+
+      it 'deletes /routes/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/routes/route1/metadata/annotations/annotation1')
+      end
+
+      it 'deletes /routes/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/routes/route1/metadata/labels/label1')
+      end
+
+      it 'deletes /routes/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/routes/route1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /security_groups/:guid redirects as expected' do

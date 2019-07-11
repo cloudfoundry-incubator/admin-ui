@@ -1065,7 +1065,9 @@ module ViewModelsHelper
 
   def view_models_routes_detail
     {
+      'annotations'  => [annotation_rfc3339(cc_route_annotation)],
       'domain'       => cc_domain,
+      'labels'       => [label_rfc3339(cc_route_label)],
       'organization' => cc_organization,
       'route'        => cc_route,
       'space'        => cc_space

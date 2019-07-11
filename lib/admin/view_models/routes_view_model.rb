@@ -9,12 +9,14 @@ module AdminUI
       # routes have to exist. Other record types are optional
       return result unless routes['connected']
 
-      domains        = @cc.domains
-      events         = @cc.events
-      organizations  = @cc.organizations
-      route_bindings = @cc.route_bindings
-      route_mappings = @cc.route_mappings
-      spaces         = @cc.spaces
+      domains           = @cc.domains
+      events            = @cc.events
+      organizations     = @cc.organizations
+      route_annotations = @cc.route_annotations
+      route_bindings    = @cc.route_bindings
+      route_labels      = @cc.route_labels
+      route_mappings    = @cc.route_mappings
+      spaces            = @cc.spaces
 
       events_connected         = events['connected']
       route_bindings_connected = route_bindings['connected']
@@ -23,6 +25,54 @@ module AdminUI
       domain_hash       = Hash[domains['items'].map { |item| [item[:id], item] }]
       organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
       space_hash        = Hash[spaces['items'].map { |item| [item[:id], item] }]
+
+      route_annotations_hash = {}
+      route_annotations['items'].each do |route_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        route_guid = route_annotation[:resource_guid]
+        route_annotations_array = route_annotations_hash[route_guid]
+        if route_annotations_array.nil?
+          route_annotations_array = []
+          route_annotations_hash[route_guid] = route_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         route_annotation,
+            created_at_rfc3339: route_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: route_annotation[:updated_at].nil? ? nil : route_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        route_annotations_array.push(wrapper)
+      end
+
+      route_labels_hash = {}
+      route_labels['items'].each do |route_label|
+        return result unless @running
+
+        Thread.pass
+
+        route_guid = route_label[:resource_guid]
+        route_labels_array = route_labels_hash[route_guid]
+        if route_labels_array.nil?
+          route_labels_array = []
+          route_labels_hash[route_guid] = route_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              route_label,
+            created_at_rfc3339: route_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: route_label[:updated_at].nil? ? nil : route_label[:updated_at].to_datetime.rfc3339
+          }
+
+        route_labels_array.push(wrapper)
+      end
 
       event_counters = {}
       events['items'].each do |event|
@@ -73,9 +123,11 @@ module AdminUI
         space        = space_hash[route[:space_id]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]
 
-        app_counter     = app_counters[guid]
-        binding_counter = binding_counters[route[:id]]
-        event_counter   = event_counters[guid]
+        app_counter            = app_counters[guid]
+        binding_counter        = binding_counters[route[:id]]
+        event_counter          = event_counters[guid]
+        route_annotation_array = route_annotations_hash[guid] || []
+        route_label_array      = route_labels_hash[guid] || []
 
         row = []
 
@@ -159,7 +211,9 @@ module AdminUI
 
         hash[guid] =
           {
+            'annotations'  => route_annotation_array,
             'domain'       => domain,
+            'labels'       => route_label_array,
             'organization' => organization,
             'route'        => route,
             'space'        => space

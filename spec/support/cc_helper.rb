@@ -274,7 +274,9 @@ module CCHelper
   end
 
   def cc_clear_routes_cache_stub(config)
+    cc_clear_route_annotations_cache_stub(config)
     cc_clear_route_bindings_cache_stub(config)
+    cc_clear_route_labels_cache_stub(config)
     cc_clear_route_mappings_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM routes')
@@ -282,10 +284,18 @@ module CCHelper
     @cc_routes_deleted = true
   end
 
+  def cc_clear_route_annotations_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM route_annotations')
+  end
+
   def cc_clear_route_bindings_cache_stub(config)
     sql(config.ccdb_uri, 'DELETE FROM route_bindings')
 
     @cc_route_bindings_deleted = true
+  end
+
+  def cc_clear_route_labels_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM route_labels')
   end
 
   def cc_clear_route_mappings_cache_stub(config)
@@ -1274,6 +1284,19 @@ module CCHelper
     }
   end
 
+  def cc_route_annotation
+    {
+      created_at:    unique_time('cc_route_annotation_created'),
+      guid:          'route_annotation1',
+      id:            unique_id('cc_route_annotation'),
+      key:           'rtannotationkey',
+      key_prefix:    'rtannotationkeyprefix.com',
+      resource_guid: cc_route[:guid],
+      updated_at:    unique_time('cc_route_annotation_updated'),
+      value:         'rtannotationvalue'
+    }
+  end
+
   def cc_route_binding
     {
       created_at:          unique_time('cc_route_binding_created'),
@@ -1283,6 +1306,19 @@ module CCHelper
       route_service_url:   cc_service_instance[:route_service_url],
       service_instance_id: cc_service_instance[:id],
       updated_at:          unique_time('cc_route_binding_updated')
+    }
+  end
+
+  def cc_route_label
+    {
+      created_at:    unique_time('cc_route_label_created'),
+      guid:          'route_label1',
+      id:            unique_id('cc_route_label'),
+      key_name:      'rtlabelkeyname',
+      key_prefix:    'rtlabelkeyprefix.com',
+      resource_guid: cc_route[:guid],
+      updated_at:    unique_time('cc_route_label_updated'),
+      value:         'rtlabelvalue'
     }
   end
 
@@ -2010,6 +2046,8 @@ module CCHelper
                [:droplets,                         cc_droplet],
                [:buildpack_lifecycle_data,         cc_buildpack_lifecycle_data],
                [:routes,                           cc_route],
+               [:route_annotations,                cc_route_annotation],
+               [:route_labels,                     cc_route_label],
                [:service_brokers,                  cc_service_broker_with_password],
                [:users,                            cc_user],
                [:request_counts,                   cc_request_count],
@@ -2679,6 +2717,16 @@ module CCHelper
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/routes/#{cc_route[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_routes_deleted
+        cc_route_not_found
+      else
+        cc_clear_routes_cache_stub(config)
+        OK.new({})
+      end
+    end
   end
 
   def cc_route_binding_not_found
@@ -3111,6 +3159,8 @@ module CCHelper
       if @cc_spaces_deleted
         cc_space_not_found
       else
+        cc_clear_route_annotations_cache_stub(config)
+        cc_clear_route_labels_cache_stub(config)
         sql(config.ccdb_uri, "DELETE FROM routes WHERE space_id = '#{cc_space[:id]}' AND NOT EXISTS (SELECT * FROM route_mappings WHERE routes.guid == route_mappings.route_guid)")
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end

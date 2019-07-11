@@ -125,6 +125,8 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_buildpacks
+      @cc.invalidate_buildpack_annotations
+      @cc.invalidate_buildpack_labels
       @view_models.invalidate_buildpacks
     end
 
@@ -177,6 +179,8 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_domains
+      @cc.invalidate_domain_annotations
+      @cc.invalidate_domain_labels
       if recursive
         @cc.invalidate_routes
         @cc.invalidate_route_mappings
@@ -267,6 +271,8 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_isolation_segments
+      @cc.invalidate_isolation_segment_annotations
+      @cc.invalidate_isolation_segment_labels
       @cc.invalidate_organizations_isolation_segments
       @view_models.invalidate_isolation_segments
       @view_models.invalidate_organizations_isolation_segments
@@ -437,9 +443,22 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_routes
+      @cc.invalidate_route_annotations
+      @cc.invalidate_route_labels
       @cc.invalidate_route_mappings
       @view_models.invalidate_routes
       @view_models.invalidate_route_mappings
+    end
+
+    def delete_route_annotation(route_guid, prefix, name)
+      url = "/v3/routes/#{route_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_route_annotations
+      @view_models.invalidate_routes
     end
 
     def delete_route_binding(service_instance_guid, route_guid, is_gateway_service)
@@ -448,6 +467,17 @@ module AdminUI
       @client.delete_cc(url)
       @cc.invalidate_route_bindings
       @view_models.invalidate_route_bindings
+    end
+
+    def delete_route_label(route_guid, prefix, name)
+      url = "/v3/routes/#{route_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_route_labels
+      @view_models.invalidate_routes
     end
 
     def delete_route_mapping(route_mapping_guid)
@@ -532,6 +562,8 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_instances
+      @cc.invalidate_service_instance_annotations
+      @cc.invalidate_service_instance_labels
       if recursive
         @cc.invalidate_service_bindings
         @cc.invalidate_service_keys
@@ -615,6 +647,7 @@ module AdminUI
       @cc.invalidate_spaces_auditors
       @cc.invalidate_spaces_developers
       @cc.invalidate_spaces_managers
+      @cc.invalidate_space_annotations
       @cc.invalidate_space_labels
       @cc.invalidate_staging_security_groups_spaces
       if recursive
@@ -709,6 +742,8 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_stacks
+      @cc.invalidate_stack_annotations
+      @cc.invalidate_stack_labels
       @view_models.invalidate_stacks
     end
 
@@ -750,6 +785,7 @@ module AdminUI
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
       @cc.invalidate_task_annotations
+      @cc.invalidate_task_labels
       @view_models.invalidate_tasks
     end
 

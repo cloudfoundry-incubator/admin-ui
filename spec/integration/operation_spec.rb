@@ -1234,12 +1234,28 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_route(cc_route[:guid], true)
       end
 
+      def delete_route_annotation
+        operation.delete_route_annotation(cc_route[:guid], cc_route_annotation[:key_prefix], cc_route_annotation[:key])
+      end
+
+      def delete_route_label
+        operation.delete_route_label(cc_route[:guid], cc_route_label[:key_prefix], cc_route_label[:key_name])
+      end
+
       it 'deletes route' do
         expect { delete_route }.to change { cc.routes['items'].length }.from(1).to(0)
       end
 
       it 'deletes route recursive' do
         expect { delete_route_recursive }.to change { cc.routes['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the route annotation' do
+        expect { delete_route_annotation }.to change { cc.route_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the route label' do
+        expect { delete_route_label }.to change { cc.route_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -1260,6 +1276,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting recursive deleted route' do
           expect { delete_route_recursive }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_route_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted route' do
+          expect { delete_route_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_route_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted route' do
+          expect { delete_route_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_route_not_found(exception) }
         end
       end
     end

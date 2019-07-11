@@ -157,6 +157,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Routes tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Routes' }
+        let(:page_id)   { 'RoutesPage' }
+        let(:button_id) { 'Buttons_RoutesLabelsTable_0' }
+      end
+    end
+
+    context 'Routes tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Routes' }
+        let(:page_id)   { 'RoutesPage' }
+        let(:button_id) { 'Buttons_RoutesAnnotationsTable_0' }
+      end
+    end
+
     context 'Route Mappings tab does not have delete button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'RouteMappings' }

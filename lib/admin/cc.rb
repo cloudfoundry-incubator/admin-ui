@@ -240,11 +240,23 @@ module AdminUI
             table:   :quota_definitions,
             columns: %i[app_instance_limit app_task_limit created_at guid id instance_memory_limit memory_limit name non_basic_services_allowed total_private_domains total_reserved_route_ports total_routes total_services total_service_keys updated_at]
           },
+          request_counts:
+          {
+            db_uri:  ccdb_uri,
+            table:   :request_counts,
+            columns: %i[count id user_guid valid_until]
+          },
           revocable_tokens:
           {
             db_uri:  uaadb_uri,
             table:   :revocable_tokens,
             columns: %i[client_id expires_at format identity_zone_id issued_at response_type scope token_id user_id]
+          },
+          route_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :route_annotations,
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
           },
           route_bindings:
           {
@@ -252,11 +264,11 @@ module AdminUI
             table:   :route_bindings,
             columns: %i[created_at guid id route_id route_service_url service_instance_id updated_at]
           },
-          request_counts:
+          route_labels:
           {
             db_uri:  ccdb_uri,
-            table:   :request_counts,
-            columns: %i[count id user_guid valid_until]
+            table:   :route_labels,
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
           },
           route_mappings:
           {
@@ -695,8 +707,16 @@ module AdminUI
       invalidate_cache(:revocable_tokens)
     end
 
+    def invalidate_route_annotations
+      invalidate_cache(:route_annotations)
+    end
+
     def invalidate_route_bindings
       invalidate_cache(:route_bindings)
+    end
+
+    def invalidate_route_labels
+      invalidate_cache(:route_labels)
     end
 
     def invalidate_route_mappings
@@ -936,8 +956,16 @@ module AdminUI
       result_cache(:revocable_tokens)
     end
 
+    def route_annotations
+      result_cache(:route_annotations)
+    end
+
     def route_bindings
       result_cache(:route_bindings)
+    end
+
+    def route_labels
+      result_cache(:route_labels)
     end
 
     def route_mappings

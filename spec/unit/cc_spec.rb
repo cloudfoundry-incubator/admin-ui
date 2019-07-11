@@ -209,8 +209,16 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.routes)
     end
 
+    it 'returns zero route annotations as expected' do
+      verify_disconnected_items(cc.route_annotations)
+    end
+
     it 'returns zero route_bindings as expected' do
       verify_disconnected_items(cc.route_bindings)
+    end
+
+    it 'returns zero route labels as expected' do
+      verify_disconnected_items(cc.route_labels)
     end
 
     it 'returns zero route_mappings as expected' do
