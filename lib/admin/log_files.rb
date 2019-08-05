@@ -196,7 +196,7 @@ module AdminUI
         begin
           uri, options = uri_and_options
 
-          last_slash   = uri.path.rindex('/')
+          last_slash = uri.path.rindex('/')
           file_name = uri.path.slice(last_slash + 1, uri.path.length - last_slash)
           ext_name = File.extname(file_name)
           base_name = File.basename(file_name, ext_name)

@@ -9,7 +9,7 @@ gem 'net-sftp', '2.1.2'
 gem 'parse-cron', '0.1.4'
 gem 'protobuf', '3.10.0'
 gem 'rack-ssl', '1.4.1'
-gem 'sequel', '5.22.0'
+gem 'sequel', '5.23.0'
 gem 'sequel_pg', '1.12.2'
 gem 'sinatra', '2.0.5'
 gem 'sqlite3', '1.4.1'
@@ -20,8 +20,8 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '0.73.0'
-  gem 'rubocop-performance', '1.4.0'
+  gem 'rubocop', '0.74.0'
+  gem 'rubocop-performance', '1.4.1'
   gem 'rubocop-rails', '2.2.1'
 end
 
