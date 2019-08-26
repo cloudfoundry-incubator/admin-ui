@@ -577,11 +577,15 @@ Sequel.migration do
       String :revision_guid, :size=>255
       Integer :revision_version
       DateTime :last_healthy_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      String :status_value, :size=>255
+      String :status_reason, :size=>255
       
       index [:app_guid]
       index [:created_at]
       index [:guid], :unique=>true
       index [:state]
+      index [:status_reason]
+      index [:status_value]
       index [:updated_at]
     end
     
@@ -717,6 +721,7 @@ Sequel.migration do
       String :name, :size=>255, :null=>false
       String :command, :size=>4096, :null=>false
       foreign_key :app_guid, :apps, :type=>String, :size=>255, :null=>false, :key=>[:guid]
+      Integer :memory
       
       index [:app_guid], :name=>:fk_sidecar_app_guid_index
       index [:created_at]
@@ -1361,7 +1366,7 @@ Sequel.migration do
       foreign_key :app_guid, :apps, :type=>String, :text=>true, :null=>false, :key=>[:guid]
       foreign_key :route_guid, :routes, :type=>String, :text=>true, :null=>false, :key=>[:guid]
       String :process_type, :text=>true
-      Integer :weight, :default=>1
+      Integer :weight
       
       index [:created_at], :name=>:apps_routes_created_at_index
       index [:guid], :name=>:apps_routes_guid_index, :unique=>true
