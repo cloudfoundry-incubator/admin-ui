@@ -21,7 +21,7 @@ GEM
     jaro_winkler (1.5.3)
     membrane (1.1.0)
     middleware (0.1.0)
-    minitest (5.11.3)
+    minitest (5.12.2)
     mustermann (1.0.3)
     mysql2 (0.5.2)
     nats (0.11.0)
@@ -31,7 +31,7 @@ GEM
     net-ssh (5.2.0)
     parallel (1.17.0)
     parse-cron (0.1.4)
-    parser (2.6.4.0)
+    parser (2.6.4.1)
       ast (~> 2.4.0)
     pg (1.1.4)
     protobuf (3.10.1)
@@ -59,7 +59,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.2)
-    rubocop (0.74.0)
+    rubocop (0.75.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.6)
@@ -72,11 +72,11 @@ GEM
       rack (>= 1.1)
       rubocop (>= 0.72.0)
     ruby-progressbar (1.10.1)
-    rubyzip (1.2.3)
-    selenium-webdriver (3.142.4)
+    rubyzip (2.0.0)
+    selenium-webdriver (3.142.5)
       childprocess (>= 0.5, < 3.0)
-      rubyzip (~> 1.2, >= 1.2.2)
-    sequel (5.24.0)
+      rubyzip (>= 1.2.2)
+    sequel (5.25.0)
     sequel_pg (1.12.2)
       pg (>= 0.18.0)
       sequel (>= 4.38.0)
@@ -88,7 +88,7 @@ GEM
     sqlite3 (1.4.1)
     thor (0.20.3)
     thread_safe (0.3.6)
-    tilt (2.0.9)
+    tilt (2.0.10)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unicode-display_width (1.6.0)
@@ -96,7 +96,7 @@ GEM
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
     yajl-ruby (1.4.1)
-    zeitwerk (2.1.9)
+    zeitwerk (2.1.10)
 
 PLATFORMS
   ruby
@@ -111,18 +111,18 @@ DEPENDENCIES
   protobuf (= 3.10.1)
   rack-ssl (= 1.4.1)
   rspec (= 3.8.0)
-  rubocop (= 0.74.0)
+  rubocop (= 0.75.0)
   rubocop-performance (= 1.4.1)
   rubocop-rails (= 2.3.2)
-  selenium-webdriver (= 3.142.4)
-  sequel (= 5.24.0)
+  selenium-webdriver (= 3.142.5)
+  sequel (= 5.25.0)
   sequel_pg (= 1.12.2)
   sinatra (= 2.0.7)
   sqlite3 (= 1.4.1)
   yajl-ruby (= 1.4.1)
 
 RUBY VERSION
-   ruby 2.6.4p104
+   ruby 2.6.5p114
 
 BUNDLED WITH
    1.17.3

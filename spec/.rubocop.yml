@@ -1,14 +1,14 @@
 inherit_from:
   - ../.rubocop.yml
 
-HandleExceptions:
-  Enabled: false
-
-IndentFirstArrayElement:
+Layout/IndentFirstArrayElement:
   EnforcedStyle: align_brackets
 
-IndentFirstHashElement:
+Layout/IndentFirstHashElement:
   EnforcedStyle: align_braces
+
+Lint/HandleExceptions:
+  Enabled: false
 
 Style/Lambda:
   Enabled: false

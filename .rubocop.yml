@@ -11,41 +11,44 @@ AllCops:
     - 'spec/support/ccdb/*'
     - 'spec/support/uaadb/*'
 
-AbcSize:
-  Enabled: false
-
-AlignHash:
+Layout/AlignHash:
   EnforcedColonStyle: table
   EnforcedHashRocketStyle: table
 
-BlockLength:
+Lint/UriEscapeUnescape:
   Enabled: false
 
-BlockNesting:
+Metrics/AbcSize:
   Enabled: false
 
-ClassLength:
+Metrics/BlockLength:
   Enabled: false
 
-CyclomaticComplexity:
+Metrics/BlockNesting:
   Enabled: false
 
-Documentation:
+Metrics/ClassLength:
   Enabled: false
 
-FrozenStringLiteralComment:
+Metrics/CyclomaticComplexity:
   Enabled: false
 
-LineLength:
+Metrics/LineLength:
   Enabled: false
 
-MethodLength:
+Metrics/MethodLength:
   Enabled: false
 
-ParameterLists:
+Metrics/ParameterLists:
   Enabled: false
 
-PerceivedComplexity:
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Naming/RescuedExceptionsVariableName:
+  Enabled: false
+
+Naming/UncommunicativeMethodParamName:
   Enabled: false
 
 Rails/Exit:
@@ -57,20 +60,17 @@ Rails/Output:
 Rails/TimeZone:
   Enabled: false
 
-RescuedExceptionsVariableName:
+Style/Documentation:
   Enabled: false
 
 Style/DateTime:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
   Enabled: false
 
 Style/RescueStandardError:
   Enabled: false
 
 Style/SafeNavigation:
-  Enabled: false
-
-UncommunicativeMethodParamName:
-  Enabled: false
-
-UriEscapeUnescape:
   Enabled: false
