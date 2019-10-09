@@ -21,11 +21,11 @@ end
 
 group :development do
   gem 'rubocop', '0.75.0'
-  gem 'rubocop-performance', '1.4.1'
+  gem 'rubocop-performance', '1.5.0'
   gem 'rubocop-rails', '2.3.2'
 end
 
 group :test do
-  gem 'rspec', '3.8.0'
-  gem 'selenium-webdriver', '3.142.5'
+  gem 'rspec', '3.9.0'
+  gem 'selenium-webdriver', '3.142.6'
 end
