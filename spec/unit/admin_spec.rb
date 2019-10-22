@@ -1681,6 +1681,57 @@ describe AdminUI::Admin do
       it_behaves_like('common delete user')
     end
 
+    shared_examples 'common delete user annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/users/user1/metadata/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete user annotation via http' do
+      it_behaves_like('common delete user annotation')
+    end
+
+    context 'delete user annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete user annotation')
+    end
+
+    shared_examples 'common delete user label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/users/user1/metadata/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete user label via http' do
+      it_behaves_like('common delete user label')
+    end
+
+    context 'delete user label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete user label')
+    end
+
+    shared_examples 'common delete user label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/users/user1/metadata/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete user label with prefix via http' do
+      it_behaves_like('common delete user label with prefix')
+    end
+
+    context 'delete user label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete user label with prefix')
+    end
+
     shared_examples 'common delete user tokens' do
       it 'returns failure code due to disconnection' do
         response = delete('/users/user1/tokens')
@@ -3222,6 +3273,18 @@ describe AdminUI::Admin do
 
       it 'deletes /users/:guid redirects as expected' do
         delete_redirects_as_expected('/users/user1')
+      end
+
+      it 'deletes /users/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/users/user1/metadata/annotations/annotation1')
+      end
+
+      it 'deletes /users/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/users/user1/metadata/labels/label1')
+      end
+
+      it 'deletes /users/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/users/user1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /users/:guid/tokens redirects as expected' do

@@ -2322,6 +2322,14 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_user(cc_user[:guid])
       end
 
+      def delete_user_annotation
+        operation.delete_user_annotation(cc_user[:guid], cc_user_annotation[:key_prefix], cc_user_annotation[:key])
+      end
+
+      def delete_user_label
+        operation.delete_user_label(cc_user[:guid], cc_user_label[:key_prefix], cc_user_label[:key_name])
+      end
+
       it 'activates user' do
         deactivate_user
         expect { activate_user }.to change { cc.users_uaa['items'][0][:active] }.from(false).to(true)
@@ -2359,6 +2367,14 @@ describe AdminUI::Operation, type: :integration do
       it 'deletes user' do
         expect { delete_user }.to change { cc.users_uaa['items'].length }.from(1).to(0)
         expect(cc.users_uaa['items'].length).to eq(0)
+      end
+
+      it 'deletes the user annotation' do
+        expect { delete_user_annotation }.to change { cc.user_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the user label' do
+        expect { delete_user_label }.to change { cc.user_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -2407,6 +2423,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting deleted user' do
           expect { delete_user }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_cc_user_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted user' do
+          expect { delete_user_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_cc_user_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted user' do
+          expect { delete_user_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_cc_user_not_found(exception) }
         end
       end
     end

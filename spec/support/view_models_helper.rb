@@ -1800,7 +1800,9 @@ module ViewModelsHelper
 
   def view_models_users_detail
     {
+      'annotations'   => [annotation_rfc3339(cc_user_annotation)],
       'identity_zone' => uaa_identity_zone,
+      'labels'        => [label_rfc3339(cc_user_label)],
       'organization'  => cc_organization,
       'request_count' => cc_request_count,
       'space'         => cc_space,

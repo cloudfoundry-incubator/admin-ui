@@ -349,6 +349,14 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.task_labels)
     end
 
+    it 'returns zero user annotations as expected' do
+      verify_disconnected_items(cc.user_annotations)
+    end
+
+    it 'returns zero user labels as expected' do
+      verify_disconnected_items(cc.user_labels)
+    end
+
     it 'returns zero users_cc as expected' do
       verify_disconnected_items(cc.users_cc)
     end

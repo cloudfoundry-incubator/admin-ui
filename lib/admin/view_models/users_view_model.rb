@@ -37,6 +37,8 @@ module AdminUI
       identity_zones   = @cc.identity_zones
       request_counts   = @cc.request_counts
       revocable_tokens = @cc.revocable_tokens
+      user_annotations = @cc.user_annotations
+      user_labels      = @cc.user_labels
 
       approvals_connected        = approvals['connected']
       events_connected           = events['connected']
@@ -49,6 +51,54 @@ module AdminUI
       request_count_hash = Hash[request_counts['items'].map { |item| [item[:user_guid], item] }]
       space_hash         = Hash[spaces['items'].map { |item| [item[:id], item] }]
       user_cc_hash       = Hash[users_cc['items'].map { |item| [item[:guid], item] }]
+
+      user_annotations_hash = {}
+      user_annotations['items'].each do |user_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        user_guid = user_annotation[:resource_guid]
+        user_annotations_array = user_annotations_hash[user_guid]
+        if user_annotations_array.nil?
+          user_annotations_array = []
+          user_annotations_hash[user_guid] = user_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         user_annotation,
+            created_at_rfc3339: user_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: user_annotation[:updated_at].nil? ? nil : user_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        user_annotations_array.push(wrapper)
+      end
+
+      user_labels_hash = {}
+      user_labels['items'].each do |user_label|
+        return result unless @running
+
+        Thread.pass
+
+        user_guid = user_label[:resource_guid]
+        user_labels_array = user_labels_hash[user_guid]
+        if user_labels_array.nil?
+          user_labels_array = []
+          user_labels_hash[user_guid] = user_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              user_label,
+            created_at_rfc3339: user_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: user_label[:updated_at].nil? ? nil : user_label[:updated_at].to_datetime.rfc3339
+          }
+
+        user_labels_array.push(wrapper)
+      end
 
       event_counters = {}
       events['items'].each do |event|
@@ -130,6 +180,8 @@ module AdminUI
         identity_zone            = identity_zone_hash[user_uaa[:identity_zone_id]]
         request_count            = request_count_hash[guid]
         revocable_token_counter  = revocable_token_counters[guid]
+        user_annotation_array    = user_annotations_hash[guid] || []
+        user_label_array         = user_labels_hash[guid] || []
 
         row = []
 
@@ -269,7 +321,9 @@ module AdminUI
 
         hash[guid] =
           {
+            'annotations'   => user_annotation_array,
             'identity_zone' => identity_zone,
+            'labels'        => user_label_array,
             'organization'  => organization,
             'request_count' => request_count,
             'space'         => space,

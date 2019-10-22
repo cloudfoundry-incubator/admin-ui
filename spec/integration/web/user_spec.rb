@@ -329,6 +329,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Users tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Users' }
+        let(:page_id)   { 'UsersPage' }
+        let(:button_id) { 'Buttons_UsersLabelsTable_0' }
+      end
+    end
+
+    context 'Users tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Users' }
+        let(:page_id)   { 'UsersPage' }
+        let(:button_id) { 'Buttons_UsersAnnotationsTable_0' }
+      end
+    end
+
     context 'Groups tab does not have delete button' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Groups' }

@@ -462,6 +462,18 @@ module AdminUI
             table:   :tasks,
             columns: %i[app_guid command created_at disk_in_mb droplet_guid failure_reason guid id memory_in_mb name sequence_id state updated_at]
           },
+          user_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :user_annotations,
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
+          },
+          user_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :user_labels,
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
+          },
           users_cc:
           {
             db_uri:  ccdb_uri,
@@ -839,6 +851,14 @@ module AdminUI
       invalidate_cache(:tasks)
     end
 
+    def invalidate_user_annotations
+      invalidate_cache(:user_annotations)
+    end
+
+    def invalidate_user_labels
+      invalidate_cache(:user_labels)
+    end
+
     def invalidate_users_cc
       invalidate_cache(:users_cc)
     end
@@ -1119,6 +1139,14 @@ module AdminUI
 
     def tasks
       result_cache(:tasks)
+    end
+
+    def user_annotations
+      result_cache(:user_annotations)
+    end
+
+    def user_labels
+      result_cache(:user_labels)
     end
 
     def users_cc

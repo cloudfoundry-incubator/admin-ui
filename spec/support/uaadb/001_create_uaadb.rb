@@ -212,6 +212,22 @@ Sequel.migration do
       index [:identity_zone_id, :entity_id], :name=>:entity_in_zone, :unique=>true
     end
     
+    create_table(:spring_session, :ignore_index_errors=>true) do
+      String :primary_id, :size=>36, :fixed=>true, :null=>false
+      String :session_id, :size=>36, :fixed=>true, :null=>false
+      Bignum :creation_time, :null=>false
+      Bignum :last_access_time, :null=>false
+      Integer :max_inactive_interval, :null=>false
+      Bignum :expiry_time, :null=>false
+      String :principal_name, :size=>100
+      
+      primary_key [:primary_id]
+      
+      index [:session_id], :name=>:spring_session_ix1, :unique=>true
+      index [:expiry_time], :name=>:spring_session_ix2
+      index [:principal_name], :name=>:spring_session_ix3
+    end
+    
     create_table(:user_google_mfa_credentials) do
       String :user_id, :size=>36, :null=>false
       String :secret_key, :size=>255, :null=>false
@@ -259,6 +275,14 @@ Sequel.migration do
       primary_key [:id]
       
       index [:identity_zone_id], :name=>:user_identity_zone
+    end
+    
+    create_table(:spring_session_attributes) do
+      foreign_key :session_primary_id, :spring_session, :type=>String, :size=>36, :fixed=>true, :null=>false, :key=>[:primary_id], :on_delete=>:cascade
+      String :attribute_name, :size=>200, :null=>false
+      File :attribute_bytes, :null=>false
+      
+      primary_key [:session_primary_id, :attribute_name]
     end
   end
 end

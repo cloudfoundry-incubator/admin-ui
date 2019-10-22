@@ -13,6 +13,7 @@ module AdminUI
         env_var_visibility:                          true, # Added in cf-release 238
         hide_marketplace_from_unauthenticated_users: false, # Added in cf-deployment 5.1.0
         private_domain_creation:                     true,
+        resource_matching:                           true, # Added in cf-deployment 12.2.0
         route_creation:                              true,
         service_instance_creation:                   true,
         service_instance_sharing:                    false, # Added in cf-release 280

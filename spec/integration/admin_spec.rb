@@ -2010,6 +2010,18 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/users/#{uaa_user[:id]}"]])
     end
 
+    def delete_user_annotation
+      response = delete_request("/users/#{cc_user[:guid]}/metadata/annotations/#{cc_user_annotation[:key]}?prefix=#{cc_user_annotation[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/users/#{cc_user[:guid]}/metadata/annotations/#{cc_user_annotation[:key]}?prefix=#{cc_user_annotation[:key_prefix]}"]], true)
+    end
+
+    def delete_user_label
+      response = delete_request("/users/#{cc_user[:guid]}/metadata/labels/#{cc_user_label[:key_name]}?prefix=#{cc_user_label[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/users/#{cc_user[:guid]}/metadata/labels/#{cc_user_label[:key_name]}?prefix=#{cc_user_label[:key_prefix]}"]], true)
+    end
+
     it 'has user name and users request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/users_view_model']], true)
     end
@@ -2049,6 +2061,14 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a user' do
       expect { delete_user }.to change { get_json('/users_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes a user annotation' do
+      expect { delete_user_annotation }.to change { get_json("/users_view_model/#{cc_user[:guid]}")['annotations'].length }.from(1).to(0)
+    end
+
+    it 'deletes a user label' do
+      expect { delete_user_label }.to change { get_json("/users_view_model/#{cc_user[:guid]}")['labels'].length }.from(1).to(0)
     end
   end
 

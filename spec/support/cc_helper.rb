@@ -433,6 +433,8 @@ module CCHelper
   end
 
   def cc_clear_users_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM user_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM user_labels')
     sql(config.ccdb_uri, 'DELETE FROM spaces_auditors')
     sql(config.ccdb_uri, 'DELETE FROM spaces_developers')
     sql(config.ccdb_uri, 'DELETE FROM spaces_managers')
@@ -1829,6 +1831,32 @@ module CCHelper
     }
   end
 
+  def cc_user_annotation
+    {
+      created_at:    unique_time('cc_user_annotation_created'),
+      guid:          'user_annotation1',
+      id:            unique_id('cc_user_annotation'),
+      key:           'userannotationkey',
+      key_prefix:    'userannotationkeyprefix.com',
+      resource_guid: cc_user[:guid],
+      updated_at:    unique_time('cc_user_annotation_updated'),
+      value:         'userannotationvalue'
+    }
+  end
+
+  def cc_user_label
+    {
+      created_at:    unique_time('cc_user_label_created'),
+      guid:          'user_label1',
+      id:            unique_id('cc_user_label'),
+      key_name:      'userlabelkeyname',
+      key_prefix:    'userlabelkeyprefix.com',
+      resource_guid: cc_user[:guid],
+      updated_at:    unique_time('cc_user_label_updated'),
+      value:         'userlabelvalue'
+    }
+  end
+
   def uaa_approval
     {
       client_id:        uaa_client[:client_id],
@@ -2050,6 +2078,8 @@ module CCHelper
                [:route_labels,                     cc_route_label],
                [:service_brokers,                  cc_service_broker_with_password],
                [:users,                            cc_user],
+               [:user_annotations,                 cc_user_annotation],
+               [:user_labels,                      cc_user_label],
                [:request_counts,                   cc_request_count],
                [:organizations_auditors,           cc_organization_auditor],
                [:organizations_billing_managers,   cc_organization_billing_manager],
@@ -3289,6 +3319,16 @@ module CCHelper
 
   def cc_user_stubs(config)
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/users/#{cc_user[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @cc_users_deleted
+        cc_user_not_found
+      else
+        cc_clear_users_cache_stub(config)
+        OK.new({})
+      end
+    end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/users/#{cc_user[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
       if @cc_users_deleted
         cc_user_not_found
       else

@@ -504,6 +504,20 @@ describe AdminUI::CC, type: :integration do
       expect(cc.task_labels['items'].length).to eq(0)
     end
 
+    it 'clears the user annotations cache' do
+      expect(cc.user_annotations['items'].length).to eq(1)
+      cc_clear_users_cache_stub(config)
+      cc.invalidate_user_annotations
+      expect(cc.user_annotations['items'].length).to eq(0)
+    end
+
+    it 'clears the user labels cache' do
+      expect(cc.user_labels['items'].length).to eq(1)
+      cc_clear_users_cache_stub(config)
+      cc.invalidate_user_labels
+      expect(cc.user_labels['items'].length).to eq(0)
+    end
+
     it 'clears the users cc cache' do
       expect(cc.users_cc['items'].length).to eq(1)
       cc_clear_users_cache_stub(config)
@@ -1054,6 +1068,20 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected task labels' do
       let(:results)  { cc.task_labels }
       let(:expected) { cc_task_label }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected user annotations' do
+      let(:results)  { cc.user_annotations }
+      let(:expected) { cc_user_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected user labels' do
+      let(:results)  { cc.user_labels }
+      let(:expected) { cc_user_label }
 
       it_behaves_like('common cc retrieval')
     end

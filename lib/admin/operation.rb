@@ -808,6 +808,8 @@ module AdminUI
       begin
         @client.delete_cc(url)
         @cc.invalidate_users_cc
+        @cc.invalidate_user_annotations
+        @cc.invalidate_user_labels
       rescue CCRestClientResponseError => error
         # If we receive a 404 since the user is not within the CC, it still might be in UAA
         raise unless error.http_code == '404'
@@ -831,6 +833,28 @@ module AdminUI
 
         raise error
       end
+    end
+
+    def delete_user_annotation(user_guid, prefix, name)
+      url = "/v3/users/#{user_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_user_annotations
+      @view_models.invalidate_users
+    end
+
+    def delete_user_label(user_guid, prefix, name)
+      url = "/v3/users/#{user_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_user_labels
+      @view_models.invalidate_users
     end
 
     def delete_user_tokens(user_guid)
