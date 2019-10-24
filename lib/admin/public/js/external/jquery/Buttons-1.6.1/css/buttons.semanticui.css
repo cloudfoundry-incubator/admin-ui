@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @keyframes dtb-spinner {
   100% {
     transform: rotate(360deg);
@@ -62,48 +63,47 @@ div.dt-button-collection-title:empty {
   display: none;
 }
 
-ul.dt-buttons li {
-  margin: 0;
+div.dt-button-collection {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 200px;
+  margin-top: 3px !important;
+  z-index: 2002;
+  background: white;
 }
-ul.dt-buttons li.active a {
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
-}
-
-ul.dt-buttons.button-group a {
-  margin-bottom: 0;
-}
-
-ul.dt-button-collection.f-dropdown.fixed {
+div.dt-button-collection.fixed {
   position: fixed;
   top: 50%;
   left: 50%;
   margin-left: -75px;
   border-radius: 0;
 }
-ul.dt-button-collection.f-dropdown.fixed.two-column {
-  margin-left: -150px;
+div.dt-button-collection.fixed.two-column {
+  margin-left: -200px;
 }
-ul.dt-button-collection.f-dropdown.fixed.three-column {
+div.dt-button-collection.fixed.three-column {
   margin-left: -225px;
 }
-ul.dt-button-collection.f-dropdown.fixed.four-column {
+div.dt-button-collection.fixed.four-column {
   margin-left: -300px;
 }
-ul.dt-button-collection.f-dropdown > div:last-child {
+div.dt-button-collection > :last-child {
+  display: block !important;
   -webkit-column-gap: 8px;
   -moz-column-gap: 8px;
   -ms-column-gap: 8px;
   -o-column-gap: 8px;
   column-gap: 8px;
 }
-ul.dt-button-collection.f-dropdown > div:last-child > * {
+div.dt-button-collection > :last-child > * {
   -webkit-column-break-inside: avoid;
   break-inside: avoid;
 }
-ul.dt-button-collection.f-dropdown.two-column {
-  width: 300px;
+div.dt-button-collection.two-column {
+  width: 400px;
 }
-ul.dt-button-collection.f-dropdown.two-column > div:last-child {
+div.dt-button-collection.two-column > :last-child {
   padding-bottom: 1px;
   -webkit-column-count: 2;
   -moz-column-count: 2;
@@ -111,10 +111,10 @@ ul.dt-button-collection.f-dropdown.two-column > div:last-child {
   -o-column-count: 2;
   column-count: 2;
 }
-ul.dt-button-collection.f-dropdown.three-column {
+div.dt-button-collection.three-column {
   width: 450px;
 }
-ul.dt-button-collection.f-dropdown.three-column > div:last-child {
+div.dt-button-collection.three-column > :last-child {
   padding-bottom: 1px;
   -webkit-column-count: 3;
   -moz-column-count: 3;
@@ -122,10 +122,10 @@ ul.dt-button-collection.f-dropdown.three-column > div:last-child {
   -o-column-count: 3;
   column-count: 3;
 }
-ul.dt-button-collection.f-dropdown.four-column {
+div.dt-button-collection.four-column {
   width: 600px;
 }
-ul.dt-button-collection.f-dropdown.four-column > div:last-child {
+div.dt-button-collection.four-column > :last-child {
   padding-bottom: 1px;
   -webkit-column-count: 4;
   -moz-column-count: 4;
@@ -133,14 +133,14 @@ ul.dt-button-collection.f-dropdown.four-column > div:last-child {
   -o-column-count: 4;
   column-count: 4;
 }
-ul.dt-button-collection.f-dropdown .dt-button {
+div.dt-button-collection .dt-button {
   border-radius: 0;
 }
-ul.dt-button-collection.f-dropdown.fixed {
-  max-width: none;
-}
-ul.dt-button-collection.f-dropdown.fixed:before, ul.dt-button-collection.f-dropdown.fixed:after {
-  display: none;
+
+button.buttons-collection.ui.button span:after {
+  display: inline-block;
+  content: "▾";
+  padding-left: 0.5em;
 }
 
 div.dt-button-background {
@@ -149,42 +149,25 @@ div.dt-button-background {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 88;
+  z-index: 2001;
 }
 
 @media screen and (max-width: 767px) {
-  ul.dt-buttons {
+  div.dt-buttons {
     float: none;
     width: 100%;
     text-align: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.5em;
   }
-  ul.dt-buttons li {
+  div.dt-buttons a.btn {
     float: none;
   }
 }
-div.button-group.stacked.dropdown-pane {
-  margin-top: 2px;
-  padding: 1px;
-  z-index: 89;
-}
-div.button-group.stacked.dropdown-pane a.button {
-  display: block;
-  margin-bottom: 1px;
-  border-right: none;
-}
-div.button-group.stacked.dropdown-pane a.button:last-child {
-  margin-bottom: 0;
-  margin-right: 1px;
-}
-
 div.dt-buttons button.button.processing,
 div.dt-buttons div.button.processing,
 div.dt-buttons a.button.processing {
+  position: relative;
   color: rgba(0, 0, 0, 0.2);
-  color: rgba(255, 255, 255, 0.2);
-  border-top-color: white;
-  border-bottom-color: white;
 }
 div.dt-buttons button.button.processing:after,
 div.dt-buttons div.button.processing:after,
