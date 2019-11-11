@@ -726,35 +726,47 @@ module ViewModelsHelper
     [
       [
         "#{cc_organization[:guid]}/auditors/#{uaa_user[:id]}",
+        'Auditor',
+        cc_organization_auditor[:role_guid],
+        cc_organization_auditor[:created_at].to_datetime.rfc3339,
+        cc_organization_auditor[:updated_at].to_datetime.rfc3339,
         cc_organization[:name],
         cc_organization[:guid],
         uaa_user[:username],
-        uaa_user[:id],
-        'Auditor'
+        uaa_user[:id]
       ],
       [
         "#{cc_organization[:guid]}/billing_managers/#{uaa_user[:id]}",
+        'Billing Manager',
+        cc_organization_billing_manager[:role_guid],
+        cc_organization_billing_manager[:created_at].to_datetime.rfc3339,
+        cc_organization_billing_manager[:updated_at].to_datetime.rfc3339,
         cc_organization[:name],
         cc_organization[:guid],
         uaa_user[:username],
-        uaa_user[:id],
-        'Billing Manager'
+        uaa_user[:id]
       ],
       [
         "#{cc_organization[:guid]}/managers/#{uaa_user[:id]}",
+        'Manager',
+        cc_organization_manager[:role_guid],
+        cc_organization_manager[:created_at].to_datetime.rfc3339,
+        cc_organization_manager[:updated_at].to_datetime.rfc3339,
         cc_organization[:name],
         cc_organization[:guid],
         uaa_user[:username],
-        uaa_user[:id],
-        'Manager'
+        uaa_user[:id]
       ],
       [
         "#{cc_organization[:guid]}/users/#{uaa_user[:id]}",
+        'User',
+        cc_organization_user[:role_guid],
+        cc_organization_user[:created_at].to_datetime.rfc3339,
+        cc_organization_user[:updated_at].to_datetime.rfc3339,
         cc_organization[:name],
         cc_organization[:guid],
         uaa_user[:username],
-        uaa_user[:id],
-        'User'
+        uaa_user[:id]
       ]
     ]
   end
@@ -1559,30 +1571,39 @@ module ViewModelsHelper
     [
       [
         "#{cc_space[:guid]}/auditors/#{uaa_user[:id]}",
+        'Auditor',
+        cc_space_auditor[:role_guid],
+        cc_space_auditor[:created_at].to_datetime.rfc3339,
+        cc_space_auditor[:updated_at].to_datetime.rfc3339,
         cc_space[:name],
         cc_space[:guid],
         "#{cc_organization[:name]}/#{cc_space[:name]}",
         uaa_user[:username],
-        uaa_user[:id],
-        'Auditor'
+        uaa_user[:id]
       ],
       [
         "#{cc_space[:guid]}/developers/#{uaa_user[:id]}",
+        'Developer',
+        cc_space_developer[:role_guid],
+        cc_space_developer[:created_at].to_datetime.rfc3339,
+        cc_space_developer[:updated_at].to_datetime.rfc3339,
         cc_space[:name],
         cc_space[:guid],
         "#{cc_organization[:name]}/#{cc_space[:name]}",
         uaa_user[:username],
-        uaa_user[:id],
-        'Developer'
+        uaa_user[:id]
       ],
       [
         "#{cc_space[:guid]}/managers/#{uaa_user[:id]}",
+        'Manager',
+        cc_space_manager[:role_guid],
+        cc_space_manager[:created_at].to_datetime.rfc3339,
+        cc_space_manager[:updated_at].to_datetime.rfc3339,
         cc_space[:name],
         cc_space[:guid],
         "#{cc_organization[:name]}/#{cc_space[:name]}",
         uaa_user[:username],
-        uaa_user[:id],
-        'Manager'
+        uaa_user[:id]
       ]
     ]
   end

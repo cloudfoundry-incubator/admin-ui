@@ -34,7 +34,7 @@ module AdminUI
       add_rows(organizations_managers,         'managers',         'Manager', organization_hash, user_cc_hash, user_uaa_hash, items, hash)
       add_rows(organizations_users,            'users',            'User', organization_hash, user_cc_hash, user_uaa_hash, items, hash)
 
-      result(true, items, hash, (1..5).to_a, (1..5).to_a)
+      result(true, items, hash, (1..8).to_a, (1..8).to_a)
     end
 
     private
@@ -59,11 +59,25 @@ module AdminUI
         key = "#{organization[:guid]}/#{path_role}/#{user_cc[:guid]}"
 
         row.push(key)
+        row.push(human_role)
+        row.push(organization_role[:role_guid])
+
+        if organization_role[:created_at]
+          row.push(organization_role[:created_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
+        if organization_role[:updated_at]
+          row.push(organization_role[:updated_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
         row.push(organization[:name])
         row.push(organization[:guid])
         row.push(user_uaa[:username])
         row.push(user_uaa[:id])
-        row.push(human_role)
 
         items.push(row)
 

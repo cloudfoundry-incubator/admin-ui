@@ -1116,16 +1116,22 @@ module CCHelper
 
   def cc_organization_auditor
     {
+      created_at:                unique_time('cc_organization_auditor_created'),
       organizations_auditors_pk: unique_id('cc_organization_auditor'),
       organization_id:           cc_organization[:id],
+      role_guid:                 'OrgAuditor1',
+      updated_at:                unique_time('cc_organization_auditor_updated'),
       user_id:                   cc_user[:id]
     }
   end
 
   def cc_organization_billing_manager
     {
+      created_at:                        unique_time('cc_organization_billing_manager_created'),
       organizations_billing_managers_pk: unique_id('cc_organization_billing_manager'),
       organization_id:                   cc_organization[:id],
+      role_guid:                         'OrgBillingManager1',
+      updated_at:                        unique_time('cc_organization_billing_manager_updated'),
       user_id:                           cc_user[:id]
     }
   end
@@ -1152,8 +1158,11 @@ module CCHelper
 
   def cc_organization_manager
     {
+      created_at:                unique_time('cc_organization_manager_created'),
       organizations_managers_pk: unique_id('cc_organization_manager'),
       organization_id:           cc_organization[:id],
+      role_guid:                 'OrgManager1',
+      updated_at:                unique_time('cc_organization_manager_updated'),
       user_id:                   cc_user[:id]
     }
   end
@@ -1168,8 +1177,11 @@ module CCHelper
 
   def cc_organization_user
     {
+      created_at:             unique_time('cc_organization_user_created'),
       organizations_users_pk: unique_id('cc_organization_user'),
       organization_id:        cc_organization[:id],
+      role_guid:              'OrgUser1',
+      updated_at:             unique_time('cc_organization_user_updated'),
       user_id:                cc_user[:id]
     }
   end
@@ -1651,16 +1663,22 @@ module CCHelper
 
   def cc_space_auditor
     {
+      created_at:         unique_time('cc_space_auditor_created'),
+      role_guid:          'SpaceAuditor1',
       spaces_auditors_pk: unique_id('cc_space_auditor'),
       space_id:           cc_space[:id],
+      updated_at:         unique_time('cc_space_auditor_updated'),
       user_id:            cc_user[:id]
     }
   end
 
   def cc_space_developer
     {
+      created_at:           unique_time('cc_space_developer_created'),
+      role_guid:            'SpaceDeveloper1',
       spaces_developers_pk: unique_id('cc_space_developer'),
       space_id:             cc_space[:id],
+      updated_at:           unique_time('cc_space_developer_updated'),
       user_id:              cc_user[:id]
     }
   end
@@ -1680,8 +1698,11 @@ module CCHelper
 
   def cc_space_manager
     {
+      created_at:         unique_time('cc_space_manager_created'),
+      role_guid:          'SpaceManager1',
       spaces_managers_pk: unique_id('cc_space_manager'),
       space_id:           cc_space[:id],
+      updated_at:         unique_time('cc_space_manager_updated'),
       user_id:            cc_user[:id]
     }
   end

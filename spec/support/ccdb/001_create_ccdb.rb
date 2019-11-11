@@ -594,6 +594,7 @@ Sequel.migration do
       DateTime :last_healthy_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       String :status_value, :size=>255
       String :status_reason, :size=>255
+      String :strategy, :default=>"rolling", :size=>255, :null=>false
       
       index [:app_guid]
       index [:created_at]
@@ -1343,32 +1344,56 @@ Sequel.migration do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
       primary_key :organizations_auditors_pk, :keep_order=>true
+      String :role_guid, :size=>255
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       
       index [:organization_id, :user_id], :name=>:org_auditors_idx, :unique=>true
+      index [:created_at]
+      index [:role_guid]
+      index [:updated_at]
     end
     
     create_table(:organizations_billing_managers, :ignore_index_errors=>true) do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
       primary_key :organizations_billing_managers_pk, :keep_order=>true
+      String :role_guid, :size=>255
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       
       index [:organization_id, :user_id], :name=>:org_billing_managers_idx, :unique=>true
+      index [:created_at]
+      index [:role_guid]
+      index [:updated_at]
     end
     
     create_table(:organizations_managers, :ignore_index_errors=>true) do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
       primary_key :organizations_managers_pk, :keep_order=>true
+      String :role_guid, :size=>255
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       
       index [:organization_id, :user_id], :name=>:org_managers_idx, :unique=>true
+      index [:created_at]
+      index [:role_guid]
+      index [:updated_at]
     end
     
     create_table(:organizations_users, :ignore_index_errors=>true) do
       foreign_key :organization_id, :organizations, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
       primary_key :organizations_users_pk, :keep_order=>true
+      String :role_guid, :size=>255
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       
       index [:organization_id, :user_id], :name=>:org_users_idx, :unique=>true
+      index [:created_at]
+      index [:role_guid]
+      index [:updated_at]
     end
     
     create_table(:route_annotations, :ignore_index_errors=>true) do
@@ -1473,24 +1498,42 @@ Sequel.migration do
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
       primary_key :spaces_auditors_pk, :keep_order=>true
+      String :role_guid, :size=>255
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       
       index [:space_id, :user_id], :name=>:space_auditors_idx, :unique=>true
+      index [:created_at]
+      index [:role_guid]
+      index [:updated_at]
     end
     
     create_table(:spaces_developers, :ignore_index_errors=>true) do
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
       primary_key :spaces_developers_pk, :keep_order=>true
+      String :role_guid, :size=>255
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       
       index [:space_id, :user_id], :name=>:space_developers_idx, :unique=>true
+      index [:created_at]
+      index [:role_guid]
+      index [:updated_at]
     end
     
     create_table(:spaces_managers, :ignore_index_errors=>true) do
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]
       primary_key :spaces_managers_pk, :keep_order=>true
+      String :role_guid, :size=>255
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       
       index [:space_id, :user_id], :name=>:space_managers_idx, :unique=>true
+      index [:created_at]
+      index [:role_guid]
+      index [:updated_at]
     end
     
     create_table(:user_annotations, :ignore_index_errors=>true) do

@@ -4306,13 +4306,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationRolesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
-                                 labels:          ['', 'Organization', 'User', ''],
-                                 colspans:        %w[1 2 2 1]
+                                 labels:          ['', '', 'Organization', 'User'],
+                                 colspans:        %w[1 4 2 2]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='OrganizationRolesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 6,
-                                 labels:          ['', 'Name', 'GUID', 'Name', 'GUID', 'Role'],
+                                 expected_length: 9,
+                                 labels:          ['', 'Role', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Name', 'GUID'],
                                  colspans:        nil
                                }
                              ])
@@ -4320,11 +4320,14 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='OrganizationRolesTable']/tbody/tr/td"),
                            [
                              '',
+                             'Auditor',
+                             cc_organization_auditor[:role_guid],
+                             cc_organization_auditor[:created_at].to_datetime.rfc3339,
+                             cc_organization_auditor[:updated_at].to_datetime.rfc3339,
                              cc_organization[:name],
                              cc_organization[:guid],
                              uaa_user[:username],
-                             uaa_user[:id],
-                             'Auditor'
+                             uaa_user[:id]
                            ])
         end
 
@@ -4380,20 +4383,23 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Organization',      tag: 'div', value: cc_organization[:name] },
+                            { label: 'Role',              tag: 'div', value: 'Auditor' },
+                            { label: 'GUID',              tag:   nil, value: cc_organization_auditor[:role_guid] },
+                            { label: 'Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_organization_auditor[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_organization_auditor[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Organization',      tag:   'a', value: cc_organization[:name] },
                             { label: 'Organization GUID', tag:   nil, value: cc_organization[:guid] },
                             { label: 'User',              tag:   'a', value: uaa_user[:username] },
-                            { label: 'User GUID',         tag:   nil, value: uaa_user[:id] },
-                            { label: 'Role',              tag:   nil, value: 'Auditor' }
+                            { label: 'User GUID',         tag:   nil, value: uaa_user[:id] }
                           ])
           end
 
           it 'has organizations link' do
-            check_filter_link('OrganizationRoles', 0, 'Organizations', cc_organization[:guid])
+            check_filter_link('OrganizationRoles', 4, 'Organizations', cc_organization[:guid])
           end
 
           it 'has users link' do
-            check_filter_link('OrganizationRoles', 2, 'Users', uaa_user[:id])
+            check_filter_link('OrganizationRoles', 6, 'Users', uaa_user[:id])
           end
         end
       end
@@ -4407,13 +4413,13 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpaceRolesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 4,
-                                 labels:          ['', 'Space', 'User', ''],
-                                 colspans:        %w[1 3 2 1]
+                                 labels:          ['', '', 'Space', 'User'],
+                                 colspans:        %w[1 4 3 2]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='SpaceRolesTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 7,
-                                 labels:          ['', 'Name', 'GUID', 'Target', 'Name', 'GUID', 'Role'],
+                                 expected_length: 10,
+                                 labels:          ['', 'Role', 'GUID', 'Created', 'Updated', 'Name', 'GUID', 'Target', 'Name', 'GUID'],
                                  colspans:        nil
                                }
                              ])
@@ -4421,12 +4427,15 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='SpaceRolesTable']/tbody/tr/td"),
                            [
                              '',
+                             'Auditor',
+                             cc_space_auditor[:role_guid],
+                             cc_space_auditor[:created_at].to_datetime.rfc3339,
+                             cc_space_auditor[:updated_at].to_datetime.rfc3339,
                              cc_space[:name],
                              cc_space[:guid],
                              "#{cc_organization[:name]}/#{cc_space[:name]}",
                              uaa_user[:username],
-                             uaa_user[:id],
-                             'Auditor'
+                             uaa_user[:id]
                            ])
         end
 
@@ -4482,26 +4491,29 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Space',             tag: 'div', value: cc_space[:name] },
+                            { label: 'Role',              tag: 'div', value: 'Auditor' },
+                            { label: 'GUID',              tag:   nil, value: cc_space_auditor[:role_guid] },
+                            { label: 'Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space_auditor[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space_auditor[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Space',             tag:   'a', value: cc_space[:name] },
                             { label: 'Space GUID',        tag:   nil, value: cc_space[:guid] },
                             { label: 'Organization',      tag:   'a', value: cc_organization[:name] },
                             { label: 'Organization GUID', tag:   nil, value: cc_organization[:guid] },
                             { label: 'User',              tag:   'a', value: uaa_user[:username] },
-                            { label: 'User GUID',         tag:   nil, value: uaa_user[:id] },
-                            { label: 'Role',              tag:   nil, value: 'Auditor' }
+                            { label: 'User GUID',         tag:   nil, value: uaa_user[:id] }
                           ])
           end
 
           it 'has spaces link' do
-            check_filter_link('SpaceRoles', 0, 'Spaces', cc_space[:guid])
+            check_filter_link('SpaceRoles', 4, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('SpaceRoles', 2, 'Organizations', cc_organization[:guid])
+            check_filter_link('SpaceRoles', 6, 'Organizations', cc_organization[:guid])
           end
 
           it 'has users link' do
-            check_filter_link('SpaceRoles', 4, 'Users', uaa_user[:id])
+            check_filter_link('SpaceRoles', 8, 'Users', uaa_user[:id])
           end
         end
       end

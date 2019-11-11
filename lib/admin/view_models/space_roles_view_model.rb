@@ -33,7 +33,7 @@ module AdminUI
       add_rows(spaces_developers, 'developers', 'Developer', space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
       add_rows(spaces_managers,   'managers',   'Manager',   space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
 
-      result(true, items, hash, (1..6).to_a, (1..6).to_a)
+      result(true, items, hash, (1..9).to_a, (1..9).to_a)
     end
 
     private
@@ -60,6 +60,21 @@ module AdminUI
         key = "#{space[:guid]}/#{path_role}/#{user_cc[:guid]}"
 
         row.push(key)
+        row.push(human_role)
+        row.push(space_role[:role_guid])
+
+        if space_role[:created_at]
+          row.push(space_role[:created_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
+        if space_role[:updated_at]
+          row.push(space_role[:updated_at].to_datetime.rfc3339)
+        else
+          row.push(nil)
+        end
+
         row.push(space[:name])
         row.push(space[:guid])
 
@@ -71,7 +86,6 @@ module AdminUI
 
         row.push(user_uaa[:username])
         row.push(user_uaa[:id])
-        row.push(human_role)
 
         items.push(row)
 

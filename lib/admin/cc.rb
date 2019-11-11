@@ -190,13 +190,13 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :organizations_auditors,
-            columns: %i[organizations_auditors_pk organization_id user_id]
+            columns: %i[created_at organizations_auditors_pk organization_id role_guid updated_at user_id]
           },
           organizations_billing_managers:
           {
             db_uri:  ccdb_uri,
             table:   :organizations_billing_managers,
-            columns: %i[organizations_billing_managers_pk organization_id user_id]
+            columns: %i[created_at organizations_billing_managers_pk organization_id role_guid updated_at user_id]
           },
           organizations_isolation_segments:
           {
@@ -208,7 +208,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :organizations_managers,
-            columns: %i[organizations_managers_pk organization_id user_id]
+            columns: %i[created_at organizations_managers_pk organization_id role_guid updated_at user_id]
           },
           organizations_private_domains:
           {
@@ -220,7 +220,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :organizations_users,
-            columns: %i[organizations_users_pk organization_id user_id]
+            columns: %i[created_at organizations_users_pk organization_id role_guid updated_at user_id]
           },
           packages:
           {
@@ -406,19 +406,19 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :spaces_auditors,
-            columns: %i[spaces_auditors_pk space_id user_id]
+            columns: %i[created_at role_guid spaces_auditors_pk space_id updated_at user_id]
           },
           spaces_developers:
           {
             db_uri:  ccdb_uri,
             table:   :spaces_developers,
-            columns: %i[spaces_developers_pk space_id user_id]
+            columns: %i[created_at role_guid spaces_developers_pk space_id updated_at user_id]
           },
           spaces_managers:
           {
             db_uri:  ccdb_uri,
             table:   :spaces_managers,
-            columns: %i[spaces_managers_pk space_id user_id]
+            columns: %i[created_at role_guid spaces_managers_pk space_id updated_at user_id]
           },
           stack_annotations:
           {
