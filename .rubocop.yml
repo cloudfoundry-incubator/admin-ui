@@ -11,7 +11,7 @@ AllCops:
     - 'spec/support/ccdb/*'
     - 'spec/support/uaadb/*'
 
-Layout/AlignHash:
+Layout/HashAlignment:
   EnforcedColonStyle: table
   EnforcedHashRocketStyle: table
 
@@ -45,10 +45,10 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Enabled: false
 
-Naming/RescuedExceptionsVariableName:
+Naming/MethodParameterName:
   Enabled: false
 
-Naming/UncommunicativeMethodParamName:
+Naming/RescuedExceptionsVariableName:
   Enabled: false
 
 Rails/Exit:

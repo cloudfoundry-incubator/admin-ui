@@ -63,11 +63,11 @@ module AdminUI
                                                 nil,
                                                 headers: { 'Authorization' => @token },
                                                 ping:    30)
-        return [uri_base, websocket]
+        [uri_base, websocket]
       rescue => error
         @logger.error("Error during get_firehose websocket instantiation: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
-        return [uri_base, nil]
+        [uri_base, nil]
       end
     end
 

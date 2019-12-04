@@ -20,7 +20,7 @@ module AdminUI
       ccdb_uri  = @config.ccdb_uri
       uaadb_uri = @config.uaadb_uri
 
-      # rubocop:disable Layout/AlignHash
+      # rubocop:disable Layout/HashAlignment
       @caches =
         {
           application_annotations:
@@ -487,7 +487,7 @@ module AdminUI
             columns: %i[active created email familyname givenname id identity_zone_id lastmodified last_logon_success_time passwd_change_required passwd_lastmodified phonenumber previous_logon_success_time username verified version]
           }
         }
-      # rubocop:enable Layout/AlignHash
+      # rubocop:enable Layout/HashAlignment
 
       @caches.each_pair do |key, cache|
         cache[:condition] = ConditionVariable.new
