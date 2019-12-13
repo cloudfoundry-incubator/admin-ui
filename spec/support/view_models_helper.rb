@@ -1199,6 +1199,7 @@ module ViewModelsHelper
         cc_service_broker[:guid],
         cc_service_broker[:created_at].to_datetime.rfc3339,
         cc_service_broker[:updated_at].to_datetime.rfc3339,
+        cc_service_broker[:state],
         1,
         uaa_client[:client_id],
         1,

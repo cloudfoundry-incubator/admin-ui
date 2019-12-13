@@ -7110,8 +7110,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='ServiceBrokersTable_wrapper']/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 17,
-                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'Events', 'Service Dashboard Client', 'Services', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Instance Shares', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Target'],
+                                 expected_length: 18,
+                                 labels:          ['', 'Name', 'GUID', 'Created', 'Updated', 'State', 'Events', 'Service Dashboard Client', 'Services', 'Service Plans', 'Public Active Service Plans', 'Service Plan Visibilities', 'Service Instances', 'Service Instance Shares', 'Service Bindings', 'Service Keys', 'Route Bindings', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -7123,6 +7123,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_broker[:guid],
                              cc_service_broker[:created_at].to_datetime.rfc3339,
                              cc_service_broker[:updated_at].to_datetime.rfc3339,
+                             cc_service_broker[:state],
                              '1',
                              uaa_client[:client_id],
                              '1',
@@ -7211,6 +7212,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Broker GUID',          tag:   nil, value: cc_service_broker[:guid] },
                             { label: 'Service Broker Created',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Broker Updated',       tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Service Broker State',         tag:   nil, value: cc_service_broker[:state] },
                             { label: 'Service Broker Auth Username', tag:   nil, value: cc_service_broker[:auth_username] },
                             { label: 'Service Broker Broker URL',    tag:   nil, value: cc_service_broker[:broker_url] },
                             { label: 'Service Broker Events',        tag:   'a', value: '1' },
@@ -7232,51 +7234,51 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has events link' do
-            check_filter_link('ServiceBrokers', 6, 'Events', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 7, 'Events', cc_service_broker[:guid])
           end
 
           it 'has clients link' do
-            check_filter_link('ServiceBrokers', 7, 'Clients', uaa_client[:client_id])
+            check_filter_link('ServiceBrokers', 8, 'Clients', uaa_client[:client_id])
           end
 
           it 'has services link' do
-            check_filter_link('ServiceBrokers', 8, 'Services', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 9, 'Services', cc_service_broker[:guid])
           end
 
           it 'has service plans link' do
-            check_filter_link('ServiceBrokers', 9, 'ServicePlans', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 10, 'ServicePlans', cc_service_broker[:guid])
           end
 
           it 'has service plan visibilities link' do
-            check_filter_link('ServiceBrokers', 11, 'ServicePlanVisibilities', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 12, 'ServicePlanVisibilities', cc_service_broker[:guid])
           end
 
           it 'has service instances link' do
-            check_filter_link('ServiceBrokers', 12, 'ServiceInstances', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 13, 'ServiceInstances', cc_service_broker[:guid])
           end
 
           it 'has shared service instances link' do
-            check_filter_link('ServiceBrokers', 13, 'SharedServiceInstances', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 14, 'SharedServiceInstances', cc_service_broker[:guid])
           end
 
           it 'has service bindings link' do
-            check_filter_link('ServiceBrokers', 14, 'ServiceBindings', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 15, 'ServiceBindings', cc_service_broker[:guid])
           end
 
           it 'has service keys link' do
-            check_filter_link('ServiceBrokers', 15, 'ServiceKeys', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 16, 'ServiceKeys', cc_service_broker[:guid])
           end
 
           it 'has route bindings link' do
-            check_filter_link('ServiceBrokers', 16, 'RouteBindings', cc_service_broker[:guid])
+            check_filter_link('ServiceBrokers', 17, 'RouteBindings', cc_service_broker[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('ServiceBrokers', 17, 'Spaces', cc_space[:guid])
+            check_filter_link('ServiceBrokers', 18, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('ServiceBrokers', 19, 'Organizations', cc_organization[:guid])
+            check_filter_link('ServiceBrokers', 20, 'Organizations', cc_organization[:guid])
           end
         end
       end

@@ -1466,6 +1466,7 @@ module CCHelper
       id:            unique_id('cc_service_broker'),
       name:          'TestServiceBroker',
       space_id:      cc_space[:id],
+      state:         'AVAILABLE',
       updated_at:    unique_time('cc_service_broker_updated')
     }
   end

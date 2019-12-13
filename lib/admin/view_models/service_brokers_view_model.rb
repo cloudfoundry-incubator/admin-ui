@@ -287,6 +287,8 @@ module AdminUI
           row.push(nil)
         end
 
+        row.push(service_broker[:state])
+
         if event_counter
           row.push(event_counter)
         elsif events_connected
@@ -389,7 +391,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..16).to_a, [1, 2, 3, 4, 6, 16])
+      result(true, items, hash, (1..17).to_a, [1, 2, 3, 4, 5, 7, 17])
     end
   end
 end

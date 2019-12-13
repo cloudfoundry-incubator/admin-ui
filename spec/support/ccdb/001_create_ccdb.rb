@@ -1276,6 +1276,7 @@ Sequel.migration do
       foreign_key :space_id, :spaces, :key=>[:id]
       String :encryption_key_label, :size=>255
       Integer :encryption_iterations, :default=>2048, :null=>false
+      String :state, :default=>"", :size=>255, :null=>false
       
       index [:broker_url], :name=>:sb_broker_url_index
       index [:created_at], :name=>:sbrokers_created_at_index
@@ -1447,16 +1448,20 @@ Sequel.migration do
       index [:process_type]
     end
     
-    create_table(:service_broker_states, :ignore_index_errors=>true) do
+    create_table(:service_broker_update_requests, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
-      String :state, :size=>50, :null=>false
+      String :name, :size=>255
+      String :broker_url, :size=>255
+      String :authentication, :size=>16000
+      String :salt, :size=>255
+      String :encryption_key_label, :size=>255
+      Integer :encryption_iterations, :default=>2048, :null=>false
       Integer :service_broker_id, :null=>false
       foreign_key :fk_service_brokers_id, :service_brokers, :key=>[:id]
       
-      index [:service_broker_id], :name=>:fk_service_brokers_id_index
       index [:created_at]
       index [:guid], :unique=>true
       index [:updated_at]

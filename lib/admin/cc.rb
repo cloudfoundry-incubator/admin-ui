@@ -310,7 +310,7 @@ module AdminUI
           {
             db_uri:  ccdb_uri,
             table:   :service_brokers,
-            columns: %i[auth_username broker_url created_at guid id name space_id updated_at]
+            columns: %i[auth_username broker_url created_at guid id name space_id state updated_at]
           },
           service_dashboard_clients:
           {
