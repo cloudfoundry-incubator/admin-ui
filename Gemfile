@@ -9,10 +9,10 @@ gem 'net-sftp', '2.1.2'
 gem 'parse-cron', '0.1.4'
 gem 'protobuf', '3.10.2'
 gem 'rack-ssl', '1.4.1'
-gem 'sequel', '5.27.0'
+gem 'sequel', '5.28.0'
 gem 'sequel_pg', '1.12.2'
-gem 'sinatra', '2.0.7'
-gem 'sqlite3', '1.4.1'
+gem 'sinatra', '2.0.8.1'
+gem 'sqlite3', '1.4.2'
 gem 'yajl-ruby', '1.4.1'
 
 group :mysql do
@@ -20,12 +20,12 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '0.77.0'
-  gem 'rubocop-performance', '1.5.1'
-  gem 'rubocop-rails', '2.4.0'
+  gem 'rubocop', '0.78.0'
+  gem 'rubocop-performance', '1.5.2'
+  gem 'rubocop-rails', '2.4.1'
 end
 
 group :test do
   gem 'rspec', '3.9.0'
-  gem 'selenium-webdriver', '3.142.6'
+  gem 'selenium-webdriver', '3.142.7'
 end
