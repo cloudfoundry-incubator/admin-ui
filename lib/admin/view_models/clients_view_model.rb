@@ -1,3 +1,4 @@
+require 'cgi'
 require 'yajl'
 require_relative 'base_view_model'
 
@@ -87,7 +88,7 @@ module AdminUI
 
         row = []
 
-        row.push(URI.escape(client_id))
+        row.push(CGI.escape(client_id))
 
         if identity_zone
           row.push(identity_zone[:name])

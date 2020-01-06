@@ -1,4 +1,4 @@
-require 'uri'
+require 'cgi'
 require 'yajl'
 
 module AdminUI
@@ -153,7 +153,7 @@ module AdminUI
     end
 
     def delete_client(client_id)
-      url = "/oauth/clients/#{URI.escape(client_id)}"
+      url = "/oauth/clients/#{CGI.escape(client_id)}"
       @logger.debug("DELETE #{url}")
       @client.delete_uaa(url)
       @cc.invalidate_approvals
@@ -164,7 +164,7 @@ module AdminUI
     end
 
     def delete_client_tokens(client_id)
-      url = "/oauth/token/revoke/client/#{URI.escape(client_id)}"
+      url = "/oauth/token/revoke/client/#{CGI.escape(client_id)}"
       @logger.debug("GET #{url}")
       @client.get_uaa(url)
       @cc.invalidate_clients
@@ -241,7 +241,7 @@ module AdminUI
     end
 
     def delete_identity_zone(identity_zone_id)
-      url = "/identity-zones/#{URI.escape(identity_zone_id)}"
+      url = "/identity-zones/#{CGI.escape(identity_zone_id)}"
       @logger.debug("DELETE #{url}")
       @client.delete_uaa(url)
       @cc.invalidate_approvals

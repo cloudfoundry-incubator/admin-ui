@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby '2.6.5'
+ruby '2.7.0'
 
 gem 'faye-websocket', '0.10.9'
 gem 'membrane', '1.1.0'
@@ -10,7 +10,7 @@ gem 'parse-cron', '0.1.4'
 gem 'protobuf', '3.10.2'
 gem 'rack-ssl', '1.4.1'
 gem 'sequel', '5.28.0'
-gem 'sequel_pg', '1.12.2'
+gem 'sequel_pg', '1.12.4'
 gem 'sinatra', '2.0.8.1'
 gem 'sqlite3', '1.4.2'
 gem 'yajl-ruby', '1.4.1'

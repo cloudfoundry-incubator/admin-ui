@@ -1,5 +1,5 @@
+require 'cgi'
 require 'time'
-require 'uri'
 require 'yajl'
 require_relative '../spec_helper'
 require_relative 'cc_helper'
@@ -195,7 +195,7 @@ module ViewModelsHelper
         uaa_approval[:status],
         uaa_approval[:lastmodifiedat].to_datetime.rfc3339,
         uaa_approval[:expiresat].to_datetime.rfc3339,
-        URI.escape(uaa_approval[:client_id])
+        CGI.escape(uaa_approval[:client_id])
       ]
     ]
   end

@@ -1,3 +1,4 @@
+require 'cgi'
 require 'date'
 require_relative 'base_view_model'
 
@@ -152,7 +153,7 @@ module AdminUI
 
         row = []
 
-        row.push(URI.escape(id))
+        row.push(CGI.escape(id))
         row.push(identity_zone[:name])
         row.push(id)
         row.push(identity_zone[:created].to_datetime.rfc3339)

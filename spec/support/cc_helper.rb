@@ -1,6 +1,5 @@
 require 'net/http'
 require 'time'
-require 'uri'
 require 'yajl'
 require_relative '../spec_helper'
 

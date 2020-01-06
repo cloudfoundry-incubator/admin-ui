@@ -33,7 +33,7 @@ GEM
     parse-cron (0.1.4)
     parser (2.7.0.1)
       ast (~> 2.4.0)
-    pg (1.2.0)
+    pg (1.2.1)
     protobuf (3.10.2)
       activesupport (>= 3.2)
       middleware
@@ -77,8 +77,8 @@ GEM
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
     sequel (5.28.0)
-    sequel_pg (1.12.2)
-      pg (>= 0.18.0)
+    sequel_pg (1.12.4)
+      pg (>= 0.18.0, != 1.2.0)
       sequel (>= 4.38.0)
     sinatra (2.0.8.1)
       mustermann (~> 1.0)
@@ -116,13 +116,13 @@ DEPENDENCIES
   rubocop-rails (= 2.4.1)
   selenium-webdriver (= 3.142.7)
   sequel (= 5.28.0)
-  sequel_pg (= 1.12.2)
+  sequel_pg (= 1.12.4)
   sinatra (= 2.0.8.1)
   sqlite3 (= 1.4.2)
   yajl-ruby (= 1.4.1)
 
 RUBY VERSION
-   ruby 2.6.5p114
+   ruby 2.7.0p0
 
 BUNDLED WITH
    2.1.2

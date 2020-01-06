@@ -1,5 +1,4 @@
 require 'net/http'
-require 'uri'
 require 'yajl'
 require_relative '../spec_helper'
 # These shouldn't be required, but they are in some environments...

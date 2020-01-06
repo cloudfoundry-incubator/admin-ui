@@ -1,7 +1,6 @@
 require 'fileutils'
 require 'sequel'
 require 'sequel/extensions/migration'
-require 'uri'
 require 'yajl'
 require_relative '../spec_helper'
 

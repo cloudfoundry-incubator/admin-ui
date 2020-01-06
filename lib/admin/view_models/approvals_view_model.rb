@@ -1,5 +1,5 @@
+require 'cgi'
 require 'date'
-require 'uri'
 require_relative 'base_view_model'
 
 module AdminUI
@@ -48,7 +48,7 @@ module AdminUI
         row.push(approval[:expiresat].to_datetime.rfc3339)
 
         # We need an additional escaped client id for retrieval
-        row.push(URI.escape(approval[:client_id]))
+        row.push(CGI.escape(approval[:client_id]))
 
         items.push(row)
 
