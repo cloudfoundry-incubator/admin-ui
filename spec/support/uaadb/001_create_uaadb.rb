@@ -161,6 +161,7 @@ Sequel.migration do
       index [:client_id], :name=>:idx_revocable_token_client_id
       index [:expires_at], :name=>:idx_revocable_token_expires_at
       index [:user_id], :name=>:idx_revocable_token_user_id
+      index [:user_id, :client_id, :response_type, :identity_zone_id], :name=>:revocable_tokens_user_id_client_id_response_type_identity__idx
       index [:identity_zone_id], :name=>:revocable_tokens_zone_id
     end
     
