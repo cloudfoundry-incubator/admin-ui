@@ -245,6 +245,14 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.service_brokers)
     end
 
+    it 'returns zero service_broker_annotations as expected' do
+      verify_disconnected_items(cc.service_broker_annotations)
+    end
+
+    it 'returns zero service_broker_labels as expected' do
+      verify_disconnected_items(cc.service_broker_labels)
+    end
+
     it 'returns zero service_dashboard_clients as expected' do
       verify_disconnected_items(cc.service_dashboard_clients)
     end
@@ -271,6 +279,14 @@ describe AdminUI::CC do
 
     it 'returns zero service_keys as expected' do
       verify_disconnected_items(cc.service_keys)
+    end
+
+    it 'returns zero service_offering_annotations as expected' do
+      verify_disconnected_items(cc.service_offering_annotations)
+    end
+
+    it 'returns zero service_offering_labels as expected' do
+      verify_disconnected_items(cc.service_offering_labels)
     end
 
     it 'returns zero service_plans as expected' do

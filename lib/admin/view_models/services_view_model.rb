@@ -10,15 +10,17 @@ module AdminUI
       # services have to exist. Other record types are optional
       return result unless services['connected']
 
-      events                    = @cc.events
-      route_bindings            = @cc.route_bindings
-      service_bindings          = @cc.service_bindings
-      service_brokers           = @cc.service_brokers
-      service_instances         = @cc.service_instances
-      service_instance_shares   = @cc.service_instance_shares
-      service_keys              = @cc.service_keys
-      service_plans             = @cc.service_plans
-      service_plan_visibilities = @cc.service_plan_visibilities
+      events                       = @cc.events
+      route_bindings               = @cc.route_bindings
+      service_bindings             = @cc.service_bindings
+      service_brokers              = @cc.service_brokers
+      service_instances            = @cc.service_instances
+      service_instance_shares      = @cc.service_instance_shares
+      service_keys                 = @cc.service_keys
+      service_offering_annotations = @cc.service_offering_annotations
+      service_offering_labels      = @cc.service_offering_labels
+      service_plans                = @cc.service_plans
+      service_plan_visibilities    = @cc.service_plan_visibilities
 
       events_connected                    = events['connected']
       route_bindings_connected            = route_bindings['connected']
@@ -33,6 +35,54 @@ module AdminUI
       service_instance_guid_hash = Hash[service_instances['items'].map { |item| [item[:guid], item] }]
       service_instance_id_hash   = Hash[service_instances['items'].map { |item| [item[:id], item] }]
       service_plan_hash          = Hash[service_plans['items'].map { |item| [item[:id], item] }]
+
+      service_offering_annotations_hash = {}
+      service_offering_annotations['items'].each do |service_offering_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        service_offering_guid = service_offering_annotation[:resource_guid]
+        service_offering_annotations_array = service_offering_annotations_hash[service_offering_guid]
+        if service_offering_annotations_array.nil?
+          service_offering_annotations_array = []
+          service_offering_annotations_hash[service_offering_guid] = service_offering_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         service_offering_annotation,
+            created_at_rfc3339: service_offering_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: service_offering_annotation[:updated_at].nil? ? nil : service_offering_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        service_offering_annotations_array.push(wrapper)
+      end
+
+      service_offering_labels_hash = {}
+      service_offering_labels['items'].each do |service_offering_label|
+        return result unless @running
+
+        Thread.pass
+
+        service_offering_guid = service_offering_label[:resource_guid]
+        service_offering_labels_array = service_offering_labels_hash[service_offering_guid]
+        if service_offering_labels_array.nil?
+          service_offering_labels_array = []
+          service_offering_labels_hash[service_offering_guid] = service_offering_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              service_offering_label,
+            created_at_rfc3339: service_offering_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: service_offering_label[:updated_at].nil? ? nil : service_offering_label[:updated_at].to_datetime.rfc3339
+          }
+
+        service_offering_labels_array.push(wrapper)
+      end
 
       event_counters = {}
       events['items'].each do |event|
@@ -208,6 +258,8 @@ module AdminUI
         service_instance_counter           = service_instance_counters[id]
         service_instance_share_counter     = service_instance_share_counters[id]
         service_key_counter                = service_key_counters[id]
+        service_offering_annotation_array  = service_offering_annotations_hash[guid] || []
+        service_offering_label_array       = service_offering_labels_hash[guid] || []
         service_plan_counter               = service_plan_counters[id]
         service_plan_public_active_counter = service_plan_public_active_counters[id]
         service_plan_visibility_counter    = service_plan_visibility_counters[id]
@@ -361,6 +413,8 @@ module AdminUI
 
         hash[guid] =
           {
+            'annotations'    => service_offering_annotation_array,
+            'labels'         => service_offering_label_array,
             'service'        => service,
             'service_broker' => service_broker
           }

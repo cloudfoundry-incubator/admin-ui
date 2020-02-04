@@ -328,6 +328,8 @@ module CCHelper
   def cc_clear_service_brokers_cache_stub(config)
     cc_clear_services_cache_stub(config)
 
+    sql(config.ccdb_uri, 'DELETE FROM service_broker_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM service_broker_labels')
     sql(config.ccdb_uri, 'DELETE FROM service_dashboard_clients')
     sql(config.ccdb_uri, 'DELETE FROM service_brokers')
 
@@ -378,6 +380,8 @@ module CCHelper
   def cc_clear_services_cache_stub(config)
     cc_clear_service_plans_cache_stub(config)
 
+    sql(config.ccdb_uri, 'DELETE FROM service_offering_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM service_offering_labels')
     sql(config.ccdb_uri, 'DELETE FROM services')
 
     @cc_services_deleted = true
@@ -1409,6 +1413,32 @@ module CCHelper
     }
   end
 
+  def cc_service_offering_annotation
+    {
+      created_at:    unique_time('cc_service_offering_annotation_created'),
+      guid:          'service_offering_annotation1',
+      id:            unique_id('cc_service_offering_annotation'),
+      key:           'soannotationkey',
+      key_prefix:    'soannotationkeyprefix.com',
+      resource_guid: cc_service[:guid],
+      updated_at:    unique_time('cc_service_offering_annotation_updated'),
+      value:         'soannotationvalue'
+    }
+  end
+
+  def cc_service_offering_label
+    {
+      created_at:    unique_time('cc_service_offering_label_created'),
+      guid:          'service_offering_label1',
+      id:            unique_id('cc_service_offering_label'),
+      key_name:      'solabelkeyname',
+      key_prefix:    'solabelkeyprefix.com',
+      resource_guid: cc_service[:guid],
+      updated_at:    unique_time('cc_service_offering_label_updated'),
+      value:         'solabelvalue'
+    }
+  end
+
   def cc_service_binding
     {
       app_guid:              cc_app[:guid],
@@ -1477,6 +1507,32 @@ module CCHelper
 
   def cc_service_broker_rename
     'renamed_TestServiceBroker'
+  end
+
+  def cc_service_broker_annotation
+    {
+      created_at:    unique_time('cc_service_broker_annotation_created'),
+      guid:          'service_broker_annotation1',
+      id:            unique_id('cc_service_broker_annotation'),
+      key:           'sbannotationkey',
+      key_prefix:    'sbannotationkeyprefix.com',
+      resource_guid: cc_service_broker[:guid],
+      updated_at:    unique_time('cc_service_broker_annotation_updated'),
+      value:         'sbannotationvalue'
+    }
+  end
+
+  def cc_service_broker_label
+    {
+      created_at:    unique_time('cc_service_broker_label_created'),
+      guid:          'service_broker_label1',
+      id:            unique_id('cc_service_broker_label'),
+      key_name:      'sblabelkeyname',
+      key_prefix:    'sblabelkeyprefix.com',
+      resource_guid: cc_service_broker[:guid],
+      updated_at:    unique_time('cc_service_broker_label_updated'),
+      value:         'sblabelvalue'
+    }
   end
 
   def cc_service_dashboard_client
@@ -2098,6 +2154,8 @@ module CCHelper
                [:route_annotations,                cc_route_annotation],
                [:route_labels,                     cc_route_label],
                [:service_brokers,                  cc_service_broker_with_password],
+               [:service_broker_annotations,       cc_service_broker_annotation],
+               [:service_broker_labels,            cc_service_broker_label],
                [:users,                            cc_user],
                [:user_annotations,                 cc_user_annotation],
                [:user_labels,                      cc_user_label],
@@ -2107,6 +2165,8 @@ module CCHelper
                [:organizations_managers,           cc_organization_manager],
                [:organizations_users,              cc_organization_user],
                [:services,                         cc_service],
+               [:service_offering_annotations,     cc_service_offering_annotation],
+               [:service_offering_labels,          cc_service_offering_label],
                [:spaces_auditors,                  cc_space_auditor],
                [:spaces_developers,                cc_space_developer],
                [:spaces_managers,                  cc_space_manager],
@@ -2911,6 +2971,16 @@ module CCHelper
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_offerings/#{cc_service[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_services_deleted
+        cc_service_not_found
+      else
+        cc_clear_services_cache_stub(config)
+        OK.new({})
+      end
+    end
   end
 
   def cc_service_binding_not_found
@@ -2956,6 +3026,16 @@ module CCHelper
       else
         cc_clear_service_brokers_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_brokers/#{cc_service_broker[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_service_brokers_deleted
+        cc_service_broker_not_found
+      else
+        cc_clear_service_brokers_cache_stub(config)
+        Accepted.new({})
       end
     end
   end
@@ -3354,7 +3434,7 @@ module CCHelper
         cc_user_not_found
       else
         cc_clear_users_cache_stub(config)
-        OK.new({})
+        Created.new
       end
     end
   end

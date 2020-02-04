@@ -9,18 +9,20 @@ module AdminUI
       # service_brokers have to exist. Other record types are optional
       return result unless service_brokers['connected']
 
-      events                    = @cc.events
-      organizations             = @cc.organizations
-      route_bindings            = @cc.route_bindings
-      service_bindings          = @cc.service_bindings
-      service_dashboard_clients = @cc.service_dashboard_clients
-      service_instances         = @cc.service_instances
-      service_instance_shares   = @cc.service_instance_shares
-      service_keys              = @cc.service_keys
-      service_plans             = @cc.service_plans
-      service_plan_visibilities = @cc.service_plan_visibilities
-      services                  = @cc.services
-      spaces                    = @cc.spaces
+      events                     = @cc.events
+      organizations              = @cc.organizations
+      route_bindings             = @cc.route_bindings
+      service_bindings           = @cc.service_bindings
+      service_broker_annotations = @cc.service_broker_annotations
+      service_broker_labels      = @cc.service_broker_labels
+      service_dashboard_clients  = @cc.service_dashboard_clients
+      service_instances          = @cc.service_instances
+      service_instance_shares    = @cc.service_instance_shares
+      service_keys               = @cc.service_keys
+      service_plans              = @cc.service_plans
+      service_plan_visibilities  = @cc.service_plan_visibilities
+      services                   = @cc.services
+      spaces                     = @cc.spaces
 
       events_connected                    = events['connected']
       route_bindings_connected            = route_bindings['connected']
@@ -39,6 +41,54 @@ module AdminUI
       service_instance_id_hash      = Hash[service_instances['items'].map { |item| [item[:id], item] }]
       service_plan_hash             = Hash[service_plans['items'].map { |item| [item[:id], item] }]
       space_hash                    = Hash[spaces['items'].map { |item| [item[:id], item] }]
+
+      service_broker_annotations_hash = {}
+      service_broker_annotations['items'].each do |service_broker_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        service_broker_guid = service_broker_annotation[:resource_guid]
+        service_broker_annotations_array = service_broker_annotations_hash[service_broker_guid]
+        if service_broker_annotations_array.nil?
+          service_broker_annotations_array = []
+          service_broker_annotations_hash[service_broker_guid] = service_broker_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         service_broker_annotation,
+            created_at_rfc3339: service_broker_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: service_broker_annotation[:updated_at].nil? ? nil : service_broker_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        service_broker_annotations_array.push(wrapper)
+      end
+
+      service_broker_labels_hash = {}
+      service_broker_labels['items'].each do |service_broker_label|
+        return result unless @running
+
+        Thread.pass
+
+        service_broker_guid = service_broker_label[:resource_guid]
+        service_broker_labels_array = service_broker_labels_hash[service_broker_guid]
+        if service_broker_labels_array.nil?
+          service_broker_labels_array = []
+          service_broker_labels_hash[service_broker_guid] = service_broker_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              service_broker_label,
+            created_at_rfc3339: service_broker_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: service_broker_label[:updated_at].nil? ? nil : service_broker_label[:updated_at].to_datetime.rfc3339
+          }
+
+        service_broker_labels_array.push(wrapper)
+      end
 
       event_counters = {}
       events['items'].each do |event|
@@ -266,6 +316,8 @@ module AdminUI
         event_counter                      = event_counters[guid]
         route_binding_counter              = route_binding_counters[id]
         service_binding_counter            = service_binding_counters[id]
+        service_broker_annotation_array    = service_broker_annotations_hash[guid] || []
+        service_broker_label_array         = service_broker_labels_hash[guid] || []
         service_counter                    = service_counters[id]
         service_instance_counter           = service_instance_counters[id]
         service_instance_share_counter     = service_instance_share_counters[id]
@@ -385,6 +437,8 @@ module AdminUI
 
         hash[guid] =
           {
+            'annotations'    => service_broker_annotation_array,
+            'labels'         => service_broker_label_array,
             'organization'   => organization,
             'service_broker' => service_broker,
             'space'          => space

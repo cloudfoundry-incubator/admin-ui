@@ -545,8 +545,8 @@ Sequel.migration do
       String :buildpack_cache_sha256_checksum, :text=>true
       TrueClass :enable_ssh
       String :encryption_key_label, :size=>255
-      TrueClass :revisions_enabled, :default=>false
       Integer :encryption_iterations, :default=>2048, :null=>false
+      TrueClass :revisions_enabled, :default=>true
       
       index [:droplet_guid], :name=>:apps_desired_droplet_guid
       index [:created_at], :name=>:apps_v3_created_at_index
@@ -887,6 +887,20 @@ Sequel.migration do
       index [:guid], :unique=>true
       index [:updated_at]
       index [:resource_guid], :name=>:fk_droplet_labels_resource_guid_index
+    end
+    
+    create_table(:kpack_lifecycle_data, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :build_guid, :builds, :type=>String, :size=>255, :null=>false, :key=>[:guid]
+      String :droplet_guid, :size=>255
+      
+      index [:build_guid], :name=>:fk_kpack_lifecycle_build_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
     
     create_table(:package_annotations, :ignore_index_errors=>true) do
@@ -1444,8 +1458,42 @@ Sequel.migration do
       index [:created_at], :name=>:apps_routes_created_at_index
       index [:guid], :name=>:apps_routes_guid_index, :unique=>true
       index [:updated_at], :name=>:apps_routes_updated_at_index
+      index [:app_guid]
       index [:app_guid, :route_guid, :process_type, :app_port], :name=>:route_mappings_app_guid_route_guid_process_type_app_port_key, :unique=>true
       index [:process_type]
+    end
+    
+    create_table(:service_broker_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :service_brokers, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_service_broker_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:service_broker_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :service_brokers, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_service_broker_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:service_broker_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
     
     create_table(:service_broker_update_requests, :ignore_index_errors=>true) do
@@ -1569,6 +1617,72 @@ Sequel.migration do
       
       index [:resource_guid], :name=>:fk_user_labels_resource_guid_index
       index [:key_prefix, :key_name, :value], :name=>:user_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:service_broker_update_request_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :service_broker_update_requests, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_sb_update_request_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:service_broker_update_request_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :service_broker_update_requests, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_sb_update_request_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:sb_update_request_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:service_offering_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :services, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_service_offering_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:service_offering_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :services, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_service_offering_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:service_offering_labels_compound_index
       index [:created_at]
       index [:guid], :unique=>true
       index [:updated_at]

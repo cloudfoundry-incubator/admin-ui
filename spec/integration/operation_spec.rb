@@ -1489,12 +1489,28 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_service(cc_service[:guid], true)
       end
 
+      def delete_service_offering_annotation
+        operation.delete_service_offering_annotation(cc_service[:guid], cc_service_offering_annotation[:key_prefix], cc_service_offering_annotation[:key])
+      end
+
+      def delete_service_offering_label
+        operation.delete_service_offering_label(cc_service[:guid], cc_service_offering_label[:key_prefix], cc_service_offering_label[:key_name])
+      end
+
       it 'deletes service' do
         expect { delete_service }.to change { cc.services['items'].length }.from(1).to(0)
       end
 
       it 'purges service' do
         expect { purge_service }.to change { cc.services['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the service offering annotation' do
+        expect { delete_service_offering_annotation }.to change { cc.service_offering_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the service offering label' do
+        expect { delete_service_offering_label }.to change { cc.service_offering_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -1515,6 +1531,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails purging deleted service' do
           expect { purge_service }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted service' do
+          expect { delete_service_offering_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted service' do
+          expect { delete_service_offering_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_not_found(exception) }
         end
       end
     end
@@ -1563,12 +1587,28 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_service_broker(cc_service_broker[:guid])
       end
 
+      def delete_service_broker_annotation
+        operation.delete_service_broker_annotation(cc_service_broker[:guid], cc_service_broker_annotation[:key_prefix], cc_service_broker_annotation[:key])
+      end
+
+      def delete_service_broker_label
+        operation.delete_service_broker_label(cc_service_broker[:guid], cc_service_broker_label[:key_prefix], cc_service_broker_label[:key_name])
+      end
+
       it 'renames the service broker' do
         expect { rename_service_broker }.to change { cc.service_brokers['items'][0][:name] }.from(cc_service_broker[:name]).to(cc_service_broker_rename)
       end
 
       it 'deletes service broker' do
         expect { delete_service_broker }.to change { cc.service_brokers['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the service broker annotation' do
+        expect { delete_service_broker_annotation }.to change { cc.service_broker_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the service broker label' do
+        expect { delete_service_broker_label }.to change { cc.service_broker_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -1589,6 +1629,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting deleted service broker' do
           expect { delete_service_broker }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_broker_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted service broker' do
+          expect { delete_service_broker_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_broker_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted service broker' do
+          expect { delete_service_broker_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_broker_not_found(exception) }
         end
       end
     end

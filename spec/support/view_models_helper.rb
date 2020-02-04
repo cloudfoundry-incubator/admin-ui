@@ -1218,6 +1218,8 @@ module ViewModelsHelper
 
   def view_models_service_brokers_detail
     {
+      'annotations'    => [annotation_rfc3339(cc_service_broker_annotation)],
+      'labels'         => [label_rfc3339(cc_service_broker_label)],
       'organization'   => cc_organization,
       'service_broker' => cc_service_broker,
       'space'          => cc_space
@@ -1484,6 +1486,8 @@ module ViewModelsHelper
 
   def view_models_services_detail
     {
+      'annotations'    => [annotation_rfc3339(cc_service_offering_annotation)],
+      'labels'         => [label_rfc3339(cc_service_offering_label)],
       'service'        => cc_service,
       'service_broker' => cc_service_broker
     }

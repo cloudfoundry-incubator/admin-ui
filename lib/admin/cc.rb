@@ -306,6 +306,18 @@ module AdminUI
             table:   :service_binding_operations,
             columns: %i[broker_provided_operation created_at description id service_binding_id state type updated_at]
           },
+          service_broker_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_broker_annotations,
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
+          },
+          service_broker_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_broker_labels,
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
+          },
           service_brokers:
           {
             db_uri:  ccdb_uri,
@@ -353,6 +365,18 @@ module AdminUI
             db_uri:  ccdb_uri,
             table:   :service_keys,
             columns: %i[created_at guid id name service_instance_id updated_at]
+          },
+          service_offering_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_offering_annotations,
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
+          },
+          service_offering_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_offering_labels,
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
           },
           service_plans:
           {
@@ -755,6 +779,14 @@ module AdminUI
       invalidate_cache(:service_bindings)
     end
 
+    def invalidate_service_broker_annotations
+      invalidate_cache(:service_broker_annotations)
+    end
+
+    def invalidate_service_broker_labels
+      invalidate_cache(:service_broker_labels)
+    end
+
     def invalidate_service_brokers
       invalidate_cache(:service_brokers)
     end
@@ -777,6 +809,14 @@ module AdminUI
 
     def invalidate_service_keys
       invalidate_cache(:service_keys)
+    end
+
+    def invalidate_service_offering_annotations
+      invalidate_cache(:service_offering_annotations)
+    end
+
+    def invalidate_service_offering_labels
+      invalidate_cache(:service_offering_labels)
     end
 
     def invalidate_service_plans
@@ -1012,6 +1052,14 @@ module AdminUI
       result_cache(:service_bindings)
     end
 
+    def service_broker_annotations
+      result_cache(:service_broker_annotations)
+    end
+
+    def service_broker_labels
+      result_cache(:service_broker_labels)
+    end
+
     def service_brokers
       result_cache(:service_brokers)
     end
@@ -1042,6 +1090,14 @@ module AdminUI
 
     def service_keys
       result_cache(:service_keys)
+    end
+
+    def service_offering_annotations
+      result_cache(:service_offering_annotations)
+    end
+
+    def service_offering_labels
+      result_cache(:service_offering_labels)
     end
 
     def service_plans

@@ -1137,6 +1137,57 @@ describe AdminUI::Admin do
       it_behaves_like('common purge service')
     end
 
+    shared_examples 'common delete service annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/services/service1/metadata/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service annotation via http' do
+      it_behaves_like('common delete service annotation')
+    end
+
+    context 'delete service annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service annotation')
+    end
+
+    shared_examples 'common delete service label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/services/service1/metadata/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service label via http' do
+      it_behaves_like('common delete service label')
+    end
+
+    context 'delete service label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service label')
+    end
+
+    shared_examples 'common delete service label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/services/service1/metadata/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service label with prefix via http' do
+      it_behaves_like('common delete service label with prefix')
+    end
+
+    context 'delete service label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service label with prefix')
+    end
+
     shared_examples 'common delete service binding' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_bindings/service_binding1')
@@ -1169,6 +1220,57 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete service broker')
+    end
+
+    shared_examples 'common delete service broker annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_brokers/service_broker1/metadata/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service broker annotation via http' do
+      it_behaves_like('common delete service broker annotation')
+    end
+
+    context 'delete service broker annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service broker annotation')
+    end
+
+    shared_examples 'common delete service broker label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_brokers/service_broker1/metadata/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service broker label via http' do
+      it_behaves_like('common delete service broker label')
+    end
+
+    context 'delete service broker label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service broker label')
+    end
+
+    shared_examples 'common delete service broker label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_brokers/service_broker1/metadata/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service broker label with prefix via http' do
+      it_behaves_like('common delete service broker label with prefix')
+    end
+
+    context 'delete service broker label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service broker label with prefix')
     end
 
     shared_examples 'common delete service instance' do
@@ -3143,6 +3245,18 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/service_brokers/service_broker1')
       end
 
+      it 'deletes /service_brokers/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/service_brokers/service_broker1/metadata/annotations/annotation1')
+      end
+
+      it 'deletes /service_brokers/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/service_brokers/service_broker1/metadata/labels/label1')
+      end
+
+      it 'deletes /service_brokers/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/service_brokers/service_broker1/metadata/labels/label1?prefix=bogus.com')
+      end
+
       it 'deletes /service_instances/:guid/:boolean redirects as expected' do
         delete_redirects_as_expected('/service_instances/service_instance1/true')
       end
@@ -3189,6 +3303,18 @@ describe AdminUI::Admin do
 
       it 'deletes /services/:guid?purge=true redirects as expected' do
         delete_redirects_as_expected('/services/service1?purge=true')
+      end
+
+      it 'deletes /services/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/services/service1/metadata/annotations/annotation1')
+      end
+
+      it 'deletes /services/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/services/service1/metadata/labels/label1')
+      end
+
+      it 'deletes /services/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/services/service1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /shared_service_instances/:guid/:guid redirects as expected' do

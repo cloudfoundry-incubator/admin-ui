@@ -514,6 +514,8 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_services
+      @cc.invalidate_service_offering_annotations
+      @cc.invalidate_service_offering_labels
       @cc.invalidate_service_plans
       @cc.invalidate_service_plan_visibilities
       if purge
@@ -544,12 +546,36 @@ module AdminUI
       @cc.invalidate_clients
       @cc.invalidate_services
       @cc.invalidate_service_brokers
+      @cc.invalidate_service_broker_annotations
+      @cc.invalidate_service_broker_labels
       @cc.invalidate_service_plans
       @cc.invalidate_service_plan_visibilities
       @view_models.invalidate_services
       @view_models.invalidate_service_brokers
       @view_models.invalidate_service_plans
       @view_models.invalidate_service_plan_visibilities
+    end
+
+    def delete_service_broker_annotation(service_broker_guid, prefix, name)
+      url = "/v3/service_brokers/#{service_broker_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_service_broker_annotations
+      @view_models.invalidate_service_brokers
+    end
+
+    def delete_service_broker_label(service_broker_guid, prefix, name)
+      url = "/v3/service_brokers/#{service_broker_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_service_broker_labels
+      @view_models.invalidate_service_brokers
     end
 
     def delete_service_instance(service_instance_guid, is_gateway_service, recursive, purge)
@@ -601,6 +627,28 @@ module AdminUI
       @client.delete_cc(url)
       @cc.invalidate_service_keys
       @view_models.invalidate_service_keys
+    end
+
+    def delete_service_offering_annotation(service_offering_guid, prefix, name)
+      url = "/v3/service_offerings/#{service_offering_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_service_offering_annotations
+      @view_models.invalidate_services
+    end
+
+    def delete_service_offering_label(service_offering_guid, prefix, name)
+      url = "/v3/service_offerings/#{service_offering_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_service_offering_labels
+      @view_models.invalidate_services
     end
 
     def delete_service_plan(service_plan_guid)

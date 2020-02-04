@@ -481,11 +481,43 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Service Brokers tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceBrokers' }
+        let(:page_id)   { 'ServiceBrokersPage' }
+        let(:button_id) { 'Buttons_ServiceBrokersLabelsTable_0' }
+      end
+    end
+
+    context 'Service Brokers tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceBrokers' }
+        let(:page_id)   { 'ServiceBrokersPage' }
+        let(:button_id) { 'Buttons_ServiceBrokersAnnotationsTable_0' }
+      end
+    end
+
     context 'Services tab does not have delete or purge buttons' do
       it_behaves_like('verifies first button is copy button') do
         let(:tab_id)    { 'Services' }
         let(:page_id)   { 'ServicesPage' }
         let(:button_id) { 'Buttons_ServicesTable_0' }
+      end
+    end
+
+    context 'Services tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Services' }
+        let(:page_id)   { 'ServicesPage' }
+        let(:button_id) { 'Buttons_ServicesLabelsTable_0' }
+      end
+    end
+
+    context 'Service tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'Services' }
+        let(:page_id)   { 'ServicesPage' }
+        let(:button_id) { 'Buttons_ServicesAnnotationsTable_0' }
       end
     end
 

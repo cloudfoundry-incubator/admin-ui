@@ -7233,6 +7233,130 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
+          it 'has labels subtable' do
+            expect(@driver.find_element(id: 'ServiceBrokersLabelsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceBrokersLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceBrokersLabelsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_service_broker_label[:key_prefix],
+                               cc_service_broker_label[:key_name],
+                               cc_service_broker_label[:guid],
+                               cc_service_broker_label[:created_at].to_datetime.rfc3339,
+                               cc_service_broker_label[:updated_at].to_datetime.rfc3339,
+                               cc_service_broker_label[:value]
+                             ])
+          end
+
+          it 'labels subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ServiceBrokersLabelsTable_1')
+          end
+
+          it 'labels subtable has a checkbox in the first column' do
+            check_checkbox_guid('ServiceBrokersLabelsTable', "#{cc_service_broker[:guid]}/metadata/labels/#{cc_service_broker_label[:key_name]}?prefix=#{cc_service_broker_label[:key_prefix]}")
+          end
+
+          context 'manage labels subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_ServiceBrokersLabelsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_ServiceBrokersLabelsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'ServiceBrokersLabelsTable' }
+                let(:button_id)               { 'Buttons_ServiceBrokersLabelsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the service broker's selected labels?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'service_broker_labels' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ServiceBrokersLabelsTable_1' }
+                let(:print_button_id) { 'Buttons_ServiceBrokersLabelsTable_2' }
+                let(:save_button_id)  { 'Buttons_ServiceBrokersLabelsTable_3' }
+                let(:csv_button_id)   { 'Buttons_ServiceBrokersLabelsTable_4' }
+                let(:excel_button_id) { 'Buttons_ServiceBrokersLabelsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_ServiceBrokersLabelsTable_6' }
+              end
+            end
+          end
+
+          it 'has annotations subtable' do
+            expect(@driver.find_element(id: 'ServiceBrokersAnnotationsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServiceBrokersAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ServiceBrokersAnnotationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_service_broker_annotation[:key_prefix],
+                               cc_service_broker_annotation[:key],
+                               cc_service_broker_annotation[:guid],
+                               cc_service_broker_annotation[:created_at].to_datetime.rfc3339,
+                               cc_service_broker_annotation[:updated_at].to_datetime.rfc3339,
+                               cc_service_broker_annotation[:value]
+                             ])
+          end
+
+          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ServiceBrokersAnnotationsTable_1')
+          end
+
+          it 'annotations subtable has a checkbox in the first column' do
+            check_checkbox_guid('ServiceBrokersAnnotationsTable', "#{cc_service_broker[:guid]}/metadata/annotations/#{cc_service_broker_annotation[:key]}?prefix=#{cc_service_broker_annotation[:key_prefix]}")
+          end
+
+          context 'manage annotations subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_ServiceBrokersAnnotationsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_ServiceBrokersAnnotationsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'ServiceBrokersAnnotationsTable' }
+                let(:button_id)               { 'Buttons_ServiceBrokersAnnotationsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the service broker's selected annotations?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'service_broker_annotations' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ServiceBrokersAnnotationsTable_1' }
+                let(:print_button_id) { 'Buttons_ServiceBrokersAnnotationsTable_2' }
+                let(:save_button_id)  { 'Buttons_ServiceBrokersAnnotationsTable_3' }
+                let(:csv_button_id)   { 'Buttons_ServiceBrokersAnnotationsTable_4' }
+                let(:excel_button_id) { 'Buttons_ServiceBrokersAnnotationsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_ServiceBrokersAnnotationsTable_6' }
+              end
+            end
+          end
+
           it 'has events link' do
             check_filter_link('ServiceBrokers', 7, 'Events', cc_service_broker[:guid])
           end
@@ -7447,6 +7571,130 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Service Broker Created',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:created_at].to_datetime.rfc3339}\")") },
                             { label: 'Service Broker Updated',        tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_service_broker[:updated_at].to_datetime.rfc3339}\")") }
                           ])
+          end
+
+          it 'has labels subtable' do
+            expect(@driver.find_element(id: 'ServicesLabelsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServicesLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ServicesLabelsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_service_offering_label[:key_prefix],
+                               cc_service_offering_label[:key_name],
+                               cc_service_offering_label[:guid],
+                               cc_service_offering_label[:created_at].to_datetime.rfc3339,
+                               cc_service_offering_label[:updated_at].to_datetime.rfc3339,
+                               cc_service_offering_label[:value]
+                             ])
+          end
+
+          it 'labels subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ServicesLabelsTable_1')
+          end
+
+          it 'labels subtable has a checkbox in the first column' do
+            check_checkbox_guid('ServicesLabelsTable', "#{cc_service[:guid]}/metadata/labels/#{cc_service_offering_label[:key_name]}?prefix=#{cc_service_offering_label[:key_prefix]}")
+          end
+
+          context 'manage labels subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_ServicesLabelsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_ServicesLabelsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'ServicesLabelsTable' }
+                let(:button_id)               { 'Buttons_ServicesLabelsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the service's selected labels?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'service_labels' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ServicesLabelsTable_1' }
+                let(:print_button_id) { 'Buttons_ServicesLabelsTable_2' }
+                let(:save_button_id)  { 'Buttons_ServicesLabelsTable_3' }
+                let(:csv_button_id)   { 'Buttons_ServicesLabelsTable_4' }
+                let(:excel_button_id) { 'Buttons_ServicesLabelsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_ServicesLabelsTable_6' }
+              end
+            end
+          end
+
+          it 'has annotations subtable' do
+            expect(@driver.find_element(id: 'ServicesAnnotationsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='ServicesAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='ServicesAnnotationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_service_offering_annotation[:key_prefix],
+                               cc_service_offering_annotation[:key],
+                               cc_service_offering_annotation[:guid],
+                               cc_service_offering_annotation[:created_at].to_datetime.rfc3339,
+                               cc_service_offering_annotation[:updated_at].to_datetime.rfc3339,
+                               cc_service_offering_annotation[:value]
+                             ])
+          end
+
+          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_ServicesAnnotationsTable_1')
+          end
+
+          it 'annotations subtable has a checkbox in the first column' do
+            check_checkbox_guid('ServicesAnnotationsTable', "#{cc_service[:guid]}/metadata/annotations/#{cc_service_offering_annotation[:key]}?prefix=#{cc_service_offering_annotation[:key_prefix]}")
+          end
+
+          context 'manage annotations subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_ServicesAnnotationsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_ServicesAnnotationsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'ServicesAnnotationsTable' }
+                let(:button_id)               { 'Buttons_ServicesAnnotationsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the service's selected annotations?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'service_annotations' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_ServicesAnnotationsTable_1' }
+                let(:print_button_id) { 'Buttons_ServicesAnnotationsTable_2' }
+                let(:save_button_id)  { 'Buttons_ServicesAnnotationsTable_3' }
+                let(:csv_button_id)   { 'Buttons_ServicesAnnotationsTable_4' }
+                let(:excel_button_id) { 'Buttons_ServicesAnnotationsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_ServicesAnnotationsTable_6' }
+              end
+            end
           end
 
           it 'has events link' do
