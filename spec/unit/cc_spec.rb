@@ -293,6 +293,14 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.service_plans)
     end
 
+    it 'returns zero service_plan_annotations as expected' do
+      verify_disconnected_items(cc.service_plan_annotations)
+    end
+
+    it 'returns zero service_plan_labels as expected' do
+      verify_disconnected_items(cc.service_plan_labels)
+    end
+
     it 'returns zero service_plan_visibilities as expected' do
       verify_disconnected_items(cc.service_plan_visibilities)
     end

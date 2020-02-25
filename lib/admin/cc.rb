@@ -384,6 +384,18 @@ module AdminUI
             table:   :service_plans,
             columns: %i[active bindable created_at create_binding_schema create_instance_schema description extra free guid id maintenance_info maximum_polling_duration name plan_updateable public service_id unique_id updated_at update_instance_schema]
           },
+          service_plan_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_plan_annotations,
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
+          },
+          service_plan_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_plan_labels,
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
+          },
           service_plan_visibilities:
           {
             db_uri:  ccdb_uri,
@@ -819,6 +831,14 @@ module AdminUI
       invalidate_cache(:service_offering_labels)
     end
 
+    def invalidate_service_plan_annotations
+      invalidate_cache(:service_plan_annotations)
+    end
+
+    def invalidate_service_plan_labels
+      invalidate_cache(:service_plan_labels)
+    end
+
     def invalidate_service_plans
       invalidate_cache(:service_plans)
     end
@@ -1098,6 +1118,14 @@ module AdminUI
 
     def service_offering_labels
       result_cache(:service_offering_labels)
+    end
+
+    def service_plan_annotations
+      result_cache(:service_plan_annotations)
+    end
+
+    def service_plan_labels
+      result_cache(:service_plan_labels)
     end
 
     def service_plans

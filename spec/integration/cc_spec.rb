@@ -420,6 +420,20 @@ describe AdminUI::CC, type: :integration do
       expect(cc.service_plans['items'].length).to eq(0)
     end
 
+    it 'clears the service plan annotations cache' do
+      expect(cc.service_plan_annotations['items'].length).to eq(1)
+      cc_clear_service_plans_cache_stub(config)
+      cc.invalidate_service_plan_annotations
+      expect(cc.service_plan_annotations['items'].length).to eq(0)
+    end
+
+    it 'clears the service plan labels cache' do
+      expect(cc.service_plan_labels['items'].length).to eq(1)
+      cc_clear_service_plans_cache_stub(config)
+      cc.invalidate_service_plan_labels
+      expect(cc.service_plan_labels['items'].length).to eq(0)
+    end
+
     it 'clears the service plan visibilities cache' do
       expect(cc.service_plan_visibilities['items'].length).to eq(1)
       cc_clear_service_plan_visibilities_cache_stub(config)
@@ -1001,6 +1015,20 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected service plans' do
       let(:results)  { cc.service_plans }
       let(:expected) { cc_service_plan }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected service plan annotations' do
+      let(:results)  { cc.service_plan_annotations }
+      let(:expected) { cc_service_plan_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected service plan labels' do
+      let(:results)  { cc.service_plan_labels }
+      let(:expected) { cc_service_plan_label }
 
       it_behaves_like('common cc retrieval')
     end

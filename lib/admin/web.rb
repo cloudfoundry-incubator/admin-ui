@@ -2303,6 +2303,42 @@ module AdminUI
       500
     end
 
+    delete '/service_plans/:service_plan_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/service_plans/#{params[:service_plan_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_service_plan_annotation(params[:service_plan_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service plan annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service plan annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
+    delete '/service_plans/:service_plan_guid/metadata/labels/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/service_plans/#{params[:service_plan_guid]}/metadata/labels/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_service_plan_label(params[:service_plan_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service plan label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service plan label: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
     delete '/service_plan_visibilities/:service_plan_visibility_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/service_plan_visibilities/#{params[:service_plan_visibility_guid]}")
       @operation.delete_service_plan_visibility(params[:service_plan_visibility_guid])

@@ -718,7 +718,7 @@ Sequel.migration do
       foreign_key :app_guid, :apps, :type=>String, :size=>255, :key=>[:guid]
       Integer :version, :default=>1
       String :droplet_guid, :size=>255
-      String :encrypted_environment_variables, :size=>16000
+      String :encrypted_environment_variables, :text=>true
       String :salt, :size=>255
       String :encryption_key_label, :size=>255
       Integer :encryption_iterations, :default=>2048, :null=>false
@@ -1743,6 +1743,39 @@ Sequel.migration do
       index [:guid], :name=>:si_guid_index, :unique=>true
       index [:space_id, :name], :name=>:si_space_id_name_index, :unique=>true
       index [:updated_at], :name=>:si_updated_at_index
+    end
+    
+    create_table(:service_plan_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :service_plans, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_service_plan_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:service_plan_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :service_plans, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_service_plan_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:service_plan_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
     
     create_table(:service_plan_visibilities, :ignore_index_errors=>true) do

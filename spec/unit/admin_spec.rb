@@ -1409,6 +1409,57 @@ describe AdminUI::Admin do
       it_behaves_like('common delete service plan')
     end
 
+    shared_examples 'common delete service plan annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_plans/service_plan1/metadata/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service plan annotation via http' do
+      it_behaves_like('common delete service plan annotation')
+    end
+
+    context 'delete service plan annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service plan annotation')
+    end
+
+    shared_examples 'common delete service plan label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_plans/service_plan1/metadata/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service plan label via http' do
+      it_behaves_like('common delete service plan label')
+    end
+
+    context 'delete service plan label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service plan label')
+    end
+
+    shared_examples 'common delete service plan label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_plans/service_plan1/metadata/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service plan label with prefix via http' do
+      it_behaves_like('common delete service plan label with prefix')
+    end
+
+    context 'delete service plan label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service plan label with prefix')
+    end
+
     shared_examples 'common delete service plan visibility' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_plan_visibilities/service_plan_visibility1')
@@ -3287,6 +3338,18 @@ describe AdminUI::Admin do
 
       it 'deletes /service_plans/:guid redirects as expected' do
         delete_redirects_as_expected('/service_plans/service_plan1')
+      end
+
+      it 'deletes /service_plans/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/service_plans/service_plan1/metadata/annotations/annotation1')
+      end
+
+      it 'deletes /service_plans/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/service_plans/service_plan1/metadata/labels/label1')
+      end
+
+      it 'deletes /service_plans/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/service_plans/service_plan1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /service_plan_visibilities/:guid redirects as expected' do

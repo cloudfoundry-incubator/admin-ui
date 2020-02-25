@@ -366,6 +366,8 @@ module CCHelper
     cc_clear_service_instances_cache_stub(config)
     cc_clear_service_plan_visibilities_cache_stub(config)
 
+    sql(config.ccdb_uri, 'DELETE FROM service_plan_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM service_plan_labels')
     sql(config.ccdb_uri, 'DELETE FROM service_plans')
 
     @cc_service_plans_deleted = true
@@ -1675,6 +1677,32 @@ module CCHelper
     }
   end
 
+  def cc_service_plan_annotation
+    {
+      created_at:    unique_time('cc_service_plan_annotation_created'),
+      guid:          'service_plan_annotation1',
+      id:            unique_id('cc_service_plan_annotation'),
+      key:           'spannotationkey',
+      key_prefix:    'spannotationkeyprefix.com',
+      resource_guid: cc_service_plan[:guid],
+      updated_at:    unique_time('cc_service_plan_annotation_updated'),
+      value:         'spannotationvalue'
+    }
+  end
+
+  def cc_service_plan_label
+    {
+      created_at:    unique_time('cc_service_plan_label_created'),
+      guid:          'service_plan_label1',
+      id:            unique_id('cc_service_plan_label'),
+      key_name:      'splabelkeyname',
+      key_prefix:    'splabelkeyprefix.com',
+      resource_guid: cc_service_plan[:guid],
+      updated_at:    unique_time('cc_service_plan_label_updated'),
+      value:         'splabelvalue'
+    }
+  end
+
   def cc_service_plan_visibility
     {
       created_at:      unique_time('cc_service_plan_visibility_created'),
@@ -2171,6 +2199,8 @@ module CCHelper
                [:spaces_developers,                cc_space_developer],
                [:spaces_managers,                  cc_space_manager],
                [:service_plans,                    cc_service_plan],
+               [:service_plan_annotations,         cc_service_plan_annotation],
+               [:service_plan_labels,              cc_service_plan_label],
                [:service_instances,                cc_service_instance_with_credentials],
                [:service_instance_annotations,     cc_service_instance_annotation],
                [:service_instance_labels,          cc_service_instance_label],
@@ -3167,6 +3197,16 @@ module CCHelper
       else
         cc_clear_service_plans_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_plans/#{cc_service_plan[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_service_plans_deleted
+        cc_service_plan_not_found
+      else
+        cc_clear_service_plans_cache_stub(config)
+        OK.new({})
       end
     end
   end

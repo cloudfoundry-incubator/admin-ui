@@ -661,6 +661,28 @@ module AdminUI
       @view_models.invalidate_service_plan_visibilities
     end
 
+    def delete_service_plan_annotation(service_plan_guid, prefix, name)
+      url = "/v3/service_plans/#{service_plan_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_service_plan_annotations
+      @view_models.invalidate_service_plans
+    end
+
+    def delete_service_plan_label(service_plan_guid, prefix, name)
+      url = "/v3/service_plans/#{service_plan_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_service_plan_labels
+      @view_models.invalidate_service_plans
+    end
+
     def delete_service_plan_visibility(service_plan_visibility_guid)
       url = "/v2/service_plan_visibilities/#{service_plan_visibility_guid}"
       @logger.debug("DELETE #{url}")

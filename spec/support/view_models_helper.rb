@@ -1373,6 +1373,8 @@ module ViewModelsHelper
 
   def view_models_service_plans_detail
     {
+      'annotations'    => [annotation_rfc3339(cc_service_plan_annotation)],
+      'labels'         => [label_rfc3339(cc_service_plan_label)],
       'service'        => cc_service,
       'service_broker' => cc_service_broker,
       'service_plan'   => cc_service_plan

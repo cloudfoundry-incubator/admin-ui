@@ -18,6 +18,8 @@ module AdminUI
       service_instances         = @cc.service_instances
       service_instance_shares   = @cc.service_instance_shares
       service_keys              = @cc.service_keys
+      service_plan_annotations  = @cc.service_plan_annotations
+      service_plan_labels       = @cc.service_plan_labels
       service_plan_visibilities = @cc.service_plan_visibilities
 
       events_connected                    = events['connected']
@@ -32,6 +34,54 @@ module AdminUI
       service_hash               = Hash[services['items'].map { |item| [item[:id], item] }]
       service_instance_guid_hash = Hash[service_instances['items'].map { |item| [item[:guid], item] }]
       service_instance_id_hash   = Hash[service_instances['items'].map { |item| [item[:id], item] }]
+
+      service_plan_annotations_hash = {}
+      service_plan_annotations['items'].each do |service_plan_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        service_plan_guid = service_plan_annotation[:resource_guid]
+        service_plan_annotations_array = service_plan_annotations_hash[service_plan_guid]
+        if service_plan_annotations_array.nil?
+          service_plan_annotations_array = []
+          service_plan_annotations_hash[service_plan_guid] = service_plan_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         service_plan_annotation,
+            created_at_rfc3339: service_plan_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: service_plan_annotation[:updated_at].nil? ? nil : service_plan_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        service_plan_annotations_array.push(wrapper)
+      end
+
+      service_plan_labels_hash = {}
+      service_plan_labels['items'].each do |service_plan_label|
+        return result unless @running
+
+        Thread.pass
+
+        service_plan_guid = service_plan_label[:resource_guid]
+        service_plan_labels_array = service_plan_labels_hash[service_plan_guid]
+        if service_plan_labels_array.nil?
+          service_plan_labels_array = []
+          service_plan_labels_hash[service_plan_guid] = service_plan_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              service_plan_label,
+            created_at_rfc3339: service_plan_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: service_plan_label[:updated_at].nil? ? nil : service_plan_label[:updated_at].to_datetime.rfc3339
+          }
+
+        service_plan_labels_array.push(wrapper)
+      end
 
       event_counters = {}
       events['items'].each do |event|
@@ -167,6 +217,8 @@ module AdminUI
         service_instance_counter        = service_instance_counters[id]
         service_instance_share_counter  = service_instance_share_counters[id]
         service_key_counter             = service_key_counters[id]
+        service_plan_annotation_array   = service_plan_annotations_hash[guid] || []
+        service_plan_label_array        = service_plan_labels_hash[guid] || []
         service_plan_visibility_counter = service_plan_visibility_counters[id]
 
         row = []
@@ -293,6 +345,8 @@ module AdminUI
 
         hash[guid] =
           {
+            'annotations'    => service_plan_annotation_array,
+            'labels'         => service_plan_label_array,
             'service'        => service,
             'service_broker' => service_broker,
             'service_plan'   => service_plan

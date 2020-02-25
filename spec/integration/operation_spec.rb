@@ -1780,6 +1780,14 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_service_plan(cc_service_plan[:guid])
       end
 
+      def delete_service_plan_annotation
+        operation.delete_service_plan_annotation(cc_service_plan[:guid], cc_service_plan_annotation[:key_prefix], cc_service_plan_annotation[:key])
+      end
+
+      def delete_service_plan_label
+        operation.delete_service_plan_label(cc_service_plan[:guid], cc_service_plan_label[:key_prefix], cc_service_plan_label[:key_name])
+      end
+
       it 'makes service plan public' do
         make_service_plan_private
         expect { make_service_plan_public }.to change { cc.service_plans['items'][0][:public] }.from(false).to(true)
@@ -1792,6 +1800,14 @@ describe AdminUI::Operation, type: :integration do
 
       it 'deletes service plan' do
         expect { delete_service_plan }.to change { cc.service_plans['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the service plan annotation' do
+        expect { delete_service_plan_annotation }.to change { cc.service_plan_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the service plan label' do
+        expect { delete_service_plan_label }.to change { cc.service_plan_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -1816,6 +1832,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting deleted service plan' do
           expect { delete_service_plan }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_plan_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted service plan' do
+          expect { delete_service_plan_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_plan_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted service plan' do
+          expect { delete_service_plan_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_plan_not_found(exception) }
         end
       end
     end
