@@ -20,7 +20,7 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '0.79.0'
+  gem 'rubocop', '0.80.0'
   gem 'rubocop-performance', '1.5.2'
   gem 'rubocop-rails', '2.4.2'
 end
