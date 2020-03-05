@@ -194,7 +194,7 @@ module AdminUI
                     @varz,
                     @view_models)
 
-      Rack::Handler::WEBrick.run(web, web_hash)
+      Rack::Handler::WEBrick.run(web, **web_hash)
     end
   end
 end
