@@ -894,8 +894,9 @@ Sequel.migration do
       String :guid, :text=>true, :null=>false
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
       DateTime :updated_at
-      foreign_key :build_guid, :builds, :type=>String, :size=>255, :null=>false, :key=>[:guid]
+      foreign_key :build_guid, :builds, :type=>String, :size=>255, :key=>[:guid]
       String :droplet_guid, :size=>255
+      foreign_key :app_guid, :apps, :type=>String, :size=>255, :key=>[:guid]
       
       index [:build_guid], :name=>:fk_kpack_lifecycle_build_guid_index
       index [:created_at]

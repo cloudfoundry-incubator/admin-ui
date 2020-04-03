@@ -18,6 +18,12 @@ Layout/HashAlignment:
 Layout/LineLength:
   Enabled: false
 
+Lint/RaiseException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true
+
 Lint/UriEscapeUnescape:
   Enabled: false
 
@@ -52,6 +58,9 @@ Naming/RescuedExceptionsVariableName:
   Enabled: false
 
 Rails/Exit:
+  Enabled: false
+
+Rails/IndexBy:
   Enabled: false
 
 Rails/Output:
