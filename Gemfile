@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby '2.7.0'
+ruby '2.7.1'
 
 gem 'faye-websocket', '0.10.9'
 gem 'membrane', '1.1.0'
@@ -22,7 +22,7 @@ end
 group :development do
   gem 'rubocop', '0.81.0'
   gem 'rubocop-performance', '1.5.2'
-  gem 'rubocop-rails', '2.5.0'
+  gem 'rubocop-rails', '2.5.1'
 end
 
 group :test do

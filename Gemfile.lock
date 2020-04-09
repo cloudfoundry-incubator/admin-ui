@@ -31,7 +31,7 @@ GEM
     net-ssh (5.2.0)
     parallel (1.19.1)
     parse-cron (0.1.4)
-    parser (2.7.0.5)
+    parser (2.7.1.0)
       ast (~> 2.4.0)
     pg (1.2.3)
     protobuf (3.10.3)
@@ -69,7 +69,7 @@ GEM
       unicode-display_width (>= 1.4.0, < 2.0)
     rubocop-performance (1.5.2)
       rubocop (>= 0.71.0)
-    rubocop-rails (2.5.0)
+    rubocop-rails (2.5.1)
       activesupport
       rack (>= 1.1)
       rubocop (>= 0.72.0)
@@ -92,7 +92,7 @@ GEM
     thor (1.0.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
-    tzinfo (1.2.6)
+    tzinfo (1.2.7)
       thread_safe (~> 0.1)
     unicode-display_width (1.7.0)
     websocket-driver (0.7.1)
@@ -116,7 +116,7 @@ DEPENDENCIES
   rspec (= 3.9.0)
   rubocop (= 0.81.0)
   rubocop-performance (= 1.5.2)
-  rubocop-rails (= 2.5.0)
+  rubocop-rails (= 2.5.1)
   selenium-webdriver (= 3.142.7)
   sequel (= 5.31.0)
   sequel_pg (= 1.12.5)
@@ -125,7 +125,7 @@ DEPENDENCIES
   yajl-ruby (= 1.4.1)
 
 RUBY VERSION
-   ruby 2.7.0p0
+   ruby 2.7.1p83
 
 BUNDLED WITH
-   2.1.2
+   2.1.4
