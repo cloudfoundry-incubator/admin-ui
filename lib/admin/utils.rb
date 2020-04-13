@@ -37,7 +37,7 @@ module AdminUI
 
       http             = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl     = uri.scheme.to_s.casecmp('https').zero?
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE if config.cloud_controller_ssl_verify_none
+      http.verify_mode = config.cloud_controller_ssl_verify_none ? OpenSSL::SSL::VERIFY_NONE : OpenSSL::SSL::VERIFY_PEER
       request          = get_method_class(method).new(path)
 
       request.basic_auth(basic_auth_array[0], basic_auth_array[1]) unless basic_auth_array.nil? || basic_auth_array.length < 2
