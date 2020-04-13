@@ -111,23 +111,18 @@ module AdminUI
       "#{@authorization_endpoint}/oauth/authorize?response_type=code&client_id=#{@config.uaa_client_id}&redirect_uri=#{redirect_uri}"
     end
 
-    def sso_login_token_json(code, redirect_uri)
-      info
-      content = URI.encode_www_form('client_id'    => @config.uaa_client_id,
-                                    'grant_type'   => 'authorization_code',
-                                    'code'         => code,
-                                    'redirect_uri' => redirect_uri)
-      response = Utils.http_request(@config,
-                                    "#{@token_endpoint}/oauth/token",
-                                    Utils::HTTP_POST,
-                                    [@config.uaa_client_id, @config.uaa_client_secret],
-                                    content,
-                                    nil,
-                                    'application/x-www-form-urlencoded')
-      return Yajl::Parser.parse(response.body) if response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated)
+    def sso_login_token_payload_json(code, redirect_uri)
+      json = sso_login_token_json(code, redirect_uri)
+      return nil if json.nil?
 
-      @logger.error("Unexpected response code from sso_login_token_json is #{response.code}, message #{response.message}, body #{response.body}")
-      nil
+      user_access_token = json['access_token']
+
+      # As of UAA 74.2.0, UAA /introspect supports client access_token
+      use_introspect = Gem::Version.new(@uaa_version) >= Gem::Version.new('74.2.0')
+
+      return sso_login_introspect_token(user_access_token) if use_introspect
+
+      sso_login_check_token(user_access_token)
     end
 
     def uaa_version
@@ -171,25 +166,6 @@ module AdminUI
       return "#{@token_endpoint}#{path}" if path && path[0] == '/'
 
       "#{@token_endpoint}/#{path}"
-    end
-
-    def login
-      info
-
-      @token = nil
-
-      response = Utils.http_request(@config,
-                                    "#{@token_endpoint}/oauth/token",
-                                    Utils::HTTP_POST,
-                                    [@config.uaa_client_id, @config.uaa_client_secret],
-                                    'grant_type=client_credentials',
-                                    nil,
-                                    'application/x-www-form-urlencoded')
-
-      raise AdminUI::CCRestClientResponseError, response unless response.is_a?(Net::HTTPOK)
-
-      body_json = Yajl::Parser.parse(response.body)
-      @token = "#{body_json['token_type']} #{body_json['access_token']}"
     end
 
     def info
@@ -256,6 +232,81 @@ module AdminUI
 
       @uaa_version = app['version']
       raise "Information retrieved from #{uaa_info_url} does not include app.version" if @uaa_version.nil?
+    end
+
+    def login
+      info
+
+      @token = nil
+
+      response = Utils.http_request(@config,
+                                    "#{@token_endpoint}/oauth/token",
+                                    Utils::HTTP_POST,
+                                    [@config.uaa_client_id, @config.uaa_client_secret],
+                                    'grant_type=client_credentials',
+                                    nil,
+                                    'application/x-www-form-urlencoded')
+
+      raise AdminUI::CCRestClientResponseError, response unless response.is_a?(Net::HTTPOK)
+
+      body_json = Yajl::Parser.parse(response.body)
+      @token = "#{body_json['token_type']} #{body_json['access_token']}"
+    end
+
+    def sso_login_check_token(user_access_token)
+      content = URI.encode_www_form('token' => user_access_token)
+      response = Utils.http_request(@config,
+                                    "#{@token_endpoint}/check_token",
+                                    Utils::HTTP_POST,
+                                    [@config.uaa_client_id, @config.uaa_client_secret],
+                                    content,
+                                    nil,
+                                    'application/x-www-form-urlencoded')
+      return Yajl::Parser.parse(response.body) if response.is_a?(Net::HTTPOK)
+
+      @logger.error("Unexpected response code from sso_login_check_token is #{response.code}, message #{response.message}, body #{response.body}")
+      nil
+    end
+
+    def sso_login_introspect_token(user_access_token)
+      content = URI.encode_www_form('token' => user_access_token)
+      response = Utils.http_request(@config,
+                                    "#{@token_endpoint}/introspect",
+                                    Utils::HTTP_POST,
+                                    nil,
+                                    content,
+                                    @token,
+                                    'application/x-www-form-urlencoded')
+
+      if response.is_a?(Net::HTTPOK)
+        payload_json = Yajl::Parser.parse(response.body)
+        return payload_json if payload_json['active'] == true
+
+        @logger.error('Inactive user token from sso_login_introspect_token')
+      else
+        @logger.error("Unexpected response code from sso_login_introspect_token is #{response.code}, message #{response.message}, body #{response.body}")
+      end
+
+      nil
+    end
+
+    def sso_login_token_json(code, redirect_uri)
+      info
+      content = URI.encode_www_form('client_id'    => @config.uaa_client_id,
+                                    'grant_type'   => 'authorization_code',
+                                    'code'         => code,
+                                    'redirect_uri' => redirect_uri)
+      response = Utils.http_request(@config,
+                                    "#{@token_endpoint}/oauth/token",
+                                    Utils::HTTP_POST,
+                                    [@config.uaa_client_id, @config.uaa_client_secret],
+                                    content,
+                                    nil,
+                                    'application/x-www-form-urlencoded')
+      return Yajl::Parser.parse(response.body) if response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated)
+
+      @logger.error("Unexpected response code from sso_login_token_json is #{response.code}, message #{response.message}, body #{response.body}")
+      nil
     end
   end
 end
