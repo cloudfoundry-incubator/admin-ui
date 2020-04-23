@@ -1,9 +1,9 @@
 ---
 bind_address: 0.0.0.0
-ccdb_uri: postgres://ccadmin:admin@10.244.0.30:5524/ccdb
+ccdb_uri: postgres://cloud_controller:ccpw@10.244.0.130:5524/cloud_controller
 cloud_controller_discovery_interval: 300
-cloud_controller_ssl_verify_none: true
-cloud_controller_uri: http://api.10.244.0.34.xip.io
+cloud_controller_ssl_verify_none: false
+cloud_controller_uri: https://api.bosh-lite.com
 component_connection_retries: 2
 data_file: data/data.json
 db_uri: sqlite://data/store.db
@@ -16,7 +16,7 @@ log_file: admin_ui.log
 log_file_page_size: 51200
 log_file_sftp_keys: [ ]
 log_files: ['/var/vcap/sys/log/cloud_controller_ng/*.log', 'admin_ui.log']
-mbus: nats://nats:nats@10.244.0.6:4222
+mbus: nats://nats:natspw@10.244.0.128:4222
 monitored_components: [NATS, CloudController, DEA, HealthManager, Router, -Provisioner, ALL]
 nats_discovery_interval: 30
 nats_discovery_timeout: 10
@@ -32,7 +32,7 @@ stats_retry_interval: 300
 uaa_client:
   id: admin_ui_client
   secret: admin_ui_secret
-uaadb_uri: postgres://uaaadmin:admin@10.244.0.30:5524/uaadb
+uaadb_uri: postgres://uaa:uaapw@10.244.0.130:5524/uaa
 uaa_groups_admin: [ admin_ui.admin ]
 uaa_groups_user: [ admin_ui.user ] 
 varz_discovery_interval: 30

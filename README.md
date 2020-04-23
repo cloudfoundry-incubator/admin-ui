@@ -91,7 +91,7 @@ The following steps are the same if you are using the default bosh-lite install 
 
 ```
 # Target your bosh-lite UAA and get the 'admin' token
-uaac target http://uaa.10.244.0.34.xip.io
+uaac target --skip-ssl-validation https://uaa.bosh-lite.com
 uaac token client get admin -s admin-secret
 
 # Add 'scim.write' if not already there and re-get token
@@ -114,7 +114,7 @@ uaac client add admin_ui_client \
 ```
 
 **Note:** 
-If you are using the default bosh-lite install then running the above commands should enable you to use the default 
+If you are using the default bosh-lite install, then running the above commands and setting the bosh-lite-specific configuration values in config/default.yml (`ccdb_uri` password, `cloud_controller_ssl_verify_none`, `mbus` password and `uaadb_uri` password) should enable you to use the default 
 configuration values for the Administration UI and you can skip down to the
 [Using the Administration UI](#using) section.
 If you have installed Cloud Foundry on AWS using the AWS Bosh Bootstrap, then you will have to modify the Administration UI before moving forward.
