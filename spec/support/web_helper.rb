@@ -68,6 +68,7 @@ shared_context :web_context do
 
       options = Selenium::WebDriver::Firefox::Options.new
       options.profile = profile
+      options.headless!
 
       Selenium::WebDriver.for(:firefox, marionette: true, options: options)
     end
