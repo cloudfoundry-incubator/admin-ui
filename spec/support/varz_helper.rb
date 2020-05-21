@@ -13,6 +13,7 @@ module VARZHelper
   # Failing with NoMethodError: undefined method `closed?
   class OK < Net::HTTPOK
     attr_reader :body
+
     def initialize(hash)
       super(1.0, 200, 'OK')
       @body = Yajl::Encoder.encode(hash)

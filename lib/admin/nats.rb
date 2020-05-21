@@ -227,7 +227,7 @@ module AdminUI
         @cache['items'].merge!(nats_discovery_results['items'])
 
         update_connection_status('NATS',
-                                 @config.mbus.partition('@').last[0..-1],
+                                 @config.mbus.partition('@').last[0..],
                                  @cache['connected'],
                                  disconnected)
 

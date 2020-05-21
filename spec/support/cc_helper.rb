@@ -8,6 +8,7 @@ module CCHelper
   # Failing with NoMethodError: undefined method `closed?
   class OK < Net::HTTPOK
     attr_reader :body
+
     def initialize(hash)
       super(1.0, 200, 'OK')
       @body = Yajl::Encoder.encode(hash)
@@ -18,6 +19,7 @@ module CCHelper
   # Failing with NoMethodError: undefined method `closed?
   class Created < Net::HTTPOK
     attr_reader :body
+
     def initialize
       super(1.0, 201, 'Created')
       @body = Yajl::Encoder.encode({})
@@ -28,6 +30,7 @@ module CCHelper
   # Failing with NoMethodError: undefined method `closed?
   class Accepted < Net::HTTPAccepted
     attr_reader :body
+
     def initialize(hash)
       super(1.0, 202, 'Accepted')
       @body = Yajl::Encoder.encode(hash)
@@ -38,6 +41,7 @@ module CCHelper
   # Failing with NoMethodError: undefined method `closed?
   class BadRequest < Net::HTTPBadRequest
     attr_reader :body
+
     def initialize(hash)
       super(1.0, 400, 'BadRequest')
       @body = Yajl::Encoder.encode(hash)
@@ -48,6 +52,7 @@ module CCHelper
   # Failing with NoMethodError: undefined method `closed?
   class NotFound < Net::HTTPNotFound
     attr_reader :body
+
     def initialize(hash)
       super(1.0, 404, 'NotFound')
       @body = Yajl::Encoder.encode(hash)
@@ -58,6 +63,7 @@ module CCHelper
   # Failing with NoMethodError: undefined method `closed?
   class UnprocessableEntity < Net::HTTPUnprocessableEntity
     attr_reader :body
+
     def initialize(hash)
       super(1.0, 422, 'UnprocessableEntity')
       @body = Yajl::Encoder.encode(hash)

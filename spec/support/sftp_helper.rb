@@ -12,6 +12,7 @@ module SFTPHelper
   class MockEntry
     attr_reader :attributes
     attr_reader :name
+
     def initialize(name)
       @name       = name
       @attributes = ::Net::SFTP::Protocol::V01::Attributes.new

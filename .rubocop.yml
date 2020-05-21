@@ -11,6 +11,9 @@ AllCops:
     - 'spec/support/ccdb/*'
     - 'spec/support/uaadb/*'
 
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
+
 Layout/HashAlignment:
   EnforcedColonStyle: table
   EnforcedHashRocketStyle: table
@@ -98,3 +101,6 @@ Style/RescueStandardError:
 
 Style/SafeNavigation:
   Enabled: false
+
+Style/SlicingWithRange:
+  Enabled: true
