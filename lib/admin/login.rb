@@ -19,8 +19,6 @@ module AdminUI
 
     def login_user(code, redirect_uri)
       json = @client.sso_login_token_payload_json(code, redirect_uri)
-      return [nil, nil] if json.nil?
-
       user_name = json['user_name']
       scope = json['scope']
 

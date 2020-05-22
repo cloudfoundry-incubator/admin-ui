@@ -113,8 +113,6 @@ module AdminUI
 
     def sso_login_token_payload_json(code, redirect_uri)
       json = sso_login_token_json(code, redirect_uri)
-      return nil if json.nil?
-
       user_access_token = json['access_token']
 
       # As of UAA 74.2.0, UAA /introspect supports client access_token
@@ -182,7 +180,7 @@ module AdminUI
         raise "Unable to fetch from #{cc_v2_info_url}"
       end
 
-      raise "Unable to fetch from #{cc_v2_info_url}" unless response.is_a?(Net::HTTPOK)
+      raise "Unable to fetch from #{cc_v2_info_url}. Response code is #{response.code}." unless response.is_a?(Net::HTTPOK)
 
       body_json = Yajl::Parser.parse(response.body)
 
@@ -223,7 +221,7 @@ module AdminUI
         raise "Unable to fetch from #{uaa_info_url}"
       end
 
-      raise "Unable to fetch from #{uaa_info_url}" unless response.is_a?(Net::HTTPOK)
+      raise "Unable to fetch from #{uaa_info_url}. Response code is #{response.code}." unless response.is_a?(Net::HTTPOK)
 
       body_json = Yajl::Parser.parse(response.body)
 
@@ -254,9 +252,10 @@ module AdminUI
     end
 
     def sso_login_check_token(user_access_token)
+      url = "#{@token_endpoint}/check_token"
       content = URI.encode_www_form('token' => user_access_token)
       response = Utils.http_request(@config,
-                                    "#{@token_endpoint}/check_token",
+                                    url,
                                     Utils::HTTP_POST,
                                     [@config.uaa_client_id, @config.uaa_client_secret],
                                     content,
@@ -265,13 +264,14 @@ module AdminUI
       return Yajl::Parser.parse(response.body) if response.is_a?(Net::HTTPOK)
 
       @logger.error("Unexpected response code from sso_login_check_token is #{response.code}, message #{response.message}, body #{response.body}")
-      nil
+      raise "Unable to post to #{url}. Response code is #{response.code}."
     end
 
     def sso_login_introspect_token(user_access_token)
+      url = "#{@token_endpoint}/introspect"
       content = URI.encode_www_form('token' => user_access_token)
       response = Utils.http_request(@config,
-                                    "#{@token_endpoint}/introspect",
+                                    url,
                                     Utils::HTTP_POST,
                                     nil,
                                     content,
@@ -283,21 +283,22 @@ module AdminUI
         return payload_json if payload_json['active'] == true
 
         @logger.error('Inactive user token from sso_login_introspect_token')
-      else
-        @logger.error("Unexpected response code from sso_login_introspect_token is #{response.code}, message #{response.message}, body #{response.body}")
+        raise 'Inactive user token.'
       end
 
-      nil
+      @logger.error("Unexpected response code from sso_login_introspect_token is #{response.code}, message #{response.message}, body #{response.body}")
+      raise "Unable to post to #{url}. Response code is #{response.code}."
     end
 
     def sso_login_token_json(code, redirect_uri)
       info
+      url = "#{@token_endpoint}/oauth/token"
       content = URI.encode_www_form('client_id'    => @config.uaa_client_id,
                                     'grant_type'   => 'authorization_code',
                                     'code'         => code,
                                     'redirect_uri' => redirect_uri)
       response = Utils.http_request(@config,
-                                    "#{@token_endpoint}/oauth/token",
+                                    url,
                                     Utils::HTTP_POST,
                                     [@config.uaa_client_id, @config.uaa_client_secret],
                                     content,
@@ -306,7 +307,7 @@ module AdminUI
       return Yajl::Parser.parse(response.body) if response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated)
 
       @logger.error("Unexpected response code from sso_login_token_json is #{response.code}, message #{response.message}, body #{response.body}")
-      nil
+      raise "Unable to post to #{url}. Response code is #{response.code}."
     end
   end
 end
