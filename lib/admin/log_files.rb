@@ -222,7 +222,7 @@ module AdminUI
           uri, options = uri_and_options
 
           uri_path = uri.path
-          wildcard = uri_path.index(/[\{\[\*\?]/)
+          wildcard = uri_path.index(/[{\[*?]/)
 
           if wildcard.nil?
             Net::SFTP.start(uri.host, uri.user, options) do |sftp|
