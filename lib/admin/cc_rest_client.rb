@@ -112,6 +112,7 @@ module AdminUI
     end
 
     def sso_login_token_payload_json(code, redirect_uri)
+      info
       json = sso_login_token_json(code, redirect_uri)
       user_access_token = json['access_token']
 
@@ -270,28 +271,17 @@ module AdminUI
     def sso_login_introspect_token(user_access_token)
       url = "#{@token_endpoint}/introspect"
       content = URI.encode_www_form('token' => user_access_token)
-      response = Utils.http_request(@config,
-                                    url,
-                                    Utils::HTTP_POST,
-                                    nil,
-                                    content,
-                                    @token,
-                                    'application/x-www-form-urlencoded')
+      payload_json = cf_request(url,
+                                Utils::HTTP_POST,
+                                content,
+                                'application/x-www-form-urlencoded')
+      return payload_json if payload_json['active'] == true
 
-      if response.is_a?(Net::HTTPOK)
-        payload_json = Yajl::Parser.parse(response.body)
-        return payload_json if payload_json['active'] == true
-
-        @logger.error('Inactive user token from sso_login_introspect_token')
-        raise 'Inactive user token.'
-      end
-
-      @logger.error("Unexpected response code from sso_login_introspect_token is #{response.code}, message #{response.message}, body #{response.body}")
-      raise "Unable to post to #{url}. Response code is #{response.code}."
+      @logger.error('Inactive user token from sso_login_introspect_token')
+      raise 'Inactive user token.'
     end
 
     def sso_login_token_json(code, redirect_uri)
-      info
       url = "#{@token_endpoint}/oauth/token"
       content = URI.encode_www_form('client_id'    => @config.uaa_client_id,
                                     'grant_type'   => 'authorization_code',
