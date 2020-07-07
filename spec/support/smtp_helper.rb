@@ -2,8 +2,8 @@ require 'net/smtp'
 require_relative '../spec_helper'
 
 module SMTPHelper
-  attr_reader :smtp_start
-  attr_reader :smtp_send_message
+  attr_reader :smtp_start,
+              :smtp_send_message
 
   def smtp_stub(config, disconnected_components)
     @smtp_start              = false

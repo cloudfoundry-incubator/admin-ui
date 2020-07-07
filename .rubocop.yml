@@ -69,6 +69,30 @@ Naming/MethodParameterName:
 Naming/RescuedExceptionsVariableName:
   Enabled: false
 
+Performance/AncestorsInclude:
+  Enabled: true
+
+Performance/BigDecimalWithNumericArgument:
+  Enabled: true
+
+Performance/RedundantSortBlock:
+  Enabled: true
+
+Performance/RedundantStringChars:
+  Enabled: true
+
+Performance/ReverseFirst:
+  Enabled: true
+
+Performance/SortReverse:
+  Enabled: true
+
+Performance/Squeeze:
+  Enabled: true
+
+Performance/StringInclude:
+  Enabled: true
+
 Rails/Exit:
   Enabled: false
 
@@ -80,6 +104,12 @@ Rails/Output:
 
 Rails/TimeZone:
   Enabled: false
+
+Style/AccessorGrouping:
+  Enabled: true
+
+Style/BisectedAttrAccessor:
+  Enabled: true
 
 Style/Documentation:
   Enabled: false
@@ -100,6 +130,9 @@ Style/HashTransformKeys:
   Enabled: true
 
 Style/HashTransformValues:
+  Enabled: true
+
+Style/RedundantAssignment:
   Enabled: true
 
 Style/RedundantFetchBlock:

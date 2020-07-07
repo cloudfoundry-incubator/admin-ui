@@ -10,8 +10,8 @@ module SFTPHelper
   end
 
   class MockEntry
-    attr_reader :attributes
-    attr_reader :name
+    attr_reader :attributes,
+                :name
 
     def initialize(name)
       @name       = name
@@ -19,18 +19,18 @@ module SFTPHelper
     end
   end
 
-  attr_reader :sftp_attributes_directory
-  attr_reader :sftp_attributes_file
-  attr_reader :sftp_attributes_mtime
-  attr_reader :sftp_attributes_size
-  attr_reader :sftp_close
-  attr_reader :sftp_dir_entries
-  attr_reader :sftp_dir_glob
-  attr_reader :sftp_download
-  attr_reader :sftp_fstat
-  attr_reader :sftp_open
-  attr_reader :sftp_read
-  attr_reader :sftp_start
+  attr_reader :sftp_attributes_directory,
+              :sftp_attributes_file,
+              :sftp_attributes_mtime,
+              :sftp_attributes_size,
+              :sftp_close,
+              :sftp_dir_entries,
+              :sftp_dir_glob,
+              :sftp_download,
+              :sftp_fstat,
+              :sftp_open,
+              :sftp_read,
+              :sftp_start
 
   def sftp_stub(config, is_file, file_name, file_extension, file_content, file_mtime)
     @sftp_attributes_directory = false

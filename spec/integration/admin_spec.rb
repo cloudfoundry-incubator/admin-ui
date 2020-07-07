@@ -56,7 +56,7 @@ describe AdminUI::Admin, type: :integration do
     found_match = 0
     File.readlines(log_file).each do |line|
       line.chomp!
-      next unless line.match?(/\[ admin \] : \[ /)
+      next unless line.include?('[ admin ] : [ ')
 
       operations_msgs.each do |op_msg|
         op  = op_msg[0]
