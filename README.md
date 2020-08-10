@@ -247,7 +247,7 @@ Relative path location to store the Administration UI doppler data file.
 Example: <code>data/doppler_data.json</code>
 </dd>
 <dt>
-<code><b>doppler_logging_endpoint_override</b></code>
+<code>doppler_logging_endpoint_override</code>
 </dt>
 <dd>
 This optional URI is used to override the doppler_logging_endpoint retrieved from /v2/info. This can be used to offload filtering of the standard dopper_logging_endpoint to allow only those metrics consumed by the Administration UI, namely container metrics and value metrics. The doppler_logging_endpoint_override is required to support the same protocol as the base /v2/info doppler_logging_endpoint.
@@ -267,6 +267,16 @@ Example: <code>300</code>
 Seconds between rolling up doppler_logging_endpoint data to be made available. 
 <br>
 Example: <code>30</code>
+</dd>
+<dt>
+<code>doppler_ssl_verify_none</code>
+</dt>
+<dd>
+True to ignore SSL verification to doppler_logging_endpoint.
+<br>
+Example: <code>true</code>
+<br>
+Example: <code>false</code>
 </dd>
 <dt>
 <code>event_days</code>

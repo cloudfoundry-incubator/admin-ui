@@ -11,6 +11,7 @@ display_encrypted_values: true
 doppler_data_file: data/doppler_data.json
 doppler_reconnect_delay: 300
 doppler_rollup_interval: 30
+doppler_ssl_verify_none: false
 event_days: 7
 log_file: admin_ui.log
 log_file_page_size: 51200
