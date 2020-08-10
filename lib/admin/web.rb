@@ -352,9 +352,10 @@ module AdminUI
       code = params['code']
       user_name, user_type = @login.login_user(code, local_redirect_uri(request))
 
-      if AdminUI::Login::LOGIN_ADMIN == user_type
+      case user_type
+      when AdminUI::Login::LOGIN_ADMIN
         authenticated(user_name, 'admin', true)
-      elsif AdminUI::Login::LOGIN_USER == user_type
+      when AdminUI::Login::LOGIN_USER
         authenticated(user_name, 'user', true)
       else
         authenticated(user_name, 'anyone', false)

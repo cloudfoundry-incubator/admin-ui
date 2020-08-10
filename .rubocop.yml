@@ -21,19 +21,49 @@ Layout/HashAlignment:
 Layout/LineLength:
   Enabled: false
 
+Lint/BinaryOperatorWithIdenticalOperands:
+  Enabled: true
+
 Lint/DeprecatedOpenSSLConstant:
+  Enabled: true
+
+Lint/DuplicateElsifCondition:
+  Enabled: true
+
+Lint/DuplicateRescueException:
+  Enabled: true
+
+Lint/EmptyConditionalBody:
+  Enabled: true
+
+Lint/FloatComparison:
+  Enabled: true
+
+Lint/MissingSuper:
   Enabled: true
 
 Lint/MixedRegexpCaptureTypes:
   Enabled: true
 
+Lint/OutOfRangeRegexpRef:
+  Enabled: true
+
 Lint/RaiseException:
+  Enabled: true
+
+Lint/SelfAssignment:
   Enabled: true
 
 Layout/SpaceAroundMethodCallOperator:
   Enabled: true
 
 Lint/StructNewOverride:
+  Enabled: true
+
+Lint/TopLevelReturnWithArgument:
+  Enabled: true
+
+Lint/UnreachableLoop:
   Enabled: true
 
 Lint/UriEscapeUnescape:
@@ -93,22 +123,67 @@ Performance/Squeeze:
 Performance/StringInclude:
   Enabled: true
 
+Rails/ActiveRecordCallbacksOrder:
+  Enabled: true
+
 Rails/Exit:
   Enabled: false
 
+Rails/FindById:
+  Enabled: true
+
 Rails/IndexBy:
+  Enabled: false
+
+Rails/Inquiry:
+  Enabled: true
+
+Rails/MailerName:
+  Enabled: true
+
+Rails/MatchRoute:
+  Enabled: true
+
+Rails/NegateInclude:
   Enabled: false
 
 Rails/Output:
   Enabled: false
 
+Rails/Pluck:
+  Enabled: true
+
+Rails/PluckInWhere:
+  Enabled: true
+
+Rails/RenderInline:
+  Enabled: true
+
+Rails/RenderPlainText:
+  Enabled: true
+
+Rails/ShortI18n:
+  Enabled: true
+
+Rails/SkipsModelValidations:
+  Enabled: false
+
 Rails/TimeZone:
   Enabled: false
+
+Rails/WhereExists:
+  Enabled: true
 
 Style/AccessorGrouping:
   Enabled: true
 
+Style/ArrayCoercion:
+  Enabled: true
+
 Style/BisectedAttrAccessor:
+  Enabled: true
+
+Style/CaseLikeIf:
   Enabled: true
 
 Style/Documentation:
@@ -117,13 +192,25 @@ Style/Documentation:
 Style/DateTime:
   Enabled: false
 
+Style/ExplicitBlockArgument:
+  Enabled: true
+
 Style/ExponentialNotation:
   Enabled: true
 
 Style/FrozenStringLiteralComment:
   Enabled: false
 
+Style/GlobalStdStream:
+  Enabled: true
+
+Style/HashAsLastArrayItem:
+  Enabled: true
+
 Style/HashEachMethods:
+  Enabled: true
+
+Style/HashLikeCase:
   Enabled: true
 
 Style/HashTransformKeys:
@@ -132,11 +219,17 @@ Style/HashTransformKeys:
 Style/HashTransformValues:
   Enabled: true
 
+Style/OptionalBooleanParameter:
+  Enabled: false
+
 Style/RedundantAssignment:
   Enabled: true
 
 Style/RedundantFetchBlock:
   Enabled: true
+
+Style/RedundantFileExtensionInRequire:
+  Enabled: false
 
 Style/RedundantRegexpCharacterClass:
   Enabled: true
@@ -150,5 +243,11 @@ Style/RescueStandardError:
 Style/SafeNavigation:
   Enabled: false
 
+Style/SingleArgumentDig:
+  Enabled: true
+
 Style/SlicingWithRange:
+  Enabled: true
+
+Style/StringConcatenation:
   Enabled: true

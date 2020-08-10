@@ -105,6 +105,12 @@ describe AdminUI::Config do
         expect(config.doppler_rollup_interval).to eq(doppler_rollup_interval)
       end
 
+      it 'doppler_ssl_verify_none' do
+        doppler_ssl_verify_none = true
+        config = AdminUI::Config.load('doppler_ssl_verify_none' => true)
+        expect(config.doppler_ssl_verify_none).to eq(doppler_ssl_verify_none)
+      end
+
       it 'event_days' do
         event_days = 35
         config = AdminUI::Config.load('event_days' => event_days)
@@ -447,6 +453,10 @@ describe AdminUI::Config do
         expect(config.doppler_rollup_interval).to eq(30)
       end
 
+      it 'doppler_ssl_verify_none' do
+        expect(config.doppler_ssl_verify_none).to eq(false)
+      end
+
       it 'event_days' do
         expect(config.event_days).to eq(7)
       end
@@ -680,6 +690,10 @@ describe AdminUI::Config do
         expect { AdminUI::Config.load(config.merge(doppler_rollup_interval: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
+      it 'doppler_ssl_verify_none' do
+        expect { AdminUI::Config.load(config.merge(doppler_ssl_verify_none: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
       it 'event_days' do
         expect { AdminUI::Config.load(config.merge(event_days: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
@@ -880,6 +894,10 @@ describe AdminUI::Config do
 
       it 'doppler_rollup_interval' do
         expect { AdminUI::Config.load(config.merge(doppler_rollup_interval: nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'doppler_ssl_verify_none' do
+        expect { AdminUI::Config.load(config.merge(doppler_ssl_verify_none: nil)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'event_days' do

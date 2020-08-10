@@ -82,9 +82,11 @@ module DopplerHelper
     }.freeze
 
   class MockWebSocketClient < Faye::WebSocket::Client
+    # rubocop:disable Lint/MissingSuper
     def initialize
       # Don't call super
     end
+    # rubocop:enable Lint/MissingSuper
   end
 
   def doppler_stub(doppler_logging_endpoint, application_instance_source, router_source)
@@ -119,13 +121,14 @@ module DopplerHelper
         EventMachine.next_tick { blk.call(event(analyzer_value_metric_envelope(value_metric_key, value_metric_value))) }
       end
 
-      if application_instance_source == :doppler_cell
+      case application_instance_source
+      when :doppler_cell
         REP_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
           EventMachine.next_tick { blk.call(event(rep_value_metric_envelope(value_metric_key, value_metric_value))) }
         end
 
         EventMachine.next_tick { blk.call(event(rep_container_metric_envelope)) }
-      elsif application_instance_source == :doppler_dea
+      when :doppler_dea
         DEA_VALUE_METRICS.each_pair do |value_metric_key, value_metric_value|
           EventMachine.next_tick { blk.call(event(dea_value_metric_envelope(value_metric_key, value_metric_value))) }
         end

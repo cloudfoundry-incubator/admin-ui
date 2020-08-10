@@ -89,7 +89,8 @@ module ViewModelsHelper
 
   def view_models_application_instances_detail
     container = nil
-    if @application_instance_source == :doppler_cell
+    case @application_instance_source
+    when :doppler_cell
       container =
         {
           application_id:     rep_container_metric_envelope.containerMetric.applicationId,
@@ -104,7 +105,7 @@ module ViewModelsHelper
           origin:             rep_envelope.origin,
           timestamp:          rep_envelope.timestamp
         }
-    elsif @application_instance_source == :doppler_dea
+    when :doppler_dea
       container =
         {
           application_id:     dea_container_metric_envelope.containerMetric.applicationId,

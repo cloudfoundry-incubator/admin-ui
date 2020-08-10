@@ -72,7 +72,8 @@ module AdminUI
       end
 
       organizations_isolation_segments['items'].each do |organization_isolation_segment|
-        return result until @running
+        return result unless @running
+
         Thread.pass
 
         isolation_segment_guid = organization_isolation_segment[:isolation_segment_guid]
@@ -81,7 +82,8 @@ module AdminUI
       end
 
       organizations['items'].each do |organization|
-        return result until @running
+        return result unless @running
+
         Thread.pass
 
         default_isolation_segment_guid = organization[:default_isolation_segment_guid]
@@ -92,7 +94,8 @@ module AdminUI
       end
 
       spaces['items'].each do |space|
-        return result until @running
+        return result unless @running
+
         Thread.pass
 
         isolation_segment_guid = space[:isolation_segment_guid]

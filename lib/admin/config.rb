@@ -17,6 +17,7 @@ module AdminUI
         display_encrypted_values:                          true,
         doppler_reconnect_delay:                            300,
         doppler_rollup_interval:                             30,
+        doppler_ssl_verify_none:                          false,
         event_days:                                           7,
         log_file_page_size:                              51_200,
         log_file_sftp_keys:                                  [],
@@ -57,6 +58,7 @@ module AdminUI
             optional(:doppler_logging_endpoint_override)   => String,
             optional(:doppler_reconnect_delay)             => Integer,
             optional(:doppler_rollup_interval)             => Integer,
+            optional(:doppler_ssl_verify_none)             => bool,
             optional(:event_days)                          => Integer,
             log_file:                                         /[^\r\n\t]+/,
             optional(:log_file_sftp_keys)                  => [String],
@@ -231,6 +233,10 @@ module AdminUI
 
     def doppler_rollup_interval
       @config[:doppler_rollup_interval]
+    end
+
+    def doppler_ssl_verify_none
+      @config[:doppler_ssl_verify_none]
     end
 
     def event_days

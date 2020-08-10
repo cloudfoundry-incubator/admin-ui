@@ -701,7 +701,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: button_id).click
-            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_OrganizationsTable_' + button_index.to_s))
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: "Buttons_OrganizationsTable_#{button_index}"))
 
             check_operation_result
           end
@@ -1221,7 +1221,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: button_id).click
-            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_SpacesTable_' + button_index.to_s))
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: "Buttons_SpacesTable_#{button_index}"))
 
             check_operation_result
           end
@@ -1659,7 +1659,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: 'Buttons_ApplicationsTable_' + button_index.to_s).click
-            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_ApplicationsTable_' + button_index.to_s))
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: "Buttons_ApplicationsTable_#{button_index}"))
 
             check_operation_result
           end
@@ -4820,7 +4820,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: button_id).click
-            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_UsersTable_' + button_index.to_s))
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: "Buttons_UsersTable_#{button_index}"))
 
             check_operation_result
           end
@@ -5607,7 +5607,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: 'Buttons_BuildpacksTable_' + button_index.to_s).click
-            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_BuildpacksTable_' + button_index.to_s))
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: "Buttons_BuildpacksTable_#{button_index}"))
 
             check_operation_result
           end
@@ -6244,7 +6244,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: 'Buttons_FeatureFlagsTable_' + button_index.to_s).click
-            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_FeatureFlagsTable_' + button_index.to_s))
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: "Buttons_FeatureFlagsTable_#{button_index}"))
 
             check_operation_result
           end
@@ -8442,7 +8442,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: button_id).click
-            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_IdentityProvidersTable_' + button_index.to_s))
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: "Buttons_IdentityProvidersTable_#{button_index}"))
 
             check_operation_result
           end
@@ -8745,7 +8745,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
             # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
             # @driver.find_element(id: 'Buttons_SecurityGroupsTable_' + button_index.to_s).click
-            @driver.execute_script('arguments[0].click();', @driver.find_element(id: 'Buttons_SecurityGroupsTable_' + button_index.to_s))
+            @driver.execute_script('arguments[0].click();', @driver.find_element(id: "Buttons_SecurityGroupsTable_#{button_index}"))
 
             check_operation_result
           end

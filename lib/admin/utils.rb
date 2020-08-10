@@ -68,11 +68,12 @@ module AdminUI
     end
 
     def self.symbolize_keys(object)
-      if object.is_a? Array
+      case object
+      when Array
         new_array = []
         object.each { |item| new_array.push(symbolize_keys(item)) }
         new_array
-      elsif object.is_a? Hash
+      when Hash
         new_hash = {}
         object.each { |key, value| new_hash[key.to_sym] = symbolize_keys(value) }
         new_hash

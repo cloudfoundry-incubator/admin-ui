@@ -149,7 +149,7 @@ module AdminUI
       end
 
       # Only show error and fatal messages
-      error_logger = Logger.new(STDERR)
+      error_logger = Logger.new($stderr)
       error_logger.level = Logger::ERROR
 
       web_hash =

@@ -62,7 +62,8 @@ module AdminUI
         websocket = Faye::WebSocket::Client.new("#{uri_base}/#{subscription_id}?filter-type=metrics",
                                                 nil,
                                                 headers: { 'Authorization' => @token },
-                                                ping:    30)
+                                                ping:    30,
+                                                tls:     { verify_peer: !@config.doppler_ssl_verify_none })
         [uri_base, websocket]
       rescue => error
         @logger.error("Error during get_firehose websocket instantiation: #{error.inspect}")
