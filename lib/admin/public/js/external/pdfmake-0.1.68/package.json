@@ -1,0 +1,74 @@
+{
+  "name": "pdfmake",
+  "version": "0.1.68",
+  "description": "Client/server side PDF printing in pure JavaScript",
+  "main": "src/printer.js",
+  "browser": "build/pdfmake.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "iconv-lite": "^0.6.2",
+    "linebreak": "^1.0.2",
+    "pdfkit": "^0.11.0",
+    "svg-to-pdfkit": "^0.1.8",
+    "xmldoc": "^1.1.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.5",
+    "@babel/plugin-transform-modules-commonjs": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "babel-loader": "^8.1.0",
+    "brfs": "^2.0.2",
+    "core-js": "^3.6.5",
+    "eslint-plugin-jsdoc": "^27.1.2",
+    "expose-loader": "^1.0.0",
+    "fancy-log": "^1.3.3",
+    "file-saver": "^2.0.2",
+    "gulp": "^4.0.2",
+    "gulp-each": "^0.5.0",
+    "gulp-eslint": "^6.0.0",
+    "gulp-file-contents-to-json": "^0.2.2",
+    "gulp-spawn-mocha": "^6.0.0",
+    "mocha": "^7.2.0",
+    "rewire": "^5.0.0",
+    "sinon": "^9.0.2",
+    "string-replace-webpack-plugin": "^0.1.3",
+    "transform-loader": "^0.2.4",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^4.44.1"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "scripts": {
+    "build": "gulp build",
+    "test": "gulp",
+    "playground": "node dev-playground/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bpampuch/pdfmake.git"
+  },
+  "keywords": [
+    "pdf",
+    "javascript",
+    "printing",
+    "layout"
+  ],
+  "author": "Bartek Pampuch <bartosz.pampuch@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bpampuch/pdfmake/issues"
+  },
+  "homepage": "http://pdfmake.org",
+  "config": {
+    "blanket": {
+      "pattern": "src",
+      "data-cover-never": [
+        "node_modules",
+        "tests"
+      ]
+    }
+  }
+}
