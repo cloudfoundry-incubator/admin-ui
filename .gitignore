@@ -22,3 +22,4 @@ data
 .README.md.html
 .project
 nohup.out
+*.pem

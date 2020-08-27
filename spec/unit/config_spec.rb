@@ -165,6 +165,27 @@ describe AdminUI::Config do
         expect(config.nats_discovery_timeout).to eq(nats_discovery_timeout)
       end
 
+      context 'nats_tls is in use' do
+        let(:nats_tls) { { 'ca_file' => 'ca_file', 'cert_chain_file' => 'cert_chain_file', 'private_key_file' => 'private_key_file', 'verify_peer' => true } }
+        let(:config) { AdminUI::Config.load('nats_tls' => nats_tls) }
+
+        it 'nats_tls_ca_file' do
+          expect(config.nats_tls_ca_file).to eq('ca_file')
+        end
+
+        it 'nats_tls_cert_chain_file' do
+          expect(config.nats_tls_cert_chain_file).to eq('cert_chain_file')
+        end
+
+        it 'nats_tls_private_key_file' do
+          expect(config.nats_tls_private_key_file).to eq('private_key_file')
+        end
+
+        it 'nats_tls_verify_peer' do
+          expect(config.nats_tls_verify_peer).to eq(true)
+        end
+      end
+
       it 'port' do
         port = 55
         config = AdminUI::Config.load('port' => port)
@@ -493,6 +514,24 @@ describe AdminUI::Config do
         expect(config.nats_discovery_timeout).to eq(10)
       end
 
+      context 'nats_tls' do
+        it 'nats_tls_ca_file' do
+          expect(config.nats_tls_ca_file).to be_nil
+        end
+
+        it 'nats_tls_cert_chain_file' do
+          expect(config.nats_tls_cert_chain_file).to be_nil
+        end
+
+        it 'nats_tls_private_key_file' do
+          expect(config.nats_tls_private_key_file).to be_nil
+        end
+
+        it 'nats_tls_verify_peer' do
+          expect(config.nats_tls_verify_peer).to be_nil
+        end
+      end
+
       it 'port' do
         expect(config.port).to be_nil
       end
@@ -730,6 +769,24 @@ describe AdminUI::Config do
         expect { AdminUI::Config.load(config.merge(nats_discovery_timeout: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
 
+      context 'nats_tls' do
+        it 'nats_tls_ca_file' do
+          expect { AdminUI::Config.load(config.merge(nats_tls: { ca_file: 5 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'nats_tls_cert_chain_file' do
+          expect { AdminUI::Config.load(config.merge(nats_tls: { cert_chain_file: 5 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'nats_tls_private_key_file' do
+          expect { AdminUI::Config.load(config.merge(nats_tls: { private_key_file: 5 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'nats_tls_verify_peer' do
+          expect { AdminUI::Config.load(config.merge(nats_tls: { verify_peer: 5 })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+      end
+
       it 'port' do
         expect { AdminUI::Config.load(config.merge(port: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
       end
@@ -910,6 +967,16 @@ describe AdminUI::Config do
 
       it 'mbus' do
         expect { AdminUI::Config.load(config.merge(mbus: nil)) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      context 'nats_tls' do
+        it 'nats_tls_cert_chain_file' do
+          expect { AdminUI::Config.load(config.merge(nats_tls: { private_key_file: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+        end
+
+        it 'nats_tls_private_key_file' do
+          expect { AdminUI::Config.load(config.merge(nats_tls: { cert_chain_file: 'hi' })) }.to raise_error(Membrane::SchemaValidationError)
+        end
       end
 
       it 'port' do

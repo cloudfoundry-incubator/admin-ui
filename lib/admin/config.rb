@@ -68,6 +68,13 @@ module AdminUI
             optional(:monitored_components)                => [/[^\r\n\t]+/],
             optional(:nats_discovery_interval)             => Integer,
             optional(:nats_discovery_timeout)              => Integer,
+            optional(:nats_tls)                            =>
+            {
+              optional(:ca_file)     => String,
+              cert_chain_file:          String,
+              private_key_file:         String,
+              optional(:verify_peer) => bool
+            },
             port:                                             Integer,
             optional(:receiver_emails)                     => [/[^\r\n\t]+/],
             optional(:sender_email)                        =>
@@ -273,6 +280,30 @@ module AdminUI
 
     def nats_discovery_timeout
       @config[:nats_discovery_timeout]
+    end
+
+    def nats_tls_ca_file
+      return nil if @config[:nats_tls].nil?
+
+      @config[:nats_tls][:ca_file]
+    end
+
+    def nats_tls_cert_chain_file
+      return nil if @config[:nats_tls].nil?
+
+      @config[:nats_tls][:cert_chain_file]
+    end
+
+    def nats_tls_private_key_file
+      return nil if @config[:nats_tls].nil?
+
+      @config[:nats_tls][:private_key_file]
+    end
+
+    def nats_tls_verify_peer
+      return nil if @config[:nats_tls].nil?
+
+      @config[:nats_tls][:verify_peer]
     end
 
     def port

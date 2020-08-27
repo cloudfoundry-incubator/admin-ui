@@ -119,7 +119,26 @@ module AdminUI
             @logger.error(error.backtrace.join("\n"))
           end
 
-          ::NATS.start(uri: @config.mbus, ping_interval: @config.nats_discovery_timeout) do
+          options =
+            {
+              uri:           @config.mbus,
+              ping_interval: @config.nats_discovery_timeout
+            }
+
+          unless @config.nats_tls_cert_chain_file.nil? || @config.nats_tls_private_key_file.nil?
+            tls =
+              {
+                cert_chain_file:  @config.nats_tls_cert_chain_file,
+                private_key_file: @config.nats_tls_private_key_file
+              }
+
+            tls[:ca_file]     = @config.nats_tls_ca_file unless @config.nats_tls_ca_file.nil?
+            tls[:verify_peer] = @config.nats_tls_verify_peer unless @config.nats_tls_verify_peer.nil?
+
+            options[:tls] = tls
+          end
+
+          ::NATS.start(options) do
             result['connected'] = true
 
             ::NATS.request('vcap.component.discover') do |item|

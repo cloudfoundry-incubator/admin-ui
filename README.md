@@ -365,6 +365,47 @@ The number of seconds to wait for the NATS to respond to <code>vcap.component.di
 Example: <code>10</code>
 </dd>
 <dt>
+<code>nats_tls</code>
+</dt>
+<dd>
+A set of optional configuration properties for Admin-UI to securely communicate with NATS using TLS. These keys and values correspond to those documented for [TLS secure client connection within the NATS repository](https://github.com/nats-io/nats.rb/blob/master/README.md#tls).
+<br>
+<dl>
+<dt>
+<code>ca_file</code>
+</dt>
+<dd>
+File path string referencing the NATS client certificate authority file. This is required if <code>verify_peer</code> has a value of <code>true</code>.
+<br>
+Example: <code>./ca.pem</code>
+</dd>
+<dt>
+<code><b>cert_chain_file</b></code>
+</dt>
+<dd>
+File path string referencing the NATS client certificate file.
+<br>
+Example: <code>./cert.pem</code>
+</dd>
+<dt>
+<code><b>private_key_file</b></code>
+</dt>
+<dd>
+File path string referencing the NATS client private key file.
+<br>
+Example: <code>./key.pem</code>
+</dd>
+<dt>
+<code>verify_peer</code>
+</dt>
+<dd>
+True to verify peer for the NATS client. If true, <code>ca_file</code> configuration is required.
+<br>
+Example: <code>true</code>
+</dd>
+</dl>
+</dd>
+<dt>
 <code>port</code>
 </dt>
 <dd>
@@ -490,7 +531,7 @@ point, you no longer need to keep the certificate request (dot csr file).
 <code><b>certificate_file_path</b></code>
 </dt>
 <dd>
-File path string leading to the certificate file.
+File path string referencing the certificate file.
 <br>
 Example: <code>certificate/server.cert</code>
 </dd>
@@ -506,7 +547,7 @@ Example: <code>1800</code> for 30 minutes.
 <code><b>private_key_file_path</b></code>
 </dt>
 <dd>
-File path string leading to the private key file.
+File path string referencing the private key file.
 <br>
 Example: <code>system@10.10.10.10</code>
 </dd>
