@@ -897,6 +897,7 @@ Sequel.migration do
       foreign_key :build_guid, :builds, :type=>String, :size=>255, :key=>[:guid]
       String :droplet_guid, :size=>255
       foreign_key :app_guid, :apps, :type=>String, :size=>255, :key=>[:guid]
+      String :buildpacks, :default=>"[]", :size=>5000
       
       index [:build_guid], :name=>:fk_kpack_lifecycle_build_guid_index
       index [:created_at]
@@ -1907,6 +1908,21 @@ Sequel.migration do
       index [:guid], :name=>:sk_guid_index, :unique=>true
       index [:updated_at], :name=>:sk_updated_at_index
       index [:name, :service_instance_id], :name=>:svc_key_name_instance_id_index, :unique=>true
+    end
+    
+    create_table(:route_binding_operations, :ignore_index_errors=>true) do
+      primary_key :id
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :route_binding_id, :route_bindings, :key=>[:id], :on_delete=>:cascade
+      String :state, :size=>255, :null=>false
+      String :type, :size=>255, :null=>false
+      String :description, :size=>10000
+      String :broker_provided_operation, :size=>10000
+      
+      index [:route_binding_id], :name=>:route_binding_id_index, :unique=>true
+      index [:created_at]
+      index [:updated_at]
     end
     
     create_table(:service_binding_operations, :ignore_index_errors=>true) do

@@ -6,10 +6,6 @@ module AdminUI
   class AdminUILogger < Logger
     alias super_info info
 
-    def initialize(file_name, level)
-      super(file_name, level)
-    end
-
     def info_user(user_name, op, msg)
       super_info("[ #{user_name} ] : [ #{op} ] : #{msg}")
     end

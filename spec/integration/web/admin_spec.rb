@@ -5,11 +5,11 @@ require 'yajl'
 require_relative '../../spec_helper'
 require_relative '../../support/web_helper'
 
+BILLION = 1000 * 1000 * 1000
+
 describe AdminUI::Admin, type: :integration, firefox_available: true do
   include_context :server_context
   include_context :web_context
-
-  BILLION = 1000 * 1000 * 1000
 
   context 'unauthenticated' do
     before do

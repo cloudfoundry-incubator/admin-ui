@@ -11,6 +11,9 @@ AllCops:
     - 'spec/support/ccdb/*'
     - 'spec/support/uaadb/*'
 
+Layout/BeginEndAlignment:
+  Enabled: true
+
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
 
@@ -24,10 +27,16 @@ Layout/LineLength:
 Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 
+Lint/ConstantDefinitionInBlock:
+  Enabled: true
+
 Lint/DeprecatedOpenSSLConstant:
   Enabled: true
 
 Lint/DuplicateElsifCondition:
+  Enabled: true
+
+Lint/DuplicateRequire:
   Enabled: true
 
 Lint/DuplicateRescueException:
@@ -36,7 +45,13 @@ Lint/DuplicateRescueException:
 Lint/EmptyConditionalBody:
   Enabled: true
 
+Lint/EmptyFile:
+  Enabled: true
+
 Lint/FloatComparison:
+  Enabled: true
+
+Lint/IdentityComparison:
   Enabled: true
 
 Lint/MissingSuper:
@@ -63,11 +78,20 @@ Lint/StructNewOverride:
 Lint/TopLevelReturnWithArgument:
   Enabled: true
 
+Lint/TrailingCommaInAttributeDeclaration:
+  Enabled: true
+
 Lint/UnreachableLoop:
   Enabled: true
 
 Lint/UriEscapeUnescape:
   Enabled: false
+
+Lint/UselessMethodDefinition:
+  Enabled: true
+
+Lint/UselessTimes:
+  Enabled: true
 
 Metrics/AbcSize:
   Enabled: false
@@ -123,7 +147,13 @@ Performance/Squeeze:
 Performance/StringInclude:
   Enabled: true
 
+Performance/Sum:
+  Enabled: true
+
 Rails/ActiveRecordCallbacksOrder:
+  Enabled: true
+
+Rails/AfterCommitOverride:
   Enabled: true
 
 Rails/Exit:
@@ -168,10 +198,16 @@ Rails/ShortI18n:
 Rails/SkipsModelValidations:
   Enabled: false
 
+Rails/SquishedSQLHeredocs:
+  Enabled: true
+
 Rails/TimeZone:
   Enabled: false
 
 Rails/WhereExists:
+  Enabled: true
+
+Rails/WhereNot:
   Enabled: true
 
 Style/AccessorGrouping:
@@ -184,6 +220,9 @@ Style/BisectedAttrAccessor:
   Enabled: true
 
 Style/CaseLikeIf:
+  Enabled: true
+
+Style/CombinableLoops:
   Enabled: true
 
 Style/Documentation:
@@ -219,6 +258,9 @@ Style/HashTransformKeys:
 Style/HashTransformValues:
   Enabled: true
 
+Style/KeywordParametersOrder:
+  Enabled: true
+
 Style/OptionalBooleanParameter:
   Enabled: false
 
@@ -237,6 +279,9 @@ Style/RedundantRegexpCharacterClass:
 Style/RedundantRegexpEscape:
   Enabled: true
 
+Style/RedundantSelfAssignment:
+  Enabled: true
+
 Style/RescueStandardError:
   Enabled: false
 
@@ -248,6 +293,9 @@ Style/SingleArgumentDig:
 
 Style/SlicingWithRange:
   Enabled: true
+
+Style/SoleNestedConditional:
+  Enabled: false
 
 Style/StringConcatenation:
   Enabled: true

@@ -84,6 +84,7 @@ module AdminUI
         service_instance_labels_array.push(wrapper)
       end
 
+      actee_types = %w[service_instance user_provided_service_instance]
       event_counters = {}
       events['items'].each do |event|
         return result unless @running
@@ -91,7 +92,7 @@ module AdminUI
         Thread.pass
 
         actee_type = event[:actee_type]
-        next unless %w[service_instance user_provided_service_instance].include?(actee_type)
+        next unless actee_types.include?(actee_type)
 
         actee = event[:actee]
         event_counters[actee] = 0 if event_counters[actee].nil?
