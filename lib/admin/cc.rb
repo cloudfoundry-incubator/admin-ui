@@ -264,6 +264,12 @@ module AdminUI
             table:   :route_bindings,
             columns: %i[created_at guid id route_id route_service_url service_instance_id updated_at]
           },
+          route_binding_operations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :route_binding_operations,
+            columns: %i[broker_provided_operation created_at description id route_binding_id state type updated_at]
+          },
           route_labels:
           {
             db_uri:  ccdb_uri,
@@ -1038,6 +1044,10 @@ module AdminUI
 
     def route_annotations
       result_cache(:route_annotations)
+    end
+
+    def route_binding_operations
+      result_cache(:route_binding_operations)
     end
 
     def route_bindings

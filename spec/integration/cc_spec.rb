@@ -879,6 +879,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected route binding operations' do
+      let(:results)  { cc.route_binding_operations }
+      let(:expected) { cc_route_binding_operation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected route bindings' do
       let(:results)  { cc.route_bindings }
       let(:expected) { cc_route_binding }

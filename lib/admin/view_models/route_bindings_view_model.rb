@@ -13,21 +13,23 @@ module AdminUI
                            route_bindings['connected'] &&
                            service_instances['connected']
 
-      domains         = @cc.domains
-      organizations   = @cc.organizations
-      service_brokers = @cc.service_brokers
-      service_plans   = @cc.service_plans
-      services        = @cc.services
-      spaces          = @cc.spaces
+      domains                  = @cc.domains
+      organizations            = @cc.organizations
+      route_binding_operations = @cc.route_binding_operations
+      service_brokers          = @cc.service_brokers
+      service_plans            = @cc.service_plans
+      services                 = @cc.services
+      spaces                   = @cc.spaces
 
-      domain_hash           = Hash[domains['items'].map { |item| [item[:id], item] }]
-      organization_hash     = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      route_hash            = Hash[routes['items'].map { |item| [item[:id], item] }]
-      service_broker_hash   = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
-      service_instance_hash = Hash[service_instances['items'].map { |item| [item[:id], item] }]
-      service_plan_hash     = Hash[service_plans['items'].map { |item| [item[:id], item] }]
-      service_hash          = Hash[services['items'].map { |item| [item[:id], item] }]
-      space_hash            = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      domain_hash                  = Hash[domains['items'].map { |item| [item[:id], item] }]
+      organization_hash            = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      route_binding_operation_hash = Hash[route_binding_operations['items'].map { |item| [item[:route_binding_id], item] }]
+      route_hash                   = Hash[routes['items'].map { |item| [item[:id], item] }]
+      service_broker_hash          = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
+      service_instance_hash        = Hash[service_instances['items'].map { |item| [item[:id], item] }]
+      service_plan_hash            = Hash[service_plans['items'].map { |item| [item[:id], item] }]
+      service_hash                 = Hash[services['items'].map { |item| [item[:id], item] }]
+      space_hash                   = Hash[spaces['items'].map { |item| [item[:id], item] }]
 
       items = []
       hash  = {}
@@ -42,14 +44,16 @@ module AdminUI
 
         next if route.nil? || service_instance.nil?
 
-        guid             = route_binding[:guid]
-        domain           = route.nil? ? nil : domain_hash[route[:domain_id]]
-        service_plan_id  = service_instance.nil? ? nil : service_instance[:service_plan_id]
-        service_plan     = service_plan_id.nil? ? nil : service_plan_hash[service_plan_id]
-        service          = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
-        service_broker   = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
-        space            = service_instance.nil? ? nil : space_hash[service_instance[:space_id]]
-        organization     = space.nil? ? nil : organization_hash[space[:organization_id]]
+        guid                    = route_binding[:guid]
+        id                      = route_binding[:id]
+        domain                  = route.nil? ? nil : domain_hash[route[:domain_id]]
+        route_binding_operation = route_binding_operation_hash[id]
+        service_plan_id         = service_instance.nil? ? nil : service_instance[:service_plan_id]
+        service_plan            = service_plan_id.nil? ? nil : service_plan_hash[service_plan_id]
+        service                 = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
+        service_broker          = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
+        space                   = service_instance.nil? ? nil : space_hash[service_instance[:space_id]]
+        organization            = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         is_gateway_service = service_instance[:is_gateway_service].nil? ? true : service_instance[:is_gateway_service]
 
@@ -63,6 +67,20 @@ module AdminUI
           row.push(route_binding[:updated_at].to_datetime.rfc3339)
         else
           row.push(nil)
+        end
+
+        if route_binding_operation
+          row.push(route_binding_operation[:type])
+          row.push(route_binding_operation[:state])
+          row.push(route_binding_operation[:created_at].to_datetime.rfc3339)
+
+          if route_binding_operation[:updated_at]
+            row.push(route_binding_operation[:updated_at].to_datetime.rfc3339)
+          else
+            row.push(nil)
+          end
+        else
+          row.push(nil, nil, nil, nil)
         end
 
         if domain
@@ -157,19 +175,20 @@ module AdminUI
 
         hash[guid] =
           {
-            'domain'           => domain,
-            'organization'     => organization,
-            'route'            => route,
-            'route_binding'    => route_binding,
-            'service'          => service,
-            'service_broker'   => service_broker,
-            'service_instance' => service_instance,
-            'service_plan'     => service_plan,
-            'space'            => space
+            'domain'                  => domain,
+            'organization'            => organization,
+            'route'                   => route,
+            'route_binding'           => route_binding,
+            'route_binding_operation' => route_binding_operation,
+            'service'                 => service,
+            'service_broker'          => service_broker,
+            'service_instance'        => service_instance,
+            'service_plan'            => service_plan,
+            'space'                   => space
           }
       end
 
-      result(true, items, hash, (1..28).to_a, (1..28).to_a)
+      result(true, items, hash, (1..32).to_a, (1..32).to_a)
     end
   end
 end

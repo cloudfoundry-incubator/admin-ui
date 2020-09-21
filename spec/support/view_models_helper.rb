@@ -984,6 +984,10 @@ module ViewModelsHelper
         cc_route_binding[:guid],
         cc_route_binding[:created_at].to_datetime.rfc3339,
         cc_route_binding[:updated_at].to_datetime.rfc3339,
+        cc_route_binding_operation[:type],
+        cc_route_binding_operation[:state],
+        cc_route_binding_operation[:created_at].to_datetime.rfc3339,
+        cc_route_binding_operation[:updated_at].to_datetime.rfc3339,
         "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}",
         cc_route[:guid],
         cc_service_instance[:name],
@@ -1015,15 +1019,16 @@ module ViewModelsHelper
 
   def view_models_route_bindings_detail
     {
-      'domain'           => cc_domain,
-      'organization'     => cc_organization,
-      'route'            => cc_route,
-      'route_binding'    => cc_route_binding,
-      'service'          => cc_service,
-      'service_broker'   => cc_service_broker,
-      'service_instance' => cc_service_instance,
-      'service_plan'     => cc_service_plan,
-      'space'            => cc_space
+      'domain'                  => cc_domain,
+      'organization'            => cc_organization,
+      'route'                   => cc_route,
+      'route_binding'           => cc_route_binding,
+      'route_binding_operation' => cc_route_binding_operation,
+      'service'                 => cc_service,
+      'service_broker'          => cc_service_broker,
+      'service_instance'        => cc_service_instance,
+      'service_plan'            => cc_service_plan,
+      'space'                   => cc_space
     }
   end
 

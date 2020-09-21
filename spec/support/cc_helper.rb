@@ -294,6 +294,7 @@ module CCHelper
   end
 
   def cc_clear_route_bindings_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM route_binding_operations')
     sql(config.ccdb_uri, 'DELETE FROM route_bindings')
 
     @cc_route_bindings_deleted = true
@@ -1334,6 +1335,19 @@ module CCHelper
     }
   end
 
+  def cc_route_binding_operation
+    {
+      broker_provided_operation: 'TestRouteBindingOperation broker operation',
+      created_at:                unique_time('cc_route_binding_operation_created'),
+      description:               'TestRouteBindingOperation description',
+      id:                        unique_id('cc_route_binding_operation'),
+      route_binding_id:          cc_route_binding[:id],
+      state:                     'succeeded',
+      type:                      'create',
+      updated_at:                unique_time('cc_route_binding_operation_updated')
+    }
+  end
+
   def cc_route_label
     {
       created_at:    unique_time('cc_route_label_created'),
@@ -2221,11 +2235,16 @@ module CCHelper
                [:task_labels,                      cc_task_label]
              ]
 
-    result << [:route_bindings, cc_route_binding] if use_route
-    result << [:route_mappings, cc_route_mapping] if use_route
+    if use_route
+      result << [:route_bindings, cc_route_binding]
+      result << [:route_binding_operations, cc_route_binding_operation]
+      result << [:route_mappings, cc_route_mapping]
+    end
 
-    result << [:quota_definitions, cc_quota_definition2] if insert_second_quota_definition
-    result << [:space_quota_definitions, cc_space_quota_definition2] if insert_second_quota_definition
+    if insert_second_quota_definition
+      result << [:quota_definitions, cc_quota_definition2]
+      result << [:space_quota_definitions, cc_space_quota_definition2]
+    end
 
     result << [:events, cc_event_app] if event_type == 'app'
     result << [:events, cc_event_organization] if event_type == 'organization'
