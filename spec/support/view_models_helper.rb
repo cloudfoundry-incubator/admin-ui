@@ -726,7 +726,7 @@ module ViewModelsHelper
   def view_models_organization_roles
     [
       [
-        "#{cc_organization[:guid]}/auditors/#{uaa_user[:id]}",
+        "#{cc_organization[:guid]}/#{cc_organization_auditor[:role_guid]}/auditors/#{uaa_user[:id]}",
         'Auditor',
         cc_organization_auditor[:role_guid],
         cc_organization_auditor[:created_at].to_datetime.rfc3339,
@@ -737,7 +737,7 @@ module ViewModelsHelper
         uaa_user[:id]
       ],
       [
-        "#{cc_organization[:guid]}/billing_managers/#{uaa_user[:id]}",
+        "#{cc_organization[:guid]}/#{cc_organization_billing_manager[:role_guid]}/billing_managers/#{uaa_user[:id]}",
         'Billing Manager',
         cc_organization_billing_manager[:role_guid],
         cc_organization_billing_manager[:created_at].to_datetime.rfc3339,
@@ -748,7 +748,7 @@ module ViewModelsHelper
         uaa_user[:id]
       ],
       [
-        "#{cc_organization[:guid]}/managers/#{uaa_user[:id]}",
+        "#{cc_organization[:guid]}/#{cc_organization_manager[:role_guid]}/managers/#{uaa_user[:id]}",
         'Manager',
         cc_organization_manager[:role_guid],
         cc_organization_manager[:created_at].to_datetime.rfc3339,
@@ -759,7 +759,7 @@ module ViewModelsHelper
         uaa_user[:id]
       ],
       [
-        "#{cc_organization[:guid]}/users/#{uaa_user[:id]}",
+        "#{cc_organization[:guid]}/#{cc_organization_user[:role_guid]}/users/#{uaa_user[:id]}",
         'User',
         cc_organization_user[:role_guid],
         cc_organization_user[:created_at].to_datetime.rfc3339,
@@ -1390,7 +1390,7 @@ module ViewModelsHelper
   def view_models_service_plan_visibilities
     [
       [
-        cc_service_plan_visibility[:guid],
+        "#{cc_service_plan_visibility[:guid]}/#{cc_service_plan[:guid]}/#{cc_organization[:guid]}",
         cc_service_plan_visibility[:guid],
         cc_service_plan_visibility[:created_at].to_datetime.rfc3339,
         cc_service_plan_visibility[:updated_at].to_datetime.rfc3339,
@@ -1583,7 +1583,7 @@ module ViewModelsHelper
   def view_models_space_roles
     [
       [
-        "#{cc_space[:guid]}/auditors/#{uaa_user[:id]}",
+        "#{cc_space[:guid]}/#{cc_space_auditor[:role_guid]}/auditors/#{uaa_user[:id]}",
         'Auditor',
         cc_space_auditor[:role_guid],
         cc_space_auditor[:created_at].to_datetime.rfc3339,
@@ -1595,7 +1595,7 @@ module ViewModelsHelper
         uaa_user[:id]
       ],
       [
-        "#{cc_space[:guid]}/developers/#{uaa_user[:id]}",
+        "#{cc_space[:guid]}/#{cc_space_developer[:role_guid]}/developers/#{uaa_user[:id]}",
         'Developer',
         cc_space_developer[:role_guid],
         cc_space_developer[:created_at].to_datetime.rfc3339,
@@ -1607,7 +1607,7 @@ module ViewModelsHelper
         uaa_user[:id]
       ],
       [
-        "#{cc_space[:guid]}/managers/#{uaa_user[:id]}",
+        "#{cc_space[:guid]}/#{cc_space_manager[:role_guid]}/managers/#{uaa_user[:id]}",
         'Manager',
         cc_space_manager[:role_guid],
         cc_space_manager[:created_at].to_datetime.rfc3339,

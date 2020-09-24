@@ -333,8 +333,15 @@ module AdminUI
       result = details(:applications, guid)
       if @config.display_encrypted_values && admin && !result.nil?
         begin
-          json = @cc_rest_client.get_cc("/v2/apps/#{guid}")
-          environment_variables = json['entity']['environment_json']
+          api_version = @cc_rest_client.api_version
+          v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+          if v3
+            json = @cc_rest_client.get_cc("/v3/apps/#{guid}/environment_variables")
+            environment_variables = json['var']
+          else
+            json = @cc_rest_client.get_cc("/v2/apps/#{guid}")
+            environment_variables = json['entity']['environment_json']
+          end
           environment_variables = Hash[environment_variables.sort_by { |key, _| key.downcase }]
           return Hash[result.merge('environment_variables' => environment_variables).sort_by { |key, _| key }]
         rescue => error
@@ -417,9 +424,16 @@ module AdminUI
       result = details(:environment_groups, name)
       unless result.nil?
         begin
-          json = @cc_rest_client.get_cc("/v2/config/environment_variable_groups/#{name}")
-          json = Hash[json.sort_by { |key, _| key.downcase }]
-          return Hash[result.merge(variables: json).sort_by { |key, _| key }]
+          api_version = @cc_rest_client.api_version
+          v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+          if v3
+            json = @cc_rest_client.get_cc("/v3/environment_variable_groups/#{name}")
+            environment_variables = json['var']
+          else
+            environment_variables = @cc_rest_client.get_cc("/v2/config/environment_variable_groups/#{name}")
+          end
+          environment_variables = Hash[environment_variables.sort_by { |key, _| key.downcase }]
+          return Hash[result.merge(variables: environment_variables).sort_by { |key, _| key }]
         rescue => error
           @logger.error("Error during environment_group #{name} retrieval: #{error.inspect}")
           @logger.error(error.backtrace.join("\n"))
@@ -532,8 +546,8 @@ module AdminUI
       result_cache(:organizations_isolation_segments)
     end
 
-    def organization_role(organization_guid, role, user_guid)
-      details(:organization_roles, "#{organization_guid}/#{role}/#{user_guid}")
+    def organization_role(organization_guid, role_guid, role, user_guid)
+      details(:organization_roles, "#{organization_guid}/#{role_guid}/#{role}/#{user_guid}")
     end
 
     def organization_roles
@@ -612,6 +626,7 @@ module AdminUI
       result = details(:service_bindings, guid)
       if @config.display_encrypted_values && admin && !result.nil?
         begin
+          # TODO: v3 retrieve service binding
           json = @cc_rest_client.get_cc("/v2/service_bindings/#{guid}")
           credentials = json['entity']['credentials']
           credentials = Hash[credentials.sort_by { |key, _| key.downcase }]
@@ -642,6 +657,7 @@ module AdminUI
       if @config.display_encrypted_values && admin && !result.nil?
         begin
           type = is_gateway_service ? 'service_instances' : 'user_provided_service_instances'
+          # TODO: v3 retrieve service instance
           json = @cc_rest_client.get_cc("/v2/#{type}/#{guid}")
           credentials = json['entity']['credentials']
           credentials = Hash[credentials.sort_by { |key, _| key.downcase }]
@@ -662,6 +678,7 @@ module AdminUI
       result = details(:service_keys, guid)
       if @config.display_encrypted_values && admin && !result.nil?
         begin
+          # TODO: v3 retrieve service key
           json = @cc_rest_client.get_cc("/v2/service_keys/#{guid}")
           credentials = json['entity']['credentials']
           credentials = Hash[credentials.sort_by { |key, _| key.downcase }]
@@ -686,8 +703,8 @@ module AdminUI
       result_cache(:service_plans)
     end
 
-    def service_plan_visibility(guid)
-      details(:service_plan_visibilities, guid)
+    def service_plan_visibility(service_plan_visibility_guid, service_plan_guid, organization_guid)
+      details(:service_plan_visibilities, "#{service_plan_visibility_guid}/#{service_plan_guid}/#{organization_guid}")
     end
 
     def service_plan_visibilities
@@ -745,8 +762,8 @@ module AdminUI
       result_cache(:space_quotas)
     end
 
-    def space_role(space_guid, role, user_guid)
-      details(:space_roles, "#{space_guid}/#{role}/#{user_guid}")
+    def space_role(space_guid, role_guid, role, user_guid)
+      details(:space_roles, "#{space_guid}/#{role_guid}/#{role}/#{user_guid}")
     end
 
     def space_roles

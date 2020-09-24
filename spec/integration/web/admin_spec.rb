@@ -4346,7 +4346,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          check_checkbox_guid('OrganizationRolesTable', "#{cc_organization[:guid]}/auditors/#{uaa_user[:id]}")
+          check_checkbox_guid('OrganizationRolesTable', "#{cc_organization[:guid]}/#{cc_organization_auditor[:role_guid]}/auditors/#{uaa_user[:id]}")
         end
 
         context 'manage organization roles' do
@@ -4454,7 +4454,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          check_checkbox_guid('SpaceRolesTable', "#{cc_space[:guid]}/auditors/#{uaa_user[:id]}")
+          check_checkbox_guid('SpaceRolesTable', "#{cc_space[:guid]}/#{cc_space_auditor[:role_guid]}/auditors/#{uaa_user[:id]}")
         end
 
         context 'manage space roles' do
@@ -8158,7 +8158,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          check_checkbox_guid('ServicePlanVisibilitiesTable', cc_service_plan_visibility[:guid])
+          check_checkbox_guid('ServicePlanVisibilitiesTable', "#{cc_service_plan_visibility[:guid]}/#{cc_service_plan[:guid]}/#{cc_organization[:guid]}")
         end
 
         context 'manage service plan visibilities' do

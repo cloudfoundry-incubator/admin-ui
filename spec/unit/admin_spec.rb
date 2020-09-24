@@ -901,7 +901,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete organization role' do
       it 'returns failure code due to disconnection' do
-        response = delete('/organizations/organization1/auditors/user1')
+        response = delete('/organizations/organization1/role1/auditors/user1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1462,7 +1462,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete service plan visibility' do
       it 'returns failure code due to disconnection' do
-        response = delete('/service_plan_visibilities/service_plan_visibility1')
+        response = delete('/service_plan_visibilities/service_plan_visibility1/serviceplan1/organization1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1666,7 +1666,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete space role' do
       it 'returns failure code due to disconnection' do
-        response = delete('/spaces/space1/auditors/user1')
+        response = delete('/spaces/space1/role1/auditors/user1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -1917,23 +1917,6 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common manage application')
-    end
-
-    shared_examples 'common manage application feature' do
-      it 'returns failure code due to disconnection' do
-        response = put('/applications/application1/features/revisions', '{"enabled":true}')
-        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
-      end
-    end
-
-    context 'manage application feature via http' do
-      it_behaves_like('common manage application feature')
-    end
-
-    context 'manage application feature via https' do
-      let(:secured_client_connection) { true }
-
-      it_behaves_like('common manage application feature')
     end
 
     shared_examples 'common manage buildpack' do
@@ -2442,8 +2425,8 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/organization_roles_view_model')
       end
 
-      it '/organization_roles_view_model/:guid/:role/:guid returns not found' do
-        verify_not_found('/organization_roles_view_model/organization1/auditors/user1')
+      it '/organization_roles_view_model/:guid/:guid/:role/:guid returns not found' do
+        verify_not_found('/organization_roles_view_model/organization1/role1/auditors/user1')
       end
 
       it '/quotas_view_model succeeds' do
@@ -2554,8 +2537,8 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/service_plan_visibilities_view_model')
       end
 
-      it '/service_plan_visibilities_view_model/:guid returns not found' do
-        verify_not_found('/service_plan_visibilities_view_model/service_plan_visibility1')
+      it '/service_plan_visibilities_view_model/:guid/:guid/:guid returns not found' do
+        verify_not_found('/service_plan_visibilities_view_model/service_plan_visibility1/service_plan1/organization1')
       end
 
       it '/service_providers_view_model succeeds' do
@@ -2594,8 +2577,8 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/space_roles_view_model')
       end
 
-      it '/space_roles_view_model/:guid/:role/:guid returns not found' do
-        verify_not_found('/space_roles_view_model/space1/auditors/user1')
+      it '/space_roles_view_model/:guid/:guid/:role/:guid returns not found' do
+        verify_not_found('/space_roles_view_model/space1/role1/auditors/user1')
       end
 
       it '/spaces_view_model succeeds' do
@@ -2876,8 +2859,8 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/organization_roles_view_model')
       end
 
-      it '/organization_roles_view_model/:guid/:role/:guid redirects as expected' do
-        get_redirects_as_expected('/organization_roles_view_model/organization1/auditors/user1')
+      it '/organization_roles_view_model/:guid/:guid/:role/:guid redirects as expected' do
+        get_redirects_as_expected('/organization_roles_view_model/organization1/role1/auditors/user1')
       end
 
       it '/organizations_isolation_segments_view_model redirects as expected' do
@@ -3008,8 +2991,8 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/service_plan_visibilities_view_model')
       end
 
-      it '/service_plan_visibilities_view_model/:guid redirects as expected' do
-        get_redirects_as_expected('/service_plans_view_model/service_plan_visibilities1')
+      it '/service_plan_visibilities_view_model/:guid/:guid/:guid redirects as expected' do
+        get_redirects_as_expected('/service_plan_visibilities_view_model/service_plan_visibilities1/service_plan1/organization1')
       end
 
       it '/service_providers_view_model redirects as expected' do
@@ -3048,8 +3031,8 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/space_roles_view_model')
       end
 
-      it '/space_roles_view_model/:guid/:role/:guid redirects as expected' do
-        get_redirects_as_expected('/space_roles_view_model/space1/auditors/user1')
+      it '/space_roles_view_model/:guid/:guid/:role/:guid redirects as expected' do
+        get_redirects_as_expected('/space_roles_view_model/space1/role1/auditors/user1')
       end
 
       it '/spaces_view_model redirects as expected' do
@@ -3240,8 +3223,8 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/organizations/organization1/isolation_segment1')
       end
 
-      it 'deletes /organizations/:guid/:role/:guid redirects as expected' do
-        delete_redirects_as_expected('/organizations/organization1/auditors/user1')
+      it 'deletes /organizations/:guid/:guid/:role/:guid redirects as expected' do
+        delete_redirects_as_expected('/organizations/organization1/role1/auditors/user1')
       end
 
       it 'deletes /quota_definitions/:guid redirects as expected' do
@@ -3352,8 +3335,8 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/service_plans/service_plan1/metadata/labels/label1?prefix=bogus.com')
       end
 
-      it 'deletes /service_plan_visibilities/:guid redirects as expected' do
-        delete_redirects_as_expected('/service_plan_visibilities/service_plan_visibility1')
+      it 'deletes /service_plan_visibilities/:guid/:guid/:guid redirects as expected' do
+        delete_redirects_as_expected('/service_plan_visibilities/service_plan_visibility1/service_plan1/organization1')
       end
 
       it 'deletes /service_providers/:id redirects as expected' do
@@ -3420,8 +3403,8 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/spaces/space1/unmapped_routes')
       end
 
-      it 'deletes /spaces/:guid/:role/:guid redirects as expected' do
-        delete_redirects_as_expected('/spaces/space1/auditors/user1')
+      it 'deletes /spaces/:guid/:guid/:role/:guid redirects as expected' do
+        delete_redirects_as_expected('/spaces/space1/role1/auditors/user1')
       end
 
       it 'deletes /stacks/:guid redirects as expected' do
@@ -3690,10 +3673,6 @@ describe AdminUI::Admin do
 
       it 'puts /applications/:guid redirects as expected' do
         put_redirects_as_expected('/applications/application1', '{"state":"STARTED"}')
-      end
-
-      it 'puts /applications/:guid/features/:feature redirects as expected' do
-        put_redirects_as_expected('/applications/application1/features/revisions', '{"enabled":true}')
       end
 
       it 'puts /buildpacks/:guid redirects as expected' do

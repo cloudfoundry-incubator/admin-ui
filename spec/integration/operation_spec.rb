@@ -149,11 +149,11 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def enable_revisions_application
-        operation.manage_application_feature(cc_app[:guid], 'revisions', '{"enabled":true}')
+        operation.manage_application(cc_app[:guid], '{"revisions_enabled":true}')
       end
 
       def disable_revisions_application
-        operation.manage_application_feature(cc_app[:guid], 'revisions', '{"enabled":false}')
+        operation.manage_application(cc_app[:guid], '{"revisions_enabled":false}')
       end
 
       it 'renames the application' do
@@ -1085,19 +1085,19 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage organization roles' do
       def delete_organization_auditor
-        operation.delete_organization_role(cc_organization[:guid], 'auditors', cc_user[:guid])
+        operation.delete_organization_role(cc_organization[:guid], cc_organization_auditor[:role_guid], 'auditors', cc_user[:guid])
       end
 
       def delete_organization_billing_manager
-        operation.delete_organization_role(cc_organization[:guid], 'billing_managers', cc_user[:guid])
+        operation.delete_organization_role(cc_organization[:guid], cc_organization_billing_manager[:role_guid], 'billing_managers', cc_user[:guid])
       end
 
       def delete_organization_manager
-        operation.delete_organization_role(cc_organization[:guid], 'managers', cc_user[:guid])
+        operation.delete_organization_role(cc_organization[:guid], cc_organization_manager[:role_guid], 'managers', cc_user[:guid])
       end
 
       def delete_organization_user
-        operation.delete_organization_role(cc_organization[:guid], 'users', cc_user[:guid])
+        operation.delete_organization_role(cc_organization[:guid], cc_organization_user[:role_guid], 'users', cc_user[:guid])
       end
 
       it 'deletes organization auditor role' do
@@ -1850,7 +1850,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_service_plan_visibility
-        operation.delete_service_plan_visibility(cc_service_plan_visibility[:guid])
+        operation.delete_service_plan_visibility(cc_service_plan_visibility[:guid], cc_service_plan[:guid], cc_organization[:guid])
       end
 
       it 'deletes service plan visibility' do
@@ -2164,15 +2164,15 @@ describe AdminUI::Operation, type: :integration do
 
     context 'manage space roles' do
       def delete_space_auditor
-        operation.delete_space_role(cc_space[:guid], 'auditors', cc_user[:guid])
+        operation.delete_space_role(cc_space[:guid], cc_space_auditor[:role_guid], 'auditors', cc_user[:guid])
       end
 
       def delete_space_developer
-        operation.delete_space_role(cc_space[:guid], 'developers', cc_user[:guid])
+        operation.delete_space_role(cc_space[:guid], cc_space_developer[:role_guid], 'developers', cc_user[:guid])
       end
 
       def delete_space_manager
-        operation.delete_space_role(cc_space[:guid], 'managers', cc_user[:guid])
+        operation.delete_space_role(cc_space[:guid], cc_space_manager[:role_guid], 'managers', cc_user[:guid])
       end
 
       it 'deletes space auditor role' do

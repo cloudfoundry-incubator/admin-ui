@@ -4,16 +4,18 @@ require_relative 'base_view_model'
 module AdminUI
   class ServicePlanVisibilitiesViewModel < AdminUI::BaseViewModel
     def do_items
+      organizations             = @cc.organizations
+      service_plans             = @cc.service_plans
       service_plan_visibilities = @cc.service_plan_visibilities
 
-      # service_plan_visibilities have to exist. Other record types are optional
-      return result unless service_plan_visibilities['connected']
+      # organizations, service_plans and service_plan_visibilities have to exist. Other record types are optional
+      return result unless organizations['connected'] &&
+                           service_plans['connected'] &&
+                           service_plan_visibilities['connected']
 
-      events           = @cc.events
-      organizations    = @cc.organizations
-      service_brokers  = @cc.service_brokers
-      service_plans    = @cc.service_plans
-      services         = @cc.services
+      events          = @cc.events
+      service_brokers = @cc.service_brokers
+      services        = @cc.services
 
       events_connected = events['connected']
 
@@ -43,17 +45,22 @@ module AdminUI
 
         Thread.pass
 
-        guid            = service_plan_visibility[:guid]
-        organization    = organization_hash[service_plan_visibility[:organization_id]]
-        service_plan    = service_plan_hash[service_plan_visibility[:service_plan_id]]
-        service         = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
-        service_broker  = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
+        organization = organization_hash[service_plan_visibility[:organization_id]]
+        next if organization.nil?
 
-        event_counter = event_counters[guid]
+        service_plan = service_plan_hash[service_plan_visibility[:service_plan_id]]
+        next if service_plan.nil?
+
+        guid           = service_plan_visibility[:guid]
+        service        = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
+        service_broker = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
+        event_counter  = event_counters[guid]
 
         row = []
 
-        row.push(guid)
+        key = "#{guid}/#{service_plan[:guid]}/#{organization[:guid]}"
+
+        row.push(key)
         row.push(guid)
         row.push(service_plan_visibility[:created_at].to_datetime.rfc3339)
 
@@ -71,25 +78,21 @@ module AdminUI
           row.push(nil)
         end
 
-        if service_plan
-          row.push(service_plan[:name])
-          row.push(service_plan[:guid])
-          row.push(service_plan[:unique_id])
-          row.push(service_plan[:created_at].to_datetime.rfc3339)
+        row.push(service_plan[:name])
+        row.push(service_plan[:guid])
+        row.push(service_plan[:unique_id])
+        row.push(service_plan[:created_at].to_datetime.rfc3339)
 
-          if service_plan[:updated_at]
-            row.push(service_plan[:updated_at].to_datetime.rfc3339)
-          else
-            row.push(nil)
-          end
-
-          row.push(service_plan[:bindable])
-          row.push(service_plan[:free])
-          row.push(service_plan[:active])
-          row.push(service_plan[:public])
+        if service_plan[:updated_at]
+          row.push(service_plan[:updated_at].to_datetime.rfc3339)
         else
-          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil)
         end
+
+        row.push(service_plan[:bindable])
+        row.push(service_plan[:free])
+        row.push(service_plan[:active])
+        row.push(service_plan[:public])
 
         if service
           row.push(service[:label])
@@ -123,24 +126,20 @@ module AdminUI
           row.push(nil, nil, nil, nil)
         end
 
-        if organization
-          row.push(organization[:name])
-          row.push(organization[:guid])
+        row.push(organization[:name])
+        row.push(organization[:guid])
 
-          row.push(organization[:created_at].to_datetime.rfc3339)
+        row.push(organization[:created_at].to_datetime.rfc3339)
 
-          if organization[:updated_at]
-            row.push(organization[:updated_at].to_datetime.rfc3339)
-          else
-            row.push(nil)
-          end
+        if organization[:updated_at]
+          row.push(organization[:updated_at].to_datetime.rfc3339)
         else
-          row.push(nil, nil, nil, nil)
+          row.push(nil)
         end
 
         items.push(row)
 
-        hash[guid] =
+        hash[key] =
           {
             'organization'            => organization,
             'service'                 => service,

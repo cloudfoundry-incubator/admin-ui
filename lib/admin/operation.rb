@@ -41,7 +41,13 @@ module AdminUI
     end
 
     def create_organization(control_message)
-      url = '/v2/organizations'
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              '/v3/organizations'
+            else
+              '/v2/organizations'
+            end
       @logger.debug("POST #{url}, #{control_message}")
       @client.post_cc(url, control_message)
       @cc.invalidate_organizations
@@ -49,16 +55,31 @@ module AdminUI
     end
 
     def create_space_quota_definition_space(space_quota_definition_guid, space_guid)
-      url = "/v2/space_quota_definitions/#{space_quota_definition_guid}/spaces/#{space_guid}"
-      @logger.debug("PUT #{url}")
-      @client.put_cc(url, '{}')
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/space_quotas/#{space_quota_definition_guid}/relationships/spaces"
+        body = "{\"data\":[{\"guid\":\"#{space_guid}\"}]}"
+        @logger.debug("POST #{url}, #{body}")
+        @client.post_cc(url, body)
+      else
+        url = "/v2/space_quota_definitions/#{space_quota_definition_guid}/spaces/#{space_guid}"
+        @logger.debug("PUT #{url}")
+        @client.put_cc(url, '{}')
+      end
       @cc.invalidate_spaces
       @view_models.invalidate_spaces
     end
 
     def delete_application(app_guid, recursive)
-      url = "/v2/apps/#{app_guid}"
-      url += '?recursive=true' if recursive
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/apps/#{app_guid}"
+      else
+        url = "/v2/apps/#{app_guid}"
+        url += '?recursive=true' if recursive
+      end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_applications
@@ -69,7 +90,7 @@ module AdminUI
       @cc.invalidate_processes
       @cc.invalidate_tasks
       @varz.invalidate
-      if recursive
+      if v3 || recursive
         @cc.invalidate_service_bindings
         @view_models.invalidate_service_bindings
       end
@@ -101,6 +122,7 @@ module AdminUI
     end
 
     def delete_application_instance(app_guid, instance_index)
+      # TODO: v3 delete application instance
       url = "/v2/apps/#{app_guid}/instances/#{instance_index}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -121,7 +143,13 @@ module AdminUI
     end
 
     def delete_buildpack(buildpack_guid)
-      url = "/v2/buildpacks/#{buildpack_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/buildpacks/#{buildpack_guid}"
+            else
+              "/v2/buildpacks/#{buildpack_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_buildpacks
@@ -174,14 +202,20 @@ module AdminUI
     end
 
     def delete_domain(domain_guid, is_shared, recursive)
-      url = is_shared ? "/v2/shared_domains/#{domain_guid}" : "/v2/private_domains/#{domain_guid}"
-      url += '?recursive=true' if recursive
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/domains/#{domain_guid}"
+      else
+        url = is_shared ? "/v2/shared_domains/#{domain_guid}" : "/v2/private_domains/#{domain_guid}"
+        url += '?recursive=true' if recursive
+      end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_domains
       @cc.invalidate_domain_annotations
       @cc.invalidate_domain_labels
-      if recursive
+      if v3 || recursive
         @cc.invalidate_routes
         @cc.invalidate_route_mappings
         @view_models.invalidate_routes
@@ -309,8 +343,14 @@ module AdminUI
     end
 
     def delete_organization(organization_guid, recursive)
-      url = "/v2/organizations/#{organization_guid}"
-      url += '?recursive=true' if recursive
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/organizations/#{organization_guid}"
+      else
+        url = "/v2/organizations/#{organization_guid}"
+        url += '?recursive=true' if recursive
+      end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_organizations
@@ -321,7 +361,7 @@ module AdminUI
       @cc.invalidate_organization_annotations
       @cc.invalidate_organization_labels
       @cc.invalidate_service_plan_visibilities
-      if recursive
+      if v3 || recursive
         @cc.invalidate_applications
         @cc.invalidate_droplets
         @cc.invalidate_packages
@@ -403,15 +443,27 @@ module AdminUI
     end
 
     def delete_organization_private_domain(organization_guid, domain_guid)
-      url = "/v2/organizations/#{organization_guid}/private_domains/#{domain_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/domains/#{domain_guid}/relationships/shared_organizations/#{organization_guid}"
+            else
+              "/v2/organizations/#{organization_guid}/private_domains/#{domain_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_organizations_private_domains
       @view_models.invalidate_domains
     end
 
-    def delete_organization_role(organization_guid, role, user_guid)
-      url = "/v2/organizations/#{organization_guid}/#{role}/#{user_guid}"
+    def delete_organization_role(organization_guid, role_guid, role, user_guid)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/roles/#{role_guid}"
+            else
+              "/v2/organizations/#{organization_guid}/#{role}/#{user_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_organizations_auditors if role == 'auditors'
@@ -422,7 +474,13 @@ module AdminUI
     end
 
     def delete_quota_definition(quota_definition_guid)
-      url = "/v2/quota_definitions/#{quota_definition_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/organization_quotas/#{quota_definition_guid}"
+            else
+              "/v2/quota_definitions/#{quota_definition_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_quota_definitions
@@ -438,16 +496,26 @@ module AdminUI
     end
 
     def delete_route(route_guid, recursive)
-      url = "/v2/routes/#{route_guid}"
-      url += '?recursive=true' if recursive
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/routes/#{route_guid}"
+      else
+        url = "/v2/routes/#{route_guid}"
+        url += '?recursive=true' if recursive
+      end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_routes
       @cc.invalidate_route_annotations
       @cc.invalidate_route_labels
-      @cc.invalidate_route_mappings
+      if v3 || recursive
+        @cc.invalidate_route_bindings
+        @cc.invalidate_route_mappings
+        @view_models.invalidate_route_bindings
+        @view_models.invalidate_route_mappings
+      end
       @view_models.invalidate_routes
-      @view_models.invalidate_route_mappings
     end
 
     def delete_route_annotation(route_guid, prefix, name)
@@ -462,6 +530,7 @@ module AdminUI
     end
 
     def delete_route_binding(service_instance_guid, route_guid, is_gateway_service)
+      # TODO: v3 delete route binding
       url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}/routes/#{route_guid}" : "/v2/user_provided_service_instances/#{service_instance_guid}/routes/#{route_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -481,6 +550,7 @@ module AdminUI
     end
 
     def delete_route_mapping(route_mapping_guid)
+      # TODO: v3 delete route mapping
       url = "/v2/route_mappings/#{route_mapping_guid}"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -489,7 +559,13 @@ module AdminUI
     end
 
     def delete_security_group(security_group_guid)
-      url = "/v2/security_groups/#{security_group_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/security_groups/#{security_group_guid}"
+            else
+              "/v2/security_groups/#{security_group_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_security_groups
@@ -501,7 +577,13 @@ module AdminUI
     end
 
     def delete_security_group_space(security_group_guid, space_guid)
-      url = "/v2/security_groups/#{security_group_guid}/spaces/#{space_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/security_groups/#{security_group_guid}/relationships/running_spaces/#{space_guid}"
+            else
+              "/v2/security_groups/#{security_group_guid}/spaces/#{space_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_security_groups_spaces
@@ -509,7 +591,13 @@ module AdminUI
     end
 
     def delete_service(service_guid, purge)
-      url = "/v2/services/#{service_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/service_offerings/#{service_guid}"
+            else
+              "/v2/services/#{service_guid}"
+            end
       url += '?purge=true' if purge
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -532,6 +620,7 @@ module AdminUI
     end
 
     def delete_service_binding(service_binding_guid)
+      # TODO: v3 delete service binding
       url = "/v2/service_bindings/#{service_binding_guid}?accepts_incomplete=true"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -540,7 +629,13 @@ module AdminUI
     end
 
     def delete_service_broker(service_broker_guid)
-      url = "/v2/service_brokers/#{service_broker_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/service_brokers/#{service_broker_guid}"
+            else
+              "/v2/service_brokers/#{service_broker_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_clients
@@ -579,6 +674,7 @@ module AdminUI
     end
 
     def delete_service_instance(service_instance_guid, is_gateway_service, recursive, purge)
+      # TODO: v3 delete service instance
       url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}?accepts_incomplete=true" : "/v2/user_provided_service_instances/#{service_instance_guid}"
       if recursive
         url += is_gateway_service ? '&' : '?'
@@ -622,6 +718,7 @@ module AdminUI
     end
 
     def delete_service_key(service_key_guid)
+      # TODO: v3 delete service key
       url = "/v2/service_keys/#{service_key_guid}?accepts_incomplete=true"
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -652,7 +749,13 @@ module AdminUI
     end
 
     def delete_service_plan(service_plan_guid)
-      url = "/v2/service_plans/#{service_plan_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/service_plans/#{service_plan_guid}"
+            else
+              "/v2/service_plans/#{service_plan_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_plans
@@ -683,8 +786,14 @@ module AdminUI
       @view_models.invalidate_service_plans
     end
 
-    def delete_service_plan_visibility(service_plan_visibility_guid)
-      url = "/v2/service_plan_visibilities/#{service_plan_visibility_guid}"
+    def delete_service_plan_visibility(service_plan_visibility_guid, service_plan_guid, organization_guid)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/service_plans/#{service_plan_guid}/visibility/#{organization_guid}"
+            else
+              "/v2/service_plan_visibilities/#{service_plan_visibility_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_plan_visibilities
@@ -708,8 +817,14 @@ module AdminUI
     end
 
     def delete_space(space_guid, recursive)
-      url = "/v2/spaces/#{space_guid}"
-      url += '?recursive=true' if recursive
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/spaces/#{space_guid}"
+      else
+        url = "/v2/spaces/#{space_guid}"
+        url += '?recursive=true' if recursive
+      end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_security_groups_spaces
@@ -720,7 +835,7 @@ module AdminUI
       @cc.invalidate_space_annotations
       @cc.invalidate_space_labels
       @cc.invalidate_staging_security_groups_spaces
-      if recursive
+      if v3 || recursive
         @cc.invalidate_applications
         @cc.invalidate_droplets
         @cc.invalidate_packages
@@ -772,7 +887,13 @@ module AdminUI
     end
 
     def delete_space_quota_definition(space_quota_definition_guid)
-      url = "/v2/space_quota_definitions/#{space_quota_definition_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/space_quotas/#{space_quota_definition_guid}"
+            else
+              "/v2/space_quota_definitions/#{space_quota_definition_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_space_quota_definitions
@@ -780,15 +901,27 @@ module AdminUI
     end
 
     def delete_space_quota_definition_space(space_quota_definition_guid, space_guid)
-      url = "/v2/space_quota_definitions/#{space_quota_definition_guid}/spaces/#{space_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/space_quotas/#{space_quota_definition_guid}/relationships/spaces/#{space_guid}"
+            else
+              "/v2/space_quota_definitions/#{space_quota_definition_guid}/spaces/#{space_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_spaces
       @view_models.invalidate_spaces
     end
 
-    def delete_space_role(space_guid, role, user_guid)
-      url = "/v2/spaces/#{space_guid}/#{role}/#{user_guid}"
+    def delete_space_role(space_guid, role_guid, role, user_guid)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/roles/#{role_guid}"
+            else
+              "/v2/spaces/#{space_guid}/#{role}/#{user_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_spaces_auditors if role == 'auditors'
@@ -798,7 +931,13 @@ module AdminUI
     end
 
     def delete_space_unmapped_routes(space_guid)
-      url = "/v2/spaces/#{space_guid}/unmapped_routes"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/spaces/#{space_guid}/routes?unmapped=true"
+            else
+              "/v2/spaces/#{space_guid}/unmapped_routes"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_routes
@@ -808,7 +947,13 @@ module AdminUI
     end
 
     def delete_stack(stack_guid)
-      url = "/v2/stacks/#{stack_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/stacks/#{stack_guid}"
+            else
+              "/v2/stacks/#{stack_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_stacks
@@ -840,7 +985,13 @@ module AdminUI
     end
 
     def delete_staging_security_group_space(staging_security_group_guid, staging_space_guid)
-      url = "/v2/security_groups/#{staging_security_group_guid}/staging_spaces/#{staging_space_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/security_groups/#{staging_security_group_guid}/relationships/staging_spaces/#{staging_space_guid}"
+            else
+              "/v2/security_groups/#{staging_security_group_guid}/staging_spaces/#{staging_space_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_staging_security_groups_spaces
@@ -871,7 +1022,13 @@ module AdminUI
     end
 
     def delete_user(user_guid)
-      url = "/v2/users/#{user_guid}"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/users/#{user_guid}"
+            else
+              "/v2/users/#{user_guid}"
+            end
       @logger.debug("DELETE #{url}")
 
       cc_error = nil
@@ -938,9 +1095,43 @@ module AdminUI
     end
 
     def manage_application(app_guid, control_message)
-      url = "/v2/apps/#{app_guid}"
-      @logger.debug("PUT #{url}, #{control_message}")
-      @client.put_cc(url, control_message)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      json = Yajl::Parser.parse(control_message)
+      diego = json['diego']
+      revisions_enabled = json['revisions_enabled']
+      if diego.nil? && (v3 || !revisions_enabled.nil?)
+        enable_ssh = json['enable_ssh']
+        name = json['name']
+        state = json['state']
+        if !enable_ssh.nil?
+          url = "/v3/apps/#{app_guid}/features/ssh"
+          body = "{\"enabled\":#{enable_ssh}}"
+          @logger.debug("PATCH #{url}, #{body}")
+          @client.patch_cc(url, body)
+        elsif !name.nil?
+          url = "/v3/apps/#{app_guid}"
+          @logger.debug("PATCH #{url}, #{control_message}")
+          @client.patch_cc(url, control_message)
+        elsif !revisions_enabled.nil?
+          url = "/v3/apps/#{app_guid}/features/revisions"
+          body = "{\"enabled\":#{revisions_enabled}}"
+          @logger.debug("PATCH #{url}, #{body}")
+          @client.patch_cc(url, body)
+        elsif !state.nil?
+          url = if state == 'STARTED'
+                  "/v3/apps/#{app_guid}/actions/start"
+                else
+                  "/v3/apps/#{app_guid}/actions/stop"
+                end
+          @logger.debug("POST #{url}")
+          @client.post_cc(url, nil)
+        end
+      else
+        url = "/v2/apps/#{app_guid}"
+        @logger.debug("PUT #{url}, #{control_message}")
+        @client.put_cc(url, control_message)
+      end
       @cc.invalidate_applications
       @cc.invalidate_droplets
       @cc.invalidate_packages
@@ -950,26 +1141,34 @@ module AdminUI
       @view_models.invalidate_application_instances
     end
 
-    def manage_application_feature(app_guid, feature, control_message)
-      url = "/v3/apps/#{app_guid}/features/#{feature}"
-      @logger.debug("PATCH #{url}, #{control_message}")
-      @client.patch_cc(url, control_message)
-      @cc.invalidate_applications
-      @view_models.invalidate_applications
-    end
-
     def manage_buildpack(buildpack_guid, control_message)
-      url = "/v2/buildpacks/#{buildpack_guid}"
-      @logger.debug("PUT #{url}, #{control_message}")
-      @client.put_cc(url, control_message)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/buildpacks/#{buildpack_guid}"
+        @logger.debug("PATCH #{url}, #{control_message}")
+        @client.patch_cc(url, control_message)
+      else
+        url = "/v2/buildpacks/#{buildpack_guid}"
+        @logger.debug("PUT #{url}, #{control_message}")
+        @client.put_cc(url, control_message)
+      end
       @cc.invalidate_buildpacks
       @view_models.invalidate_buildpacks
     end
 
     def manage_feature_flag(feature_flag_name, control_message)
-      url = "/v2/config/feature_flags/#{feature_flag_name}"
-      @logger.debug("PUT #{url}, #{control_message}")
-      @client.put_cc(url, control_message)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/feature_flags/#{feature_flag_name}"
+        @logger.debug("PATCH #{url}, #{control_message}")
+        @client.patch_cc(url, control_message)
+      else
+        url = "/v2/config/feature_flags/#{feature_flag_name}"
+        @logger.debug("PUT #{url}, #{control_message}")
+        @client.put_cc(url, control_message)
+      end
       @cc.invalidate_feature_flags
       @view_models.invalidate_feature_flags
     end
@@ -1001,45 +1200,72 @@ module AdminUI
     end
 
     def manage_organization(organization_guid, control_message)
-      url = "/v2/organizations/#{organization_guid}"
-      @logger.debug("PUT #{url}, #{control_message}")
-      @client.put_cc(url, control_message)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        json = Yajl::Parser.parse(control_message)
+        quota_definition_guid = json['quota_definition_guid']
+        if !quota_definition_guid.nil?
+          url = "/v3/organization_quotas/#{quota_definition_guid}/relationships/organizations"
+          body = "{\"data\":[{\"guid\":\"#{organization_guid}\"}]}"
+          @logger.debug("POST #{url}, #{body}")
+          @client.post_cc(url, body)
+        else
+          url = "/v3/organizations/#{organization_guid}"
+          body = control_message
+          status = json['status']
+          unless status.nil?
+            suspended = status == 'suspended'
+            body = "{\"suspended\":#{suspended}}"
+          end
+          @logger.debug("PATCH #{url}, #{body}")
+          @client.patch_cc(url, body)
+        end
+      else
+        url = "/v2/organizations/#{organization_guid}"
+        @logger.debug("PUT #{url}, #{control_message}")
+        @client.put_cc(url, control_message)
+      end
       @cc.invalidate_organizations
       @view_models.invalidate_organizations
     end
 
     def manage_quota_definition(quota_definition_guid, control_message)
-      url = "/v2/quota_definitions/#{quota_definition_guid}"
-      @logger.debug("PUT #{url}, #{control_message}")
-      @client.put_cc(url, control_message)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/organization_quotas/#{quota_definition_guid}"
+        @logger.debug("PATCH #{url}, #{control_message}")
+        @client.patch_cc(url, control_message)
+      else
+        url = "/v2/quota_definitions/#{quota_definition_guid}"
+        @logger.debug("PUT #{url}, #{control_message}")
+        @client.put_cc(url, control_message)
+      end
       @cc.invalidate_quota_definitions
       @view_models.invalidate_quotas
     end
 
     def manage_security_group(security_group_guid, control_message)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
       json = Yajl::Parser.parse(control_message)
       running_default = json['running_default']
       staging_default = json['staging_default']
-
-      if running_default.nil?
-        if staging_default.nil?
-          url = "/v2/security_groups/#{security_group_guid}"
-          @logger.debug("PUT #{url}, #{control_message}")
-          @client.put_cc(url, control_message)
-        else
-          url = "/v2/config/staging_security_groups/#{security_group_guid}"
-
-          if staging_default
-            @logger.debug("PUT #{url}")
-            @client.put_cc(url, nil)
-          else
-            @logger.debug("DELETE #{url}")
-            @client.delete_cc(url)
-          end
-        end
-      else
+      if v3
+        url = "/v3/security_groups/#{security_group_guid}"
+        body = if !running_default.nil?
+                 "{\"globally_enabled\":{\"running\":#{running_default}}}"
+               elsif !staging_default.nil?
+                 "{\"globally_enabled\":{\"staging\":#{staging_default}}}"
+               else
+                 control_message
+               end
+        @logger.debug("PATCH #{url}, #{body}")
+        @client.patch_cc(url, body)
+      # Else we have to be in v2 case
+      elsif !running_default.nil?
         url = "/v2/config/running_security_groups/#{security_group_guid}"
-
         if running_default
           @logger.debug("PUT #{url}")
           @client.put_cc(url, nil)
@@ -1047,21 +1273,42 @@ module AdminUI
           @logger.debug("DELETE #{url}")
           @client.delete_cc(url)
         end
+      elsif !staging_default.nil?
+        url = "/v2/config/staging_security_groups/#{security_group_guid}"
+        if staging_default
+          @logger.debug("PUT #{url}")
+          @client.put_cc(url, nil)
+        else
+          @logger.debug("DELETE #{url}")
+          @client.delete_cc(url)
+        end
+      else
+        url = "/v2/security_groups/#{security_group_guid}"
+        @logger.debug("PUT #{url}, #{control_message}")
+        @client.put_cc(url, control_message)
       end
-
       @cc.invalidate_security_groups
       @view_models.invalidate_security_groups
     end
 
     def manage_service_broker(service_broker_guid, control_message)
-      url = "/v2/service_brokers/#{service_broker_guid}"
-      @logger.debug("PUT #{url}, #{control_message}")
-      @client.put_cc(url, control_message)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/service_brokers/#{service_broker_guid}"
+        @logger.debug("PATCH #{url}, #{control_message}")
+        @client.patch_cc(url, control_message)
+      else
+        url = "/v2/service_brokers/#{service_broker_guid}"
+        @logger.debug("PUT #{url}, #{control_message}")
+        @client.put_cc(url, control_message)
+      end
       @cc.invalidate_service_brokers
       @view_models.invalidate_service_brokers
     end
 
     def manage_service_instance(service_instance_guid, is_gateway_service, control_message)
+      # TODO: v3 manage service instance
       url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}" : "/v2/user_provided_service_instances/#{service_instance_guid}"
       @logger.debug("PUT #{url}, #{control_message}")
       @client.put_cc(url, control_message)
@@ -1070,25 +1317,70 @@ module AdminUI
     end
 
     def manage_service_plan(service_plan_guid, control_message)
-      url = "/v2/service_plans/#{service_plan_guid}"
-      @logger.debug("PUT #{url}, #{control_message}")
-      @client.put_cc(url, control_message)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        json = Yajl::Parser.parse(control_message)
+        pub = json['public']
+        unless pub.nil?
+          url = "/v3/service_plans/#{service_plan_guid}/visibility"
+          type = if pub
+                   'public'
+                 else
+                   'admin'
+                 end
+          body = "{\"type\":\"#{type}\"}"
+          @logger.debug("POST #{url}, #{body}")
+          @client.post_cc(url, body)
+        end
+      else
+        url = "/v2/service_plans/#{service_plan_guid}"
+        @logger.debug("PUT #{url}, #{control_message}")
+        @client.put_cc(url, control_message)
+      end
       @cc.invalidate_service_plans
+      @cc.invalidate_service_plan_visibilities
       @view_models.invalidate_service_plans
+      @view_models.invalidate_service_plan_visibilities
     end
 
     def manage_space(space_guid, control_message)
-      url = "/v2/spaces/#{space_guid}"
-      @logger.debug("PUT #{url}, #{control_message}")
-      @client.put_cc(url, control_message)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        json = Yajl::Parser.parse(control_message)
+        allow_ssh = json['allow_ssh']
+        if !allow_ssh.nil?
+          url = "/v3/spaces/#{space_guid}/features/ssh"
+          body = "{\"enabled\":#{allow_ssh}}"
+          @logger.debug("PATCH #{url}, #{body}")
+          @client.patch_cc(url, body)
+        else
+          url = "/v3/spaces/#{space_guid}"
+          @logger.debug("PATCH #{url}, #{control_message}")
+          @client.patch_cc(url, control_message)
+        end
+      else
+        url = "/v2/spaces/#{space_guid}"
+        @logger.debug("PUT #{url}, #{control_message}")
+        @client.put_cc(url, control_message)
+      end
       @cc.invalidate_spaces
       @view_models.invalidate_spaces
     end
 
     def manage_space_quota_definition(space_quota_definition_guid, control_message)
-      url = "/v2/space_quota_definitions/#{space_quota_definition_guid}"
-      @logger.debug("PUT #{url}, #{control_message}")
-      @client.put_cc(url, control_message)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/space_quotas/#{space_quota_definition_guid}"
+        @logger.debug("PATCH #{url}, #{control_message}")
+        @client.patch_cc(url, control_message)
+      else
+        url = "/v2/space_quota_definitions/#{space_quota_definition_guid}"
+        @logger.debug("PUT #{url}, #{control_message}")
+        @client.put_cc(url, control_message)
+      end
       @cc.invalidate_space_quota_definitions
       @view_models.invalidate_space_quotas
     end
@@ -1129,22 +1421,41 @@ module AdminUI
     end
 
     def remove_organization_default_isolation_segment(organization_guid)
-      url = "/v2/organizations/#{organization_guid}/default_isolation_segment"
-      @logger.debug("DELETE #{url}")
-      @client.delete_cc(url)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/organizations/#{organization_guid}/relationships/default_isolation_segment"
+        body = '{\"data\":null}'
+        @logger.debug("PATCH #{url}, #{body}")
+        @client.patch_cc(url, body)
+      else
+        url = "/v2/organizations/#{organization_guid}/default_isolation_segment"
+        @logger.debug("DELETE #{url}")
+        @client.delete_cc(url)
+      end
       @cc.invalidate_organizations
       @view_models.invalidate_organizations
     end
 
     def remove_space_isolation_segment(space_guid)
-      url = "/v2/spaces/#{space_guid}/isolation_segment"
-      @logger.debug("DELETE #{url}")
-      @client.delete_cc(url)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      if v3
+        url = "/v3/spaces/#{space_guid}/relationships/isolation_segment"
+        body = '{\"data\":null}'
+        @logger.debug("PATCH #{url}, #{body}")
+        @client.patch_cc(url, body)
+      else
+        url = "/v2/spaces/#{space_guid}/isolation_segment"
+        @logger.debug("DELETE #{url}")
+        @client.delete_cc(url)
+      end
       @cc.invalidate_spaces
       @view_models.invalidate_spaces
     end
 
     def restage_application(app_guid)
+      # TODO: v3 restage application
       url = "/v2/apps/#{app_guid}/restage"
       @logger.debug("POST #{url}")
       @client.post_cc(url, '{}')

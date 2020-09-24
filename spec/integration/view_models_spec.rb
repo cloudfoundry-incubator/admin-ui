@@ -496,7 +496,7 @@ describe AdminUI::ViewModels, type: :integration do
     end
 
     context 'returns connected organization_roles_view_model detail' do
-      let(:results)  { view_models.organization_role(cc_organization[:guid], 'auditors', cc_user[:guid]) }
+      let(:results)  { view_models.organization_role(cc_organization[:guid], cc_organization_auditor[:role_guid], 'auditors', cc_user[:guid]) }
       let(:expected) { view_models_organization_roles_detail }
 
       it_behaves_like('common view model retrieval detail')
@@ -717,7 +717,7 @@ describe AdminUI::ViewModels, type: :integration do
     end
 
     context 'returns connected service_plan_visibilities_view_model detail' do
-      let(:results)  { view_models.service_plan_visibility(cc_service_plan_visibility[:guid]) }
+      let(:results)  { view_models.service_plan_visibility(cc_service_plan_visibility[:guid], cc_service_plan[:guid], cc_organization[:guid]) }
       let(:expected) { view_models_service_plan_visibilities_detail }
 
       it_behaves_like('common view model retrieval detail')
@@ -788,7 +788,7 @@ describe AdminUI::ViewModels, type: :integration do
     end
 
     context 'returns connected space_roles_view_model detail' do
-      let(:results)  { view_models.space_role(cc_space[:guid], 'auditors', cc_user[:guid]) }
+      let(:results)  { view_models.space_role(cc_space[:guid], cc_space_auditor[:role_guid], 'auditors', cc_user[:guid]) }
       let(:expected) { view_models_space_roles_detail }
 
       it_behaves_like('common view model retrieval detail')

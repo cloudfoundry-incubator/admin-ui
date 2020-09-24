@@ -253,7 +253,7 @@ describe AdminUI::ViewModels do
     end
 
     it 'returns nil organization_role expected' do
-      expect(view_models.organization_role('bogus', 'bogus', 'bogus')).to be_nil
+      expect(view_models.organization_role('bogus', 'bogus', 'bogus', 'bogus')).to be_nil
     end
 
     it 'returns zero organization_roles as expected' do
@@ -365,7 +365,7 @@ describe AdminUI::ViewModels do
     end
 
     it 'returns nil service_plan_visibility as expected' do
-      expect(view_models.service_plan_visibility('bogus')).to be_nil
+      expect(view_models.service_plan_visibility('bogus', 'bogus', 'bogus')).to be_nil
     end
 
     it 'returns zero service_plan_visibilities as expected' do
@@ -409,7 +409,7 @@ describe AdminUI::ViewModels do
     end
 
     it 'returns nil space_role as expected' do
-      expect(view_models.space_role('bogus', 'bogus', 'bogus')).to be_nil
+      expect(view_models.space_role('bogus', 'bogus', 'bogus', 'bogus')).to be_nil
     end
 
     it 'returns zero space_roles as expected' do

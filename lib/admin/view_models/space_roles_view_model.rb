@@ -57,7 +57,7 @@ module AdminUI
 
         organization = organization_hash[space[:organization_id]]
 
-        key = "#{space[:guid]}/#{path_role}/#{user_cc[:guid]}"
+        key = "#{space[:guid]}/#{space_role[:role_guid]}/#{path_role}/#{user_cc[:guid]}"
 
         row.push(key)
         row.push(human_role)

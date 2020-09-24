@@ -56,7 +56,7 @@ module AdminUI
         user_uaa = user_uaa_hash[user_cc[:guid]]
         next if user_uaa.nil?
 
-        key = "#{organization[:guid]}/#{path_role}/#{user_cc[:guid]}"
+        key = "#{organization[:guid]}/#{organization_role[:role_guid]}/#{path_role}/#{user_cc[:guid]}"
 
         row.push(key)
         row.push(human_role)

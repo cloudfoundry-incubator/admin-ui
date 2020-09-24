@@ -994,7 +994,7 @@ module CCHelper
   end
 
   def cc_info_api_version
-    '2.122.0'
+    '2.153.0'
   end
 
   def cc_info_build
@@ -1006,7 +1006,7 @@ module CCHelper
   end
 
   def cc_info_osbapi_version
-    '2.14'
+    '2.15'
   end
 
   def cc_info_token_endpoint
@@ -2282,14 +2282,19 @@ module CCHelper
   end
 
   def cc_app_not_found
-    NotFound.new('code'        => 100_004,
-                 'description' => "The app name could not be found: #{cc_app[:guid]}",
-                 'error_code'  => 'CF-AppNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 100_004,
+                     'detail' => "The app name could not be found: #{cc_app[:guid]}",
+                     'title'  => 'CF-AppNotFound'
+                   }
+                 ])
   end
 
   def cc_app_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
-      OK.new('entity' => { 'environment_json' => cc_app_environment_variable })
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}/environment_variables", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
+      OK.new({ 'var' => cc_app_environment_variable })
     end
 
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}/restage", AdminUI::Utils::HTTP_POST, anything, anything, anything, anything, anything) do
@@ -2300,32 +2305,42 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_app_rename}\"}", anything, anything, anything) do
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        cc_clear_apps_cache_stub(config)
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, "{\"name\":\"#{cc_app_rename}\"}", anything, anything, anything) do
       if @cc_apps_deleted
         cc_app_not_found
       else
         sql(config.ccdb_uri, "UPDATE apps SET name = '#{cc_app_rename}' WHERE guid = '#{cc_app[:guid]}'")
-        Created.new
+        OK.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"state":"STOPPED"}', anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}/actions/stop", AdminUI::Utils::HTTP_POST, anything, anything, anything, anything, anything) do
       if @cc_apps_deleted
         cc_app_not_found
       else
         sql(config.ccdb_uri, "UPDATE apps SET desired_state = 'STOPPED' WHERE guid = '#{cc_app[:guid]}'")
         sql(config.ccdb_uri, "UPDATE processes SET state = 'STOPPED' WHERE app_guid = '#{cc_app[:guid]}'")
-        Created.new
+        OK.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"state":"STARTED"}', anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}/actions/start", AdminUI::Utils::HTTP_POST, anything, anything, anything, anything, anything) do
       if @cc_apps_deleted
         cc_app_not_found
       else
         sql(config.ccdb_uri, "UPDATE apps SET desired_state = 'STARTED' WHERE guid = '#{cc_app[:guid]}'")
         sql(config.ccdb_uri, "UPDATE processes SET state = 'STARTED' WHERE app_guid = '#{cc_app[:guid]}'")
-        Created.new
+        OK.new({})
       end
     end
 
@@ -2347,21 +2362,21 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"enable_ssh":true}', anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}/features/ssh", AdminUI::Utils::HTTP_PATCH, anything, '{"enabled":true}', anything, anything, anything) do
       if @cc_apps_deleted
         cc_app_not_found
       else
         sql(config.ccdb_uri, "UPDATE apps SET enable_ssh = 'true' WHERE guid = '#{cc_app[:guid]}'")
-        Created.new
+        OK.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"enable_ssh":false}', anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}/features/ssh", AdminUI::Utils::HTTP_PATCH, anything, '{"enabled":false}', anything, anything, anything) do
       if @cc_apps_deleted
         cc_app_not_found
       else
         sql(config.ccdb_uri, "UPDATE apps SET enable_ssh = 'false' WHERE guid = '#{cc_app[:guid]}'")
-        Created.new
+        OK.new({})
       end
     end
 
@@ -2370,7 +2385,7 @@ module CCHelper
         cc_app_not_found
       else
         sql(config.ccdb_uri, "UPDATE apps SET revisions_enabled = 'true' WHERE guid = '#{cc_app[:guid]}'")
-        Created.new
+        OK.new({})
       end
     end
 
@@ -2379,35 +2394,16 @@ module CCHelper
         cc_app_not_found
       else
         sql(config.ccdb_uri, "UPDATE apps SET revisions_enabled = 'false' WHERE guid = '#{cc_app[:guid]}'")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
-      if @cc_apps_deleted
-        cc_app_not_found
-      else
-        cc_clear_apps_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/apps/#{cc_app[:guid]}?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
-      if @cc_apps_deleted
-        cc_app_not_found
-      else
-        cc_clear_apps_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
-      end
-    end
-
-    # Remove metadata
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
-      if @cc_apps_deleted
-        cc_app_not_found
-      else
-        cc_clear_apps_cache_stub(config)
         OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/apps/#{cc_app[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @cc_apps_deleted
+        cc_app_not_found
+      else
+        cc_clear_apps_cache_stub(config)
+        Accepted.new({})
       end
     end
 
@@ -2436,66 +2432,17 @@ module CCHelper
   end
 
   def cc_buildpack_not_found
-    NotFound.new('code'        => 10_000,
-                 'description' => 'Unknown request',
-                 'error_code'  => 'CF-NotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 10_000,
+                     'detail' => 'Unknown request',
+                     'title'  => 'CF-NotFound'
+                   }
+                 ])
   end
 
   def cc_buildpack_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_buildpack_rename}\"}", anything, anything, anything) do
-      if @cc_buildpacks_deleted
-        cc_buildpack_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE buildpacks SET name = '#{cc_buildpack_rename}' WHERE guid = '#{cc_buildpack[:guid]}'")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"enabled":true}', anything, anything, anything) do
-      if @cc_buildpacks_deleted
-        cc_buildpack_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE buildpacks SET enabled = 'true' WHERE guid = '#{cc_buildpack[:guid]}'")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"enabled":false}', anything, anything, anything) do
-      if @cc_buildpacks_deleted
-        cc_buildpack_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE buildpacks SET enabled = 'false' WHERE guid = '#{cc_buildpack[:guid]}'")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"locked":true}', anything, anything, anything) do
-      if @cc_buildpacks_deleted
-        cc_buildpack_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE buildpacks SET locked = 'true' WHERE guid = '#{cc_buildpack[:guid]}'")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"locked":false}', anything, anything, anything) do
-      if @cc_buildpacks_deleted
-        cc_buildpack_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE buildpacks SET locked = 'false' WHERE guid = '#{cc_buildpack[:guid]}'")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
-      if @cc_buildpacks_deleted
-        cc_buildpack_not_found
-      else
-        cc_clear_buildpacks_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
-      end
-    end
-
     # Remove metadata
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
       if @cc_buildpacks_deleted
@@ -2505,32 +2452,83 @@ module CCHelper
         OK.new({})
       end
     end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, "{\"name\":\"#{cc_buildpack_rename}\"}", anything, anything, anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE buildpacks SET name = '#{cc_buildpack_rename}' WHERE guid = '#{cc_buildpack[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, '{"enabled":true}', anything, anything, anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE buildpacks SET enabled = 'true' WHERE guid = '#{cc_buildpack[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, '{"enabled":false}', anything, anything, anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE buildpacks SET enabled = 'false' WHERE guid = '#{cc_buildpack[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, '{"locked":true}', anything, anything, anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE buildpacks SET locked = 'true' WHERE guid = '#{cc_buildpack[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, '{"locked":false}', anything, anything, anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE buildpacks SET locked = 'false' WHERE guid = '#{cc_buildpack[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/buildpacks/#{cc_buildpack[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @cc_buildpacks_deleted
+        cc_buildpack_not_found
+      else
+        cc_clear_buildpacks_cache_stub(config)
+        Accepted.new({})
+      end
+    end
   end
 
   def cc_domain_not_found
-    NotFound.new('code'        => 130_002,
-                 'description' => "The domain could not be found: #{cc_domain[:guid]}",
-                 'error_code'  => 'CF-DomainNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 130_002,
+                     'detail' => "The domain could not be found: #{cc_domain[:guid]}",
+                     'title'  => 'CF-DomainNotFound'
+                   }
+                 ])
   end
 
   def cc_domain_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/private_domains/#{cc_domain[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/domains/#{cc_domain[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_domains_deleted
         cc_domain_not_found
       else
         cc_clear_domains_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/private_domains/#{cc_domain[:guid]}?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
-      if @cc_domains_deleted
-        cc_domain_not_found
-      else
-        cc_clear_domains_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
-      end
-    end
     # Remove metadata
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/domains/#{cc_domain[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
       if @cc_domains_deleted
@@ -2543,19 +2541,24 @@ module CCHelper
   end
 
   def cc_env_group_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/config/environment_variable_groups/#{cc_env_group[:name]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
-      OK.new(cc_env_group_variable)
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/environment_variable_groups/#{cc_env_group[:name]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
+      OK.new('var' => cc_env_group_variable)
     end
   end
 
   def cc_feature_flag_not_found
-    NotFound.new('code'        => 330_000,
-                 'description' => "The feature flag could not be found: #{cc_feature_flag[:name]}",
-                 'error_code'  => 'CF-FeatureFlagNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 330_000,
+                     'detail' => "The feature flag could not be found: #{cc_feature_flag[:name]}",
+                     'title'  => 'CF-FeatureFlagNotFound'
+                   }
+                 ])
   end
 
   def cc_feature_flag_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/config/feature_flags/#{cc_feature_flag[:name]}", AdminUI::Utils::HTTP_PUT, anything, '{"enabled":true}', anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/feature_flags/#{cc_feature_flag[:name]}", AdminUI::Utils::HTTP_PATCH, anything, '{"enabled":true}', anything, anything, anything) do
       if @cc_feature_flags_deleted
         cc_feature_flag_not_found
       else
@@ -2564,7 +2567,7 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/config/feature_flags/#{cc_feature_flag[:name]}", AdminUI::Utils::HTTP_PUT, anything, '{"enabled":false}', anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/feature_flags/#{cc_feature_flag[:name]}", AdminUI::Utils::HTTP_PATCH, anything, '{"enabled":false}', anything, anything, anything) do
       if @cc_feature_flags_deleted
         cc_feature_flag_not_found
       else
@@ -2616,13 +2619,6 @@ module CCHelper
       end
     end
 
-    # This is the old pre-cf-release 253 mechanism
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/isolation_segments/#{cc_isolation_segment[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_isolation_segment_rename}\"}", anything, anything, anything) do
-      NotFound.new('code'        => 10_000,
-                   'description' => 'Unknown request',
-                   'error_code'  => 'CF-NotFound')
-    end
-
     # Remove metadata
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/isolation_segments/#{cc_isolation_segment[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
       if @cc_isolation_segments_deleted
@@ -2651,13 +2647,6 @@ module CCHelper
       end
     end
 
-    # This is the old pre-cf-release 252 mechanism
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/isolation_segments/#{cc_isolation_segment[:guid]}/relationships/organizations", AdminUI::Utils::HTTP_DELETE, anything, "{\"data\":[{\"guid\":\"#{cc_organization[:guid]}\"}]}", anything, anything, anything) do
-      NotFound.new('code'        => 10_000,
-                   'description' => 'Unknown request',
-                   'error_code'  => 'CF-NotFound')
-    end
-
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/isolation_segments/#{cc_isolation_segment[:guid]}/relationships/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_isolation_segments_deleted
         cc_isolation_segment_not_found
@@ -2683,19 +2672,29 @@ module CCHelper
   end
 
   def cc_organization_not_found
-    NotFound.new('code'        => 30_003,
-                 'description' => "The organization could not be found: #{cc_organization[:guid]}",
-                 'error_code'  => 'CF-OrganizationNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 30_003,
+                     'detail' => "The organization could not be found: #{cc_organization[:guid]}",
+                     'title'  => 'CF-OrganizationNotFound'
+                   }
+                 ])
   end
 
   def cc_organization_taken
-    BadRequest.new('code'        => 30_002,
-                   'description' => "The organization name is taken: #{cc_organization2[:name]}",
-                   'error_code'  => 'CF-OrganizationNameTaken')
+    BadRequest.new('errors' =>
+                   [
+                     {
+                       'code'   => 30_002,
+                       'detail' => "The organization name is taken: #{cc_organization2[:name]}",
+                       'title'  => 'CF-OrganizationNameTaken'
+                     }
+                   ])
   end
 
   def cc_organization_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations", AdminUI::Utils::HTTP_POST, anything, "{\"name\":\"#{cc_organization2[:name]}\"}", anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/organizations", AdminUI::Utils::HTTP_POST, anything, "{\"name\":\"#{cc_organization2[:name]}\"}", anything, anything, anything) do
       if @cc_organization_created
         cc_organization_taken
       else
@@ -2714,42 +2713,6 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_organization_rename}\"}", anything, anything, anything) do
-      if @cc_organizations_deleted
-        cc_organization_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE organizations SET name = '#{cc_organization_rename}' WHERE guid = '#{cc_organization[:guid]}'")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"quota_definition_guid\":\"#{cc_quota_definition2[:guid]}\"}", anything, anything, anything) do
-      if @cc_organizations_deleted
-        cc_organization_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE organizations SET quota_definition_id = (SELECT id FROM quota_definitions WHERE guid = '#{cc_quota_definition2[:guid]}')")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"status":"suspended"}', anything, anything, anything) do
-      if @cc_organizations_deleted
-        cc_organization_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE organizations SET status = 'suspended' WHERE guid = '#{cc_organization[:guid]}'")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"status":"active"}', anything, anything, anything) do
-      if @cc_organizations_deleted
-        cc_organization_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE organizations SET status = 'active' WHERE guid = '#{cc_organization[:guid]}'")
-        Created.new
-      end
-    end
-
     # Remove metadata
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
       if @cc_organizations_deleted
@@ -2760,25 +2723,52 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, "{\"name\":\"#{cc_organization_rename}\"}", anything, anything, anything) do
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE organizations SET name = '#{cc_organization_rename}' WHERE guid = '#{cc_organization[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, '{"suspended":true}', anything, anything, anything) do
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE organizations SET status = 'suspended' WHERE guid = '#{cc_organization[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, '{"suspended":false}', anything, anything, anything) do
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE organizations SET status = 'active' WHERE guid = '#{cc_organization[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/organization_quotas/#{cc_quota_definition2[:guid]}/relationships/organizations", AdminUI::Utils::HTTP_POST, anything, "{\"data\":[{\"guid\":\"#{cc_organization[:guid]}\"}]}", anything, anything, anything) do
+      if @cc_organizations_deleted
+        cc_organization_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE organizations SET quota_definition_id = (SELECT id FROM quota_definitions WHERE guid = '#{cc_quota_definition2[:guid]}')")
+        Created.new
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_organizations_deleted
         cc_organization_not_found
       else
         cc_clear_organizations_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
-      if @cc_organizations_deleted
-        cc_organization_not_found
-      else
-        cc_clear_organizations_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}/default_isolation_segment", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/organizations/#{cc_organization[:guid]}/relationships/default_isolation_segment", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
       if @cc_organizations_deleted
         cc_organization_not_found
       else
@@ -2787,43 +2777,43 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}/auditors/#{cc_user[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/roles/#{cc_organization_auditor[:role_guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_organizations_deleted
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_auditors WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}/billing_managers/#{cc_user[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/roles/#{cc_organization_billing_manager[:role_guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_organizations_deleted
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_billing_managers WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}/managers/#{cc_user[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/roles/#{cc_organization_manager[:role_guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_organizations_deleted
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_managers WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}/users/#{cc_user[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/roles/#{cc_organization_user[:role_guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_organizations_deleted
         cc_organization_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM organizations_users WHERE organization_id = '#{cc_organization[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/organizations/#{cc_organization[:guid]}/private_domains/#{cc_domain[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/domains/#{cc_domain[:guid]}/relationships/shared_organizations/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_organizations_deleted
         cc_organization_not_found
       else
@@ -2834,53 +2824,54 @@ module CCHelper
   end
 
   def cc_quota_definition_not_found
-    NotFound.new('code'        => 240_001,
-                 'description' => "Quota Definition could not be found: #{cc_quota_definition[:guid]}",
-                 'error_code'  => 'CF-QuotaDefinitionNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 240_001,
+                     'detail' => "Quota Definition could not be found: #{cc_quota_definition[:guid]}",
+                     'title'  => 'CF-QuotaDefinitionNotFound'
+                   }
+                 ])
   end
 
   def cc_quota_definition_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/quota_definitions/#{cc_quota_definition[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_quota_definition_rename}\"}", anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/organization_quotas/#{cc_quota_definition[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, "{\"name\":\"#{cc_quota_definition_rename}\"}", anything, anything, anything) do
       if @cc_quota_definitions_deleted
         cc_quota_definition_not_found
       else
         sql(config.ccdb_uri, "UPDATE quota_definitions SET name = '#{cc_quota_definition_rename}' WHERE guid = '#{cc_quota_definition[:guid]}'")
-        Created.new
+        OK.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/quota_definitions/#{cc_quota_definition[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/organization_quotas/#{cc_quota_definition[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_quota_definitions_deleted
         cc_quota_definition_not_found
       else
         cc_clear_quota_definitions_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
   end
 
   def cc_route_not_found
-    NotFound.new('code'        => 210_002,
-                 'description' => "The route could not be found: #{cc_route[:guid]}",
-                 'error_code'  => 'CF-RouteNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 210_002,
+                     'detail' => "The route could not be found: #{cc_route[:guid]}",
+                     'title'  => 'CF-RouteNotFound'
+                   }
+                 ])
   end
 
   def cc_route_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/routes/#{cc_route[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/routes/#{cc_route[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_routes_deleted
         cc_route_not_found
       else
         cc_clear_routes_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/routes/#{cc_route[:guid]}?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
-      if @cc_routes_deleted
-        cc_route_not_found
-      else
-        cc_clear_routes_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
 
@@ -2930,13 +2921,18 @@ module CCHelper
   end
 
   def cc_security_group_not_found
-    NotFound.new('code'        => 300_002,
-                 'description' => "The security group could not be found: #{cc_security_group[:guid]}",
-                 'error_code'  => 'CF-SecurityGroupNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 300_002,
+                     'detail' => "The security group could not be found: #{cc_security_group[:guid]}",
+                     'title'  => 'CF-SecurityGroupNotFound'
+                   }
+                 ])
   end
 
   def cc_security_group_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_security_group_rename}\"}", anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, "{\"name\":\"#{cc_security_group_rename}\"}", anything, anything, anything) do
       if @cc_security_groups_deleted
         cc_security_group_not_found
       else
@@ -2945,7 +2941,7 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/config/running_security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_PUT, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, '{"globally_enabled":{"running":true}}', anything, anything, anything) do
       if @cc_security_groups_deleted
         cc_security_group_not_found
       else
@@ -2954,7 +2950,7 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/config/staging_security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_PUT, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, '{"globally_enabled":{"staging":true}}', anything, anything, anything) do
       if @cc_security_groups_deleted
         cc_security_group_not_found
       else
@@ -2963,36 +2959,36 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/config/running_security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, '{"globally_enabled":{"running":false}}', anything, anything, anything) do
       if @cc_security_groups_deleted
         cc_security_group_not_found
       else
         sql(config.ccdb_uri, "UPDATE security_groups SET running_default = 'false' WHERE guid = '#{cc_security_group[:guid]}'")
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        OK.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/config/staging_security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, '{"globally_enabled":{"staging":false}}', anything, anything, anything) do
       if @cc_security_groups_deleted
         cc_security_group_not_found
       else
         sql(config.ccdb_uri, "UPDATE security_groups SET staging_default = 'false' WHERE guid = '#{cc_security_group[:guid]}'")
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        OK.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/security_groups/#{cc_security_group[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_security_groups_deleted
         cc_security_group_not_found
       else
         cc_clear_security_groups_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
   end
 
   def cc_security_group_space_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/security_groups/#{cc_security_group[:guid]}/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/security_groups/#{cc_security_group[:guid]}/relationships/running_spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_security_groups_deleted
         cc_security_group_not_found
       else
@@ -3003,13 +2999,18 @@ module CCHelper
   end
 
   def cc_service_not_found
-    NotFound.new('code'        => 120_003,
-                 'description' => "The service could not be found: #{cc_service[:guid]}",
-                 'error_code'  => 'CF-ServiceNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 120_003,
+                     'detail' => "The service could not be found: #{cc_service[:guid]}",
+                     'title'  => 'CF-ServiceNotFound'
+                   }
+                 ])
   end
 
   def cc_service_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/services/#{cc_service[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_offerings/#{cc_service[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_services_deleted
         cc_service_not_found
       else
@@ -3018,7 +3019,7 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/services/#{cc_service[:guid]}?purge=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_offerings/#{cc_service[:guid]}?purge=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_services_deleted
         cc_service_not_found
       else
@@ -3060,32 +3061,37 @@ module CCHelper
   end
 
   def cc_service_broker_not_found
-    NotFound.new('code'        => 10_000,
-                 'description' => 'Unknown request',
-                 'error_code'  => 'CF-NotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 10_000,
+                     'detail' => 'Unknown request',
+                     'title'  => 'CF-NotFound'
+                   }
+                 ])
   end
 
   def cc_service_broker_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_brokers/#{cc_service_broker[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_service_broker_rename}\"}", anything, anything, anything) do
-      if @cc_service_brokers_deleted
-        cc_service_broker_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE service_brokers SET name = '#{cc_service_broker_rename}' WHERE guid = '#{cc_service_broker[:guid]}'")
-        OK.new({})
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_brokers/#{cc_service_broker[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_brokers/#{cc_service_broker[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
       if @cc_service_brokers_deleted
         cc_service_broker_not_found
       else
         cc_clear_service_brokers_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
 
-    # Remove metadata
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_brokers/#{cc_service_broker[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_brokers/#{cc_service_broker[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, "{\"name\":\"#{cc_service_broker_rename}\"}", anything, anything, anything) do
+      if @cc_service_brokers_deleted
+        cc_service_broker_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE service_brokers SET name = '#{cc_service_broker_rename}' WHERE guid = '#{cc_service_broker[:guid]}'")
+        Accepted.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_brokers/#{cc_service_broker[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_service_brokers_deleted
         cc_service_broker_not_found
       else
@@ -3154,9 +3160,14 @@ module CCHelper
   end
 
   def cc_service_instance_share_unprocessable_entity
-    UnprocessableEntity.new('code'        => 10_008,
-                            'description' => "Unable to unshare service instance from space #{cc_space[:guid]}. Ensure the space exists and the service instance has been shared to this space.",
-                            'error_code'  => 'CF-UnprocessableEntity')
+    UnprocessableEntity.new('errors' =>
+                            [
+                              {
+                                'code'   => 10_008,
+                                'detail' => "Unable to unshare service instance from space #{cc_space[:guid]}. Ensure the space exists and the service instance has been shared to this space.",
+                                'title'  => 'CF-UnprocessableEntity'
+                              }
+                            ])
   end
 
   def cc_service_instance_share_stubs(config)
@@ -3192,31 +3203,36 @@ module CCHelper
   end
 
   def cc_service_plan_not_found
-    NotFound.new('code'        => 110_003,
-                 'description' => "The service plan could not be found: #{cc_service_plan[:guid]}",
-                 'error_code'  => 'CF-ServicePlanNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 110_003,
+                     'detail' => "The service plan could not be found: #{cc_service_plan[:guid]}",
+                     'title'  => 'CF-ServicePlanNotFound'
+                   }
+                 ])
   end
 
   def cc_service_plan_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_plans/#{cc_service_plan[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"public":true}', anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_plans/#{cc_service_plan[:guid]}/visibility", AdminUI::Utils::HTTP_POST, anything, '{"type":"public"}', anything, anything, anything) do
       if @cc_service_plans_deleted
         cc_service_plan_not_found
       else
         sql(config.ccdb_uri, "UPDATE service_plans SET public = 'true' WHERE guid = '#{cc_service_plan[:guid]}'")
-        Created.new
+        OK.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_plans/#{cc_service_plan[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"public":false}', anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_plans/#{cc_service_plan[:guid]}/visibility", AdminUI::Utils::HTTP_POST, anything, '{"type":"admin"}', anything, anything, anything) do
       if @cc_service_plans_deleted
         cc_service_plan_not_found
       else
         sql(config.ccdb_uri, "UPDATE service_plans SET public = 'false' WHERE guid = '#{cc_service_plan[:guid]}'")
-        Created.new
+        OK.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_plans/#{cc_service_plan[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_plans/#{cc_service_plan[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_service_plans_deleted
         cc_service_plan_not_found
       else
@@ -3237,13 +3253,18 @@ module CCHelper
   end
 
   def cc_service_plan_visibility_not_found
-    NotFound.new('code'        => 260_003,
-                 'description' => "The service plan visibility could not be found: #{cc_service_plan[:guid]}",
-                 'error_code'  => 'CF-ServicePlanVisibilityNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 260_003,
+                     'detail' => "The service plan visibility could not be found: #{cc_service_plan[:guid]}",
+                     'title'  => 'CF-ServicePlanVisibilityNotFound'
+                   }
+                 ])
   end
 
   def cc_service_plan_visibility_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/service_plan_visibilities/#{cc_service_plan_visibility[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/service_plans/#{cc_service_plan[:guid]}/visibility/#{cc_organization[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_service_plan_visibilities_deleted
         cc_service_plan_visibility_not_found
       else
@@ -3254,57 +3275,17 @@ module CCHelper
   end
 
   def cc_space_not_found
-    NotFound.new('code'        => 40_004,
-                 'description' => "The app space could not be found: #{cc_space[:guid]}",
-                 'error_code'  => 'CF-SpaceNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'        => 40_004,
+                     'detail' => "The app space could not be found: #{cc_space[:guid]}",
+                     'title'  => 'CF-SpaceNotFound'
+                   }
+                 ])
   end
 
   def cc_space_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_space_rename}\"}", anything, anything, anything) do
-      if @cc_spaces_deleted
-        cc_space_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE spaces SET name = '#{cc_space_rename}' WHERE guid = '#{cc_space[:guid]}'")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"allow_ssh":true}', anything, anything, anything) do
-      if @cc_spaces_deleted
-        cc_space_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE spaces SET allow_ssh = 'true' WHERE guid = '#{cc_space[:guid]}'")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PUT, anything, '{"allow_ssh":false}', anything, anything, anything) do
-      if @cc_spaces_deleted
-        cc_space_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE spaces SET allow_ssh = 'false' WHERE guid = '#{cc_space[:guid]}'")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
-      if @cc_spaces_deleted
-        cc_space_not_found
-      else
-        cc_clear_spaces_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}?recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
-      if @cc_spaces_deleted
-        cc_space_not_found
-      else
-        cc_clear_spaces_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
-      end
-    end
-
     # Remove metadata
     allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
       if @cc_spaces_deleted
@@ -3315,71 +3296,112 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}/auditors/#{cc_user[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, "{\"name\":\"#{cc_space_rename}\"}", anything, anything, anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE spaces SET name = '#{cc_space_rename}' WHERE guid = '#{cc_space[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/spaces/#{cc_space[:guid]}/features/ssh", AdminUI::Utils::HTTP_PATCH, anything, '{"enabled":true}', anything, anything, anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE spaces SET allow_ssh = 'true' WHERE guid = '#{cc_space[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/spaces/#{cc_space[:guid]}/features/ssh", AdminUI::Utils::HTTP_PATCH, anything, '{"enabled":false}', anything, anything, anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE spaces SET allow_ssh = 'false' WHERE guid = '#{cc_space[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        cc_clear_spaces_cache_stub(config)
+        Accepted.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/roles/#{cc_space_auditor[:role_guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_spaces_deleted
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_auditors WHERE space_id = '#{cc_space[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}/developers/#{cc_user[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/roles/#{cc_space_developer[:role_guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_spaces_deleted
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_developers WHERE space_id = '#{cc_space[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}/isolation_segment", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
-      if @cc_spaces_deleted
-        cc_space_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE spaces SET isolation_segment_guid = NULL WHERE guid = '#{cc_space[:guid]}'")
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}/managers/#{cc_user[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/roles/#{cc_space_manager[:role_guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_spaces_deleted
         cc_space_not_found
       else
         sql(config.ccdb_uri, "DELETE FROM spaces_managers WHERE space_id = '#{cc_space[:id]}' AND user_id = '#{cc_user[:id]}'")
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/spaces/#{cc_space[:guid]}/unmapped_routes", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/spaces/#{cc_space[:guid]}/relationships/isolation_segment", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE spaces SET isolation_segment_guid = NULL WHERE guid = '#{cc_space[:guid]}'")
+        OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/spaces/#{cc_space[:guid]}/routes?unmapped=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_spaces_deleted
         cc_space_not_found
       else
         cc_clear_route_annotations_cache_stub(config)
         cc_clear_route_labels_cache_stub(config)
         sql(config.ccdb_uri, "DELETE FROM routes WHERE space_id = '#{cc_space[:id]}' AND NOT EXISTS (SELECT * FROM route_mappings WHERE routes.guid == route_mappings.route_guid)")
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
   end
 
   def cc_space_quota_definition_not_found
-    NotFound.new('code'        => 310_007,
-                 'description' => "Space Quota Definition could not be found: #{cc_space_quota_definition[:guid]}",
-                 'error_code'  => 'CF-SpaceQuotaDefinitionNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'        => 310_007,
+                     'detail' => "Space Quota Definition could not be found: #{cc_space_quota_definition[:guid]}",
+                     'title'  => 'CF-SpaceQuotaDefinitionNotFound'
+                   }
+                 ])
   end
 
   def cc_space_quota_definition_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/space_quota_definitions/#{cc_space_quota_definition[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_space_quota_definition_rename}\"}", anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/space_quotas/#{cc_space_quota_definition[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, "{\"name\":\"#{cc_space_quota_definition_rename}\"}", anything, anything, anything) do
       if @cc_space_quota_definitions_deleted
         cc_space_quota_definition_not_found
       else
         sql(config.ccdb_uri, "UPDATE space_quota_definitions SET name = '#{cc_space_quota_definition_rename}' WHERE guid = '#{cc_space_quota_definition[:guid]}'")
-        Created.new
+        OK.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/space_quota_definitions/#{cc_space_quota_definition2[:guid]}/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_PUT, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/space_quotas/#{cc_space_quota_definition2[:guid]}/relationships/spaces", AdminUI::Utils::HTTP_POST, anything, anything, anything, anything, anything) do
       if @cc_space_quota_definitions_deleted
         cc_space_quota_definition_not_found
       else
@@ -3388,16 +3410,16 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/space_quota_definitions/#{cc_space_quota_definition[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/space_quotas/#{cc_space_quota_definition[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_space_quota_definitions_deleted
         cc_space_quota_definition_not_found
       else
         cc_clear_space_quota_definitions_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
+        Accepted.new({})
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/space_quota_definitions/#{cc_space_quota_definition[:guid]}/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/space_quotas/#{cc_space_quota_definition[:guid]}/relationships/spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_space_quota_definitions_deleted
         cc_space_quota_definition_not_found
       else
@@ -3408,18 +3430,23 @@ module CCHelper
   end
 
   def cc_stack_not_found
-    NotFound.new('code'        => 250_003,
-                 'description' => "The stack could not be found: #{cc_stack[:guid]}",
-                 'error_code'  => 'CF-StackNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 250_003,
+                     'detail' => "The stack could not be found: #{cc_stack[:guid]}",
+                     'title'  => 'CF-StackNotFound'
+                   }
+                 ])
   end
 
   def cc_stack_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/stacks/#{cc_stack[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/stacks/#{cc_stack[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_stacks_deleted
         cc_stack_not_found
       else
         cc_clear_stacks_cache_stub(config)
-        OK.new({})
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
 
@@ -3435,7 +3462,7 @@ module CCHelper
   end
 
   def cc_staging_security_group_space_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/security_groups/#{cc_security_group[:guid]}/staging_spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/security_groups/#{cc_security_group[:guid]}/relationships/staging_spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_security_groups_deleted
         cc_security_group_not_found
       else
@@ -3478,18 +3505,23 @@ module CCHelper
   end
 
   def cc_user_not_found
-    NotFound.new('code'        => 20_003,
-                 'description' => "The user could not be found: #{cc_user[:guid]}",
-                 'error_code'  => 'CF-UserNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 20_003,
+                     'detail' => "The user could not be found: #{cc_user[:guid]}",
+                     'title'  => 'CF-UserNotFound'
+                   }
+                 ])
   end
 
   def cc_user_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/users/#{cc_user[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/users/#{cc_user[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_users_deleted
         cc_user_not_found
       else
         cc_clear_users_cache_stub(config)
-        OK.new({})
+        Accepted.new({})
       end
     end
 

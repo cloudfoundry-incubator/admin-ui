@@ -425,9 +425,9 @@ module AdminUI
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.organization_roles, params).items)
     end
 
-    get '/organization_roles_view_model/:organization_guid/:role/:user_guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/organization_roles_view_model/#{params[:organization_guid]}/#{params[:role]}/#{params[:user_guid]}")
-      result = @view_models.organization_role(params[:organization_guid], params[:role], params[:user_guid])
+    get '/organization_roles_view_model/:organization_guid/:role_guid/:role/:user_guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/organization_roles_view_model/#{params[:organization_guid]}/#{params[:role_guid]}/#{params[:role]}/#{params[:user_guid]}")
+      result = @view_models.organization_role(params[:organization_guid], params[:role_guid], params[:role], params[:user_guid])
       return Yajl::Encoder.encode(result) if result
 
       404
@@ -621,9 +621,9 @@ module AdminUI
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.service_plan_visibilities, params).items)
     end
 
-    get '/service_plan_visibilities_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/service_plan_visibilities_view_model/#{params[:guid]}")
-      result = @view_models.service_plan_visibility(params[:guid])
+    get '/service_plan_visibilities_view_model/:service_plan_visibility_guid/:service_plan_guid/:organization_guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/service_plan_visibilities_view_model/#{params[:service_plan_visibility_guid]}/#{params[:service_plan_guid]}/#{params[:organization_guid]}")
+      result = @view_models.service_plan_visibility(params[:service_plan_visibility_guid], params[:service_plan_guid], params[:organization_guid])
       return Yajl::Encoder.encode(result) if result
 
       404
@@ -686,9 +686,9 @@ module AdminUI
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.space_roles, params).items)
     end
 
-    get '/space_roles_view_model/:space_guid/:role/:user_guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/space_roles_view_model/#{params[:space_guid]}/#{params[:role]}/#{params[:user_guid]}")
-      result = @view_models.space_role(params[:space_guid], params[:role], params[:user_guid])
+    get '/space_roles_view_model/:space_guid/:role_guid/:role/:user_guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/space_roles_view_model/#{params[:space_guid]}/#{params[:role_guid]}/#{params[:role]}/#{params[:user_guid]}")
+      result = @view_models.space_role(params[:space_guid], params[:role_guid], params[:role], params[:user_guid])
       return Yajl::Encoder.encode(result) if result
 
       404
@@ -1268,22 +1268,6 @@ module AdminUI
       body(Yajl::Encoder.encode(error.to_h))
     rescue => error
       @logger.error("Error during update application: #{error.inspect}")
-      @logger.error(error.backtrace.join("\n"))
-      500
-    end
-
-    put '/applications/:app_guid/features/:feature', auth: [:admin] do
-      control_message = request.body.read.to_s
-      @logger.info_user(session[:username], 'put', "/applications/#{params[:app_guid]}/features/#{params[:feature]}; body = #{control_message}")
-      @operation.manage_application_feature(params[:app_guid], params[:feature], control_message)
-      204
-    rescue CCRestClientResponseError => error
-      @logger.error("Error during update application feature: #{error.to_h}")
-      content_type(:json)
-      status(error.http_code)
-      body(Yajl::Encoder.encode(error.to_h))
-    rescue => error
-      @logger.error("Error during update application feature: #{error.inspect}")
       @logger.error(error.backtrace.join("\n"))
       500
     end
@@ -1991,9 +1975,9 @@ module AdminUI
       500
     end
 
-    delete '/organizations/:organization_guid/:role/:user_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/#{params[:role]}/#{params[:user_guid]}")
-      @operation.delete_organization_role(params[:organization_guid], params[:role], params[:user_guid])
+    delete '/organizations/:organization_guid/:role_guid/:role/:user_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/organizations/#{params[:organization_guid]}/#{params[:role_guid]}/#{params[:role]}/#{params[:user_guid]}")
+      @operation.delete_organization_role(params[:organization_guid], params[:role_guid], params[:role], params[:user_guid])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete organization role: #{error.to_h}")
@@ -2340,9 +2324,9 @@ module AdminUI
       500
     end
 
-    delete '/service_plan_visibilities/:service_plan_visibility_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/service_plan_visibilities/#{params[:service_plan_visibility_guid]}")
-      @operation.delete_service_plan_visibility(params[:service_plan_visibility_guid])
+    delete '/service_plan_visibilities/:service_plan_visibility_guid/:service_plan_guid/:organization_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/service_plan_visibilities/#{params[:service_plan_visibility_guid]}/#{params[:service_plan_guid]}/#{params[:organization_guid]}")
+      @operation.delete_service_plan_visibility(params[:service_plan_visibility_guid], params[:service_plan_guid], params[:organization_guid])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete service plan visibility: #{error.to_h}")
@@ -2538,9 +2522,9 @@ module AdminUI
       500
     end
 
-    delete '/spaces/:space_guid/:role/:user_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/#{params[:role]}/#{params[:user_guid]}")
-      @operation.delete_space_role(params[:space_guid], params[:role], params[:user_guid])
+    delete '/spaces/:space_guid/:role_guid/:role/:user_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/spaces/#{params[:space_guid]}/#{params[:role_guid]}/#{params[:role]}/#{params[:user_guid]}")
+      @operation.delete_space_role(params[:space_guid], params[:role_guid], params[:role], params[:user_guid])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete space role: #{error.to_h}")

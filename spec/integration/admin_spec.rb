@@ -217,15 +217,15 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def disable_app_revisions
-      response = put_request("/applications/#{cc_app[:guid]}/features/revisions", '{"enabled":false}')
+      response = put_request("/applications/#{cc_app[:guid]}", '{"revisions_enabled":false}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}/features/revisions; body = {\"enabled\":false}"]], true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"revisions_enabled\":false}"]], true)
     end
 
     def enable_app_revisions
-      response = put_request("/applications/#{cc_app[:guid]}/features/revisions", '{"enabled":true}')
+      response = put_request("/applications/#{cc_app[:guid]}", '{"revisions_enabled":true}')
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}/features/revisions; body = {\"enabled\":true}"]], true)
+      verify_sys_log_entries([['put', "/applications/#{cc_app[:guid]}; body = {\"revisions_enabled\":true}"]], true)
     end
 
     def delete_app
@@ -1040,9 +1040,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_organization_role
-      response = delete_request("/organizations/#{cc_organization[:guid]}/auditors/#{cc_user[:guid]}")
+      response = delete_request("/organizations/#{cc_organization[:guid]}/#{cc_organization_auditor[:role_guid]}/auditors/#{cc_user[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/auditors/#{cc_user[:guid]}"]])
+      verify_sys_log_entries([['delete', "/organizations/#{cc_organization[:guid]}/#{cc_organization_auditor[:role_guid]}/auditors/#{cc_user[:guid]}"]])
     end
 
     it 'has user name and organization roles request in the log file' do
@@ -1640,9 +1640,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_service_plan_visibility
-      response = delete_request("/service_plan_visibilities/#{cc_service_plan_visibility[:guid]}")
+      response = delete_request("/service_plan_visibilities/#{cc_service_plan_visibility[:guid]}/#{cc_service_plan[:guid]}/#{cc_organization[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/service_plan_visibilities/#{cc_service_plan_visibility[:guid]}"]])
+      verify_sys_log_entries([['delete', "/service_plan_visibilities/#{cc_service_plan_visibility[:guid]}/#{cc_service_plan[:guid]}/#{cc_organization[:guid]}"]])
     end
 
     it 'has user name and service plan visibility request in the log file' do
@@ -1891,9 +1891,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_space_role
-      response = delete_request("/spaces/#{cc_space[:guid]}/auditors/#{cc_user[:guid]}")
+      response = delete_request("/spaces/#{cc_space[:guid]}/#{cc_space_auditor[:role_guid]}/auditors/#{cc_user[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/auditors/#{cc_user[:guid]}"]])
+      verify_sys_log_entries([['delete', "/spaces/#{cc_space[:guid]}/#{cc_space_auditor[:role_guid]}/auditors/#{cc_user[:guid]}"]])
     end
 
     it 'has user name and space roles request in the log file' do
@@ -2540,7 +2540,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'organization_roles_view_model detail' do
-      let(:path)              { "/organization_roles_view_model/#{cc_organization[:guid]}/auditors/#{cc_user[:guid]}" }
+      let(:path)              { "/organization_roles_view_model/#{cc_organization[:guid]}/#{cc_organization_auditor[:role_guid]}/auditors/#{cc_user[:guid]}" }
       let(:view_model_source) { view_models_organization_roles_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -2734,7 +2734,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'service_plan_visibilities_view_model detail' do
-      let(:path)              { "/service_plan_visibilities_view_model/#{cc_service_plan_visibility[:guid]}" }
+      let(:path)              { "/service_plan_visibilities_view_model/#{cc_service_plan_visibility[:guid]}/#{cc_service_plan[:guid]}/#{cc_organization[:guid]}" }
       let(:view_model_source) { view_models_service_plan_visibilities_detail }
       it_behaves_like('retrieves view_model detail')
     end
@@ -2811,7 +2811,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'space_roles_view_model detail' do
-      let(:path)              { "/space_roles_view_model/#{cc_space[:guid]}/auditors/#{cc_user[:guid]}" }
+      let(:path)              { "/space_roles_view_model/#{cc_space[:guid]}/#{cc_space_auditor[:role_guid]}/auditors/#{cc_user[:guid]}" }
       let(:view_model_source) { view_models_space_roles_detail }
       it_behaves_like('retrieves view_model detail')
     end
