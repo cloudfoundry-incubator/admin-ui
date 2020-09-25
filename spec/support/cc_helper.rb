@@ -2904,13 +2904,18 @@ module CCHelper
   end
 
   def cc_route_mapping_not_found
-    NotFound.new('code'        => 210_007,
-                 'description' => "The route mapping could not be found: #{cc_route_mapping[:guid]}",
-                 'error_code'  => 'CF-RouteMappingNotFound')
+    NotFound.new('errors' =>
+                 [
+                   {
+                     'code'   => 210_007,
+                     'detail' => "The route mapping could not be found: #{cc_route_mapping[:guid]}",
+                     'title'  => 'CF-RouteMappingNotFound'
+                   }
+                 ])
   end
 
   def cc_route_mapping_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v2/route_mappings/#{cc_route_mapping[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, "#{config.cloud_controller_uri}/v3/routes/#{cc_route[:guid]}/destinations/#{cc_route_mapping[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_route_mappings_deleted
         cc_route_mapping_not_found
       else

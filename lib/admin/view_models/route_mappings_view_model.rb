@@ -33,8 +33,10 @@ module AdminUI
         Thread.pass
 
         guid        = route_mapping[:guid]
-        application = application_hash[route_mapping[:app_guid]]
-        route       = route_hash[route_mapping[:route_guid]]
+        app_guid    = route_mapping[:app_guid]
+        route_guid  = route_mapping[:route_guid]
+        application = application_hash[app_guid]
+        route       = route_hash[route_guid]
 
         domain       = route.nil? ? nil : domain_hash[route[:domain_id]]
         space        = application.nil? ? nil : space_hash[application[:space_guid]]
@@ -42,7 +44,9 @@ module AdminUI
 
         row = []
 
-        row.push(guid)
+        key = "#{guid}/#{route_guid}"
+
+        row.push(key)
         row.push(guid)
 
         row.push(route_mapping[:created_at].to_datetime.rfc3339)
@@ -57,7 +61,7 @@ module AdminUI
 
         if application
           row.push(application[:name])
-          row.push(application[:guid])
+          row.push(app_guid)
         else
           row.push(nil, nil)
         end
@@ -78,7 +82,7 @@ module AdminUI
           end
 
           row.push(fqdn)
-          row.push(route[:guid])
+          row.push(route_guid)
         else
           row.push(nil, nil)
         end
@@ -91,7 +95,7 @@ module AdminUI
 
         items.push(row)
 
-        hash[guid] =
+        hash[key] =
           {
             'application'   => application,
             'domain'        => domain,

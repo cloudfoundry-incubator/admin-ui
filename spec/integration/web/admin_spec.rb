@@ -2723,7 +2723,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          check_checkbox_guid('RouteMappingsTable', cc_route_mapping[:guid])
+          check_checkbox_guid('RouteMappingsTable', "#{cc_route_mapping[:guid]}/#{cc_route[:guid]}")
         end
 
         context 'manage route mappings' do

@@ -584,7 +584,7 @@ describe AdminUI::ViewModels, type: :integration do
     end
 
     context 'returns connected route_mappings_view_model detail' do
-      let(:results)  { view_models.route_mapping(cc_route_mapping[:guid]) }
+      let(:results)  { view_models.route_mapping(cc_route_mapping[:guid], cc_route[:guid]) }
       let(:expected) { view_models_route_mappings_detail }
 
       it_behaves_like('common view model retrieval detail')

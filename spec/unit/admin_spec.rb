@@ -1054,7 +1054,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete route mapping' do
       it 'returns failure code due to disconnection' do
-        response = delete('/route_mappings/route1')
+        response = delete('/route_mappings/route_mapping1/route1')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -2465,8 +2465,8 @@ describe AdminUI::Admin do
         verify_disconnected_view_model_items('/route_mappings_view_model')
       end
 
-      it '/route_mappings_view_model/:guid returns not found' do
-        verify_not_found('/route_mappings_view_model/route1')
+      it '/route_mappings_view_model/:guid/:guid returns not found' do
+        verify_not_found('/route_mappings_view_model/route_mapping1/route1')
       end
 
       it '/routes_view_model succeeds' do
@@ -2915,8 +2915,8 @@ describe AdminUI::Admin do
         get_redirects_as_expected('/route_mappings_view_model')
       end
 
-      it '/route_mappings_view_model/:guid redirects as expected' do
-        get_redirects_as_expected('/route_mappings_view_model/route1')
+      it '/route_mappings_view_model/:guid/:guid redirects as expected' do
+        get_redirects_as_expected('/route_mappings_view_model/route_mapping1/route1')
       end
 
       it '/routes_view_model redirects as expected' do
@@ -3239,8 +3239,8 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/route_bindings/service_instance1/route1/true')
       end
 
-      it 'deletes /route_mappings/:guid redirects as expected' do
-        delete_redirects_as_expected('/route_mappings/route_mapping1')
+      it 'deletes /route_mappings/:guid/:guid redirects as expected' do
+        delete_redirects_as_expected('/route_mappings/route_mapping1/route1')
       end
 
       it 'deletes /routes/:guid redirects as expected' do

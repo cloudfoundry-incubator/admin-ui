@@ -549,9 +549,14 @@ module AdminUI
       @view_models.invalidate_routes
     end
 
-    def delete_route_mapping(route_mapping_guid)
-      # TODO: v3 delete route mapping
-      url = "/v2/route_mappings/#{route_mapping_guid}"
+    def delete_route_mapping(route_mapping_guid, route_guid)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
+      url = if v3
+              "/v3/routes/#{route_guid}/destinations/#{route_mapping_guid}"
+            else
+              "/v2/route_mappings/#{route_mapping_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_route_mappings

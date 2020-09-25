@@ -1325,7 +1325,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_route_mapping
-        operation.delete_route_mapping(cc_route_mapping[:guid])
+        operation.delete_route_mapping(cc_route_mapping[:guid], cc_route[:guid])
       end
 
       it 'deletes route mapping' do

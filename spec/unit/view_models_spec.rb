@@ -301,7 +301,7 @@ describe AdminUI::ViewModels do
     end
 
     it 'returns nil route_mapping as expected' do
-      expect(view_models.route_mapping('bogus')).to be_nil
+      expect(view_models.route_mapping('bogus', 'bogus')).to be_nil
     end
 
     it 'returns zero route_mappings as expected' do

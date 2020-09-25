@@ -594,8 +594,8 @@ module AdminUI
       result_cache(:route_bindings)
     end
 
-    def route_mapping(guid)
-      details(:route_mappings, guid)
+    def route_mapping(route_mapping_guid, route_guid)
+      details(:route_mappings, "#{route_mapping_guid}/#{route_guid}")
     end
 
     def route_mappings

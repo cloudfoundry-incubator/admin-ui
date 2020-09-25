@@ -1195,9 +1195,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_route_mapping
-      response = delete_request("/route_mappings/#{cc_route_mapping[:guid]}")
+      response = delete_request("/route_mappings/#{cc_route_mapping[:guid]}/#{cc_route[:guid]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/route_mappings/#{cc_route_mapping[:guid]}"]])
+      verify_sys_log_entries([['delete', "/route_mappings/#{cc_route_mapping[:guid]}/#{cc_route[:guid]}"]])
     end
 
     it 'has user name and routes request in the log file' do
@@ -2619,7 +2619,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     context 'route_mappings_view_model detail' do
-      let(:path)              { "/route_mappings_view_model/#{cc_route_mapping[:guid]}" }
+      let(:path)              { "/route_mappings_view_model/#{cc_route_mapping[:guid]}/#{cc_route[:guid]}" }
       let(:view_model_source) { view_models_route_mappings_detail }
       it_behaves_like('retrieves view_model detail')
     end

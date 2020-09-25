@@ -503,9 +503,9 @@ module AdminUI
       Yajl::Encoder.encode(AllActions.new(@logger, @view_models.route_mappings, params).items)
     end
 
-    get '/route_mappings_view_model/:guid', auth: [:user] do
-      @logger.info_user(session[:username], 'get', "/route_mappings_view_model/#{params[:guid]}")
-      result = @view_models.route_mapping(params[:guid])
+    get '/route_mappings_view_model/:route_mapping_guid/:route_guid', auth: [:user] do
+      @logger.info_user(session[:username], 'get', "/route_mappings_view_model/#{params[:route_mapping_guid]}/#{params[:route_guid]}")
+      result = @view_models.route_mapping(params[:route_mapping_guid], params[:route_guid])
       return Yajl::Encoder.encode(result) if result
 
       404
@@ -2089,9 +2089,9 @@ module AdminUI
       500
     end
 
-    delete '/route_mappings/:route_mapping_guid', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/route_mappings/#{params[:route_mapping_guid]}")
-      @operation.delete_route_mapping(params[:route_mapping_guid])
+    delete '/route_mappings/:route_mapping_guid/:route_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/route_mappings/#{params[:route_mapping_guid]}/#{params[:route_guid]}")
+      @operation.delete_route_mapping(params[:route_mapping_guid], params[:route_guid])
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete route mapping: #{error.to_h}")

@@ -1035,7 +1035,7 @@ module ViewModelsHelper
   def view_models_route_mappings
     [
       [
-        cc_route_mapping[:guid],
+        "#{cc_route_mapping[:guid]}/#{cc_route[:guid]}",
         cc_route_mapping[:guid],
         cc_route_mapping[:created_at].to_datetime.rfc3339,
         cc_route_mapping[:updated_at].to_datetime.rfc3339,
