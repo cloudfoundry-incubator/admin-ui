@@ -146,7 +146,7 @@ module AdminUI
       result = { 'uri' => uri, 'name' => item['host'], 'type' => item['type'], 'index' => item['index'] }
 
       begin
-        response = Utils.http_request(@config, uri, 'GET', (item.nil? ? nil : item['credentials']))
+        response = Utils.http_request(@config, @logger, uri, 'GET', (item.nil? ? nil : item['credentials']))
 
         if response.is_a?(Net::HTTPOK)
           result['connected'] = true

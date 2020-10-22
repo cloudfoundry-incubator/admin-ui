@@ -1,6 +1,4 @@
-require 'net/http'
 require 'logger'
-require_relative 'config'
 
 module AdminUI
   class AdminUILogger < Logger
@@ -8,6 +6,15 @@ module AdminUI
 
     def info_user(user_name, op, msg)
       super_info("[ #{user_name} ] : [ #{op} ] : #{msg}")
+    end
+
+    def <<(msg)
+      return if msg.nil?
+
+      msg = msg.to_s.strip
+      return unless msg.length.positive?
+
+      unknown("[ -- ] : [ -- ] : #{msg}")
     end
 
     def debug(msg)

@@ -287,6 +287,18 @@ Maximum number of days of events in the past to include within the Events tab.
 Example: <code>7</code>
 </dd>
 <dt>
+<code>http_debug</code>
+</dt>
+<dd>
+Whether http invocations will provide records in the log_file or not.
+The default value is intentionally <code>false</code> as this is considered a security exposure.
+Records within the log_file will be of log type <code>ANY</code>.
+<br>
+Example: <code>true</code>
+<br>
+Example: <code>false</code>
+</dd>
+<dt>
 <code>log_file</code>
 </dt>
 <dd>

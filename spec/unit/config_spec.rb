@@ -117,6 +117,12 @@ describe AdminUI::Config do
         expect(config.event_days).to eq(event_days)
       end
 
+      it 'http_debug' do
+        http_debug = true
+        config = AdminUI::Config.load('http_debug' => http_debug)
+        expect(config.http_debug).to eq(http_debug)
+      end
+
       it 'log_file' do
         log_file = 'admin_ui.log'
         config = AdminUI::Config.load('log_file' => log_file)
@@ -482,6 +488,10 @@ describe AdminUI::Config do
         expect(config.event_days).to eq(7)
       end
 
+      it 'http_debug' do
+        expect(config.http_debug).to eq(false)
+      end
+
       it 'log_file' do
         expect(config.log_file).to be_nil
       end
@@ -735,6 +745,10 @@ describe AdminUI::Config do
 
       it 'event_days' do
         expect { AdminUI::Config.load(config.merge(event_days: 'hi')) }.to raise_error(Membrane::SchemaValidationError)
+      end
+
+      it 'http_debug' do
+        expect { AdminUI::Config.load(config.merge(http_debug: 5)) }.to raise_error(Membrane::SchemaValidationError)
       end
 
       it 'log_file' do

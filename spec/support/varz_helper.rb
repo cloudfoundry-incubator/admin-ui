@@ -21,15 +21,15 @@ module VARZHelper
   end
 
   def varz_stub
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, nats_cloud_controller_varz, AdminUI::Utils::HTTP_GET, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, nats_cloud_controller_varz, AdminUI::Utils::HTTP_GET, anything) do
       OK.new(varz_cloud_controller)
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, nats_provisioner_varz, AdminUI::Utils::HTTP_GET, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, nats_provisioner_varz, AdminUI::Utils::HTTP_GET, anything) do
       OK.new(varz_provisioner)
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, nats_router_varz, AdminUI::Utils::HTTP_GET, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, nats_router_varz, AdminUI::Utils::HTTP_GET, anything) do
       OK.new(varz_router)
     end
   end

@@ -19,6 +19,7 @@ module AdminUI
         doppler_rollup_interval:                             30,
         doppler_ssl_verify_none:                          false,
         event_days:                                           7,
+        http_debug:                                       false,
         log_file_page_size:                              51_200,
         log_file_sftp_keys:                                  [],
         log_files:                                           [],
@@ -60,6 +61,7 @@ module AdminUI
             optional(:doppler_rollup_interval)             => Integer,
             optional(:doppler_ssl_verify_none)             => bool,
             optional(:event_days)                          => Integer,
+            optional(:http_debug)                          => bool,
             log_file:                                         /[^\r\n\t]+/,
             optional(:log_file_sftp_keys)                  => [String],
             optional(:log_file_page_size)                  => Integer,
@@ -248,6 +250,10 @@ module AdminUI
 
     def event_days
       @config[:event_days]
+    end
+
+    def http_debug
+      @config[:http_debug]
     end
 
     def log_file

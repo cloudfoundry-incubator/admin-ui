@@ -29,7 +29,7 @@ module AdminUI
       HTTP_METHODS_MAP[method_string.upcase]
     end
 
-    def self.http_request(config, uri_string, method = HTTP_GET, basic_auth_array = nil, body = nil, authorization_header = nil, content_type = nil, if_match = nil)
+    def self.http_request(config, logger, uri_string, method = HTTP_GET, basic_auth_array = nil, body = nil, authorization_header = nil, content_type = nil, if_match = nil)
       uri = URI.parse(uri_string)
 
       path  = uri.path
@@ -47,6 +47,8 @@ module AdminUI
       request['If-Match']      = if_match unless if_match.nil?
 
       request.body = body if body
+
+      http.set_debug_output(logger) if config.http_debug
 
       retries_remaining = 2
       loop do

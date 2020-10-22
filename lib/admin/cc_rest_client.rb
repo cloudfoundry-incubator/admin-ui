@@ -140,7 +140,7 @@ module AdminUI
       end
 
       loop do
-        response = Utils.http_request(@config, url, method, nil, body, @token, content_type, if_match)
+        response = Utils.http_request(@config, @logger, url, method, nil, body, @token, content_type, if_match)
 
         return Yajl::Parser.parse(response.body) if method == Utils::HTTP_GET && response.is_a?(Net::HTTPOK)
         return Yajl::Parser.parse(response.body) if method == Utils::HTTP_PUT && (response.is_a?(Net::HTTPOK) || response.is_a?(Net::HTTPCreated))
@@ -175,7 +175,7 @@ module AdminUI
 
       response = nil
       begin
-        response = Utils.http_request(@config, cc_v2_info_url, Utils::HTTP_GET)
+        response = Utils.http_request(@config, @logger, cc_v2_info_url, Utils::HTTP_GET)
       rescue => error
         @logger.error("Error fetching #{cc_v2_info_url}: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
@@ -216,7 +216,7 @@ module AdminUI
       uaa_info_url = "#{@token_endpoint}/info"
 
       begin
-        response = Utils.http_request(@config, uaa_info_url, Utils::HTTP_GET)
+        response = Utils.http_request(@config, @logger, uaa_info_url, Utils::HTTP_GET)
       rescue => error
         @logger.error("Error fetching #{uaa_info_url}: #{error.inspect}")
         @logger.error(error.backtrace.join("\n"))
@@ -240,6 +240,7 @@ module AdminUI
       @token = nil
 
       response = Utils.http_request(@config,
+                                    @logger,
                                     "#{@token_endpoint}/oauth/token",
                                     Utils::HTTP_POST,
                                     [@config.uaa_client_id, @config.uaa_client_secret],
@@ -257,6 +258,7 @@ module AdminUI
       url = "#{@token_endpoint}/check_token"
       content = URI.encode_www_form('token' => user_access_token)
       response = Utils.http_request(@config,
+                                    @logger,
                                     url,
                                     Utils::HTTP_POST,
                                     [@config.uaa_client_id, @config.uaa_client_secret],
@@ -289,6 +291,7 @@ module AdminUI
                                     'code'         => code,
                                     'redirect_uri' => redirect_uri)
       response = Utils.http_request(@config,
+                                    @logger,
                                     url,
                                     Utils::HTTP_POST,
                                     [@config.uaa_client_id, @config.uaa_client_secret],
