@@ -36,10 +36,16 @@ Lint/DeprecatedOpenSSLConstant:
 Lint/DuplicateElsifCondition:
   Enabled: true
 
+Lint/DuplicateRegexpCharacterClassElement:
+  Enabled: true
+
 Lint/DuplicateRequire:
   Enabled: true
 
 Lint/DuplicateRescueException:
+  Enabled: true
+
+Lint/EmptyBlock:
   Enabled: true
 
 Lint/EmptyConditionalBody:
@@ -81,10 +87,16 @@ Layout/SpaceAroundMethodCallOperator:
 Lint/StructNewOverride:
   Enabled: true
 
+Lint/ToEnumArguments:
+  Enabled: true
+
 Lint/TopLevelReturnWithArgument:
   Enabled: true
 
 Lint/TrailingCommaInAttributeDeclaration:
+  Enabled: true
+
+Lint/UnmodifiedReduceAccumulator:
   Enabled: true
 
 Lint/UnreachableLoop:
@@ -219,6 +231,9 @@ Rails/WhereNot:
 Style/AccessorGrouping:
   Enabled: true
 
+Style/ArgumentsForwarding:
+  Enabled: true
+
 Style/ArrayCoercion:
   Enabled: true
 
@@ -239,6 +254,9 @@ Style/Documentation:
 
 Style/DateTime:
   Enabled: false
+
+Style/DocumentDynamicEvalDefinition:
+  Enabled: true
 
 Style/ExplicitBlockArgument:
   Enabled: true
@@ -307,4 +325,7 @@ Style/SoleNestedConditional:
   Enabled: false
 
 Style/StringConcatenation:
+  Enabled: true
+
+Style/SwapValues:
   Enabled: true

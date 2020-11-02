@@ -903,6 +903,7 @@ Sequel.migration do
       index [:created_at]
       index [:guid], :unique=>true
       index [:updated_at]
+      index [:droplet_guid], :name=>:kpack_lifecycle_droplet_guid_index
     end
     
     create_table(:package_annotations, :ignore_index_errors=>true) do
@@ -1832,6 +1833,7 @@ Sequel.migration do
       index [:name]
       index [:service_instance_guid]
       index [:app_guid, :name], :name=>:unique_service_binding_app_guid_name, :unique=>true
+      index [:service_instance_guid, :app_guid], :name=>:unique_service_binding_service_instance_guid_app_guid, :unique=>true
     end
     
     create_table(:service_instance_annotations, :ignore_index_errors=>true) do

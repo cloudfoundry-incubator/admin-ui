@@ -94,19 +94,19 @@ describe AdminUI::LogFiles do
     context 'file' do
       let(:log_file_uri) { log_file_qualified_name }
 
-      it_behaves_like('common FILE actions') {}
+      it_behaves_like('common FILE actions') {} # intentionally empty
     end
 
     context 'directory' do
       let(:log_file_uri) { log_file_directory }
 
-      it_behaves_like('common FILE actions') {}
+      it_behaves_like('common FILE actions') {} # intentionally empty
     end
 
     context 'glob' do
       let(:log_file_uri) { "#{log_file_directory}/**/*#{log_file_extension}" }
 
-      it_behaves_like('common FILE actions') {}
+      it_behaves_like('common FILE actions') {} # intentionally empty
     end
   end
 
@@ -189,7 +189,7 @@ describe AdminUI::LogFiles do
                                    time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
 
-        it_behaves_like('common SFTP actions') {}
+        it_behaves_like('common SFTP actions') {} # intentionally empty
       end
 
       context 'user and implied key' do
@@ -212,7 +212,7 @@ describe AdminUI::LogFiles do
                                    time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
 
-        it_behaves_like('common SFTP actions') {}
+        it_behaves_like('common SFTP actions') {} # intentionally empty
       end
     end
 
@@ -240,7 +240,7 @@ describe AdminUI::LogFiles do
                                    time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
 
-        it_behaves_like('common SFTP actions') {}
+        it_behaves_like('common SFTP actions') {} # intentionally empty
       end
 
       context 'user and implied key' do
@@ -264,7 +264,7 @@ describe AdminUI::LogFiles do
                                    time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
 
-        it_behaves_like('common SFTP actions') {}
+        it_behaves_like('common SFTP actions') {} # intentionally empty
       end
     end
 
@@ -289,7 +289,7 @@ describe AdminUI::LogFiles do
                                    time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
 
-        it_behaves_like('common SFTP actions') {}
+        it_behaves_like('common SFTP actions') {} # intentionally empty
       end
 
       context 'user and implied key' do
@@ -310,7 +310,7 @@ describe AdminUI::LogFiles do
                                    time: AdminUI::Utils.time_in_milliseconds(log_file_mtime))
         end
 
-        it_behaves_like('common SFTP actions') {}
+        it_behaves_like('common SFTP actions') {} # intentionally empty
       end
     end
   end

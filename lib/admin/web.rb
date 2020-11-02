@@ -229,6 +229,7 @@ module AdminUI
     end
 
     get '/favicon.ico' do
+      # intentionally empty
     end
 
     get '/feature_flags_view_model', auth: [:user] do
@@ -284,6 +285,7 @@ module AdminUI
     end
 
     get '/health' do
+      # intentionally empty
     end
 
     get '/health_managers_view_model', auth: [:user] do

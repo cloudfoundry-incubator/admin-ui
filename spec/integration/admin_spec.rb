@@ -133,7 +133,7 @@ describe AdminUI::Admin, type: :integration do
 
   shared_examples 'common_check_request_path' do
     let(:http)   { create_http }
-    let(:cookie) {}
+    let(:cookie) {} # intentionally empty
     it 'returns the 404 code if the get url is invalid' do
       get_response_for_invalid_path('/foo')
     end
