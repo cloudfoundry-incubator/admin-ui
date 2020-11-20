@@ -264,6 +264,18 @@ module AdminUI
             table:   :route_bindings,
             columns: %i[created_at guid id route_id route_service_url service_instance_id updated_at]
           },
+          route_binding_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :route_binding_annotations,
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
+          },
+          route_binding_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :route_binding_labels,
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
+          },
           route_binding_operations:
           {
             db_uri:  ccdb_uri,
@@ -765,6 +777,14 @@ module AdminUI
       invalidate_cache(:route_annotations)
     end
 
+    def invalidate_route_binding_annotations
+      invalidate_cache(:route_binding_annotations)
+    end
+
+    def invalidate_route_binding_labels
+      invalidate_cache(:route_binding_labels)
+    end
+
     def invalidate_route_bindings
       invalidate_cache(:route_bindings)
     end
@@ -1044,6 +1064,14 @@ module AdminUI
 
     def route_annotations
       result_cache(:route_annotations)
+    end
+
+    def route_binding_annotations
+      result_cache(:route_binding_annotations)
+    end
+
+    def route_binding_labels
+      result_cache(:route_binding_labels)
     end
 
     def route_binding_operations

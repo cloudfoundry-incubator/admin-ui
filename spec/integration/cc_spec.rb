@@ -301,6 +301,20 @@ describe AdminUI::CC, type: :integration do
       expect(cc.route_bindings['items'].length).to eq(0)
     end
 
+    it 'clears the route binding annotations cache' do
+      expect(cc.route_binding_annotations['items'].length).to eq(1)
+      cc_clear_route_bindings_cache_stub(config)
+      cc.invalidate_route_binding_annotations
+      expect(cc.route_binding_annotations['items'].length).to eq(0)
+    end
+
+    it 'clears the route binding labels cache' do
+      expect(cc.route_binding_labels['items'].length).to eq(1)
+      cc_clear_route_bindings_cache_stub(config)
+      cc.invalidate_route_binding_labels
+      expect(cc.route_binding_labels['items'].length).to eq(0)
+    end
+
     it 'clears the route labels cache' do
       expect(cc.route_labels['items'].length).to eq(1)
       cc_clear_routes_cache_stub(config)
@@ -875,6 +889,20 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected route annotations' do
       let(:results)  { cc.route_annotations }
       let(:expected) { cc_route_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected route binding annotations' do
+      let(:results)  { cc.route_binding_annotations }
+      let(:expected) { cc_route_binding_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected route binding labels' do
+      let(:results)  { cc.route_binding_labels }
+      let(:expected) { cc_route_binding_label }
 
       it_behaves_like('common cc retrieval')
     end

@@ -2091,6 +2091,42 @@ module AdminUI
       500
     end
 
+    delete '/route_bindings/:route_binding_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/route_bindings/#{params[:route_binding_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_route_binding_annotation(params[:route_binding_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete route binding annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete route binding annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
+    delete '/route_bindings/:route_binding_guid/metadata/labels/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/route_bindings/#{params[:route_binding_guid]}/metadata/labels/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_route_binding_label(params[:route_binding_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete route binding label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete route binding label: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
     delete '/route_mappings/:route_mapping_guid/:route_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/route_mappings/#{params[:route_mapping_guid]}/#{params[:route_guid]}")
       @operation.delete_route_mapping(params[:route_mapping_guid], params[:route_guid])

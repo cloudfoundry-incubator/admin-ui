@@ -1177,12 +1177,32 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/route_bindings/#{cc_service_instance[:guid]}/#{cc_route[:guid]}/#{cc_service_instance[:is_gateway_service]}"]])
     end
 
+    def delete_route_binding_annotation
+      response = delete_request("/route_bindings/#{cc_route_binding[:guid]}/metadata/annotations/#{cc_route_binding_annotation[:key]}?prefix=#{cc_route_binding_annotation[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/route_bindings/#{cc_route_binding[:guid]}/metadata/annotations/#{cc_route_binding_annotation[:key]}?prefix=#{cc_route_binding_annotation[:key_prefix]}"]], true)
+    end
+
+    def delete_route_binding_label
+      response = delete_request("/route_bindings/#{cc_route_binding[:guid]}/metadata/labels/#{cc_route_binding_label[:key_name]}?prefix=#{cc_route_binding_label[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/route_bindings/#{cc_route_binding[:guid]}/metadata/labels/#{cc_route_binding_label[:key_name]}?prefix=#{cc_route_binding_label[:key_prefix]}"]], true)
+    end
+
     it 'has user name and route bindings request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/route_bindings_view_model']], true)
     end
 
     it 'deletes a route binding' do
       expect { delete_route_binding }.to change { get_json('/route_bindings_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes a route binding annotation' do
+      expect { delete_route_binding_annotation }.to change { get_json("/route_bindings_view_model/#{cc_route_binding[:guid]}")['annotations'].length }.from(1).to(0)
+    end
+
+    it 'deletes a route binding label' do
+      expect { delete_route_binding_label }.to change { get_json("/route_bindings_view_model/#{cc_route_binding[:guid]}")['labels'].length }.from(1).to(0)
     end
   end
 

@@ -1019,7 +1019,9 @@ module ViewModelsHelper
 
   def view_models_route_bindings_detail
     {
+      'annotations'             => [annotation_rfc3339(cc_route_binding_annotation)],
       'domain'                  => cc_domain,
+      'labels'                  => [label_rfc3339(cc_route_binding_label)],
       'organization'            => cc_organization,
       'route'                   => cc_route,
       'route_binding'           => cc_route_binding,

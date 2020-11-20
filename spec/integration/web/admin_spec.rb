@@ -4017,6 +4017,130 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                           ])
           end
 
+          it 'has labels subtable' do
+            expect(@driver.find_element(id: 'RouteBindingsLabelsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='RouteBindingsLabelsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='RouteBindingsLabelsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_route_binding_label[:key_prefix],
+                               cc_route_binding_label[:key_name],
+                               cc_route_binding_label[:guid],
+                               cc_route_binding_label[:created_at].to_datetime.rfc3339,
+                               cc_route_binding_label[:updated_at].to_datetime.rfc3339,
+                               cc_route_binding_label[:value]
+                             ])
+          end
+
+          it 'labels subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_RouteBindingsLabelsTable_1')
+          end
+
+          it 'labels subtable has a checkbox in the first column' do
+            check_checkbox_guid('RouteBindingsLabelsTable', "#{cc_route_binding[:guid]}/metadata/labels/#{cc_route_binding_label[:key_name]}?prefix=#{cc_route_binding_label[:key_prefix]}")
+          end
+
+          context 'manage labels subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_RouteBindingsLabelsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_RouteBindingsLabelsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'RouteBindingsLabelsTable' }
+                let(:button_id)               { 'Buttons_RouteBindingsLabelsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the route binding's selected labels?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'route_binding_labels' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_RouteBindingsLabelsTable_1' }
+                let(:print_button_id) { 'Buttons_RouteBindingsLabelsTable_2' }
+                let(:save_button_id)  { 'Buttons_RouteBindingsLabelsTable_3' }
+                let(:csv_button_id)   { 'Buttons_RouteBindingsLabelsTable_4' }
+                let(:excel_button_id) { 'Buttons_RouteBindingsLabelsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_RouteBindingsLabelsTable_6' }
+              end
+            end
+          end
+
+          it 'has annotations subtable' do
+            expect(@driver.find_element(id: 'RouteBindingsAnnotationsDetailsLabel').displayed?).to be(true)
+
+            check_table_headers(columns:         @driver.find_elements(xpath: "//div[@id='RouteBindingsAnnotationsTableContainer']/div[2]/div[4]/div/div/table/thead/tr/th"),
+                                expected_length: 7,
+                                labels:          ['', 'Prefix', 'Key', 'GUID', 'Created', 'Updated', 'Value'],
+                                colspans:        nil)
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='RouteBindingsAnnotationsTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_route_binding_annotation[:key_prefix],
+                               cc_route_binding_annotation[:key],
+                               cc_route_binding_annotation[:guid],
+                               cc_route_binding_annotation[:created_at].to_datetime.rfc3339,
+                               cc_route_binding_annotation[:updated_at].to_datetime.rfc3339,
+                               cc_route_binding_annotation[:value]
+                             ])
+          end
+
+          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
+            check_allowscriptaccess_attribute('Buttons_RouteBindingsAnnotationsTable_1')
+          end
+
+          it 'annotations subtable has a checkbox in the first column' do
+            check_checkbox_guid('RouteBindingsAnnotationsTable', "#{cc_route_binding[:guid]}/metadata/annotations/#{cc_route_binding_annotation[:key]}?prefix=#{cc_route_binding_annotation[:key_prefix]}")
+          end
+
+          context 'manage annotations subtable' do
+            it 'has a Delete button' do
+              expect(@driver.find_element(id: 'Buttons_RouteBindingsAnnotationsTable_0').text).to eq('Delete')
+            end
+
+            context 'Delete button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_RouteBindingsAnnotationsTable_0' }
+              end
+            end
+
+            context 'Delete button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'RouteBindingsAnnotationsTable' }
+                let(:button_id)               { 'Buttons_RouteBindingsAnnotationsTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { "Are you sure you want to delete the route binding's selected annotations?" }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'route_binding_annotations' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_RouteBindingsAnnotationsTable_1' }
+                let(:print_button_id) { 'Buttons_RouteBindingsAnnotationsTable_2' }
+                let(:save_button_id)  { 'Buttons_RouteBindingsAnnotationsTable_3' }
+                let(:csv_button_id)   { 'Buttons_RouteBindingsAnnotationsTable_4' }
+                let(:excel_button_id) { 'Buttons_RouteBindingsAnnotationsTable_5' }
+                let(:pdf_button_id)   { 'Buttons_RouteBindingsAnnotationsTable_6' }
+              end
+            end
+          end
+
           it 'has routes link' do
             check_filter_link('RouteBindings', 11, 'Routes', cc_route[:guid])
           end

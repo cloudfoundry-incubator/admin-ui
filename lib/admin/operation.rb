@@ -511,6 +511,8 @@ module AdminUI
       @cc.invalidate_route_labels
       if v3 || recursive
         @cc.invalidate_route_bindings
+        @cc.invalidate_route_binding_annotations
+        @cc.invalidate_route_binding_labels
         @cc.invalidate_route_mappings
         @view_models.invalidate_route_bindings
         @view_models.invalidate_route_mappings
@@ -535,6 +537,30 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_route_bindings
+      @cc.invalidate_route_binding_annotations
+      @cc.invalidate_route_binding_labels
+      @view_models.invalidate_route_bindings
+    end
+
+    def delete_route_binding_annotation(service_instance_guid, prefix, name)
+      url = "/v3/service_route_bindings/#{service_instance_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_route_binding_annotations
+      @view_models.invalidate_route_bindings
+    end
+
+    def delete_route_binding_label(service_instance_guid, prefix, name)
+      url = "/v3/service_route_bindings/#{service_instance_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_route_binding_labels
       @view_models.invalidate_route_bindings
     end
 

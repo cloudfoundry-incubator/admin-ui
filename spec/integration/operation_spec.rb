@@ -1297,8 +1297,24 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_route_binding(cc_service_instance[:guid], cc_route[:guid], cc_service_instance[:is_gateway_service])
       end
 
+      def delete_route_binding_annotation
+        operation.delete_route_binding_annotation(cc_route_binding[:guid], cc_route_binding_annotation[:key_prefix], cc_route_binding_annotation[:key])
+      end
+
+      def delete_route_binding_label
+        operation.delete_route_binding_label(cc_route_binding[:guid], cc_route_binding_label[:key_prefix], cc_route_binding_label[:key_name])
+      end
+
       it 'deletes route binding' do
         expect { delete_route_binding }.to change { cc.route_bindings['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the route binding annotation' do
+        expect { delete_route_binding_annotation }.to change { cc.route_binding_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the route binding label' do
+        expect { delete_route_binding_label }.to change { cc.route_binding_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -1315,6 +1331,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting deleted route binding' do
           expect { delete_route_binding }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_route_binding_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted route binding' do
+          expect { delete_route_binding_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_route_binding_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted route binding' do
+          expect { delete_route_binding_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_route_binding_not_found(exception) }
         end
       end
     end

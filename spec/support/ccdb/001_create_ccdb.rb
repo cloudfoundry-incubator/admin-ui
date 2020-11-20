@@ -1912,6 +1912,39 @@ Sequel.migration do
       index [:name, :service_instance_id], :name=>:svc_key_name_instance_id_index, :unique=>true
     end
     
+    create_table(:route_binding_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :route_bindings, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_route_binding_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:route_binding_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :route_bindings, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_route_binding_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:route_binding_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
     create_table(:route_binding_operations, :ignore_index_errors=>true) do
       primary_key :id
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false

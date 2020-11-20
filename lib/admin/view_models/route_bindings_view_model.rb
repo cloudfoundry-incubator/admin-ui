@@ -13,13 +13,15 @@ module AdminUI
                            route_bindings['connected'] &&
                            service_instances['connected']
 
-      domains                  = @cc.domains
-      organizations            = @cc.organizations
-      route_binding_operations = @cc.route_binding_operations
-      service_brokers          = @cc.service_brokers
-      service_plans            = @cc.service_plans
-      services                 = @cc.services
-      spaces                   = @cc.spaces
+      domains                   = @cc.domains
+      organizations             = @cc.organizations
+      route_binding_annotations = @cc.route_binding_annotations
+      route_binding_labels      = @cc.route_binding_labels
+      route_binding_operations  = @cc.route_binding_operations
+      service_brokers           = @cc.service_brokers
+      service_plans             = @cc.service_plans
+      services                  = @cc.services
+      spaces                    = @cc.spaces
 
       domain_hash                  = Hash[domains['items'].map { |item| [item[:id], item] }]
       organization_hash            = Hash[organizations['items'].map { |item| [item[:id], item] }]
@@ -34,6 +36,54 @@ module AdminUI
       items = []
       hash  = {}
 
+      route_binding_annotations_hash = {}
+      route_binding_annotations['items'].each do |route_binding_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        route_binding_guid = route_binding_annotation[:resource_guid]
+        route_binding_annotations_array = route_binding_annotations_hash[route_binding_guid]
+        if route_binding_annotations_array.nil?
+          route_binding_annotations_array = []
+          route_binding_annotations_hash[route_binding_guid] = route_binding_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         route_binding_annotation,
+            created_at_rfc3339: route_binding_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: route_binding_annotation[:updated_at].nil? ? nil : route_binding_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        route_binding_annotations_array.push(wrapper)
+      end
+
+      route_binding_labels_hash = {}
+      route_binding_labels['items'].each do |route_binding_label|
+        return result unless @running
+
+        Thread.pass
+
+        route_binding_guid = route_binding_label[:resource_guid]
+        route_binding_labels_array = route_binding_labels_hash[route_binding_guid]
+        if route_binding_labels_array.nil?
+          route_binding_labels_array = []
+          route_binding_labels_hash[route_binding_guid] = route_binding_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              route_binding_label,
+            created_at_rfc3339: route_binding_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: route_binding_label[:updated_at].nil? ? nil : route_binding_label[:updated_at].to_datetime.rfc3339
+          }
+
+        route_binding_labels_array.push(wrapper)
+      end
+
       route_bindings['items'].each do |route_binding|
         return result unless @running
 
@@ -44,16 +94,18 @@ module AdminUI
 
         next if route.nil? || service_instance.nil?
 
-        guid                    = route_binding[:guid]
-        id                      = route_binding[:id]
-        domain                  = route.nil? ? nil : domain_hash[route[:domain_id]]
-        route_binding_operation = route_binding_operation_hash[id]
-        service_plan_id         = service_instance.nil? ? nil : service_instance[:service_plan_id]
-        service_plan            = service_plan_id.nil? ? nil : service_plan_hash[service_plan_id]
-        service                 = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
-        service_broker          = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
-        space                   = service_instance.nil? ? nil : space_hash[service_instance[:space_id]]
-        organization            = space.nil? ? nil : organization_hash[space[:organization_id]]
+        guid                           = route_binding[:guid]
+        id                             = route_binding[:id]
+        domain                         = route.nil? ? nil : domain_hash[route[:domain_id]]
+        route_binding_annotation_array = route_binding_annotations_hash[guid] || []
+        route_binding_label_array      = route_binding_labels_hash[guid] || []
+        route_binding_operation        = route_binding_operation_hash[id]
+        service_plan_id                = service_instance.nil? ? nil : service_instance[:service_plan_id]
+        service_plan                   = service_plan_id.nil? ? nil : service_plan_hash[service_plan_id]
+        service                        = service_plan.nil? ? nil : service_hash[service_plan[:service_id]]
+        service_broker                 = service.nil? || service[:service_broker_id].nil? ? nil : service_broker_hash[service[:service_broker_id]]
+        space                          = service_instance.nil? ? nil : space_hash[service_instance[:space_id]]
+        organization                   = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         is_gateway_service = service_instance[:is_gateway_service].nil? ? true : service_instance[:is_gateway_service]
 
@@ -175,6 +227,8 @@ module AdminUI
 
         hash[guid] =
           {
+            'annotations'             => route_binding_annotation_array,
+            'labels'                  => route_binding_label_array,
             'domain'                  => domain,
             'organization'            => organization,
             'route'                   => route,

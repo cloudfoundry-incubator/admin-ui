@@ -294,6 +294,8 @@ module CCHelper
   end
 
   def cc_clear_route_bindings_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM route_binding_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM route_binding_labels')
     sql(config.ccdb_uri, 'DELETE FROM route_binding_operations')
     sql(config.ccdb_uri, 'DELETE FROM route_bindings')
 
@@ -1335,6 +1337,32 @@ module CCHelper
     }
   end
 
+  def cc_route_binding_annotation
+    {
+      created_at:    unique_time('cc_route_binding_annotation_created'),
+      guid:          'route_binding_annotation1',
+      id:            unique_id('cc_route_binding_annotation'),
+      key:           'rbannotationkey',
+      key_prefix:    'rbannotationkeyprefix.com',
+      resource_guid: cc_route_binding[:guid],
+      updated_at:    unique_time('cc_route_binding_annotation_updated'),
+      value:         'rbannotationvalue'
+    }
+  end
+
+  def cc_route_binding_label
+    {
+      created_at:    unique_time('cc_route_binding_label_created'),
+      guid:          'route_binding_label1',
+      id:            unique_id('cc_route_binding_label'),
+      key_name:      'rblabelkeyname',
+      key_prefix:    'rblabelkeyprefix.com',
+      resource_guid: cc_route_binding[:guid],
+      updated_at:    unique_time('cc_route_binding_label_updated'),
+      value:         'rblabelvalue'
+    }
+  end
+
   def cc_route_binding_operation
     {
       broker_provided_operation: 'TestRouteBindingOperation broker operation',
@@ -2237,6 +2265,8 @@ module CCHelper
 
     if use_route
       result << [:route_bindings, cc_route_binding]
+      result << [:route_binding_annotations, cc_route_binding_annotation]
+      result << [:route_binding_labels, cc_route_binding_label]
       result << [:route_binding_operations, cc_route_binding_operation]
       result << [:route_mappings, cc_route_mapping]
     end
@@ -2899,6 +2929,16 @@ module CCHelper
       else
         cc_clear_route_bindings_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/service_route_bindings/#{cc_route_binding[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_route_bindings_deleted
+        cc_route_binding_not_found
+      else
+        cc_clear_route_bindings_cache_stub(config)
+        OK.new({})
       end
     end
   end
