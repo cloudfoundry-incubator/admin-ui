@@ -33,6 +33,9 @@ Lint/ConstantDefinitionInBlock:
 Lint/DeprecatedOpenSSLConstant:
   Enabled: true
 
+Lint/DuplicateBranch:
+  Enabled: true
+
 Lint/DuplicateElsifCondition:
   Enabled: true
 
@@ -46,6 +49,9 @@ Lint/DuplicateRescueException:
   Enabled: true
 
 Lint/EmptyBlock:
+  Enabled: true
+
+Lint/EmptyClass:
   Enabled: true
 
 Lint/EmptyConditionalBody:
@@ -67,6 +73,9 @@ Lint/MissingSuper:
   Enabled: true
 
 Lint/MixedRegexpCaptureTypes:
+  Enabled: true
+
+Lint/NoReturnInBeginEndBlocks:
   Enabled: true
 
 Lint/OutOfRangeRegexpRef:
@@ -94,6 +103,9 @@ Lint/TopLevelReturnWithArgument:
   Enabled: true
 
 Lint/TrailingCommaInAttributeDeclaration:
+  Enabled: true
+
+Lint/UnexpectedBlockArity:
   Enabled: true
 
 Lint/UnmodifiedReduceAccumulator:
@@ -144,7 +156,22 @@ Naming/RescuedExceptionsVariableName:
 Performance/AncestorsInclude:
   Enabled: true
 
+Performance/ArraySemiInfiniteRangeSlice:
+  Enabled: true
+
 Performance/BigDecimalWithNumericArgument:
+  Enabled: true
+
+Performance/BlockGivenWithExplicitBlock:
+  Enabled: true
+
+Performance/CollectionLiteralInLoop:
+  Enabled: true
+
+Performance/ConstantRegexp:
+  Enabled: true
+
+Performance/MethodObjectAsBlock:
   Enabled: true
 
 Performance/RedundantSortBlock:
@@ -246,6 +273,9 @@ Style/CaseLikeIf:
 Style/ClassEqualityComparison:
   Enabled: true
 
+Style/CollectionCompact:
+  Enabled: true
+
 Style/CombinableLoops:
   Enabled: true
 
@@ -288,8 +318,17 @@ Style/HashTransformValues:
 Style/KeywordParametersOrder:
   Enabled: true
 
+Style/NegatedIfElseCondition:
+  Enabled: true
+
+Style/NilLambda:
+  Enabled: true
+
 Style/OptionalBooleanParameter:
   Enabled: false
+
+Style/RedundantArgument:
+  Enabled: true
 
 Style/RedundantAssignment:
   Enabled: true

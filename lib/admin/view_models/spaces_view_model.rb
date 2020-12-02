@@ -439,7 +439,7 @@ module AdminUI
         elsif applications_connected && tasks_connected
           row.push(0)
         else
-          row.push(0)
+          row.push(nil)
         end
 
         if containers_connected

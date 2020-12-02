@@ -1236,12 +1236,7 @@ module AdminUI
       if v3
         json = Yajl::Parser.parse(control_message)
         quota_definition_guid = json['quota_definition_guid']
-        if !quota_definition_guid.nil?
-          url = "/v3/organization_quotas/#{quota_definition_guid}/relationships/organizations"
-          body = "{\"data\":[{\"guid\":\"#{organization_guid}\"}]}"
-          @logger.debug("POST #{url}, #{body}")
-          @client.post_cc(url, body)
-        else
+        if quota_definition_guid.nil?
           url = "/v3/organizations/#{organization_guid}"
           body = control_message
           status = json['status']
@@ -1251,6 +1246,11 @@ module AdminUI
           end
           @logger.debug("PATCH #{url}, #{body}")
           @client.patch_cc(url, body)
+        else
+          url = "/v3/organization_quotas/#{quota_definition_guid}/relationships/organizations"
+          body = "{\"data\":[{\"guid\":\"#{organization_guid}\"}]}"
+          @logger.debug("POST #{url}, #{body}")
+          @client.post_cc(url, body)
         end
       else
         url = "/v2/organizations/#{organization_guid}"
@@ -1381,15 +1381,15 @@ module AdminUI
       if v3
         json = Yajl::Parser.parse(control_message)
         allow_ssh = json['allow_ssh']
-        if !allow_ssh.nil?
+        if allow_ssh.nil?
+          url = "/v3/spaces/#{space_guid}"
+          @logger.debug("PATCH #{url}, #{control_message}")
+          @client.patch_cc(url, control_message)
+        else
           url = "/v3/spaces/#{space_guid}/features/ssh"
           body = "{\"enabled\":#{allow_ssh}}"
           @logger.debug("PATCH #{url}, #{body}")
           @client.patch_cc(url, body)
-        else
-          url = "/v3/spaces/#{space_guid}"
-          @logger.debug("PATCH #{url}, #{control_message}")
-          @client.patch_cc(url, control_message)
         end
       else
         url = "/v2/spaces/#{space_guid}"

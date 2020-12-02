@@ -221,10 +221,10 @@ module AdminUI
           row.push(nil)
         end
 
-        if !user_uaa[:passwd_change_required].nil?
-          row.push(user_uaa[:passwd_change_required])
-        else
+        if user_uaa[:passwd_change_required].nil?
           row.push(nil)
+        else
+          row.push(user_uaa[:passwd_change_required])
         end
 
         row.push(user_uaa[:email])
