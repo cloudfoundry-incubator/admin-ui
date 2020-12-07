@@ -1026,6 +1026,13 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected service key operations' do
+      let(:results)  { cc.service_key_operations }
+      let(:expected) { cc_service_key_operation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected service keys' do
       let(:results)  { cc.service_keys }
       let(:expected) { cc_service_key }

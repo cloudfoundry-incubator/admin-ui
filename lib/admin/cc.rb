@@ -384,6 +384,12 @@ module AdminUI
             table:   :service_keys,
             columns: %i[created_at guid id name service_instance_id updated_at]
           },
+          service_key_operations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_key_operations,
+            columns: %i[broker_provided_operation created_at description id service_key_id state type updated_at]
+          },
           service_offering_annotations:
           {
             db_uri:  ccdb_uri,
@@ -1144,6 +1150,10 @@ module AdminUI
 
     def service_instances
       result_cache(:service_instances)
+    end
+
+    def service_key_operations
+      result_cache(:service_key_operations)
     end
 
     def service_keys

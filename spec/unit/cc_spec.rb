@@ -293,6 +293,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.service_keys)
     end
 
+    it 'returns zero service_key_operations as expected' do
+      verify_disconnected_items(cc.service_key_operations)
+    end
+
     it 'returns zero service_offering_annotations as expected' do
       verify_disconnected_items(cc.service_offering_annotations)
     end

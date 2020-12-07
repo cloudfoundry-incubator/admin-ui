@@ -366,6 +366,7 @@ module CCHelper
   end
 
   def cc_clear_service_keys_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM service_key_operations')
     sql(config.ccdb_uri, 'DELETE FROM service_keys')
 
     @cc_service_keys_deleted = true
@@ -1697,6 +1698,19 @@ module CCHelper
     cc_service_key.merge(credentials: cc_service_key_credential)
   end
 
+  def cc_service_key_operation
+    {
+      broker_provided_operation: 'TestServiceKeyOperation broker operation',
+      created_at:                unique_time('cc_service_key_operation_created'),
+      description:               'TestServiceKeyOperation description',
+      id:                        unique_id('cc_service_key_operation'),
+      service_key_id:            cc_service_key[:id],
+      state:                     'succeeded',
+      type:                      'create',
+      updated_at:                unique_time('cc_service_key_operation_updated')
+    }
+  end
+
   def cc_service_plan_display_name
     'TestServicePlan display name'
   end
@@ -2258,6 +2272,7 @@ module CCHelper
                [:service_instance_operations,      cc_service_instance_operation],
                [:service_binding_operations,       cc_service_binding_operation],
                [:service_keys,                     cc_service_key_with_credentials],
+               [:service_key_operations,           cc_service_key_operation],
                [:tasks,                            cc_task],
                [:task_annotations,                 cc_task_annotation],
                [:task_labels,                      cc_task_label]

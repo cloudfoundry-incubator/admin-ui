@@ -1975,6 +1975,21 @@ Sequel.migration do
       index [:service_binding_id], :name=>:svc_binding_id_index, :unique=>true
     end
     
+    create_table(:service_key_operations, :ignore_index_errors=>true) do
+      primary_key :id
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :service_key_id, :service_keys, :key=>[:id], :on_delete=>:cascade
+      String :state, :size=>255, :null=>false
+      String :type, :size=>255, :null=>false
+      String :description, :size=>10000
+      String :broker_provided_operation, :size=>10000
+      
+      index [:created_at]
+      index [:updated_at]
+      index [:service_key_id], :name=>:svc_key_id_index, :unique=>true
+    end
+    
     alter_table(:app_annotations) do
       add_foreign_key [:resource_guid], :apps, :name=>:fk_app_annotations_resource_guid, :key=>[:guid], :schema=>:public
     end

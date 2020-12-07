@@ -1302,6 +1302,10 @@ module ViewModelsHelper
         cc_service_key[:created_at].to_datetime.rfc3339,
         cc_service_key[:updated_at].to_datetime.rfc3339,
         1,
+        cc_service_key_operation[:type],
+        cc_service_key_operation[:state],
+        cc_service_key_operation[:created_at].to_datetime.rfc3339,
+        cc_service_key_operation[:updated_at].to_datetime.rfc3339,
         cc_service_instance[:name],
         cc_service_instance[:guid],
         cc_service_instance[:created_at].to_datetime.rfc3339,
@@ -1331,14 +1335,15 @@ module ViewModelsHelper
 
   def view_models_service_keys_detail
     {
-      'credentials'      => cc_service_key_credential,
-      'organization'     => cc_organization,
-      'service'          => cc_service,
-      'service_broker'   => cc_service_broker,
-      'service_instance' => cc_service_instance,
-      'service_key'      => cc_service_key,
-      'service_plan'     => cc_service_plan,
-      'space'            => cc_space
+      'credentials'           => cc_service_key_credential,
+      'organization'          => cc_organization,
+      'service'               => cc_service,
+      'service_broker'        => cc_service_broker,
+      'service_instance'      => cc_service_instance,
+      'service_key'           => cc_service_key,
+      'service_key_operation' => cc_service_key_operation,
+      'service_plan'          => cc_service_plan,
+      'space'                 => cc_space
     }
   end
 
