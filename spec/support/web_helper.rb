@@ -70,7 +70,9 @@ shared_context :web_context do
       options.profile = profile
       options.headless!
 
-      Selenium::WebDriver.for(:firefox, marionette: true, options: options)
+      # TODO: Temporary workaround for ruby 3.0.0
+      # Selenium::WebDriver.for(:firefox, marionette: true, options: options)
+      Selenium::WebDriver::Firefox::Driver.new(marionette: true, options: options)
     end
   rescue => error
     unless url.nil?

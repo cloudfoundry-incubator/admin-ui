@@ -30,9 +30,9 @@ access GitHub.com, RubyGems.org, Ubuntu software repositories, etc.
 
 ## Installation Steps
 
-### Ubuntu 14.04.3 64 bit
+### Ubuntu 18.04.5 64 bit
 
-This has been tested on Ubuntu 10.04.4 64 bit, Ubuntu 12.04.3 64 bit, Ubuntu 13.04 64 bit and Ubuntu 14.04.3 64 bit.
+The last version of Ubuntu this has been tested upon is Ubuntu 18.04.5 64 bit.
 
 ### Ubuntu Prerequisite Libraries
 
@@ -46,7 +46,8 @@ sudo apt-get install -f -y --no-install-recommends git-core build-essential libr
 
 ### Ruby
 
-Ruby is required to run the Administration UI. This has been tested with Ruby 2.7.2 with previous testing performed on Ruby 1.9.3-p484, 2.1.7, 2.2.3, 2.2.4, 2.3.1, 2.3.3, 2.4.2, 2.4.5, 2.5.5, 2.6.3, 2.6.4, 2.6.5, 2.7.0 and 2.7.1.
+Ruby is required to run the Administration UI. The last version used for testing is Ruby 3.0.0.
+
 Here is a sample installation of ruby using rbenv:
 
 ```
@@ -55,21 +56,8 @@ git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-bu
 echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.profile
 echo 'eval "$(rbenv init -)"' >> ~/.profile
 . ~/.profile
-rbenv install 2.7.2
-rbenv global 2.7.2
-```
-
-### Ruby Bundler Gem
-The bundler gem is required to install prerequisite gems for the Administration UI.
-
-```
-gem install bundler --no-document
-```
-
-If you are using rbenv you need to refresh the rbenv shims:
-
-```
-rbenv rehash
+rbenv install 3.0.0
+rbenv global 3.0.0
 ```
 
 ### Retrieve the Administration UI code

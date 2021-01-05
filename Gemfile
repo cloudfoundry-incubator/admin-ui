@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby '2.7.2'
+ruby '3.0.0'
 
 gem 'faye-websocket', '0.11.0'
 gem 'membrane', '1.1.0'
@@ -13,6 +13,7 @@ gem 'sequel', '5.39.0'
 gem 'sequel_pg', '1.14.0'
 gem 'sinatra', '2.1.0'
 gem 'sqlite3', '1.4.2'
+gem 'webrick', '1.7.0'
 gem 'yajl-ruby', '1.4.1'
 
 group :mysql do
