@@ -3,6 +3,7 @@ require:
 - rubocop-rails
 
 AllCops:
+  SuggestExtensions: false
   Exclude:
     - '.bundle/**/*'
     - 'vendor/**/*'
@@ -34,6 +35,9 @@ Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 
 Lint/ConstantDefinitionInBlock:
+  Enabled: true
+
+Lint/DeprecatedConstants:
   Enabled: true
 
 Lint/DeprecatedOpenSSLConstant:
@@ -75,6 +79,9 @@ Lint/HashCompareByIdentity:
 Lint/IdentityComparison:
   Enabled: true
 
+Lint/LambdaWithoutLiteralBlock:
+  Enabled: true
+
 Lint/MissingSuper:
   Enabled: true
 
@@ -88,6 +95,9 @@ Lint/OutOfRangeRegexpRef:
   Enabled: true
 
 Lint/RaiseException:
+  Enabled: true
+
+Lint/RedundantDirGlobSort:
   Enabled: true
 
 Lint/RedundantSafeNavigation:
@@ -298,6 +308,9 @@ Style/DateTime:
   Enabled: false
 
 Style/DocumentDynamicEvalDefinition:
+  Enabled: true
+
+Style/EndlessMethod:
   Enabled: true
 
 Style/ExplicitBlockArgument:
