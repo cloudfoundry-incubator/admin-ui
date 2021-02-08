@@ -249,6 +249,14 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.service_bindings)
     end
 
+    it 'returns zero service_binding_annotations as expected' do
+      verify_disconnected_items(cc.service_binding_annotations)
+    end
+
+    it 'returns zero service_binding_labels as expected' do
+      verify_disconnected_items(cc.service_binding_labels)
+    end
+
     it 'returns zero service_binding_operations as expected' do
       verify_disconnected_items(cc.service_binding_operations)
     end
@@ -291,6 +299,14 @@ describe AdminUI::CC do
 
     it 'returns zero service_keys as expected' do
       verify_disconnected_items(cc.service_keys)
+    end
+
+    it 'returns zero service_key_annotations as expected' do
+      verify_disconnected_items(cc.service_key_annotations)
+    end
+
+    it 'returns zero service_key_labels as expected' do
+      verify_disconnected_items(cc.service_key_labels)
     end
 
     it 'returns zero service_key_operations as expected' do

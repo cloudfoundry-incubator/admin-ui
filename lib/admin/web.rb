@@ -2187,6 +2187,42 @@ module AdminUI
       500
     end
 
+    delete '/service_bindings/:service_binding_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/service_bindings/#{params[:service_binding_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_service_binding_annotation(params[:service_binding_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service binding annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service binding annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
+    delete '/service_bindings/:service_binding_guid/metadata/labels/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/service_bindings/#{params[:service_binding_guid]}/metadata/labels/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_service_binding_label(params[:service_binding_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service binding label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service binding label: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
     delete '/service_brokers/:service_broker_guid', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/service_brokers/#{params[:service_broker_guid]}")
       @operation.delete_service_broker(params[:service_broker_guid])
@@ -2307,6 +2343,42 @@ module AdminUI
       body(Yajl::Encoder.encode(error.to_h))
     rescue => error
       @logger.error("Error during delete service key: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
+    delete '/service_keys/:service_key_guid/metadata/annotations/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/service_keys/#{params[:service_key_guid]}/metadata/annotations/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_service_key_annotation(params[:service_key_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service key annotation: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service key annotation: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
+    delete '/service_keys/:service_key_guid/metadata/labels/:name', auth: [:admin] do
+      prefix = params[:prefix]
+      url = "/service_keys/#{params[:service_key_guid]}/metadata/labels/#{params[:name]}"
+      url += "?prefix=#{prefix}" if prefix
+      @logger.info_user(session[:username], 'delete', url)
+      @operation.delete_service_key_label(params[:service_key_guid], prefix, params[:name])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete service key label: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete service key label: #{error.inspect}")
       @logger.error(error.backtrace.join("\n"))
       500
     end

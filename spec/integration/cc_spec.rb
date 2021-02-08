@@ -357,6 +357,20 @@ describe AdminUI::CC, type: :integration do
       expect(cc.service_bindings['items'].length).to eq(0)
     end
 
+    it 'clears the service binding annotations cache' do
+      expect(cc.service_binding_annotations['items'].length).to eq(1)
+      cc_clear_service_bindings_cache_stub(config)
+      cc.invalidate_service_binding_annotations
+      expect(cc.service_binding_annotations['items'].length).to eq(0)
+    end
+
+    it 'clears the service binding labels cache' do
+      expect(cc.service_binding_labels['items'].length).to eq(1)
+      cc_clear_service_bindings_cache_stub(config)
+      cc.invalidate_service_binding_labels
+      expect(cc.service_binding_labels['items'].length).to eq(0)
+    end
+
     it 'clears the service brokers cache' do
       expect(cc.service_brokers['items'].length).to eq(1)
       cc_clear_service_brokers_cache_stub(config)
@@ -411,6 +425,20 @@ describe AdminUI::CC, type: :integration do
       cc_clear_service_keys_cache_stub(config)
       cc.invalidate_service_keys
       expect(cc.service_keys['items'].length).to eq(0)
+    end
+
+    it 'clears the service key annotations cache' do
+      expect(cc.service_key_annotations['items'].length).to eq(1)
+      cc_clear_service_keys_cache_stub(config)
+      cc.invalidate_service_key_annotations
+      expect(cc.service_key_annotations['items'].length).to eq(0)
+    end
+
+    it 'clears the service key labels cache' do
+      expect(cc.service_key_labels['items'].length).to eq(1)
+      cc_clear_service_keys_cache_stub(config)
+      cc.invalidate_service_key_labels
+      expect(cc.service_key_labels['items'].length).to eq(0)
     end
 
     it 'clears the service offering annotations cache' do
@@ -963,6 +991,20 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
+    context 'returns connected service binding annotations' do
+      let(:results)  { cc.service_binding_annotations }
+      let(:expected) { cc_service_binding_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected service binding labels' do
+      let(:results)  { cc.service_binding_labels }
+      let(:expected) { cc_service_binding_label }
+
+      it_behaves_like('common cc retrieval')
+    end
+
     context 'returns connected service brokers' do
       let(:results)  { cc.service_brokers }
       let(:expected) { cc_service_broker }
@@ -1022,6 +1064,20 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected service instances' do
       let(:results)  { cc.service_instances }
       let(:expected) { cc_service_instance }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected service key annotations' do
+      let(:results)  { cc.service_key_annotations }
+      let(:expected) { cc_service_key_annotation }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected service key labels' do
+      let(:results)  { cc.service_key_labels }
+      let(:expected) { cc_service_key_label }
 
       it_behaves_like('common cc retrieval')
     end

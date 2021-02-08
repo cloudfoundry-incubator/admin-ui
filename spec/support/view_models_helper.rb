@@ -1185,8 +1185,10 @@ module ViewModelsHelper
 
   def view_models_service_bindings_detail
     {
+      'annotations'               => [annotation_rfc3339(cc_service_binding_annotation)],
       'application'               => cc_app,
       'credentials'               => cc_service_binding_credential,
+      'labels'                    => [label_rfc3339(cc_service_binding_label)],
       'organization'              => cc_organization,
       'service'                   => cc_service,
       'service_binding'           => cc_service_binding,
@@ -1335,7 +1337,9 @@ module ViewModelsHelper
 
   def view_models_service_keys_detail
     {
+      'annotations'           => [annotation_rfc3339(cc_service_key_annotation)],
       'credentials'           => cc_service_key_credential,
+      'labels'                => [label_rfc3339(cc_service_key_label)],
       'organization'          => cc_organization,
       'service'               => cc_service,
       'service_broker'        => cc_service_broker,

@@ -83,8 +83,6 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_applications
-      @cc.invalidate_application_annotations
-      @cc.invalidate_application_labels
       @cc.invalidate_droplets
       @cc.invalidate_packages
       @cc.invalidate_processes
@@ -153,8 +151,6 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_buildpacks
-      @cc.invalidate_buildpack_annotations
-      @cc.invalidate_buildpack_labels
       @view_models.invalidate_buildpacks
     end
 
@@ -213,8 +209,6 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_domains
-      @cc.invalidate_domain_annotations
-      @cc.invalidate_domain_labels
       if v3 || recursive
         @cc.invalidate_routes
         @cc.invalidate_route_mappings
@@ -305,8 +299,6 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_isolation_segments
-      @cc.invalidate_isolation_segment_annotations
-      @cc.invalidate_isolation_segment_labels
       @cc.invalidate_organizations_isolation_segments
       @view_models.invalidate_isolation_segments
       @view_models.invalidate_organizations_isolation_segments
@@ -358,8 +350,6 @@ module AdminUI
       @cc.invalidate_organizations_billing_managers
       @cc.invalidate_organizations_managers
       @cc.invalidate_organizations_users
-      @cc.invalidate_organization_annotations
-      @cc.invalidate_organization_labels
       @cc.invalidate_service_plan_visibilities
       if v3 || recursive
         @cc.invalidate_applications
@@ -507,12 +497,8 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_routes
-      @cc.invalidate_route_annotations
-      @cc.invalidate_route_labels
       if v3 || recursive
         @cc.invalidate_route_bindings
-        @cc.invalidate_route_binding_annotations
-        @cc.invalidate_route_binding_labels
         @cc.invalidate_route_mappings
         @view_models.invalidate_route_bindings
         @view_models.invalidate_route_mappings
@@ -537,8 +523,6 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_route_bindings
-      @cc.invalidate_route_binding_annotations
-      @cc.invalidate_route_binding_labels
       @view_models.invalidate_route_bindings
     end
 
@@ -633,8 +617,6 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_services
-      @cc.invalidate_service_offering_annotations
-      @cc.invalidate_service_offering_labels
       @cc.invalidate_service_plans
       @cc.invalidate_service_plan_visibilities
       if purge
@@ -659,6 +641,28 @@ module AdminUI
       @view_models.invalidate_service_bindings
     end
 
+    def delete_service_binding_annotation(service_binding_guid, prefix, name)
+      url = "/v3/service_credential_bindings/#{service_binding_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_service_binding_annotations
+      @view_models.invalidate_service_bindings
+    end
+
+    def delete_service_binding_label(service_binding_guid, prefix, name)
+      url = "/v3/service_credential_bindings/#{service_binding_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_service_binding_labels
+      @view_models.invalidate_service_bindings
+    end
+
     def delete_service_broker(service_broker_guid)
       api_version = @client.api_version
       v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')
@@ -672,8 +676,6 @@ module AdminUI
       @cc.invalidate_clients
       @cc.invalidate_services
       @cc.invalidate_service_brokers
-      @cc.invalidate_service_broker_annotations
-      @cc.invalidate_service_broker_labels
       @cc.invalidate_service_plans
       @cc.invalidate_service_plan_visibilities
       @view_models.invalidate_services
@@ -715,8 +717,6 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_instances
-      @cc.invalidate_service_instance_annotations
-      @cc.invalidate_service_instance_labels
       if recursive
         @cc.invalidate_service_bindings
         @cc.invalidate_service_keys
@@ -754,6 +754,28 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_keys
+      @view_models.invalidate_service_keys
+    end
+
+    def delete_service_key_annotation(service_key_guid, prefix, name)
+      url = "/v3/service_credential_bindings/#{service_key_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_service_key_annotations
+      @view_models.invalidate_service_keys
+    end
+
+    def delete_service_key_label(service_key_guid, prefix, name)
+      url = "/v3/service_credential_bindings/#{service_key_guid}"
+      key = name
+      key = "#{prefix}/#{name}" if prefix
+      body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
+      @logger.debug("PATCH #{url}, #{body}")
+      @client.patch_cc(url, body)
+      @cc.invalidate_service_key_labels
       @view_models.invalidate_service_keys
     end
 
@@ -863,8 +885,6 @@ module AdminUI
       @cc.invalidate_spaces_auditors
       @cc.invalidate_spaces_developers
       @cc.invalidate_spaces_managers
-      @cc.invalidate_space_annotations
-      @cc.invalidate_space_labels
       @cc.invalidate_staging_security_groups_spaces
       if v3 || recursive
         @cc.invalidate_applications
@@ -988,8 +1008,6 @@ module AdminUI
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_stacks
-      @cc.invalidate_stack_annotations
-      @cc.invalidate_stack_labels
       @view_models.invalidate_stacks
     end
 
@@ -1037,7 +1055,6 @@ module AdminUI
       @logger.debug("PATCH #{url}, #{body}")
       @client.patch_cc(url, body)
       @cc.invalidate_task_annotations
-      @cc.invalidate_task_labels
       @view_models.invalidate_tasks
     end
 
@@ -1066,8 +1083,6 @@ module AdminUI
       begin
         @client.delete_cc(url)
         @cc.invalidate_users_cc
-        @cc.invalidate_user_annotations
-        @cc.invalidate_user_labels
       rescue CCRestClientResponseError => error
         # If we receive a 404 since the user is not within the CC, it still might be in UAA
         raise unless error.http_code == '404'

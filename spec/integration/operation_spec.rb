@@ -1576,8 +1576,24 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_service_binding(cc_service_binding[:guid])
       end
 
+      def delete_service_binding_annotation
+        operation.delete_service_binding_annotation(cc_service_binding[:guid], cc_service_binding_annotation[:key_prefix], cc_service_binding_annotation[:key])
+      end
+
+      def delete_service_binding_label
+        operation.delete_service_binding_label(cc_service_binding[:guid], cc_service_binding_label[:key_prefix], cc_service_binding_label[:key_name])
+      end
+
       it 'deletes service binding' do
         expect { delete_service_binding }.to change { cc.service_bindings['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the service binding annotation' do
+        expect { delete_service_binding_annotation }.to change { cc.service_binding_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the service binding label' do
+        expect { delete_service_binding_label }.to change { cc.service_binding_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -1594,6 +1610,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting deleted service binding' do
           expect { delete_service_binding }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_binding_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted service binding' do
+          expect { delete_service_binding_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_binding_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted service binding' do
+          expect { delete_service_binding_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_binding_not_found(exception) }
         end
       end
     end
@@ -1765,8 +1789,24 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_service_key(cc_service_key[:guid])
       end
 
+      def delete_service_key_annotation
+        operation.delete_service_key_annotation(cc_service_key[:guid], cc_service_key_annotation[:key_prefix], cc_service_key_annotation[:key])
+      end
+
+      def delete_service_key_label
+        operation.delete_service_key_label(cc_service_key[:guid], cc_service_key_label[:key_prefix], cc_service_key_label[:key_name])
+      end
+
       it 'deletes service key' do
         expect { delete_service_key }.to change { cc.service_keys['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the service key annotation' do
+        expect { delete_service_key_annotation }.to change { cc.service_key_annotations['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the service key label' do
+        expect { delete_service_key_label }.to change { cc.service_key_labels['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -1783,6 +1823,14 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting deleted service key' do
           expect { delete_service_key }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_key_not_found(exception) }
+        end
+
+        it 'fails deleting annotation on deleted service key' do
+          expect { delete_service_key_annotation }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_key_not_found(exception) }
+        end
+
+        it 'fails deleting label on deleted service key' do
+          expect { delete_service_key_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_service_key_not_found(exception) }
         end
       end
     end

@@ -230,6 +230,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       end
     end
 
+    context 'Service Bindings tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceBindings' }
+        let(:page_id)   { 'ServiceBindingsPage' }
+        let(:button_id) { 'Buttons_ServiceBindingsLabelsTable_0' }
+      end
+    end
+
+    context 'Service Bindings tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceBindings' }
+        let(:page_id)   { 'ServiceBindingsPage' }
+        let(:button_id) { 'Buttons_ServiceBindingsAnnotationsTable_0' }
+      end
+    end
+
     context 'Service Bindings tab does not have credentials subtable' do
       it_behaves_like('verifies subtable is not shown') do
         let(:tab_id)         { 'ServiceBindings' }
@@ -253,6 +269,22 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         let(:tab_id)    { 'ServiceKeys' }
         let(:page_id)   { 'ServiceKeysPage' }
         let(:button_id) { 'Buttons_ServiceKeysTable_0' }
+      end
+    end
+
+    context 'Service Keys tab Labels subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceKeys' }
+        let(:page_id)   { 'ServiceKeysPage' }
+        let(:button_id) { 'Buttons_ServiceKeysLabelsTable_0' }
+      end
+    end
+
+    context 'Service Keys tab Annotations subtable does not have delete button' do
+      it_behaves_like('verifies first button is copy button') do
+        let(:tab_id)    { 'ServiceKeys' }
+        let(:page_id)   { 'ServiceKeysPage' }
+        let(:button_id) { 'Buttons_ServiceKeysAnnotationsTable_0' }
       end
     end
 

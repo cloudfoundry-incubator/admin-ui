@@ -1205,6 +1205,57 @@ describe AdminUI::Admin do
       it_behaves_like('common delete service binding')
     end
 
+    shared_examples 'common delete service binding annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_bindings/service_binding1/metadata/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service binding annotation via http' do
+      it_behaves_like('common delete service binding annotation')
+    end
+
+    context 'delete service binding annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service binding annotation')
+    end
+
+    shared_examples 'common delete service binding label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_bindings/service_binding1/metadata/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service binding label via http' do
+      it_behaves_like('common delete service binding label')
+    end
+
+    context 'delete service binding label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service binding label')
+    end
+
+    shared_examples 'common delete service binding label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_bindings/service_binding1/metadata/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service binding label with prefix via http' do
+      it_behaves_like('common delete service binding label with prefix')
+    end
+
+    context 'delete service binding label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service binding label with prefix')
+    end
+
     shared_examples 'common delete service broker' do
       it 'returns failure code due to disconnection' do
         response = delete('/service_brokers/service_broker1')
@@ -1390,6 +1441,57 @@ describe AdminUI::Admin do
       let(:secured_client_connection) { true }
 
       it_behaves_like('common delete service key')
+    end
+
+    shared_examples 'common delete service key annotation' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_keys/service_key1/metadata/annotations/annotation1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service key annotation via http' do
+      it_behaves_like('common delete service key annotation')
+    end
+
+    context 'delete service key annotation via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service key annotation')
+    end
+
+    shared_examples 'common delete service key label' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_keys/service_key1/metadata/labels/label1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service key label via http' do
+      it_behaves_like('common delete service key label')
+    end
+
+    context 'delete service key label via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service key label')
+    end
+
+    shared_examples 'common delete service key label with prefix' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/service_keys/service_key1/metadata/labels/label1?prefix=bogus.com')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete service key label with prefix via http' do
+      it_behaves_like('common delete service key label with prefix')
+    end
+
+    context 'delete service key label with prefix via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete service key label with prefix')
     end
 
     shared_examples 'common delete service plan' do
@@ -3275,6 +3377,18 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/service_bindings/service_binding1')
       end
 
+      it 'deletes /service_bindings/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/service_bindings/service_binding1/metadata/annotations/annotation1')
+      end
+
+      it 'deletes /service_bindings/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/service_bindings/service_binding1/metadata/labels/label1')
+      end
+
+      it 'deletes /service_bindings/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/service_bindings/service_binding1/metadata/labels/label1?prefix=bogus.com')
+      end
+
       it 'deletes /service_brokers/:guid redirects as expected' do
         delete_redirects_as_expected('/service_brokers/service_broker1')
       end
@@ -3317,6 +3431,18 @@ describe AdminUI::Admin do
 
       it 'deletes /service_keys/:guid redirects as expected' do
         delete_redirects_as_expected('/service_keys/service_key1')
+      end
+
+      it 'deletes /service_keys/:guid/metadata/annotations/:annotation redirects as expected' do
+        delete_redirects_as_expected('/service_keys/service_key1/metadata/annotations/annotation1')
+      end
+
+      it 'deletes /service_keys/:guid/metadata/labels/:label redirects as expected' do
+        delete_redirects_as_expected('/service_keys/service_key1/metadata/labels/label1')
+      end
+
+      it 'deletes /service_keys/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
+        delete_redirects_as_expected('/service_keys/service_key1/metadata/labels/label1?prefix=bogus.com')
       end
 
       it 'deletes /service_plans/:guid redirects as expected' do

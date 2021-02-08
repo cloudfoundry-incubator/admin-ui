@@ -318,6 +318,19 @@ module AdminUI
             table:   :service_bindings,
             columns: %i[app_guid created_at guid id name service_instance_guid syslog_drain_url updated_at]
           },
+          service_binding_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_binding_annotations,
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
+          },
+          service_binding_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_binding_labels,
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
+          },
+
           service_binding_operations:
           {
             db_uri:  ccdb_uri,
@@ -384,6 +397,19 @@ module AdminUI
             table:   :service_keys,
             columns: %i[created_at guid id name service_instance_id updated_at]
           },
+          service_key_annotations:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_key_annotations,
+            columns: %i[created_at guid id key key_prefix resource_guid updated_at value]
+          },
+          service_key_labels:
+          {
+            db_uri:  ccdb_uri,
+            table:   :service_key_labels,
+            columns: %i[created_at guid id key_name key_prefix resource_guid updated_at value]
+          },
+
           service_key_operations:
           {
             db_uri:  ccdb_uri,
@@ -823,6 +849,14 @@ module AdminUI
       invalidate_cache(:service_bindings)
     end
 
+    def invalidate_service_binding_annotations
+      invalidate_cache(:service_binding_annotations)
+    end
+
+    def invalidate_service_binding_labels
+      invalidate_cache(:service_binding_labels)
+    end
+
     def invalidate_service_broker_annotations
       invalidate_cache(:service_broker_annotations)
     end
@@ -853,6 +887,14 @@ module AdminUI
 
     def invalidate_service_keys
       invalidate_cache(:service_keys)
+    end
+
+    def invalidate_service_key_annotations
+      invalidate_cache(:service_key_annotations)
+    end
+
+    def invalidate_service_key_labels
+      invalidate_cache(:service_key_labels)
     end
 
     def invalidate_service_offering_annotations
@@ -1108,6 +1150,14 @@ module AdminUI
       result_cache(:security_groups_spaces)
     end
 
+    def service_binding_annotations
+      result_cache(:service_binding_annotations)
+    end
+
+    def service_binding_labels
+      result_cache(:service_binding_labels)
+    end
+
     def service_binding_operations
       result_cache(:service_binding_operations)
     end
@@ -1150,6 +1200,14 @@ module AdminUI
 
     def service_instances
       result_cache(:service_instances)
+    end
+
+    def service_key_annotations
+      result_cache(:service_key_annotations)
+    end
+
+    def service_key_labels
+      result_cache(:service_key_labels)
     end
 
     def service_key_operations

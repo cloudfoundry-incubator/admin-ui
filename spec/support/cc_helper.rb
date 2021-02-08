@@ -328,6 +328,8 @@ module CCHelper
   end
 
   def cc_clear_service_bindings_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM service_binding_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM service_binding_labels')
     sql(config.ccdb_uri, 'DELETE FROM service_binding_operations')
     sql(config.ccdb_uri, 'DELETE FROM service_bindings')
 
@@ -366,6 +368,8 @@ module CCHelper
   end
 
   def cc_clear_service_keys_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM service_key_annotations')
+    sql(config.ccdb_uri, 'DELETE FROM service_key_labels')
     sql(config.ccdb_uri, 'DELETE FROM service_key_operations')
     sql(config.ccdb_uri, 'DELETE FROM service_keys')
 
@@ -1514,14 +1518,30 @@ module CCHelper
     cc_service_binding.merge(credentials: cc_service_binding_credential)
   end
 
-  def cc_service_binding_volume_mounts
-    [
-      {
-        'container_dir' => 'container_dir1',
-        'device_type'   => 'device_type1',
-        'mode'          => 'bogus mode1'
-      }
-    ]
+  def cc_service_binding_annotation
+    {
+      created_at:    unique_time('cc_service_binding_annotation_created'),
+      guid:          'service_binding_annotation1',
+      id:            unique_id('cc_service_binding_annotation'),
+      key:           'sbannotationkey',
+      key_prefix:    'sbannotationkeyprefix.com',
+      resource_guid: cc_service_binding[:guid],
+      updated_at:    unique_time('cc_service_binding_annotation_updated'),
+      value:         'sbannotationvalue'
+    }
+  end
+
+  def cc_service_binding_label
+    {
+      created_at:    unique_time('cc_service_binding_label_created'),
+      guid:          'service_binding_label1',
+      id:            unique_id('cc_service_binding_label'),
+      key_name:      'sblabelkeyname',
+      key_prefix:    'sblabelkeyprefix.com',
+      resource_guid: cc_service_binding[:guid],
+      updated_at:    unique_time('cc_service_binding_label_updated'),
+      value:         'sblabelvalue'
+    }
   end
 
   def cc_service_binding_operation
@@ -1535,6 +1555,16 @@ module CCHelper
       type:                      'create',
       updated_at:                unique_time('cc_service_binding_operation_updated')
     }
+  end
+
+  def cc_service_binding_volume_mounts
+    [
+      {
+        'container_dir' => 'container_dir1',
+        'device_type'   => 'device_type1',
+        'mode'          => 'bogus mode1'
+      }
+    ]
   end
 
   def cc_service_broker
@@ -1696,6 +1726,32 @@ module CCHelper
   # We do not retrieve credentials, but it is required for insert
   def cc_service_key_with_credentials
     cc_service_key.merge(credentials: cc_service_key_credential)
+  end
+
+  def cc_service_key_annotation
+    {
+      created_at:    unique_time('cc_service_key_annotation_created'),
+      guid:          'service_key_annotation1',
+      id:            unique_id('cc_service_key_annotation'),
+      key:           'skannotationkey',
+      key_prefix:    'skannotationkeyprefix.com',
+      resource_guid: cc_service_key[:guid],
+      updated_at:    unique_time('cc_service_key_annotation_updated'),
+      value:         'skannotationvalue'
+    }
+  end
+
+  def cc_service_key_label
+    {
+      created_at:    unique_time('cc_service_key_label_created'),
+      guid:          'service_key_label1',
+      id:            unique_id('cc_service_key_label'),
+      key_name:      'sklabelkeyname',
+      key_prefix:    'sklabelkeyprefix.com',
+      resource_guid: cc_service_key[:guid],
+      updated_at:    unique_time('cc_service_key_label_updated'),
+      value:         'sklabelvalue'
+    }
   end
 
   def cc_service_key_operation
@@ -2269,9 +2325,13 @@ module CCHelper
                [:service_instance_shares,          cc_service_instance_share],
                [:service_plan_visibilities,        cc_service_plan_visibility],
                [:service_bindings,                 cc_service_binding_with_credentials],
+               [:service_binding_annotations,      cc_service_binding_annotation],
+               [:service_binding_labels,           cc_service_binding_label],
                [:service_instance_operations,      cc_service_instance_operation],
                [:service_binding_operations,       cc_service_binding_operation],
                [:service_keys,                     cc_service_key_with_credentials],
+               [:service_key_annotations,          cc_service_key_annotation],
+               [:service_key_labels,               cc_service_key_label],
                [:service_key_operations,           cc_service_key_operation],
                [:tasks,                            cc_task],
                [:task_annotations,                 cc_task_annotation],
@@ -3118,6 +3178,16 @@ module CCHelper
         Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/service_credential_bindings/#{cc_service_binding[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_service_bindings_deleted
+        cc_service_binding_not_found
+      else
+        cc_clear_service_bindings_cache_stub(config)
+        OK.new({})
+      end
+    end
   end
 
   def cc_service_broker_not_found
@@ -3258,6 +3328,16 @@ module CCHelper
       else
         cc_clear_service_keys_cache_stub(config)
         Net::HTTPNoContent.new(1.0, 204, 'OK')
+      end
+    end
+
+    # Remove metadata
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/service_credential_bindings/#{cc_service_key[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, anything, anything, anything, anything) do
+      if @cc_service_keys_deleted
+        cc_service_key_not_found
+      else
+        cc_clear_service_keys_cache_stub(config)
+        OK.new({})
       end
     end
   end

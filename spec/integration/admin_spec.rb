@@ -1428,12 +1428,32 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/service_bindings/#{cc_service_binding[:guid]}"]])
     end
 
+    def delete_service_binding_annotation
+      response = delete_request("/service_bindings/#{cc_service_binding[:guid]}/metadata/annotations/#{cc_service_binding_annotation[:key]}?prefix=#{cc_service_binding_annotation[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/service_bindings/#{cc_service_binding[:guid]}/metadata/annotations/#{cc_service_binding_annotation[:key]}?prefix=#{cc_service_binding_annotation[:key_prefix]}"]], true)
+    end
+
+    def delete_service_binding_label
+      response = delete_request("/service_bindings/#{cc_service_binding[:guid]}/metadata/labels/#{cc_service_binding_label[:key_name]}?prefix=#{cc_service_binding_label[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/service_bindings/#{cc_service_binding[:guid]}/metadata/labels/#{cc_service_binding_label[:key_name]}?prefix=#{cc_service_binding_label[:key_prefix]}"]], true)
+    end
+
     it 'has user name and service bindings request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/service_bindings_view_model']], true)
     end
 
     it 'deletes a service binding' do
       expect { delete_service_binding }.to change { get_json('/service_bindings_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes a service binding annotation' do
+      expect { delete_service_binding_annotation }.to change { get_json("/service_bindings_view_model/#{cc_service_binding[:guid]}")['annotations'].length }.from(1).to(0)
+    end
+
+    it 'deletes a service binding label' do
+      expect { delete_service_binding_label }.to change { get_json("/service_bindings_view_model/#{cc_service_binding[:guid]}")['labels'].length }.from(1).to(0)
     end
   end
 
@@ -1577,12 +1597,32 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/service_keys/#{cc_service_key[:guid]}"]])
     end
 
+    def delete_service_key_annotation
+      response = delete_request("/service_keys/#{cc_service_key[:guid]}/metadata/annotations/#{cc_service_key_annotation[:key]}?prefix=#{cc_service_key_annotation[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/service_keys/#{cc_service_key[:guid]}/metadata/annotations/#{cc_service_key_annotation[:key]}?prefix=#{cc_service_key_annotation[:key_prefix]}"]], true)
+    end
+
+    def delete_service_key_label
+      response = delete_request("/service_keys/#{cc_service_key[:guid]}/metadata/labels/#{cc_service_key_label[:key_name]}?prefix=#{cc_service_key_label[:key_prefix]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/service_keys/#{cc_service_key[:guid]}/metadata/labels/#{cc_service_key_label[:key_name]}?prefix=#{cc_service_key_label[:key_prefix]}"]], true)
+    end
+
     it 'has user name and service keys request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/service_keys_view_model']], true)
     end
 
     it 'deletes a service key' do
       expect { delete_service_key }.to change { get_json('/service_keys_view_model')['items']['items'].length }.from(1).to(0)
+    end
+
+    it 'deletes a service key annotation' do
+      expect { delete_service_key_annotation }.to change { get_json("/service_keys_view_model/#{cc_service_key[:guid]}")['annotations'].length }.from(1).to(0)
+    end
+
+    it 'deletes a service key label' do
+      expect { delete_service_key_label }.to change { get_json("/service_keys_view_model/#{cc_service_key[:guid]}")['labels'].length }.from(1).to(0)
     end
   end
 

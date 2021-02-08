@@ -9,15 +9,17 @@ module AdminUI
       # service_bindings have to exist. Other record types are optional
       return result unless service_bindings['connected']
 
-      applications               = @cc.applications
-      events                     = @cc.events
-      organizations              = @cc.organizations
-      service_binding_operations = @cc.service_binding_operations
-      service_brokers            = @cc.service_brokers
-      service_instances          = @cc.service_instances
-      service_plans              = @cc.service_plans
-      services                   = @cc.services
-      spaces                     = @cc.spaces
+      applications                = @cc.applications
+      events                      = @cc.events
+      organizations               = @cc.organizations
+      service_binding_annotations = @cc.service_binding_annotations
+      service_binding_labels      = @cc.service_binding_labels
+      service_binding_operations  = @cc.service_binding_operations
+      service_brokers             = @cc.service_brokers
+      service_instances           = @cc.service_instances
+      service_plans               = @cc.service_plans
+      services                    = @cc.services
+      spaces                      = @cc.spaces
 
       events_connected = events['connected']
 
@@ -29,6 +31,54 @@ module AdminUI
       service_plan_hash              = Hash[service_plans['items'].map { |item| [item[:id], item] }]
       service_hash                   = Hash[services['items'].map { |item| [item[:id], item] }]
       space_hash                     = Hash[spaces['items'].map { |item| [item[:id], item] }]
+
+      service_binding_annotations_hash = {}
+      service_binding_annotations['items'].each do |service_binding_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        service_binding_guid = service_binding_annotation[:resource_guid]
+        service_binding_annotations_array = service_binding_annotations_hash[service_binding_guid]
+        if service_binding_annotations_array.nil?
+          service_binding_annotations_array = []
+          service_binding_annotations_hash[service_binding_guid] = service_binding_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         service_binding_annotation,
+            created_at_rfc3339: service_binding_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: service_binding_annotation[:updated_at].nil? ? nil : service_binding_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        service_binding_annotations_array.push(wrapper)
+      end
+
+      service_binding_labels_hash = {}
+      service_binding_labels['items'].each do |service_binding_label|
+        return result unless @running
+
+        Thread.pass
+
+        service_binding_guid = service_binding_label[:resource_guid]
+        service_binding_labels_array = service_binding_labels_hash[service_binding_guid]
+        if service_binding_labels_array.nil?
+          service_binding_labels_array = []
+          service_binding_labels_hash[service_binding_guid] = service_binding_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              service_binding_label,
+            created_at_rfc3339: service_binding_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: service_binding_label[:updated_at].nil? ? nil : service_binding_label[:updated_at].to_datetime.rfc3339
+          }
+
+        service_binding_labels_array.push(wrapper)
+      end
 
       event_counters = {}
       events['items'].each do |event|
@@ -63,7 +113,9 @@ module AdminUI
         space                     = service_instance.nil? ? nil : space_hash[service_instance[:space_id]]
         organization              = space.nil? ? nil : organization_hash[space[:organization_id]]
 
-        event_counter = event_counters[guid]
+        event_counter                    = event_counters[guid]
+        service_binding_annotation_array = service_binding_annotations_hash[guid] || []
+        service_binding_label_array      = service_binding_labels_hash[guid] || []
 
         row = []
 
@@ -183,7 +235,9 @@ module AdminUI
 
         hash[guid] =
           {
+            'annotations'               => service_binding_annotation_array,
             'application'               => application,
+            'labels'                    => service_binding_label_array,
             'organization'              => organization,
             'service'                   => service,
             'service_binding'           => service_binding,

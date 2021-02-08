@@ -13,6 +13,8 @@ module AdminUI
       organizations          = @cc.organizations
       service_brokers        = @cc.service_brokers
       service_instances      = @cc.service_instances
+      service_key_annotations = @cc.service_key_annotations
+      service_key_labels      = @cc.service_key_labels
       service_key_operations = @cc.service_key_operations
       service_plans          = @cc.service_plans
       services               = @cc.services
@@ -27,6 +29,54 @@ module AdminUI
       service_plan_hash          = Hash[service_plans['items'].map { |item| [item[:id], item] }]
       service_hash               = Hash[services['items'].map { |item| [item[:id], item] }]
       space_hash                 = Hash[spaces['items'].map { |item| [item[:id], item] }]
+
+      service_key_annotations_hash = {}
+      service_key_annotations['items'].each do |service_key_annotation|
+        return result unless @running
+
+        Thread.pass
+
+        service_key_guid = service_key_annotation[:resource_guid]
+        service_key_annotations_array = service_key_annotations_hash[service_key_guid]
+        if service_key_annotations_array.nil?
+          service_key_annotations_array = []
+          service_key_annotations_hash[service_key_guid] = service_key_annotations_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            annotation:         service_key_annotation,
+            created_at_rfc3339: service_key_annotation[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: service_key_annotation[:updated_at].nil? ? nil : service_key_annotation[:updated_at].to_datetime.rfc3339
+          }
+
+        service_key_annotations_array.push(wrapper)
+      end
+
+      service_key_labels_hash = {}
+      service_key_labels['items'].each do |service_key_label|
+        return result unless @running
+
+        Thread.pass
+
+        service_key_guid = service_key_label[:resource_guid]
+        service_key_labels_array = service_key_labels_hash[service_key_guid]
+        if service_key_labels_array.nil?
+          service_key_labels_array = []
+          service_key_labels_hash[service_key_guid] = service_key_labels_array
+        end
+
+        # Need rfc3339 dates
+        wrapper =
+          {
+            label:              service_key_label,
+            created_at_rfc3339: service_key_label[:created_at].to_datetime.rfc3339,
+            updated_at_rfc3339: service_key_label[:updated_at].nil? ? nil : service_key_label[:updated_at].to_datetime.rfc3339
+          }
+
+        service_key_labels_array.push(wrapper)
+      end
 
       event_counters = {}
       events['items'].each do |event|
@@ -60,7 +110,9 @@ module AdminUI
         space                 = service_instance.nil? ? nil : space_hash[service_instance[:space_id]]
         organization          = space.nil? ? nil : organization_hash[space[:organization_id]]
 
-        event_counter = event_counters[guid]
+        event_counter                = event_counters[guid]
+        service_key_annotation_array = service_key_annotations_hash[guid] || []
+        service_key_label_array      = service_key_labels_hash[guid] || []
 
         row = []
 
@@ -171,6 +223,8 @@ module AdminUI
 
         hash[guid] =
           {
+            'annotations'           => service_key_annotation_array,
+            'labels'                => service_key_label_array,
             'organization'          => organization,
             'service'               => service,
             'service_broker'        => service_broker,

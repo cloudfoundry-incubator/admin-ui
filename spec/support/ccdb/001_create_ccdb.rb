@@ -1960,6 +1960,39 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:service_binding_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :service_bindings, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_service_binding_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:service_binding_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :service_bindings, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_service_binding_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:service_binding_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
     create_table(:service_binding_operations, :ignore_index_errors=>true) do
       primary_key :id
       DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
@@ -1973,6 +2006,39 @@ Sequel.migration do
       index [:created_at]
       index [:updated_at]
       index [:service_binding_id], :name=>:svc_binding_id_index, :unique=>true
+    end
+    
+    create_table(:service_key_annotations, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :service_keys, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key, :size=>1000
+      String :value, :size=>5000
+      
+      index [:resource_guid], :name=>:fk_service_key_annotations_resource_guid_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
+    end
+    
+    create_table(:service_key_labels, :ignore_index_errors=>true) do
+      primary_key :id
+      String :guid, :text=>true, :null=>false
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at
+      foreign_key :resource_guid, :service_keys, :type=>String, :size=>255, :key=>[:guid]
+      String :key_prefix, :size=>253
+      String :key_name, :size=>63
+      String :value, :size=>63
+      
+      index [:resource_guid], :name=>:fk_service_key_labels_resource_guid_index
+      index [:key_prefix, :key_name, :value], :name=>:service_key_labels_compound_index
+      index [:created_at]
+      index [:guid], :unique=>true
+      index [:updated_at]
     end
     
     create_table(:service_key_operations, :ignore_index_errors=>true) do
