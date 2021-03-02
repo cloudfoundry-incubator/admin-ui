@@ -34,13 +34,13 @@ module AdminUI
       service_plan_visibilities_connected = service_plan_visibilities['connected']
       services_connected                  = service_plans['connected']
 
-      organization_hash             = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      service_dashboard_client_hash = Hash[service_dashboard_clients['items'].map { |item| [item[:service_broker_id], item] }]
-      service_hash                  = Hash[services['items'].map { |item| [item[:id], item] }]
-      service_instance_guid_hash    = Hash[service_instances['items'].map { |item| [item[:guid], item] }]
-      service_instance_id_hash      = Hash[service_instances['items'].map { |item| [item[:id], item] }]
-      service_plan_hash             = Hash[service_plans['items'].map { |item| [item[:id], item] }]
-      space_hash                    = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      organization_hash             = organizations['items'].map { |item| [item[:id], item] }.to_h
+      service_dashboard_client_hash = service_dashboard_clients['items'].map { |item| [item[:service_broker_id], item] }.to_h
+      service_hash                  = services['items'].map { |item| [item[:id], item] }.to_h
+      service_instance_guid_hash    = service_instances['items'].map { |item| [item[:guid], item] }.to_h
+      service_instance_id_hash      = service_instances['items'].map { |item| [item[:id], item] }.to_h
+      service_plan_hash             = service_plans['items'].map { |item| [item[:id], item] }.to_h
+      space_hash                    = spaces['items'].map { |item| [item[:id], item] }.to_h
 
       service_broker_annotations_hash = {}
       service_broker_annotations['items'].each do |service_broker_annotation|

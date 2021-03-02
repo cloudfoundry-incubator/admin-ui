@@ -64,13 +64,13 @@ module AdminUI
       tasks_connected                            = tasks['connected']
       users_connected                            = users['connected']
 
-      applications_hash       = Hash[applications['items'].map { |item| [item[:guid], item] }]
-      droplets_hash           = Hash[droplets['items'].map { |item| [item[:guid], item] }]
-      isolation_segments_hash = Hash[isolation_segments['items'].map { |item| [item[:guid], item] }]
-      quota_hash              = Hash[quotas['items'].map { |item| [item[:id], item] }]
+      applications_hash       = applications['items'].map { |item| [item[:guid], item] }.to_h
+      droplets_hash           = droplets['items'].map { |item| [item[:guid], item] }.to_h
+      isolation_segments_hash = isolation_segments['items'].map { |item| [item[:guid], item] }.to_h
+      quota_hash              = quotas['items'].map { |item| [item[:id], item] }.to_h
       routes_used_set         = route_mappings['items'].to_set { |route_mapping| route_mapping[:route_guid] }
-      spaces_guid_hash        = Hash[spaces['items'].map { |item| [item[:guid], item] }]
-      spaces_id_hash          = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      spaces_guid_hash        = spaces['items'].map { |item| [item[:guid], item] }.to_h
+      spaces_id_hash          = spaces['items'].map { |item| [item[:id], item] }.to_h
 
       latest_droplets = latest_app_guid_hash(droplets['items'])
       latest_packages = latest_app_guid_hash(packages['items'])

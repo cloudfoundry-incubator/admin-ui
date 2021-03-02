@@ -21,9 +21,9 @@ module AdminUI
       events_connected           = events['connected']
       revocable_tokens_connected = revocable_tokens['connected']
 
-      identity_zone_hash            = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
-      service_broker_hash           = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
-      service_dashboard_client_hash = Hash[service_dashboard_clients['items'].map { |item| [item[:uaa_id], item] }]
+      identity_zone_hash            = identity_zones['items'].map { |item| [item[:id], item] }.to_h
+      service_broker_hash           = service_brokers['items'].map { |item| [item[:id], item] }.to_h
+      service_dashboard_client_hash = service_dashboard_clients['items'].map { |item| [item[:uaa_id], item] }.to_h
 
       event_counters = {}
       events['items'].each do |event|

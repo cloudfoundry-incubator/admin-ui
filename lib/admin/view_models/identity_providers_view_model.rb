@@ -11,7 +11,7 @@ module AdminUI
 
       identity_zones = @cc.identity_zones
 
-      identity_zone_hash = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
+      identity_zone_hash = identity_zones['items'].map { |item| [item[:id], item] }.to_h
 
       items = []
       hash  = {}

@@ -342,8 +342,8 @@ module AdminUI
             json = @cc_rest_client.get_cc("/v2/apps/#{guid}")
             environment_variables = json['entity']['environment_json']
           end
-          environment_variables = Hash[environment_variables.sort_by { |key, _| key.downcase }]
-          return Hash[result.merge('environment_variables' => environment_variables).sort_by { |key, _| key }]
+          environment_variables = environment_variables.sort_by { |key, _| key.downcase }.to_h
+          return result.merge('environment_variables' => environment_variables).sort_by { |key, _| key }.to_h
         rescue => error
           @logger.error("Error during application #{guid} retrieval: #{error.inspect}")
           @logger.error(error.backtrace.join("\n"))
@@ -432,8 +432,8 @@ module AdminUI
           else
             environment_variables = @cc_rest_client.get_cc("/v2/config/environment_variable_groups/#{name}")
           end
-          environment_variables = Hash[environment_variables.sort_by { |key, _| key.downcase }]
-          return Hash[result.merge(variables: environment_variables).sort_by { |key, _| key }]
+          environment_variables = environment_variables.sort_by { |key, _| key.downcase }.to_h
+          return result.merge(variables: environment_variables).sort_by { |key, _| key }.to_h
         rescue => error
           @logger.error("Error during environment_group #{name} retrieval: #{error.inspect}")
           @logger.error(error.backtrace.join("\n"))
@@ -629,9 +629,9 @@ module AdminUI
           # TODO: v3 retrieve service binding
           json = @cc_rest_client.get_cc("/v2/service_bindings/#{guid}")
           credentials = json['entity']['credentials']
-          credentials = Hash[credentials.sort_by { |key, _| key.downcase }]
+          credentials = credentials.sort_by { |key, _| key.downcase }.to_h
           volume_mounts = json['entity']['volume_mounts']
-          return Hash[result.merge('credentials' => credentials, 'volume_mounts' => volume_mounts).sort_by { |key, _| key }]
+          return result.merge('credentials' => credentials, 'volume_mounts' => volume_mounts).sort_by { |key, _| key }.to_h
         rescue => error
           @logger.error("Error during service_binding #{guid} retrieval: #{error.inspect}")
           @logger.error(error.backtrace.join("\n"))
@@ -660,8 +660,8 @@ module AdminUI
           # TODO: v3 retrieve service instance
           json = @cc_rest_client.get_cc("/v2/#{type}/#{guid}")
           credentials = json['entity']['credentials']
-          credentials = Hash[credentials.sort_by { |key, _| key.downcase }]
-          return Hash[result.merge('credentials' => credentials).sort_by { |key, _| key }]
+          credentials = credentials.sort_by { |key, _| key.downcase }.to_h
+          return result.merge('credentials' => credentials).sort_by { |key, _| key }.to_h
         rescue => error
           @logger.error("Error during service_instance #{guid} retrieval: #{error.inspect}")
           @logger.error(error.backtrace.join("\n"))
@@ -681,8 +681,8 @@ module AdminUI
           # TODO: v3 retrieve service key
           json = @cc_rest_client.get_cc("/v2/service_keys/#{guid}")
           credentials = json['entity']['credentials']
-          credentials = Hash[credentials.sort_by { |key, _| key.downcase }]
-          return Hash[result.merge('credentials' => credentials).sort_by { |key, _| key }]
+          credentials = credentials.sort_by { |key, _| key.downcase }.to_h
+          return result.merge('credentials' => credentials).sort_by { |key, _| key }.to_h
         rescue => error
           @logger.error("Error during service_key #{guid} retrieval: #{error.inspect}")
           @logger.error(error.backtrace.join("\n"))

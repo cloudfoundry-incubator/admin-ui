@@ -14,7 +14,7 @@ module AdminUI
 
       spaces_connected = spaces['connected']
 
-      organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      organization_hash = organizations['items'].map { |item| [item[:id], item] }.to_h
 
       space_counters = {}
 

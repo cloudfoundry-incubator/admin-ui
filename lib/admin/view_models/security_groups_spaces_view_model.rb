@@ -15,9 +15,9 @@ module AdminUI
 
       organizations = @cc.organizations
 
-      organization_hash   = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      security_group_hash = Hash[security_groups['items'].map { |item| [item[:id], item] }]
-      space_hash          = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      organization_hash   = organizations['items'].map { |item| [item[:id], item] }.to_h
+      security_group_hash = security_groups['items'].map { |item| [item[:id], item] }.to_h
+      space_hash          = spaces['items'].map { |item| [item[:id], item] }.to_h
 
       items = []
       hash  = {}

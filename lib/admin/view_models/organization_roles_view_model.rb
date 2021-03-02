@@ -22,9 +22,9 @@ module AdminUI
                            users_cc['connected'] &&
                            users_uaa['connected']
 
-      organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      user_cc_hash      = Hash[users_cc['items'].map { |item| [item[:id], item] }]
-      user_uaa_hash     = Hash[users_uaa['items'].map { |item| [item[:id], item] }]
+      organization_hash = organizations['items'].map { |item| [item[:id], item] }.to_h
+      user_cc_hash      = users_cc['items'].map { |item| [item[:id], item] }.to_h
+      user_uaa_hash     = users_uaa['items'].map { |item| [item[:id], item] }.to_h
 
       items = []
       hash  = {}

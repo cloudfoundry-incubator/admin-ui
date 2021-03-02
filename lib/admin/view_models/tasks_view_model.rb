@@ -15,9 +15,9 @@ module AdminUI
       task_annotations = @cc.task_annotations
       task_labels      = @cc.task_labels
 
-      application_hash  = Hash[applications['items'].map { |item| [item[:guid], item] }]
-      organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      space_hash        = Hash[spaces['items'].map { |item| [item[:guid], item] }]
+      application_hash  = applications['items'].map { |item| [item[:guid], item] }.to_h
+      organization_hash = organizations['items'].map { |item| [item[:id], item] }.to_h
+      space_hash        = spaces['items'].map { |item| [item[:guid], item] }.to_h
 
       task_annotations_hash = {}
       task_annotations['items'].each do |task_annotation|

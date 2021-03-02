@@ -12,6 +12,9 @@ AllCops:
     - 'spec/support/ccdb/*'
     - 'spec/support/uaadb/*'
 
+Gemspec/DateAssignment:
+  Enabled: true
+
 Layout/BeginEndAlignment:
   Enabled: true
 
@@ -202,7 +205,13 @@ Performance/ConstantRegexp:
 Performance/MethodObjectAsBlock:
   Enabled: true
 
+Performance/RedundantEqualityComparisonBlock:
+  Enabled: true
+
 Performance/RedundantSortBlock:
+  Enabled: true
+
+Performance/RedundantSplitRegexpArgument:
   Enabled: true
 
 Performance/RedundantStringChars:
@@ -338,6 +347,9 @@ Style/GlobalStdStream:
   Enabled: true
 
 Style/HashAsLastArrayItem:
+  Enabled: true
+
+Style/HashConversion:
   Enabled: true
 
 Style/HashEachMethods:

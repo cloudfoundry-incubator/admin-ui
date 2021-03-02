@@ -19,7 +19,7 @@ module AdminUI
       organizations_private_domains_connected = organizations_private_domains['connected']
       routes_connected                        = routes['connected']
 
-      organization_hash = Hash[organizations['items'].map { |item| [item[:id], item] }]
+      organization_hash = organizations['items'].map { |item| [item[:id], item] }.to_h
 
       domain_annotations_hash = {}
       domain_annotations['items'].each do |domain_annotation|

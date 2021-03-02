@@ -19,10 +19,10 @@ module AdminUI
 
       events_connected = events['connected']
 
-      organization_hash   = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      service_broker_hash = Hash[service_brokers['items'].map { |item| [item[:id], item] }]
-      service_plan_hash   = Hash[service_plans['items'].map { |item| [item[:id], item] }]
-      service_hash        = Hash[services['items'].map { |item| [item[:id], item] }]
+      organization_hash   = organizations['items'].map { |item| [item[:id], item] }.to_h
+      service_broker_hash = service_brokers['items'].map { |item| [item[:id], item] }.to_h
+      service_plan_hash   = service_plans['items'].map { |item| [item[:id], item] }.to_h
+      service_hash        = services['items'].map { |item| [item[:id], item] }.to_h
 
       items = []
       hash  = {}

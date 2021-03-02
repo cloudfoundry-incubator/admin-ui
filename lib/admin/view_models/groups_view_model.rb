@@ -14,7 +14,7 @@ module AdminUI
 
       group_membership_connected = group_membership['connected']
 
-      identity_zone_hash = Hash[identity_zones['items'].map { |item| [item[:id], item] }]
+      identity_zone_hash = identity_zones['items'].map { |item| [item[:id], item] }.to_h
 
       group_membership_counters = {}
       group_membership['items'].each do |group_membership_entry|

@@ -13,8 +13,8 @@ module AdminUI
                            organizations['connected'] &&
                            organizations_isolation_segments['connected']
 
-      organization_hash       = Hash[organizations['items'].map { |item| [item[:guid], item] }]
-      isolation_segments_hash = Hash[isolation_segments['items'].map { |item| [item[:guid], item] }]
+      organization_hash       = organizations['items'].map { |item| [item[:guid], item] }.to_h
+      isolation_segments_hash = isolation_segments['items'].map { |item| [item[:guid], item] }.to_h
 
       items = []
       hash  = {}

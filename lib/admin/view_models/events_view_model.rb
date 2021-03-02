@@ -12,10 +12,10 @@ module AdminUI
       spaces        = @cc.spaces
       organizations = @cc.organizations
 
-      organization_guid_hash = Hash[organizations['items'].map { |item| [item[:guid], item] }]
-      organization_id_hash   = Hash[organizations['items'].map { |item| [item[:id], item] }]
-      space_guid_hash        = Hash[spaces['items'].map { |item| [item[:guid], item] }]
-      space_id_hash          = Hash[spaces['items'].map { |item| [item[:id], item] }]
+      organization_guid_hash = organizations['items'].map { |item| [item[:guid], item] }.to_h
+      organization_id_hash   = organizations['items'].map { |item| [item[:id], item] }.to_h
+      space_guid_hash        = spaces['items'].map { |item| [item[:guid], item] }.to_h
+      space_id_hash          = spaces['items'].map { |item| [item[:id], item] }.to_h
 
       items = []
       hash  = {}
