@@ -25,19 +25,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
       login('Administration')
     end
 
-    def check_allowscriptaccess_attribute(copy_node_id)
-      expect(@driver.find_element(id: copy_node_id).text).to eq('Copy')
-
-      # Optionally test allowscriptaccess field, but only if flash-based buttons, not if html5 buttons
-      @driver.manage.timeouts.implicit_wait = 0.1
-      begin
-        divs = @driver.find_elements(xpath: "//a[@id='#{copy_node_id}']/div")
-        expect(@driver.find_element(xpath: "//a[@id='#{copy_node_id}']/div/embed").attribute('allowscriptaccess')).to eq('sameDomain') unless divs.empty?
-      ensure
-        @driver.manage.timeouts.implicit_wait = implicit_wait
-      end
-    end
-
     def refresh_button
       # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code
       # @driver.find_element(id: 'MenuButtonRefresh').click
@@ -543,10 +530,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           it_behaves_like('has organizations table data')
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_OrganizationsTable_8')
-        end
-
         it 'has a checkbox in the first column' do
           check_checkbox_guid('OrganizationsTable', cc_organization[:guid])
         end
@@ -869,10 +852,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_OrganizationsLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('OrganizationsLabelsTable', "#{cc_organization[:guid]}/metadata/labels/#{cc_organization_label[:key_name]}?prefix=#{cc_organization_label[:key_prefix]}")
           end
@@ -929,10 +908,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_organization_annotation[:updated_at].to_datetime.rfc3339,
                                cc_organization_annotation[:value]
                              ])
-          end
-
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_OrganizationsAnnotationsTable_1')
           end
 
           it 'annotations subtable has a checkbox in the first column' do
@@ -1127,10 +1102,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'doppler dea' do
           it_behaves_like 'has spaces table data'
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_SpacesTable_7')
         end
 
         it 'has a checkbox in the first column' do
@@ -1413,10 +1384,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_SpacesLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('SpacesLabelsTable', "#{cc_space[:guid]}/metadata/labels/#{cc_space_label[:key_name]}?prefix=#{cc_space_label[:key_prefix]}")
           end
@@ -1473,10 +1440,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_space_annotation[:updated_at].to_datetime.rfc3339,
                                cc_space_annotation[:value]
                              ])
-          end
-
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_SpacesAnnotationsTable_1')
           end
 
           it 'annotations subtable has a checkbox in the first column' do
@@ -1643,10 +1606,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
         context 'doppler dea' do
           it_behaves_like('has applications table data')
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ApplicationsTable_12')
         end
 
         it 'has a checkbox in the first column' do
@@ -2012,10 +1971,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ApplicationsLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('ApplicationsLabelsTable', "#{cc_app[:guid]}/metadata/labels/#{cc_app_label[:key_name]}?prefix=#{cc_app_label[:key_prefix]}")
           end
@@ -2074,10 +2029,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ApplicationsAnnotationsTable_1')
-          end
-
           it 'annotations subtable has a checkbox in the first column' do
             check_checkbox_guid('ApplicationsAnnotationsTable', "#{cc_app[:guid]}/metadata/annotations/#{cc_app_annotation[:key]}?prefix=#{cc_app_annotation[:key_prefix]}")
           end
@@ -2130,10 +2081,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_app_environment_variable.keys.first,
                                "\"#{cc_app_environment_variable.values.first}\""
                              ])
-          end
-
-          it 'environment variables subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ApplicationsEnvironmentVariablesTable_1')
           end
 
           it 'environment variables subtable has a checkbox in the first column' do
@@ -2278,9 +2225,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                nil
                              ])
           end
-        end
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ApplicationInstancesTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -2446,10 +2390,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_RoutesTable_2')
-        end
-
         it 'has a checkbox in the first column' do
           check_checkbox_guid('RoutesTable', cc_route[:guid])
         end
@@ -2553,10 +2493,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_RoutesLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('RoutesLabelsTable', "#{cc_route[:guid]}/metadata/labels/#{cc_route_label[:key_name]}?prefix=#{cc_route_label[:key_prefix]}")
           end
@@ -2613,10 +2549,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_route_annotation[:updated_at].to_datetime.rfc3339,
                                cc_route_annotation[:value]
                              ])
-          end
-
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_RoutesAnnotationsTable_1')
           end
 
           it 'annotations subtable has a checkbox in the first column' do
@@ -2716,10 +2648,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_route[:guid],
                              "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_RouteMappingsTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -2869,10 +2797,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_broker[:updated_at].to_datetime.rfc3339,
                              "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ServiceInstancesTable_4')
         end
 
         it 'has a checkbox in the first column' do
@@ -3046,10 +2970,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServiceInstancesLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('ServiceInstancesLabelsTable', "#{cc_service_instance[:guid]}/metadata/labels/#{cc_service_instance_label[:key_name]}?prefix=#{cc_service_instance_label[:key_prefix]}")
           end
@@ -3108,10 +3028,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServiceInstancesAnnotationsTable_1')
-          end
-
           it 'annotations subtable has a checkbox in the first column' do
             check_checkbox_guid('ServiceInstancesAnnotationsTable', "#{cc_service_instance[:guid]}/metadata/annotations/#{cc_service_instance_annotation[:key]}?prefix=#{cc_service_instance_annotation[:key_prefix]}")
           end
@@ -3163,10 +3079,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_service_instance_credential.keys.first,
                                "\"#{cc_service_instance_credential.values.first}\""
                              ])
-          end
-
-          it 'credentials subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServiceInstancesCredentialsTable_0')
           end
 
           context 'manage credentials subtable' do
@@ -3276,10 +3188,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              "#{cc_organization[:name]}/#{cc_space[:name]}",
                              "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_SharedServiceInstancesTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -3462,10 +3370,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ServiceBindingsTable_1')
-        end
-
         it 'has a checkbox in the first column' do
           check_checkbox_guid('ServiceBindingsTable', cc_service_binding[:guid])
         end
@@ -3578,10 +3482,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServiceBindingsLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('ServiceBindingsLabelsTable', "#{cc_service_binding[:guid]}/metadata/labels/#{cc_service_binding_label[:key_name]}?prefix=#{cc_service_binding_label[:key_prefix]}")
           end
@@ -3640,10 +3540,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServiceBindingsAnnotationsTable_1')
-          end
-
           it 'annotations subtable has a checkbox in the first column' do
             check_checkbox_guid('ServiceBindingsAnnotationsTable', "#{cc_service_binding[:guid]}/metadata/annotations/#{cc_service_binding_annotation[:key]}?prefix=#{cc_service_binding_annotation[:key_prefix]}")
           end
@@ -3697,10 +3593,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'credentials subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServiceBindingsCredentialsTable_0')
-          end
-
           context 'manage credentials subtable' do
             context 'Standard buttons' do
               let(:filename) { 'service_binding_credentials' }
@@ -3730,10 +3622,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_service_binding_volume_mounts[0]['device_type'],
                                cc_service_binding_volume_mounts[0]['mode']
                              ])
-          end
-
-          it 'volume mounts subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServiceBindingsVolumeMountsTable_0')
           end
 
           context 'manage volume mounts subtable' do
@@ -3844,10 +3732,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ServiceKeysTable_1')
-        end
-
         it 'has a checkbox in the first column' do
           check_checkbox_guid('ServiceKeysTable', cc_service_key[:guid])
         end
@@ -3955,10 +3839,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServiceKeysLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('ServiceKeysLabelsTable', "#{cc_service_key[:guid]}/metadata/labels/#{cc_service_key_label[:key_name]}?prefix=#{cc_service_key_label[:key_prefix]}")
           end
@@ -4017,10 +3897,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServiceKeysAnnotationsTable_1')
-          end
-
           it 'annotations subtable has a checkbox in the first column' do
             check_checkbox_guid('ServiceKeysAnnotationsTable', "#{cc_service_key[:guid]}/metadata/annotations/#{cc_service_key_annotation[:key]}?prefix=#{cc_service_key_annotation[:key_prefix]}")
           end
@@ -4072,10 +3948,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_service_key_credential.keys.first,
                                "\"#{cc_service_key_credential.values.first}\""
                              ])
-          end
-
-          it 'credentials subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServiceKeysCredentialsTable_0')
           end
 
           context 'manage credentials subtable' do
@@ -4179,10 +4051,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_broker[:updated_at].to_datetime.rfc3339,
                              "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_RouteBindingsTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -4295,10 +4163,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_RouteBindingsLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('RouteBindingsLabelsTable', "#{cc_route_binding[:guid]}/metadata/labels/#{cc_route_binding_label[:key_name]}?prefix=#{cc_route_binding_label[:key_prefix]}")
           end
@@ -4355,10 +4219,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_route_binding_annotation[:updated_at].to_datetime.rfc3339,
                                cc_route_binding_annotation[:value]
                              ])
-          end
-
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_RouteBindingsAnnotationsTable_1')
           end
 
           it 'annotations subtable has a checkbox in the first column' do
@@ -4470,10 +4330,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_TasksTable_1')
-        end
-
         it 'has a checkbox in the first column' do
           check_checkbox_guid('TasksTable', cc_task[:guid])
         end
@@ -4571,10 +4427,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_TasksLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('TasksLabelsTable', "#{cc_task[:guid]}/metadata/labels/#{cc_task_label[:key_name]}?prefix=#{cc_task_label[:key_prefix]}")
           end
@@ -4631,10 +4483,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_task_annotation[:updated_at].to_datetime.rfc3339,
                                cc_task_annotation[:value]
                              ])
-          end
-
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_TasksAnnotationsTable_1')
           end
 
           it 'annotations subtable has a checkbox in the first column' do
@@ -4721,10 +4569,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_user[:username],
                              uaa_user[:id]
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_OrganizationRolesTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -4829,10 +4673,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_user[:username],
                              uaa_user[:id]
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_SpaceRolesTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -4944,10 +4784,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              cc_service_broker[:name]
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ClientsTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -5116,10 +4952,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_UsersTable_8')
         end
 
         it 'has a checkbox in the first column' do
@@ -5401,10 +5233,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_UsersLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('UsersLabelsTable', "#{cc_user[:guid]}/metadata/labels/#{cc_user_label[:key_name]}?prefix=#{cc_user_label[:key_prefix]}")
           end
@@ -5461,10 +5289,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_user_annotation[:updated_at].to_datetime.rfc3339,
                                cc_user_annotation[:value]
                              ])
-          end
-
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_UsersAnnotationsTable_1')
           end
 
           it 'annotations subtable has a checkbox in the first column' do
@@ -5570,10 +5394,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_GroupsTable_1')
-        end
-
         it 'has a checkbox in the first column' do
           check_checkbox_guid('GroupsTable', uaa_group[:id])
         end
@@ -5673,10 +5493,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_user[:id],
                              uaa_group_membership[:added].to_datetime.rfc3339
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_GroupMembersTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -5785,10 +5601,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ApprovalsTable_0')
-        end
-
         context 'manage approvals' do
           context 'Standard buttons' do
             let(:filename) { 'approvals' }
@@ -5875,10 +5687,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              uaa_user[:username],
                              uaa_revocable_token[:user_id]
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_RevocableTokensTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -5983,10 +5791,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatBoolean(#{cc_buildpack[:locked]})"),
                              '1'
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_BuildpacksTable_6')
         end
 
         it 'has a checkbox in the first column' do
@@ -6180,10 +5984,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_BuildpacksLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('BuildpacksLabelsTable', "#{cc_buildpack[:guid]}/metadata/labels/#{cc_buildpack_label[:key_name]}?prefix=#{cc_buildpack_label[:key_prefix]}")
           end
@@ -6240,10 +6040,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_buildpack_annotation[:updated_at].to_datetime.rfc3339,
                                cc_buildpack_annotation[:value]
                              ])
-          end
-
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_BuildpacksAnnotationsTable_1')
           end
 
           it 'annotations subtable has a checkbox in the first column' do
@@ -6321,10 +6117,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              '1'
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_DomainsTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -6423,10 +6215,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_DomainsLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('DomainsLabelsTable', "#{cc_domain[:guid]}/metadata/labels/#{cc_domain_label[:key_name]}?prefix=#{cc_domain_label[:key_prefix]}")
           end
@@ -6485,10 +6273,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_DomainsAnnotationsTable_1')
-          end
-
           it 'annotations subtable has a checkbox in the first column' do
             check_checkbox_guid('DomainsAnnotationsTable', "#{cc_domain[:guid]}/metadata/annotations/#{cc_domain_annotation[:key]}?prefix=#{cc_domain_annotation[:key_prefix]}")
           end
@@ -6542,10 +6326,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  cc_organization[:name],
                                  cc_organization[:guid]
                                ])
-            end
-
-            it 'has allowscriptaccess property set to sameDomain' do
-              check_allowscriptaccess_attribute('Buttons_DomainsOrganizationsTable_1')
             end
 
             it 'has a checkbox in the first column' do
@@ -6620,10 +6400,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_feature_flag[:updated_at].to_datetime.rfc3339,
                              @driver.execute_script("return Format.formatBoolean(#{cc_feature_flag[:enabled]})")
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_FeatureFlagsTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -6750,10 +6526,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatBoolean(#{cc_quota_definition[:non_basic_services_allowed]})"),
                              '1'
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_QuotasTable_2')
         end
 
         it 'has a checkbox in the first column' do
@@ -6887,10 +6659,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_SpaceQuotasTable_2')
-        end
-
         it 'has a checkbox in the first column' do
           check_checkbox_guid('SpaceQuotasTable', cc_space_quota_definition[:guid])
         end
@@ -7013,10 +6781,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_StacksTable_1')
-        end
-
         it 'has a checkbox in the first column' do
           check_checkbox_guid('StacksTable', cc_stack[:guid])
         end
@@ -7095,10 +6859,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_StacksLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('StacksLabelsTable', "#{cc_stack[:guid]}/metadata/labels/#{cc_stack_label[:key_name]}?prefix=#{cc_stack_label[:key_prefix]}")
           end
@@ -7155,10 +6915,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_stack_annotation[:updated_at].to_datetime.rfc3339,
                                cc_stack_annotation[:value]
                              ])
-          end
-
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_StacksAnnotationsTable_1')
           end
 
           it 'annotations subtable has a checkbox in the first column' do
@@ -7246,10 +7002,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_event_space[:actor],
                              "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_EventsTable_0')
         end
 
         context 'manage events' do
@@ -7531,10 +7283,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ServiceBrokersTable_2')
-        end
-
         it 'has a checkbox in the first column' do
           check_checkbox_guid('ServiceBrokersTable', cc_service_broker[:guid])
         end
@@ -7645,10 +7393,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServiceBrokersLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('ServiceBrokersLabelsTable', "#{cc_service_broker[:guid]}/metadata/labels/#{cc_service_broker_label[:key_name]}?prefix=#{cc_service_broker_label[:key_prefix]}")
           end
@@ -7705,10 +7449,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_service_broker_annotation[:updated_at].to_datetime.rfc3339,
                                cc_service_broker_annotation[:value]
                              ])
-          end
-
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServiceBrokersAnnotationsTable_1')
           end
 
           it 'annotations subtable has a checkbox in the first column' do
@@ -7854,10 +7594,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ServicesTable_2')
-        end
-
         it 'has a checkbox in the first column' do
           check_checkbox_guid('ServicesTable', cc_service[:guid])
         end
@@ -7985,10 +7721,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServicesLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('ServicesLabelsTable', "#{cc_service[:guid]}/metadata/labels/#{cc_service_offering_label[:key_name]}?prefix=#{cc_service_offering_label[:key_prefix]}")
           end
@@ -8045,10 +7777,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_service_offering_annotation[:updated_at].to_datetime.rfc3339,
                                cc_service_offering_annotation[:value]
                              ])
-          end
-
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServicesAnnotationsTable_1')
           end
 
           it 'annotations subtable has a checkbox in the first column' do
@@ -8181,10 +7909,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_service_broker[:created_at].to_datetime.rfc3339,
                              cc_service_broker[:updated_at].to_datetime.rfc3339
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ServicePlansTable_3')
         end
 
         it 'has a checkbox in the first column' do
@@ -8338,10 +8062,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServicePlansLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('ServicePlansLabelsTable', "#{cc_service_plan[:guid]}/metadata/labels/#{cc_service_plan_label[:key_name]}?prefix=#{cc_service_plan_label[:key_prefix]}")
           end
@@ -8398,10 +8118,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_service_plan_annotation[:updated_at].to_datetime.rfc3339,
                                cc_service_plan_annotation[:value]
                              ])
-          end
-
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_ServicePlansAnnotationsTable_1')
           end
 
           it 'annotations subtable has a checkbox in the first column' do
@@ -8533,10 +8249,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_organization[:created_at].to_datetime.rfc3339,
                              cc_organization[:updated_at].to_datetime.rfc3339
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ServicePlanVisibilitiesTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -8675,10 +8387,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_IdentityZonesTable_1')
-        end
-
         context 'manage identity zones' do
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'Buttons_IdentityZonesTable_0').text).to eq('Delete')
@@ -8804,10 +8512,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_IdentityProvidersTable_2')
-        end
-
         context 'manage identity providers' do
           it 'has a Require Password Change for Users button' do
             expect(@driver.find_element(id: 'Buttons_IdentityProvidersTable_0').text).to eq('Require Password Change for Users')
@@ -8926,10 +8630,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ServiceProvidersTable_1')
-        end
-
         it 'has a checkbox in the first column' do
           check_checkbox_guid('ServiceProvidersTable', uaa_service_provider[:id])
         end
@@ -9026,10 +8726,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_MFAProvidersTable_1')
-        end
-
         context 'manage MFA providers' do
           it 'has a Delete button' do
             expect(@driver.find_element(id: 'Buttons_MFAProvidersTable_0').text).to eq('Delete')
@@ -9121,10 +8817,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              '1'
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_SecurityGroupsTable_6')
         end
 
         it 'has a checkbox in the first column' do
@@ -9331,10 +9023,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'rules subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_SecurityGroupsRulesTable_0')
-          end
-
           context 'manage rules subtable' do
             context 'Standard buttons' do
               let(:filename) { 'security_group_rules' }
@@ -9393,10 +9081,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_space[:updated_at].to_datetime.rfc3339,
                              "#{cc_organization[:name]}/#{cc_space[:name]}"
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_SecurityGroupsSpacesTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -9508,10 +9192,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_StagingSecurityGroupsSpacesTable_1')
-        end
-
         it 'has a checkbox in the first column' do
           check_checkbox_guid('StagingSecurityGroupsSpacesTable', "#{cc_security_group[:guid]}/#{cc_space[:guid]}")
         end
@@ -9611,10 +9291,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              '1'
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_IsolationSegmentsTable_3')
         end
 
         it 'has a checkbox in the first column' do
@@ -9743,10 +9419,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              ])
           end
 
-          it 'labels subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_IsolationSegmentsLabelsTable_1')
-          end
-
           it 'labels subtable has a checkbox in the first column' do
             check_checkbox_guid('IsolationSegmentsLabelsTable', "#{cc_isolation_segment[:guid]}/metadata/labels/#{cc_isolation_segment_label[:key_name]}?prefix=#{cc_isolation_segment_label[:key_prefix]}")
           end
@@ -9803,10 +9475,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_isolation_segment_annotation[:updated_at].to_datetime.rfc3339,
                                cc_isolation_segment_annotation[:value]
                              ])
-          end
-
-          it 'annotations subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_IsolationSegmentsAnnotationsTable_1')
           end
 
           it 'annotations subtable has a checkbox in the first column' do
@@ -9889,10 +9557,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_isolation_segment[:name],
                              cc_isolation_segment[:guid]
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_OrganizationsIsolationSegmentsTable_1')
         end
 
         it 'has a checkbox in the first column' do
@@ -9982,10 +9646,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_EnvironmentGroupsTable_0')
-        end
-
         context 'manage environment groups' do
           context 'Standard buttons' do
             let(:filename) { 'environment_groups' }
@@ -10032,10 +9692,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                cc_env_group_variable.keys.first,
                                "\"#{cc_env_group_variable.values.first}\""
                              ])
-          end
-
-          it 'variables subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_EnvironmentGroupsVariablesTable_0')
           end
 
           context 'manage variables subtable' do
@@ -10093,10 +9749,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatNumber(#{DopplerHelper::DEA_VALUE_METRICS['remaining_memory']})"),
                              @driver.execute_script("return Format.formatNumber(#{DopplerHelper::DEA_VALUE_METRICS['remaining_disk']})")
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_DEAsTable_0')
         end
 
         context 'manage DEAs' do
@@ -10192,10 +9844,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_CellsTable_0')
-        end
-
         context 'manage cells' do
           context 'Standard buttons' do
             let(:filename) { 'cells' }
@@ -10277,10 +9925,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_CloudControllersTable_0')
-        end
-
         context 'manage cloud controllers' do
           context 'Standard buttons' do
             let(:filename) { 'cloud_controllers' }
@@ -10345,10 +9989,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script("return Format.formatNumber(#{DopplerHelper::ANALYZER_VALUE_METRICS['numCPUS']})"),
                              @driver.execute_script("return Format.formatNumber(#{AdminUI::Utils.convert_bytes_to_megabytes(DopplerHelper::ANALYZER_VALUE_METRICS['memoryStats.numBytesAllocated'])})")
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_HealthManagersTable_0')
         end
 
         context 'manage health managers' do
@@ -10432,10 +10072,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                            ])
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_GatewaysTable_0')
-        end
-
         context 'manage service gateways' do
           context 'Standard buttons' do
             let(:filename) { 'gateways' }
@@ -10490,10 +10126,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                varz_provisioner['nodes'].keys[0],
                                @driver.execute_script("return Format.formatNumber(#{varz_provisioner['nodes'][varz_provisioner['nodes'].keys[0]]['available_capacity']})")
                              ])
-          end
-
-          it 'nodes subtable has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_GatewaysNodesTable_0')
           end
 
           context 'manage nodes subtable' do
@@ -10568,10 +10200,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_RoutersTable_0')
-        end
-
         context 'manage routers' do
           context 'Standard buttons' do
             let(:filename) { 'routers' }
@@ -10637,10 +10265,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                ])
             end
 
-            it 'top10 subtable has allowscriptaccess property set to sameDomain' do
-              check_allowscriptaccess_attribute('Buttons_RoutersTop10ApplicationsTable_0')
-            end
-
             context 'manage top10 applications subtable' do
               context 'Standard buttons' do
                 let(:filename) { 'router_applications' }
@@ -10698,10 +10322,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              @driver.execute_script('return Constants.STATUS__RUNNING'),
                              varz_cloud_controller['start']
                            ])
-        end
-
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_ComponentsTable_2')
         end
 
         context 'manage components' do
@@ -10787,10 +10407,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           expect(@driver.find_element(id: 'LogContents').text).to eq(log_file_displayed_contents)
         end
 
-        it 'has allowscriptaccess property set to sameDomain' do
-          check_allowscriptaccess_attribute('Buttons_LogsTable_0')
-        end
-
         context 'manage logs' do
           context 'Standard buttons' do
             let(:filename) { 'logs' }
@@ -10832,10 +10448,6 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           context 'doppler dea' do
             it_behaves_like('it has a table')
-          end
-
-          it 'has allowscriptaccess property set to sameDomain' do
-            check_allowscriptaccess_attribute('Buttons_StatsTable_1')
           end
 
           context 'manage stats' do
