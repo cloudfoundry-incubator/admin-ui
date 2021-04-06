@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby '3.0.0'
+ruby '3.0.1'
 
 gem 'faye-websocket', '0.11.0'
 gem 'membrane', '1.1.0'
