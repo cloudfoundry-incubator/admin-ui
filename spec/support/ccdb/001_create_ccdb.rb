@@ -1550,6 +1550,20 @@ Sequel.migration do
       index [:updated_at]
     end
     
+    create_table(:spaces_application_supporters, :ignore_index_errors=>true) do
+      primary_key :spaces_application_supporters_pk
+      String :role_guid, :size=>255
+      foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
+      foreign_key :user_id, :users, :null=>false, :key=>[:id]
+      DateTime :created_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      DateTime :updated_at, :default=>Sequel::CURRENT_TIMESTAMP, :null=>false
+      
+      index [:created_at]
+      index [:role_guid]
+      index [:updated_at]
+      index [:space_id, :user_id], :name=>:spaces_application_supporters_user_space_index, :unique=>true
+    end
+    
     create_table(:spaces_auditors, :ignore_index_errors=>true) do
       foreign_key :space_id, :spaces, :null=>false, :key=>[:id]
       foreign_key :user_id, :users, :null=>false, :key=>[:id]

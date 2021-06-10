@@ -21,6 +21,9 @@ Layout/BeginEndAlignment:
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
 
+Lint/EmptyInPattern:
+  Enabled: true
+
 Layout/HashAlignment:
   EnforcedColonStyle: table
   EnforcedHashRocketStyle: table
@@ -373,7 +376,13 @@ Style/HashTransformValues:
 Style/IfWithBooleanLiteralBranches:
   Enabled: true
 
+Style/InPatternThen:
+  Enabled: true
+
 Style/KeywordParametersOrder:
+  Enabled: true
+
+Style/MultilineInPatternThen:
   Enabled: true
 
 Style/NegatedIfElseCondition:
@@ -384,6 +393,9 @@ Style/NilLambda:
 
 Style/OptionalBooleanParameter:
   Enabled: false
+
+Style/QuotedSymbols:
+  Enabled: true
 
 Style/RedundantArgument:
   Enabled: true
