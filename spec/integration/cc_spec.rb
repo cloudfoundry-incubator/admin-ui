@@ -504,6 +504,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.spaces['items'].length).to eq(0)
     end
 
+    it 'clears the spaces application supporters cache' do
+      expect(cc.spaces_application_supporters['items'].length).to eq(1)
+      cc_clear_spaces_cache_stub(config)
+      cc.invalidate_spaces_application_supporters
+      expect(cc.spaces_application_supporters['items'].length).to eq(0)
+    end
+
     it 'clears the spaces auditors cache' do
       expect(cc.spaces_auditors['items'].length).to eq(1)
       cc_clear_spaces_cache_stub(config)
@@ -1162,6 +1169,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected spaces' do
       let(:results)  { cc.spaces }
       let(:expected) { cc_space }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected spaces application supporters' do
+      let(:results)  { cc.spaces_application_supporters }
+      let(:expected) { cc_space_application_supporter }
 
       it_behaves_like('common cc retrieval')
     end

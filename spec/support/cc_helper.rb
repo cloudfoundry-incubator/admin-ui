@@ -454,6 +454,7 @@ module CCHelper
   def cc_clear_users_cache_stub(config)
     sql(config.ccdb_uri, 'DELETE FROM user_annotations')
     sql(config.ccdb_uri, 'DELETE FROM user_labels')
+    sql(config.ccdb_uri, 'DELETE FROM spaces_application_supporters')
     sql(config.ccdb_uri, 'DELETE FROM spaces_auditors')
     sql(config.ccdb_uri, 'DELETE FROM spaces_developers')
     sql(config.ccdb_uri, 'DELETE FROM spaces_managers')
@@ -1863,6 +1864,17 @@ module CCHelper
     }
   end
 
+  def cc_space_application_supporter
+    {
+      created_at:                       unique_time('cc_space_application_supporter_created'),
+      role_guid:                        'SpaceAppSupporter1',
+      spaces_application_supporters_pk: unique_id('cc_space_application_supporter'),
+      space_id:                         cc_space[:id],
+      updated_at:                       unique_time('cc_space_application_supporter_updated'),
+      user_id:                          cc_user[:id]
+    }
+  end
+
   def cc_space_auditor
     {
       created_at:         unique_time('cc_space_auditor_created'),
@@ -2313,6 +2325,7 @@ module CCHelper
                [:services,                         cc_service],
                [:service_offering_annotations,     cc_service_offering_annotation],
                [:service_offering_labels,          cc_service_offering_label],
+               [:spaces_application_supporters,    cc_space_application_supporter],
                [:spaces_auditors,                  cc_space_auditor],
                [:spaces_developers,                cc_space_developer],
                [:spaces_managers,                  cc_space_manager],
@@ -3468,6 +3481,15 @@ module CCHelper
         cc_space_not_found
       else
         cc_clear_spaces_cache_stub(config)
+        Accepted.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/roles/#{cc_space_application_supporter[:role_guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @cc_spaces_deleted
+        cc_space_not_found
+      else
+        sql(config.ccdb_uri, "DELETE FROM spaces_application_supporters WHERE space_id = '#{cc_space[:id]}' AND user_id = '#{cc_user[:id]}'")
         Accepted.new({})
       end
     end

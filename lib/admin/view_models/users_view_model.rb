@@ -10,14 +10,15 @@ module AdminUI
       organizations_managers         = @cc.organizations_managers
       organizations_users            = @cc.organizations_users
       spaces                         = @cc.spaces
+      spaces_application_supporters  = @cc.spaces_application_supporters
       spaces_auditors                = @cc.spaces_auditors
-      spaces_managers                = @cc.spaces_developers
-      spaces_developers              = @cc.spaces_managers
+      spaces_developers              = @cc.spaces_developers
+      spaces_managers                = @cc.spaces_managers
       users_cc                       = @cc.users_cc
       users_uaa                      = @cc.users_uaa
 
       # organizations, organizations_auditors, organizations_billing_managers, organizations_managers, organizations_users,
-      # spaces, spaces_auditors, spaces_developers, spaces_managers,
+      # spaces, spaces_application_supporters, spaces_auditors, spaces_developers, spaces_managers,
       # users_cc and users_uaa have to exist. Other record types are optional
       return result unless organizations['connected'] &&
                            organizations_auditors['connected'] &&
@@ -25,6 +26,7 @@ module AdminUI
                            organizations_managers['connected'] &&
                            organizations_users['connected'] &&
                            spaces['connected'] &&
+                           spaces_application_supporters['connected'] &&
                            spaces_auditors['connected'] &&
                            spaces_developers['connected'] &&
                            spaces_managers['connected'] &&
@@ -152,6 +154,7 @@ module AdminUI
       users_organizations_billing_managers = {}
       users_organizations_managers         = {}
       users_organizations_users            = {}
+      users_spaces_application_supporters   = {}
       users_spaces_auditors                = {}
       users_spaces_developers              = {}
       users_spaces_managers                = {}
@@ -160,6 +163,7 @@ module AdminUI
       count_roles(organizations_billing_managers, users_organizations_billing_managers)
       count_roles(organizations_managers,         users_organizations_managers)
       count_roles(organizations_users,            users_organizations_users)
+      count_roles(spaces_application_supporters,  users_spaces_application_supporters)
       count_roles(spaces_auditors,                users_spaces_auditors)
       count_roles(spaces_developers,              users_spaces_developers)
       count_roles(spaces_managers,                users_spaces_managers)
@@ -289,6 +293,7 @@ module AdminUI
           organization_billing_managers = users_organizations_billing_managers[id] || 0
           organization_managers         = users_organizations_managers[id] || 0
           organization_users            = users_organizations_users[id] || 0
+          spc_application_supporters    = users_spaces_application_supporters[id] || 0
           spc_auditors                  = users_spaces_auditors[id] || 0
           spc_developers                = users_spaces_developers[id] || 0
           spc_managers                  = users_spaces_managers[id] || 0
@@ -299,7 +304,8 @@ module AdminUI
           row.push(organization_managers)
           row.push(organization_users)
 
-          row.push(spc_auditors + spc_developers + spc_managers)
+          row.push(spc_application_supporters + spc_auditors + spc_developers + spc_managers)
+          row.push(spc_application_supporters)
           row.push(spc_auditors)
           row.push(spc_developers)
           row.push(spc_managers)
@@ -314,7 +320,7 @@ module AdminUI
             row.push(nil)
           end
         else
-          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+          row.push(nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)
         end
 
         items.push(row)
@@ -332,7 +338,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..32).to_a, (1..15).to_a << 32)
+      result(true, items, hash, (1..33).to_a, (1..15).to_a << 33)
     end
 
     private

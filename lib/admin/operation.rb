@@ -365,6 +365,7 @@ module AdminUI
         @cc.invalidate_service_brokers
         @cc.invalidate_space_quota_definitions
         @cc.invalidate_spaces
+        @cc.invalidate_spaces_application_supporters
         @cc.invalidate_spaces_auditors
         @cc.invalidate_spaces_developers
         @cc.invalidate_spaces_managers
@@ -882,6 +883,7 @@ module AdminUI
       @client.delete_cc(url)
       @cc.invalidate_security_groups_spaces
       @cc.invalidate_spaces
+      @cc.invalidate_spaces_application_supporters
       @cc.invalidate_spaces_auditors
       @cc.invalidate_spaces_developers
       @cc.invalidate_spaces_managers
@@ -975,6 +977,7 @@ module AdminUI
             end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
+      @cc.invalidate_spaces_application_supporters if role == 'application_supporters'
       @cc.invalidate_spaces_auditors if role == 'auditors'
       @cc.invalidate_spaces_developers if role == 'developers'
       @cc.invalidate_spaces_managers if role == 'managers'

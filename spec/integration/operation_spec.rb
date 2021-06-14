@@ -2235,6 +2235,10 @@ describe AdminUI::Operation, type: :integration do
     end
 
     context 'manage space roles' do
+      def delete_space_application_supporter
+        operation.delete_space_role(cc_space[:guid], cc_space_application_supporter[:role_guid], 'application_supporters', cc_user[:guid])
+      end
+
       def delete_space_auditor
         operation.delete_space_role(cc_space[:guid], cc_space_auditor[:role_guid], 'auditors', cc_user[:guid])
       end
@@ -2245,6 +2249,10 @@ describe AdminUI::Operation, type: :integration do
 
       def delete_space_manager
         operation.delete_space_role(cc_space[:guid], cc_space_manager[:role_guid], 'managers', cc_user[:guid])
+      end
+
+      it 'deletes space application supporter role' do
+        expect { delete_space_application_supporter }.to change { cc.spaces_application_supporters['items'].length }.from(1).to(0)
       end
 
       it 'deletes space auditor role' do
@@ -2269,6 +2277,10 @@ describe AdminUI::Operation, type: :integration do
           expect(exception.cf_error_code).to eq('CF-SpaceNotFound')
           expect(exception.http_code).to eq(404)
           expect(exception.message).to eq("The app space could not be found: #{cc_space[:guid]}")
+        end
+
+        it 'failed deleting space application supporter role due to deleted space' do
+          expect { delete_space_application_supporter }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_space_not_found(exception) }
         end
 
         it 'failed deleting space auditor role due to deleted space' do

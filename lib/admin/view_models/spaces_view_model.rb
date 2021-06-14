@@ -27,6 +27,7 @@ module AdminUI
       space_annotations              = @cc.space_annotations
       space_labels                   = @cc.space_labels
       space_quotas                   = @cc.space_quota_definitions
+      spaces_application_supporters  = @cc.spaces_application_supporters
       spaces_auditors                = @cc.spaces_auditors
       spaces_developers              = @cc.spaces_developers
       spaces_managers                = @cc.spaces_managers
@@ -45,7 +46,7 @@ module AdminUI
       security_groups_spaces_connected         = security_groups_spaces['connected']
       service_brokers_connected                = service_brokers['connected']
       service_instances_connected              = service_instances['connected']
-      spaces_roles_connected                   = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
+      spaces_roles_connected                   = spaces_application_supporters['connected'] && spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
       staging_security_groups_spaces_connected = staging_security_groups_spaces['connected']
       tasks_connected                          = tasks['connected']
       users_connected                          = users['connected']
@@ -139,6 +140,7 @@ module AdminUI
       space_process_counters_hash            = {}
       space_task_counters                    = {}
 
+      count_space_roles(spaces_application_supporters, space_role_counters)
       count_space_roles(spaces_auditors, space_role_counters)
       count_space_roles(spaces_developers, space_role_counters)
       count_space_roles(spaces_managers, space_role_counters)

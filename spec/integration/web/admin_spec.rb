@@ -486,7 +486,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                '1',
                                '1',
                                '4',
-                               '3',
+                               '4',
                                '1',
                                cc_quota_definition[:name],
                                '1',
@@ -787,7 +787,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'Events Target',                  tag:   'a', value: '1' },
                               { label: 'Spaces',                         tag:   'a', value: '1' },
                               { label: 'Organization Roles',             tag:   'a', value: '4' },
-                              { label: 'Space Roles',                    tag:   'a', value: '3' },
+                              { label: 'Space Roles',                    tag:   'a', value: '4' },
                               { label: 'Default Users',                  tag:   'a', value: '1' },
                               { label: 'Quota',                          tag:   'a', value: cc_quota_definition[:name] },
                               { label: 'Quota GUID',                     tag:   nil, value: cc_quota_definition[:guid] },
@@ -1064,7 +1064,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                @driver.execute_script("return Format.formatBoolean(#{cc_space[:allow_ssh]})"),
                                '1',
                                '1',
-                               '3',
+                               '4',
                                '1',
                                cc_space_quota_definition[:name],
                                '1',
@@ -1323,7 +1323,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                               { label: 'SSH Allowed',             tag:   nil, value: @driver.execute_script("return Format.formatBoolean(#{cc_space[:allow_ssh]})") },
                               { label: 'Events',                  tag:   'a', value: '1' },
                               { label: 'Events Target',           tag:   'a', value: '1' },
-                              { label: 'Roles',                   tag:   'a', value: '3' },
+                              { label: 'Roles',                   tag:   'a', value: '4' },
                               { label: 'Default Users',           tag:   'a', value: '1' },
                               { label: 'Space Quota',             tag:   'a', value: cc_space_quota_definition[:name] },
                               { label: 'Space Quota GUID',        tag:   nil, value: cc_space_quota_definition[:guid] },
@@ -4663,10 +4663,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='SpaceRolesTable']/tbody/tr/td"),
                            [
                              '',
-                             'Auditor',
-                             cc_space_auditor[:role_guid],
-                             cc_space_auditor[:created_at].to_datetime.rfc3339,
-                             cc_space_auditor[:updated_at].to_datetime.rfc3339,
+                             'Application Supporter',
+                             cc_space_application_supporter[:role_guid],
+                             cc_space_application_supporter[:created_at].to_datetime.rfc3339,
+                             cc_space_application_supporter[:updated_at].to_datetime.rfc3339,
                              cc_space[:name],
                              cc_space[:guid],
                              "#{cc_organization[:name]}/#{cc_space[:name]}",
@@ -4676,7 +4676,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          check_checkbox_guid('SpaceRolesTable', "#{cc_space[:guid]}/#{cc_space_auditor[:role_guid]}/auditors/#{uaa_user[:id]}")
+          check_checkbox_guid('SpaceRolesTable', "#{cc_space[:guid]}/#{cc_space_application_supporter[:role_guid]}/application_supporters/#{uaa_user[:id]}")
         end
 
         context 'manage space roles' do
@@ -4723,10 +4723,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Role',              tag: 'div', value: 'Auditor' },
-                            { label: 'GUID',              tag:   nil, value: cc_space_auditor[:role_guid] },
-                            { label: 'Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space_auditor[:created_at].to_datetime.rfc3339}\")") },
-                            { label: 'Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space_auditor[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Role',              tag: 'div', value: 'Application Supporter' },
+                            { label: 'GUID',              tag:   nil, value: cc_space_application_supporter[:role_guid] },
+                            { label: 'Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space_application_supporter[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space_application_supporter[:updated_at].to_datetime.rfc3339}\")") },
                             { label: 'Space',             tag:   'a', value: cc_space[:name] },
                             { label: 'Space GUID',        tag:   nil, value: cc_space[:guid] },
                             { label: 'Organization',      tag:   'a', value: cc_organization[:name] },
@@ -4906,12 +4906,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 6,
                                  labels:          ['', '', 'Requests', 'Organization Roles', 'Space Roles', ''],
-                                 colspans:        %w[1 20 2 5 4 1]
+                                 colspans:        %w[1 20 2 5 5 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 33,
-                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Last Successful Logon', 'Previous Successful Logon', 'Password Updated', 'Password Change Required', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Verified', 'Version', 'Events', 'Groups', 'Approvals', 'Revocable Tokens', 'Count', 'Valid Until', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Default Target'],
+                                 expected_length: 34,
+                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Last Successful Logon', 'Previous Successful Logon', 'Password Updated', 'Password Change Required', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Verified', 'Version', 'Events', 'Groups', 'Approvals', 'Revocable Tokens', 'Count', 'Valid Until', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Application Supporter', 'Auditor', 'Developer', 'Manager', 'Default Target'],
                                  colspans:        nil
                                }
                              ])
@@ -4946,7 +4946,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              '1',
                              '1',
                              '1',
-                             '3',
+                             '4',
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -5202,7 +5203,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Organization Billing Manager Roles', tag:   nil, value: '1' },
                             { label: 'Organization Manager Roles',         tag:   nil, value: '1' },
                             { label: 'Organization User Roles',            tag:   nil, value: '1' },
-                            { label: 'Space Total Roles',                  tag:   'a', value: '3' },
+                            { label: 'Space Total Roles',                  tag:   'a', value: '4' },
+                            { label: 'Space Application Supporter Roles',  tag:   nil, value: '1' },
                             { label: 'Space Auditor Roles',                tag:   nil, value: '1' },
                             { label: 'Space Developer Roles',              tag:   nil, value: '1' },
                             { label: 'Space Manager Roles',                tag:   nil, value: '1' },
@@ -5358,11 +5360,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has spaces link' do
-            check_filter_link('Users', 32, 'Spaces', cc_space[:guid])
+            check_filter_link('Users', 33, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Users', 34, 'Organizations', cc_organization[:guid])
+            check_filter_link('Users', 35, 'Organizations', cc_organization[:guid])
           end
         end
       end

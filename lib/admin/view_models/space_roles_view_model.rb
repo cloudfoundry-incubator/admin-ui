@@ -3,16 +3,18 @@ require_relative 'base_view_model'
 module AdminUI
   class SpaceRolesViewModel < AdminUI::BaseViewModel
     def do_items
-      spaces            = @cc.spaces
-      spaces_auditors   = @cc.spaces_auditors
-      spaces_managers   = @cc.spaces_managers
-      spaces_developers = @cc.spaces_developers
-      users_cc          = @cc.users_cc
-      users_uaa         = @cc.users_uaa
+      spaces                        = @cc.spaces
+      spaces_application_supporters = @cc.spaces_application_supporters
+      spaces_auditors               = @cc.spaces_auditors
+      spaces_managers               = @cc.spaces_managers
+      spaces_developers             = @cc.spaces_developers
+      users_cc                      = @cc.users_cc
+      users_uaa                     = @cc.users_uaa
 
-      # spaces, spaces_auditors, spaces_developers,
+      # spaces, spaces_application_supporters, spaces_auditors, spaces_developers,
       # spaces_managers, users_cc and users_uaa have to exist
       return result unless spaces['connected'] &&
+                           spaces_application_supporters['connected'] &&
                            spaces_auditors['connected'] &&
                            spaces_developers['connected'] &&
                            spaces_managers['connected'] &&
@@ -29,9 +31,10 @@ module AdminUI
       items = []
       hash  = {}
 
-      add_rows(spaces_auditors,   'auditors',   'Auditor',   space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
-      add_rows(spaces_developers, 'developers', 'Developer', space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
-      add_rows(spaces_managers,   'managers',   'Manager',   space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
+      add_rows(spaces_application_supporters, 'application_supporters', 'Application Supporter', space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
+      add_rows(spaces_auditors,               'auditors',               'Auditor',               space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
+      add_rows(spaces_developers,             'developers',             'Developer',             space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
+      add_rows(spaces_managers,               'managers',               'Manager',               space_hash, organization_hash, user_cc_hash, user_uaa_hash, items, hash)
 
       result(true, items, hash, (1..9).to_a, (1..9).to_a)
     end

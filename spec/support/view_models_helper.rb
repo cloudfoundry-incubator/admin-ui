@@ -794,7 +794,7 @@ module ViewModelsHelper
         1,
         1,
         4,
-        3,
+        4,
         1,
         cc_quota_definition[:name],
         1,
@@ -1594,6 +1594,18 @@ module ViewModelsHelper
   def view_models_space_roles
     [
       [
+        "#{cc_space[:guid]}/#{cc_space_application_supporter[:role_guid]}/application_supporters/#{uaa_user[:id]}",
+        'Application Supporter',
+        cc_space_application_supporter[:role_guid],
+        cc_space_application_supporter[:created_at].to_datetime.rfc3339,
+        cc_space_application_supporter[:updated_at].to_datetime.rfc3339,
+        cc_space[:name],
+        cc_space[:guid],
+        "#{cc_organization[:name]}/#{cc_space[:name]}",
+        uaa_user[:username],
+        uaa_user[:id]
+      ],
+      [
         "#{cc_space[:guid]}/#{cc_space_auditor[:role_guid]}/auditors/#{uaa_user[:id]}",
         'Auditor',
         cc_space_auditor[:role_guid],
@@ -1654,7 +1666,7 @@ module ViewModelsHelper
         cc_space[:allow_ssh],
         1,
         1,
-        3,
+        4,
         1,
         cc_space_quota_definition[:name],
         1,
@@ -1834,7 +1846,8 @@ module ViewModelsHelper
         1,
         1,
         1,
-        3,
+        4,
+        1,
         1,
         1,
         1,

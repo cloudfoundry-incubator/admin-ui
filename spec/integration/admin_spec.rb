@@ -1947,7 +1947,7 @@ describe AdminUI::Admin, type: :integration do
     let(:cookie) { login_and_return_cookie(http) }
 
     before do
-      expect(get_json('/space_roles_view_model')['items']['items'].length).to eq(3)
+      expect(get_json('/space_roles_view_model')['items']['items'].length).to eq(4)
     end
 
     def delete_space_role
@@ -1961,7 +1961,7 @@ describe AdminUI::Admin, type: :integration do
     end
 
     it 'deletes a space role' do
-      expect { delete_space_role }.to change { get_json('/space_roles_view_model')['items']['items'].length }.from(3).to(2)
+      expect { delete_space_role }.to change { get_json('/space_roles_view_model')['items']['items'].length }.from(4).to(3)
     end
   end
 

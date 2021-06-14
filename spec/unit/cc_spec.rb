@@ -353,6 +353,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.spaces)
     end
 
+    it 'returns zero spaces_application_supporters as expected' do
+      verify_disconnected_items(cc.spaces_application_supporters)
+    end
+
     it 'returns zero spaces_auditors as expected' do
       verify_disconnected_items(cc.spaces_auditors)
     end

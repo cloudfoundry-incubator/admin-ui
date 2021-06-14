@@ -488,6 +488,12 @@ module AdminUI
             table:   :spaces,
             columns: %i[allow_ssh created_at guid id isolation_segment_guid name organization_id space_quota_definition_id updated_at]
           },
+          spaces_application_supporters:
+          {
+            db_uri:  ccdb_uri,
+            table:   :spaces_application_supporters,
+            columns: %i[created_at role_guid spaces_application_supporters_pk space_id updated_at user_id]
+          },
           spaces_auditors:
           {
             db_uri:  ccdb_uri,
@@ -945,6 +951,10 @@ module AdminUI
       invalidate_cache(:spaces)
     end
 
+    def invalidate_spaces_application_supporters
+      invalidate_cache(:spaces_application_supporters)
+    end
+
     def invalidate_spaces_auditors
       invalidate_cache(:spaces_auditors)
     end
@@ -1289,6 +1299,10 @@ module AdminUI
       return nil unless hash['connected']
 
       hash['items'].length
+    end
+
+    def spaces_application_supporters
+      result_cache(:spaces_application_supporters)
     end
 
     def spaces_auditors
