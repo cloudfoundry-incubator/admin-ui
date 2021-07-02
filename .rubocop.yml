@@ -28,6 +28,9 @@ Layout/HashAlignment:
   EnforcedColonStyle: table
   EnforcedHashRocketStyle: table
 
+Layout/LineEndStringConcatenationIndentation:
+  Enabled: false
+
 Layout/LineLength:
   Enabled: false
 
@@ -181,6 +184,9 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Enabled: false
 
+Naming/InclusiveLanguage:
+  Enabled: true
+
 Naming/MethodParameterName:
   Enabled: false
 
@@ -241,16 +247,28 @@ Performance/Sum:
 Rails/ActiveRecordCallbacksOrder:
   Enabled: true
 
+Rails/AddColumnIndex:
+  Enabled: true
+
 Rails/AfterCommitOverride:
   Enabled: true
 
 Rails/AttributeDefaultBlockValue:
   Enabled: true
 
+Rails/EagerEvaluationLogMessage:
+  Enabled: true
+
 Rails/Exit:
   Enabled: false
 
+Rails/ExpandedDateRange:
+  Enabled: true
+
 Rails/FindById:
+  Enabled: true
+
+Rails/I18nLocaleAssignment:
   Enabled: true
 
 Rails/IndexBy:
@@ -294,6 +312,12 @@ Rails/SquishedSQLHeredocs:
 
 Rails/TimeZone:
   Enabled: false
+
+Rails/TimeZoneAssignment:
+  Enabled: true
+
+Rails/UnusedIgnoredColumns:
+  Enabled: true
 
 Rails/WhereEquals:
   Enabled: true

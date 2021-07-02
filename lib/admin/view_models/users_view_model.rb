@@ -154,7 +154,7 @@ module AdminUI
       users_organizations_billing_managers = {}
       users_organizations_managers         = {}
       users_organizations_users            = {}
-      users_spaces_application_supporters   = {}
+      users_spaces_application_supporters  = {}
       users_spaces_auditors                = {}
       users_spaces_developers              = {}
       users_spaces_managers                = {}
