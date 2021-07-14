@@ -46,7 +46,7 @@ sudo apt-get install -f -y --no-install-recommends git-core build-essential libr
 
 ### Ruby
 
-Ruby is required to run the Administration UI. The last version used for development and testing is Ruby 3.0.1.
+Ruby is required to run the Administration UI. The last version used for development and testing is Ruby 3.0.2.
 
 Here is a sample installation of ruby using rbenv:
 
@@ -56,8 +56,8 @@ git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-bu
 echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.profile
 echo 'eval "$(rbenv init -)"' >> ~/.profile
 . ~/.profile
-rbenv install 3.0.1
-rbenv global 3.0.1
+rbenv install 3.0.2
+rbenv global 3.0.2
 ```
 
 ### Retrieve the Administration UI code
