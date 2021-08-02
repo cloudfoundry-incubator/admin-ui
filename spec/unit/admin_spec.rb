@@ -1003,7 +1003,7 @@ describe AdminUI::Admin do
 
     shared_examples 'common delete route binding' do
       it 'returns failure code due to disconnection' do
-        response = delete('/route_bindings/service_instance1/route1/true')
+        response = delete('/route_bindings/route_binding1/delete/service_instance1/route1/true')
         expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
       end
     end
@@ -3337,8 +3337,8 @@ describe AdminUI::Admin do
         delete_redirects_as_expected('/revocable_tokens/revocable_token1')
       end
 
-      it 'deletes /route_bindings/:guid/:guid/:boolean redirects as expected' do
-        delete_redirects_as_expected('/route_bindings/service_instance1/route1/true')
+      it 'deletes /route_bindings/:guid/delete/:guid/:guid/:boolean redirects as expected' do
+        delete_redirects_as_expected('/route_bindings/route_binding1/delete/service_instance1/route1/true')
       end
 
       it 'deletes /route_mappings/:guid/:guid redirects as expected' do

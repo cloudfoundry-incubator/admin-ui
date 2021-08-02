@@ -141,7 +141,6 @@ module AdminUI
 
     def launch_web
       if defined?(WEBrick::HTTPRequest)
-        # TODO: Look at moving to Thin to avoid this limitation
         # We have to increase the WEBrick HTTPRequest constant MAX_URI_LENGTH from its defined value of 2083
         # or we will have problems with the jQuery DataTables server side ajax calls causing WEBrick::HTTPStatus::RequestURITooLarge
         WEBrick::HTTPRequest.instance_eval { remove_const :MAX_URI_LENGTH }

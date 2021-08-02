@@ -1294,7 +1294,7 @@ describe AdminUI::Operation, type: :integration do
       end
 
       def delete_route_binding
-        operation.delete_route_binding(cc_service_instance[:guid], cc_route[:guid], cc_service_instance[:is_gateway_service])
+        operation.delete_route_binding(cc_route_binding[:guid], cc_service_instance[:guid], cc_route[:guid], cc_service_instance[:is_gateway_service])
       end
 
       def delete_route_binding_annotation

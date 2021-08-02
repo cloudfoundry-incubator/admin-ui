@@ -4054,7 +4054,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          check_checkbox_guid('RouteBindingsTable', "#{cc_service_instance[:guid]}/#{cc_route[:guid]}/#{cc_service_instance[:is_gateway_service]}")
+          check_checkbox_guid('RouteBindingsTable', "#{cc_route_binding[:guid]}/delete/#{cc_service_instance[:guid]}/#{cc_route[:guid]}/#{cc_service_instance[:is_gateway_service]}")
         end
 
         context 'manage route bindings' do

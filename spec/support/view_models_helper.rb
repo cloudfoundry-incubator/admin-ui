@@ -980,7 +980,7 @@ module ViewModelsHelper
   def view_models_route_bindings
     [
       [
-        "#{cc_service_instance[:guid]}/#{cc_route[:guid]}/#{cc_service_instance[:is_gateway_service]}",
+        "#{cc_route_binding[:guid]}/delete/#{cc_service_instance[:guid]}/#{cc_route[:guid]}/#{cc_service_instance[:is_gateway_service]}",
         cc_route_binding[:guid],
         cc_route_binding[:created_at].to_datetime.rfc3339,
         cc_route_binding[:updated_at].to_datetime.rfc3339,

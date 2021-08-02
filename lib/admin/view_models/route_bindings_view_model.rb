@@ -111,7 +111,7 @@ module AdminUI
 
         row = []
 
-        row.push("#{service_instance[:guid]}/#{route[:guid]}/#{is_gateway_service}")
+        row.push("#{guid}/delete/#{service_instance[:guid]}/#{route[:guid]}/#{is_gateway_service}")
         row.push(guid)
         row.push(route_binding[:created_at].to_datetime.rfc3339)
 

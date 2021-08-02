@@ -518,17 +518,22 @@ module AdminUI
       @view_models.invalidate_routes
     end
 
-    def delete_route_binding(service_instance_guid, route_guid, is_gateway_service)
-      # TODO: v3 delete route binding
-      url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}/routes/#{route_guid}" : "/v2/user_provided_service_instances/#{service_instance_guid}/routes/#{route_guid}"
+    def delete_route_binding(route_binding_guid, service_instance_guid, route_guid, is_gateway_service)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.164.0')
+      url = if v3
+              "/v3/service_route_bindings/#{route_binding_guid}"
+            else
+              is_gateway_service ? "/v2/service_instances/#{service_instance_guid}/routes/#{route_guid}" : "/v2/user_provided_service_instances/#{service_instance_guid}/routes/#{route_guid}"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_route_bindings
       @view_models.invalidate_route_bindings
     end
 
-    def delete_route_binding_annotation(service_instance_guid, prefix, name)
-      url = "/v3/service_route_bindings/#{service_instance_guid}"
+    def delete_route_binding_annotation(route_binding_guid, prefix, name)
+      url = "/v3/service_route_bindings/#{route_binding_guid}"
       key = name
       key = "#{prefix}/#{name}" if prefix
       body = "{\"metadata\":{\"annotations\":{\"#{key}\":null}}}"
@@ -538,8 +543,8 @@ module AdminUI
       @view_models.invalidate_route_bindings
     end
 
-    def delete_route_binding_label(service_instance_guid, prefix, name)
-      url = "/v3/service_route_bindings/#{service_instance_guid}"
+    def delete_route_binding_label(route_binding_guid, prefix, name)
+      url = "/v3/service_route_bindings/#{route_binding_guid}"
       key = name
       key = "#{prefix}/#{name}" if prefix
       body = "{\"metadata\":{\"labels\":{\"#{key}\":null}}}"
@@ -634,8 +639,13 @@ module AdminUI
     end
 
     def delete_service_binding(service_binding_guid)
-      # TODO: v3 delete service binding
-      url = "/v2/service_bindings/#{service_binding_guid}?accepts_incomplete=true"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.164.0')
+      url = if v3
+              "/v3/service_credential_bindings/#{service_binding_guid}"
+            else
+              "/v2/service_bindings/#{service_binding_guid}?accepts_incomplete=true"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_bindings
@@ -708,12 +718,18 @@ module AdminUI
     end
 
     def delete_service_instance(service_instance_guid, is_gateway_service, recursive, purge)
-      # TODO: v3 delete service instance
-      url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}?accepts_incomplete=true" : "/v2/user_provided_service_instances/#{service_instance_guid}"
-      if recursive
-        url += is_gateway_service ? '&' : '?'
-        url += 'recursive=true'
-        url += '&purge=true' if purge
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.164.0')
+      if v3
+        url = "/v3/service_instances/#{service_instance_guid}"
+        url += '?purge=true' if purge
+      else
+        url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}?accepts_incomplete=true" : "/v2/user_provided_service_instances/#{service_instance_guid}"
+        if recursive
+          url += is_gateway_service ? '&' : '?'
+          url += 'recursive=true'
+          url += '&purge=true' if purge
+        end
       end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
@@ -750,8 +766,13 @@ module AdminUI
     end
 
     def delete_service_key(service_key_guid)
-      # TODO: v3 delete service key
-      url = "/v2/service_keys/#{service_key_guid}?accepts_incomplete=true"
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.164.0')
+      url = if v3
+              "/v3/service_credential_bindings/#{service_key_guid}"
+            else
+              "/v2/service_keys/#{service_key_guid}?accepts_incomplete=true"
+            end
       @logger.debug("DELETE #{url}")
       @client.delete_cc(url)
       @cc.invalidate_service_keys
@@ -1357,10 +1378,17 @@ module AdminUI
     end
 
     def manage_service_instance(service_instance_guid, is_gateway_service, control_message)
-      # TODO: v3 manage service instance
-      url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}" : "/v2/user_provided_service_instances/#{service_instance_guid}"
-      @logger.debug("PUT #{url}, #{control_message}")
-      @client.put_cc(url, control_message)
+      api_version = @client.api_version
+      v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.164.0')
+      if v3
+        url = "/v3/service_instances/#{service_instance_guid}"
+        @logger.debug("PATCH #{url}, #{control_message}")
+        @client.patch_cc(url, control_message)
+      else
+        url = is_gateway_service ? "/v2/service_instances/#{service_instance_guid}" : "/v2/user_provided_service_instances/#{service_instance_guid}"
+        @logger.debug("PUT #{url}, #{control_message}")
+        @client.put_cc(url, control_message)
+      end
       @cc.invalidate_service_instances
       @view_models.invalidate_service_instances
     end

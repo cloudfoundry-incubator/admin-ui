@@ -1172,9 +1172,9 @@ describe AdminUI::Admin, type: :integration do
     end
 
     def delete_route_binding
-      response = delete_request("/route_bindings/#{cc_service_instance[:guid]}/#{cc_route[:guid]}/#{cc_service_instance[:is_gateway_service]}")
+      response = delete_request("/route_bindings/#{cc_route_binding[:guid]}/delete/#{cc_service_instance[:guid]}/#{cc_route[:guid]}/#{cc_service_instance[:is_gateway_service]}")
       expect(response.is_a?(Net::HTTPNoContent)).to be(true)
-      verify_sys_log_entries([['delete', "/route_bindings/#{cc_service_instance[:guid]}/#{cc_route[:guid]}/#{cc_service_instance[:is_gateway_service]}"]])
+      verify_sys_log_entries([['delete', "/route_bindings/#{cc_route_binding[:guid]}/delete/#{cc_service_instance[:guid]}/#{cc_route[:guid]}/#{cc_service_instance[:is_gateway_service]}"]])
     end
 
     def delete_route_binding_annotation

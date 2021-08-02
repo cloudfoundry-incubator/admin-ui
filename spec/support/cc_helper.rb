@@ -1002,7 +1002,7 @@ module CCHelper
   end
 
   def cc_info_api_version
-    '2.153.0'
+    '2.167.0'
   end
 
   def cc_info_build
@@ -3011,7 +3011,7 @@ module CCHelper
   end
 
   def cc_route_binding_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}/routes/#{cc_route[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/service_route_bindings/#{cc_route_binding[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_route_bindings_deleted
         cc_route_binding_not_found
       else
@@ -3179,11 +3179,11 @@ module CCHelper
   end
 
   def cc_service_binding_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v2/service_bindings/#{cc_service_binding[:guid]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
-      OK.new('entity' => { 'credentials' => cc_service_binding_credential, 'volume_mounts' => cc_service_binding_volume_mounts })
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/service_credential_bindings/#{cc_service_binding[:guid]}/details", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
+      OK.new('credentials' => cc_service_binding_credential, 'volume_mounts' => cc_service_binding_volume_mounts)
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v2/service_bindings/#{cc_service_binding[:guid]}?accepts_incomplete=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/service_credential_bindings/#{cc_service_binding[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_service_bindings_deleted
         cc_service_binding_not_found
       else
@@ -3251,20 +3251,11 @@ module CCHelper
   end
 
   def cc_service_instance_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
-      OK.new('entity' => { 'credentials' => cc_service_instance_credential })
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/service_instances/#{cc_service_instance[:guid]}/credentials", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
+      OK.new(cc_service_instance_credential)
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}", AdminUI::Utils::HTTP_PUT, anything, "{\"name\":\"#{cc_service_instance_rename}\"}", anything, anything, anything) do
-      if @cc_service_instances_deleted
-        cc_service_instance_not_found
-      else
-        sql(config.ccdb_uri, "UPDATE service_instances SET name = '#{cc_service_instance_rename}' WHERE guid = '#{cc_service_instance[:guid]}'")
-        Created.new
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}?accepts_incomplete=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/service_instances/#{cc_service_instance[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_service_instances_deleted
         cc_service_instance_not_found
       else
@@ -3273,16 +3264,7 @@ module CCHelper
       end
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}?accepts_incomplete=true&recursive=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
-      if @cc_service_instances_deleted
-        cc_service_instance_not_found
-      else
-        cc_clear_service_instances_cache_stub(config)
-        Net::HTTPNoContent.new(1.0, 204, 'OK')
-      end
-    end
-
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v2/service_instances/#{cc_service_instance[:guid]}?accepts_incomplete=true&recursive=true&purge=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/service_instances/#{cc_service_instance[:guid]}?purge=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_service_instances_deleted
         cc_service_instance_not_found
       else
@@ -3298,6 +3280,15 @@ module CCHelper
       else
         cc_clear_service_instances_cache_stub(config)
         OK.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/service_instances/#{cc_service_instance[:guid]}", AdminUI::Utils::HTTP_PATCH, anything, "{\"name\":\"#{cc_service_instance_rename}\"}", anything, anything, anything) do
+      if @cc_service_instances_deleted
+        cc_service_instance_not_found
+      else
+        sql(config.ccdb_uri, "UPDATE service_instances SET name = '#{cc_service_instance_rename}' WHERE guid = '#{cc_service_instance[:guid]}'")
+        Created.new
       end
     end
   end
@@ -3331,11 +3322,11 @@ module CCHelper
   end
 
   def cc_service_key_stubs(config)
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v2/service_keys/#{cc_service_key[:guid]}", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
-      OK.new('entity' => { 'credentials' => cc_service_key_credential })
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/service_credential_bindings/#{cc_service_key[:guid]}/details", AdminUI::Utils::HTTP_GET, anything, anything, anything, anything, anything) do
+      OK.new('credentials' => cc_service_key_credential)
     end
 
-    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v2/service_keys/#{cc_service_key[:guid]}?accepts_incomplete=true", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/service_credential_bindings/#{cc_service_key[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
       if @cc_service_keys_deleted
         cc_service_key_not_found
       else

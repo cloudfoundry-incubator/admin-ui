@@ -2076,9 +2076,9 @@ module AdminUI
       500
     end
 
-    delete '/route_bindings/:service_instance_guid/:route_guid/:is_gateway_service', auth: [:admin] do
-      @logger.info_user(session[:username], 'delete', "/route_bindings/#{params[:service_instance_guid]}/#{params[:route_guid]}/#{params[:is_gateway_service]}")
-      @operation.delete_route_binding(params[:service_instance_guid], params[:route_guid], params[:is_gateway_service] == 'true')
+    delete '/route_bindings/:route_binding_guid/delete/:service_instance_guid/:route_guid/:is_gateway_service', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/route_bindings/#{params[:route_binding_guid]}/delete/#{params[:service_instance_guid]}/#{params[:route_guid]}/#{params[:is_gateway_service]}")
+      @operation.delete_route_binding(params[:route_binding_guid], params[:service_instance_guid], params[:route_guid], params[:is_gateway_service] == 'true')
       204
     rescue CCRestClientResponseError => error
       @logger.error("Error during delete route binding: #{error.to_h}")

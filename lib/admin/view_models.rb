@@ -626,11 +626,18 @@ module AdminUI
       result = details(:service_bindings, guid)
       if @config.display_encrypted_values && admin && !result.nil?
         begin
-          # TODO: v3 retrieve service binding
-          json = @cc_rest_client.get_cc("/v2/service_bindings/#{guid}")
-          credentials = json['entity']['credentials']
+          api_version = @cc_rest_client.api_version
+          v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.164.0')
+          if v3
+            json = @cc_rest_client.get_cc("/v3/service_credential_bindings/#{guid}/details")
+            credentials = json['credentials']
+            volume_mounts = json['volume_mounts']
+          else
+            json = @cc_rest_client.get_cc("/v2/service_bindings/#{guid}")
+            credentials = json['entity']['credentials']
+            volume_mounts = json['entity']['volume_mounts']
+          end
           credentials = credentials.sort_by { |key, _| key.downcase }.to_h
-          volume_mounts = json['entity']['volume_mounts']
           return result.merge('credentials' => credentials, 'volume_mounts' => volume_mounts).sort_by { |key, _| key }.to_h
         rescue => error
           @logger.error("Error during service_binding #{guid} retrieval: #{error.inspect}")
@@ -656,12 +663,21 @@ module AdminUI
       result = details(:service_instances, guid)
       if @config.display_encrypted_values && admin && !result.nil?
         begin
-          type = is_gateway_service ? 'service_instances' : 'user_provided_service_instances'
-          # TODO: v3 retrieve service instance
-          json = @cc_rest_client.get_cc("/v2/#{type}/#{guid}")
-          credentials = json['entity']['credentials']
-          credentials = credentials.sort_by { |key, _| key.downcase }.to_h
-          return result.merge('credentials' => credentials).sort_by { |key, _| key }.to_h
+          api_version = @cc_rest_client.api_version
+          v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.164.0')
+          if v3
+            if !is_gateway_service || @testing
+              credentials = @cc_rest_client.get_cc("/v3/service_instances/#{guid}/credentials")
+              credentials = credentials.sort_by { |key, _| key.downcase }.to_h
+              return result.merge('credentials' => credentials).sort_by { |key, _| key }.to_h
+            end
+          else
+            type = is_gateway_service ? 'service_instances' : 'user_provided_service_instances'
+            json = @cc_rest_client.get_cc("/v2/#{type}/#{guid}")
+            credentials = json['entity']['credentials']
+            credentials = credentials.sort_by { |key, _| key.downcase }.to_h
+            return result.merge('credentials' => credentials).sort_by { |key, _| key }.to_h
+          end
         rescue => error
           @logger.error("Error during service_instance #{guid} retrieval: #{error.inspect}")
           @logger.error(error.backtrace.join("\n"))
@@ -678,9 +694,15 @@ module AdminUI
       result = details(:service_keys, guid)
       if @config.display_encrypted_values && admin && !result.nil?
         begin
-          # TODO: v3 retrieve service key
-          json = @cc_rest_client.get_cc("/v2/service_keys/#{guid}")
-          credentials = json['entity']['credentials']
+          api_version = @cc_rest_client.api_version
+          v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.164.0')
+          if v3
+            json = @cc_rest_client.get_cc("/v3/service_credential_bindings/#{guid}/details")
+            credentials = json['credentials']
+          else
+            json = @cc_rest_client.get_cc("/v2/service_keys/#{guid}")
+            credentials = json['entity']['credentials']
+          end
           credentials = credentials.sort_by { |key, _| key.downcase }.to_h
           return result.merge('credentials' => credentials).sort_by { |key, _| key }.to_h
         rescue => error

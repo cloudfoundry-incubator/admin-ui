@@ -570,6 +570,8 @@ Sequel.migration do
       String :created_by_user_guid, :text=>true
       String :created_by_user_name, :text=>true
       String :created_by_user_email, :text=>true
+      Integer :staging_memory_in_mb
+      Integer :staging_disk_in_mb
       
       index [:app_guid]
       index [:created_at]
