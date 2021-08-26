@@ -10,15 +10,15 @@ module AdminUI
       organizations_managers         = @cc.organizations_managers
       organizations_users            = @cc.organizations_users
       spaces                         = @cc.spaces
-      spaces_application_supporters  = @cc.spaces_application_supporters
       spaces_auditors                = @cc.spaces_auditors
       spaces_developers              = @cc.spaces_developers
       spaces_managers                = @cc.spaces_managers
+      spaces_supporters              = @cc.spaces_supporters
       users_cc                       = @cc.users_cc
       users_uaa                      = @cc.users_uaa
 
       # organizations, organizations_auditors, organizations_billing_managers, organizations_managers, organizations_users,
-      # spaces, spaces_application_supporters, spaces_auditors, spaces_developers, spaces_managers,
+      # spaces, spaces_auditors, spaces_developers, spaces_managers, spaces_supporters,
       # users_cc and users_uaa have to exist. Other record types are optional
       return result unless organizations['connected'] &&
                            organizations_auditors['connected'] &&
@@ -26,10 +26,10 @@ module AdminUI
                            organizations_managers['connected'] &&
                            organizations_users['connected'] &&
                            spaces['connected'] &&
-                           spaces_application_supporters['connected'] &&
                            spaces_auditors['connected'] &&
                            spaces_developers['connected'] &&
                            spaces_managers['connected'] &&
+                           spaces_supporters['connected'] &&
                            users_cc['connected'] &&
                            users_uaa['connected']
 
@@ -154,19 +154,19 @@ module AdminUI
       users_organizations_billing_managers = {}
       users_organizations_managers         = {}
       users_organizations_users            = {}
-      users_spaces_application_supporters  = {}
       users_spaces_auditors                = {}
       users_spaces_developers              = {}
       users_spaces_managers                = {}
+      users_spaces_supporters              = {}
 
       count_roles(organizations_auditors,         users_organizations_auditors)
       count_roles(organizations_billing_managers, users_organizations_billing_managers)
       count_roles(organizations_managers,         users_organizations_managers)
       count_roles(organizations_users,            users_organizations_users)
-      count_roles(spaces_application_supporters,  users_spaces_application_supporters)
       count_roles(spaces_auditors,                users_spaces_auditors)
       count_roles(spaces_developers,              users_spaces_developers)
       count_roles(spaces_managers,                users_spaces_managers)
+      count_roles(spaces_supporters,              users_spaces_supporters)
 
       items = []
       hash  = {}
@@ -293,10 +293,10 @@ module AdminUI
           organization_billing_managers = users_organizations_billing_managers[id] || 0
           organization_managers         = users_organizations_managers[id] || 0
           organization_users            = users_organizations_users[id] || 0
-          spc_application_supporters    = users_spaces_application_supporters[id] || 0
           spc_auditors                  = users_spaces_auditors[id] || 0
           spc_developers                = users_spaces_developers[id] || 0
           spc_managers                  = users_spaces_managers[id] || 0
+          spc_supporters                = users_spaces_supporters[id] || 0
 
           row.push(organization_auditors + organization_billing_managers + organization_managers + organization_users)
           row.push(organization_auditors)
@@ -304,11 +304,11 @@ module AdminUI
           row.push(organization_managers)
           row.push(organization_users)
 
-          row.push(spc_application_supporters + spc_auditors + spc_developers + spc_managers)
-          row.push(spc_application_supporters)
+          row.push(spc_auditors + spc_developers + spc_managers + spc_supporters)
           row.push(spc_auditors)
           row.push(spc_developers)
           row.push(spc_managers)
+          row.push(spc_supporters)
 
           default_space_id = user_cc[:default_space_id]
           space            = default_space_id.nil? ? nil : space_hash[default_space_id]

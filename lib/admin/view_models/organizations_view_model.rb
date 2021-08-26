@@ -35,10 +35,10 @@ module AdminUI
       service_plan_visibilities        = @cc.service_plan_visibilities
       space_quotas                     = @cc.space_quota_definitions
       spaces                           = @cc.spaces
-      spaces_application_supporters    = @cc.spaces_application_supporters
       spaces_auditors                  = @cc.spaces_auditors
       spaces_developers                = @cc.spaces_developers
       spaces_managers                  = @cc.spaces_managers
+      spaces_supporters                = @cc.spaces_supporters
       staging_security_groups_spaces   = @cc.staging_security_groups_spaces
       tasks                            = @cc.tasks
       users                            = @cc.users_cc
@@ -60,7 +60,7 @@ module AdminUI
       service_plan_visibilities_connected        = service_plan_visibilities['connected']
       space_quotas_connected                     = space_quotas['connected']
       spaces_connected                           = spaces['connected']
-      spaces_roles_connected                     = spaces_application_supporters['connected'] && spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected']
+      spaces_roles_connected                     = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected'] && spaces_supporters['connected']
       staging_security_groups_spaces_connected   = staging_security_groups_spaces['connected']
       tasks_connected                            = tasks['connected']
       users_connected                            = users['connected']
@@ -176,10 +176,10 @@ module AdminUI
       count_organization_roles(organizations_managers, organization_role_counters)
       count_organization_roles(organizations_users, organization_role_counters)
 
-      count_space_roles(spaces_id_hash, spaces_application_supporters, space_role_counters)
       count_space_roles(spaces_id_hash, spaces_auditors, space_role_counters)
       count_space_roles(spaces_id_hash, spaces_developers, space_role_counters)
       count_space_roles(spaces_id_hash, spaces_managers, space_role_counters)
+      count_space_roles(spaces_id_hash, spaces_supporters, space_role_counters)
 
       users['items'].each do |user|
         return result unless @running

@@ -379,7 +379,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a Save button' do
-          expect(@driver.find_element(id: save_button_id).text).to eq('Save')
+          expect(@driver.find_element(id: save_button_id).text).to start_with('Save')
         end
 
         it 'copies the data in the table' do
@@ -4663,10 +4663,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_data(@driver.find_elements(xpath: "//table[@id='SpaceRolesTable']/tbody/tr/td"),
                            [
                              '',
-                             'Application Supporter',
-                             cc_space_application_supporter[:role_guid],
-                             cc_space_application_supporter[:created_at].to_datetime.rfc3339,
-                             cc_space_application_supporter[:updated_at].to_datetime.rfc3339,
+                             'Auditor',
+                             cc_space_auditor[:role_guid],
+                             cc_space_auditor[:created_at].to_datetime.rfc3339,
+                             cc_space_auditor[:updated_at].to_datetime.rfc3339,
                              cc_space[:name],
                              cc_space[:guid],
                              "#{cc_organization[:name]}/#{cc_space[:name]}",
@@ -4676,7 +4676,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
         end
 
         it 'has a checkbox in the first column' do
-          check_checkbox_guid('SpaceRolesTable', "#{cc_space[:guid]}/#{cc_space_application_supporter[:role_guid]}/application_supporters/#{uaa_user[:id]}")
+          check_checkbox_guid('SpaceRolesTable', "#{cc_space[:guid]}/#{cc_space_auditor[:role_guid]}/auditors/#{uaa_user[:id]}")
         end
 
         context 'manage space roles' do
@@ -4723,10 +4723,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
 
           it 'has details' do
             check_details([
-                            { label: 'Role',              tag: 'div', value: 'Application Supporter' },
-                            { label: 'GUID',              tag:   nil, value: cc_space_application_supporter[:role_guid] },
-                            { label: 'Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space_application_supporter[:created_at].to_datetime.rfc3339}\")") },
-                            { label: 'Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space_application_supporter[:updated_at].to_datetime.rfc3339}\")") },
+                            { label: 'Role',              tag: 'div', value: 'Auditor' },
+                            { label: 'GUID',              tag:   nil, value: cc_space_auditor[:role_guid] },
+                            { label: 'Created',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space_auditor[:created_at].to_datetime.rfc3339}\")") },
+                            { label: 'Updated',           tag:   nil, value: @driver.execute_script("return Format.formatDateString(\"#{cc_space_auditor[:updated_at].to_datetime.rfc3339}\")") },
                             { label: 'Space',             tag:   'a', value: cc_space[:name] },
                             { label: 'Space GUID',        tag:   nil, value: cc_space[:guid] },
                             { label: 'Organization',      tag:   'a', value: cc_organization[:name] },
@@ -4911,7 +4911,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='UsersTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
                                  expected_length: 34,
-                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Last Successful Logon', 'Previous Successful Logon', 'Password Updated', 'Password Change Required', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Verified', 'Version', 'Events', 'Groups', 'Approvals', 'Revocable Tokens', 'Count', 'Valid Until', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Application Supporter', 'Auditor', 'Developer', 'Manager', 'Default Target'],
+                                 labels:          ['', 'Identity Zone', 'Username', 'GUID', 'Created', 'Updated', 'Last Successful Logon', 'Previous Successful Logon', 'Password Updated', 'Password Change Required', 'Email', 'Family Name', 'Given Name', 'Phone Number', 'Active', 'Verified', 'Version', 'Events', 'Groups', 'Approvals', 'Revocable Tokens', 'Count', 'Valid Until', 'Total', 'Auditor', 'Billing Manager', 'Manager', 'User', 'Total', 'Auditor', 'Developer', 'Manager', 'Supporter', 'Default Target'],
                                  colspans:        nil
                                }
                              ])
@@ -5204,10 +5204,10 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Organization Manager Roles',         tag:   nil, value: '1' },
                             { label: 'Organization User Roles',            tag:   nil, value: '1' },
                             { label: 'Space Total Roles',                  tag:   'a', value: '4' },
-                            { label: 'Space Application Supporter Roles',  tag:   nil, value: '1' },
                             { label: 'Space Auditor Roles',                tag:   nil, value: '1' },
                             { label: 'Space Developer Roles',              tag:   nil, value: '1' },
                             { label: 'Space Manager Roles',                tag:   nil, value: '1' },
+                            { label: 'Space Supporter Roles',              tag:   nil, value: '1' },
                             { label: 'Space',                              tag:   'a', value: cc_space[:name] },
                             { label: 'Space GUID',                         tag:   nil, value: cc_space[:guid] },
                             { label: 'Organization',                       tag:   'a', value: cc_organization[:name] },

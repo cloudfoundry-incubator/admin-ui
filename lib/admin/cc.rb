@@ -488,12 +488,6 @@ module AdminUI
             table:   :spaces,
             columns: %i[allow_ssh created_at guid id isolation_segment_guid name organization_id space_quota_definition_id updated_at]
           },
-          spaces_application_supporters:
-          {
-            db_uri:  ccdb_uri,
-            table:   :spaces_application_supporters,
-            columns: %i[created_at role_guid spaces_application_supporters_pk space_id updated_at user_id]
-          },
           spaces_auditors:
           {
             db_uri:  ccdb_uri,
@@ -511,6 +505,12 @@ module AdminUI
             db_uri:  ccdb_uri,
             table:   :spaces_managers,
             columns: %i[created_at role_guid spaces_managers_pk space_id updated_at user_id]
+          },
+          spaces_supporters:
+          {
+            db_uri:  ccdb_uri,
+            table:   :spaces_supporters,
+            columns: %i[created_at role_guid spaces_supporters_pk space_id updated_at user_id]
           },
           stack_annotations:
           {
@@ -951,10 +951,6 @@ module AdminUI
       invalidate_cache(:spaces)
     end
 
-    def invalidate_spaces_application_supporters
-      invalidate_cache(:spaces_application_supporters)
-    end
-
     def invalidate_spaces_auditors
       invalidate_cache(:spaces_auditors)
     end
@@ -965,6 +961,10 @@ module AdminUI
 
     def invalidate_spaces_managers
       invalidate_cache(:spaces_managers)
+    end
+
+    def invalidate_spaces_supporters
+      invalidate_cache(:spaces_supporters)
     end
 
     def invalidate_stack_annotations
@@ -1301,10 +1301,6 @@ module AdminUI
       hash['items'].length
     end
 
-    def spaces_application_supporters
-      result_cache(:spaces_application_supporters)
-    end
-
     def spaces_auditors
       result_cache(:spaces_auditors)
     end
@@ -1315,6 +1311,10 @@ module AdminUI
 
     def spaces_managers
       result_cache(:spaces_managers)
+    end
+
+    def spaces_supporters
+      result_cache(:spaces_supporters)
     end
 
     def stack_annotations

@@ -1594,18 +1594,6 @@ module ViewModelsHelper
   def view_models_space_roles
     [
       [
-        "#{cc_space[:guid]}/#{cc_space_application_supporter[:role_guid]}/application_supporters/#{uaa_user[:id]}",
-        'Application Supporter',
-        cc_space_application_supporter[:role_guid],
-        cc_space_application_supporter[:created_at].to_datetime.rfc3339,
-        cc_space_application_supporter[:updated_at].to_datetime.rfc3339,
-        cc_space[:name],
-        cc_space[:guid],
-        "#{cc_organization[:name]}/#{cc_space[:name]}",
-        uaa_user[:username],
-        uaa_user[:id]
-      ],
-      [
         "#{cc_space[:guid]}/#{cc_space_auditor[:role_guid]}/auditors/#{uaa_user[:id]}",
         'Auditor',
         cc_space_auditor[:role_guid],
@@ -1635,6 +1623,18 @@ module ViewModelsHelper
         cc_space_manager[:role_guid],
         cc_space_manager[:created_at].to_datetime.rfc3339,
         cc_space_manager[:updated_at].to_datetime.rfc3339,
+        cc_space[:name],
+        cc_space[:guid],
+        "#{cc_organization[:name]}/#{cc_space[:name]}",
+        uaa_user[:username],
+        uaa_user[:id]
+      ],
+      [
+        "#{cc_space[:guid]}/#{cc_space_supporter[:role_guid]}/supporters/#{uaa_user[:id]}",
+        'Supporter',
+        cc_space_supporter[:role_guid],
+        cc_space_supporter[:created_at].to_datetime.rfc3339,
+        cc_space_supporter[:updated_at].to_datetime.rfc3339,
         cc_space[:name],
         cc_space[:guid],
         "#{cc_organization[:name]}/#{cc_space[:name]}",

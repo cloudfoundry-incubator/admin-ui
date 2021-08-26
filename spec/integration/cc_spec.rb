@@ -504,13 +504,6 @@ describe AdminUI::CC, type: :integration do
       expect(cc.spaces['items'].length).to eq(0)
     end
 
-    it 'clears the spaces application supporters cache' do
-      expect(cc.spaces_application_supporters['items'].length).to eq(1)
-      cc_clear_spaces_cache_stub(config)
-      cc.invalidate_spaces_application_supporters
-      expect(cc.spaces_application_supporters['items'].length).to eq(0)
-    end
-
     it 'clears the spaces auditors cache' do
       expect(cc.spaces_auditors['items'].length).to eq(1)
       cc_clear_spaces_cache_stub(config)
@@ -530,6 +523,13 @@ describe AdminUI::CC, type: :integration do
       cc_clear_spaces_cache_stub(config)
       cc.invalidate_spaces_managers
       expect(cc.spaces_managers['items'].length).to eq(0)
+    end
+
+    it 'clears the spaces supporters cache' do
+      expect(cc.spaces_supporters['items'].length).to eq(1)
+      cc_clear_spaces_cache_stub(config)
+      cc.invalidate_spaces_supporters
+      expect(cc.spaces_supporters['items'].length).to eq(0)
     end
 
     it 'clears the space annotations cache' do
@@ -1173,13 +1173,6 @@ describe AdminUI::CC, type: :integration do
       it_behaves_like('common cc retrieval')
     end
 
-    context 'returns connected spaces application supporters' do
-      let(:results)  { cc.spaces_application_supporters }
-      let(:expected) { cc_space_application_supporter }
-
-      it_behaves_like('common cc retrieval')
-    end
-
     context 'returns connected spaces auditors' do
       let(:results)  { cc.spaces_auditors }
       let(:expected) { cc_space_auditor }
@@ -1201,6 +1194,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected spaces managers' do
       let(:results)  { cc.spaces_managers }
       let(:expected) { cc_space_manager }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected spaces supporters' do
+      let(:results)  { cc.spaces_supporters }
+      let(:expected) { cc_space_supporter }
 
       it_behaves_like('common cc retrieval')
     end
