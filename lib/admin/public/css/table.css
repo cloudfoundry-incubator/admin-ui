@@ -120,7 +120,7 @@
     cursor: default;
 }
 
-button.dt_button, div.dt-button, button.dt-button 
+button.dt_button, div.dt-button, button.dt-button, span.dt-down-arrow 
 {
     border-radius: 3px;
     font-size: .75em;

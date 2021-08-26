@@ -1,0 +1,14 @@
+.git*
+dev-playground/
+docs/
+examples/
+tests/
+build/fonts/
+yarn.lock
+composer.json
+bower.json
+webpack.config.js
+webpack-standardfonts.config.js
+.editorconfig
+.eslintrc.json
+build-examples.js
