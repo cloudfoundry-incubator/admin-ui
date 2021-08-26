@@ -1,7 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    activesupport (6.1.4)
+    activesupport (6.1.4.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -59,18 +59,18 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
     rspec-support (3.10.2)
-    rubocop (1.18.4)
+    rubocop (1.19.1)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml
-      rubocop-ast (>= 1.8.0, < 2.0)
+      rubocop-ast (>= 1.9.1, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
-    rubocop-ast (1.8.0)
+    rubocop-ast (1.11.0)
       parser (>= 3.0.1.1)
-    rubocop-performance (1.11.4)
+    rubocop-performance (1.11.5)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
     rubocop-rails (2.11.3)
@@ -119,8 +119,8 @@ DEPENDENCIES
   protobuf (= 3.10.4)
   rack-ssl (= 1.4.1)
   rspec (= 3.10.0)
-  rubocop (= 1.18.4)
-  rubocop-performance (= 1.11.4)
+  rubocop (= 1.19.1)
+  rubocop-performance (= 1.11.5)
   rubocop-rails (= 2.11.3)
   selenium-webdriver (= 3.142.7)
   sequel (= 5.47.0)
@@ -134,4 +134,4 @@ RUBY VERSION
    ruby 3.0.2p107
 
 BUNDLED WITH
-   2.2.25
+   2.2.26

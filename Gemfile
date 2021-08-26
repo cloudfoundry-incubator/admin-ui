@@ -21,8 +21,8 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '1.18.4'
-  gem 'rubocop-performance', '1.11.4'
+  gem 'rubocop', '1.19.1'
+  gem 'rubocop-performance', '1.11.5'
   gem 'rubocop-rails', '2.11.3'
 end
 

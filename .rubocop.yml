@@ -21,9 +21,6 @@ Layout/BeginEndAlignment:
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
 
-Lint/EmptyInPattern:
-  Enabled: true
-
 Layout/HashAlignment:
   EnforcedColonStyle: table
   EnforcedHashRocketStyle: table
@@ -38,6 +35,9 @@ Layout/SpaceBeforeBrackets:
   Enabled: true
 
 Lint/AmbiguousAssignment:
+  Enabled: true
+
+Lint/AmbiguousRange:
   Enabled: true
 
 Lint/BinaryOperatorWithIdenticalOperands:
@@ -77,6 +77,9 @@ Lint/EmptyConditionalBody:
   Enabled: true
 
 Lint/EmptyFile:
+  Enabled: true
+
+Lint/EmptyInPattern:
   Enabled: true
 
 Lint/FloatComparison:
@@ -440,6 +443,9 @@ Style/RedundantRegexpEscape:
   Enabled: true
 
 Style/RedundantSelfAssignment:
+  Enabled: true
+
+Style/RedundantSelfAssignmentBranch:
   Enabled: true
 
 Style/RescueStandardError:
