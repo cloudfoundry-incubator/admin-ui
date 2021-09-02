@@ -1042,6 +1042,7 @@ module ViewModelsHelper
         cc_route_mapping[:created_at].to_datetime.rfc3339,
         cc_route_mapping[:updated_at].to_datetime.rfc3339,
         cc_route_mapping[:weight],
+        cc_route_mapping[:protocol],
         cc_app[:name],
         cc_app[:guid],
         "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}",

@@ -1459,6 +1459,7 @@ Sequel.migration do
       foreign_key :route_guid, :routes, :type=>String, :text=>true, :null=>false, :key=>[:guid]
       String :process_type, :text=>true
       Integer :weight
+      String :protocol, :size=>255
       
       index [:created_at], :name=>:apps_routes_created_at_index
       index [:guid], :name=>:apps_routes_guid_index, :unique=>true

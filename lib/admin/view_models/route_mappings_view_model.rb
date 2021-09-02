@@ -58,6 +58,7 @@ module AdminUI
         end
 
         row.push(route_mapping[:weight])
+        row.push(route_mapping[:protocol])
 
         if application
           row.push(application[:name])
@@ -106,7 +107,7 @@ module AdminUI
           }
       end
 
-      result(true, items, hash, (1..9).to_a, [1, 2, 3, 5, 6, 7, 8, 9])
+      result(true, items, hash, (1..10).to_a, [1, 2, 3, 5, 6, 7, 8, 9, 10])
     end
   end
 end

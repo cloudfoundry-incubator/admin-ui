@@ -2625,12 +2625,12 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                                  columns:         @driver.find_elements(xpath: "//div[@id='RouteMappingsTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
                                  expected_length: 5,
                                  labels:          ['', '', 'Application', 'Route', ''],
-                                 colspans:        %w[1 4 2 2 1]
+                                 colspans:        %w[1 5 2 2 1]
                                },
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='RouteMappingsTableContainer']/div/div[4]/div/div/table/thead/tr[2]/th"),
-                                 expected_length: 10,
-                                 labels:          ['', 'GUID', 'Created', 'Updated', 'Weight', 'Name', 'GUID', 'URI', 'GUID', 'Target'],
+                                 expected_length: 11,
+                                 labels:          ['', 'GUID', 'Created', 'Updated', 'Weight', 'Protocol', 'Name', 'GUID', 'URI', 'GUID', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2642,6 +2642,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_route_mapping[:created_at].to_datetime.rfc3339,
                              cc_route_mapping[:updated_at].to_datetime.rfc3339,
                              @driver.execute_script("return Format.formatNumber(#{cc_route_mapping[:weight]})"),
+                             cc_route_mapping[:protocol],
                              cc_app[:name],
                              cc_app[:guid],
                              "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}",
@@ -2701,6 +2702,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Created',           tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route_mapping[:created_at].to_datetime.rfc3339}\")") } },
                             { label: 'Updated',           tag:   nil, value: Selenium::WebDriver::Wait.new(timeout: 5).until { @driver.execute_script("return Format.formatDateString(\"#{cc_route_mapping[:updated_at].to_datetime.rfc3339}\")") } },
                             { label: 'Weight',            tag:   nil, value: @driver.execute_script("return Format.formatNumber(#{cc_route_mapping[:weight]})") },
+                            { label: 'Protocol',          tag:   nil, value: cc_route_mapping[:protocol] },
                             { label: 'URI',               tag:   'a', value: "http://#{cc_route[:host]}.#{cc_domain[:name]}#{cc_route[:path]}" },
                             { label: 'Application',       tag:   'a', value: cc_app[:name] },
                             { label: 'Application GUID',  tag:   nil, value: cc_app[:guid] },
@@ -2715,23 +2717,23 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has applications link' do
-            check_filter_link('RouteMappings', 5, 'Applications', cc_app[:guid])
+            check_filter_link('RouteMappings', 6, 'Applications', cc_app[:guid])
           end
 
           it 'has routes link' do
-            check_filter_link('RouteMappings', 7, 'Routes', cc_route[:guid])
+            check_filter_link('RouteMappings', 8, 'Routes', cc_route[:guid])
           end
 
           it 'has domains link' do
-            check_filter_link('RouteMappings', 8, 'Domains', cc_domain[:guid])
+            check_filter_link('RouteMappings', 9, 'Domains', cc_domain[:guid])
           end
 
           it 'has spaces link' do
-            check_filter_link('RouteMappings', 10, 'Spaces', cc_space[:guid])
+            check_filter_link('RouteMappings', 11, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('RouteMappings', 12, 'Organizations', cc_organization[:guid])
+            check_filter_link('RouteMappings', 13, 'Organizations', cc_organization[:guid])
           end
         end
       end

@@ -1403,6 +1403,7 @@ module CCHelper
       guid:         'route_mapping1',
       id:           unique_id('cc_route_mapping'),
       process_type: 'web',
+      protocol:     'http1',
       route_guid:   cc_route[:guid],
       updated_at:   unique_time('cc_route_mapping_updated'),
       weight:       1
