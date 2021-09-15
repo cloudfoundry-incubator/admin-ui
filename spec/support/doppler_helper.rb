@@ -41,7 +41,7 @@ module DopplerHelper
       'remaining_disk'         => 27_904.0,
       'remaining_memory'       => 6_976.0,
       'reservable_stagers'     => 4,
-      'uptime'                 => ((((7 * 24) + 8) * 60 + 9) * 60) + 10 # 7 days, 8 hours, 9 minutes, 10 seconds
+      'uptime'                 => (((((7 * 24) + 8) * 60) + 9) * 60) + 10 # 7 days, 8 hours, 9 minutes, 10 seconds
     }.freeze
 
   GOROUTER_VALUE_METRICS =
@@ -57,7 +57,7 @@ module DopplerHelper
       'numCPUS'                            => 4.0,
       'numGoRoutines'                      => 44.0,
       'total_routes'                       => 11.0,
-      'uptime'                             => ((((12 * 24) + 13) * 60 + 14) * 60) + 15 # 12 days, 13 hours, 14 minutes, 15 seconds
+      'uptime'                             => (((((12 * 24) + 13) * 60) + 14) * 60) + 15 # 12 days, 13 hours, 14 minutes, 15 seconds
     }.freeze
 
   REP_VALUE_METRICS =

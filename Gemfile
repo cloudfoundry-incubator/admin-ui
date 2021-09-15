@@ -7,7 +7,7 @@ gem 'membrane', '1.1.0'
 gem 'nats', '0.11.0'
 gem 'net-sftp', '3.0.0'
 gem 'parse-cron', '0.1.4'
-gem 'protobuf', '3.10.4'
+gem 'protobuf', '3.10.5'
 gem 'rack-ssl', '1.4.1'
 gem 'sequel', '5.48.0'
 gem 'sequel_pg', '1.14.0'
@@ -21,9 +21,9 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '1.20.0'
+  gem 'rubocop', '1.21.0'
   gem 'rubocop-performance', '1.11.5'
-  gem 'rubocop-rails', '2.11.3'
+  gem 'rubocop-rails', '2.12.2'
 end
 
 group :test do

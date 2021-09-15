@@ -37,6 +37,9 @@ Layout/SpaceBeforeBrackets:
 Lint/AmbiguousAssignment:
   Enabled: true
 
+Lint/AmbiguousOperatorPrecedence:
+  Enabled: true
+
 Lint/AmbiguousRange:
   Enabled: true
 
@@ -89,6 +92,9 @@ Lint/HashCompareByIdentity:
   Enabled: true
 
 Lint/IdentityComparison:
+  Enabled: true
+
+Lint/IncompatibleIoSelectWithFiberScheduler:
   Enabled: true
 
 Lint/LambdaWithoutLiteralBlock:
@@ -296,6 +302,9 @@ Rails/Pluck:
   Enabled: true
 
 Rails/PluckInWhere:
+  Enabled: true
+
+Rails/RedundantTravelBack:
   Enabled: true
 
 Rails/RenderInline:
