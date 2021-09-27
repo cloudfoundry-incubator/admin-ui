@@ -71,31 +71,14 @@ div.dt-button-collection {
   z-index: 2001;
   width: 100%;
 }
-div.dt-button-collection ul.dropdown-menu {
-  position: relative;
+div.dt-button-collection div.dropdown-menu {
   display: block;
   z-index: 2002;
   min-width: 100%;
 }
 div.dt-button-collection div.dt-button-collection-title {
   background-color: white;
-}
-div.dt-button-collection div.dt-btn-split-wrapper {
-  width: 100%;
-  display: inline-flex;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-div.dt-button-collection button.dt-btn-split-drop-button {
-  width: 100%;
-  border: none;
-  border-radius: 0px;
-  margin-left: 0px !important;
-}
-div.dt-button-collection button.dt-btn-split-drop-button:focus {
-  border: none;
-  border-radius: 0px;
-  outline: none;
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 div.dt-button-collection.fixed {
   position: fixed;
@@ -161,6 +144,36 @@ div.dt-button-collection.four-column > :last-child {
 div.dt-button-collection .dt-button {
   border-radius: 0;
 }
+div.dt-button-collection.fixed {
+  max-width: none;
+}
+div.dt-button-collection.fixed:before, div.dt-button-collection.fixed:after {
+  display: none;
+}
+div.dt-button-collection div.dt-btn-split-wrapper {
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+div.dt-button-collection button.dt-btn-split-drop-button {
+  width: 100%;
+  color: #212529;
+  border: none;
+  background-color: white;
+  border-radius: 0px;
+  margin-left: 0px !important;
+}
+div.dt-button-collection button.dt-btn-split-drop-button:focus {
+  border: none;
+  border-radius: 0px;
+  outline: none;
+}
+div.dt-button-collection button.dt-btn-split-drop-button:hover {
+  background-color: #e9ecef;
+}
+div.dt-button-collection button.dt-btn-split-drop-button:active {
+  background-color: #007bff !important;
+}
 
 div.dt-button-background {
   position: fixed;
@@ -168,7 +181,7 @@ div.dt-button-background {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2001;
+  z-index: 999;
 }
 
 @media screen and (max-width: 767px) {
@@ -211,12 +224,23 @@ div.dt-buttons a.btn.processing:after {
 }
 
 div.dt-btn-split-wrapper button.dt-btn-split-drop {
-  border-top-right-radius: 4px !important;
-  border-bottom-right-radius: 4px !important;
+  border-top-right-radius: 0.25rem !important;
+  border-bottom-right-radius: 0.25rem !important;
 }
 
-span.dt-down-arrow {
-  color: rgba(70, 70, 70, 0.9);
-  font-size: 10px;
-  padding-left: 10px;
+div.dataTables_wrapper div.dt-buttons.btn-group button.btn:last-child:first-of-type {
+  border-radius: 4px !important;
+}
+div.dataTables_wrapper div.dt-buttons.btn-group div.btn-group button.btn:last-of-type {
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
+}
+div.dataTables_wrapper div.dt-buttons.btn-group div.btn-group button.btn:first-of-type {
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+div.dataTables_wrapper div.dt-buttons.btn-group div.btn-group:last-child {
+  border: 1px solid #6c757d;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
 }

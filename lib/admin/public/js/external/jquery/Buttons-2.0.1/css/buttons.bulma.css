@@ -69,18 +69,21 @@ div.dt-button-collection-title:empty {
 div.dt-button-collection {
   position: absolute;
   z-index: 2001;
-  width: 100%;
 }
 div.dt-button-collection div.dropdown-menu {
   display: block;
   z-index: 2002;
   min-width: 100%;
-  padding-left: 2px;
-  padding-right: 2px;
 }
 div.dt-button-collection div.dt-button-collection-title {
   background-color: white;
   border: 1px solid rgba(0, 0, 0, 0.15);
+}
+div.dt-button-collection div.dt-btn-split-wrapper {
+  width: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-bottom: 0px;
 }
 div.dt-button-collection.fixed {
   position: fixed;
@@ -152,28 +155,6 @@ div.dt-button-collection.fixed {
 div.dt-button-collection.fixed:before, div.dt-button-collection.fixed:after {
   display: none;
 }
-div.dt-button-collection div.dt-btn-split-wrapper {
-  width: 100%;
-}
-div.dt-button-collection button.dt-btn-split-drop-button {
-  width: 100%;
-  color: #212529;
-  border: none;
-  background-color: white;
-  border-radius: 0px;
-  margin-left: 0px !important;
-}
-div.dt-button-collection button.dt-btn-split-drop-button:focus {
-  border: none;
-  border-radius: 0px;
-  outline: none;
-}
-div.dt-button-collection button.dt-btn-split-drop-button:hover {
-  background-color: #e9ecef;
-}
-div.dt-button-collection button.dt-btn-split-drop-button:active {
-  background-color: #007bff !important;
-}
 
 div.dt-button-background {
   position: fixed;
@@ -222,8 +203,9 @@ div.dt-buttons a.btn.processing:after {
   -webkit-animation: dtb-spinner 1500ms infinite linear;
   -moz-animation: dtb-spinner 1500ms infinite linear;
 }
-
-div.dt-btn-split-wrapper button.dt-btn-split-drop {
-  border-top-right-radius: 0.25rem !important;
-  border-bottom-right-radius: 0.25rem !important;
+div.dt-buttons button.button {
+  margin-left: 5px;
+}
+div.dt-buttons button.button:first-child {
+  margin-left: 0px;
 }
