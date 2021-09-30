@@ -46,7 +46,7 @@ module AdminUI
       security_groups_spaces_connected         = security_groups_spaces['connected']
       service_brokers_connected                = service_brokers['connected']
       service_instances_connected              = service_instances['connected']
-      spaces_roles_connected                   = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected'] && spaces_supporters['connected']
+      spaces_roles_connected                   = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected'] && (!@testing || spaces_supporters['connected'])
       staging_security_groups_spaces_connected = staging_security_groups_spaces['connected']
       tasks_connected                          = tasks['connected']
       users_connected                          = users['connected']

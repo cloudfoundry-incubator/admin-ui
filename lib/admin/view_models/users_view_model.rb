@@ -18,7 +18,7 @@ module AdminUI
       users_uaa                      = @cc.users_uaa
 
       # organizations, organizations_auditors, organizations_billing_managers, organizations_managers, organizations_users,
-      # spaces, spaces_auditors, spaces_developers, spaces_managers, spaces_supporters,
+      # spaces, spaces_auditors, spaces_developers, spaces_managers, spaces_supporters (if testing),
       # users_cc and users_uaa have to exist. Other record types are optional
       return result unless organizations['connected'] &&
                            organizations_auditors['connected'] &&
@@ -29,7 +29,7 @@ module AdminUI
                            spaces_auditors['connected'] &&
                            spaces_developers['connected'] &&
                            spaces_managers['connected'] &&
-                           spaces_supporters['connected'] &&
+                           (!@testing || spaces_supporters['connected']) &&
                            users_cc['connected'] &&
                            users_uaa['connected']
 

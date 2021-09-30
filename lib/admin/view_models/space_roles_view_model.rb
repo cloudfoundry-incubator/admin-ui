@@ -11,13 +11,13 @@ module AdminUI
       users_cc          = @cc.users_cc
       users_uaa         = @cc.users_uaa
 
-      # spaces, spaces_auditors, spaces_developers, spaces_supporters,
+      # spaces, spaces_auditors, spaces_developers, spaces_supporters (if testing),
       # spaces_managers, users_cc and users_uaa have to exist
       return result unless spaces['connected'] &&
                            spaces_auditors['connected'] &&
                            spaces_developers['connected'] &&
                            spaces_managers['connected'] &&
-                           spaces_supporters['connected'] &&
+                           (!@testing || spaces_supporters['connected']) &&
                            users_cc['connected'] &&
                            users_uaa['connected']
 

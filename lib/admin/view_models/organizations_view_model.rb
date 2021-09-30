@@ -60,7 +60,7 @@ module AdminUI
       service_plan_visibilities_connected        = service_plan_visibilities['connected']
       space_quotas_connected                     = space_quotas['connected']
       spaces_connected                           = spaces['connected']
-      spaces_roles_connected                     = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected'] && spaces_supporters['connected']
+      spaces_roles_connected                     = spaces_auditors['connected'] && spaces_developers['connected'] && spaces_managers['connected'] && (!@testing || spaces_supporters['connected'])
       staging_security_groups_spaces_connected   = staging_security_groups_spaces['connected']
       tasks_connected                            = tasks['connected']
       users_connected                            = users['connected']
