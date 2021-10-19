@@ -182,7 +182,7 @@ module AdminUI
     def read_or_initialize_cache
       if File.exist?(@config.data_file)
         begin
-          read = IO.read(@config.data_file)
+          read = File.read(@config.data_file)
           begin
             parsed = Yajl::Parser.parse(read)
             if parsed.is_a?(Hash)

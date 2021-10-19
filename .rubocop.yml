@@ -127,6 +127,9 @@ Lint/RedundantDirGlobSort:
 Lint/RedundantSafeNavigation:
   Enabled: true
 
+Lint/RequireRelativeSelfPath:
+  Enabled: true
+
 Lint/SelfAssignment:
   Enabled: true
 
@@ -340,6 +343,9 @@ Rails/WhereExists:
 Rails/WhereNot:
   Enabled: true
 
+Security/IoMethods:
+  Enabled: true
+
 Style/AccessorGrouping:
   Enabled: true
 
@@ -427,6 +433,12 @@ Style/NegatedIfElseCondition:
 Style/NilLambda:
   Enabled: true
 
+Style/NumberedParameters:
+  Enabled: true
+
+Style/NumberedParametersLimit:
+  Enabled: true
+
 Style/OptionalBooleanParameter:
   Enabled: false
 
@@ -462,6 +474,9 @@ Style/RescueStandardError:
 
 Style/SafeNavigation:
   Enabled: false
+
+Style/SelectByRegexp:
+  Enabled: true
 
 Style/SingleArgumentDig:
   Enabled: true

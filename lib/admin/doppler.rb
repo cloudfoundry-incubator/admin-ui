@@ -458,7 +458,7 @@ module AdminUI
     def read_or_initialize_components
       if File.exist?(@config.doppler_data_file)
         begin
-          read = IO.read(@config.doppler_data_file)
+          read = File.read(@config.doppler_data_file)
           begin
             parsed = Yajl::Parser.parse(read)
             if parsed.is_a?(Hash)

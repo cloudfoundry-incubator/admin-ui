@@ -102,7 +102,7 @@ module AdminUI
           file_size = File.size(@path)
 
           start, read_size = calculate_content_start_and_read_size(start, file_size)
-          contents = IO.read(@path, read_size, start)
+          contents = File.read(@path, read_size, start)
           return create_content_result(file_size, start, read_size, contents)
         rescue => error
           @logger.error("Error retrieving contents of log file #{path}: #{error.inspect}")

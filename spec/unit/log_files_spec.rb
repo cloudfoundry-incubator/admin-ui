@@ -57,7 +57,7 @@ describe AdminUI::LogFiles do
         infos = log_files.infos
         info = infos[0]
         file = log_files.file(info[:path])
-        content = IO.read(file.path)
+        content = File.read(file.path)
         expect(content).to eq(log_file_content)
       end
 
@@ -124,7 +124,7 @@ describe AdminUI::LogFiles do
         file = log_files.file(info[:path])
         expect(sftp_start).to be(true)
         expect(sftp_download).to be(true)
-        content = IO.read(file.path)
+        content = File.read(file.path)
         expect(content).to eq(log_file_content)
       end
 

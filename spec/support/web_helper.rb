@@ -4,7 +4,9 @@ require 'selenium-webdriver'
 RSpec.configure do |config|
   firefox_exists = false
   begin
-    firefox_exists = File.exist?(Selenium::WebDriver::Firefox::Binary.path)
+    path = Selenium::WebDriver::Platform.find_binary(Selenium::WebDriver::Firefox::Service::EXECUTABLE)
+    Selenium::WebDriver::Platform.assert_executable(path)
+    firefox_exists = true
   rescue
   end
   config.filter_run_excluding firefox_available: true unless firefox_exists
@@ -46,17 +48,16 @@ shared_context :web_context do
       tunnel_identifier = ENV['TRAVIS_JOB_NUMBER']
       username          = ENV['SAUCE_USERNAME']
 
-      caps = Selenium::WebDriver::Remote::Capabilities.firefox(marionette: true,
-                                                               build: build_number,
+      caps = Selenium::WebDriver::Remote::Capabilities.firefox(build: build_number,
                                                                'tunnel-identifier' => tunnel_identifier)
 
       url = "http://#{username}:#{access_key}@localhost:4445/wd/hub"
       client = Selenium::WebDriver::Remote::Http::Default.new
       client.timeout = 600
       Selenium::WebDriver.for(:remote,
-                              http_client:          client,
-                              desired_capabilities: caps,
-                              url:                  url)
+                              http_client:  client,
+                              capabilities: caps,
+                              url:          url)
     else
       profile = Selenium::WebDriver::Firefox::Profile.new
       profile['browser.download.dir']                     = directory
@@ -70,9 +71,8 @@ shared_context :web_context do
       options.profile = profile
       options.headless!
 
-      # TODO: Temporary workaround for ruby 3.0.0
-      # Selenium::WebDriver.for(:firefox, marionette: true, options: options)
-      Selenium::WebDriver::Firefox::Driver.new(marionette: true, options: options)
+      Selenium::WebDriver.for(:firefox,
+                              capabilities: options)
     end
   rescue => error
     unless url.nil?
