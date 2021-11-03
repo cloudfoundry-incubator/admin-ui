@@ -59,7 +59,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
     rspec-support (3.10.2)
-    rubocop (1.22.1)
+    rubocop (1.22.3)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
       rainbow (>= 2.2.2, < 4.0)
@@ -70,7 +70,7 @@ GEM
       unicode-display_width (>= 1.4.0, < 3.0)
     rubocop-ast (1.12.0)
       parser (>= 3.0.1.1)
-    rubocop-performance (1.11.5)
+    rubocop-performance (1.12.0)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
     rubocop-rails (2.12.4)
@@ -80,11 +80,11 @@ GEM
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
-    selenium-webdriver (4.0.0)
+    selenium-webdriver (4.0.3)
       childprocess (>= 0.5, < 5.0)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2)
-    sequel (5.49.0)
+    sequel (5.50.0)
     sequel_pg (1.14.0)
       pg (>= 0.18.0, != 1.2.0)
       sequel (>= 4.38.0)
@@ -105,7 +105,7 @@ GEM
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
     yajl-ruby (1.4.1)
-    zeitwerk (2.4.2)
+    zeitwerk (2.5.1)
 
 PLATFORMS
   x86_64-linux
@@ -120,11 +120,11 @@ DEPENDENCIES
   protobuf (= 3.10.5)
   rack-ssl (= 1.4.1)
   rspec (= 3.10.0)
-  rubocop (= 1.22.1)
-  rubocop-performance (= 1.11.5)
+  rubocop (= 1.22.3)
+  rubocop-performance (= 1.12.0)
   rubocop-rails (= 2.12.4)
-  selenium-webdriver (= 4.0.0)
-  sequel (= 5.49.0)
+  selenium-webdriver (= 4.0.3)
+  sequel (= 5.50.0)
   sequel_pg (= 1.14.0)
   sinatra (= 2.1.0)
   sqlite3 (= 1.4.2)
@@ -135,4 +135,4 @@ RUBY VERSION
    ruby 3.0.2p107
 
 BUNDLED WITH
-   2.2.29
+   2.2.30
