@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-ruby '3.0.2'
+ruby '3.0.3'
 
 gem 'faye-websocket', '0.11.1'
 gem 'membrane', '1.1.0'
@@ -21,12 +21,12 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '1.22.3'
+  gem 'rubocop', '1.23.0'
   gem 'rubocop-performance', '1.12.0'
   gem 'rubocop-rails', '2.12.4'
 end
 
 group :test do
   gem 'rspec', '3.10.0'
-  gem 'selenium-webdriver', '4.0.3'
+  gem 'selenium-webdriver', '4.1.0'
 end

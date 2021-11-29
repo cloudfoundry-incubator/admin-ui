@@ -15,6 +15,9 @@ AllCops:
 Gemspec/DateAssignment:
   Enabled: true
 
+Gemspec/RequireMFA:
+  Enabled: true
+
 Layout/BeginEndAlignment:
   Enabled: true
 
@@ -167,6 +170,9 @@ Lint/UriEscapeUnescape:
   Enabled: false
 
 Lint/UselessMethodDefinition:
+  Enabled: true
+
+Lint/UselessRuby2Keywords:
   Enabled: true
 
 Lint/UselessTimes:
@@ -440,6 +446,9 @@ Style/NumberedParameters:
   Enabled: true
 
 Style/NumberedParametersLimit:
+  Enabled: true
+
+Style/OpenStructUse:
   Enabled: true
 
 Style/OptionalBooleanParameter:
