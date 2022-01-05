@@ -14,9 +14,9 @@ describe AdminUI::CC, type: :integration do
   let(:uaadb_uri)  { "sqlite://#{uaadb_file}" }
 
   let(:config) do
-    AdminUI::Config.load(ccdb_uri:  ccdb_uri,
-                         db_uri:    db_uri,
-                         uaadb_uri: uaadb_uri)
+    AdminUI::Config.load(ccdb_uri:,
+                         db_uri:,
+                         uaadb_uri:)
   end
 
   let(:logger) { Logger.new(log_file) }

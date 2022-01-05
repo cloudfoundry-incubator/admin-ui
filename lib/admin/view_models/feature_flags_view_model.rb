@@ -40,7 +40,7 @@ module AdminUI
       unless @testing
         DEFAULT_FLAGS.each_pair do |name, enabled|
           name_string = name.to_s
-          combined_feature_flags.push(name: name_string, enabled: enabled) unless feature_flags_set.include?(name_string)
+          combined_feature_flags.push(name: name_string, enabled:) unless feature_flags_set.include?(name_string)
         end
 
         unless feature_flags_set.include?('task_creation')

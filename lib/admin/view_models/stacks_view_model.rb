@@ -21,8 +21,8 @@ module AdminUI
       buildpacks_connected               = buildpacks['connected']
       processes_connected                = processes['connected']
 
-      buildpack_lifecycle_data_hash = buildpack_lifecycle_data['items'].map { |item| [item[:app_guid], item] }.to_h
-      process_app_hash              = processes['items'].map { |item| [item[:app_guid], item] }.to_h
+      buildpack_lifecycle_data_hash = buildpack_lifecycle_data['items'].to_h { |item| [item[:app_guid], item] }
+      process_app_hash              = processes['items'].to_h { |item| [item[:app_guid], item] }
 
       stack_annotations_hash = {}
       stack_annotations['items'].each do |stack_annotation|

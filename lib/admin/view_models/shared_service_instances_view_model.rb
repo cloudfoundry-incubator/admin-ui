@@ -16,13 +16,13 @@ module AdminUI
       services          = @cc.services
       spaces            = @cc.spaces
 
-      organization_hash     = organizations['items'].map { |item| [item[:id], item] }.to_h
-      service_broker_hash   = service_brokers['items'].map { |item| [item[:id], item] }.to_h
-      service_instance_hash = service_instances['items'].map { |item| [item[:guid], item] }.to_h
-      service_plan_hash     = service_plans['items'].map { |item| [item[:id], item] }.to_h
-      service_hash          = services['items'].map { |item| [item[:id], item] }.to_h
-      space_guid_hash       = spaces['items'].map { |item| [item[:guid], item] }.to_h
-      space_id_hash         = spaces['items'].map { |item| [item[:id], item] }.to_h
+      organization_hash     = organizations['items'].to_h { |item| [item[:id], item] }
+      service_broker_hash   = service_brokers['items'].to_h { |item| [item[:id], item] }
+      service_instance_hash = service_instances['items'].to_h { |item| [item[:guid], item] }
+      service_plan_hash     = service_plans['items'].to_h { |item| [item[:id], item] }
+      service_hash          = services['items'].to_h { |item| [item[:id], item] }
+      space_guid_hash       = spaces['items'].to_h { |item| [item[:guid], item] }
+      space_id_hash         = spaces['items'].to_h { |item| [item[:id], item] }
 
       items = []
       hash  = {}

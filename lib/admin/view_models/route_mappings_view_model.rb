@@ -18,11 +18,11 @@ module AdminUI
       organizations = @cc.organizations
       spaces        = @cc.spaces
 
-      application_hash  = applications['items'].map { |item| [item[:guid], item] }.to_h
-      domain_hash       = domains['items'].map { |item| [item[:id], item] }.to_h
-      organization_hash = organizations['items'].map { |item| [item[:id], item] }.to_h
-      route_hash        = routes['items'].map { |item| [item[:guid], item] }.to_h
-      space_hash        = spaces['items'].map { |item| [item[:guid], item] }.to_h
+      application_hash  = applications['items'].to_h { |item| [item[:guid], item] }
+      domain_hash       = domains['items'].to_h { |item| [item[:id], item] }
+      organization_hash = organizations['items'].to_h { |item| [item[:id], item] }
+      route_hash        = routes['items'].to_h { |item| [item[:guid], item] }
+      space_hash        = spaces['items'].to_h { |item| [item[:guid], item] }
 
       items = []
       hash  = {}

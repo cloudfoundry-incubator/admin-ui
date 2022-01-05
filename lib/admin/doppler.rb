@@ -508,9 +508,7 @@ module AdminUI
           'notified'  => param_components['notified']
         }
 
-      File.open(@config.doppler_data_file, 'w') do |file|
-        file.write(Yajl::Encoder.encode(local_components, pretty: true))
-      end
+      File.write(@config.doppler_data_file, Yajl::Encoder.encode(local_components, pretty: true))
     rescue => error
       @logger.error("Error during doppler write_components: #{error.inspect}")
       @logger.error(error.backtrace.join("\n"))

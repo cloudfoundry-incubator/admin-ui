@@ -1778,7 +1778,7 @@ module ViewModelsHelper
           organizations:     1,
           running_instances: cc_process[:state] == 'STARTED' ? 1 : 0,
           spaces:            1,
-          timestamp:         timestamp,
+          timestamp:,
           total_instances:   cc_process[:instances],
           users:             1
         }

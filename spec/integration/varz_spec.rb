@@ -13,8 +13,8 @@ describe AdminUI::VARZ, type: :integration do
   let(:log_file)  { '/tmp/admin_ui.log' }
 
   let(:config) do
-    AdminUI::Config.load(data_file:              data_file,
-                         db_uri:                 db_uri,
+    AdminUI::Config.load(data_file:,
+                         db_uri:,
                          monitored_components:   [],
                          nats_discovery_timeout: 1)
   end

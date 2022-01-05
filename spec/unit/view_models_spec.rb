@@ -15,14 +15,14 @@ describe AdminUI::ViewModels do
   let(:uaadb_uri)         { "sqlite://#{uaadb_file}" }
 
   let(:config) do
-    AdminUI::Config.load(ccdb_uri:                ccdb_uri,
-                         data_file:               data_file,
-                         db_uri:                  db_uri,
-                         doppler_data_file:       doppler_data_file,
+    AdminUI::Config.load(ccdb_uri:,
+                         data_file:,
+                         db_uri:,
+                         doppler_data_file:,
                          doppler_rollup_interval: 1,
                          log_files:               [log_file],
                          mbus:                    'nats://nats:c1oudc0w@localhost:14222',
-                         uaadb_uri:               uaadb_uri)
+                         uaadb_uri:)
   end
 
   let(:cc)                 { AdminUI::CC.new(config, logger, true) }

@@ -37,9 +37,9 @@ module AdminUI
             metrics =
               {
                 instances:    1,
-                cpu:          cpu,
-                disk_bytes:   disk_bytes,
-                memory_bytes: memory_bytes
+                cpu:,
+                disk_bytes:,
+                memory_bytes:
               }
             metrics_hash[key] = metrics
           else

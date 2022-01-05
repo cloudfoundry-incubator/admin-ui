@@ -22,9 +22,9 @@ module AdminUI
       route_bindings_connected = route_bindings['connected']
       route_mappings_connected = route_mappings['connected']
 
-      domain_hash       = domains['items'].map { |item| [item[:id], item] }.to_h
-      organization_hash = organizations['items'].map { |item| [item[:id], item] }.to_h
-      space_hash        = spaces['items'].map { |item| [item[:id], item] }.to_h
+      domain_hash       = domains['items'].to_h { |item| [item[:id], item] }
+      organization_hash = organizations['items'].to_h { |item| [item[:id], item] }
+      space_hash        = spaces['items'].to_h { |item| [item[:id], item] }
 
       route_annotations_hash = {}
       route_annotations['items'].each do |route_annotation|

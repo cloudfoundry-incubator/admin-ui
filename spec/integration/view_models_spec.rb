@@ -24,16 +24,16 @@ describe AdminUI::ViewModels, type: :integration do
   let(:uaadb_uri)                    { "sqlite://#{uaadb_file}" }
 
   let(:config) do
-    AdminUI::Config.load(ccdb_uri:                ccdb_uri,
-                         data_file:               data_file,
-                         db_uri:                  db_uri,
-                         doppler_data_file:       doppler_data_file,
+    AdminUI::Config.load(ccdb_uri:,
+                         data_file:,
+                         db_uri:,
+                         doppler_data_file:,
                          doppler_rollup_interval: 1,
-                         log_file:                log_file,
+                         log_file:,
                          log_files:               [log_file_displayed],
                          mbus:                    'nats://nats:c1oudc0w@localhost:14222',
                          nats_discovery_timeout:  1,
-                         uaadb_uri:               uaadb_uri)
+                         uaadb_uri:)
   end
 
   let(:cc)                 { AdminUI::CC.new(config, logger, true) }

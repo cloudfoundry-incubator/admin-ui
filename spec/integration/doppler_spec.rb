@@ -19,13 +19,13 @@ describe AdminUI::Doppler, type: :integration do
 
   let(:base_config_values) do
     {
-      ccdb_uri:                ccdb_uri,
-      cloud_controller_uri:    cloud_controller_uri,
-      db_uri:                  db_uri,
-      doppler_data_file:       doppler_data_file,
+      ccdb_uri:,
+      cloud_controller_uri:,
+      db_uri:,
+      doppler_data_file:,
       doppler_rollup_interval: 1,
       monitored_components:    [],
-      uaadb_uri:               uaadb_uri
+      uaadb_uri:
     }
   end
 

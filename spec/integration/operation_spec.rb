@@ -23,16 +23,16 @@ describe AdminUI::Operation, type: :integration do
   let(:use_route)                      { true }
 
   let(:config) do
-    AdminUI::Config.load(ccdb_uri:                ccdb_uri,
+    AdminUI::Config.load(ccdb_uri:,
                          cloud_controller_uri:    'http://api.cloudfoundry',
-                         data_file:               data_file,
-                         db_uri:                  db_uri,
-                         doppler_data_file:       doppler_data_file,
+                         data_file:,
+                         db_uri:,
+                         doppler_data_file:,
                          doppler_rollup_interval: 1,
                          mbus:                    'nats://nats:c1oudc0w@localhost:14222',
                          monitored_components:    [],
                          nats_discovery_timeout:  1,
-                         uaadb_uri:               uaadb_uri,
+                         uaadb_uri:,
                          uaa_client:              {
                                                     id:     'id',
                                                     secret: 'secret'

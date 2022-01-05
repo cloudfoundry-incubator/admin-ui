@@ -28,24 +28,22 @@ describe AdminUI::DBStoreMigration do
 
   let(:config) do
     {
-      ccdb_uri:             ccdb_uri,
-      cloud_controller_uri: cloud_controller_uri,
-      data_file:            data_file,
-      db_uri:               db_uri,
-      doppler_data_file:    doppler_data_file,
-      log_file:             log_file,
+      ccdb_uri:,
+      cloud_controller_uri:,
+      data_file:,
+      db_uri:,
+      doppler_data_file:,
+      log_file:,
       mbus:                 'nats://nats:c1oudc0w@localhost:14222',
-      port:                 port,
-      uaadb_uri:            uaadb_uri,
+      port:,
+      uaadb_uri:,
       uaa_client:           { id: 'id', secret: 'secret' }
     }
   end
 
   def launch_admin_daemon(config)
     File.delete(db_file) if File.exist?(db_file)
-    File.open(config_file, 'w') do |file|
-      file.write(Yajl::Encoder.encode(config, pretty: true))
-    end
+    File.write(config_file, Yajl::Encoder.encode(config, pretty: true))
     project_path = File.join(File.dirname(__FILE__), '../..')
     spawn_opts =
       {
@@ -107,7 +105,7 @@ describe AdminUI::DBStoreMigration do
 
   context 'when stats file exists and database instance does not' do
     it 'migrates stats persistence from file stats to database' do
-      merged_config = config.merge(stats_file: stats_file)
+      merged_config = config.merge(stats_file:)
       FileUtils.cp("#{db_migration_spec_dir}/#{stats_file_spec}", stats_file)
       launch_admin_daemon(merged_config)
       expect(File.file?(db_file)).to be(true)

@@ -23,15 +23,15 @@ module AdminUI
       services                  = @cc.services
       spaces                    = @cc.spaces
 
-      domain_hash                  = domains['items'].map { |item| [item[:id], item] }.to_h
-      organization_hash            = organizations['items'].map { |item| [item[:id], item] }.to_h
-      route_binding_operation_hash = route_binding_operations['items'].map { |item| [item[:route_binding_id], item] }.to_h
-      route_hash                   = routes['items'].map { |item| [item[:id], item] }.to_h
-      service_broker_hash          = service_brokers['items'].map { |item| [item[:id], item] }.to_h
-      service_instance_hash        = service_instances['items'].map { |item| [item[:id], item] }.to_h
-      service_plan_hash            = service_plans['items'].map { |item| [item[:id], item] }.to_h
-      service_hash                 = services['items'].map { |item| [item[:id], item] }.to_h
-      space_hash                   = spaces['items'].map { |item| [item[:id], item] }.to_h
+      domain_hash                  = domains['items'].to_h { |item| [item[:id], item] }
+      organization_hash            = organizations['items'].to_h { |item| [item[:id], item] }
+      route_binding_operation_hash = route_binding_operations['items'].to_h { |item| [item[:route_binding_id], item] }
+      route_hash                   = routes['items'].to_h { |item| [item[:id], item] }
+      service_broker_hash          = service_brokers['items'].to_h { |item| [item[:id], item] }
+      service_instance_hash        = service_instances['items'].to_h { |item| [item[:id], item] }
+      service_plan_hash            = service_plans['items'].to_h { |item| [item[:id], item] }
+      service_hash                 = services['items'].to_h { |item| [item[:id], item] }
+      space_hash                   = spaces['items'].to_h { |item| [item[:id], item] }
 
       items = []
       hash  = {}

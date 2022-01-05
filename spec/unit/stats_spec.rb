@@ -12,13 +12,13 @@ describe AdminUI::Stats do
   let(:log_file)          { '/tmp/admin_ui.log' }
 
   let(:config) do
-    AdminUI::Config.new(data_file:               data_file,
-                        db_uri:                  db_uri,
-                        doppler_data_file:       doppler_data_file,
+    AdminUI::Config.new(data_file:,
+                        db_uri:,
+                        doppler_data_file:,
                         doppler_rollup_interval: 1,
                         mbus:                    'nats://nats:c1oudc0w@localhost:14222',
                         monitored_components:    [],
-                        stats_refresh_schedules: stats_refresh_schedules)
+                        stats_refresh_schedules:)
   end
 
   let(:cc)                 { AdminUI::CC.new(config, logger, true) }
@@ -171,9 +171,9 @@ describe AdminUI::Stats do
 
   context 'calculate_time_until_generate_stats' do
     let(:config) do
-      AdminUI::Config.load(data_file:               data_file,
-                           db_uri:                  db_uri,
-                           doppler_data_file:       doppler_data_file,
+      AdminUI::Config.load(data_file:,
+                           db_uri:,
+                           doppler_data_file:,
                            doppler_rollup_interval: 1,
                            mbus:                    'nats://nats:c1oudc0w@localhost:14222',
                            monitored_components:    [],
@@ -187,9 +187,9 @@ describe AdminUI::Stats do
 
   context 'calculate_time_until_generate_stats' do
     let(:config) do
-      AdminUI::Config.new(data_file:               data_file,
-                          db_uri:                  db_uri,
-                          doppler_data_file:       doppler_data_file,
+      AdminUI::Config.new(data_file:,
+                          db_uri:,
+                          doppler_data_file:,
                           doppler_rollup_interval: 1,
                           mbus:                    'nats://nats:c1oudc0w@localhost:14222',
                           monitored_components:    [],

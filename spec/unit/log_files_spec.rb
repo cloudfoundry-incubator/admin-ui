@@ -34,9 +34,7 @@ describe AdminUI::LogFiles do
 
     before do
       Dir.mkdir(log_file_directory)
-      File.open(log_file_qualified_name, 'w') do |file|
-        file.write(log_file_content)
-      end
+      File.write(log_file_qualified_name, log_file_content)
       File.utime(log_file_mtime, log_file_mtime, log_file_qualified_name)
     end
 
@@ -87,7 +85,7 @@ describe AdminUI::LogFiles do
                               page_size: config.log_file_page_size,
                               path:      log_file_qualified_name,
                               read_size: length,
-                              start:     start)
+                              start:)
       end
     end
 
@@ -162,7 +160,7 @@ describe AdminUI::LogFiles do
                               page_size: config.log_file_page_size,
                               path:      info[:path],
                               read_size: length,
-                              start:     start)
+                              start:)
       end
     end
 

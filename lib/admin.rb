@@ -144,7 +144,7 @@ module AdminUI
         # We have to increase the WEBrick HTTPRequest constant MAX_URI_LENGTH from its defined value of 2083
         # or we will have problems with the jQuery DataTables server side ajax calls causing WEBrick::HTTPStatus::RequestURITooLarge
         WEBrick::HTTPRequest.instance_eval { remove_const :MAX_URI_LENGTH }
-        WEBrick::HTTPRequest.const_set('MAX_URI_LENGTH', 10_240)
+        WEBrick::HTTPRequest.const_set(:MAX_URI_LENGTH, 10_240)
       end
 
       # Only show error and fatal messages
@@ -167,8 +167,8 @@ module AdminUI
       @logger.debug("config.secured_client_connection: #{@config.secured_client_connection}")
 
       if @config.secured_client_connection
-        pkey  = OpenSSL::PKey::RSA.new(File.open(@config.ssl_private_key_file_path).read, @config.ssl_private_key_pass_phrase)
-        cert  = OpenSSL::X509::Certificate.new(File.open(@config.ssl_certificate_file_path).read)
+        pkey  = OpenSSL::PKey::RSA.new(File.read(@config.ssl_private_key_file_path), @config.ssl_private_key_pass_phrase)
+        cert  = OpenSSL::X509::Certificate.new(File.read(@config.ssl_certificate_file_path))
         names = OpenSSL::X509::Name.parse cert.subject.to_s
 
         web_hash[:SSLCertificate]  = cert

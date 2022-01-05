@@ -29,24 +29,24 @@ describe AdminUI::Admin do
 
   let(:config) do
     {
-      ccdb_uri:                  ccdb_uri,
-      cloud_controller_uri:      cloud_controller_uri,
-      data_file:                 data_file,
+      ccdb_uri:,
+      cloud_controller_uri:,
+      data_file:,
       db_uri:                    "sqlite://#{db_file}",
-      doppler_data_file:         doppler_data_file,
+      doppler_data_file:,
       doppler_rollup_interval:   1,
-      log_file:                  log_file,
+      log_file:,
       mbus:                      'nats://nats:c1oudc0w@localhost:14222',
-      port:                      port,
-      secured_client_connection: secured_client_connection,
+      port:,
+      secured_client_connection:,
       ssl:                       {
-                                   certificate_file_path:   certificate_file_path,
+                                   certificate_file_path:,
                                    max_session_idle_length: 1000,
-                                   private_key_file_path:   private_key_file_path,
-                                   private_key_pass_phrase: private_key_pass_phrase
+                                   private_key_file_path:,
+                                   private_key_pass_phrase:
                                  },
-      stats_file:                stats_file,
-      uaadb_uri:                 uaadb_uri,
+      stats_file:,
+      uaadb_uri:,
       uaa_client:                {
                                    id:     'id',
                                    secret: 'secret'

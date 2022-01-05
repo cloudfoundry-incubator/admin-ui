@@ -8,7 +8,7 @@ describe AdminUI::Doppler do
   let(:log_file)          { '/tmp/admin_ui.log' }
 
   let(:config) do
-    AdminUI::Config.load(doppler_data_file:       doppler_data_file,
+    AdminUI::Config.load(doppler_data_file:,
                          doppler_rollup_interval: 1,
                          monitored_components:    [])
   end

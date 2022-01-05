@@ -73,11 +73,11 @@ module AdminUI
         result =
           {
             data:      contents.nil? ? '' : contents,
-            file_size: file_size,
+            file_size:,
             page_size: @config.log_file_page_size,
             path:      @path,
-            read_size: read_size,
-            start:     start
+            read_size:,
+            start:
           }
 
         if read_size < file_size
@@ -129,7 +129,7 @@ module AdminUI
         begin
           paths.each do |path|
             stat = File.stat(path)
-            results.push(path: path,
+            results.push(path:,
                          size: stat.size,
                          time: Utils.time_in_milliseconds(stat.mtime))
           end
@@ -264,7 +264,7 @@ module AdminUI
 
         {
           path: uri_string,
-          size: size,
+          size:,
           time: Utils.time_in_milliseconds(mtime)
         }
       end

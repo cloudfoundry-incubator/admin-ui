@@ -68,9 +68,7 @@ module SFTPHelper
 
     allow_any_instance_of(MockSession).to receive(:download!) do |_session, _source, target|
       @sftp_download = true
-      File.open(target, 'w') do |file|
-        file.write(file_content)
-      end
+      File.write(target, file_content)
     end
 
     allow_any_instance_of(MockSession).to receive(:fstat!) do

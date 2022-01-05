@@ -1,15 +1,16 @@
 source 'http://rubygems.org'
 
-ruby '3.0.3'
+ruby '3.1.0'
 
 gem 'faye-websocket', '0.11.1'
 gem 'membrane', '1.1.0'
 gem 'nats', '0.11.0'
 gem 'net-sftp', '3.0.0'
+gem 'net-smtp', '0.3.1'
 gem 'parse-cron', '0.1.4'
 gem 'protobuf', '3.10.5'
 gem 'rack-ssl', '1.4.1'
-gem 'sequel', '5.51.0'
+gem 'sequel', '5.52.0'
 gem 'sequel_pg', '1.14.0'
 gem 'sinatra', '2.1.0'
 gem 'sqlite3', '1.4.2'
@@ -21,9 +22,9 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '1.23.0'
-  gem 'rubocop-performance', '1.12.0'
-  gem 'rubocop-rails', '2.12.4'
+  gem 'rubocop', '1.24.1'
+  gem 'rubocop-performance', '1.13.1'
+  gem 'rubocop-rails', '2.13.0'
 end
 
 group :test do

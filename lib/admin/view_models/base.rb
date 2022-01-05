@@ -35,7 +35,7 @@ module AdminUI
         answer =
           {
             connected: true,
-            items:     items
+            items:
           }
 
         answer[:detail_hash]                   = detail_hash if detail_hash

@@ -214,9 +214,7 @@ module AdminUI
 
     # The call to this method must be in a synchronized block
     def write_cache
-      File.open(@config.data_file, 'w') do |file|
-        file.write(Yajl::Encoder.encode(@cache, pretty: true))
-      end
+      File.write(@config.data_file, Yajl::Encoder.encode(@cache, pretty: true))
     rescue => error
       @logger.error("Error during NATS write data: #{error.inspect}")
       @logger.error(error.backtrace.join("\n"))

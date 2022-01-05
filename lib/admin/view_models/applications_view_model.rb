@@ -32,13 +32,13 @@ module AdminUI
       service_bindings_connected = service_bindings['connected']
       tasks_connected            = tasks['connected']
 
-      buildpack_lifecycle_data_hash = buildpack_lifecycle_data['items'].map { |item| [item[:app_guid], item] }.to_h
-      droplet_hash                  = droplets['items'].map { |item| [item[:guid], item] }.to_h
-      organization_hash             = organizations['items'].map { |item| [item[:id], item] }.to_h
-      package_hash                  = packages['items'].map { |item| [item[:guid], item] }.to_h
-      process_app_hash              = processes['items'].map { |item| [item[:app_guid], item] }.to_h
-      space_hash                    = spaces['items'].map { |item| [item[:guid], item] }.to_h
-      stack_hash                    = stacks['items'].map { |item| [item[:name], item] }.to_h
+      buildpack_lifecycle_data_hash = buildpack_lifecycle_data['items'].to_h { |item| [item[:app_guid], item] }
+      droplet_hash                  = droplets['items'].to_h { |item| [item[:guid], item] }
+      organization_hash             = organizations['items'].to_h { |item| [item[:id], item] }
+      package_hash                  = packages['items'].to_h { |item| [item[:guid], item] }
+      process_app_hash              = processes['items'].to_h { |item| [item[:app_guid], item] }
+      space_hash                    = spaces['items'].to_h { |item| [item[:guid], item] }
+      stack_hash                    = stacks['items'].to_h { |item| [item[:name], item] }
 
       latest_droplets = latest_app_guid_hash(droplets['items'])
       latest_packages = latest_app_guid_hash(packages['items'])

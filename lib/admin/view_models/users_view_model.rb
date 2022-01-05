@@ -48,11 +48,11 @@ module AdminUI
       request_counts_connected   = request_counts['connected']
       revocable_tokens_connected = revocable_tokens['connected']
 
-      identity_zone_hash = identity_zones['items'].map { |item| [item[:id], item] }.to_h
-      organization_hash  = organizations['items'].map { |item| [item[:id], item] }.to_h
-      request_count_hash = request_counts['items'].map { |item| [item[:user_guid], item] }.to_h
-      space_hash         = spaces['items'].map { |item| [item[:id], item] }.to_h
-      user_cc_hash       = users_cc['items'].map { |item| [item[:guid], item] }.to_h
+      identity_zone_hash = identity_zones['items'].to_h { |item| [item[:id], item] }
+      organization_hash  = organizations['items'].to_h { |item| [item[:id], item] }
+      request_count_hash = request_counts['items'].to_h { |item| [item[:user_guid], item] }
+      space_hash         = spaces['items'].to_h { |item| [item[:id], item] }
+      user_cc_hash       = users_cc['items'].to_h { |item| [item[:guid], item] }
 
       user_annotations_hash = {}
       user_annotations['items'].each do |user_annotation|

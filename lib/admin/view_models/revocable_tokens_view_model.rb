@@ -14,9 +14,9 @@ module AdminUI
       identity_zones = @cc.identity_zones
       users          = @cc.users_uaa
 
-      client_hash        = clients['items'].map { |item| [item[:client_id], item] }.to_h
-      identity_zone_hash = identity_zones['items'].map { |item| [item[:id], item] }.to_h
-      user_hash          = users['items'].map { |item| [item[:id], item] }.to_h
+      client_hash        = clients['items'].to_h { |item| [item[:client_id], item] }
+      identity_zone_hash = identity_zones['items'].to_h { |item| [item[:id], item] }
+      user_hash          = users['items'].to_h { |item| [item[:id], item] }
 
       items = []
       hash  = {}

@@ -8,7 +8,7 @@ describe AdminUI::VARZ do
   let(:log_file)  { '/tmp/admin_ui.log' }
 
   let(:config) do
-    AdminUI::Config.load(data_file:            data_file,
+    AdminUI::Config.load(data_file:,
                          mbus:                 'nats://nats:c1oudc0w@localhost:14222',
                          monitored_components: [])
   end

@@ -45,21 +45,21 @@ shared_context :server_context do
 
   let(:config) do
     {
-      ccdb_uri:                ccdb_uri,
-      cloud_controller_uri:    cloud_controller_uri,
-      data_file:               data_file,
-      db_uri:                  db_uri,
-      doppler_data_file:       doppler_data_file,
+      ccdb_uri:,
+      cloud_controller_uri:,
+      data_file:,
+      db_uri:,
+      doppler_data_file:,
       doppler_rollup_interval: 1,
-      log_file:                log_file,
-      log_file_page_size:      log_file_page_size,
+      log_file:,
+      log_file_page_size:,
       log_files:               [log_file_displayed],
       mbus:                    'nats://nats:c1oudc0w@localhost:14222',
       nats_discovery_timeout:  1,
-      port:                    port,
-      table_height:            table_height,
-      table_page_size:         table_page_size,
-      uaadb_uri:               uaadb_uri,
+      port:,
+      table_height:,
+      table_page_size:,
+      uaadb_uri:,
       uaa_client:              {
                                  id:     'id',
                                  secret: 'secret'

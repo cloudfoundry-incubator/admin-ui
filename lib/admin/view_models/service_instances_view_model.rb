@@ -29,12 +29,12 @@ module AdminUI
       service_instance_shares_connected = service_instance_shares['connected']
       service_keys_connected            = service_keys['connected']
 
-      organization_hash               = organizations['items'].map { |item| [item[:id], item] }.to_h
-      service_broker_hash             = service_brokers['items'].map { |item| [item[:id], item] }.to_h
-      service_instance_operation_hash = service_instance_operations['items'].map { |item| [item[:service_instance_id], item] }.to_h
-      service_plan_hash               = service_plans['items'].map { |item| [item[:id], item] }.to_h
-      service_hash                    = services['items'].map { |item| [item[:id], item] }.to_h
-      space_hash                      = spaces['items'].map { |item| [item[:id], item] }.to_h
+      organization_hash               = organizations['items'].to_h { |item| [item[:id], item] }
+      service_broker_hash             = service_brokers['items'].to_h { |item| [item[:id], item] }
+      service_instance_operation_hash = service_instance_operations['items'].to_h { |item| [item[:service_instance_id], item] }
+      service_plan_hash               = service_plans['items'].to_h { |item| [item[:id], item] }
+      service_hash                    = services['items'].to_h { |item| [item[:id], item] }
+      space_hash                      = spaces['items'].to_h { |item| [item[:id], item] }
 
       service_instance_annotations_hash = {}
       service_instance_annotations['items'].each do |service_instance_annotation|

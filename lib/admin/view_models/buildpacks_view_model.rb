@@ -18,8 +18,8 @@ module AdminUI
       applications_connected = applications['connected']
       droplets_connected     = droplets['connected']
 
-      droplet_hash = droplets['items'].map { |item| [item[:guid], item] }.to_h
-      stack_hash   = stacks['items'].map { |item| [item[:name], item] }.to_h
+      droplet_hash = droplets['items'].to_h { |item| [item[:guid], item] }
+      stack_hash   = stacks['items'].to_h { |item| [item[:name], item] }
 
       latest_droplets = latest_app_guid_hash(droplets['items'])
 

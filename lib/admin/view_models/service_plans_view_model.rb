@@ -30,10 +30,10 @@ module AdminUI
       service_keys_connected              = service_keys['connected']
       service_plan_visibilities_connected = service_plan_visibilities['connected']
 
-      service_broker_hash        = service_brokers['items'].map { |item| [item[:id], item] }.to_h
-      service_hash               = services['items'].map { |item| [item[:id], item] }.to_h
-      service_instance_guid_hash = service_instances['items'].map { |item| [item[:guid], item] }.to_h
-      service_instance_id_hash   = service_instances['items'].map { |item| [item[:id], item] }.to_h
+      service_broker_hash        = service_brokers['items'].to_h { |item| [item[:id], item] }
+      service_hash               = services['items'].to_h { |item| [item[:id], item] }
+      service_instance_guid_hash = service_instances['items'].to_h { |item| [item[:guid], item] }
+      service_instance_id_hash   = service_instances['items'].to_h { |item| [item[:id], item] }
 
       service_plan_annotations_hash = {}
       service_plan_annotations['items'].each do |service_plan_annotation|

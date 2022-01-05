@@ -57,7 +57,7 @@ shared_context :web_context do
       Selenium::WebDriver.for(:remote,
                               http_client:  client,
                               capabilities: caps,
-                              url:          url)
+                              url:)
     else
       profile = Selenium::WebDriver::Firefox::Profile.new
       profile['browser.download.dir']                     = directory
@@ -208,7 +208,7 @@ shared_context :web_context do
       expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('DEAs')
     end
 
-    element = @driver.find_element(id: id)
+    element = @driver.find_element(id:)
     expect(element).to_not be_nil
     return element if element.displayed?
 
@@ -236,7 +236,7 @@ shared_context :web_context do
       expect(@driver.find_element(class_name: 'menuItemSelected').attribute('id')).to eq('DEAs')
     end
 
-    element = @driver.find_element(id: id)
+    element = @driver.find_element(id:)
     expect(element).to_not be_nil
 
     # TODO: Behavior of selenium-webdriver. Entire item must be displayed for it to click. Workaround following after commented out code

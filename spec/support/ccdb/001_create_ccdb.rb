@@ -1939,6 +1939,7 @@ Sequel.migration do
       
       index [:created_at], :name=>:sk_created_at_index
       index [:guid], :name=>:sk_guid_index, :unique=>true
+      index [:service_instance_id], :name=>:sk_svc_instance_id_index
       index [:updated_at], :name=>:sk_updated_at_index
       index [:name, :service_instance_id], :name=>:svc_key_name_instance_id_index, :unique=>true
     end
