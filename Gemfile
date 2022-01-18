@@ -22,9 +22,9 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '1.24.1'
-  gem 'rubocop-performance', '1.13.1'
-  gem 'rubocop-rails', '2.13.0'
+  gem 'rubocop', '1.25.0'
+  gem 'rubocop-performance', '1.13.2'
+  gem 'rubocop-rails', '2.13.2'
 end
 
 group :test do
