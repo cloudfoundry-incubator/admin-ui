@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-  - 3.1.0
+  - 3.1.1
 addons:
   sauce_connect:
     username: 'admin-ui'

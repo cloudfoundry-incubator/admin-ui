@@ -51,7 +51,7 @@ module ViewModelsHelper
 
   def annotation_rfc3339(annotation)
     {
-      annotation:         annotation,
+      annotation:,
       created_at_rfc3339: annotation[:created_at].to_datetime.rfc3339,
       updated_at_rfc3339: annotation[:updated_at].to_datetime.rfc3339
     }
@@ -59,7 +59,7 @@ module ViewModelsHelper
 
   def label_rfc3339(label)
     {
-      label:              label,
+      label:,
       created_at_rfc3339: label[:created_at].to_datetime.rfc3339,
       updated_at_rfc3339: label[:updated_at].to_datetime.rfc3339
     }
