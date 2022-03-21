@@ -271,6 +271,9 @@ Performance/StringInclude:
 Performance/Sum:
   Enabled: true
 
+Rails/ActionControllerTestCase:
+  Enabled: true
+
 Rails/ActiveRecordCallbacksOrder:
   Enabled: true
 
@@ -284,6 +287,15 @@ Rails/AttributeDefaultBlockValue:
   Enabled: true
 
 Rails/CompactBlank:
+  Enabled: true
+
+Rails/DeprecatedActiveModelErrorsMethods:
+  Enabled: true
+
+Rails/DuplicateAssociation:
+  Enabled: true
+
+Rails/DuplicateScope:
   Enabled: true
 
 Rails/DurationArithmetic:
@@ -301,7 +313,13 @@ Rails/ExpandedDateRange:
 Rails/FindById:
   Enabled: true
 
+Rails/I18nLazyLookup:
+  Enabled: true
+  
 Rails/I18nLocaleAssignment:
+  Enabled: true
+
+Rails/I18nLocaleTexts:
   Enabled: true
 
 Rails/IndexBy:
@@ -311,6 +329,9 @@ Rails/Inquiry:
   Enabled: true
 
 Rails/MailerName:
+  Enabled: true
+
+Rails/MigrationClassName:
   Enabled: true
 
 Rails/MatchRoute:
@@ -356,6 +377,9 @@ Rails/TimeZone:
   Enabled: false
 
 Rails/TimeZoneAssignment:
+  Enabled: true
+
+Rails/TransactionExitStatement:
   Enabled: true
 
 Rails/UnusedIgnoredColumns:
@@ -464,6 +488,9 @@ Style/MultilineInPatternThen:
   Enabled: true
 
 Style/NegatedIfElseCondition:
+  Enabled: true
+
+Style/NestedFileDirname:
   Enabled: true
 
 Style/NilLambda:
