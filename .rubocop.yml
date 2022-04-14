@@ -130,6 +130,9 @@ Lint/RedundantDirGlobSort:
 Lint/RedundantSafeNavigation:
   Enabled: true
 
+Lint/RefinementImportMethods:
+  Enabled: true
+
 Lint/RequireRelativeSelfPath:
   Enabled: true
 
@@ -522,6 +525,9 @@ Style/RedundantFetchBlock:
 
 Style/RedundantFileExtensionInRequire:
   Enabled: false
+
+Style/RedundantInitialize:
+  Enabled: true
 
 Style/RedundantRegexpCharacterClass:
   Enabled: true
