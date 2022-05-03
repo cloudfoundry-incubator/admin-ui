@@ -4,11 +4,11 @@ require_relative '../spec_helper'
 
 module SFTPHelper
   class MockSession < ::Net::SFTP::Session
-    # rubocop:disable Lint/MissingSuper, Style/RedundantInitialize
+    # rubocop:disable Lint/MissingSuper
     def initialize
       # Intentionally do not call super
     end
-    # rubocop:enable Lint/MissingSuper, Style/RedundantInitialize
+    # rubocop:enable Lint/MissingSuper
   end
 
   class MockEntry

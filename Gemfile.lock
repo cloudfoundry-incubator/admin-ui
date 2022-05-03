@@ -1,7 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    activesupport (7.0.2.3)
+    activesupport (7.0.2.4)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -39,7 +39,7 @@ GEM
     parser (3.1.2.0)
       ast (~> 2.4.1)
     pg (1.3.5)
-    protobuf (3.10.5)
+    protobuf (3.10.6)
       activesupport (>= 3.2)
       middleware
       thor
@@ -50,7 +50,7 @@ GEM
     rack-ssl (1.4.1)
       rack
     rainbow (3.1.1)
-    regexp_parser (2.3.0)
+    regexp_parser (2.3.1)
     rexml (3.2.5)
     rspec (3.11.0)
       rspec-core (~> 3.11.0)
@@ -65,13 +65,13 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.11.0)
     rspec-support (3.11.0)
-    rubocop (1.27.0)
+    rubocop (1.28.2)
       parallel (~> 1.10)
       parser (>= 3.1.0.0)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml
-      rubocop-ast (>= 1.16.0, < 2.0)
+      rubocop-ast (>= 1.17.0, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 3.0)
     rubocop-ast (1.17.0)
@@ -90,7 +90,7 @@ GEM
       childprocess (>= 0.5, < 5.0)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2)
-    sequel (5.55.0)
+    sequel (5.56.0)
     sequel_pg (1.15.0)
       pg (>= 0.18.0, != 1.2.0)
       sequel (>= 4.38.0)
@@ -124,14 +124,14 @@ DEPENDENCIES
   net-sftp (= 3.0.0)
   net-smtp (= 0.3.1)
   parse-cron (= 0.1.4)
-  protobuf (= 3.10.5)
+  protobuf (= 3.10.6)
   rack-ssl (= 1.4.1)
   rspec (= 3.11.0)
-  rubocop (= 1.27.0)
+  rubocop (= 1.28.2)
   rubocop-performance (= 1.13.3)
   rubocop-rails (= 2.14.2)
   selenium-webdriver (= 4.1.0)
-  sequel (= 5.55.0)
+  sequel (= 5.56.0)
   sequel_pg (= 1.15.0)
   sinatra (= 2.2.0)
   sqlite3 (= 1.4.2)
@@ -142,4 +142,4 @@ RUBY VERSION
    ruby 3.1.2p20
 
 BUNDLED WITH
-   2.3.11
+   2.3.12

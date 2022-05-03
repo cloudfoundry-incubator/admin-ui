@@ -397,6 +397,9 @@ Rails/WhereExists:
 Rails/WhereNot:
   Enabled: true
 
+Security/CompoundHash:
+  Enabled: true
+
 Security/IoMethods:
   Enabled: true
 
@@ -440,6 +443,9 @@ Style/ExplicitBlockArgument:
   Enabled: true
 
 Style/ExponentialNotation:
+  Enabled: true
+
+Style/FetchEnvVar:
   Enabled: true
 
 Style/FileRead:
@@ -503,6 +509,9 @@ Style/NumberedParameters:
   Enabled: true
 
 Style/NumberedParametersLimit:
+  Enabled: true
+
+Style/ObjectThen:
   Enabled: true
 
 Style/OpenStructUse:

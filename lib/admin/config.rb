@@ -314,7 +314,7 @@ module AdminUI
 
     def port
       # If running as a Cloud Foundry application, get the port from the environment.
-      ENV['PORT'] || @config[:port]
+      ENV.fetch('PORT', @config[:port])
     end
 
     def receiver_emails

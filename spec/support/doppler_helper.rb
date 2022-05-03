@@ -82,11 +82,11 @@ module DopplerHelper
     }.freeze
 
   class MockWebSocketClient < Faye::WebSocket::Client
-    # rubocop:disable Lint/MissingSuper, Style/RedundantInitialize
+    # rubocop:disable Lint/MissingSuper
     def initialize
       # Don't call super
     end
-    # rubocop:enable Lint/MissingSuper, Style/RedundantInitialize
+    # rubocop:enable Lint/MissingSuper
   end
 
   def doppler_stub(doppler_logging_endpoint, application_instance_source, router_source)

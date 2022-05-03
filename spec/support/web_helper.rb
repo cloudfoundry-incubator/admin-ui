@@ -43,10 +43,10 @@ shared_context :web_context do
 
   def selenium_web_driver
     if ENV['TRAVIS']
-      access_key        = ENV['SAUCE_ACCESS_KEY']
-      build_number      = ENV['TRAVIS_BUILD_NUMBER']
-      tunnel_identifier = ENV['TRAVIS_JOB_NUMBER']
-      username          = ENV['SAUCE_USERNAME']
+      access_key        = ENV.fetch('SAUCE_ACCESS_KEY', nil)
+      build_number      = ENV.fetch('TRAVIS_BUILD_NUMBER', nil)
+      tunnel_identifier = ENV.fetch('TRAVIS_JOB_NUMBER', nil)
+      username          = ENV.fetch('SAUCE_USERNAME', nil)
 
       caps = Selenium::WebDriver::Remote::Capabilities.firefox(build: build_number,
                                                                'tunnel-identifier' => tunnel_identifier)
