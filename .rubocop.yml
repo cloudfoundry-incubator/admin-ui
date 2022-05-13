@@ -439,6 +439,9 @@ Style/DocumentDynamicEvalDefinition:
 Style/EndlessMethod:
   Enabled: true
 
+Style/EnvHome:
+  Enabled: true
+
 Style/ExplicitBlockArgument:
   Enabled: true
 

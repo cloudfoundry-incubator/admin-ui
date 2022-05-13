@@ -47,13 +47,7 @@ module AdminUI
         row.push(token_id)
         row.push(Time.at(revocable_token[:issued_at] / 1000.0).to_datetime.rfc3339)
         row.push(Time.at(revocable_token[:expires_at] / 1000.0).to_datetime.rfc3339)
-
-        if revocable_token[:format]
-          row.push(revocable_token[:format])
-        else
-          row.push(nil)
-        end
-
+        row.push(revocable_token[:format] || nil)
         row.push(revocable_token[:response_type])
 
         if revocable_token[:scope]

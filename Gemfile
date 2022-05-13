@@ -18,11 +18,11 @@ gem 'webrick', '1.7.0'
 gem 'yajl-ruby', '1.4.2'
 
 group :mysql do
-  gem 'mysql2', '0.5.3'
+  gem 'mysql2', '0.5.4'
 end
 
 group :development do
-  gem 'rubocop', '1.28.2'
+  gem 'rubocop', '1.29.1'
   gem 'rubocop-performance', '1.13.3'
   gem 'rubocop-rails', '2.14.2'
 end

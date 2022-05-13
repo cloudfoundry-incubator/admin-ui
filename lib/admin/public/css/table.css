@@ -190,21 +190,6 @@ table.customTable tbody th
     user-select: none;
 }
 
-table.customTable thead th.sorting
-{
-    background: rgb(170, 170, 170) url('../images/sort_both.png') no-repeat right center;
-}
-
-table.customTable thead th.sorting_asc
-{
-    background: rgb(170, 170, 170) url('../images/sort_asc.png') no-repeat right center;
-}
-
-table.customTable thead th.sorting_desc
-{
-    background: rgb(170, 170, 170) url('../images/sort_desc.png') no-repeat right center;
-}
-
 table.customTable thead,
 table.customTable thead th,
 table.customTable tbody
@@ -239,45 +224,8 @@ table.dataTable tbody th
     border: 1px solid rgb(120, 120, 120);
 }
 
-table.dataTable tbody tr.selected.odd,
-table.dataTable tbody tr.selected.even,
-table.dataTable tbody tr.selected.odd td.sorting_1,
-table.dataTable tbody tr.selected.odd td.sorting_2,
-table.dataTable tbody tr.selected.odd td.sorting_3,
-table.dataTable tbody tr.selected.even td.sorting_1,
-table.dataTable tbody tr.selected.even td.sorting_2,
-table.dataTable tbody tr.selected.even td.sorting_3
+table.dataTable tbody tr.selected > *
 {
-    background: rgb(120, 120, 120);
+    box-shadow: inset 0 0 0 9999px rgb(120, 120, 120);
     color: rgb(220, 220, 220);
-}
-
-table.dataTable tr.even td.sorting_1
-{
-    background: rgb(227, 227, 227);
-}
-
-table.dataTable tr.even td.sorting_2
-{
-    background: rgb(217, 217, 217);
-}
-
-table.dataTable tr.even td.sorting_3
-{
-    background: rgb(207, 207, 207);
-}
-
-table.dataTable tr.odd td.sorting_1
-{
-    background: rgb(235, 235, 235);
-}
-
-table.dataTable tr.odd td.sorting_2
-{
-    background: rgb(225, 225, 225);
-}
-
-table.dataTable tr.odd td.sorting_3
-{
-    background: rgb(215, 215, 215);
 }
