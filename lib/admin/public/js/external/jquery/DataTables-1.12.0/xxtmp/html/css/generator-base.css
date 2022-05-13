@@ -1,0 +1,31 @@
+
+@import url(https://fonts.googleapis.com/css?family=Raleway:100);
+
+body.dataTables,
+body.jqueryui {
+	font: 90%/1.45em "Helvetica Neue", HelveticaNeue, Arial, Helvetica, sans-serif;
+	margin: 0;
+	padding: 0;
+	color: #333;
+	background-color: #fff;
+}
+
+body.dataTables div.container,
+body.jqueryui div.container {
+	max-width: 980px;
+	margin: 0 auto;
+}
+
+body.dataTables h1,
+body.jqueryui h1 {
+	font-family: 'HelveticaNeue-UltraLight', 'Helvetica Neue UltraLight', 'Raleway', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+	font-weight: 100;
+	letter-spacing: 1px;
+	font-size: 3em;
+	line-height: 1em;
+}
+
+h1 span {
+	font-size: 0.5em;
+	line-height: 1em;
+}

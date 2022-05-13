@@ -1,0 +1,28 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 2
+    paths:
+        - ./
+    excludePaths:
+        - vendor/
+
+    treatPhpDocTypesAsCertain: false
+
+    # some extra rules
+    checkAlwaysTrueCheckTypeFunctionCall: true
+    checkAlwaysTrueInstanceof: true
+    checkAlwaysTrueStrictComparison: true
+    checkExplicitMixedMissingReturn: true
+    checkFunctionNameCase: true
+    reportMaybesInMethodSignatures: true
+    reportStaticMethodSignatures: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+
+    ignoreErrors:
+        # - '~^Unsafe usage of new static\(\)\.$~'
+
+        -
+            message: '~^.+$~'
+            path: HtmLawed/Htmlawed.php

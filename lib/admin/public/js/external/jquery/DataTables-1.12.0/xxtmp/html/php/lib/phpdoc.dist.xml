@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdocumentor
+	configVersion="3"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="https://www.phpdoc.org"
+>
+	<title>Editor - PHP server-side</title>
+	<paths>
+		<output>docs/</output>
+	</paths>
+	<version number="2.0.0">
+		<api format="php">
+			<visibility>public</visibility>
+			<visibility>protected</visibility>
+		</api>
+	</version>
+</phpdocumentor>

@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Editor PHP 2.0.7</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="../">
+    <link rel="icon" href="images/favicon.ico"/>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/base.css">
+            <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="css/template.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css" integrity="sha256-ybRkN9dBjhcS2qrW1z+hfCxq+1aBdwyQM5wlQoQVt/0=" crossorigin="anonymous" />
+                <script src="https://cdn.jsdelivr.net/npm/fuse.js@3.4.6"></script>
+        <script src="https://cdn.jsdelivr.net/npm/css-vars-ponyfill@2"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/js/all.min.js" integrity="sha256-0vuk8LXoyrmCjp1f0O300qo1M75ZQyhH9X3J6d+scmk=" crossorigin="anonymous"></script>
+        <script src="js/search.js"></script>
+        <script defer src="js/searchIndex.js"></script>
+    </head>
+<body id="top">
+    <header class="phpdocumentor-header phpdocumentor-section">
+    <h1 class="phpdocumentor-title"><a href="" class="phpdocumentor-title__link">Editor PHP 2.0.7</a></h1>
+    <input class="phpdocumentor-header__menu-button" type="checkbox" id="menu-button" name="menu-button" />
+    <label class="phpdocumentor-header__menu-icon" for="menu-button">
+        <i class="fas fa-bars"></i>
+    </label>
+    <section data-search-form class="phpdocumentor-search">
+    <label>
+        <span class="visually-hidden">Search for</span>
+        <svg class="phpdocumentor-search__icon" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="7.5" cy="7.5" r="6.5" stroke="currentColor" stroke-width="2"/>
+            <line x1="12.4892" y1="12.2727" x2="19.1559" y2="18.9393" stroke="currentColor" stroke-width="3"/>
+        </svg>
+        <input type="search" class="phpdocumentor-field phpdocumentor-search__field" placeholder="Loading .." disabled />
+    </label>
+</section>
+
+    <nav class="phpdocumentor-topnav">
+    <ul class="phpdocumentor-topnav__menu">
+        </ul>
+</nav>
+</header>
+
+    <main class="phpdocumentor">
+        <div class="phpdocumentor-section">
+            <input class="phpdocumentor-sidebar__menu-button" type="checkbox" id="sidebar-button" name="sidebar-button" />
+<label class="phpdocumentor-sidebar__menu-icon" for="sidebar-button">
+    Menu
+</label>
+<aside class="phpdocumentor-column -four phpdocumentor-sidebar">
+    
+    <section class="phpdocumentor-sidebar__category">
+        <h2 class="phpdocumentor-sidebar__category-header">Namespaces</h2>
+                                                <h4 class="phpdocumentor-sidebar__root-namespace"><a href="namespaces/datatables.html"><abbr title="\DataTables">DataTables</abbr></a></h4>
+                <ul class="phpdocumentor-list">
+                                            <li><a href="namespaces/datatables-database.html"><abbr title="\DataTables\Database">Database</abbr></a></li>
+                                            <li><a href="namespaces/datatables-editor.html"><abbr title="\DataTables\Editor">Editor</abbr></a></li>
+                                            <li><a href="namespaces/datatables-htmlawed.html"><abbr title="\DataTables\HtmLawed">HtmLawed</abbr></a></li>
+                                    </ul>
+                        </section>
+
+    
+    <section class="phpdocumentor-sidebar__category">
+        <h2 class="phpdocumentor-sidebar__category-header">Reports</h2>
+                <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/deprecated.html">Deprecated</a></h3>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/errors.html">Errors</a></h3>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="reports/markers.html">Markers</a></h3>
+    </section>
+
+    <section class="phpdocumentor-sidebar__category">
+        <h2 class="phpdocumentor-sidebar__category-header">Indices</h2>
+        <h3 class="phpdocumentor-sidebar__root-package"><a href="indices/files.html">Files</a></h3>
+    </section>
+</aside>
+
+            <div class="phpdocumentor-column -eight phpdocumentor-content">
+                    <ul class="phpdocumentor-breadcrumbs">
+            <li class="phpdocumentor-breadcrumb"><a href="namespaces/datatables.html">DataTables</a></li>
+            <li class="phpdocumentor-breadcrumb"><a href="namespaces/datatables-editor.html">Editor</a></li>
+    </ul>
+
+    <article class="phpdocumentor-element -class">
+        <h2 class="phpdocumentor-content__title">
+    Upload
+
+        <span class="phpdocumentor-element__extends">
+        extends <a href="classes/DataTables-Ext.html"><abbr title="\DataTables\Ext">Ext</abbr></a>
+    </span>
+    
+    
+    
+    </h2>
+
+        <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">79</span>
+</aside>
+
+            <p class="phpdocumentor-summary">Upload class for Editor. This class provides the ability to easily specify
+file upload information, specifically how the file should be recorded on
+the server (database and file system).</p>
+
+    <section class="phpdocumentor-description"><p>An instance of this class is attached to a field using the Field-&gt;upload() method. When Editor detects a file upload for that file the
+information provided for this instance is executed.</p>
+<p>The configuration is primarily driven through the Upload-&gt;db() and
+Upload-&gt;action() methods:</p>
+<ul>
+<li>Upload-&gt;db() Describes how information about the uploaded file is to be
+stored on the database.</li>
+<li>Upload-&gt;action() Describes where the file should be stored on the file system
+and provides the option of specifying a custom action when a file is
+uploaded.</li>
+</ul>
+<p>Both methods are optional - you can store the file on the server using the
+Upload-&gt;db() method only if you want to store the file in the database, or if
+you don't want to store relational data on the database us only
+Upload-&gt;action(). However,  the majority of the time it is best to use
+both - store information about the file on the database for fast retrieval (using a
+Editor-&gt;leftJoin() for example) and the file on the file system for direct
+web access.</p>
+</section>
+
+
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">example</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                
+                                                 <section class="phpdocumentor-description"><p>information about a file in a table called <code class="prettyprint">files</code> and the actual
+file in an <code class="prettyprint">uploads</code> directory.</p>
+<pre class="prettyprint"><code class="prettyprint">	Field::inst( 'imageId' )
+		-&gt;upload(
+			Upload::inst( $_SERVER['DOCUMENT_ROOT'].'/uploads/__ID__.__EXTN__' )
+		 		-&gt;db( 'files', 'id', array(
+					'webPath'     =&gt; Upload::DB_WEB_PATH,
+					'fileName'    =&gt; Upload::DB_FILE_NAME,
+					'fileSize'    =&gt; Upload::DB_FILE_SIZE,
+					'systemPath'  =&gt; Upload::DB_SYSTEM_PATH
+				) )
+				-&gt;allowedExtensions( array( 'png', 'jpg' ), &quot;Please upload an image file&quot; )
+		)
+</code></pre>
+</section>
+
+                                    </dd>
+                            <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">example</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                
+                                                 <section class="phpdocumentor-description"><p>above, but with PHP 5.4 (which allows chaining from new instances of a
+class)</p>
+<pre class="prettyprint"><code class="prettyprint">	newField( 'imageId' )
+		-&gt;upload(
+			new Upload( $_SERVER['DOCUMENT_ROOT'].'/uploads/__ID__.__EXTN__' )
+		 		-&gt;db( 'files', 'id', array(
+					'webPath'     =&gt; Upload::DB_WEB_PATH,
+					'fileName'    =&gt; Upload::DB_FILE_NAME,
+					'fileSize'    =&gt; Upload::DB_FILE_SIZE,
+					'systemPath'  =&gt; Upload::DB_SYSTEM_PATH
+				) )
+				-&gt;allowedExtensions( array( 'png', 'jpg' ), &quot;Please upload an image file&quot; )
+		)
+</code></pre>
+</section>
+
+                                    </dd>
+                        </dl>
+
+
+
+
+
+
+<h3 id="toc">
+    Table of Contents
+    <a href="#toc" class="headerlink"><i class="fas fa-link"></i></a>
+</h3>
+
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a href="classes/DataTables-Editor-Upload.html#constant_DB_CONTENT">DB_CONTENT</a>
+    <span>
+        &nbsp;= &#039;editor-content&#039;                    </span>
+</dt>
+<dd>Database value option (`Db()`) - File content. This should be written to
+a blob. Typically this should be avoided and the file saved on the file
+system, but there are cases where it can be useful to store the file in
+the database.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a href="classes/DataTables-Editor-Upload.html#constant_DB_CONTENT_TYPE">DB_CONTENT_TYPE</a>
+    <span>
+        &nbsp;= &#039;editor-contentType&#039;                    </span>
+</dt>
+<dd>Database value option (`Db()`) - Content type</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a href="classes/DataTables-Editor-Upload.html#constant_DB_EXTN">DB_EXTN</a>
+    <span>
+        &nbsp;= &#039;editor-extn&#039;                    </span>
+</dt>
+<dd>Database value option (`Db()`) - File extension</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a href="classes/DataTables-Editor-Upload.html#constant_DB_FILE_NAME">DB_FILE_NAME</a>
+    <span>
+        &nbsp;= &#039;editor-fileName&#039;                    </span>
+</dt>
+<dd>Database value option (`Db()`) - File name (with extension)</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a href="classes/DataTables-Editor-Upload.html#constant_DB_FILE_SIZE">DB_FILE_SIZE</a>
+    <span>
+        &nbsp;= &#039;editor-fileSize&#039;                    </span>
+</dt>
+<dd>Database value option (`Db()`) - File size (bytes)</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a href="classes/DataTables-Editor-Upload.html#constant_DB_MIME_TYPE">DB_MIME_TYPE</a>
+    <span>
+        &nbsp;= &#039;editor-mimeType&#039;                    </span>
+</dt>
+<dd>Database value option (`Db()`) - MIME type</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a href="classes/DataTables-Editor-Upload.html#constant_DB_READ_ONLY">DB_READ_ONLY</a>
+    <span>
+        &nbsp;= &#039;editor-readOnly&#039;                    </span>
+</dt>
+<dd>Read from the database - don&#039;t write to it</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a href="classes/DataTables-Editor-Upload.html#constant_DB_SYSTEM_PATH">DB_SYSTEM_PATH</a>
+    <span>
+        &nbsp;= &#039;editor-systemPath&#039;                    </span>
+</dt>
+<dd>Database value option (`Db()`) - Full system path to the file</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a href="classes/DataTables-Editor-Upload.html#constant_DB_WEB_PATH">DB_WEB_PATH</a>
+    <span>
+        &nbsp;= &#039;editor-webPath&#039;                    </span>
+</dt>
+<dd>Database value option (`Db()`) - HTTP path to the file. This is derived
+from the system path by removing `$_SERVER[&#039;DOCUMENT_ROOT&#039;]`. If your
+images live outside of the document root a custom value would be to be
+used.</dd>
+
+                    <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a href="classes/DataTables-Editor-Upload.html#method___construct">__construct()</a>
+    <span>
+                        &nbsp;: mixed    </span>
+</dt>
+<dd>Upload instance constructor</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a href="classes/DataTables-Editor-Upload.html#method_action">action()</a>
+    <span>
+                        &nbsp;: self    </span>
+</dt>
+<dd>Set the action to take when a file is uploaded. This can be either of:</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a href="classes/DataTables-Editor-Upload.html#method_allowedExtensions">allowedExtensions()</a>
+    <span>
+                        &nbsp;: self    </span>
+</dt>
+<dd>An array of valid file extensions that can be uploaded. This is for
+simple validation that the file is of the expected type - for example you
+might use `[ &#039;png&#039;, &#039;jpg&#039;, &#039;jpeg&#039;, &#039;gif&#039; ]` for images. The check is
+case-insensitive. If no extensions are given, no validation is performed
+on the file extension.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a href="classes/DataTables-Editor-Upload.html#method_db">db()</a>
+    <span>
+                        &nbsp;: self    </span>
+</dt>
+<dd>Database configuration method. When used, this method will tell Editor
+what information you want written to a database on file upload, should
+you wish to store relational information about your file on the database
+(this is generally recommended).</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a href="classes/DataTables-Editor-Upload.html#method_dbClean">dbClean()</a>
+    <span>
+                        &nbsp;: self    </span>
+</dt>
+<dd>Set a callback function that is used to remove files which no longer have
+a reference in a source table.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a href="classes/DataTables-Ext.html#method_inst">inst()</a>
+    <span>
+                        &nbsp;: <a href="classes/DataTables-Editor.html"><abbr title="\DataTables\Editor">Editor</abbr></a>|<a href="classes/DataTables-Editor-Field.html"><abbr title="\DataTables\Editor\Field">Field</abbr></a>|<a href="classes/DataTables-Editor-Join.html"><abbr title="\DataTables\Editor\Join">Join</abbr></a>|<a href="classes/DataTables-Editor-Upload.html"><abbr title="\DataTables\Editor\Upload">Upload</abbr></a>    </span>
+</dt>
+<dd>Static method to instantiate a new instance of a class (shorthand of
+&#039;instantiate&#039;).</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a href="classes/DataTables-Ext.html#method_instantiate">instantiate()</a>
+    <span>
+                        &nbsp;: <a href="classes/DataTables-Editor.html"><abbr title="\DataTables\Editor">Editor</abbr></a>|<a href="classes/DataTables-Editor-Field.html"><abbr title="\DataTables\Editor\Field">Field</abbr></a>|<a href="classes/DataTables-Editor-Join.html"><abbr title="\DataTables\Editor\Join">Join</abbr></a>|<a href="classes/DataTables-Editor-Upload.html"><abbr title="\DataTables\Editor\Upload">Upload</abbr></a>    </span>
+</dt>
+<dd>Static method to instantiate a new instance of a class.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a href="classes/DataTables-Editor-Upload.html#method_validator">validator()</a>
+    <span>
+                        &nbsp;: self    </span>
+</dt>
+<dd>Add a validation method to check file uploads. Multiple validators can be
+added by calling this method multiple times - they will be executed in
+sequence when a file has been uploaded.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a href="classes/DataTables-Editor-Upload.html#method_where">where()</a>
+    <span>
+                        &nbsp;: self    </span>
+</dt>
+<dd>Add a condition to the data to be retrieved from the database. This
+must be given as a function to be executed (usually anonymous) and
+will be passed in a single argument, the `Query` object, to which
+conditions can be added. Multiple calls to this method can be made.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a href="classes/DataTables-Ext.html#method__getSet">_getSet()</a>
+    <span>
+                        &nbsp;: mixed    </span>
+</dt>
+<dd>Common getter / setter function for DataTables classes.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a href="classes/DataTables-Ext.html#method__propExists">_propExists()</a>
+    <span>
+                        &nbsp;: bool    </span>
+</dt>
+<dd>Determine if a property is available in a data set (allowing `null` to be
+a valid value)</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a href="classes/DataTables-Ext.html#method__readProp">_readProp()</a>
+    <span>
+                        &nbsp;: mixed    </span>
+</dt>
+<dd>Read a value from a data structure, using Javascript dotted object
+notation. This is the inverse of the `_writeProp` method and provides
+the same support, matching DataTables&#039; ability to read nested JSON
+data objects.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a href="classes/DataTables-Ext.html#method__writeProp">_writeProp()</a>
+    <span>
+                        &nbsp;: mixed    </span>
+</dt>
+<dd>Write the field&#039;s value to an array structure, using Javascript dotted
+object notation to indicate JSON data structure. For example `name.first`
+gives the data structure: `name: { first: ... }`. This matches DataTables
+own ability to do this on the client-side, although this doesn&#039;t
+implement implement quite such a complex structure (no array / function
+support).</dd>
+
+        </dl>
+
+
+
+        
+    <section class="phpdocumentor-constants">
+        <h3 class="phpdocumentor-elements__header" id="constants">
+            Constants
+            <a href="classes/DataTables-Editor-Upload.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
+        </h3>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_DB_CONTENT">
+        DB_CONTENT
+        <a href="classes/DataTables-Editor-Upload.html#constant_DB_CONTENT" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">89</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Database value option (`Db()`) - File content. This should be written to
+a blob. Typically this should be avoided and the file saved on the file
+system, but there are cases where it can be useful to store the file in
+the database.</p>
+
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+    <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">DB_CONTENT</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;editor-content&#039;</span>
+</code>
+
+
+        <section class="phpdocumentor-description"></section>
+
+    
+
+</article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_DB_CONTENT_TYPE">
+        DB_CONTENT_TYPE
+        <a href="classes/DataTables-Editor-Upload.html#constant_DB_CONTENT_TYPE" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">92</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Database value option (`Db()`) - Content type</p>
+
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+    <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">DB_CONTENT_TYPE</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;editor-contentType&#039;</span>
+</code>
+
+
+        <section class="phpdocumentor-description"></section>
+
+    
+
+</article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_DB_EXTN">
+        DB_EXTN
+        <a href="classes/DataTables-Editor-Upload.html#constant_DB_EXTN" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">95</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Database value option (`Db()`) - File extension</p>
+
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+    <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">DB_EXTN</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;editor-extn&#039;</span>
+</code>
+
+
+        <section class="phpdocumentor-description"></section>
+
+    
+
+</article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_DB_FILE_NAME">
+        DB_FILE_NAME
+        <a href="classes/DataTables-Editor-Upload.html#constant_DB_FILE_NAME" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">98</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Database value option (`Db()`) - File name (with extension)</p>
+
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+    <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">DB_FILE_NAME</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;editor-fileName&#039;</span>
+</code>
+
+
+        <section class="phpdocumentor-description"></section>
+
+    
+
+</article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_DB_FILE_SIZE">
+        DB_FILE_SIZE
+        <a href="classes/DataTables-Editor-Upload.html#constant_DB_FILE_SIZE" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">101</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Database value option (`Db()`) - File size (bytes)</p>
+
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+    <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">DB_FILE_SIZE</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;editor-fileSize&#039;</span>
+</code>
+
+
+        <section class="phpdocumentor-description"></section>
+
+    
+
+</article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_DB_MIME_TYPE">
+        DB_MIME_TYPE
+        <a href="classes/DataTables-Editor-Upload.html#constant_DB_MIME_TYPE" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">104</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Database value option (`Db()`) - MIME type</p>
+
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+    <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">DB_MIME_TYPE</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;editor-mimeType&#039;</span>
+</code>
+
+
+        <section class="phpdocumentor-description"></section>
+
+    
+
+</article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_DB_READ_ONLY">
+        DB_READ_ONLY
+        <a href="classes/DataTables-Editor-Upload.html#constant_DB_READ_ONLY" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">118</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Read from the database - don&#039;t write to it</p>
+
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+    <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">DB_READ_ONLY</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;editor-readOnly&#039;</span>
+</code>
+
+
+        <section class="phpdocumentor-description"></section>
+
+    
+
+</article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_DB_SYSTEM_PATH">
+        DB_SYSTEM_PATH
+        <a href="classes/DataTables-Editor-Upload.html#constant_DB_SYSTEM_PATH" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">107</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Database value option (`Db()`) - Full system path to the file</p>
+
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+    <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">DB_SYSTEM_PATH</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;editor-systemPath&#039;</span>
+</code>
+
+
+        <section class="phpdocumentor-description"></section>
+
+    
+
+</article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_DB_WEB_PATH">
+        DB_WEB_PATH
+        <a href="classes/DataTables-Editor-Upload.html#constant_DB_WEB_PATH" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">114</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Database value option (`Db()`) - HTTP path to the file. This is derived
+from the system path by removing `$_SERVER[&#039;DOCUMENT_ROOT&#039;]`. If your
+images live outside of the document root a custom value would be to be
+used.</p>
+
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+    <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">DB_WEB_PATH</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;editor-webPath&#039;</span>
+</code>
+
+
+        <section class="phpdocumentor-description"></section>
+
+    
+
+</article>
+            </section>
+
+        
+
+            <section class="phpdocumentor-methods">
+        <h3 class="phpdocumentor-elements__header" id="methods">
+            Methods
+            <a href="classes/DataTables-Editor-Upload.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
+        </h3>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method___construct">
+        __construct()
+        <a href="classes/DataTables-Editor-Upload.html#method___construct" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">147</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Upload instance constructor</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type">string|callable&nbsp;</span><span class="phpdocumentor-signature__argument__name">$action</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$action</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string|callable</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Action to take on upload - this is applied
+directly to Upload-&gt;action().</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">mixed</span>
+            &mdash;
+            <section class="phpdocumentor-description"></section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_action">
+        action()
+        <a href="classes/DataTables-Editor-Upload.html#method_action" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">177</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Set the action to take when a file is uploaded. This can be either of:</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                <span class="phpdocumentor-signature__name">action</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string|callable&nbsp;</span><span class="phpdocumentor-signature__argument__name">$action</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">self</span></code>
+
+        <section class="phpdocumentor-description"><ul>
+<li>A string - the value given is the full system path to where the
+uploaded file is written to. The value given can include three &quot;macros&quot;
+which are replaced by the script dependent on the uploaded file:
+<ul>
+<li>
+<code class="prettyprint">__EXTN__</code> - the file extension</li>
+<li>
+<code class="prettyprint">__NAME__</code> - the uploaded file's name (including the extension)</li>
+<li>
+<code class="prettyprint">__ID__</code> - Database primary key value if the Upload-&gt;db() method is
+used.</li>
+</ul>
+</li>
+<li>A closure - if a function is given the responsibility of what to do
+with the uploaded file is transferred to this function. That will
+typically involve writing it to the file system so it can be used
+later.</li>
+</ul>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$action</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string|callable</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Action to take - see description above.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">self</span>
+            &mdash;
+            <section class="phpdocumentor-description"><p>Current instance, used for chaining</p>
+</section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+            -deprecated                                            "
+>
+    <h4 class="phpdocumentor-element__name" id="method_allowedExtensions">
+        allowedExtensions()
+        <a href="classes/DataTables-Editor-Upload.html#method_allowedExtensions" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">199</span>
+</aside>
+
+        <p class="phpdocumentor-summary">An array of valid file extensions that can be uploaded. This is for
+simple validation that the file is of the expected type - for example you
+might use `[ &#039;png&#039;, &#039;jpg&#039;, &#039;jpeg&#039;, &#039;gif&#039; ]` for images. The check is
+case-insensitive. If no extensions are given, no validation is performed
+on the file extension.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature -deprecated">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                <span class="phpdocumentor-signature__name">allowedExtensions</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, string&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$extn</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$error</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">&quot;This file type cannot be uploaded&quot;</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">self</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$extn</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, string&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>List of file extensions that are allowable for
+the upload</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$error</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">&quot;This file type cannot be uploaded&quot;</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Error message if a file is uploaded that doesn't
+match the valid list of extensions.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">deprecated</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                
+                                                 <section class="phpdocumentor-description"><p>Use Validate::fileExtensions</p>
+</section>
+
+                                    </dd>
+                        </dl>
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">self</span>
+            &mdash;
+            <section class="phpdocumentor-description"><p>Current instance, used for chaining</p>
+</section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_db">
+        db()
+        <a href="classes/DataTables-Editor-Upload.html#method_db" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">226</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Database configuration method. When used, this method will tell Editor
+what information you want written to a database on file upload, should
+you wish to store relational information about your file on the database
+(this is generally recommended).</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                <span class="phpdocumentor-signature__name">db</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$table</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$pkey</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fields</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">self</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$table</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The name of the table where the file information
+should be stored</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$pkey</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Primary key column name. The <code class="prettyprint">Upload</code> class
+requires that the database table have a single primary key so each
+row can be uniquely identified.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$fields</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>A list of the fields to be written to on upload.
+The property names are the database columns and the values can be
+defined by the constants of this class. The value can also be a
+string or a closure function if you wish to send custom information
+to the database.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">self</span>
+            &mdash;
+            <section class="phpdocumentor-description"><p>Current instance, used for chaining</p>
+</section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_dbClean">
+        dbClean()
+        <a href="classes/DataTables-Editor-Upload.html#method_dbClean" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">247</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Set a callback function that is used to remove files which no longer have
+a reference in a source table.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                <span class="phpdocumentor-signature__name">dbClean</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$tableField</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">callable&nbsp;</span><span class="phpdocumentor-signature__argument__name">$callback</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">self</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$tableField</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$callback</span>
+                : <span class="phpdocumentor-signature__argument__return-type">callable</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Function that will be executed on clean. It is
+given an array of information from the database about the orphaned
+rows, and can return true to indicate that the rows should be
+removed from the database. Any other return value (including none)
+will result in the records being retained.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">self</span>
+            &mdash;
+            <section class="phpdocumentor-description"><p>Current instance, used for chaining</p>
+</section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_inst">
+        inst()
+        <a href="classes/DataTables-Ext.html#method_inst" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Ext.php"><a href="files/ext.html"><abbr title="Ext.php">Ext.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">51</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Static method to instantiate a new instance of a class (shorthand of
+&#039;instantiate&#039;).</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__name">inst</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/DataTables-Editor.html"><abbr title="\DataTables\Editor">Editor</abbr></a>|<a href="classes/DataTables-Editor-Field.html"><abbr title="\DataTables\Editor\Field">Field</abbr></a>|<a href="classes/DataTables-Editor-Join.html"><abbr title="\DataTables\Editor\Join">Join</abbr></a>|<a href="classes/DataTables-Editor-Upload.html"><abbr title="\DataTables\Editor\Upload">Upload</abbr></a></span></code>
+
+        <section class="phpdocumentor-description"><p>This method performs exactly the same actions as the 'instantiate'
+static method, but is simply shorter and easier to type!</p>
+</section>
+
+    
+    
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type"><a href="classes/DataTables-Editor.html"><abbr title="\DataTables\Editor">Editor</abbr></a>|<a href="classes/DataTables-Editor-Field.html"><abbr title="\DataTables\Editor\Field">Field</abbr></a>|<a href="classes/DataTables-Editor-Join.html"><abbr title="\DataTables\Editor\Join">Join</abbr></a>|<a href="classes/DataTables-Editor-Upload.html"><abbr title="\DataTables\Editor\Upload">Upload</abbr></a></span>
+            &mdash;
+            <section class="phpdocumentor-description"><p>class
+@static</p>
+</section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_instantiate">
+        instantiate()
+        <a href="classes/DataTables-Ext.html#method_instantiate" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Ext.php"><a href="files/ext.html"><abbr title="Ext.php">Ext.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">32</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Static method to instantiate a new instance of a class.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__name">instantiate</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/DataTables-Editor.html"><abbr title="\DataTables\Editor">Editor</abbr></a>|<a href="classes/DataTables-Editor-Field.html"><abbr title="\DataTables\Editor\Field">Field</abbr></a>|<a href="classes/DataTables-Editor-Join.html"><abbr title="\DataTables\Editor\Join">Join</abbr></a>|<a href="classes/DataTables-Editor-Upload.html"><abbr title="\DataTables\Editor\Upload">Upload</abbr></a></span></code>
+
+        <section class="phpdocumentor-description"><p>A factory method that will create a new instance of the class
+that has extended 'Ext'. This allows classes to be instantiated
+and then chained - which otherwise isn't available until PHP 5.4.
+If using PHP 5.4 or later, simply create a 'new' instance of the
+target class and chain methods as normal.</p>
+</section>
+
+    
+    
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type"><a href="classes/DataTables-Editor.html"><abbr title="\DataTables\Editor">Editor</abbr></a>|<a href="classes/DataTables-Editor-Field.html"><abbr title="\DataTables\Editor\Field">Field</abbr></a>|<a href="classes/DataTables-Editor-Join.html"><abbr title="\DataTables\Editor\Join">Join</abbr></a>|<a href="classes/DataTables-Editor-Upload.html"><abbr title="\DataTables\Editor\Upload">Upload</abbr></a></span>
+            &mdash;
+            <section class="phpdocumentor-description"><p>Instantiated class
+@static</p>
+</section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_validator">
+        validator()
+        <a href="classes/DataTables-Editor-Upload.html#method_validator" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">272</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Add a validation method to check file uploads. Multiple validators can be
+added by calling this method multiple times - they will be executed in
+sequence when a file has been uploaded.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                <span class="phpdocumentor-signature__name">validator</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">callable&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fn</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">self</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$fn</span>
+                : <span class="phpdocumentor-signature__argument__return-type">callable</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Validation function. A PHP <code class="prettyprint">$_FILES</code> parameter is
+passed in for the uploaded file and the return is either a string
+(validation failed and error message), or <code class="prettyprint">null</code> (validation passed).</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">self</span>
+            &mdash;
+            <section class="phpdocumentor-description"><p>Current instance, used for chaining</p>
+</section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_where">
+        where()
+        <a href="classes/DataTables-Editor-Upload.html#method_where" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Editor/Upload.php"><a href="files/editor-upload.html"><abbr title="Editor/Upload.php">Upload.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">289</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Add a condition to the data to be retrieved from the database. This
+must be given as a function to be executed (usually anonymous) and
+will be passed in a single argument, the `Query` object, to which
+conditions can be added. Multiple calls to this method can be made.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                <span class="phpdocumentor-signature__name">where</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">callable&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fn</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">self</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$fn</span>
+                : <span class="phpdocumentor-signature__argument__return-type">callable</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Where function.</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">self</span>
+            &mdash;
+            <section class="phpdocumentor-description"><p>Current instance, used for chaining</p>
+</section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method__getSet">
+        _getSet()
+        <a href="classes/DataTables-Ext.html#method__getSet" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Ext.php"><a href="files/ext.html"><abbr title="Ext.php">Ext.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">75</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Common getter / setter function for DataTables classes.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                <span class="phpdocumentor-signature__name">_getSet</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__reference-operator">&amp;</span><span class="phpdocumentor-signature__argument__name">$prop</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$val</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$array</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">false</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+        <section class="phpdocumentor-description"><p>This getter / setter method makes building getter / setting methods
+easier, by abstracting everything to a single function call.</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$prop</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>The property to set
+@param mixed $val The value to set - if given as null, then we assume
+that the function is being used as a getter.
+@param boolean $array Treat the target property as an array or not
+(default false). If used as an array, then values passed in are added
+to the $prop array.
+@return self|mixed Class instance if setting (allowing chaining), or
+the value requested if getting.</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$val</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$array</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">false</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">mixed</span>
+            &mdash;
+            <section class="phpdocumentor-description"></section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method__propExists">
+        _propExists()
+        <a href="classes/DataTables-Ext.html#method__propExists" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Ext.php"><a href="files/ext.html"><abbr title="Ext.php">Ext.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">105</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Determine if a property is available in a data set (allowing `null` to be
+a valid value)</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                <span class="phpdocumentor-signature__name">_propExists</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$data</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Javascript dotted object name to write to</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$data</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Data source array to read from</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">private</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">bool</span>
+            &mdash;
+            <section class="phpdocumentor-description"><p>true if present, false otherwise</p>
+</section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method__readProp">
+        _readProp()
+        <a href="classes/DataTables-Ext.html#method__readProp" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Ext.php"><a href="files/ext.html"><abbr title="Ext.php">Ext.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">142</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Read a value from a data structure, using Javascript dotted object
+notation. This is the inverse of the `_writeProp` method and provides
+the same support, matching DataTables&#039; ability to read nested JSON
+data objects.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                <span class="phpdocumentor-signature__name">_readProp</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$data</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Javascript dotted object name to write to</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$data</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Data source array to read from</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">private</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">mixed</span>
+            &mdash;
+            <section class="phpdocumentor-description"><p>The read value, or null if no value found.</p>
+</section>
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method__writeProp">
+        _writeProp()
+        <a href="classes/DataTables-Ext.html#method__writeProp" class="headerlink"><i class="fas fa-link"></i></a>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Ext.php"><a href="files/ext.html"><abbr title="Ext.php">Ext.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">186</span>
+</aside>
+
+        <p class="phpdocumentor-summary">Write the field&#039;s value to an array structure, using Javascript dotted
+object notation to indicate JSON data structure. For example `name.first`
+gives the data structure: `name: { first: ... }`. This matches DataTables
+own ability to do this on the client-side, although this doesn&#039;t
+implement implement quite such a complex structure (no array / function
+support).</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                <span class="phpdocumentor-signature__name">_writeProp</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__reference-operator">&amp;</span><span class="phpdocumentor-signature__argument__name">$out</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+        <section class="phpdocumentor-description"></section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$out</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Array to write the data to</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Javascript dotted object name to write to</p>
+</section>
+
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                    <section class="phpdocumentor-description"><p>Value to write</p>
+</section>
+
+            </dd>
+            </dl>
+
+    
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="#tags" class="headerlink"><i class="fas fa-link"></i></a>
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">throws</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                <span class="phpdocumentor-tag-link"><abbr title="\Exception">Exception</abbr></span>
+                                                            
+                                                 <section class="phpdocumentor-description"><p>Information about duplicate properties</p>
+</section>
+
+                                    </dd>
+                                                <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">private</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                
+                                                 <section class="phpdocumentor-description"></section>
+
+                                    </dd>
+                        </dl>
+
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+    <span class="phpdocumentor-signature__response_type">mixed</span>
+            &mdash;
+            <section class="phpdocumentor-description"></section>
+
+    
+</article>
+            </section>
+
+    </article>
+                <section data-search-results class="phpdocumentor-search-results phpdocumentor-search-results--hidden">
+    <section class="phpdocumentor-search-results__dialog">
+        <header class="phpdocumentor-search-results__header">
+            <h2 class="phpdocumentor-search-results__title">Search results</h2>
+            <button class="phpdocumentor-search-results__close"><i class="fas fa-times"></i></button>
+        </header>
+        <section class="phpdocumentor-search-results__body">
+            <ul class="phpdocumentor-search-results__entries"></ul>
+        </section>
+    </section>
+</section>
+            </div>
+        </div>
+        <a href="classes/DataTables-Editor-Upload.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
+
+    </main>
+
+    <script>
+        cssVars({});
+    </script>
+</body>
+</html>

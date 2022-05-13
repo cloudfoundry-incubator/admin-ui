@@ -1,0 +1,405 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Variable \\$sql_details might not be defined\\.$#"
+			count: 1
+			path: Bootstrap.php
+
+		-
+			message: "#^Access to an undefined property DataTables\\\\Database\\:\\:\\$query_driver\\.$#"
+			count: 5
+			path: Database.php
+
+		-
+			message: "#^Access to an undefined property DataTables\\\\Database\\:\\:\\$type\\.$#"
+			count: 1
+			path: Database.php
+
+		-
+			message: "#^Cannot call method quote\\(\\) on resource\\.$#"
+			count: 1
+			path: Database.php
+
+		-
+			message: "#^Default value of the parameter \\#2 \\$field \\(string\\) of method DataTables\\\\Database\\:\\:select\\(\\) is incompatible with type array\\.$#"
+			count: 1
+			path: Database.php
+
+		-
+			message: "#^Default value of the parameter \\#2 \\$field \\(string\\) of method DataTables\\\\Database\\:\\:selectDistinct\\(\\) is incompatible with type array\\.$#"
+			count: 1
+			path: Database.php
+
+		-
+			message: "#^Default value of the parameter \\#2 \\$type \\(int\\) of method DataTables\\\\Database\\:\\:quote\\(\\) is incompatible with type string\\.$#"
+			count: 1
+			path: Database.php
+
+		-
+			message: "#^Default value of the parameter \\#3 \\$pkey \\(string\\) of method DataTables\\\\Database\\:\\:insert\\(\\) is incompatible with type array\\.$#"
+			count: 1
+			path: Database.php
+
+		-
+			message: "#^Default value of the parameter \\#4 \\$pkey \\(string\\) of method DataTables\\\\Database\\:\\:push\\(\\) is incompatible with type array\\.$#"
+			count: 1
+			path: Database.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$_$#"
+			count: 1
+			path: Database.php
+
+		-
+			message: "#^Call to method resource\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 2
+			path: Database/Driver/Db2Query.php
+
+		-
+			message: "#^Class DataTables\\\\Database\\\\Driver\\\\Db2Result constructor invoked with 3 parameters, 2 required\\.$#"
+			count: 1
+			path: Database/Driver/Db2Query.php
+
+		-
+			message: "#^Binary operation \"\\.\" between non\\-empty\\-string and DataTables\\\\Database\\\\Query results in an error\\.$#"
+			count: 1
+			path: Database/Driver/FirebirdQuery.php
+
+		-
+			message: "#^Call to method debugInfo\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 1
+			path: Database/Driver/FirebirdQuery.php
+
+		-
+			message: "#^Call to method resource\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 2
+			path: Database/Driver/FirebirdQuery.php
+
+		-
+			message: "#^Binary operation \"\\.\" between non\\-empty\\-string and DataTables\\\\Database\\\\Query results in an error\\.$#"
+			count: 1
+			path: Database/Driver/MysqlQuery.php
+
+		-
+			message: "#^Call to method debugInfo\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 1
+			path: Database/Driver/MysqlQuery.php
+
+		-
+			message: "#^Call to method resource\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 2
+			path: Database/Driver/MysqlQuery.php
+
+		-
+			message: "#^Call to method debugInfo\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 1
+			path: Database/Driver/OracleQuery.php
+
+		-
+			message: "#^Call to method resource\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 2
+			path: Database/Driver/OracleQuery.php
+
+		-
+			message: "#^Binary operation \"\\.\" between non\\-empty\\-string and DataTables\\\\Database\\\\Query results in an error\\.$#"
+			count: 1
+			path: Database/Driver/PostgresQuery.php
+
+		-
+			message: "#^Call to method debugInfo\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 1
+			path: Database/Driver/PostgresQuery.php
+
+		-
+			message: "#^Call to method resource\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 2
+			path: Database/Driver/PostgresQuery.php
+
+		-
+			message: "#^Binary operation \"\\.\" between non\\-empty\\-string and DataTables\\\\Database\\\\Query results in an error\\.$#"
+			count: 1
+			path: Database/Driver/SqliteQuery.php
+
+		-
+			message: "#^Call to method debugInfo\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 1
+			path: Database/Driver/SqliteQuery.php
+
+		-
+			message: "#^Call to method getMessage\\(\\) on an unknown class DataTables\\\\Database\\\\Driver\\\\PDOException\\.$#"
+			count: 1
+			path: Database/Driver/SqliteQuery.php
+
+		-
+			message: "#^Call to method resource\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 2
+			path: Database/Driver/SqliteQuery.php
+
+		-
+			message: "#^Caught class DataTables\\\\Database\\\\Driver\\\\PDOException not found\\.$#"
+			count: 1
+			path: Database/Driver/SqliteQuery.php
+
+		-
+			message: "#^Binary operation \"\\.\" between non\\-empty\\-string and DataTables\\\\Database\\\\Query results in an error\\.$#"
+			count: 2
+			path: Database/Driver/SqlserverQuery.php
+
+		-
+			message: "#^Call to method debugInfo\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 1
+			path: Database/Driver/SqlserverQuery.php
+
+		-
+			message: "#^Call to method getMessage\\(\\) on an unknown class DataTables\\\\Database\\\\Driver\\\\PDOException\\.$#"
+			count: 1
+			path: Database/Driver/SqlserverQuery.php
+
+		-
+			message: "#^Call to method resource\\(\\) on an unknown class DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 2
+			path: Database/Driver/SqlserverQuery.php
+
+		-
+			message: "#^Caught class DataTables\\\\Database\\\\Driver\\\\PDOException not found\\.$#"
+			count: 1
+			path: Database/Driver/SqlserverQuery.php
+
+		-
+			message: "#^Access to an undefined property DataTables\\\\Database\\\\Query\\:\\:\\$_dbHost\\.$#"
+			count: 3
+			path: Database/Query.php
+
+		-
+			message: "#^Method DataTables\\\\Database\\\\Query\\:\\:_where_group\\(\\) should return string but return statement is missing\\.$#"
+			count: 1
+			path: Database/Query.php
+
+		-
+			message: "#^Method DataTables\\\\Database\\\\Query\\:\\:database\\(\\) has invalid return type DataTables\\\\Database\\\\DataTable\\.$#"
+			count: 1
+			path: Database/Query.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$where\\)\\: Unexpected token \"\\$where\", expected type at offset 81$#"
+			count: 1
+			path: Database/Query.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(array Values\\)\\: Unexpected token \"Values\", expected variable at offset 295$#"
+			count: 1
+			path: Database/Query.php
+
+		-
+			message:
+				"""
+					#^PHPDoc tag @param has invalid value \\(string Conditional operator to use to join to the
+					     preceding condition\\. Default `AND`\\.\\)\\: Unexpected token "Conditional", expected variable at offset 321$#
+				"""
+			count: 1
+			path: Database/Query.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(string Field name\\)\\: Unexpected token \"Field\", expected variable at offset 266$#"
+			count: 1
+			path: Database/Query.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(string The field of which the values are to be grouped\\)\\: Unexpected token \"The\", expected variable at offset 69$#"
+			count: 1
+			path: Database/Query.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$db$#"
+			count: 1
+			path: Database/Query.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(int PDO row fetch style \\- PDO\\:\\:FETCH_ASSOC is the default\\)\\: Unexpected token \"PDO\", expected variable at offset 55$#"
+			count: 1
+			path: Database/Result.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(int PDO row fetch style \\- PDO\\:\\:FETCH_ASSOC is the default\\)\\: Unexpected token \"PDO\", expected variable at offset 57$#"
+			count: 1
+			path: Database/Result.php
+
+		-
+			message: "#^Anonymous function has an unused use \\$fields\\.$#"
+			count: 1
+			path: Editor.php
+
+		-
+			message: "#^Method DataTables\\\\Editor\\:\\:validator\\(\\) has invalid return type DataTables\\\\callback\\.$#"
+			count: 1
+			path: Editor.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(int JSON encode option https\\://www\\.php\\.net/manual/en/json\\.constants\\.php\\)\\: Unexpected token \"JSON\", expected variable at offset 311$#"
+			count: 1
+			path: Editor.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(number\\[\\] \\[\\$id\\=null\\] Limit to a specific set of ids\\)\\: Unexpected token \"\\[\", expected variable at offset 256$#"
+			count: 1
+			path: Editor.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(string Value to set\\. If not given, then used as a getter\\.\\)\\: Unexpected token \"Value\", expected variable at offset 220$#"
+			count: 1
+			path: Editor.php
+
+		-
+			message:
+				"""
+					#^PHPDoc tag @param has invalid value \\(string \\[\\$limitTable\\=null\\] Limit the data gathering to a single
+					    table only\\)\\: Unexpected token "\\[", expected variable at offset 161$#
+				"""
+			count: 1
+			path: Editor.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(string \\[\\$path\\=null\\] Set an output path to log debug information\\)\\: Unexpected token \"\\[\", expected variable at offset 735$#"
+			count: 1
+			path: Editor.php
+
+		-
+			message: "#^Property DataTables\\\\Editor\\:\\:\\$_validator has unknown class DataTables\\\\callback as its type\\.$#"
+			count: 1
+			path: Editor.php
+
+		-
+			message: "#^Cannot call method value\\(\\) on array\\<string\\>\\|DataTables\\\\Editor\\|DataTables\\\\Editor\\\\Join\\|string\\.$#"
+			count: 1
+			path: Editor/Field.php
+
+		-
+			message: "#^Method DataTables\\\\Editor\\\\Field\\:\\:searchPaneOptionsExec\\(\\) has invalid return type DataTables\\\\Editor\\\\IOption\\.$#"
+			count: 1
+			path: Editor/Field.php
+
+		-
+			message: "#^Method DataTables\\\\Editor\\\\Field\\:\\:searchPaneOptionsExec\\(\\) has invalid return type DataTables\\\\Editor\\\\Promise\\.$#"
+			count: 1
+			path: Editor/Field.php
+
+		-
+			message: "#^Parameter \\$field of method DataTables\\\\Editor\\\\Field\\:\\:searchPaneOptionsExec\\(\\) has invalid type DataTables\\\\Field\\.$#"
+			count: 1
+			path: Editor/Field.php
+
+		-
+			message: "#^Parameter \\$fields of method DataTables\\\\Editor\\\\Field\\:\\:searchPaneOptionsExec\\(\\) has invalid type DataTables\\\\Field\\.$#"
+			count: 1
+			path: Editor/Field.php
+
+		-
+			message: "#^Parameter \\$http of method DataTables\\\\Editor\\\\Field\\:\\:searchPaneOptionsExec\\(\\) has invalid type DataTables\\\\DTRequest\\.$#"
+			count: 1
+			path: Editor/Field.php
+
+		-
+			message: "#^Parameter \\$leftJoin of method DataTables\\\\Editor\\\\Field\\:\\:searchPaneOptionsExec\\(\\) has invalid type DataTables\\\\Editor\\\\any\\.$#"
+			count: 1
+			path: Editor/Field.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$data$#"
+			count: 9
+			path: Editor/Format.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$opts$#"
+			count: 9
+			path: Editor/Format.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$val$#"
+			count: 9
+			path: Editor/Format.php
+
+		-
+			message: "#^Static method DataTables\\\\Editor\\\\Format\\:\\:nullEmpty\\(\\) invoked with 1 parameter, 0 required\\.$#"
+			count: 1
+			path: Editor/Format.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$order$#"
+			count: 1
+			path: Editor/Join.php
+
+		-
+			message: "#^Variable \\$readField might not be defined\\.$#"
+			count: 2
+			path: Editor/Join.php
+
+		-
+			message: "#^Call to method query\\(\\) on an unknown class DataTables\\\\Editor\\\\Database\\.$#"
+			count: 1
+			path: Editor/Options.php
+
+		-
+			message: "#^Parameter \\$db of method DataTables\\\\Editor\\\\Options\\:\\:exec\\(\\) has invalid type DataTables\\\\Editor\\\\Database\\.$#"
+			count: 1
+			path: Editor/Options.php
+
+		-
+			message: "#^Property DataTables\\\\Editor\\\\Options\\:\\:\\$_where has unknown class DataTables\\\\Editor\\\\callback as its type\\.$#"
+			count: 1
+			path: Editor/Options.php
+
+		-
+			message: "#^Cannot call method join\\(\\) on string\\.$#"
+			count: 2
+			path: Editor/SearchPaneOptions.php
+
+		-
+			message: "#^Cannot call method where\\(\\) on string\\.$#"
+			count: 1
+			path: Editor/SearchPaneOptions.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$db$#"
+			count: 1
+			path: Editor/SearchPaneOptions.php
+
+		-
+			message: "#^Property DataTables\\\\Editor\\\\SearchPaneOptions\\:\\:\\$_where has unknown class DataTables\\\\Editor\\\\callback as its type\\.$#"
+			count: 1
+			path: Editor/SearchPaneOptions.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(number\\[\\] \\[\\$ids\\=null\\] Limit to a specific set of ids\\)\\: Unexpected token \"\\[\", expected variable at offset 122$#"
+			count: 1
+			path: Editor/Upload.php
+
+		-
+			message: "#^Method DataTables\\\\Editor\\\\Validate\\:\\:__callStatic\\(\\) should return mixed but return statement is missing\\.$#"
+			count: 1
+			path: Editor/Validate.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$data$#"
+			count: 19
+			path: Editor/Validate.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$host$#"
+			count: 19
+			path: Editor/Validate.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$opts$#"
+			count: 19
+			path: Editor/Validate.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$val$#"
+			count: 19
+			path: Editor/Validate.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$html The html text to fitlter\\.\\)\\: Unexpected token \"\\$html\", expected type at offset 96$#"
+			count: 1
+			path: HtmLawed/Htmlaw.php
+
