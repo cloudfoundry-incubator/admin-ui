@@ -15,19 +15,19 @@ gem 'sequel_pg', '1.15.0'
 gem 'sinatra', '2.2.0'
 gem 'sqlite3', '1.4.2'
 gem 'webrick', '1.7.0'
-gem 'yajl-ruby', '1.4.2'
+gem 'yajl-ruby', '1.4.3'
 
 group :mysql do
   gem 'mysql2', '0.5.4'
 end
 
 group :development do
-  gem 'rubocop', '1.29.1'
-  gem 'rubocop-performance', '1.13.3'
+  gem 'rubocop', '1.30.0'
+  gem 'rubocop-performance', '1.14.0'
   gem 'rubocop-rails', '2.14.2'
 end
 
 group :test do
   gem 'rspec', '3.11.0'
-  gem 'selenium-webdriver', '4.1.0'
+  gem 'selenium-webdriver', '4.2.0'
 end

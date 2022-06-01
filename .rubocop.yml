@@ -15,6 +15,9 @@ AllCops:
 Gemspec/DateAssignment:
   Enabled: true
 
+Gemspec/DeprecatedAttributeAssignment:
+  Enabled: true
+
 Gemspec/RequireMFA:
   Enabled: true
 
@@ -491,6 +494,9 @@ Style/InPatternThen:
   Enabled: true
 
 Style/KeywordParametersOrder:
+  Enabled: true
+
+Style/MapCompactWithConditionalBlock:
   Enabled: true
 
 Style/MapToHash:
