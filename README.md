@@ -1,3 +1,7 @@
+# New Main Contributor/Maintainer Needed
+With the advent of the IBM announcement of IBM® Cloud Foundry being deprecated, this repository needs a new main contributor/maintainer. 
+IBM announcement here: https://cloud.ibm.com/docs/cloud-foundry-public?topic=cloud-foundry-public-deprecation
+
 # Administration Web UI for Cloud Foundry NG 
 
 The Administration Web UI provides metrics and operations data for Cloud Foundry NG.
