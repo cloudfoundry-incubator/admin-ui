@@ -10,10 +10,10 @@ gem 'net-smtp', '0.3.1'
 gem 'parse-cron', '0.1.4'
 gem 'protobuf', '3.10.6'
 gem 'rack-ssl', '1.4.1'
-gem 'sequel', '5.56.0'
+gem 'sequel', '5.57.0'
 gem 'sequel_pg', '1.15.0'
 gem 'sinatra', '2.2.0'
-gem 'sqlite3', '1.4.2'
+gem 'sqlite3', '1.4.4'
 gem 'webrick', '1.7.0'
 gem 'yajl-ruby', '1.4.3'
 
@@ -22,12 +22,12 @@ group :mysql do
 end
 
 group :development do
-  gem 'rubocop', '1.30.0'
-  gem 'rubocop-performance', '1.14.0'
-  gem 'rubocop-rails', '2.14.2'
+  gem 'rubocop', '1.30.1'
+  gem 'rubocop-performance', '1.14.2'
+  gem 'rubocop-rails', '2.15.0'
 end
 
 group :test do
   gem 'rspec', '3.11.0'
-  gem 'selenium-webdriver', '4.2.0'
+  gem 'selenium-webdriver', '4.2.1'
 end

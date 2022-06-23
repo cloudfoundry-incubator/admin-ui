@@ -298,6 +298,9 @@ Rails/CompactBlank:
 Rails/DeprecatedActiveModelErrorsMethods:
   Enabled: true
 
+Rails/DotSeparatedKeys:
+  Enabled: true
+
 Rails/DuplicateAssociation:
   Enabled: true
 
@@ -370,6 +373,9 @@ Rails/RenderPlainText:
 Rails/RootJoinChain:
   Enabled: true
 
+Rails/RootPublicPath:
+  Enabled: true
+
 Rails/ShortI18n:
   Enabled: true
 
@@ -379,10 +385,16 @@ Rails/SkipsModelValidations:
 Rails/SquishedSQLHeredocs:
   Enabled: true
 
+Rails/StripHeredoc:
+  Enabled: true
+
 Rails/TimeZone:
   Enabled: false
 
 Rails/TimeZoneAssignment:
+  Enabled: true
+
+Rails/ToFormattedS:
   Enabled: true
 
 Rails/TransactionExitStatement:
