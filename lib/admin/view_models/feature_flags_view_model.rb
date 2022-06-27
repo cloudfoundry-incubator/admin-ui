@@ -15,6 +15,7 @@ module AdminUI
         private_domain_creation:                     true,
         resource_matching:                           true, # Added in cf-deployment 12.2.0
         route_creation:                              true,
+        route_sharing:                               false, # Added in cf-deployment 21.4.0
         service_instance_creation:                   true,
         service_instance_sharing:                    false, # Added in cf-release 280
         set_roles_by_username:                       true, # Added in cf_release 218

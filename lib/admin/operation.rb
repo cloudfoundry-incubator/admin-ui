@@ -579,6 +579,14 @@ module AdminUI
       @view_models.invalidate_route_mappings
     end
 
+    def delete_route_space(route_guid, space_guid)
+      url = "/v3/routes/#{route_guid}/relationships/shared_spaces/#{space_guid}"
+      @logger.debug("DELETE #{url}")
+      @client.delete_cc(url)
+      @cc.invalidate_route_shares
+      @view_models.invalidate_routes
+    end
+
     def delete_security_group(security_group_guid)
       api_version = @client.api_version
       v3 = Gem::Version.new(api_version) >= Gem::Version.new('2.153.0')

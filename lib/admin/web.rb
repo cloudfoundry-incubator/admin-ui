@@ -2076,6 +2076,21 @@ module AdminUI
       500
     end
 
+    delete '/routes/:route_guid/spaces/:space_guid', auth: [:admin] do
+      @logger.info_user(session[:username], 'delete', "/routes/#{params[:route_guid]}/spaces/#{params[:space_guid]}")
+      @operation.delete_route_space(params[:route_guid], params[:space_guid])
+      204
+    rescue CCRestClientResponseError => error
+      @logger.error("Error during delete route space: #{error.to_h}")
+      content_type(:json)
+      status(error.http_code)
+      body(Yajl::Encoder.encode(error.to_h))
+    rescue => error
+      @logger.error("Error during delete route space: #{error.inspect}")
+      @logger.error(error.backtrace.join("\n"))
+      500
+    end
+
     delete '/route_bindings/:route_binding_guid/delete/:service_instance_guid/:route_guid/:is_gateway_service', auth: [:admin] do
       @logger.info_user(session[:username], 'delete', "/route_bindings/#{params[:route_binding_guid]}/delete/#{params[:service_instance_guid]}/#{params[:route_guid]}/#{params[:is_gateway_service]}")
       @operation.delete_route_binding(params[:route_binding_guid], params[:service_instance_guid], params[:route_guid], params[:is_gateway_service] == 'true')

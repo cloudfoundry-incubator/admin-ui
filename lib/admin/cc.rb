@@ -294,6 +294,12 @@ module AdminUI
             table:   :route_mappings,
             columns: %i[app_guid app_port created_at guid id process_type protocol route_guid updated_at weight]
           },
+          route_shares:
+          {
+            db_uri:  ccdb_uri,
+            table:   :route_shares,
+            columns: %i[route_guid target_space_guid]
+          },
           routes:
           {
             db_uri:  ccdb_uri,
@@ -835,6 +841,10 @@ module AdminUI
       invalidate_cache(:route_mappings)
     end
 
+    def invalidate_route_shares
+      invalidate_cache(:route_shares)
+    end
+
     def invalidate_routes
       invalidate_cache(:routes)
     end
@@ -1146,6 +1156,10 @@ module AdminUI
 
     def route_mappings
       result_cache(:route_mappings)
+    end
+
+    def route_shares
+      result_cache(:route_shares)
     end
 
     def routes

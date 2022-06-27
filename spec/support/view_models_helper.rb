@@ -1079,6 +1079,7 @@ module ViewModelsHelper
         1,
         1,
         1,
+        1,
         "#{cc_organization[:name]}/#{cc_space[:name]}"
       ]
     ]
@@ -1091,6 +1092,7 @@ module ViewModelsHelper
       'labels'       => [label_rfc3339(cc_route_label)],
       'organization' => cc_organization,
       'route'        => cc_route,
+      'route_shares' => [{ organization: cc_organization, space: cc_space }],
       'space'        => cc_space
     }
   end

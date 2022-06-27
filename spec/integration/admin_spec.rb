@@ -1142,6 +1142,12 @@ describe AdminUI::Admin, type: :integration do
       verify_sys_log_entries([['delete', "/routes/#{cc_route[:guid]}/metadata/labels/#{cc_route_label[:key_name]}?prefix=#{cc_route_label[:key_prefix]}"]], true)
     end
 
+    def delete_route_space
+      response = delete_request("/routes/#{cc_route[:guid]}/spaces/#{cc_space[:guid]}")
+      expect(response.is_a?(Net::HTTPNoContent)).to be(true)
+      verify_sys_log_entries([['delete', "/routes/#{cc_route[:guid]}/spaces/#{cc_space[:guid]}"]], true)
+    end
+
     it 'has user name and routes request in the log file' do
       verify_sys_log_entries([['authenticated', 'role admin, authorized true'], ['get', '/routes_view_model']], true)
     end
@@ -1160,6 +1166,10 @@ describe AdminUI::Admin, type: :integration do
 
     it 'deletes a route label' do
       expect { delete_route_label }.to change { get_json("/routes_view_model/#{cc_route[:guid]}")['labels'].length }.from(1).to(0)
+    end
+
+    it 'deletes a route space' do
+      expect { delete_route_space }.to change { get_json("/routes_view_model/#{cc_route[:guid]}")['route_shares'].length }.from(1).to(0)
     end
   end
 

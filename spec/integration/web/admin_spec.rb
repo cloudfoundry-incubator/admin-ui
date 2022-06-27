@@ -2365,8 +2365,8 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           check_table_layout([
                                {
                                  columns:         @driver.find_elements(xpath: "//div[@id='RoutesTableContainer']/div/div[4]/div/div/table/thead/tr[1]/th"),
-                                 expected_length: 14,
-                                 labels:          ['', 'URI', 'Host', 'Domain', 'Port', 'Path', 'VIP Offset', 'GUID', 'Created', 'Updated', 'Events', 'Route Mappings', 'Route Bindings', 'Target'],
+                                 expected_length: 15,
+                                 labels:          ['', 'URI', 'Host', 'Domain', 'Port', 'Path', 'VIP Offset', 'GUID', 'Created', 'Updated', 'Events', 'Route Mappings', 'Route Bindings', 'Route Shares', 'Target'],
                                  colspans:        nil
                                }
                              ])
@@ -2383,6 +2383,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                              cc_route[:guid],
                              cc_route[:created_at].to_datetime.rfc3339,
                              cc_route[:updated_at].to_datetime.rfc3339,
+                             '1',
                              '1',
                              '1',
                              '1',
@@ -2466,6 +2467,7 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
                             { label: 'Events',            tag:   'a', value: '1' },
                             { label: 'Route Mappings',    tag:   'a', value: '1' },
                             { label: 'Route Bindings',    tag:   'a', value: '1' },
+                            { label: 'Route Shares',      tag:   nil, value: '1' },
                             { label: 'Space',             tag:   'a', value: cc_space[:name] },
                             { label: 'Space GUID',        tag:   nil, value: cc_space[:guid] },
                             { label: 'Organization',      tag:   'a', value: cc_organization[:name] },
@@ -2589,6 +2591,72 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
             end
           end
 
+          it 'has shared spaces subtable' do
+            expect(@driver.find_element(id: 'RoutesSharesDetailsLabel').displayed?).to be(true)
+
+            check_table_layout([
+                                 {
+                                   columns:         @driver.find_elements(xpath: "//div[@id='RoutesSharesTableContainer']/div[2]/div[4]/div/div/table/thead/tr[1]/th"),
+                                   expected_length: 3,
+                                   labels:          ['', 'Space', 'Organization'],
+                                   colspans:        %w[1 2 2]
+                                 },
+                                 {
+                                   columns:         @driver.find_elements(xpath: "//div[@id='RoutesSharesTableContainer']/div[2]/div[4]/div/div/table/thead/tr[2]/th"),
+                                   expected_length: 5,
+                                   labels:          ['', 'Name', 'GUID', 'Name', 'GUID'],
+                                   colspans:        nil
+                                 }
+                               ])
+
+            check_table_data(@driver.find_elements(xpath: "//table[@id='RoutesSharesTable']/tbody/tr/td"),
+                             [
+                               '',
+                               cc_space[:name],
+                               cc_space[:guid],
+                               cc_organization[:name],
+                               cc_organization[:guid]
+                             ])
+          end
+
+          it 'shared spaces subtable has a checkbox in the first column' do
+            check_checkbox_guid('RoutesSharesTable', "#{cc_route[:guid]}/spaces/#{cc_space[:guid]}")
+          end
+
+          context 'manage shared spaces subtable' do
+            it 'has an Unshare button' do
+              expect(@driver.find_element(id: 'Buttons_RoutesSharesTable_0').text).to eq('Unshare')
+            end
+
+            context 'Unshare button' do
+              it_behaves_like('click button without selecting any rows') do
+                let(:button_id) { 'Buttons_RoutesSharesTable_0' }
+              end
+            end
+
+            context 'Unshare button' do
+              it_behaves_like('delete first row') do
+                let(:table_id)                { 'RoutesSharesTable' }
+                let(:button_id)               { 'Buttons_RoutesSharesTable_0' }
+                let(:check_no_data_available) { false }
+                let(:confirm_message)         { 'Are you sure you want to unshare the route from the selected spaces?' }
+              end
+            end
+
+            context 'Standard buttons' do
+              let(:filename) { 'route_shares' }
+
+              it_behaves_like('standard buttons') do
+                let(:copy_button_id)  { 'Buttons_RoutesSharesTable_1' }
+                let(:print_button_id) { 'Buttons_RoutesSharesTable_2' }
+                let(:save_button_id)  { 'Buttons_RoutesSharesTable_3' }
+                let(:csv_button_id)   { 'Buttons_RoutesSharesTable_4' }
+                let(:excel_button_id) { 'Buttons_RoutesSharesTable_5' }
+                let(:pdf_button_id)   { 'Buttons_RoutesSharesTable_6' }
+              end
+            end
+          end
+
           it 'has domains link' do
             check_filter_link('Routes', 2, 'Domains', cc_domain[:guid])
           end
@@ -2606,11 +2674,11 @@ describe AdminUI::Admin, type: :integration, firefox_available: true do
           end
 
           it 'has spaces link' do
-            check_filter_link('Routes', 12, 'Spaces', cc_space[:guid])
+            check_filter_link('Routes', 13, 'Spaces', cc_space[:guid])
           end
 
           it 'has organizations link' do
-            check_filter_link('Routes', 14, 'Organizations', cc_organization[:guid])
+            check_filter_link('Routes', 15, 'Organizations', cc_organization[:guid])
           end
         end
       end

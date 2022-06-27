@@ -329,6 +329,13 @@ describe AdminUI::CC, type: :integration do
       expect(cc.route_mappings['items'].length).to eq(0)
     end
 
+    it 'clears the route shares cache' do
+      expect(cc.route_shares['items'].length).to eq(1)
+      cc_clear_routes_cache_stub(config)
+      cc.invalidate_route_shares
+      expect(cc.route_shares['items'].length).to eq(0)
+    end
+
     it 'clears the security groups cache' do
       expect(cc.security_groups['items'].length).to eq(1)
       cc_clear_security_groups_cache_stub(config)
@@ -966,6 +973,13 @@ describe AdminUI::CC, type: :integration do
     context 'returns connected route mappings' do
       let(:results)  { cc.route_mappings }
       let(:expected) { cc_route_mapping }
+
+      it_behaves_like('common cc retrieval')
+    end
+
+    context 'returns connected route shares' do
+      let(:results)  { cc.route_shares }
+      let(:expected) { cc_route_share }
 
       it_behaves_like('common cc retrieval')
     end

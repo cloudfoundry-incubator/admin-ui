@@ -1069,6 +1069,23 @@ describe AdminUI::Admin do
       it_behaves_like('common delete route mapping')
     end
 
+    shared_examples 'common delete route share' do
+      it 'returns failure code due to disconnection' do
+        response = delete('/routes/route1/spaces/space1')
+        expect(response.is_a?(Net::HTTPInternalServerError)).to be(true)
+      end
+    end
+
+    context 'delete route share via http' do
+      it_behaves_like('common delete route share')
+    end
+
+    context 'delete route share via https' do
+      let(:secured_client_connection) { true }
+
+      it_behaves_like('common delete route share')
+    end
+
     shared_examples 'common delete security group' do
       it 'returns failure code due to disconnection' do
         response = delete('/security_groups/security_group1')
@@ -3363,6 +3380,10 @@ describe AdminUI::Admin do
 
       it 'deletes /routes/:guid/metadata/labels/:label?prefix=:prefix redirects as expected' do
         delete_redirects_as_expected('/routes/route1/metadata/labels/label1?prefix=bogus.com')
+      end
+
+      it 'deletes /routes/:guid/spaces/:guid redirects as expected' do
+        delete_redirects_as_expected('/routes/route1/spaces/space1')
       end
 
       it 'deletes /security_groups/:guid redirects as expected' do

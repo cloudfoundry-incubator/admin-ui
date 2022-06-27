@@ -1471,6 +1471,13 @@ Sequel.migration do
       index [:process_type]
     end
     
+    create_table(:route_shares) do
+      foreign_key :route_guid, :routes, :type=>String, :size=>255, :null=>false, :key=>[:guid], :on_delete=>:cascade
+      foreign_key :target_space_guid, :spaces, :type=>String, :size=>255, :null=>false, :key=>[:guid], :on_delete=>:cascade
+      
+      primary_key [:route_guid, :target_space_guid]
+    end
+    
     create_table(:service_broker_annotations, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false

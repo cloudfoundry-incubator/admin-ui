@@ -16,15 +16,19 @@ module AdminUI
       route_bindings    = @cc.route_bindings
       route_labels      = @cc.route_labels
       route_mappings    = @cc.route_mappings
+      route_shares      = @cc.route_shares
       spaces            = @cc.spaces
 
       events_connected         = events['connected']
       route_bindings_connected = route_bindings['connected']
       route_mappings_connected = route_mappings['connected']
+      route_shares_connected   = route_shares['connected']
+      spaces_connected         = spaces['connected']
 
       domain_hash       = domains['items'].to_h { |item| [item[:id], item] }
       organization_hash = organizations['items'].to_h { |item| [item[:id], item] }
-      space_hash        = spaces['items'].to_h { |item| [item[:id], item] }
+      space_guid_hash   = spaces['items'].to_h { |item| [item[:guid], item] }
+      space_id_hash     = spaces['items'].to_h { |item| [item[:id], item] }
 
       route_annotations_hash = {}
       route_annotations['items'].each do |route_annotation|
@@ -109,6 +113,33 @@ module AdminUI
         binding_counters[route_id] += 1
       end
 
+      route_shares_hash = {}
+      if route_shares_connected && spaces_connected
+        route_shares['items'].each do |route_share|
+          return result unless @running
+
+          Thread.pass
+
+          route_guid = route_share[:route_guid]
+          route_shares_array = route_shares_hash[route_guid]
+          if route_shares_array.nil?
+            route_shares_array = []
+            route_shares_hash[route_guid] = route_shares_array
+          end
+
+          space = space_guid_hash[route_share[:target_space_guid]]
+          next unless space
+
+          share =
+            {
+              organization: organization_hash[space[:organization_id]],
+              space:
+            }
+
+          route_shares_array.push(share)
+        end
+      end
+
       items = []
       hash  = {}
 
@@ -120,7 +151,7 @@ module AdminUI
         guid         = route[:guid]
         port         = route[:port]
         domain       = domain_hash[route[:domain_id]]
-        space        = space_hash[route[:space_id]]
+        space        = space_id_hash[route[:space_id]]
         organization = space.nil? ? nil : organization_hash[space[:organization_id]]
 
         app_counter            = app_counters[guid]
@@ -128,6 +159,7 @@ module AdminUI
         event_counter          = event_counters[guid]
         route_annotation_array = route_annotations_hash[guid] || []
         route_label_array      = route_labels_hash[guid] || []
+        route_shares_array     = route_shares_hash[guid] || []
 
         row = []
 
@@ -201,6 +233,14 @@ module AdminUI
           row.push(nil)
         end
 
+        if route_shares_array
+          row.push(route_shares_array.length)
+        elsif route_shares_connected && spaces_connected
+          row.push(0)
+        else
+          row.push(nil)
+        end
+
         if organization && space
           row.push("#{organization[:name]}/#{space[:name]}")
         else
@@ -216,11 +256,12 @@ module AdminUI
             'labels'       => route_label_array,
             'organization' => organization,
             'route'        => route,
+            'route_shares' => route_shares_array,
             'space'        => space
           }
       end
 
-      result(true, items, hash, (1..13).to_a, [1, 2, 3, 5, 7, 8, 9, 13])
+      result(true, items, hash, (1..14).to_a, [1, 2, 3, 5, 7, 8, 9, 14])
     end
   end
 end

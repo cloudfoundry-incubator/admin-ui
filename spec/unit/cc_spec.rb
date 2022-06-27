@@ -237,6 +237,10 @@ describe AdminUI::CC do
       verify_disconnected_items(cc.route_mappings)
     end
 
+    it 'returns zero route shares as expected' do
+      verify_disconnected_items(cc.route_shares)
+    end
+
     it 'returns zero security_groups as expected' do
       verify_disconnected_items(cc.security_groups)
     end

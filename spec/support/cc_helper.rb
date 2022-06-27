@@ -283,6 +283,7 @@ module CCHelper
     cc_clear_route_bindings_cache_stub(config)
     cc_clear_route_labels_cache_stub(config)
     cc_clear_route_mappings_cache_stub(config)
+    cc_clear_route_shares_cache_stub(config)
 
     sql(config.ccdb_uri, 'DELETE FROM routes')
 
@@ -310,6 +311,10 @@ module CCHelper
     sql(config.ccdb_uri, 'DELETE FROM route_mappings')
 
     @cc_route_mappings_deleted = true
+  end
+
+  def cc_clear_route_shares_cache_stub(config)
+    sql(config.ccdb_uri, 'DELETE FROM route_shares')
   end
 
   def cc_clear_security_groups_cache_stub(config)
@@ -1410,6 +1415,13 @@ module CCHelper
     }
   end
 
+  def cc_route_share
+    {
+      route_guid:        cc_route[:guid],
+      target_space_guid: cc_space[:guid]
+    }
+  end
+
   def cc_security_group
     {
       created_at:          unique_time('cc_security_group_created'),
@@ -2312,6 +2324,7 @@ module CCHelper
                [:routes,                           cc_route],
                [:route_annotations,                cc_route_annotation],
                [:route_labels,                     cc_route_label],
+               [:route_shares,                     cc_route_share],
                [:service_brokers,                  cc_service_broker_with_password],
                [:service_broker_annotations,       cc_service_broker_annotation],
                [:service_broker_labels,            cc_service_broker_label],
@@ -2991,6 +3004,15 @@ module CCHelper
       else
         cc_clear_routes_cache_stub(config)
         Accepted.new({})
+      end
+    end
+
+    allow(AdminUI::Utils).to receive(:http_request).with(anything, anything, "#{config.cloud_controller_uri}/v3/routes/#{cc_route[:guid]}/relationships/shared_spaces/#{cc_space[:guid]}", AdminUI::Utils::HTTP_DELETE, anything, anything, anything, anything, anything) do
+      if @cc_routes_deleted
+        cc_route_not_found
+      else
+        cc_clear_routes_cache_stub(config)
+        Net::HTTPNoContent.new(1.0, 204, 'OK')
       end
     end
 

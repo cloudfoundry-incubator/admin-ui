@@ -1242,6 +1242,10 @@ describe AdminUI::Operation, type: :integration do
         operation.delete_route_label(cc_route[:guid], cc_route_label[:key_prefix], cc_route_label[:key_name])
       end
 
+      def delete_route_space
+        operation.delete_route_space(cc_route[:guid], cc_space[:guid])
+      end
+
       it 'deletes route' do
         expect { delete_route }.to change { cc.routes['items'].length }.from(1).to(0)
       end
@@ -1256,6 +1260,10 @@ describe AdminUI::Operation, type: :integration do
 
       it 'deletes the route label' do
         expect { delete_route_label }.to change { cc.route_labels['items'].length }.from(1).to(0)
+      end
+
+      it 'deletes the route space' do
+        expect { delete_route_space }.to change { cc.route_shares['items'].length }.from(1).to(0)
       end
 
       context 'errors' do
@@ -1284,6 +1292,10 @@ describe AdminUI::Operation, type: :integration do
 
         it 'fails deleting label on deleted route' do
           expect { delete_route_label }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_route_not_found(exception) }
+        end
+
+        it 'fails deleting space on deleted route' do
+          expect { delete_route_space }.to raise_error(AdminUI::CCRestClientResponseError) { |exception| verify_route_not_found(exception) }
         end
       end
     end
