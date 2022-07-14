@@ -30,6 +30,11 @@ Sequel.migration do
       index [:created_at], :name=>:usage_events_created_at_index
     end
     
+    create_table(:asg_timestamps) do
+      primary_key :"{:name=>:id}"
+      DateTime :last_update
+    end
+    
     create_table(:buildpack_lifecycle_data, :ignore_index_errors=>true) do
       primary_key :id
       String :guid, :text=>true, :null=>false
@@ -603,6 +608,7 @@ Sequel.migration do
       index [:app_guid]
       index [:created_at]
       index [:guid], :unique=>true
+      index [:revision_guid]
       index [:state]
       index [:status_reason]
       index [:status_value]
@@ -712,6 +718,7 @@ Sequel.migration do
       index [:guid], :name=>:apps_guid_index, :unique=>true
       index [:updated_at], :name=>:apps_updated_at_index
       index [:app_guid]
+      index [:revision_guid]
     end
     
     create_table(:revisions, :ignore_index_errors=>true) do
@@ -1050,6 +1057,7 @@ Sequel.migration do
       String :app_guid, :size=>255, :null=>false
       
       index [:sidecar_guid], :name=>:fk_sidecar_proc_type_sidecar_guid_index
+      index [:app_guid]
       index [:created_at]
       index [:guid], :unique=>true
       index [:updated_at]

@@ -42,7 +42,7 @@ describe AdminUI::DBStoreMigration do
   end
 
   def launch_admin_daemon(config)
-    File.delete(db_file) if File.exist?(db_file)
+    FileUtils.rm_rf(db_file)
     File.write(config_file, Yajl::Encoder.encode(config, pretty: true))
     project_path = File.join(File.dirname(__FILE__), '../..')
     spawn_opts =
@@ -69,7 +69,7 @@ describe AdminUI::DBStoreMigration do
       }
     @pid = Process.spawn({}, "rm -rf #{ccdb_file} #{config_file} #{data_file} #{doppler_data_file} #{log_file} #{db_file} #{uaadb_file} #{backup_stats_file} #{db_migration_dir}/#{plan_test} ", spawn_opts)
     Process.wait(@pid)
-    FileUtils.rm_f stats_file if File.exist?(stats_file)
+    FileUtils.rm_rf stats_file
   end
 
   def migrate_database
@@ -95,7 +95,7 @@ describe AdminUI::DBStoreMigration do
     let(:db_file) { '/tmp/new_dir/admin_ui_store.db' }
 
     it 'automatically creates a sqlite database instance.' do
-      FileUtils.rm_rf '/tmp/new_dir' if File.exist?('/tmp/new_dir')
+      FileUtils.rm_rf '/tmp/new_dir'
       launch_admin_daemon(config)
       expect(File.exist?(db_file)).to be(true)
       stop_admin_daemon

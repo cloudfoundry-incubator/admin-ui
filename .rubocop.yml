@@ -12,9 +12,6 @@ AllCops:
     - 'spec/support/ccdb/*'
     - 'spec/support/uaadb/*'
 
-Gemspec/DateAssignment:
-  Enabled: true
-
 Gemspec/DeprecatedAttributeAssignment:
   Enabled: true
 
@@ -30,6 +27,12 @@ Layout/EmptyLinesAroundAttributeAccessor:
 Layout/HashAlignment:
   EnforcedColonStyle: table
   EnforcedHashRocketStyle: table
+
+Layout/LineContinuationLeadingSpace:
+  Enabled: true
+
+Layout/LineContinuationSpacing:
+  Enabled: true
 
 Layout/LineEndStringConcatenationIndentation:
   Enabled: false
@@ -53,6 +56,9 @@ Lint/BinaryOperatorWithIdenticalOperands:
   Enabled: true
 
 Lint/ConstantDefinitionInBlock:
+  Enabled: true
+
+Lint/ConstantOverwrittenInRescue:
   Enabled: true
 
 Lint/DeprecatedConstants:
@@ -110,6 +116,9 @@ Lint/MissingSuper:
   Enabled: true
 
 Lint/MixedRegexpCaptureTypes:
+  Enabled: true
+
+Lint/NonAtomicFileOperation:
   Enabled: true
 
 Lint/NoReturnInBeginEndBlocks:

@@ -57,7 +57,7 @@ describe AdminUI::Admin do
   before do
     generate_certificate if secured_client_connection
 
-    File.delete(db_file) if File.exist?(db_file)
+    FileUtils.rm_rf(db_file)
 
     allow_any_instance_of(::WEBrick::Log).to receive(:log)
 
