@@ -372,7 +372,7 @@ Example: <code>10</code>
 <code>nats_tls</code>
 </dt>
 <dd>
-A set of optional configuration properties for Admin-UI to securely communicate with NATS using TLS. These keys and values correspond to those documented for [TLS secure client connection within the NATS repository](https://github.com/nats-io/nats.rb/blob/master/README.md#tls).
+A set of optional configuration properties for Admin-UI to securely communicate with NATS using TLS. These keys and values correspond to those documented for <a href="https://github.com/nats-io/nats.rb/blob/master/README.md#tls">TLS secure client connection within the NATS repository</a>.
 <br>
 <dl>
 <dt>
