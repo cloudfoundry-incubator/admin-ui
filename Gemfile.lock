@@ -21,7 +21,7 @@ GEM
     membrane (1.1.0)
     middleware (0.1.0)
     minitest (5.16.2)
-    mustermann (1.1.1)
+    mustermann (1.1.2)
       ruby2_keywords (~> 0.0.1)
     mysql2 (0.5.4)
     nats (0.11.0)
@@ -46,7 +46,7 @@ GEM
       thor
       thread_safe
     rack (2.2.4)
-    rack-protection (2.2.0)
+    rack-protection (2.2.1)
       rack
     rack-ssl (1.4.1)
       rack
@@ -78,7 +78,7 @@ GEM
       unicode-display_width (>= 1.4.0, < 3.0)
     rubocop-ast (1.19.1)
       parser (>= 3.1.1.0)
-    rubocop-performance (1.14.2)
+    rubocop-performance (1.14.3)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
     rubocop-rails (2.15.2)
@@ -97,17 +97,17 @@ GEM
     sequel_pg (1.15.0)
       pg (>= 0.18.0, != 1.2.0)
       sequel (>= 4.38.0)
-    sinatra (2.2.0)
+    sinatra (2.2.1)
       mustermann (~> 1.0)
       rack (~> 2.2)
-      rack-protection (= 2.2.0)
+      rack-protection (= 2.2.1)
       tilt (~> 2.0)
     sqlite3 (1.4.4)
     thor (1.2.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
     timeout (0.3.0)
-    tzinfo (2.0.4)
+    tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.2.0)
     webrick (1.7.0)
@@ -132,12 +132,12 @@ DEPENDENCIES
   rack-ssl (= 1.4.1)
   rspec (= 3.11.0)
   rubocop (= 1.31.2)
-  rubocop-performance (= 1.14.2)
+  rubocop-performance (= 1.14.3)
   rubocop-rails (= 2.15.2)
   selenium-webdriver (= 4.3.0)
   sequel (= 5.58.0)
   sequel_pg (= 1.15.0)
-  sinatra (= 2.2.0)
+  sinatra (= 2.2.1)
   sqlite3 (= 1.4.4)
   webrick (= 1.7.0)
   yajl-ruby (= 1.4.3)
@@ -146,4 +146,4 @@ RUBY VERSION
    ruby 3.1.2p20
 
 BUNDLED WITH
-   2.3.17
+   2.3.18
